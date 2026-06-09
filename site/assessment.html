@@ -298,45 +298,79 @@
       // ---- Step 3: result ----
       function levelVal(lvl) { return lvl === 'Expert' ? 3 : lvl === 'Advanced' ? 2 : lvl === 'Basic' ? 1 : 0; }
 
+      // Capabilities are authored in cluster order; rank them by first appearance
+      // so the path keeps Foundation → Engineering → … ordering.
+      var CLUSTER_RANK = {};
+      CAPABILITIES.forEach(function (c) {
+        if (!(c.cluster in CLUSTER_RANK)) CLUSTER_RANK[c.cluster] = Object.keys(CLUSTER_RANK).length;
+      });
+
       function renderResult() {
         var role = ROLES.find(function (r) { return r.name === state.role; }) || { targets: {} };
+        var lvlName = ['—', 'Basic', 'Advanced', 'Expert'];
 
-        // Score: current attainment as % of role's required target points (0..100).
-        var have = 0, need = 0;
-        CAPABILITIES.forEach(function (cap) {
-          var t = levelVal(role.targets[cap.id]);
-          if (!t) return;                       // capability not required for this role
-          need += t;
-          have += Math.min(levelVal(state.ratings[cap.id]), t);
-        });
-        var score = need ? Math.round((have / need) * 100) : 0;
-        document.getElementById('scoreNum').textContent = score;
-        var band = score >= 85 ? 'Role-ready' : score >= 60 ? 'On track' : score >= 35 ? 'Developing' : 'Getting started';
-        document.getElementById('scoreBand').textContent = band;
-        document.getElementById('scoreSub').textContent =
-          'Measured against the target levels for ' + state.role + '.';
-
-        // Path: gaps first (current < target), then ordered by gap size.
-        var items = CAPABILITIES.map(function (cap) {
+        // Build the per-capability view once. "required" = role has a target.
+        var rows = CAPABILITIES.map(function (cap) {
           var t = levelVal(role.targets[cap.id]);
           var c = levelVal(state.ratings[cap.id]);
-          return { cap: cap, target: t, current: c, gap: Math.max(0, t - c) };
-        }).filter(function (x) { return x.target > 0; });
-        items.sort(function (a, b) { return b.gap - a.gap; });
+          return {
+            cap: cap, target: t, current: c,
+            required: t > 0,
+            rated: (cap.id in state.ratings),
+            gap: Math.max(0, t - c),
+            met: t > 0 && c >= t
+          };
+        });
+        var required = rows.filter(function (x) { return x.required; });
+        var ratedRequired = required.filter(function (x) { return x.rated; });
+
+        // Score is an ordinal-safe ratio: how many required targets you meet.
+        // No interval assumption (Basic/Advanced/Expert are not summed as points).
+        var metCount = required.filter(function (x) { return x.met; }).length;
+        var score = required.length ? Math.round((metCount / required.length) * 100) : 0;
+        var complete = ratedRequired.length === required.length;
+
+        document.getElementById('scoreNum').textContent = complete ? score : '–';
+        var band = !complete ? 'In progress'
+          : score >= 85 ? 'Role-ready' : score >= 60 ? 'On track'
+          : score >= 35 ? 'Developing' : 'Getting started';
+        document.getElementById('scoreBand').textContent = band;
+        document.getElementById('scoreSub').textContent = complete
+          ? 'You meet ' + metCount + ' of ' + required.length + ' capability targets for ' + state.role + '.'
+          : 'Rate all ' + required.length + ' required capabilities for a score — ' +
+            ratedRequired.length + ' done. Your path is ready below.';
+
+        // Path: gaps only, ordered by cluster, then lessons-available, then gap size.
+        var items = required.filter(function (x) { return x.gap > 0; });
+        items.sort(function (a, b) {
+          var cr = CLUSTER_RANK[a.cap.cluster] - CLUSTER_RANK[b.cap.cluster];
+          if (cr) return cr;
+          var la = a.cap.phases.length ? 0 : 1, lb = b.cap.phases.length ? 0 : 1;
+          if (la !== lb) return la - lb;        // capabilities with lessons first
+          return b.gap - a.gap;                 // bigger gap first within a cluster
+        });
 
         var list = document.getElementById('pathList');
         list.innerHTML = '';
+        if (!items.length) {
+          list.innerHTML = '<p style="color:var(--text-muted)">No gaps — you meet every target for your role. 🎉</p>';
+          return;
+        }
+        var lastCluster = null;
         items.forEach(function (x) {
+          if (x.cap.cluster !== lastCluster) {
+            lastCluster = x.cap.cluster;
+            var h = document.createElement('div');
+            h.className = 'cluster-title';
+            h.style.margin = '22px 0 10px';
+            h.textContent = x.cap.cluster;
+            list.appendChild(h);
+          }
           var el = document.createElement('div');
-          el.className = 'path-item' + (x.gap === 0 ? ' met' : '');
-          var lvlName = ['—', 'Basic', 'Advanced', 'Expert'];
-          var gapTxt = x.gap > 0
-            ? '<span class="path-gap gap">Gap · ' + lvlName[x.current] + ' → ' + lvlName[x.target] + '</span>'
-            : '<span class="path-gap ok">Target met</span>';
+          el.className = 'path-item';
           var head = '<div class="path-head"><span class="path-cap">' + x.cap.title +
-            '</span>' + gapTxt + '</div>';
-
-          var body = '';
+            '</span><span class="path-gap gap">' + lvlName[x.current] + ' → ' + lvlName[x.target] + '</span></div>';
+          var body;
           if (x.cap.phases.length) {
             var chips = x.cap.phases.map(function (pid) {
               var p = phaseById[pid];
@@ -360,8 +394,9 @@
         roleSelect.value = ''; toRate.disabled = true; showStep('step-role');
       });
 
-      // Resume where the user left off.
-      if (state.role && Object.keys(state.ratings).length) { buildRateForm(); renderResult(); showStep('step-result'); }
+      // Resume into the rate step (not results) so a partially-rated user
+      // continues rating rather than landing on a misleading low score.
+      if (state.role && Object.keys(state.ratings).length) { buildRateForm(); showStep('step-rate'); }
     })();
   </script>
 </body>

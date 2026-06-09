@@ -80,8 +80,16 @@
     }
 
     if (typeof ARTIFACTS !== 'undefined' && Array.isArray(ARTIFACTS)) {
+      // Artifacts belonging to hidden phases must not surface in search either.
+      var visibleIds = {};
+      if (typeof PHASES !== 'undefined') {
+        for (var v = 0; v < PHASES.length; v++) {
+          if (!PHASES[v].hidden) visibleIds[PHASES[v].id] = true;
+        }
+      }
       for (var a = 0; a < ARTIFACTS.length; a++) {
         var art = ARTIFACTS[a];
+        if (art.phase != null && !visibleIds[art.phase]) continue;
         _index.push({
           kind:       'artifact',
           id:         'a:' + a,
@@ -345,7 +353,7 @@
     if (!query) {
       list.innerHTML =
         '<li class="cp-empty" role="option" aria-disabled="true">' +
-        'Type to search 503 lessons, 499 outputs, and glossary terms' +
+        'Type to search 393 lessons, 355 outputs, and glossary terms' +
         '</li>';
       _activeIdx = -1;
       return;

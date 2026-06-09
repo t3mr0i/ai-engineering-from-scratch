@@ -146,8 +146,7 @@ def main():
     )
     body = (
         "const CAPABILITIES = " + json.dumps(capabilities, ensure_ascii=False, indent=2) + ";\n\n"
-        "const ROLES = " + json.dumps(roles, ensure_ascii=False, indent=2) + ";\n\n"
-        "const LEVEL_ORDER = " + json.dumps(LEVEL_ORDER) + ";\n"
+        "const ROLES = " + json.dumps(roles, ensure_ascii=False, indent=2) + ";\n"
     )
     OUT.write_text(header + body, encoding="utf-8")
     print(f"Wrote {OUT}  ({len(capabilities)} capabilities, {len(roles)} roles)")

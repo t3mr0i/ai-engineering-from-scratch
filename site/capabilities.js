@@ -428,5 +428,3 @@ const ROLES = [
     }
   }
 ];
-
-const LEVEL_ORDER = {"Basic": 1, "Advanced": 2, "Expert": 3};

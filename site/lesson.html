@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LHIND · Lesson - AI Engineering from Scratch</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum. 503 lessons across 20 phases, four languages, every algorithm built from raw math.">
+  <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum. 393 lessons across 14 phases, four languages, every algorithm built from raw math.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
   <meta property="og:title" content="AI Engineering from Scratch · Lesson">
-  <meta property="og:description" content="503 lessons. 20 phases. Write the backprop, the tokenizer, the attention mechanism, and the agent loop by hand.">
+  <meta property="og:description" content="393 lessons. 14 phases. Write the backprop, the tokenizer, the attention mechanism, and the agent loop by hand.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AI Engineering from Scratch">
-  <meta name="twitter:description" content="503 lessons. 20 phases. Build it from raw math, by hand.">
+  <meta name="twitter:description" content="393 lessons. 14 phases. Build it from raw math, by hand.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1826,6 +1826,7 @@
               phaseName: p.name,
               phaseId: p.id,
               phaseSlug: pSlug,
+              phaseHidden: !!p.hidden,
               lessonName: l.name,
               lessonSlug: lSlug,
               status: l.status,
@@ -1876,8 +1877,17 @@
 
         var html = '';
 
-        var prevPhaseIdx = currentPhaseIndex > 0 ? currentPhaseIndex - 1 : -1;
-        var nextPhaseIdx = (currentPhaseIndex >= 0 && currentPhaseIndex < PHASES.length - 1) ? currentPhaseIndex + 1 : -1;
+        // Step to the nearest non-hidden phase so prev/next never link into a
+        // hidden phase. (The current lesson still renders even if its own phase
+        // is hidden — deep links survive; we just don't navigate into hidden.)
+        function adjacentVisiblePhaseIdx(start, dir) {
+          for (var k = start + dir; k >= 0 && k < PHASES.length; k += dir) {
+            if (!PHASES[k].hidden) return k;
+          }
+          return -1;
+        }
+        var prevPhaseIdx = currentPhaseIndex > 0 ? adjacentVisiblePhaseIdx(currentPhaseIndex, -1) : -1;
+        var nextPhaseIdx = (currentPhaseIndex >= 0 && currentPhaseIndex < PHASES.length - 1) ? adjacentVisiblePhaseIdx(currentPhaseIndex, 1) : -1;
 
         if (prevPhaseIdx >= 0 || nextPhaseIdx >= 0) {
           html += '<div class="sidebar-phase-nav">';
@@ -2000,7 +2010,7 @@
             return p.replace(/[*_`]/g, '').slice(0, 200);
           }
         }
-        return '503 lessons. 20 phases. Build it from raw math, by hand.';
+        return '393 lessons. 14 phases. Build it from raw math, by hand.';
       }
 
       // Client-side per-lesson SEO. Robust indexing comes with build-time
@@ -3194,13 +3204,14 @@
       function addBottomNav(html) {
         if (currentLessonIndex < 0) return html;
 
+        // Skip lessons in hidden phases so the bottom nav never walks into them.
         var prev = null;
         for (var pi = currentLessonIndex - 1; pi >= 0; pi--) {
-          if (flatLessons[pi].isReadable) { prev = flatLessons[pi]; break; }
+          if (flatLessons[pi].isReadable && !flatLessons[pi].phaseHidden) { prev = flatLessons[pi]; break; }
         }
         var next = null;
         for (var ni = currentLessonIndex + 1; ni < flatLessons.length; ni++) {
-          if (flatLessons[ni].isReadable) { next = flatLessons[ni]; break; }
+          if (flatLessons[ni].isReadable && !flatLessons[ni].phaseHidden) { next = flatLessons[ni]; break; }
         }
 
         var nav = '<div class="lesson-nav-bottom">';
@@ -3682,8 +3693,13 @@
         html += '<div class="phase-progress-text">You\'ve completed ' + completedCount + ' of ' + totalCount + ' lessons in this phase</div>';
 
         if (completedCount >= totalCount && phaseIdx < PHASES.length - 1) {
-          var nextPhase = PHASES[phaseIdx + 1];
-          html += '<div class="phase-complete-callout visible">Ready for Phase ' + String(nextPhase.id).padStart(2, '0') + ': ' + escapeHtml(nextPhase.name) + '</div>';
+          var nextPhase = null;
+          for (var npi = phaseIdx + 1; npi < PHASES.length; npi++) {
+            if (!PHASES[npi].hidden) { nextPhase = PHASES[npi]; break; }
+          }
+          if (nextPhase) {
+            html += '<div class="phase-complete-callout visible">Ready for Phase ' + String(nextPhase.id).padStart(2, '0') + ': ' + escapeHtml(nextPhase.name) + '</div>';
+          }
         }
 
         panel.innerHTML = html;
@@ -3698,7 +3714,7 @@
 
         var next = null;
         for (var ci = currentLessonIndex + 1; ci < flatLessons.length; ci++) {
-          if (flatLessons[ci].isReadable) { next = flatLessons[ci]; break; }
+          if (flatLessons[ci].isReadable && !flatLessons[ci].phaseHidden) { next = flatLessons[ci]; break; }
         }
         var current = flatLessons[currentLessonIndex];
         var phaseIdx = current.phaseIndex;
