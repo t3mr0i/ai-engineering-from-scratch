@@ -1,0 +1,69 @@
+name: Deploy to Azure Static Web Apps
+
+# Hosts the site on Azure Static Web Apps with `site/` as the web root. Lesson
+# content (phases/<phase>/<lesson>/docs/en.md, quiz.json) is staged into
+# site/phases/ before deploy so lesson.html loads it at runtime with no GitHub
+# fetch. Requires the repo secret AZURE_STATIC_WEB_APPS_API_TOKEN (the
+# deployment token from the Azure Static Web App resource).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build_and_deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate site/data.js
+        run: node site/build.js
+
+      - name: Stage lesson content into site/phases
+        # site/ is the web root; copy the lesson docs/quizzes so lesson.html
+        # can load <path>/docs/en.md and <path>/quiz.json without GitHub.
+        run: |
+          mkdir -p site/phases
+          rsync -a --prune-empty-dirs \
+            --include='*/' \
+            --include='docs/en.md' \
+            --include='quiz.json' \
+            --exclude='*' \
+            phases/ site/phases/
+
+      - name: Deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          # site/ is the web root; staged site/phases/* serves lesson content.
+          app_location: "site"
+          output_location: ""
+          skip_app_build: true
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close PR preview
+    steps:
+      - name: Close
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: close

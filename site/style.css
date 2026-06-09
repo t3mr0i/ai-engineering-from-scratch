@@ -4,29 +4,33 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
   --font-heading: var(--font-display);
 
-  --bg: #fafaf5;
-  --bg-surface: #f3f1e8;
-  --bg-surface-hover: #ece9dc;
-  --ink: #1a1a1a;
-  --ink-soft: #4a4a4a;
-  --ink-mute: #7a7a78;
-  --rule: #1a1a1a;
-  --rule-soft: rgba(26, 26, 26, 0.16);
-  --paper-rule: rgba(26, 26, 26, 0.08);
+  /* Lufthansa Design System 2.0 — Cool Grey neutrals + Deep Blue primary.
+     Existing variable names (--blueprint, --ink, etc.) are remapped onto LH
+     tokens so the whole stylesheet picks up the palette without per-rule edits.
+     LH rule: blue and yellow never adjacent — hover on blue uses Blue Breeze. */
+  --bg: #ffffff;                       /* LH White */
+  --bg-surface: #f8fafc;               /* Cool Grey 050 */
+  --bg-surface-hover: #f1f5f9;         /* Cool Grey 100 */
+  --ink: #0f172a;                      /* Cool Grey 900 */
+  --ink-soft: #334155;                 /* Cool Grey 700 */
+  --ink-mute: #64748b;                 /* Cool Grey 500 */
+  --rule: #0f172a;                     /* Cool Grey 900 */
+  --rule-soft: #e2e8f0;                /* Cool Grey 200 */
+  --paper-rule: rgba(15, 23, 42, 0.06);
 
-  --blueprint: #3553ff;
-  --blueprint-tint: rgba(53, 83, 255, 0.08);
-  --blueprint-tint-strong: rgba(53, 83, 255, 0.18);
+  --blueprint: #05164d;               /* LH Deep Blue — primary */
+  --blueprint-tint: rgba(5, 22, 77, 0.06);
+  --blueprint-tint-strong: rgba(5, 22, 77, 0.14);
 
-  --status-complete: #3553ff;
-  --status-in-progress: #4a4a4a;
-  --status-planned: #b8b6ad;
-  --warn: #b8870f;
+  --status-complete: #05164d;          /* Deep Blue */
+  --status-in-progress: #475569;       /* Cool Grey 600 */
+  --status-planned: #cbd5e1;           /* Cool Grey 300 */
+  --warn: #8f7231;                     /* LH Gold / warning fg */
 
-  --code-bg: #efece0;
-  --modal-bg: #fafaf5;
-  --overlay-bg: rgba(26, 26, 26, 0.55);
-  --header-bg: rgba(250, 250, 245, 0.94);
+  --code-bg: #f1f5f9;                  /* Cool Grey 100 */
+  --modal-bg: #ffffff;
+  --overlay-bg: rgba(15, 23, 42, 0.55);
+  --header-bg: rgba(255, 255, 255, 0.94);
 
   --header-offset: 92px;
 
@@ -34,7 +38,7 @@
   --text-muted: var(--ink-soft);
   --border: var(--rule-soft);
   --accent: var(--blueprint);
-  --accent-hover: #2840d6;
+  --accent-hover: #4d6995;            /* Blue Breeze 03 — interactive accent on blue */
   --secondary: var(--blueprint);
   --complete: var(--status-complete);
   --planned: var(--status-planned);
@@ -45,31 +49,34 @@
 }
 
 [data-theme="dark"] {
-  --bg: #0a0d1a;
-  --bg-surface: #131830;
-  --bg-surface-hover: #1b2244;
-  --ink: #e8e6dc;
-  --ink-soft: #a8a6a0;
-  --ink-mute: #7a7878;
-  --rule: #e8e6dc;
-  --rule-soft: rgba(232, 230, 220, 0.18);
-  --paper-rule: rgba(232, 230, 220, 0.08);
+  /* LH dark mode: bg #191919, card #1a1f2e, elevated #242b3d.
+     Deep Blue is invisible on near-black, so the accent lifts to Blue Breeze
+     and hover lifts further — staying within the LH blue family, no yellow. */
+  --bg: #191919;
+  --bg-surface: #1a1f2e;
+  --bg-surface-hover: #242b3d;
+  --ink: #ffffff;
+  --ink-soft: rgba(255, 255, 255, 0.7);
+  --ink-mute: rgba(255, 255, 255, 0.5);
+  --rule: #ffffff;
+  --rule-soft: rgba(255, 255, 255, 0.16);
+  --paper-rule: rgba(255, 255, 255, 0.06);
 
-  --blueprint: #6b8eff;
-  --blueprint-tint: rgba(107, 142, 255, 0.12);
-  --blueprint-tint-strong: rgba(107, 142, 255, 0.22);
+  --blueprint: #8aa5ff;               /* Blue Breeze lifted for dark contrast */
+  --blueprint-tint: rgba(138, 165, 255, 0.12);
+  --blueprint-tint-strong: rgba(138, 165, 255, 0.22);
 
-  --status-complete: #6b8eff;
-  --status-in-progress: #c8c6c0;
-  --status-planned: #4a4a48;
-  --warn: #d4a83d;
+  --status-complete: #8aa5ff;
+  --status-in-progress: rgba(255, 255, 255, 0.7);
+  --status-planned: #475569;          /* Cool Grey 600 */
+  --warn: #c9a55a;                    /* LH Gold, lightened for dark */
 
-  --code-bg: #131830;
-  --modal-bg: #0f1424;
-  --overlay-bg: rgba(10, 13, 26, 0.78);
-  --header-bg: rgba(10, 13, 26, 0.94);
+  --code-bg: #1a1f2e;
+  --modal-bg: #1a1f2e;
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --header-bg: rgba(25, 25, 25, 0.94);
 
-  --accent-hover: #8aa5ff;
+  --accent-hover: #b3c5ff;
 }
 
 *,
