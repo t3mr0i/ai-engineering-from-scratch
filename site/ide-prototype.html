@@ -372,11 +372,14 @@
     });
 
     // ── RUN: the single seam between UI and runtime. ──
-    //   If a backend (the orchestrator) is configured, run there — real Python
-    //   with LLM libraries, Hyper-V-isolated per user. Otherwise fall back to
-    //   the in-browser Pyodide runtime (no LLM libs, offline-friendly).
-    //   Set BACKEND_URL to the orchestrator's https FQDN to flip to the backend.
-    var BACKEND_URL = (window.LESSON_IDE_BACKEND_URL || '').replace(/\/$/, '');
+    //   If a backend runner is configured, run there — real Python on Azure
+    //   (Container App, /run endpoint). Otherwise fall back to the in-browser
+    //   Pyodide runtime (offline-friendly). LLM calls are a separate path: the
+    //   browser talks to Bifrost directly (the gateway only allows the LHIND
+    //   network, not Azure egress), so lesson LLM code runs client-side.
+    //   Override the runner via window.LESSON_IDE_BACKEND_URL if needed.
+    var DEFAULT_RUNNER = 'https://lhindide-runner.ashybush-9d1ef906.germanywestcentral.azurecontainerapps.io';
+    var BACKEND_URL = (window.LESSON_IDE_BACKEND_URL || DEFAULT_RUNNER).replace(/\/$/, '');
     var runBtn = document.getElementById('runBtn');
     var outputEl = document.getElementById('output');
     var badge = document.getElementById('runtimeBadge');
