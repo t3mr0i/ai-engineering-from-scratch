@@ -68,3 +68,4 @@ site/llms.txt
 
 # Pyodide for block-test script
 scripts/.pyodide/
+ide/jupyter/lessons/

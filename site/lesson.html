@@ -3374,6 +3374,11 @@
 
         var codeUrl = lessonPath + '/code/main.py';
         var gitlabUrl = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath;
+        // JupyterHub: open this lesson's main.py as a notebook in the user's
+        // own server (lessons are baked into the image under ~/lessons/).
+        var jupyterHub = 'http://72.144.96.5';
+        var notebookUrl = jupyterHub + '/hub/user-redirect/lab/tree/'
+          + 'lessons/' + lessonPath + '/code/main.py';
 
         fetch(codeUrl)
           .then(function (r) { if (!r.ok) throw new Error('no main.py'); return r.text(); })
@@ -3410,6 +3415,7 @@
             '<button class="code-card-btn code-run">▶ Run</button>' +
             '<button class="code-card-btn code-reset">Reset</button>' +
             '<a class="code-card-btn" href="ide-prototype.html?lesson=' + encodeURIComponent(lessonPath) + '" target="_blank" rel="noopener">Open in IDE</a>' +
+            '<a class="code-card-btn" href="' + notebookUrl + '" target="_blank" rel="noopener">Open in Notebook</a>' +
             '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
             '<span class="code-run-status"></span>' +
             '</div>' +
