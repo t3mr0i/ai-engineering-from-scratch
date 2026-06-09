@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LHIND · Lesson - AI Engineering from Scratch</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23fafaf5'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%233553ff' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%233553ff'>AI</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
   <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum. 503 lessons across 20 phases, four languages, every algorithm built from raw math.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
   <meta property="og:title" content="AI Engineering from Scratch · Lesson">
@@ -1228,6 +1228,69 @@
     .code-card-actions {
       display: flex;
       gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .code-note {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .code-playground {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .code-editor {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: var(--ink);
+      background: var(--code-bg);
+      border: 1px solid var(--rule-soft);
+      padding: 14px;
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      tab-size: 4;
+      white-space: pre;
+      overflow: auto;
+    }
+
+    .code-editor:focus {
+      outline: none;
+      border-color: var(--blueprint);
+    }
+
+    .code-run-status {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-mute);
+    }
+
+    .code-output {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--ink);
+      background: var(--blueprint-tint);
+      border: 1px solid var(--rule-soft);
+      padding: 12px 14px;
+      margin: 0;
+      max-height: 360px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .code-output-error {
+      color: #b00020;
+      border-color: #b00020;
+      background: rgba(176, 0, 32, 0.06);
     }
 
     .learning-timeline {
@@ -1579,9 +1642,7 @@
         <a href="prereqs.html">Roadmap</a>
         <a href="glossary.html">Glossary</a>
         <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener" class="header-github">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-          <svg class="star-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.896l-7.416 3.517 1.48-8.279L0 9.306l8.332-1.151z"/></svg>
-          <span class="star-count" data-loading="true" aria-label="GitHub stars">…</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m23.6004 9.5927-.0337-.0862L20.3.9814a.851.851 0 0 0-.3362-.405.8748.8748 0 0 0-.9997.0539.8748.8748 0 0 0-.29.4399l-2.2055 6.748H7.5375l-2.2057-6.748a.8573.8573 0 0 0-.29-.4412.8748.8748 0 0 0-.9997-.0537.8585.8585 0 0 0-.3362.4049L.4332 9.5015l-.0325.0862a6.0657 6.0657 0 0 0 2.0119 7.0105l.0113.0087.03.0213 4.976 3.7264 2.462 1.8633 1.4995 1.1321a1.0085 1.0085 0 0 0 1.2197 0l1.4995-1.1321 2.4619-1.8633 5.006-3.7489.0125-.01a6.0682 6.0682 0 0 0 2.0094-7.003z"/></svg>          <span>GitLab</span>
         </a>
       </nav>
       <button class="search-toggle" type="button" data-cmd-palette
@@ -1628,8 +1689,8 @@
 
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260525a"></script>
-  <script src="header.js?v=20260525a" defer></script>
   <script src="cmdpalette.js?v=20260525a" defer></script>
+  <script src="analytics.js?v=20260525a" defer></script>
   <script src="figures.js?v=20260607a"></script>
   <script src="lesson-figures.js?v=20260607a"></script>
   <script type="module">
@@ -2989,24 +3050,12 @@
         renderContinuePanel(container);
       }
 
-      var ghApiCache = {};
-
       function ghApiFetch(apiPath, cb) {
-        if (ghApiCache[apiPath]) {
-          cb(null, ghApiCache[apiPath]);
-          return;
-        }
-        fetch('https://api.github.com/repos/rohitg00/ai-engineering-from-scratch/contents/' + apiPath, {
-          headers: { 'Accept': 'application/vnd.github.v3+json' }
-        }).then(function (res) {
-          if (!res.ok) throw new Error(res.status);
-          return res.json();
-        }).then(function (data) {
-          ghApiCache[apiPath] = data;
-          cb(null, data);
-        }).catch(function (err) {
-          cb(err, null);
-        });
+        // The project moved to LHIND GitLab, which has no anonymous
+        // contents-listing endpoint usable from the browser (the old
+        // api.github.com call is gone). Signal "no data" so each panel
+        // falls back to its direct GitLab tree link below.
+        cb(new Error('no remote listing'), null);
       }
 
       function classifyOutput(name) {
@@ -3054,7 +3103,7 @@
         ghApiFetch(lessonPath + '/outputs', function (err, data) {
           var el = document.getElementById('outputsContent');
           if (err || !data || !Array.isArray(data) || data.length === 0) {
-            el.innerHTML = '<div class="panel-fallback"><a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath + '" target="_blank" rel="noopener">View lesson on GitHub</a></div>';
+            el.innerHTML = '<div class="panel-fallback"><a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath + '" target="_blank" rel="noopener">View lesson on GitLab</a></div>';
             return;
           }
 
@@ -3069,7 +3118,7 @@
               installHint = 'Paste into Claude, Cursor, Codex, OpenClaw, Hermes, or any agent that reads prompts';
             } else if (type === 'skill') {
               var skillName = file.name.replace(/\.md$/, '').replace(/^skill-/, '');
-              installHint = 'npx skills add rohitg00/ai-engineering-from-scratch --skill ' + skillName;
+              installHint = 'Add to ~/.claude/skills/ from the LHIND GitLab repo · skill: ' + skillName;
             }
 
             html += '<div class="output-card">';
@@ -3077,7 +3126,7 @@
             html += '<div class="output-card-name">' + escapeHtml(file.name) + '</div>';
             html += '<div class="output-desc" id="desc-' + idx + '">Loading description...</div>';
             html += '<div class="output-actions">';
-            html += '<a class="output-btn" href="' + file.html_url + '" target="_blank" rel="noopener">View on GitHub</a>';
+            html += '<a class="output-btn" href="' + file.html_url + '" target="_blank" rel="noopener">View on GitLab</a>';
             if (installHint) {
               html += '<button class="output-btn" onclick="var h=document.getElementById(\'' + installId + '\');h.classList.toggle(\'visible\')">Install</button>';
             }
@@ -3103,46 +3152,129 @@
         });
       }
 
+      // Libraries with no Pyodide/WASM wheel — these lessons can't run in-browser.
+      var PY_NO_WASM = /^\s*(?:import|from)\s+(torch|tensorflow|jax|cupy|transformers|flax)\b/m;
+
+      // Lazy, cached Pyodide loader. Resolves to the pyodide instance.
+      var _pyodidePromise = null;
+      function loadPyodide_() {
+        if (_pyodidePromise) return _pyodidePromise;
+        _pyodidePromise = new Promise(function (resolve, reject) {
+          var CDN = 'https://cdn.jsdelivr.net/pyodide/v0.27.2/full/';
+          var s = document.createElement('script');
+          s.src = CDN + 'pyodide.js';
+          s.onload = function () {
+            window.loadPyodide({ indexURL: CDN }).then(resolve, reject);
+          };
+          s.onerror = function () { reject(new Error('Failed to load Pyodide')); };
+          document.head.appendChild(s);
+        });
+        return _pyodidePromise;
+      }
+
       function renderCodePanel(container) {
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
-        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">C</div><div class="ai-panel-title">Run the Code</div></div><div class="ai-panel-subtitle">Executable files from this lesson</div><div id="codeContent" class="panel-loading">Loading code files...</div>';
+        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">C</div><div class="ai-panel-title">Run the Code</div></div><div class="ai-panel-subtitle">Edit and run this lesson in your browser</div><div id="codeContent" class="panel-loading">Loading code…</div>';
         container.appendChild(panel);
 
-        ghApiFetch(lessonPath + '/code', function (err, data) {
+        var codeUrl = lessonPath + '/code/main.py';
+        var gitlabUrl = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath;
+
+        fetch(codeUrl)
+          .then(function (r) { if (!r.ok) throw new Error('no main.py'); return r.text(); })
+          .then(function (src) { mountPlayground(src); })
+          .catch(function () {
+            var el = document.getElementById('codeContent');
+            el.innerHTML = '<div class="panel-fallback"><a href="' + gitlabUrl + '" target="_blank" rel="noopener">View lesson on GitLab</a></div>';
+          });
+
+        function mountPlayground(src) {
           var el = document.getElementById('codeContent');
-          if (err || !data || !Array.isArray(data) || data.length === 0) {
-            el.innerHTML = '<div class="panel-fallback"><a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath + '" target="_blank" rel="noopener">View lesson on GitHub</a></div>';
+          var runLocal = 'python ' + lessonPath + '/code/main.py';
+
+          // Heavy-lib lessons can't run in the browser — show run-locally guidance.
+          if (PY_NO_WASM.test(src)) {
+            el.innerHTML =
+              '<div class="code-card">' +
+              '<div class="code-card-header"><span class="code-lang-icon">PY</span><span class="code-card-name">main.py</span></div>' +
+              '<div class="code-note">This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU, so it can’t run in the browser. Run it locally:</div>' +
+              '<div class="code-card-run">' + escapeHtml(runLocal) + '</div>' +
+              '<div class="code-card-actions">' +
+              '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
+              '<button class="code-card-btn code-card-copy" data-command="' + escapeAttr(runLocal) + '">Copy command</button>' +
+              '</div></div>';
+            wireCopy(el);
             return;
           }
 
-          var html = '<div class="code-cards">';
-          data.forEach(function (file) {
-            var icon = langIcon(file.name);
-            var cmd = langCommand(file.name);
-            var runCmd = cmd + ' ' + lessonPath + '/code/' + file.name;
-            html += '<div class="code-card">';
-            html += '<div class="code-card-header"><span class="code-lang-icon">' + icon + '</span><span class="code-card-name">' + escapeHtml(file.name) + '</span></div>';
-            html += '<div class="code-card-size">' + formatSize(file.size) + '</div>';
-            html += '<div class="code-card-run">' + escapeHtml(runCmd) + '</div>';
-            html += '<div class="code-card-actions">';
-            html += '<a class="code-card-btn" href="' + file.html_url + '" target="_blank" rel="noopener">View on GitHub</a>';
-            html += '<button class="code-card-btn code-card-copy" data-command="' + escapeAttr(runCmd) + '">Copy command</button>';
-            html += '</div>';
-            html += '</div>';
+          el.innerHTML =
+            '<div class="code-playground">' +
+            '<textarea class="code-editor" spellcheck="false"></textarea>' +
+            '<div class="code-card-actions">' +
+            '<button class="code-card-btn code-run">▶ Run</button>' +
+            '<button class="code-card-btn code-reset">Reset</button>' +
+            '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
+            '<span class="code-run-status"></span>' +
+            '</div>' +
+            '<pre class="code-output" hidden></pre>' +
+            '</div>';
+
+          var editor = el.querySelector('.code-editor');
+          var runBtn = el.querySelector('.code-run');
+          var resetBtn = el.querySelector('.code-reset');
+          var status = el.querySelector('.code-run-status');
+          var output = el.querySelector('.code-output');
+          editor.value = src;
+
+          resetBtn.addEventListener('click', function () { editor.value = src; });
+
+          runBtn.addEventListener('click', function () {
+            runBtn.disabled = true;
+            status.textContent = 'Loading Python…';
+            output.hidden = false;
+            output.textContent = '';
+            output.className = 'code-output';
+
+            loadPyodide_().then(function (py) {
+              status.textContent = 'Running…';
+              var buf = [];
+              py.setStdout({ batched: function (s) { buf.push(s); } });
+              py.setStderr({ batched: function (s) { buf.push(s); } });
+              var code = editor.value;
+              // Load any imported packages that have wheels (numpy, scipy, …).
+              return py.loadPackagesFromImports(code)
+                .catch(function () { /* unknown import → let runPython raise */ })
+                .then(function () { return py.runPythonAsync(code); })
+                .then(function () {
+                  output.textContent = buf.join('') || '(no output)';
+                  status.textContent = 'Done';
+                })
+                .catch(function (err) {
+                  output.textContent = buf.join('') + '\n' + String(err.message || err);
+                  output.className = 'code-output code-output-error';
+                  status.textContent = 'Error';
+                });
+            }).catch(function (err) {
+              output.textContent = String(err.message || err);
+              output.className = 'code-output code-output-error';
+              status.textContent = 'Failed to load Python';
+            }).then(function () {
+              runBtn.disabled = false;
+            });
           });
-          html += '</div>';
-          el.innerHTML = html;
+        }
+
+        function wireCopy(el) {
           el.querySelectorAll('.code-card-copy').forEach(function (btn) {
             btn.addEventListener('click', function () {
-              var command = btn.getAttribute('data-command');
-              navigator.clipboard.writeText(command).then(function () {
+              navigator.clipboard.writeText(btn.getAttribute('data-command')).then(function () {
                 btn.textContent = 'Copied!';
                 setTimeout(function () { btn.textContent = 'Copy command'; }, 1500);
               });
             });
           });
-        });
+        }
       }
 
       function getQuizQuestions() {

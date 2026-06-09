@@ -43,6 +43,7 @@ jobs:
             --include='*/' \
             --include='docs/en.md' \
             --include='quiz.json' \
+            --include='code/main.py' \
             --exclude='*' \
             phases/ site/phases/
 

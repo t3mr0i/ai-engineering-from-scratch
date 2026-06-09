@@ -24,6 +24,7 @@ deploy_azure:
       --include='*/'
       --include='docs/en.md'
       --include='quiz.json'
+      --include='code/main.py'
       --exclude='*'
       phases/ site/phases/
     - npx --yes @azure/static-web-apps-cli@latest deploy ./site

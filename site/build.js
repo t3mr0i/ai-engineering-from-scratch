@@ -5,7 +5,8 @@
  * and generates data.js with all phase/lesson/glossary data.
  *
  * Run: node site/build.js
- * Called automatically by GitHub Actions on every push.
+ * Called automatically by the Azure Static Web Apps deploy workflow
+ * (.github/workflows/azure-static-web-apps.yml) on every push.
  */
 
 const fs = require('fs');

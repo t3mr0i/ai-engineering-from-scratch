@@ -12,11 +12,9 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     initThemeToggle();
-    populateStats();
     renderPhases();
     initStaggerIndex();
     initModal();
-    initCopyButton();
     initSmoothScroll();
     initFadeObserver();
     initScrollExplode();
@@ -40,67 +38,6 @@
       updateThemeIcon();
     });
     updateThemeIcon();
-  }
-
-  function computeStats() {
-    var totalLessons = 0;
-    var completeLessons = 0;
-    var hasProgress = !!window.AIFSProgress;
-    for (var i = 0; i < PHASES.length; i++) {
-      var lessons = PHASES[i].lessons;
-      totalLessons += lessons.length;
-      for (var j = 0; j < lessons.length; j++) {
-        var staticDone = lessons[j].status === 'complete';
-        var userDone = false;
-        if (hasProgress && lessons[j].url) {
-          var lp = window.AIFSProgress.extractPath(lessons[j].url);
-          if (lp) userDone = window.AIFSProgress.isLessonComplete(lp);
-        }
-        if (staticDone || userDone) completeLessons++;
-      }
-    }
-    var completePhases = 0;
-    for (var p = 0; p < PHASES.length; p++) {
-      if (PHASES[p].status === 'complete') completePhases++;
-    }
-    return {
-      lessons: totalLessons,
-      phases: PHASES.length,
-      complete: completeLessons,
-      completePhases: completePhases
-    };
-  }
-
-  function setBar(selector, pct) {
-    var el = document.querySelector(selector);
-    if (!el) return;
-    var clamped = Math.max(0, Math.min(100, pct));
-    el.setAttribute('data-target-pct', clamped.toFixed(1));
-    if (el.classList.contains('in-view') || !window.IntersectionObserver) {
-      el.style.setProperty('--bar-pct', clamped.toFixed(1) + '%');
-    } else {
-      el.style.setProperty('--bar-pct', '0%');
-    }
-  }
-
-  function populateStats() {
-    var stats = computeStats();
-    var pct = stats.lessons > 0 ? (stats.complete / stats.lessons) * 100 : 0;
-    var phasePct = stats.phases > 0 ? (stats.completePhases / stats.phases) * 100 : 0;
-    var glossaryCount = (typeof GLOSSARY !== 'undefined') ? GLOSSARY.length : 0;
-
-    setText('[data-stat="complete-frac"]', stats.complete + ' / ' + stats.lessons);
-    setText('[data-stat="phases-frac"]', stats.completePhases + ' / ' + stats.phases);
-    setText('[data-stat="glossary-count"]', String(glossaryCount));
-    setBar('[data-bar="complete"]', pct);
-    setBar('[data-bar="phases"]', phasePct);
-    setBar('[data-bar="languages"]', 100);
-    setBar('[data-bar="glossary"]', glossaryCount > 0 ? 100 : 0);
-  }
-
-  function setText(selector, value) {
-    var el = document.querySelector(selector);
-    if (el) el.textContent = value;
   }
 
   function renderPhases() {
@@ -300,7 +237,6 @@
       if (currentPhaseIdx >= 0 && PHASES[currentPhaseIdx]) {
         renderModalLessons(PHASES[currentPhaseIdx]);
       }
-      populateStats();
       renderPhases();
     });
   }
@@ -308,21 +244,6 @@
   function closeModal() {
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';
-  }
-
-  function initCopyButton() {
-    var btn = document.getElementById('copyBtn');
-    var code = document.getElementById('cloneCmd');
-    if (!btn || !code) return;
-    var originalLabel = btn.textContent;
-    var revertTimer = null;
-    btn.addEventListener('click', function () {
-      navigator.clipboard.writeText(code.textContent).then(function () {
-        btn.textContent = '✓';
-        if (revertTimer) clearTimeout(revertTimer);
-        revertTimer = setTimeout(function () { btn.textContent = originalLabel; }, 1500);
-      });
-    });
   }
 
   function initSmoothScroll() {
@@ -341,27 +262,21 @@
     var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (!window.IntersectionObserver || prefersReduced) {
-      document.querySelectorAll('.reveal, .fade-in, .stat-row-bar').forEach(function (el) {
+      document.querySelectorAll('.reveal, .fade-in').forEach(function (el) {
         el.classList.add('in-view', 'visible');
-        var target = el.getAttribute('data-target-pct');
-        if (target !== null) el.style.setProperty('--bar-pct', target + '%');
       });
       return;
     }
 
     document.body.classList.add('js-anim');
 
-    var els = document.querySelectorAll('.reveal, .fade-in, .stat-row-bar, .ascii-rule, .toc-row');
+    var els = document.querySelectorAll('.reveal, .fade-in, .ascii-rule, .toc-row');
     if (!els.length) return;
     var observer = new IntersectionObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
         if (entries[i].isIntersecting) {
           var el = entries[i].target;
           el.classList.add('in-view', 'visible');
-          var target = el.getAttribute('data-target-pct');
-          if (target !== null) {
-            el.style.setProperty('--bar-pct', target + '%');
-          }
           observer.unobserve(el);
         }
       }
