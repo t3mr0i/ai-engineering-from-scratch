@@ -227,6 +227,7 @@
       </a>
       <nav class="header-nav">
         <a href="index.html#contents">Contents</a>
+        <a href="assessment.html">Assessment</a>
         <a href="catalog.html">Catalog</a>
         <a href="prereqs.html">Roadmap</a>
         <a href="glossary.html">Glossary</a>
@@ -338,6 +339,7 @@
 
         for (var i = 0; i < PHASES.length; i++) {
           var p = PHASES[i];
+          if (p.hidden) continue;
           var opt = document.createElement('option');
           opt.value = String(p.id);
           opt.textContent = String(p.id).padStart(2, '0') + ' - ' + p.name;
@@ -435,11 +437,16 @@
           bodyEl.innerHTML = html;
         }
 
-        var urlQuery = new URLSearchParams(window.location.search).get('q');
+        var params = new URLSearchParams(window.location.search);
+        var urlQuery = params.get('q');
         if (urlQuery) {
           searchInput.value = urlQuery;
           try { searchInput.setSelectionRange(urlQuery.length, urlQuery.length); } catch (_) {}
           try { searchInput.focus({ preventScroll: true }); } catch (_) { searchInput.focus(); }
+        }
+        var urlPhase = params.get('phase');
+        if (urlPhase && [].some.call(phaseSelect.options, function (o) { return o.value === urlPhase; })) {
+          phaseSelect.value = urlPhase;
         }
 
         searchInput.addEventListener('input', render);

@@ -47,6 +47,7 @@
     var html = '';
     for (var i = 0; i < PHASES.length; i++) {
       var p = PHASES[i];
+      if (p.hidden) continue;
       var total = p.lessons.length;
       var done = 0;
       for (var j = 0; j < p.lessons.length; j++) {

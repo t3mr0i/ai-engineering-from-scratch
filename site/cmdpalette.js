@@ -37,6 +37,7 @@
     if (typeof PHASES !== 'undefined' && Array.isArray(PHASES)) {
       for (var i = 0; i < PHASES.length; i++) {
         var phase = PHASES[i];
+        if (phase.hidden) continue;
         for (var j = 0; j < phase.lessons.length; j++) {
           var lesson = phase.lessons[j];
 

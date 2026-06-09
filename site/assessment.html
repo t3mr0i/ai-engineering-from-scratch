@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LHIND · AI-Literacy Self-Assessment</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
+  <meta name="description" content="Rate yourself across 19 AI-literacy capabilities, get your AI-Literacy score, and a personalized learning path built from the curriculum.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20260525a">
+  <style>
+    .assess-page { padding: 100px 0 80px; min-height: 100vh; }
+    .assess-header { margin-bottom: 32px; }
+    .assess-header h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 8px; }
+    .assess-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 60ch; }
+
+    .assess-step { display: none; }
+    .assess-step.active { display: block; }
+
+    .field-label {
+      font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--blueprint); margin-bottom: 8px; display: block;
+    }
+    .role-select {
+      font-family: var(--font-body); font-size: 1rem; padding: 12px 16px;
+      background: var(--bg-surface); border: 2px solid var(--border); border-radius: 0;
+      color: var(--text); min-width: 320px; max-width: 100%;
+    }
+
+    .cluster-block { margin: 28px 0; border-top: 2px solid var(--rule); padding-top: 16px; }
+    .cluster-title {
+      font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--blueprint); margin-bottom: 14px;
+    }
+
+    .cap-row {
+      display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start;
+      padding: 14px 0; border-bottom: 1px solid var(--rule-soft);
+    }
+    .cap-name { font-weight: 600; }
+    .cap-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
+    .cap-target {
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
+      color: var(--warn); margin-top: 6px; text-transform: uppercase;
+    }
+    .cap-no-match {
+      font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em;
+      color: var(--text-muted); margin-top: 4px;
+    }
+
+    .level-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .level-btn {
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em;
+      padding: 7px 11px; border: 2px solid var(--border); background: var(--bg-surface);
+      color: var(--text); cursor: pointer; border-radius: 0; white-space: nowrap;
+    }
+    .level-btn[aria-pressed="true"] {
+      background: var(--blueprint); color: #fff; border-color: var(--blueprint);
+    }
+
+    .btn-row { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+    .btn {
+      font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 13px 22px; border: 2px solid var(--blueprint);
+      background: var(--blueprint); color: #fff; cursor: pointer; border-radius: 0;
+      box-shadow: var(--shadow-hard); transition: transform .08s, box-shadow .08s;
+    }
+    .btn:hover { transform: translate(-1px,-1px); box-shadow: var(--shadow-hard-lg); }
+    .btn.secondary { background: var(--bg-surface); color: var(--blueprint); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; transform: none; }
+
+    /* Result */
+    .score-card {
+      border: 2px solid var(--rule); padding: 28px; margin-bottom: 32px;
+      display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;
+    }
+    .score-num {
+      font-family: var(--font-display); font-size: 5rem; line-height: 0.8;
+      color: var(--blueprint);
+    }
+    .score-meta .field-label { margin-bottom: 4px; }
+    .score-band { font-size: 1.4rem; font-weight: 700; }
+    .score-sub { color: var(--text-muted); margin-top: 6px; }
+
+    .path-item {
+      border: 2px solid var(--border); padding: 18px; margin-bottom: 14px;
+      border-left: 6px solid var(--blueprint);
+    }
+    .path-item.met { border-left-color: var(--status-planned); opacity: 0.72; }
+    .path-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+    .path-cap { font-weight: 700; font-size: 1.05rem; }
+    .path-gap {
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .path-gap.gap { color: var(--warn); }
+    .path-gap.ok { color: var(--status-complete); }
+    .path-lessons { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .lesson-chip {
+      font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 10px;
+      border: 1px solid var(--border); background: var(--bg-surface); color: var(--blueprint);
+      text-decoration: none;
+    }
+    .lesson-chip:hover { background: var(--blueprint-tint); }
+    .path-nomatch { margin-top: 10px; color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
+    @media (max-width: 640px) {
+      .cap-row { grid-template-columns: 1fr; }
+      .score-card { grid-template-columns: 1fr; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon" aria-hidden="true"></span> LHIND · AI / FROM SCRATCH
+      </a>
+      <nav class="header-nav">
+        <a href="index.html#contents">Contents</a>
+        <a href="assessment.html">Assessment</a>
+        <a href="catalog.html">Catalog</a>
+        <a href="glossary.html">Glossary</a>
+        <a href="about.html">About</a>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" type="button">
+        <span class="theme-icon" id="themeIcon">N</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" class="container assess-page">
+    <div class="assess-header">
+      <h1>AI-Literacy Self-Assessment</h1>
+      <p>Pick your role, rate yourself across the 19 capabilities, and get an
+         AI-Literacy score plus a learning path built from the lessons you actually need.</p>
+    </div>
+
+    <!-- Step 1: role -->
+    <section class="assess-step active" id="step-role">
+      <label class="field-label" for="roleSelect">Your role</label>
+      <select id="roleSelect" class="role-select" aria-label="Select your role"></select>
+      <div class="btn-row">
+        <button class="btn" id="toRate" disabled>Start assessment →</button>
+      </div>
+    </section>
+
+    <!-- Step 2: rate -->
+    <section class="assess-step" id="step-rate">
+      <div id="capForm"></div>
+      <div class="btn-row">
+        <button class="btn secondary" id="backToRole">← Role</button>
+        <button class="btn" id="toResult">See my path →</button>
+      </div>
+    </section>
+
+    <!-- Step 3: result -->
+    <section class="assess-step" id="step-result">
+      <div class="score-card">
+        <div class="score-num" id="scoreNum">0</div>
+        <div class="score-meta">
+          <span class="field-label">AI-Literacy Score</span>
+          <div class="score-band" id="scoreBand"></div>
+          <div class="score-sub" id="scoreSub"></div>
+        </div>
+      </div>
+      <h2 style="margin-bottom:6px;">Your learning path</h2>
+      <p style="color:var(--text-muted); margin-bottom:20px;">
+        Capabilities below your role's target come first. Each links to the lessons that build it.</p>
+      <div id="pathList"></div>
+      <div class="btn-row">
+        <button class="btn secondary" id="backToRate">← Adjust ratings</button>
+        <button class="btn secondary" id="restart">Start over</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>AI Engineering from Scratch · open source · free forever.</p>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="catalog.html">Catalog</a>
+        <a href="glossary.html">Glossary</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data.js?v=20260525a"></script>
+  <script src="capabilities.js?v=20260525a"></script>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var stored = localStorage.getItem('theme');
+      root.setAttribute('data-theme', stored ||
+        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+      function updateIcon() {
+        var icon = document.getElementById('themeIcon');
+        if (icon) icon.textContent = root.getAttribute('data-theme') === 'light' ? 'N' : 'D';
+      }
+      updateIcon();
+      document.addEventListener('DOMContentLoaded', function () {
+        var btn = document.getElementById('themeToggle');
+        if (btn) btn.addEventListener('click', function () {
+          var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          root.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          updateIcon();
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var STORE = 'aifs:assessment';
+      var LEVELS = ['Basic', 'Advanced', 'Expert'];
+      var phaseById = {};
+      if (typeof PHASES !== 'undefined') PHASES.forEach(function (p) { phaseById[p.id] = p; });
+
+      var state = { role: '', ratings: {} }; // ratings: capId -> 'None'|'Basic'|'Advanced'|'Expert'
+      try { var s = JSON.parse(localStorage.getItem(STORE)); if (s) state = s; } catch (e) {}
+      function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+
+      function showStep(id) {
+        ['step-role', 'step-rate', 'step-result'].forEach(function (sid) {
+          document.getElementById(sid).classList.toggle('active', sid === id);
+        });
+        window.scrollTo(0, 0);
+      }
+
+      // ---- Step 1: role ----
+      var roleSelect = document.getElementById('roleSelect');
+      var toRate = document.getElementById('toRate');
+      var ph = document.createElement('option');
+      ph.value = ''; ph.textContent = '— Select your role —'; roleSelect.appendChild(ph);
+      ROLES.forEach(function (r) {
+        var o = document.createElement('option'); o.value = r.name; o.textContent = r.name;
+        roleSelect.appendChild(o);
+      });
+      if (state.role) roleSelect.value = state.role;
+      toRate.disabled = !state.role;
+      roleSelect.addEventListener('change', function () {
+        state.role = roleSelect.value; toRate.disabled = !state.role; save();
+      });
+      toRate.addEventListener('click', function () { buildRateForm(); showStep('step-rate'); });
+
+      // ---- Step 2: rate ----
+      function buildRateForm() {
+        var form = document.getElementById('capForm');
+        form.innerHTML = '';
+        var role = ROLES.find(function (r) { return r.name === state.role; }) || { targets: {} };
+        var lastCluster = null, clusterEl = null;
+        CAPABILITIES.forEach(function (cap) {
+          if (cap.cluster !== lastCluster) {
+            lastCluster = cap.cluster;
+            clusterEl = document.createElement('div');
+            clusterEl.className = 'cluster-block';
+            clusterEl.innerHTML = '<div class="cluster-title">' + cap.cluster + '</div>';
+            form.appendChild(clusterEl);
+          }
+          var target = role.targets[cap.id];
+          var row = document.createElement('div'); row.className = 'cap-row';
+
+          var left = document.createElement('div');
+          left.innerHTML =
+            '<div class="cap-name">' + cap.title + '</div>' +
+            '<div class="cap-desc">' + (cap.description || '').slice(0, 160) + '</div>' +
+            (target ? '<div class="cap-target">Target for your role: ' + target + '</div>'
+                    : '<div class="cap-no-match">Not required for your role</div>') +
+            (cap.phases.length ? '' : '<div class="cap-no-match">No in-curriculum lessons yet</div>');
+          row.appendChild(left);
+
+          var group = document.createElement('div'); group.className = 'level-group';
+          ['None'].concat(LEVELS).forEach(function (lvl) {
+            var b = document.createElement('button');
+            b.type = 'button'; b.className = 'level-btn'; b.textContent = lvl;
+            b.setAttribute('aria-pressed', String(state.ratings[cap.id] === lvl));
+            b.addEventListener('click', function () {
+              state.ratings[cap.id] = lvl; save();
+              group.querySelectorAll('.level-btn').forEach(function (x) {
+                x.setAttribute('aria-pressed', String(x === b));
+              });
+            });
+            group.appendChild(b);
+          });
+          row.appendChild(group);
+          clusterEl.appendChild(row);
+        });
+      }
+      document.getElementById('backToRole').addEventListener('click', function () { showStep('step-role'); });
+      document.getElementById('toResult').addEventListener('click', function () { renderResult(); showStep('step-result'); });
+
+      // ---- Step 3: result ----
+      function levelVal(lvl) { return lvl === 'Expert' ? 3 : lvl === 'Advanced' ? 2 : lvl === 'Basic' ? 1 : 0; }
+
+      function renderResult() {
+        var role = ROLES.find(function (r) { return r.name === state.role; }) || { targets: {} };
+
+        // Score: current attainment as % of role's required target points (0..100).
+        var have = 0, need = 0;
+        CAPABILITIES.forEach(function (cap) {
+          var t = levelVal(role.targets[cap.id]);
+          if (!t) return;                       // capability not required for this role
+          need += t;
+          have += Math.min(levelVal(state.ratings[cap.id]), t);
+        });
+        var score = need ? Math.round((have / need) * 100) : 0;
+        document.getElementById('scoreNum').textContent = score;
+        var band = score >= 85 ? 'Role-ready' : score >= 60 ? 'On track' : score >= 35 ? 'Developing' : 'Getting started';
+        document.getElementById('scoreBand').textContent = band;
+        document.getElementById('scoreSub').textContent =
+          'Measured against the target levels for ' + state.role + '.';
+
+        // Path: gaps first (current < target), then ordered by gap size.
+        var items = CAPABILITIES.map(function (cap) {
+          var t = levelVal(role.targets[cap.id]);
+          var c = levelVal(state.ratings[cap.id]);
+          return { cap: cap, target: t, current: c, gap: Math.max(0, t - c) };
+        }).filter(function (x) { return x.target > 0; });
+        items.sort(function (a, b) { return b.gap - a.gap; });
+
+        var list = document.getElementById('pathList');
+        list.innerHTML = '';
+        items.forEach(function (x) {
+          var el = document.createElement('div');
+          el.className = 'path-item' + (x.gap === 0 ? ' met' : '');
+          var lvlName = ['—', 'Basic', 'Advanced', 'Expert'];
+          var gapTxt = x.gap > 0
+            ? '<span class="path-gap gap">Gap · ' + lvlName[x.current] + ' → ' + lvlName[x.target] + '</span>'
+            : '<span class="path-gap ok">Target met</span>';
+          var head = '<div class="path-head"><span class="path-cap">' + x.cap.title +
+            '</span>' + gapTxt + '</div>';
+
+          var body = '';
+          if (x.cap.phases.length) {
+            var chips = x.cap.phases.map(function (pid) {
+              var p = phaseById[pid];
+              if (!p) return '';
+              return '<a class="lesson-chip" href="catalog.html?phase=' + pid + '">' +
+                String(pid).padStart(2, '0') + ' · ' + p.name + '</a>';
+            }).join('');
+            body = '<div class="path-lessons">' + chips + '</div>';
+          } else {
+            body = '<div class="path-nomatch">No dedicated lessons in this curriculum yet — ' +
+              'a business/literacy capability covered through external training.</div>';
+          }
+          el.innerHTML = head + body;
+          list.appendChild(el);
+        });
+      }
+
+      document.getElementById('backToRate').addEventListener('click', function () { showStep('step-rate'); });
+      document.getElementById('restart').addEventListener('click', function () {
+        state = { role: '', ratings: {} }; save();
+        roleSelect.value = ''; toRate.disabled = true; showStep('step-role');
+      });
+
+      // Resume where the user left off.
+      if (state.role && Object.keys(state.ratings).length) { buildRateForm(); renderResult(); showStep('step-result'); }
+    })();
+  </script>
+</body>
+</html>

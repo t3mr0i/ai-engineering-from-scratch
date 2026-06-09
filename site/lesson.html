@@ -459,10 +459,16 @@
       z-index: 2;
     }
 
-    .code-copy {
+    .code-actions {
       position: absolute;
       top: 6px;
       right: 8px;
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .code-copy {
       background: transparent;
       border: 1px solid var(--rule-soft);
       padding: 3px 10px;
@@ -472,7 +478,6 @@
       text-transform: uppercase;
       color: var(--ink-soft);
       cursor: pointer;
-      z-index: 2;
       transition: color 0.15s, border-color 0.15s;
     }
 
@@ -481,10 +486,26 @@
       border-color: var(--blueprint);
     }
 
+    .code-vscode {
+      background: transparent;
+      border: 1px solid var(--rule-soft);
+      padding: 3px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .code-vscode:hover {
+      color: var(--blueprint);
+      border-color: var(--blueprint);
+    }
+
     .code-run-inline {
-      position: absolute;
-      top: 6px;
-      right: 64px;
       background: var(--blueprint-tint);
       border: 1px solid var(--blueprint);
       padding: 3px 10px;
@@ -494,7 +515,6 @@
       text-transform: uppercase;
       color: var(--blueprint);
       cursor: pointer;
-      z-index: 2;
       transition: color 0.15s, border-color 0.15s, background 0.15s;
     }
 
@@ -1665,6 +1685,7 @@
       </a>
       <nav class="header-nav">
         <a href="index.html#contents">Contents</a>
+        <a href="assessment.html">Assessment</a>
         <a href="catalog.html">Catalog</a>
         <a href="prereqs.html">Roadmap</a>
         <a href="glossary.html">Glossary</a>
@@ -2604,7 +2625,15 @@
         if ((l === 'python' || l === 'py') && !PY_NO_WASM.test(code) && isRunnablePython(code)) {
           runBtn = '<button class="code-run-inline" data-code="' + escapeAttr(code) + '">▶ Run</button>';
         }
-        return '<pre>' + langLabel + runBtn + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button><code>' + highlighted + '</code></pre>';
+        // "Open in VS Code" for Python blocks: download the snippet as a .py file,
+        // or hand it to a local VS Code via the vscode:// deep link.
+        var vscodeBtns = '';
+        if (l === 'python' || l === 'py') {
+          vscodeBtns =
+            '<button class="code-vscode code-vscode-download" data-code="' + escapeAttr(code) + '" title="Download as .py and open in VS Code">⬇ .py</button>' +
+            '<button class="code-vscode code-vscode-open" data-code="' + escapeAttr(code) + '" title="Open this snippet in your local VS Code">VS Code</button>';
+        }
+        return '<pre>' + langLabel + '<span class="code-actions">' + runBtn + vscodeBtns + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button></span><code>' + highlighted + '</code></pre>';
       }
 
       function highlightSyntax(code, lang) {
@@ -2657,7 +2686,54 @@
             });
           });
         });
+        initCodeVscode();
         initCodeRun();
+      }
+
+      // Two ways to get a Python snippet into VS Code:
+      //  • Download as a .py file the user can open/run in VS Code.
+      //  • Open the local VS Code via the vscode:// scheme. A browser can't write
+      //    arbitrary files into a local editor, so we copy the snippet to the
+      //    clipboard first and the user pastes into the new window.
+      function initCodeVscode() {
+        document.querySelectorAll('.code-vscode-download').forEach(function (btn) {
+          if (btn.dataset.wired) return;
+          btn.dataset.wired = '1';
+          btn.addEventListener('click', function () {
+            var code = btn.getAttribute('data-code');
+            var blob = new Blob([code], { type: 'text/x-python' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'snippet.py';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+            var orig = btn.textContent;
+            btn.textContent = 'Saved';
+            setTimeout(function () { btn.textContent = orig; }, 1500);
+          });
+        });
+
+        document.querySelectorAll('.code-vscode-open').forEach(function (btn) {
+          if (btn.dataset.wired) return;
+          btn.dataset.wired = '1';
+          btn.addEventListener('click', function () {
+            var code = btn.getAttribute('data-code');
+            var done = function () {
+              var orig = btn.textContent;
+              btn.textContent = 'Copied — paste in VS Code';
+              window.location.href = 'vscode://file';
+              setTimeout(function () { btn.textContent = orig; }, 2500);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(code).then(done, done);
+            } else {
+              done();
+            }
+          });
+        });
       }
 
       function initCodeRun() {

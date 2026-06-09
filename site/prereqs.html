@@ -404,6 +404,7 @@
       </a>
       <nav class="header-nav">
         <a href="index.html#contents">Contents</a>
+        <a href="assessment.html">Assessment</a>
         <a href="catalog.html">Catalog</a>
         <a href="prereqs.html">Roadmap</a>
         <a href="glossary.html">Glossary</a>
@@ -584,6 +585,53 @@
     /* Ensure every phase in PHASES has a PREREQS entry */
     for (var pid in allPhaseIds) {
       if (!(pid in PREREQS)) PREREQS[pid] = [];
+    }
+
+    /* ===================================================
+       Drop hidden phases from the graph, re-routing edges.
+       A visible phase that depended on a hidden phase inherits
+       that hidden phase's nearest visible ancestors, so no edge
+       dangles and the dependency chain stays intact.
+    =================================================== */
+    var HIDDEN = {};
+    for (var pid in allPhaseIds) {
+      if (PHASE_MAP[pid] && PHASE_MAP[pid].hidden) HIDDEN[pid] = true;
+    }
+
+    /* For an id, collect its nearest VISIBLE ancestors by walking up
+       through hidden prerequisites. */
+    function visiblePrereqs(id, seen) {
+      seen = seen || {};
+      var out = {};
+      var direct = PREREQS[id] || [];
+      for (var i = 0; i < direct.length; i++) {
+        var p = direct[i];
+        if (seen[p]) continue;
+        seen[p] = true;
+        if (HIDDEN[p]) {
+          var inherited = visiblePrereqs(p, seen);
+          for (var k in inherited) out[k] = true;
+        } else {
+          out[p] = true;
+        }
+      }
+      return out;
+    }
+
+    if (Object.keys(HIDDEN).length) {
+      var rewired = {};
+      for (var pid in PREREQS) {
+        if (HIDDEN[pid]) continue;
+        var vis = visiblePrereqs(pid);
+        rewired[pid] = Object.keys(vis).map(function (x) { return parseInt(x); });
+      }
+      PREREQS = rewired;
+      for (var hid in HIDDEN) delete allPhaseIds[hid];
+      /* Strip hidden ids from the layout tiers */
+      for (var t = 0; t < TIER_ORDER.length; t++) {
+        TIER_ORDER[t] = TIER_ORDER[t].filter(function (x) { return !HIDDEN[x]; });
+      }
+      TIER_ORDER = TIER_ORDER.filter(function (row) { return row.length; });
     }
 
     /* Build reverse map: parent → children */

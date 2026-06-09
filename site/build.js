@@ -21,6 +21,18 @@ const OUTPUT_PATH = path.join(__dirname, 'data.js');
 const GITHUB_BASE = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/';
 const SITE_ORIGIN = 'https://aiengineeringfromscratch.com';
 
+// Phases hidden from nav/catalog/search/sitemap for the AI-literacy audience.
+// Files and lessons stay on disk; they are just not surfaced. Edit this set to
+// show/hide phases — it is the single source of truth for hiding.
+const HIDDEN_PHASES = new Set([
+  1,  // Math Foundations
+  2,  // ML Fundamentals
+  3,  // Deep Learning Core
+  4,  // Computer Vision
+  6,  // Speech & Audio
+  9,  // Reinforcement Learning
+]);
+
 // GITHUB_BASE lesson url -> site path "phases/<phase>/<lesson>"
 function lessonPath(url) {
   if (!url) return null;
@@ -412,6 +424,12 @@ function build() {
   console.log('🔍 Parsing README.md...');
   const phases = parseReadme(readme, roadmapStatuses);
 
+  // Mark hidden phases (still emitted to data.js so deep links keep working,
+  // but consumers skip them in nav/catalog/search/sitemap).
+  for (const phase of phases) {
+    if (HIDDEN_PHASES.has(phase.id)) phase.hidden = true;
+  }
+
   console.log('🔍 Parsing glossary/terms.md...');
   const glossaryTerms = parseGlossary(glossary);
 
@@ -477,6 +495,7 @@ function writeSitemap(phases, glossaryCount) {
   ];
   if (glossaryCount > 0) urls.push({ loc: '/glossary.html', priority: '0.6', freq: 'monthly' });
   for (const phase of phases) {
+    if (phase.hidden) continue;
     for (const l of phase.lessons) {
       const p = lessonPath(l.url);
       if (p) urls.push({ loc: '/lesson.html?path=' + p, priority: '0.6', freq: 'monthly' });
@@ -502,6 +521,7 @@ function writeLlms(phases, glossaryCount, artifactCount) {
   out += `Source: https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training\n`;
   out += `Glossary terms: ${glossaryCount} · Reusable outputs (prompts/skills/agents): ${artifactCount}\n\n`;
   for (const phase of phases) {
+    if (phase.hidden) continue;
     out += `## Phase ${phase.id}: ${phase.name}\n`;
     if (phase.desc) out += `${phase.desc}\n`;
     out += `\n`;
