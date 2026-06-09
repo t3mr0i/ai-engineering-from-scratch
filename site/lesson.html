@@ -3395,6 +3395,7 @@
               '<div class="code-note">This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU, so it can’t run in the browser. Run it locally:</div>' +
               '<div class="code-card-run">' + escapeHtml(runLocal) + '</div>' +
               '<div class="code-card-actions">' +
+              '<a class="code-card-btn" href="ide-prototype.html?lesson=' + encodeURIComponent(lessonPath) + '" target="_blank" rel="noopener">Open in IDE</a>' +
               '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
               '<button class="code-card-btn code-card-copy" data-command="' + escapeAttr(runLocal) + '">Copy command</button>' +
               '</div></div>';
@@ -3408,6 +3409,7 @@
             '<div class="code-card-actions">' +
             '<button class="code-card-btn code-run">▶ Run</button>' +
             '<button class="code-card-btn code-reset">Reset</button>' +
+            '<a class="code-card-btn" href="ide-prototype.html?lesson=' + encodeURIComponent(lessonPath) + '" target="_blank" rel="noopener">Open in IDE</a>' +
             '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
             '<span class="code-run-status"></span>' +
             '</div>' +

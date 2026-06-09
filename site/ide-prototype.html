@@ -281,8 +281,31 @@
     var editor = null;
     var models = {};   // filename -> monaco model
 
+    // ── Load a real lesson if opened via ?lesson=<phase>/<lesson> ──
+    //   The lesson site links here as ide-prototype.html?lesson=phases/.../xx.
+    //   We fetch that lesson's code/main.py and use it as main.py. Same path
+    //   lesson.html loads from, so it works on the deployed Static Web App.
+    function loadLessonThenBoot(boot) {
+      var params = new URLSearchParams(window.location.search);
+      var lesson = params.get('lesson');
+      if (!lesson) { boot(); return; }
+      var clean = lesson.replace(/^\/+|\/+$/g, '');
+      var url = clean + '/code/main.py';
+      document.getElementById('activeFileName').textContent = clean.split('/').pop() + ' · main.py';
+      fetch(url)
+        .then(function (r) { if (!r.ok) throw new Error('no code'); return r.text(); })
+        .then(function (src) {
+          FILES = { 'main.py': src };   // replace demo files with the lesson
+          document.getElementById('runtimeBadge').textContent =
+            'lesson: ' + clean.split('/').pop();
+        })
+        .catch(function () { /* keep demo files if the lesson has no main.py */ })
+        .then(boot);
+    }
+
     // ── Boot Monaco ──
     require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
+    loadLessonThenBoot(function () {
     require(['vs/editor/editor.main'], function () {
       monaco.editor.defineTheme('lhind-dark', {
         base: 'vs-dark',
@@ -319,6 +342,7 @@
 
       renderFiles();
       renderTabs();
+    });
     });
 
     function langFor(name) {
