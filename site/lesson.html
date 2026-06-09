@@ -481,6 +481,33 @@
       border-color: var(--blueprint);
     }
 
+    .code-run-inline {
+      position: absolute;
+      top: 6px;
+      right: 64px;
+      background: var(--blueprint-tint);
+      border: 1px solid var(--blueprint);
+      padding: 3px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blueprint);
+      cursor: pointer;
+      z-index: 2;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .code-run-inline:hover:not(:disabled) {
+      background: var(--blueprint);
+      color: var(--paper, #fff);
+    }
+
+    .code-run-inline:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
     .syn-keyword { color: var(--blueprint); font-weight: 500; }
     .syn-string { color: var(--ink); }
     .syn-number { color: var(--blueprint); }
@@ -1798,7 +1825,9 @@
       buildSidebar();
       initSidebarToggle();
       initScrollProgress();
-      fetchLesson(lessonPath);
+      // Load the runnable-block manifest before rendering so code blocks can be
+      // decorated with a Run button as they render.
+      loadRunnableManifest().then(function () { fetchLesson(lessonPath); });
 
       function extractPhaseSlug(phase, index) {
         if (phase.url) {
@@ -2540,10 +2569,42 @@
         return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       }
 
+      // A Python block gets a Run button only if it was proven to run cleanly
+      // at build time (scripts/test_runnable_blocks.py). The manifest is a set
+      // of block hashes; we look each block up rather than guessing statically.
+      var _runnableBlocks = null;   // Set of hashes, or null until loaded
+      function loadRunnableManifest() {
+        return fetch('runnable-blocks.json')
+          .then(function (r) { return r.ok ? r.json() : []; })
+          .then(function (arr) { _runnableBlocks = new Set(arr); })
+          .catch(function () { _runnableBlocks = new Set(); });
+      }
+
+      // djb2 over the exact block text; MUST mirror block_hash in
+      // scripts/test_runnable_blocks.py.
+      function blockHash(code) {
+        var h = 5381;
+        for (var i = 0; i < code.length; i++) {
+          h = ((h * 33) + code.charCodeAt(i)) >>> 0;
+        }
+        return h.toString(16);
+      }
+
+      function isRunnablePython(code) {
+        return _runnableBlocks != null && _runnableBlocks.has(blockHash(code));
+      }
+
       function renderCodeBlock(code, lang) {
         var highlighted = highlightSyntax(escapeHtml(code), lang);
         var langLabel = lang ? '<span class="code-lang">' + escapeHtml(lang) + '</span>' : '';
-        return '<pre>' + langLabel + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button><code>' + highlighted + '</code></pre>';
+        var l = (lang || '').toLowerCase();
+        // Add an in-browser Run button only to Python blocks that are real,
+        // runnable programs and don't need a non-WASM library.
+        var runBtn = '';
+        if ((l === 'python' || l === 'py') && !PY_NO_WASM.test(code) && isRunnablePython(code)) {
+          runBtn = '<button class="code-run-inline" data-code="' + escapeAttr(code) + '">▶ Run</button>';
+        }
+        return '<pre>' + langLabel + runBtn + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button><code>' + highlighted + '</code></pre>';
       }
 
       function highlightSyntax(code, lang) {
@@ -2593,6 +2654,52 @@
             navigator.clipboard.writeText(code).then(function () {
               btn.textContent = 'Copied!';
               setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+            });
+          });
+        });
+        initCodeRun();
+      }
+
+      function initCodeRun() {
+        document.querySelectorAll('.code-run-inline').forEach(function (btn) {
+          if (btn.dataset.wired) return;
+          btn.dataset.wired = '1';
+          btn.addEventListener('click', function () {
+            var code = btn.getAttribute('data-code');
+            var pre = btn.closest('pre');
+            var output = pre.nextElementSibling;
+            if (!output || !output.classList.contains('code-output')) {
+              output = document.createElement('pre');
+              output.className = 'code-output';
+              pre.parentNode.insertBefore(output, pre.nextSibling);
+            }
+            btn.disabled = true;
+            btn.textContent = 'Loading…';
+            output.hidden = false;
+            output.textContent = '';
+            output.className = 'code-output';
+
+            loadPyodide_().then(function (py) {
+              btn.textContent = 'Running…';
+              var buf = [];
+              py.setStdout({ batched: function (s) { buf.push(s); } });
+              py.setStderr({ batched: function (s) { buf.push(s); } });
+              return py.loadPackagesFromImports(code)
+                .catch(function () {})
+                .then(function () { return py.runPythonAsync(code); })
+                .then(function () {
+                  output.textContent = buf.join('') || '(no output)';
+                })
+                .catch(function (err) {
+                  output.textContent = buf.join('') + '\n' + String(err.message || err);
+                  output.className = 'code-output code-output-error';
+                });
+            }).catch(function (err) {
+              output.textContent = String(err.message || err);
+              output.className = 'code-output code-output-error';
+            }).then(function () {
+              btn.disabled = false;
+              btn.textContent = '▶ Run';
             });
           });
         });
