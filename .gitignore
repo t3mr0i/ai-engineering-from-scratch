@@ -70,3 +70,4 @@ site/llms.txt
 scripts/.pyodide/
 ide/jupyter/lessons/
 site/phases/
+site/jupyterlite/
