@@ -411,24 +411,18 @@
     }
 
     // ── Backend runtime ──
-    //   POSTs the file set to the orchestrator /run. The orchestrator (behind
-    //   Entra EasyAuth) routes it to this user's sandbox. Same request/response
-    //   contract the runner image was tested against:
+    //   POSTs the file set to the runner Container App /run. No credentials:
+    //   the runner has no auth, and sending credentials would clash with its
+    //   wildcard CORS (browsers forbid credentials + Access-Control-Allow-Origin
+    //   '*'). Same request/response contract the runner image was tested against:
     //     request:  { files: {name: content, ...}, entry: "main.py" }
     //     response: { ok, output, exit_code, duration_ms, timed_out, truncated }
     function runCodeBackend(files, entry) {
       return fetch(BACKEND_URL + '/run', {
         method: 'POST',
-        credentials: 'include',           // carry the EasyAuth session
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ files: files, entry: entry })
       }).then(function (r) {
-        if (r.status === 401) {
-          // EasyAuth wants a fresh sign-in; send the user through it.
-          window.location.href = BACKEND_URL + '/.auth/login/aad?post_login_redirect_uri='
-            + encodeURIComponent(window.location.href);
-          return { ok: false, output: 'Redirecting to sign-in…' };
-        }
         if (!r.ok) return r.text().then(function (t) {
           return { ok: false, output: 'backend error ' + r.status + '\n' + t };
         });
