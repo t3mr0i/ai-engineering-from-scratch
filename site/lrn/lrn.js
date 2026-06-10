@@ -17,8 +17,8 @@
   ];
 
   var els = {
-    profileSelect: document.getElementById("profileSelect"),
-    levelSelect: document.getElementById("levelSelect"),
+    profileChips: document.getElementById("profileChips"),
+    levelChips: document.getElementById("levelChips"),
     interestChips: document.getElementById("interestChips"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
@@ -124,50 +124,63 @@
     }
   }
 
-  // Controls (profile + level selects, interest chips) only need to render
+  // Controls (profile + level + interest chips) only need to render
   // when the underlying selection set changes — not on every progress tick.
   function renderControls() {
-    renderProfileSelect();
-    renderLevelSelect();
+    renderProfileChips();
+    renderLevelChips();
     renderInterestChips();
   }
 
   function render() {
     var computed = compute();
-    renderProfileSelect();
-    renderLevelSelect();
+    renderProfileChips();
+    renderLevelChips();
     renderInterestChips();
     renderFilters();
     renderCourses(computed);
+    refreshIcons();
   }
 
-  function renderProfileSelect() {
-    var select = els.profileSelect;
-    if (select.options.length !== data.profiles.length) {
-      select.textContent = "";
-      data.profiles.forEach(function (profile) {
-        var opt = document.createElement("option");
-        opt.value = profile.id;
-        opt.textContent = profile.label;
-        opt.title = profileCode(profile);
-        select.appendChild(opt);
+  function renderProfileChips() {
+    replaceChildren(els.profileChips, data.profiles.map(function (profile) {
+      var selected = state.profileId === profile.id;
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip";
+      btn.setAttribute("aria-pressed", String(selected));
+      btn.textContent = profile.label;
+      btn.title = profileCode(profile);
+      btn.addEventListener("click", function () {
+        if (state.profileId === profile.id) return;
+        state.profileId = profile.id;
+        saveState();
+        renderProfileChips();
+        render();
+        announce("Profil gesetzt: " + profile.label + ".");
       });
-    }
-    select.value = state.profileId;
+      return btn;
+    }));
   }
 
-  function renderLevelSelect() {
-    var select = els.levelSelect;
-    if (select.options.length !== levelDefinitions.length) {
-      select.textContent = "";
-      levelDefinitions.forEach(function (level) {
-        var opt = document.createElement("option");
-        opt.value = String(level.value);
-        opt.textContent = level.value + " · " + level.label;
-        select.appendChild(opt);
+  function renderLevelChips() {
+    replaceChildren(els.levelChips, levelDefinitions.map(function (level) {
+      var selected = state.externalLevel === level.value;
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip";
+      btn.setAttribute("aria-pressed", String(selected));
+      btn.textContent = level.value + " · " + level.label;
+      btn.addEventListener("click", function () {
+        if (state.externalLevel === level.value) return;
+        state.externalLevel = level.value;
+        saveState();
+        renderLevelChips();
+        render();
+        announce("Level gesetzt: " + level.label + ".");
       });
-    }
-    select.value = String(state.externalLevel);
+      return btn;
+    }));
   }
 
   function renderInterestChips() {
@@ -229,7 +242,12 @@
       lastVisibleSignature = "";
       var empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.textContent = "Keine Kurse in diesem Filter. Wechsle auf 'Alle' oder passe die Suche an.";
+      // When "Empfohlen" is empty but optional courses exist, the level/interest
+      // combination simply has no on-path match — point the user at Optional.
+      var hasOptional = computed.entries.some(function (entry) { return entry.kind === "optional"; });
+      empty.textContent = (state.filter === "recommended" && hasOptional)
+        ? "Für dieses Level und Interesse gibt es keinen Kurs direkt auf dem Pfad. Schau unter 'Optional' für angrenzende Kurse."
+        : "Keine Kurse in diesem Filter. Wechsle auf 'Alle' oder passe die Suche an.";
       replaceChildren(els.courseGrid, [empty]);
       return;
     }
@@ -265,16 +283,28 @@
       card.style.setProperty("--enter-delay", Math.min(index, 8) * 45 + "ms");
     }
 
+    var head = document.createElement("div");
+    head.className = "course-card__head";
+
     var h = document.createElement("h3");
     h.textContent = course.title;
     h.title = courseCode(course) + " · " + course.id;
 
+    var open = document.createElement("span");
+    open.className = "course-card__open";
+    open.setAttribute("aria-hidden", "true");
+    open.appendChild(lucideIcon("arrow-right"));
+    head.append(h, open);
+
     var meta = document.createElement("p");
     meta.className = "course-card__meta";
-    meta.textContent = (entry.kind === "recommended" ? "Empfohlen" : "Optional")
+    meta.appendChild(lucideIcon("clock"));
+    var metaText = document.createElement("span");
+    metaText.textContent = (entry.kind === "recommended" ? "Empfohlen" : "Optional")
       + " · " + entry.progress.lessonCount + " Aktivitäten";
+    meta.appendChild(metaText);
 
-    card.append(h, meta, progressMeter(entry.progress.percent, "Fortschritt " + course.title));
+    card.append(head, meta, progressMeter(entry.progress.percent, "Fortschritt " + course.title));
     return card;
   }
 
@@ -287,6 +317,10 @@
     return { profile: profile, level: level, entries: entries };
   }
 
+  // Max courses shown as "Empfohlen". Beyond this, level- and interest-relevant
+  // courses are demoted to "Optional" so the recommended list stays focused.
+  var RECOMMEND_CAP = 11;
+
   function rankedCourses(profile, level) {
     var selectedInterests = state.interests;
     var selectedInterestDims = data.interests.filter(function (interest) {
@@ -295,25 +329,35 @@
       return out.concat(interest.dimensions);
     }, []);
 
-    return data.courses.filter(function (course) {
+    // Course candidacy comes from the curated learning tracks (LP01-LP05), not
+    // from re-deriving it via tag matching. A course only counts as on-path for
+    // this profile/level if it sits in a track serving the profile, in a stage
+    // matching the external level's focus (Acquire/Deepen/Create).
+    var stageCoursesForLevel = curatedCourseIds(profile, level.focusLevels);
+
+    var entries = data.courses.filter(function (course) {
       return course.profileIds.indexOf(profile.id) !== -1;
     }).map(function (course) {
-      var levelMatch = intersects(course.levels, level.focusLevels);
+      var onPath = stageCoursesForLevel.indexOf(course.id) !== -1;
       var interestMatch = intersects(course.interests, selectedInterests) || intersects(course.dimensions, selectedInterestDims);
       var roleTargetMatch = course.dimensions.some(function (dimensionId) {
         return Number(profile.targets[dimensionId] || 0) > 0;
       });
       var progress = courseProgress(course);
+      // Sharpness score decides which of the relevant courses survive the cap.
       var score = 10;
-      if (levelMatch) score += 60;
-      if (interestMatch) score += 18;
+      if (onPath) score += 60;
+      if (interestMatch) score += 24;
+      if (onPath && interestMatch) score += 12;
       if (roleTargetMatch) score += 8;
       if (progress.percent > 0 && progress.percent < 100) score += 12;
       if (progress.percent === 100 && progress.lessonCount > 0) score -= 20;
       return {
         course: course,
         score: score,
-        kind: levelMatch ? "recommended" : "optional",
+        // Recommended requires both an on-path course AND a matching interest.
+        // The cap is applied below; everything else falls back to optional.
+        kind: onPath && interestMatch ? "recommended" : "optional",
         interestMatch: interestMatch,
         progress: progress
       };
@@ -321,6 +365,33 @@
       if (b.score !== a.score) return b.score - a.score;
       return a.course.id.localeCompare(b.course.id);
     });
+
+    // Enforce the cap: demote recommended courses past RECOMMEND_CAP to optional
+    // so the focused list never balloons for broad profiles/interests.
+    var shown = 0;
+    entries.forEach(function (entry) {
+      if (entry.kind !== "recommended") return;
+      if (shown < RECOMMEND_CAP) shown += 1;
+      else entry.kind = "optional";
+    });
+
+    return entries;
+  }
+
+  // Course ids drawn from the curated tracks that serve this profile, limited to
+  // stages whose label matches the external level's focus (Acquire/Deepen/Create).
+  function curatedCourseIds(profile, focusLevels) {
+    var ids = [];
+    (data.tracks || []).forEach(function (track) {
+      if (track.profileIds.indexOf(profile.id) === -1) return;
+      (track.stages || []).forEach(function (stage) {
+        if (focusLevels.indexOf(stage.label) === -1) return;
+        stage.courses.forEach(function (id) {
+          if (ids.indexOf(id) === -1) ids.push(id);
+        });
+      });
+    });
+    return ids;
   }
 
   function filterCourses(entries) {
@@ -457,22 +528,18 @@
     els.srStatus.textContent = text;
   }
 
-  // Selects fire on change; wire after element refs exist.
-  els.profileSelect.addEventListener("change", function () {
-    if (profileById[els.profileSelect.value]) {
-      state.profileId = els.profileSelect.value;
-      saveState();
-      render();
-      announce("Profil gesetzt: " + profileById[state.profileId].label + ".");
-    }
-  });
+  // Create a placeholder element Lucide will swap for an <svg> on createIcons().
+  function lucideIcon(name) {
+    var i = document.createElement("i");
+    i.setAttribute("data-lucide", name);
+    i.setAttribute("aria-hidden", "true");
+    return i;
+  }
 
-  els.levelSelect.addEventListener("change", function () {
-    if (validLevel(els.levelSelect.value)) {
-      state.externalLevel = Number(els.levelSelect.value);
-      saveState();
-      render();
-      announce("Assessment-Level gesetzt: " + state.externalLevel + ".");
+  // Re-run Lucide after dynamic renders so newly-created placeholders become SVGs.
+  function refreshIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
     }
-  });
+  }
 })();
