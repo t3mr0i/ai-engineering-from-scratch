@@ -338,14 +338,18 @@
 
     var map = courseMap(course.id);
     var stats = courseProgress(course);
+    var nextLesson = nextLessonForCourse(course.id);
     var detail = document.createElement("article");
     detail.className = "course-detail";
 
     var head = document.createElement("div");
     head.className = "course-detail__head";
+    var eyebrow = document.createElement("span");
+    eyebrow.className = "path-eyebrow";
+    eyebrow.textContent = "LRN Skill Path · Syllabus";
     var title = document.createElement("h3");
     title.textContent = course.id + " · " + course.title;
-    head.appendChild(title);
+    head.append(eyebrow, title);
 
     var summary = document.createElement("p");
     summary.textContent = course.summary;
@@ -361,18 +365,22 @@
     });
     var status = document.createElement("span");
     status.className = "module-pill";
-    status.textContent = stats.subcourseCount + " Subkurse";
+    status.textContent = stats.subcourseCount + " Units";
     meta.appendChild(status);
     var lessonCount = document.createElement("span");
     lessonCount.className = "module-pill";
-    lessonCount.textContent = stats.lessonCount + " Lessons";
+    lessonCount.textContent = stats.lessonCount + " Aktivitäten";
     meta.appendChild(lessonCount);
+    var format = document.createElement("span");
+    format.className = "module-pill";
+    format.textContent = "Self-paced";
+    meta.appendChild(format);
 
     var note = document.createElement("p");
     note.className = "mapping-note";
-    note.textContent = "Die folgenden Subkurse sind aus dem vorhandenen Curriculum kuratiert. Verlinkt wird in den Lesson-Viewer; die Completion wird dort bzw. später im LRN-System gemessen.";
+    note.textContent = "Codecademy-Struktur: ein klarer Skill Path mit Units, Aktivitäten, Knowledge Checks und einem sichtbaren Next-Step. Completion kommt aus dem Lesson-/LRN-Tracking.";
 
-    detail.append(head, summary, meta, progressMeter(stats.percent, "Fortschritt " + course.title), note);
+    detail.append(head, summary, meta, pathSummary(course, stats, nextLesson), progressMeter(stats.percent, "Fortschritt " + course.title), note);
 
     if (!map.length) {
       var emptyMap = document.createElement("div");
@@ -393,12 +401,13 @@
   }
 
   function subcourseCard(subcourse, courseId) {
+    var stats = subcourseProgress(subcourse);
     var card = document.createElement("section");
     card.className = "subcourse-card";
     var head = document.createElement("div");
     head.className = "subcourse-card__head";
     var title = document.createElement("h4");
-    title.textContent = subcourse.title;
+    title.textContent = "Unit · " + subcourse.title;
     var pill = document.createElement("span");
     pill.className = "advice-pill";
     pill.dataset.tone = subcourse.decision === "core" ? "warn" : "ok";
@@ -408,24 +417,70 @@
     var note = document.createElement("p");
     note.textContent = subcourse.note || "";
 
+    var unitMeta = document.createElement("div");
+    unitMeta.className = "unit-meta";
+    [
+      { label: "Aktivitäten", value: String(stats.lessonCount) },
+      { label: "Erledigt", value: stats.completedLessons + "/" + stats.lessonCount },
+      { label: "Status", value: stats.percent === 100 ? "fertig" : stats.visitedLessons ? "in Arbeit" : "offen" }
+    ].forEach(function (item) {
+      var chip = document.createElement("span");
+      chip.innerHTML = "<strong></strong><em></em>";
+      chip.querySelector("strong").textContent = item.value;
+      chip.querySelector("em").textContent = item.label;
+      unitMeta.appendChild(chip);
+    });
+
     var list = document.createElement("div");
     list.className = "lesson-list";
     subcourse.lessons.forEach(function (lesson) {
-      list.appendChild(lessonLink(lesson, courseId));
+      list.appendChild(lessonLink(lesson, courseId, subcourse));
     });
 
-    card.append(head, note, list);
+    card.append(head, note, unitMeta, progressMeter(stats.percent, "Unit-Fortschritt " + subcourse.title), list);
     return card;
   }
 
-  function lessonLink(lesson, courseId) {
+  function pathSummary(course, stats, nextLesson) {
+    var wrap = document.createElement("div");
+    wrap.className = "path-summary";
+
+    var metrics = document.createElement("div");
+    metrics.className = "path-summary__metrics";
+    [
+      { label: "Units", value: String(stats.subcourseCount) },
+      { label: "Aktivitäten", value: String(stats.lessonCount) },
+      { label: "Fortschritt", value: stats.percent + "%" }
+    ].forEach(function (item) {
+      var metric = document.createElement("div");
+      metric.innerHTML = "<strong></strong><span></span>";
+      metric.querySelector("strong").textContent = item.value;
+      metric.querySelector("span").textContent = item.label;
+      metrics.appendChild(metric);
+    });
+
+    var action = document.createElement("a");
+    action.className = "path-continue";
+    action.href = nextLesson ? lessonHref(nextLesson.path, course.id) : "#";
+    action.textContent = nextLesson ? "Weiterlernen: " + nextLesson.title : "Kurs vollständig";
+    if (!nextLesson) {
+      action.setAttribute("aria-disabled", "true");
+      action.addEventListener("click", function (event) { event.preventDefault(); });
+    }
+
+    wrap.append(metrics, action);
+    return wrap;
+  }
+
+  function lessonLink(lesson, courseId, subcourse) {
     var progress = lessonProgress(lesson.path);
     var a = document.createElement("a");
     a.className = "lesson-link";
     a.href = lessonHref(lesson.path, courseId);
-    a.innerHTML = "<span></span><strong></strong><em></em>";
+    a.innerHTML = "<span></span><strong></strong><small></small><em></em>";
     a.querySelector("span").textContent = lessonPathLabel(lesson.path);
     a.querySelector("strong").textContent = lesson.title;
+    a.querySelector("small").textContent = activityType(lesson, subcourse);
     a.querySelector("em").textContent = progress.label;
     a.querySelector("em").dataset.state = progress.state;
     return a;
@@ -584,13 +639,13 @@
     courseMap(course.id).forEach(function (subcourse) {
       var chip = document.createElement("span");
       chip.className = "module-pill";
-      chip.textContent = subcourse.title;
+      chip.textContent = "Unit: " + subcourse.title;
       modules.appendChild(chip);
     });
 
     var action = document.createElement("span");
     action.className = "course-open";
-    action.textContent = state.activeCourseId === course.id ? "Mapping geöffnet" : "Mapping öffnen";
+    action.textContent = state.activeCourseId === course.id ? "Syllabus geöffnet" : "Syllabus öffnen";
 
     button.append(h, summary, meta, modules, progressMeter(entry.progress.percent, "Fortschritt " + course.title), action);
     card.appendChild(button);
@@ -664,6 +719,44 @@
       visitedLessons: visited,
       percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
     };
+  }
+
+  function subcourseProgress(subcourse) {
+    var paths = subcourse.lessons.map(function (lesson) { return lesson.path; });
+    var completed = paths.filter(function (path) {
+      return lessonProgress(path).state === "completed";
+    }).length;
+    var visited = paths.filter(function (path) {
+      return lessonProgress(path).state !== "open";
+    }).length;
+    return {
+      lessonCount: paths.length,
+      completedLessons: completed,
+      visitedLessons: visited,
+      percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
+    };
+  }
+
+  function nextLessonForCourse(courseId) {
+    var lessons = [];
+    courseMap(courseId).forEach(function (subcourse) {
+      subcourse.lessons.forEach(function (lesson) {
+        lessons.push(lesson);
+      });
+    });
+    if (!lessons.length) return null;
+    return lessons.find(function (lesson) {
+      return lessonProgress(lesson.path).state !== "completed";
+    }) || lessons[0];
+  }
+
+  function activityType(lesson, subcourse) {
+    var title = (lesson.title || "").toLowerCase();
+    var unit = (subcourse && subcourse.title || "").toLowerCase();
+    if (/eval|test|qa|verification|review|guardrail|compliance|risk|assessment/.test(title + " " + unit)) return "Knowledge Check";
+    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return "Praxisaktivität";
+    if (subcourse && subcourse.decision === "condense") return "Guided Lesson";
+    return "Lesson";
   }
 
   function lessonProgress(path) {

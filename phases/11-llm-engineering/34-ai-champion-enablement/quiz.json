@@ -1,0 +1,78 @@
+{
+  "lesson": "34-ai-champion-enablement",
+  "title": "AI Champion Enablement",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the primary value of an AI champion?",
+      "options": [
+        "Turning scattered experiments into reusable assets, shared standards, and better team habits",
+        "Approving every AI use case alone",
+        "Replacing governance teams",
+        "Keeping all prompts private"
+      ],
+      "correct": 0,
+      "explanation": "Champions scale learning and reuse without becoming the only decision point."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": [
+        "recurring question",
+        "GPU temperature",
+        "Database collation",
+        "Video bitrate"
+      ],
+      "correct": 0,
+      "explanation": "Recurring questions indicate a need for champion enablement or reusable assets."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked champion backlog with priority, controls, and rationale",
+        "An automatic certificate engine",
+        "A new AI model",
+        "A cloud deployment"
+      ],
+      "correct": 0,
+      "explanation": "The artifact prioritizes champion activities."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": [
+        "office hours plan",
+        "Ignoring repeated questions",
+        "Removing quality review",
+        "Skipping escalation"
+      ],
+      "correct": 0,
+      "explanation": "Office hours are one practical champion enablement control."
+    },
+    {
+      "stage": "post",
+      "question": "When should champion work escalate rather than stay as informal support?",
+      "options": [
+        "When impact, uncertainty, or risk signals are high",
+        "Only when no one asks for help",
+        "Only when the prompt is short",
+        "Never; champions should solve every issue alone"
+      ],
+      "correct": 0,
+      "explanation": "Champions should escalate high-risk or unclear issues to the right owners."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the course use a champion backlog?",
+      "options": [
+        "To focus enablement on repeated team needs and reusable assets",
+        "To hide requests from the community",
+        "To avoid quality review",
+        "To stop office hours"
+      ],
+      "correct": 0,
+      "explanation": "The backlog keeps champion work focused and reusable."
+    }
+  ]
+}

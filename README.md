@@ -548,7 +548,7 @@ Twenty phases. Click any phase to expand its lesson list.
 </details>
 
 <details id="phase-11">
-<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>29 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
+<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>39 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
 <br/>
 
 | # | Lesson | Type | Lang |
@@ -582,6 +582,16 @@ Twenty phases. Click any phase to expand its lesson list.
 | 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape/) | Build | Python |
 | 28 | [AI Workforce Strategy](phases/11-llm-engineering/28-ai-workforce-strategy/) | Build | Python |
 | 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai/) | Build | Python |
+| 30 | [Data Literacy for AI Projects](phases/11-llm-engineering/30-data-literacy-for-ai-projects/) | Build | Python |
+| 31 | [Hands-on Prompt Clinic](phases/11-llm-engineering/31-hands-on-prompt-clinic/) | Build | Python |
+| 32 | [AI Use Case Identification Workshop](phases/11-llm-engineering/32-ai-use-case-identification-workshop/) | Build | Python |
+| 33 | [AI Change Management and Team Integration](phases/11-llm-engineering/33-ai-change-management-team-integration/) | Build | Python |
+| 34 | [AI Champion Enablement](phases/11-llm-engineering/34-ai-champion-enablement/) | Build | Python |
+| 35 | [AI Security and Prompt Injection Defense](phases/11-llm-engineering/35-ai-security-prompt-injection/) | Build | Python |
+| 36 | [Internal Knowledge Assistants with RAG](phases/11-llm-engineering/36-internal-knowledge-assistants-rag/) | Build | Python |
+| 37 | [AI Vendor and Procurement Evaluation](phases/11-llm-engineering/37-ai-vendor-procurement-evaluation/) | Build | Python |
+| 38 | [AI Operations and Incident Response](phases/11-llm-engineering/38-ai-operations-incident-response/) | Build | Python |
+| 39 | [AI Portfolio and Roadmap Management](phases/11-llm-engineering/39-ai-portfolio-roadmap-management/) | Build | Python |
 
 </details>
 

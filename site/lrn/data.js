@@ -340,6 +340,240 @@ window.LrnData = {
       modules: ["Microsoft AI Foundations for Business Leaders", "Introduction to GenAI for Executives", "Applied Agentic AI for Organizational Transformation"]
     },
     {
+      id: "AI-10",
+      title: "Corporate Ethics & Compliance for AI",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["data", "change"],
+      interests: ["governance", "leadership"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Policy scenario, risk triage, escalation checklist",
+      summary: "AI-Nutzung gegen GDPR, interne Policies, Sicherheitsleitplanken und dokumentierte Freigaben prüfen.",
+      modules: ["Policy intake", "Risk register", "Compliance decision record"]
+    },
+    {
+      id: "AI-11",
+      title: "AI-Driven Testing & QA",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["pvs", "tc", "am"],
+      dimensions: ["business", "data"],
+      interests: ["engineering", "governance"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "QA lab, eval rubric, regression checklist",
+      summary: "AI-gestützte Testideen, Evaluationssets, QA-Gates und Review-Schleifen für LLM-Features.",
+      modules: ["Eval design", "Test generation", "Release gate"]
+    },
+    {
+      id: "AI-12",
+      title: "AI-Supported Code Modernization",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am"],
+      dimensions: ["business", "data"],
+      interests: ["engineering", "consulting"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Legacy case, modernization plan, review checklist",
+      summary: "Legacy-Code mit AI analysieren, Refactoring-Slices schneiden, Risiken kontrollieren und Reviews vorbereiten.",
+      modules: ["Legacy intake", "Modernization backlog", "Risk-controlled refactor"]
+    },
+    {
+      id: "AI-13",
+      title: "AI-Assisted Documentation",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "corp", "lead"],
+      dimensions: ["prompting", "data"],
+      interests: ["productivity", "engineering", "governance"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Documentation sprint, source-grounding checklist, quality review",
+      summary: "AI für Architektur-, Betriebs-, Compliance- und Übergabedokumentation nutzen, ohne Quellen und Verantwortung zu verlieren.",
+      modules: ["Source-grounded docs", "Review rubric", "Reusable doc pack"]
+    },
+    {
+      id: "AI-14",
+      title: "Sustainable Software & Green Coding",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "lead"],
+      dimensions: ["business", "data"],
+      interests: ["engineering", "leadership"],
+      levels: ["Acquire", "Deepen"],
+      format: "Efficiency case, metric worksheet, architecture trade-off",
+      summary: "AI- und Softwareentscheidungen auf Effizienz, Kosten, Emissionen und messbare Betriebswirkung prüfen.",
+      modules: ["Efficiency metrics", "Model-routing trade-offs", "Green release checklist"]
+    },
+    {
+      id: "AI-15",
+      title: "AI-Enhanced User Research",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "pma", "corp", "lead"],
+      dimensions: ["business", "prompting"],
+      interests: ["consulting", "productivity"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Research synthesis, persona check, insight review",
+      summary: "User-Research mit AI clustern, Hypothesen strukturieren, Bias prüfen und validierbare Produktentscheidungen vorbereiten.",
+      modules: ["Research intake", "Insight synthesis", "Validation plan"]
+    },
+    {
+      id: "AI-16",
+      title: "AI & Automation Use Case Spotting",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["business", "change"],
+      interests: ["consulting", "leadership", "engineering"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Process walk-through, opportunity canvas, prioritization board",
+      summary: "Automatisierungs- und AI-Potenziale in Prozessen erkennen, nach Wert und Risiko sortieren und als Pilot formulieren.",
+      modules: ["Opportunity scan", "Value-risk scoring", "Pilot brief"]
+    },
+    {
+      id: "AI-17",
+      title: "AI Cost & Value Economics",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["business", "data"],
+      interests: ["consulting", "leadership", "engineering"],
+      levels: ["Deepen", "Create"],
+      format: "Cost model, value case, operating metric review",
+      summary: "Token-, Modell-, Plattform- und Betriebskosten gegen Nutzen, Risiko und Skalierbarkeit bewerten.",
+      modules: ["Unit economics", "Value hypothesis", "FinOps controls"]
+    },
+    {
+      id: "AI-18",
+      title: "Consultative Prompting",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["prompting", "business"],
+      interests: ["consulting", "productivity", "leadership"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Client-case prompt clinic, output critique, reusable prompt pack",
+      summary: "Prompts für Beratungssituationen, Stakeholder-Kontext, Hypothesenarbeit und belastbare Ergebnisprüfung aufbauen.",
+      modules: ["Consulting brief", "Prompt iteration", "Client-ready output"]
+    },
+    {
+      id: "AI-19",
+      title: "AI Ecosystem & Vendor Landscape",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["literacy", "business"],
+      interests: ["foundation", "engineering", "leadership"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Landscape map, vendor-fit checklist, architecture comparison",
+      summary: "AI-Plattformen, Agent Frameworks, Tool-Ökosysteme und Vendor-Trade-offs für reale Entscheidungen einordnen.",
+      modules: ["Platform map", "Framework comparison", "Vendor decision brief"]
+    },
+    {
+      id: "AI-20",
+      title: "AI Workforce Strategy",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["change", "business"],
+      interests: ["leadership", "consulting"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Role impact map, capability plan, adoption roadmap",
+      summary: "Rollen, Skills, Verantwortlichkeiten und Enablement-Maßnahmen für AI-Transformation systematisch planen.",
+      modules: ["Role impact", "Skill matrix", "Enablement roadmap"]
+    },
+    {
+      id: "AI-21",
+      title: "Decision Making with AI",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["data", "change"],
+      interests: ["leadership", "governance", "consulting"],
+      levels: ["Deepen", "Create"],
+      format: "Decision case, uncertainty review, accountability checklist",
+      summary: "AI-Empfehlungen mit Metriken, Unsicherheit, Bias und menschlicher Verantwortung in bessere Entscheidungen übersetzen.",
+      modules: ["Decision brief", "Uncertainty check", "Accountability review"]
+    },
+    {
+      id: "AI-22",
+      title: "Data Literacy for AI Projects",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["data", "literacy"],
+      interests: ["foundation", "governance", "consulting"],
+      levels: ["Acquire", "Deepen"],
+      format: "Source inventory, quality triage, data-readiness worksheet",
+      summary: "Datenquellen, Qualität, Aktualität, Sensitivität und Evaluation prüfen, bevor ein AI-Pilot startet.",
+      modules: ["Source inventory", "Quality and freshness", "Evaluation sample"]
+    },
+    {
+      id: "AI-23",
+      title: "AI Security and Prompt Injection Defense",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["pvs", "tc", "am", "corp", "lead"],
+      dimensions: ["data", "business"],
+      interests: ["governance", "engineering"],
+      levels: ["Deepen", "Create"],
+      format: "Threat triage, trust-boundary map, launch-gate checklist",
+      summary: "Prompt Injection, Datenabfluss, Tool-Risiken und Audit-Gaps in AI-Workflows erkennen und kontrollieren.",
+      modules: ["Trust boundaries", "Tool approval", "Audit controls"]
+    },
+    {
+      id: "AI-24",
+      title: "Internal Knowledge Assistants with RAG",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["prompting", "data"],
+      interests: ["productivity", "governance", "engineering"],
+      levels: ["Acquire", "Deepen"],
+      format: "Source inventory, RAG intake, answer-quality review",
+      summary: "Interne Wissensassistenten mit Quellenverantwortung, Berechtigungen, Evaluation und Fallback-Pfad planen.",
+      modules: ["Source readiness", "Access boundary", "Answer evaluation"]
+    },
+    {
+      id: "AI-25",
+      title: "AI Vendor and Procurement Evaluation",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["business", "data"],
+      interests: ["consulting", "governance", "leadership", "engineering"],
+      levels: ["Deepen", "Create"],
+      format: "Vendor scorecard, trial criteria, exit-plan review",
+      summary: "AI-Anbieter nach Nutzen, Datenhandling, Security, Integration, Lock-in und Betriebskosten bewerten.",
+      modules: ["Vendor scorecard", "Trial criteria", "Exit plan"]
+    },
+    {
+      id: "AI-26",
+      title: "AI Operations and Incident Response",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["pvs", "tc", "am", "pma"],
+      dimensions: ["business", "data"],
+      interests: ["engineering", "governance"],
+      levels: ["Deepen", "Create"],
+      format: "Incident runbook, escalation drill, postmortem update",
+      summary: "AI-Features im Betrieb überwachen, Incident-Signale triagieren und Runbooks für Qualität, Kosten, Tools und Safety pflegen.",
+      modules: ["AI incident triage", "Rollback path", "Postmortem loop"]
+    },
+    {
+      id: "AI-27",
+      title: "AI Portfolio and Roadmap Management",
+      status: "neu aus Capability-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "pma", "corp", "lead"],
+      dimensions: ["business", "change"],
+      interests: ["leadership", "consulting"],
+      levels: ["Deepen", "Create"],
+      format: "Portfolio board, steering cadence, kill-criteria exercise",
+      summary: "AI-Initiativen nach Wert, Risiko, Abhängigkeiten, Kapazität und Lernfortschritt steuern.",
+      modules: ["Portfolio board", "Review cadence", "Scaling decision"]
+    },
+    {
       id: "CHAMP-01",
       title: "AI Champion / Community Lead",
       status: "Rollenformat aus DOCX",
@@ -359,8 +593,8 @@ window.LrnData = {
       label: "Basis für alle Rollen",
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01"] },
-        { label: "Deepen", courses: ["PROMPT-01"] }
+        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24"] },
+        { label: "Deepen", courses: ["PROMPT-01", "AI-18", "AI-23"] }
       ]
     },
     {
@@ -369,8 +603,8 @@ window.LrnData = {
       profileIds: ["bsc", "pvs", "pma"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05"] },
-        { label: "Create", courses: ["CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25"] },
+        { label: "Create", courses: ["AI-19", "AI-27", "CHAMP-01"] }
       ]
     },
     {
@@ -378,9 +612,9 @@ window.LrnData = {
       label: "Technology Path",
       profileIds: ["tc", "am"],
       stages: [
-        { label: "Acquire", courses: ["AI-01", "RESP-01"] },
-        { label: "Deepen", courses: ["AI-03", "AI-02"] },
-        { label: "Create", courses: ["CHAMP-01"] }
+        { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
+        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26"] },
+        { label: "Create", courses: ["AI-19", "AI-25", "CHAMP-01"] }
       ]
     },
     {
@@ -389,8 +623,8 @@ window.LrnData = {
       profileIds: ["lead", "corp", "pma", "bsc"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01"] },
-        { label: "Create", courses: ["CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27"] },
+        { label: "Create", courses: ["AI-19", "CHAMP-01"] }
       ]
     }
   ]

@@ -1,0 +1,68 @@
+{
+  "lesson": "35-ai-security-prompt-injection",
+  "title": "AI Security and Prompt Injection Defense",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why should AI security be addressed before launch?",
+      "options": [
+        "Because prompts, context, tools, and outputs create trust boundaries that need controls",
+        "Because model output is always safe",
+        "Because audit logs are unnecessary",
+        "Because tool calls cannot cause harm"
+      ],
+      "correct": 0,
+      "explanation": "AI workflows introduce trust boundaries that must be understood before production use."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["prompt injection", "font size", "video bitrate", "heap alignment"],
+      "correct": 0,
+      "explanation": "Prompt injection is one of the AI security signals."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked security triage plan with controls and rationale",
+        "An automatic penetration test",
+        "A production firewall",
+        "A replacement for security review"
+      ],
+      "correct": 0,
+      "explanation": "The artifact supports triage; it does not replace security review."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["trust boundary map", "skip audit logs", "allow every tool", "ignore sensitive data"],
+      "correct": 0,
+      "explanation": "A trust boundary map makes the risk surface visible."
+    },
+    {
+      "stage": "post",
+      "question": "When should an AI workflow require a launch gate?",
+      "options": [
+        "When impact, uncertainty, and security signals are high",
+        "Only when there is no data",
+        "Only when no users are involved",
+        "Never; AI security is optional"
+      ],
+      "correct": 0,
+      "explanation": "High-risk AI workflows need explicit launch-gate review."
+    },
+    {
+      "stage": "post",
+      "question": "What is the main purpose of the reusable checklist?",
+      "options": [
+        "To surface risks and controls before an assistant receives data or tool access",
+        "To hide audit gaps",
+        "To approve all tool calls automatically",
+        "To remove human review"
+      ],
+      "correct": 0,
+      "explanation": "The checklist supports practical security review before access expands."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "lesson": "39-ai-portfolio-roadmap-management",
+  "title": "AI Portfolio and Roadmap Management",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why does an AI portfolio need active management?",
+      "options": [
+        "Because quick wins, strategic bets, risk controls, capacity, and learning need to be balanced",
+        "Because every pilot should scale",
+        "Because metrics slow teams down",
+        "Because ownership is optional"
+      ],
+      "correct": 0,
+      "explanation": "Portfolio management makes tradeoffs visible across initiatives."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["capacity conflict", "font size", "video latency", "shell theme"],
+      "correct": 0,
+      "explanation": "Capacity conflict is a portfolio signal."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked portfolio plan with controls and rationale",
+        "An automatic strategy deck",
+        "A production deployment",
+        "A guaranteed business case"
+      ],
+      "correct": 0,
+      "explanation": "The artifact supports portfolio triage and steering."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["kill criteria", "ignore capacity", "skip review cadence", "hide dependencies"],
+      "correct": 0,
+      "explanation": "Kill criteria help teams stop weak initiatives."
+    },
+    {
+      "stage": "post",
+      "question": "When should an initiative receive stronger portfolio controls?",
+      "options": [
+        "When impact, uncertainty, dependencies, or capacity conflicts are high",
+        "Only when it is already finished",
+        "Only when no stakeholder is involved",
+        "Never; portfolios should not be reviewed"
+      ],
+      "correct": 0,
+      "explanation": "High-risk portfolio items need explicit review and steering."
+    },
+    {
+      "stage": "post",
+      "question": "Why are kill criteria useful?",
+      "options": [
+        "They prevent weak pilots from consuming capacity indefinitely",
+        "They remove learning",
+        "They approve every initiative",
+        "They hide risks"
+      ],
+      "correct": 0,
+      "explanation": "Kill criteria protect capacity and focus."
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "lesson": "31-hands-on-prompt-clinic",
+  "title": "Hands-on Prompt Clinic",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What makes a prompt clinic more useful than generic prompt tips?",
+      "options": [
+        "It uses real tasks, reusable prompts, and output review habits",
+        "It avoids reviewing model outputs",
+        "It asks everyone to use the same prompt for every task",
+        "It removes context from the prompt"
+      ],
+      "correct": 0,
+      "explanation": "A clinic turns prompting into a repeatable workflow with examples and review controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": [
+        "vague goal",
+        "GPU memory pressure",
+        "Network packet loss",
+        "SQL index depth"
+      ],
+      "correct": 0,
+      "explanation": "A vague goal is one of the prompt-quality signals."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked prompt-clinic plan with controls and rationale",
+        "A production prompt marketplace",
+        "A fine-tuned model",
+        "A browser plugin"
+      ],
+      "correct": 0,
+      "explanation": "The artifact scores prompt scenarios and recommends controls for clinic work."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to the lesson design?",
+      "options": [
+        "prompt brief",
+        "Ignoring the audience",
+        "Skipping source checks",
+        "Treating first drafts as final"
+      ],
+      "correct": 0,
+      "explanation": "A prompt brief captures the task contract before iteration."
+    },
+    {
+      "stage": "post",
+      "question": "When does a prompt scenario need stronger review controls?",
+      "options": [
+        "When impact, uncertainty, and prompt-quality gaps are high",
+        "Only when the prompt is short",
+        "Only when the prompt has examples",
+        "Never; prompting has no risk"
+      ],
+      "correct": 0,
+      "explanation": "High-impact or uncertain work needs more explicit review discipline."
+    },
+    {
+      "stage": "post",
+      "question": "What should happen to a good prompt after the clinic?",
+      "options": [
+        "It should become a maintained reusable asset with review notes",
+        "It should be deleted immediately",
+        "It should never be changed",
+        "It should be used without source material"
+      ],
+      "correct": 0,
+      "explanation": "The course emphasizes reusable prompt assets that teams can maintain."
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "lesson": "30-data-literacy-for-ai-projects",
+  "title": "Data Literacy for AI Projects",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why should data literacy be part of AI training before a model is selected?",
+      "options": [
+        "Because model selection is never important",
+        "Because teams need to know whether sources are allowed, fresh, representative, and good enough",
+        "Because all internal documents are automatically safe",
+        "Because evaluation can be skipped when data is available"
+      ],
+      "correct": 1,
+      "explanation": "AI feasibility depends on source quality, ownership, permissions, and evaluation before model choice becomes meaningful."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": [
+        "stale data",
+        "GPU fan speed",
+        "Image crop size",
+        "Database page cache"
+      ],
+      "correct": 0,
+      "explanation": "Stale data is one of the readiness signals used by the artifact."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked plan with category, score, priority, controls, and rationale",
+        "A trained retrieval model",
+        "A production data lake",
+        "An automatic GDPR approval"
+      ],
+      "correct": 0,
+      "explanation": "The artifact is a lightweight triage planner for classroom and project use."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to the lesson design?",
+      "options": [
+        "source inventory",
+        "Ignoring source ownership",
+        "Skipping quality thresholds",
+        "Treating all documents as public"
+      ],
+      "correct": 0,
+      "explanation": "A source inventory helps teams make the evidence base explicit."
+    },
+    {
+      "stage": "post",
+      "question": "When should a data scenario become a launch-gate discussion?",
+      "options": [
+        "When impact, uncertainty, and data risk signals are high",
+        "Only when the UI is finished",
+        "Only when the model is open source",
+        "Never; data readiness is optional"
+      ],
+      "correct": 0,
+      "explanation": "High-risk data conditions require stronger controls before launch."
+    },
+    {
+      "stage": "post",
+      "question": "What is the main purpose of the reusable worksheet?",
+      "options": [
+        "To replace data ownership",
+        "To make data assumptions visible enough for teams to challenge and improve them",
+        "To hide quality gaps from stakeholders",
+        "To approve every use case automatically"
+      ],
+      "correct": 1,
+      "explanation": "The worksheet creates a practical shared artifact for discovery and pilot planning."
+    }
+  ]
+}

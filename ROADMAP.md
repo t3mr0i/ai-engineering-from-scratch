@@ -269,7 +269,7 @@ Total estimated time: ~314 hours, at your own pace.
 | 25 | [Speculative Decoding and EAGLE](phases/10-llms-from-scratch/25-speculative-decoding) | ✅ | ~75 min |
 | 34 | [Gradient Checkpointing and Activation Recomputation](phases/10-llms-from-scratch/34-gradient-checkpointing) | ✅ | ~70 min |
 
-## Phase 11: LLM Engineering — ✅ (~26 hours)
+## Phase 11: LLM Engineering — ✅ (~34 hours)
 
 | # | Lesson | Status | Est. |
 |---|--------|--------|------|
@@ -302,6 +302,16 @@ Total estimated time: ~314 hours, at your own pace.
 | 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape) | ✅ | ~45 min |
 | 28 | [AI Workforce Strategy](phases/11-llm-engineering/28-ai-workforce-strategy) | ✅ | ~45 min |
 | 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai) | ✅ | ~45 min |
+| 30 | [Data Literacy for AI Projects](phases/11-llm-engineering/30-data-literacy-for-ai-projects) | ✅ | ~45 min |
+| 31 | [Hands-on Prompt Clinic](phases/11-llm-engineering/31-hands-on-prompt-clinic) | ✅ | ~45 min |
+| 32 | [AI Use Case Identification Workshop](phases/11-llm-engineering/32-ai-use-case-identification-workshop) | ✅ | ~45 min |
+| 33 | [AI Change Management and Team Integration](phases/11-llm-engineering/33-ai-change-management-team-integration) | ✅ | ~45 min |
+| 34 | [AI Champion Enablement](phases/11-llm-engineering/34-ai-champion-enablement) | ✅ | ~45 min |
+| 35 | [AI Security and Prompt Injection Defense](phases/11-llm-engineering/35-ai-security-prompt-injection) | ✅ | ~45 min |
+| 36 | [Internal Knowledge Assistants with RAG](phases/11-llm-engineering/36-internal-knowledge-assistants-rag) | ✅ | ~45 min |
+| 37 | [AI Vendor and Procurement Evaluation](phases/11-llm-engineering/37-ai-vendor-procurement-evaluation) | ✅ | ~45 min |
+| 38 | [AI Operations and Incident Response](phases/11-llm-engineering/38-ai-operations-incident-response) | ✅ | ~45 min |
+| 39 | [AI Portfolio and Roadmap Management](phases/11-llm-engineering/39-ai-portfolio-roadmap-management) | ✅ | ~45 min |
 
 ## Phase 12: Multimodal AI — ✅ (~65 hours)
 

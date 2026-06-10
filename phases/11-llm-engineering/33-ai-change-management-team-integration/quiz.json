@@ -1,0 +1,78 @@
+{
+  "lesson": "33-ai-change-management-team-integration",
+  "title": "AI Change Management and Team Integration",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why is AI adoption not finished when a tool is available?",
+      "options": [
+        "Because roles, handoffs, review duties, and behavior changes still need to be clear",
+        "Because every tool must be banned first",
+        "Because teams should avoid measurement",
+        "Because communication is never needed"
+      ],
+      "correct": 0,
+      "explanation": "AI adoption requires operating routines and role clarity, not only tool access."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": [
+        "role impact",
+        "Image resolution",
+        "Kernel version",
+        "CSS cascade"
+      ],
+      "correct": 0,
+      "explanation": "Role impact is one of the adoption signals used by the artifact."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A change-readiness plan with priority, controls, and rationale",
+        "An automatic reorg plan",
+        "A production authentication server",
+        "A trained language model"
+      ],
+      "correct": 0,
+      "explanation": "The artifact structures team integration decisions."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": [
+        "role map",
+        "Skipping stakeholder alignment",
+        "Ignoring governance gaps",
+        "Removing human review"
+      ],
+      "correct": 0,
+      "explanation": "A role map clarifies responsibilities around the changed workflow."
+    },
+    {
+      "stage": "post",
+      "question": "When should rollout require stronger controls?",
+      "options": [
+        "When role impact, adoption friction, and governance uncertainty are high",
+        "Only when the UI is complex",
+        "Only when there are no users",
+        "Never; rollout risk is not relevant"
+      ],
+      "correct": 0,
+      "explanation": "High adoption and governance risk require stronger rollout controls."
+    },
+    {
+      "stage": "post",
+      "question": "What is the main purpose of the integration plan?",
+      "options": [
+        "To translate AI adoption into team routines, owners, metrics, and controls",
+        "To replace managers",
+        "To remove training",
+        "To hide handoff problems"
+      ],
+      "correct": 0,
+      "explanation": "The plan connects change management to concrete operating behavior."
+    }
+  ]
+}

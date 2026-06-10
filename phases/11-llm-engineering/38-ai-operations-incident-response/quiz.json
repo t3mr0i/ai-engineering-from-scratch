@@ -1,0 +1,68 @@
+{
+  "lesson": "38-ai-operations-incident-response",
+  "title": "AI Operations and Incident Response",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why do AI features need incident runbooks?",
+      "options": [
+        "Because model behavior, retrieval quality, tool calls, cost, and safety controls can fail",
+        "Because AI systems never fail",
+        "Because support teams should improvise every response",
+        "Because monitoring is irrelevant"
+      ],
+      "correct": 0,
+      "explanation": "AI operations covers quality, cost, safety, and tool behavior in addition to uptime."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["quality drift", "font contrast", "spreadsheet width", "speaker volume"],
+      "correct": 0,
+      "explanation": "Quality drift is a core AI operations signal."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked incident triage plan with controls and rationale",
+        "A production monitoring platform",
+        "A replacement for service management",
+        "An automatic root cause"
+      ],
+      "correct": 0,
+      "explanation": "The artifact helps plan incident response controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["rollback path", "ignore alerts", "remove escalation owners", "skip postmortems"],
+      "correct": 0,
+      "explanation": "Rollback paths help contain AI feature incidents."
+    },
+    {
+      "stage": "post",
+      "question": "When should an AI incident trigger escalation?",
+      "options": [
+        "When impact, uncertainty, and operational risk signals are high",
+        "Only when no users notice",
+        "Only when the UI changes",
+        "Never; incidents should stay local"
+      ],
+      "correct": 0,
+      "explanation": "High-impact operational issues need clear escalation."
+    },
+    {
+      "stage": "post",
+      "question": "What should a postmortem update after an AI incident?",
+      "options": [
+        "Evals, prompts, tools, controls, and runbooks",
+        "Nothing; AI incidents are not repeatable",
+        "Only the color scheme",
+        "Only the launch announcement"
+      ],
+      "correct": 0,
+      "explanation": "Postmortems should improve the operating system around the AI feature."
+    }
+  ]
+}

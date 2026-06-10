@@ -1,0 +1,78 @@
+{
+  "lesson": "32-ai-use-case-identification-workshop",
+  "title": "AI Use Case Identification Workshop",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What makes an AI idea a useful use case candidate?",
+      "options": [
+        "It has a workflow, evidence, value, risk, ownership, and a way to measure impact",
+        "It mentions AI in the title",
+        "It avoids all metrics",
+        "It has no owner"
+      ],
+      "correct": 0,
+      "explanation": "A use case must be tied to a workflow and measurable outcome."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": [
+        "manual work",
+        "GPU temperature",
+        "CSS specificity",
+        "Audio sample rate"
+      ],
+      "correct": 0,
+      "explanation": "Manual work is a common signal for automation or AI opportunity discovery."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked use-case plan with priority, controls, and rationale",
+        "An automatic product roadmap",
+        "A neural search index",
+        "A legal approval"
+      ],
+      "correct": 0,
+      "explanation": "The artifact helps teams compare use cases and choose the next control level."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": [
+        "use case canvas",
+        "Ignoring ownership",
+        "Skipping pilot metrics",
+        "Approving every idea"
+      ],
+      "correct": 0,
+      "explanation": "The use case canvas captures the information needed for prioritization."
+    },
+    {
+      "stage": "post",
+      "question": "When should a use case move toward a guided pilot?",
+      "options": [
+        "When the value is plausible, the workflow is clear, and the risks are controllable",
+        "When no metric exists",
+        "When the owner is unknown",
+        "When the data cannot be accessed"
+      ],
+      "correct": 0,
+      "explanation": "A guided pilot needs enough structure to test the hypothesis safely."
+    },
+    {
+      "stage": "post",
+      "question": "What is the main purpose of the pilot brief?",
+      "options": [
+        "To make the next experiment specific enough to test",
+        "To replace stakeholder alignment",
+        "To hide risks",
+        "To remove measurement"
+      ],
+      "correct": 0,
+      "explanation": "The pilot brief turns an idea into a measurable next step."
+    }
+  ]
+}

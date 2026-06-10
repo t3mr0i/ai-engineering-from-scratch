@@ -1,0 +1,68 @@
+{
+  "lesson": "36-internal-knowledge-assistants-rag",
+  "title": "Internal Knowledge Assistants with RAG",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What makes an internal knowledge assistant reliable?",
+      "options": [
+        "Governed sources, permissions, evaluation, and fallback paths",
+        "Indexing every document without review",
+        "Ignoring source freshness",
+        "Removing answer evaluation"
+      ],
+      "correct": 0,
+      "explanation": "Internal assistants need source governance and answer evaluation."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["source sprawl", "button color", "CPU brand", "font weight"],
+      "correct": 0,
+      "explanation": "Source sprawl is a common risk for internal knowledge assistants."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked source-readiness plan with controls and rationale",
+        "A production vector database",
+        "A permission bypass",
+        "A final chatbot UI"
+      ],
+      "correct": 0,
+      "explanation": "The artifact is a planning tool for source readiness."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["access boundary", "ignore permissions", "delete evaluation samples", "skip source owners"],
+      "correct": 0,
+      "explanation": "Access boundaries keep retrieval aligned with permissions."
+    },
+    {
+      "stage": "post",
+      "question": "When should a knowledge assistant require a launch gate?",
+      "options": [
+        "When sensitive access, stale content, and missing evaluation create high risk",
+        "Only when the chat UI is complex",
+        "Only when no one owns the source",
+        "Never; RAG is always safe"
+      ],
+      "correct": 0,
+      "explanation": "High-risk source conditions require explicit launch review."
+    },
+    {
+      "stage": "post",
+      "question": "What is the main purpose of the intake template?",
+      "options": [
+        "To decide which sources are ready before indexing them",
+        "To skip quality review",
+        "To bypass privacy checks",
+        "To hide stale sources"
+      ],
+      "correct": 0,
+      "explanation": "The intake template makes source readiness explicit."
+    }
+  ]
+}

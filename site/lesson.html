@@ -2208,18 +2208,35 @@
         return 'Kern';
       }
 
+      function lrnUnitProgress(group) {
+        var completed = 0;
+        var visited = 0;
+        group.lessons.forEach(function (lesson) {
+          var state = lrnLessonProgressState(lesson.path);
+          if (state === 'complete') completed++;
+          if (state === 'complete' || state === 'in-progress') visited++;
+        });
+        return {
+          completed: completed,
+          visited: visited,
+          total: group.lessons.length,
+          percent: group.lessons.length ? Math.round((completed / group.lessons.length) * 100) : 0
+        };
+      }
+
       function buildLrnSidebar(sidebar) {
         var html = '<div class="lrn-sidebar-overview">';
         html += '<a class="lrn-sidebar-back" href="index.html">&larr; LRN Cockpit</a>';
         html += '<div class="lrn-sidebar-code">' + escapeHtml(lrnContext.course.id) + '</div>';
         html += '<div class="lrn-sidebar-title">' + escapeHtml(lrnContext.course.title) + '</div>';
         html += '<div class="lrn-sidebar-progress" aria-hidden="true"><span style="width:' + lrnContext.percent + '%"></span></div>';
-        html += '<div class="lrn-sidebar-stat">' + lrnContext.completed + '/' + lrnContext.total + ' Lessons im Kurs erledigt</div>';
+        html += '<div class="lrn-sidebar-stat">' + lrnContext.completed + '/' + lrnContext.total + ' Aktivitäten im Skill Path erledigt</div>';
         html += '</div>';
 
         lrnContext.groups.forEach(function (group, groupIndex) {
+          var unitProgress = lrnUnitProgress(group);
           html += '<div class="lrn-sidebar-subcourse">';
-          html += '<div class="lrn-sidebar-subcourse-title">' + escapeHtml(group.title) + ' · ' + escapeHtml(lrnDecisionLabel(group.decision)) + '</div>';
+          html += '<div class="lrn-sidebar-subcourse-title">Unit ' + String(groupIndex + 1).padStart(2, '0') + ' · ' + escapeHtml(group.title) + ' · ' + unitProgress.completed + '/' + unitProgress.total + '</div>';
           group.lessons.forEach(function (lesson) {
             var flatIndex = -1;
             for (var i = 0; i < lrnContext.lessons.length; i++) {
@@ -2511,11 +2528,12 @@
         var html = '<section class="lrn-lesson-banner" aria-label="LRN Kurskontext">';
         html += '<div class="lrn-lesson-kicker">';
         html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnContext.course.id) + '</span>';
-        html += '<span class="lrn-lesson-pill">Lesson ' + escapeHtml(lrnLessonOrdinal(lrnContext.currentIndex)) + '</span>';
+        html += '<span class="lrn-lesson-pill">Unit ' + String(current.groupIndex + 1).padStart(2, '0') + '</span>';
+        html += '<span class="lrn-lesson-pill">Activity ' + escapeHtml(lrnLessonOrdinal(lrnContext.currentIndex)) + '</span>';
         html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnLessonProgressLabel(current.path)) + '</span>';
         html += '</div>';
         html += '<h2>' + escapeHtml(lrnContext.course.title) + '</h2>';
-        html += '<p><strong>Subkurs:</strong> ' + escapeHtml(current.groupTitle) + '. Diese Lesson ist Teil des kuratierten LRN-Kurspfads; die globale Phasen-Navigation ist hier ausgeblendet.</p>';
+        html += '<p><strong>Unit:</strong> ' + escapeHtml(current.groupTitle) + '. Diese Aktivität ist Teil des kuratierten LRN-Syllabus; die globale Phasen-Navigation ist hier ausgeblendet.</p>';
         html += '<div class="lrn-lesson-banner__actions">';
         html += '<a class="lrn-lesson-action" href="index.html">Zur Kursübersicht</a>';
         if (lrnContext.prev) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.prev.path) + '">Vorherige Lesson</a>';
@@ -4231,7 +4249,7 @@
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
 
-        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">P</div><div class="ai-panel-title">LRN Kurspfad</div></div>';
+        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">S</div><div class="ai-panel-title">Course Syllabus</div></div>';
         html += '<div class="ai-panel-subtitle">' + escapeHtml(lrnContext.course.id) + ': ' + escapeHtml(lrnContext.course.title) + '</div>';
 
         var windowSize = 7;
@@ -4270,7 +4288,7 @@
         html += '</div>';
 
         html += '<div class="phase-progress-bar"><div class="phase-progress-fill" style="width:' + lrnContext.percent + '%"></div></div>';
-        html += '<div class="phase-progress-text">LRN-Fortschritt: ' + lrnContext.completed + ' von ' + lrnContext.total + ' Lessons im Kurs erledigt</div>';
+        html += '<div class="phase-progress-text">LRN-Fortschritt: ' + lrnContext.completed + ' von ' + lrnContext.total + ' Aktivitäten im Skill Path erledigt</div>';
 
         panel.innerHTML = html;
         container.appendChild(panel);
@@ -4317,17 +4335,17 @@
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
 
-        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">N</div><div class="ai-panel-title">Weiter im LRN-Kurs</div></div>';
+        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">N</div><div class="ai-panel-title">Next Activity</div></div>';
         html += '<div class="continue-panel">';
         html += '<div class="continue-links">';
         if (lrnContext.next) {
-          html += '<a class="continue-link" href="' + lrnLessonHref(lrnContext.next.path) + '">Nächste Lesson: ' + escapeHtml(lrnContext.next.title) + '</a>';
+          html += '<a class="continue-link" href="' + lrnLessonHref(lrnContext.next.path) + '">Nächste Aktivität: ' + escapeHtml(lrnContext.next.title) + '</a>';
         } else {
-          html += '<div class="phase-finished">LRN-Kurs vollständig durchlaufen</div>';
+          html += '<div class="phase-finished">Skill Path vollständig durchlaufen</div>';
         }
         html += '<a class="continue-link" href="index.html">Zurück zum LRN Course Cockpit</a>';
         html += '</div>';
-        html += '<div class="continue-callout">Dieser Kurs zeigt nur die Lessons, die für <code>' + escapeHtml(lrnContext.course.id) + '</code> kuratiert wurden. Weitere Curriculum-Lessons bleiben im Katalog, sind aber nicht Teil dieses LRN-Pfads.</div>';
+        html += '<div class="continue-callout">Dieser Syllabus zeigt nur die Aktivitäten, die für <code>' + escapeHtml(lrnContext.course.id) + '</code> kuratiert wurden. Weitere Curriculum-Lessons bleiben im Katalog, sind aber nicht Teil dieses LRN-Pfads.</div>';
         html += '</div>';
 
         panel.innerHTML = html;

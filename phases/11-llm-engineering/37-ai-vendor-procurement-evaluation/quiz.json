@@ -1,0 +1,68 @@
+{
+  "lesson": "37-ai-vendor-procurement-evaluation",
+  "title": "AI Vendor and Procurement Evaluation",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why does AI procurement need more than feature comparison?",
+      "options": [
+        "Because data handling, security, integration, lock-in, and operating cost affect long-term risk",
+        "Because vendor demos are always complete",
+        "Because contracts never matter",
+        "Because security evidence is optional"
+      ],
+      "correct": 0,
+      "explanation": "AI vendor decisions create operating, security, and commercial consequences."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["data residency", "font color", "audio codec", "thread name"],
+      "correct": 0,
+      "explanation": "Data residency is one vendor evaluation signal."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked vendor-fit plan with controls and rationale",
+        "A signed contract",
+        "A procurement system",
+        "A guaranteed approval"
+      ],
+      "correct": 0,
+      "explanation": "The artifact supports evaluation; it does not replace procurement."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["vendor scorecard", "skip trial criteria", "ignore pricing", "remove exit planning"],
+      "correct": 0,
+      "explanation": "A vendor scorecard makes comparison explicit."
+    },
+    {
+      "stage": "post",
+      "question": "When should a vendor decision require stronger controls?",
+      "options": [
+        "When security, data, lock-in, or pricing uncertainty is high",
+        "Only when the demo is boring",
+        "Only when no integration is needed",
+        "Never; vendor selection is only commercial"
+      ],
+      "correct": 0,
+      "explanation": "High uncertainty and risk require stronger trial and approval controls."
+    },
+    {
+      "stage": "post",
+      "question": "What is the purpose of an exit plan?",
+      "options": [
+        "To reduce lock-in risk before committing to a vendor",
+        "To avoid comparing tools",
+        "To skip security review",
+        "To hide operating cost"
+      ],
+      "correct": 0,
+      "explanation": "Exit planning makes lock-in visible before purchase."
+    }
+  ]
+}
