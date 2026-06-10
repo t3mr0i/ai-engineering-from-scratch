@@ -381,7 +381,7 @@
       detail.appendChild(emptyMap);
     } else {
       map.forEach(function (subcourse) {
-        detail.appendChild(subcourseCard(subcourse));
+        detail.appendChild(subcourseCard(subcourse, course.id));
       });
     }
 
@@ -392,7 +392,7 @@
     replaceChildren(els.courseDetail, [detail]);
   }
 
-  function subcourseCard(subcourse) {
+  function subcourseCard(subcourse, courseId) {
     var card = document.createElement("section");
     card.className = "subcourse-card";
     var head = document.createElement("div");
@@ -411,18 +411,18 @@
     var list = document.createElement("div");
     list.className = "lesson-list";
     subcourse.lessons.forEach(function (lesson) {
-      list.appendChild(lessonLink(lesson));
+      list.appendChild(lessonLink(lesson, courseId));
     });
 
     card.append(head, note, list);
     return card;
   }
 
-  function lessonLink(lesson) {
+  function lessonLink(lesson, courseId) {
     var progress = lessonProgress(lesson.path);
     var a = document.createElement("a");
     a.className = "lesson-link";
-    a.href = "../lesson.html?path=" + lesson.path;
+    a.href = lessonHref(lesson.path, courseId);
     a.innerHTML = "<span></span><strong></strong><em></em>";
     a.querySelector("span").textContent = lessonPathLabel(lesson.path);
     a.querySelector("strong").textContent = lesson.title;
@@ -725,6 +725,13 @@
     var phaseNumber = (phase.match(/^(\d+)/) || [])[1] || phase;
     var lessonNumber = (lesson.match(/^(\d+)/) || [])[1] || lesson.slice(0, 2);
     return "P" + phaseNumber + " · L" + lessonNumber;
+  }
+
+  function lessonHref(path, courseId) {
+    var prefix = window.location.pathname.indexOf("/lrn/") !== -1 ? "../" : "";
+    var query = "path=" + encodeURIComponent(path);
+    if (courseId) query += "&course=" + encodeURIComponent(courseId);
+    return prefix + "lesson.html?" + query;
   }
 
   function normalizeLevelLabel(value) {

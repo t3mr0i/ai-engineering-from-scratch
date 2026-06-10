@@ -1,0 +1,78 @@
+{
+  "lesson": "22-sustainable-software-green-coding",
+  "title": "Sustainable Software and Green Coding for AI Systems",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why should Sustainable Software and Green Coding for AI Systems be taught as a workflow instead of only as tool awareness?",
+      "options": [
+        "Because tools never change",
+        "Because teams need shared signals, controls, and decision rules they can apply to real work",
+        "Because AI removes the need for review",
+        "Because training should avoid examples"
+      ],
+      "correct": 1,
+      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": [
+        "high volume",
+        "GPU memory fragmentation",
+        "Image augmentation policy",
+        "Database sharding depth"
+      ],
+      "correct": 0,
+      "explanation": "The lesson uses \"high volume\" as one of the concrete signals for deciding what action or control is needed."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce for Sustainable Software and Green Coding for AI Systems?",
+      "options": [
+        "A trained neural network",
+        "A ranked plan with category, score, priority, controls, and rationale",
+        "A production SaaS backend",
+        "A browser extension"
+      ],
+      "correct": 1,
+      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to the lesson design?",
+      "options": [
+        "Ignoring uncertainty to move faster",
+        "caching",
+        "Removing human accountability",
+        "Treating all AI outputs as facts"
+      ],
+      "correct": 1,
+      "explanation": "The control \"caching\" is part of the intended operating model for this topic."
+    },
+    {
+      "stage": "post",
+      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
+      "options": [
+        "When impact, uncertainty, and matched risk signals are high",
+        "Only when the model is open source",
+        "Only when the user interface is complex",
+        "Never; all AI topics should be handled informally"
+      ],
+      "correct": 0,
+      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+    },
+    {
+      "stage": "post",
+      "question": "What is the main purpose of the output template?",
+      "options": [
+        "To replace project ownership",
+        "To create a reusable worksheet or prompt that teams can apply after the course",
+        "To hide assumptions from stakeholders",
+        "To generate certificates automatically"
+      ],
+      "correct": 1,
+      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+    }
+  ]
+}

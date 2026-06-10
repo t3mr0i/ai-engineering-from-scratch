@@ -269,7 +269,7 @@ Total estimated time: ~314 hours, at your own pace.
 | 25 | [Speculative Decoding and EAGLE](phases/10-llms-from-scratch/25-speculative-decoding) | ✅ | ~75 min |
 | 34 | [Gradient Checkpointing and Activation Recomputation](phases/10-llms-from-scratch/34-gradient-checkpointing) | ✅ | ~70 min |
 
-## Phase 11: LLM Engineering — ✅ (~17 hours)
+## Phase 11: LLM Engineering — ✅ (~26 hours)
 
 | # | Lesson | Status | Est. |
 |---|--------|--------|------|
@@ -288,6 +288,20 @@ Total estimated time: ~314 hours, at your own pace.
 | 13 | [Building a Production LLM Application](phases/11-llm-engineering/13-production-app) | ✅ | ~120 min |
 | 14 | [Model Context Protocol (MCP)](phases/11-llm-engineering/14-model-context-protocol) | ✅ | ~75 min |
 | 15 | [Prompt Caching & Context Caching](phases/11-llm-engineering/15-prompt-caching) | ✅ | ~60 min |
+| 16 | [LangGraph: State Machines for Agents](phases/11-llm-engineering/16-langgraph-state-machines) | ✅ | ~75 min |
+| 17 | [Agent Framework Tradeoffs](phases/11-llm-engineering/17-agent-framework-tradeoffs) | ✅ | ~45 min |
+| 18 | [Responsible AI Compliance Workflow](phases/11-llm-engineering/18-responsible-ai-compliance-workflow) | ✅ | ~45 min |
+| 19 | [AI-Driven Testing and QA](phases/11-llm-engineering/19-ai-driven-testing-qa) | ✅ | ~45 min |
+| 20 | [Code Modernization with AI](phases/11-llm-engineering/20-code-modernization-with-ai) | ✅ | ~45 min |
+| 21 | [AI-Assisted Documentation](phases/11-llm-engineering/21-ai-assisted-documentation) | ✅ | ~45 min |
+| 22 | [Sustainable Software and Green Coding for AI Systems](phases/11-llm-engineering/22-sustainable-software-green-coding) | ✅ | ~45 min |
+| 23 | [AI-Enhanced User Research](phases/11-llm-engineering/23-ai-enhanced-user-research) | ✅ | ~45 min |
+| 24 | [AI Use Case Spotting and Automation Discovery](phases/11-llm-engineering/24-use-case-spotting-automation-discovery) | ✅ | ~45 min |
+| 25 | [AI Cost and Value Economics](phases/11-llm-engineering/25-ai-cost-value-economics) | ✅ | ~45 min |
+| 26 | [Consultative Prompting](phases/11-llm-engineering/26-consultative-prompting) | ✅ | ~45 min |
+| 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape) | ✅ | ~45 min |
+| 28 | [AI Workforce Strategy](phases/11-llm-engineering/28-ai-workforce-strategy) | ✅ | ~45 min |
+| 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai) | ✅ | ~45 min |
 
 ## Phase 12: Multimodal AI — ✅ (~65 hours)
 

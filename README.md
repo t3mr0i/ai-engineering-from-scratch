@@ -548,7 +548,7 @@ Twenty phases. Click any phase to expand its lesson list.
 </details>
 
 <details id="phase-11">
-<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>17 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
+<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>29 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
 <br/>
 
 | # | Lesson | Type | Lang |
@@ -570,6 +570,18 @@ Twenty phases. Click any phase to expand its lesson list.
 | 15 | [Prompt Caching & Context Caching](phases/11-llm-engineering/15-prompt-caching/) | Build | Python |
 | 16 | [LangGraph: State Machines for Agents](phases/11-llm-engineering/16-langgraph-state-machines/) | Build | Python |
 | 17 | [Agent Framework Tradeoffs](phases/11-llm-engineering/17-agent-framework-tradeoffs/) | Learn | Python |
+| 18 | [Responsible AI Compliance Workflow](phases/11-llm-engineering/18-responsible-ai-compliance-workflow/) | Build | Python |
+| 19 | [AI-Driven Testing and QA](phases/11-llm-engineering/19-ai-driven-testing-qa/) | Build | Python |
+| 20 | [Code Modernization with AI](phases/11-llm-engineering/20-code-modernization-with-ai/) | Build | Python |
+| 21 | [AI-Assisted Documentation](phases/11-llm-engineering/21-ai-assisted-documentation/) | Build | Python |
+| 22 | [Sustainable Software and Green Coding for AI Systems](phases/11-llm-engineering/22-sustainable-software-green-coding/) | Build | Python |
+| 23 | [AI-Enhanced User Research](phases/11-llm-engineering/23-ai-enhanced-user-research/) | Build | Python |
+| 24 | [AI Use Case Spotting and Automation Discovery](phases/11-llm-engineering/24-use-case-spotting-automation-discovery/) | Build | Python |
+| 25 | [AI Cost and Value Economics](phases/11-llm-engineering/25-ai-cost-value-economics/) | Build | Python |
+| 26 | [Consultative Prompting](phases/11-llm-engineering/26-consultative-prompting/) | Build | Python |
+| 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape/) | Build | Python |
+| 28 | [AI Workforce Strategy](phases/11-llm-engineering/28-ai-workforce-strategy/) | Build | Python |
+| 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai/) | Build | Python |
 
 </details>
 

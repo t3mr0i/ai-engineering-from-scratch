@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson · Agentic Software Engineering at LHIND</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum by Lufthansa Industry Solutions. 393 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
+  <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum by Lufthansa Industry Solutions. 405 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
   <meta property="og:title" content="Agentic Software Engineering at LHIND · Lesson">
-  <meta property="og:description" content="393 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
+  <meta property="og:description" content="405 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Agentic Software Engineering at LHIND">
-  <meta name="twitter:description" content="393 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
+  <meta name="twitter:description" content="405 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -159,6 +159,170 @@
     }
 
     .sidebar-phase-nav a:hover {
+      color: var(--blueprint);
+    }
+
+    .lrn-sidebar-overview {
+      padding: 0 20px 18px;
+      border-bottom: 1px solid var(--rule-soft);
+      margin-bottom: 10px;
+    }
+
+    .lrn-sidebar-back {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      text-decoration: none;
+      border-bottom: none;
+      margin-bottom: 16px;
+    }
+
+    .lrn-sidebar-back:hover {
+      color: var(--blueprint);
+    }
+
+    .lrn-sidebar-code {
+      display: inline-flex;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blueprint);
+      border: 1px solid var(--blueprint);
+      padding: 2px 7px;
+      margin-bottom: 8px;
+    }
+
+    .lrn-sidebar-title {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.35;
+      color: var(--ink);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .lrn-sidebar-progress {
+      height: 4px;
+      background: var(--rule-soft);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .lrn-sidebar-progress span {
+      display: block;
+      height: 100%;
+      background: var(--blueprint);
+    }
+
+    .lrn-sidebar-stat {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+    }
+
+    .lrn-sidebar-subcourse {
+      padding: 14px 0 8px;
+    }
+
+    .lrn-sidebar-subcourse-title {
+      padding: 0 20px 8px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      line-height: 1.45;
+      font-weight: 500;
+      color: var(--blueprint);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .lrn-sidebar-lesson-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      gap: 1px;
+    }
+
+    .lrn-sidebar-lesson-meta {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+    }
+
+    .lrn-lesson-banner {
+      border: 1px solid var(--blueprint);
+      background: var(--blueprint-tint);
+      padding: 20px 22px;
+      margin-bottom: 34px;
+    }
+
+    .lrn-lesson-kicker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .lrn-lesson-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blueprint);
+      border: 1px solid var(--blueprint);
+      padding: 3px 8px;
+      background: var(--bg);
+    }
+
+    .lrn-lesson-banner h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      line-height: 1;
+      color: var(--blueprint);
+      margin: 0 0 10px;
+      padding: 0;
+      border: 0;
+    }
+
+    .lrn-lesson-banner p {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 0.98rem;
+      line-height: 1.55;
+      color: var(--ink);
+      text-align: left;
+    }
+
+    .lrn-lesson-banner__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .lrn-lesson-action {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--rule-soft);
+      color: var(--ink-soft);
+      background: var(--bg);
+      padding: 6px 10px;
+      text-decoration: none;
+    }
+
+    .lrn-lesson-action:hover {
+      border-color: var(--blueprint);
       color: var(--blueprint);
     }
 
@@ -1806,6 +1970,8 @@
 
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260525a"></script>
+  <script src="lrn/data.js?v=20260610a"></script>
+  <script src="lrn/curriculum-map.js?v=20260610a"></script>
   <script src="cmdpalette.js?v=20260525a" defer></script>
   <script src="analytics.js?v=20260525a" defer></script>
   <script src="figures.js?v=20260607a"></script>
@@ -1863,6 +2029,8 @@
 
       var params = new URLSearchParams(window.location.search);
       var lessonPath = params.get('path');
+      var lrnCourseId = params.get('course') || params.get('lrnCourse') || params.get('courseId');
+      var lrnContext = null;
 
       if (!lessonPath) {
         showError('No lesson path specified', 'Add ?path=phases/01-math-foundations/01-linear-algebra-intuition to the URL.');
@@ -1914,6 +2082,11 @@
         }
       }
 
+      lrnContext = buildLrnContext(lrnCourseId, lessonPath);
+      if (lrnContext) {
+        document.body.classList.add('lrn-lesson-mode');
+      }
+
       buildSidebar();
       initSidebarToggle();
       initScrollProgress();
@@ -1941,9 +2114,144 @@
         return String(index + 1).padStart(2, '0') + '-' + lesson.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       }
 
+      function buildLrnContext(courseId, path) {
+        if (!courseId || !path || !window.LrnData || !window.LrnCurriculumMap) return null;
+        var course = null;
+        for (var i = 0; i < window.LrnData.courses.length; i++) {
+          if (window.LrnData.courses[i].id === courseId) {
+            course = window.LrnData.courses[i];
+            break;
+          }
+        }
+        if (!course) return null;
+
+        var groups = (window.LrnCurriculumMap.courseMaps && window.LrnCurriculumMap.courseMaps[course.id]) || [];
+        if (!groups.length) return null;
+
+        var lessons = [];
+        groups.forEach(function (group, groupIndex) {
+          group.lessons.forEach(function (lesson, lessonIndex) {
+            lessons.push({
+              path: lesson.path,
+              title: lesson.title,
+              groupTitle: group.title,
+              groupIndex: groupIndex,
+              lessonIndex: lessonIndex,
+              decision: group.decision || 'core',
+              note: group.note || ''
+            });
+          });
+        });
+
+        var currentIndex = -1;
+        for (var j = 0; j < lessons.length; j++) {
+          if (lessons[j].path === path) {
+            currentIndex = j;
+            break;
+          }
+        }
+        if (currentIndex < 0) return null;
+
+        var completed = 0;
+        var visited = 0;
+        lessons.forEach(function (lesson) {
+          var state = lrnLessonProgressState(lesson.path);
+          if (state === 'complete') completed++;
+          if (state === 'complete' || state === 'in-progress') visited++;
+        });
+
+        return {
+          course: course,
+          groups: groups,
+          lessons: lessons,
+          currentIndex: currentIndex,
+          current: lessons[currentIndex],
+          prev: currentIndex > 0 ? lessons[currentIndex - 1] : null,
+          next: currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null,
+          completed: completed,
+          visited: visited,
+          total: lessons.length,
+          percent: lessons.length ? Math.round((completed / lessons.length) * 100) : 0
+        };
+      }
+
+      function lrnLessonProgressState(path) {
+        if (!window.AIFSProgress || !window.AIFSProgress.getLessonProgress) return 'planned';
+        var progress = window.AIFSProgress.getLessonProgress(path);
+        if (progress && progress.completedAt) return 'complete';
+        if (progress && progress.visitedAt) return 'in-progress';
+        return 'planned';
+      }
+
+      function lrnLessonProgressLabel(path) {
+        var state = lrnLessonProgressState(path);
+        if (state === 'complete') return 'erledigt';
+        if (state === 'in-progress') return 'gestartet';
+        return 'offen';
+      }
+
+      function lrnLessonHref(path) {
+        var href = 'lesson.html?path=' + encodeURIComponent(path);
+        if (lrnContext && lrnContext.course) {
+          href += '&course=' + encodeURIComponent(lrnContext.course.id);
+        }
+        return href;
+      }
+
+      function lrnLessonOrdinal(index) {
+        return String(index + 1).padStart(2, '0') + '/' + String(lrnContext.total).padStart(2, '0');
+      }
+
+      function lrnDecisionLabel(decision) {
+        if (decision === 'condense') return 'zusammengefasst';
+        if (decision === 'optional') return 'optional';
+        return 'Kern';
+      }
+
+      function buildLrnSidebar(sidebar) {
+        var html = '<div class="lrn-sidebar-overview">';
+        html += '<a class="lrn-sidebar-back" href="index.html">&larr; LRN Cockpit</a>';
+        html += '<div class="lrn-sidebar-code">' + escapeHtml(lrnContext.course.id) + '</div>';
+        html += '<div class="lrn-sidebar-title">' + escapeHtml(lrnContext.course.title) + '</div>';
+        html += '<div class="lrn-sidebar-progress" aria-hidden="true"><span style="width:' + lrnContext.percent + '%"></span></div>';
+        html += '<div class="lrn-sidebar-stat">' + lrnContext.completed + '/' + lrnContext.total + ' Lessons im Kurs erledigt</div>';
+        html += '</div>';
+
+        lrnContext.groups.forEach(function (group, groupIndex) {
+          html += '<div class="lrn-sidebar-subcourse">';
+          html += '<div class="lrn-sidebar-subcourse-title">' + escapeHtml(group.title) + ' · ' + escapeHtml(lrnDecisionLabel(group.decision)) + '</div>';
+          group.lessons.forEach(function (lesson) {
+            var flatIndex = -1;
+            for (var i = 0; i < lrnContext.lessons.length; i++) {
+              if (lrnContext.lessons[i].path === lesson.path && lrnContext.lessons[i].groupIndex === groupIndex) {
+                flatIndex = i;
+                break;
+              }
+            }
+            var active = lesson.path === lessonPath;
+            var state = lrnLessonProgressState(lesson.path);
+            html += '<a class="sidebar-lesson-link' + (active ? ' active' : '') + '" href="' + lrnLessonHref(lesson.path) + '"' + (active ? ' aria-current="page"' : '') + '>';
+            html += '<span class="sidebar-lesson-dot ' + state + '"></span>';
+            html += '<span class="lrn-sidebar-lesson-text">';
+            html += '<span>' + escapeHtml(lesson.title) + '</span>';
+            html += '<span class="lrn-sidebar-lesson-meta">' + (flatIndex >= 0 ? lrnLessonOrdinal(flatIndex) + ' · ' : '') + escapeHtml(lrnLessonProgressLabel(lesson.path)) + '</span>';
+            html += '</span>';
+            html += '</a>';
+          });
+          html += '</div>';
+        });
+
+        sidebar.innerHTML = html;
+      }
+
       function buildSidebar() {
         var sidebar = document.getElementById('lessonSidebar');
         if (!sidebar || typeof PHASES === 'undefined') return;
+
+        if (lrnContext) {
+          buildLrnSidebar(sidebar);
+          return;
+        }
 
         var html = '';
 
@@ -2062,7 +2370,7 @@
             var suggestion = suggestLesson(path);
             var msg = 'Could not fetch the lesson at <code>' + escapeHtml(path) + '</code>.';
             if (suggestion) {
-              msg += ' Did you mean <a href="lesson.html?path=' + encodeURIComponent(suggestion.path) + '">'
+              msg += ' Did you mean <a href="' + (lrnContext ? lrnLessonHref(suggestion.path) : 'lesson.html?path=' + encodeURIComponent(suggestion.path)) + '">'
                 + escapeHtml(suggestion.lessonName || suggestion.path) + '</a>? '
                 + '(The link may have been cut off.)';
             } else {
@@ -2099,7 +2407,7 @@
 
       function showError(title, msg, showCatalog) {
         var el = document.getElementById('lessonContent');
-        var actions = '<a href="index.html" class="btn btn-primary">Back to Home</a>';
+        var actions = '<a href="index.html" class="btn btn-primary">' + (lrnContext ? 'Back to LRN Cockpit' : 'Back to Home') + '</a>';
         if (showCatalog) {
           actions += ' <a href="catalog.html" class="btn">Browse all lessons</a>';
         }
@@ -2118,7 +2426,7 @@
             return p.replace(/[*_`]/g, '').slice(0, 200);
           }
         }
-        return '393 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
+        return '405 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
       }
 
       // Client-side per-lesson SEO. Robust indexing comes with build-time
@@ -2127,6 +2435,9 @@
         var ORIGIN = 'https://aiengineeringfromscratch.com';
         var path = new URLSearchParams(location.search).get('path') || '';
         var url = ORIGIN + '/lesson.html?path=' + path;
+        if (lrnContext && lrnContext.course) {
+          url += '&course=' + encodeURIComponent(lrnContext.course.id);
+        }
         var desc = lessonDescription(md);
         var fullTitle = title + ' · Agentic Software Engineering at LHIND';
         var set = function (sel, val) { var m = document.querySelector(sel); if (m) m.setAttribute('content', val); };
@@ -2166,12 +2477,14 @@
 
       function renderLesson(md) {
         var el = document.getElementById('lessonContent');
-        var html = parseMd(md);
+        var html = '';
+        if (lrnContext) html += renderLrnLessonBanner();
+        html += parseMd(md);
         html += '<div class="ai-panels" id="aiPanels"></div>';
         html = addBottomNav(html);
         el.innerHTML = '<article class="lesson-article">' + html + '</article>';
 
-        document.title = extractTitle(md) + ' - Agentic Software Engineering at LHIND';
+        document.title = extractTitle(md) + (lrnContext ? ' · ' + lrnContext.course.id + ' LRN' : ' - Agentic Software Engineering at LHIND');
         updateLessonSeo(extractTitle(md), md);
 
         initCodeCopy();
@@ -2190,6 +2503,26 @@
             }
           });
         });
+      }
+
+      function renderLrnLessonBanner() {
+        if (!lrnContext) return '';
+        var current = lrnContext.current;
+        var html = '<section class="lrn-lesson-banner" aria-label="LRN Kurskontext">';
+        html += '<div class="lrn-lesson-kicker">';
+        html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnContext.course.id) + '</span>';
+        html += '<span class="lrn-lesson-pill">Lesson ' + escapeHtml(lrnLessonOrdinal(lrnContext.currentIndex)) + '</span>';
+        html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnLessonProgressLabel(current.path)) + '</span>';
+        html += '</div>';
+        html += '<h2>' + escapeHtml(lrnContext.course.title) + '</h2>';
+        html += '<p><strong>Subkurs:</strong> ' + escapeHtml(current.groupTitle) + '. Diese Lesson ist Teil des kuratierten LRN-Kurspfads; die globale Phasen-Navigation ist hier ausgeblendet.</p>';
+        html += '<div class="lrn-lesson-banner__actions">';
+        html += '<a class="lrn-lesson-action" href="index.html">Zur Kursübersicht</a>';
+        if (lrnContext.prev) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.prev.path) + '">Vorherige Lesson</a>';
+        if (lrnContext.next) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.next.path) + '">Nächste Lesson</a>';
+        html += '</div>';
+        html += '</section>';
+        return html;
       }
 
       function buildTOC() {
@@ -3310,6 +3643,7 @@
       }
 
       function addBottomNav(html) {
+        if (lrnContext) return addLrnBottomNav(html);
         if (currentLessonIndex < 0) return html;
 
         // Skip lessons in hidden phases so the bottom nav never walks into them.
@@ -3341,9 +3675,41 @@
         return html + nav;
       }
 
+      function addLrnBottomNav(html) {
+        var nav = '<div class="lesson-nav-bottom">';
+        if (lrnContext.prev) {
+          nav += '<a class="lesson-nav-btn prev" href="' + lrnLessonHref(lrnContext.prev.path) + '">';
+          nav += '<span class="nav-label">&larr; Vorherige LRN-Lesson</span>';
+          nav += '<span class="nav-title">' + escapeHtml(lrnContext.prev.title) + '</span>';
+          nav += '</a>';
+        } else {
+          nav += '<div></div>';
+        }
+        if (lrnContext.next) {
+          nav += '<a class="lesson-nav-btn next" href="' + lrnLessonHref(lrnContext.next.path) + '">';
+          nav += '<span class="nav-label">Nächste LRN-Lesson &rarr;</span>';
+          nav += '<span class="nav-title">' + escapeHtml(lrnContext.next.title) + '</span>';
+          nav += '</a>';
+        } else {
+          nav += '<a class="lesson-nav-btn next" href="index.html">';
+          nav += '<span class="nav-label">Kurs abgeschlossen</span>';
+          nav += '<span class="nav-title">Zurück zum LRN Course Cockpit</span>';
+          nav += '</a>';
+        }
+        nav += '</div>';
+        return html + nav;
+      }
+
       function renderAIPanels() {
         var container = document.getElementById('aiPanels');
         if (!container || !lessonPath) return;
+
+        if (lrnContext) {
+          renderQuizPanel(container);
+          renderLearningPathPanel(container);
+          renderContinuePanel(container);
+          return;
+        }
 
         // Notebook first — it's the centerpiece, right after the lesson text.
         renderCodePanel(container);
@@ -3778,6 +4144,7 @@
       };
 
       function renderLearningPathPanel(container) {
+        if (lrnContext) return renderLrnLearningPathPanel(container);
         if (currentLessonIndex < 0 || typeof PHASES === 'undefined') return;
 
         var panel = document.createElement('div');
@@ -3860,7 +4227,57 @@
         container.appendChild(panel);
       }
 
+      function renderLrnLearningPathPanel(container) {
+        var panel = document.createElement('div');
+        panel.className = 'ai-panel';
+
+        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">P</div><div class="ai-panel-title">LRN Kurspfad</div></div>';
+        html += '<div class="ai-panel-subtitle">' + escapeHtml(lrnContext.course.id) + ': ' + escapeHtml(lrnContext.course.title) + '</div>';
+
+        var windowSize = 7;
+        var startIdx = Math.max(0, lrnContext.currentIndex - 3);
+        var endIdx = Math.min(lrnContext.lessons.length, startIdx + windowSize);
+        startIdx = Math.max(0, endIdx - windowSize);
+        var visible = lrnContext.lessons.slice(startIdx, endIdx);
+        var hiddenBefore = startIdx;
+        var hiddenAfter = lrnContext.lessons.length - endIdx;
+
+        html += '<div class="learning-timeline">';
+        if (hiddenBefore > 0) {
+          html += '<span class="timeline-ellipsis" title="' + hiddenBefore + ' vorherige Lessons">&laquo; ' + hiddenBefore + '</span>';
+          html += '<div class="timeline-line done"></div>';
+        }
+        visible.forEach(function (item, vIdx) {
+          var idx = startIdx + vIdx;
+          var isCurrent = idx === lrnContext.currentIndex;
+          var isPrev = idx < lrnContext.currentIndex;
+          var cls = isCurrent ? 'current' : isPrev ? 'prev' : '';
+
+          if (vIdx > 0) {
+            var lineCls = idx <= lrnContext.currentIndex ? (idx === lrnContext.currentIndex ? 'active' : 'done') : '';
+            html += '<div class="timeline-line ' + lineCls + '"></div>';
+          }
+
+          html += '<a class="timeline-item ' + cls + '" href="' + lrnLessonHref(item.path) + '" title="' + escapeAttr(item.title) + '">';
+          html += '<div class="timeline-dot"></div>';
+          html += '<div class="timeline-label">' + escapeHtml(item.title) + '</div>';
+          html += '</a>';
+        });
+        if (hiddenAfter > 0) {
+          html += '<div class="timeline-line"></div>';
+          html += '<span class="timeline-ellipsis" title="' + hiddenAfter + ' weitere Lessons">' + hiddenAfter + ' &raquo;</span>';
+        }
+        html += '</div>';
+
+        html += '<div class="phase-progress-bar"><div class="phase-progress-fill" style="width:' + lrnContext.percent + '%"></div></div>';
+        html += '<div class="phase-progress-text">LRN-Fortschritt: ' + lrnContext.completed + ' von ' + lrnContext.total + ' Lessons im Kurs erledigt</div>';
+
+        panel.innerHTML = html;
+        container.appendChild(panel);
+      }
+
       function renderContinuePanel(container) {
+        if (lrnContext) return renderLrnContinuePanel(container);
         if (currentLessonIndex < 0) return;
 
         var panel = document.createElement('div');
@@ -3890,6 +4307,27 @@
         html += '</div>';
 
         html += '<div class="continue-callout">Run <code>/find-your-level</code> in Claude, Cursor, Codex, OpenClaw, Hermes, or any agent with the curriculum skills installed for a personalized learning path</div>';
+        html += '</div>';
+
+        panel.innerHTML = html;
+        container.appendChild(panel);
+      }
+
+      function renderLrnContinuePanel(container) {
+        var panel = document.createElement('div');
+        panel.className = 'ai-panel';
+
+        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">N</div><div class="ai-panel-title">Weiter im LRN-Kurs</div></div>';
+        html += '<div class="continue-panel">';
+        html += '<div class="continue-links">';
+        if (lrnContext.next) {
+          html += '<a class="continue-link" href="' + lrnLessonHref(lrnContext.next.path) + '">Nächste Lesson: ' + escapeHtml(lrnContext.next.title) + '</a>';
+        } else {
+          html += '<div class="phase-finished">LRN-Kurs vollständig durchlaufen</div>';
+        }
+        html += '<a class="continue-link" href="index.html">Zurück zum LRN Course Cockpit</a>';
+        html += '</div>';
+        html += '<div class="continue-callout">Dieser Kurs zeigt nur die Lessons, die für <code>' + escapeHtml(lrnContext.course.id) + '</code> kuratiert wurden. Weitere Curriculum-Lessons bleiben im Katalog, sind aber nicht Teil dieses LRN-Pfads.</div>';
         html += '</div>';
 
         panel.innerHTML = html;
