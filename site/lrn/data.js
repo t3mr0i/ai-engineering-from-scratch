@@ -862,7 +862,7 @@ window.LrnData = {
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
-        { label: "Deepen", courses: ["PROMPT-01", "AI-18", "AI-23", "AI-33", "AI-39"] }
+        { label: "Deepen", courses: ["AI-06", "AI-22", "PROMPT-01", "AI-18", "AI-23", "AI-33", "AI-39"] }
       ]
     },
     {
