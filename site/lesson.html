@@ -1720,19 +1720,6 @@
       border-bottom-color: var(--blueprint);
     }
 
-    .continue-callout {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      letter-spacing: 0.06em;
-      color: var(--ink-soft);
-      background: var(--code-bg);
-      padding: 12px 18px;
-      border: 1px solid var(--rule-soft);
-      max-width: 480px;
-    }
-
-    .continue-callout code { color: var(--blueprint); }
-
     .panel-loading {
       font-family: var(--font-mono);
       font-size: 0.78rem;
@@ -4344,7 +4331,6 @@
         html += '<a class="continue-link" href="catalog.html">Full course catalog</a>';
         html += '</div>';
 
-        html += '<div class="continue-callout">Run <code>/find-your-level</code> in Claude, Cursor, Codex, OpenClaw, Hermes, or any agent with the curriculum skills installed for a personalized learning path</div>';
         html += '</div>';
 
         panel.innerHTML = html;
@@ -4365,7 +4351,6 @@
         }
         html += '<a class="continue-link" href="index.html">Zurück zum LRN Course Cockpit</a>';
         html += '</div>';
-        html += '<div class="continue-callout">Dieser Syllabus zeigt nur die Aktivitäten, die für <code>' + escapeHtml(lrnContext.course.id) + '</code> kuratiert wurden. Weitere Curriculum-Lessons bleiben im Katalog, sind aber nicht Teil dieses LRN-Pfads.</div>';
         html += '</div>';
 
         panel.innerHTML = html;

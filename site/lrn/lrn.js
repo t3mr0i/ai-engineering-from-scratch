@@ -229,13 +229,12 @@
   var lastVisibleSignature = null;
 
   function renderCourses(computed) {
-    var visible = filterCourses(computed.entries);
-    visible = applySearch(visible);
+    var term = searchTerm();
+    var visible = term ? applySearch(globalCourseEntries()) : filterCourses(computed.entries);
 
     if (els.resultLine) {
-      els.resultLine.textContent = visible.length === 1
-        ? "1 Kurs"
-        : visible.length + " Kurse";
+      els.resultLine.textContent = (visible.length === 1 ? "1 Kurs" : visible.length + " Kurse")
+        + (term ? " · globale Suche" : "");
     }
 
     if (!visible.length) {
@@ -245,9 +244,13 @@
       // When "Empfohlen" is empty but optional courses exist, the level/interest
       // combination simply has no on-path match — point the user at Optional.
       var hasOptional = computed.entries.some(function (entry) { return entry.kind === "optional"; });
-      empty.textContent = (state.filter === "recommended" && hasOptional)
-        ? "Für dieses Level und Interesse gibt es keinen Kurs direkt auf dem Pfad. Schau unter 'Optional' für angrenzende Kurse."
-        : "Keine Kurse in diesem Filter. Wechsle auf 'Alle' oder passe die Suche an.";
+      if (term) {
+        empty.textContent = "Keine Kurse zu dieser Suche.";
+      } else if (state.filter === "recommended" && hasOptional) {
+        empty.textContent = "Für dieses Level und Interesse gibt es keinen Kurs direkt auf dem Pfad. Schau unter 'Optional' für angrenzende Kurse.";
+      } else {
+        empty.textContent = "Keine Kurse in diesem Filter. Wechsle auf 'Alle' oder passe die Suche an.";
+      }
       replaceChildren(els.courseGrid, [empty]);
       return;
     }
@@ -264,11 +267,38 @@
   }
 
   function applySearch(entries) {
-    var term = els.searchInput ? els.searchInput.value.trim().toLowerCase() : "";
+    var term = searchTerm();
     if (!term) return entries;
     return entries.filter(function (entry) {
-      var course = entry.course;
-      return (course.title + " " + course.summary).toLowerCase().indexOf(term) !== -1;
+      return courseSearchText(entry.course).indexOf(term) !== -1;
+    });
+  }
+
+  function searchTerm() {
+    return els.searchInput ? els.searchInput.value.trim().toLowerCase() : "";
+  }
+
+  function courseSearchText(course) {
+    return [
+      course.id,
+      course.title,
+      course.summary,
+      course.format,
+      course.status,
+      course.source,
+      (course.modules || []).join(" ")
+    ].join(" ").toLowerCase();
+  }
+
+  function globalCourseEntries() {
+    return data.courses.map(function (course) {
+      return {
+        course: course,
+        score: 0,
+        kind: "catalog",
+        interestMatch: false,
+        progress: courseProgress(course)
+      };
     });
   }
 
@@ -300,12 +330,18 @@
     meta.className = "course-card__meta";
     meta.appendChild(lucideIcon("clock"));
     var metaText = document.createElement("span");
-    metaText.textContent = (entry.kind === "recommended" ? "Empfohlen" : "Optional")
+    metaText.textContent = courseKindLabel(entry.kind)
       + " · " + entry.progress.lessonCount + " Aktivitäten";
     meta.appendChild(metaText);
 
     card.append(head, meta, progressMeter(entry.progress.percent, "Fortschritt " + course.title));
     return card;
+  }
+
+  function courseKindLabel(kind) {
+    if (kind === "recommended") return "Empfohlen";
+    if (kind === "optional") return "Optional";
+    return "Katalog";
   }
 
   function compute() {
