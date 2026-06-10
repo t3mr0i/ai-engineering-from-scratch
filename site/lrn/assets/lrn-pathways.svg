@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+  <title id="title">LHIND LRN Pathfinder</title>
+  <desc id="desc">Diagramm mit drei Schritten: Profil, externer Level und LRN-Kursfortschritt.</desc>
+  <defs>
+    <style>
+      .paper{fill:#f8fafc}.ink{fill:#102044}.muted{fill:#607087}.blue{fill:#05164d}.soft{fill:#e8eef8}.rule{stroke:#c8d2e1;stroke-width:1.4}.strong{stroke:#05164d;stroke-width:2}.mono{font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.04em}.sans{font:700 25px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.body{font:500 15px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    </style>
+  </defs>
+  <rect class="paper" x="0" y="0" width="720" height="420" rx="8"/>
+  <path class="rule" d="M80 98h560M80 205h560M80 312h560"/>
+  <g transform="translate(66 58)">
+    <rect class="soft" x="0" y="0" width="160" height="72" rx="8"/>
+    <text class="mono muted" x="18" y="24">01 PROFIL</text>
+    <text class="sans ink" x="18" y="52">Rolle</text>
+  </g>
+  <g transform="translate(280 58)">
+    <rect fill="#f8fafc" x="0" y="0" width="160" height="72" rx="8" stroke="#c8d2e1"/>
+    <text class="mono muted" x="18" y="24">02 LEVEL</text>
+    <text class="sans ink" x="18" y="52">1 bis 5</text>
+  </g>
+  <g transform="translate(494 58)">
+    <rect fill="#f8fafc" x="0" y="0" width="160" height="72" rx="8" stroke="#c8d2e1"/>
+    <text class="mono muted" x="18" y="24">03 PROGRESS</text>
+    <text class="sans ink" x="18" y="52">LRN-Kurse</text>
+  </g>
+  <path class="strong" fill="none" d="M226 94h54M440 94h54"/>
+  <path class="blue" d="M276 88l10 6-10 6zM490 88l10 6-10 6z"/>
+  <g transform="translate(76 172)">
+    <circle class="blue" cx="20" cy="20" r="20"/>
+    <text x="20" y="25" text-anchor="middle" fill="#f8fafc" font="700 16px system-ui">A</text>
+    <text class="body ink" x="54" y="16">Acquire</text>
+    <text class="mono muted" x="54" y="38">Grundlagen sichern</text>
+  </g>
+  <g transform="translate(286 172)">
+    <circle fill="#8f7231" cx="20" cy="20" r="20"/>
+    <text x="20" y="25" text-anchor="middle" fill="#f8fafc" font="700 16px system-ui">D</text>
+    <text class="body ink" x="54" y="16">Deepen</text>
+    <text class="mono muted" x="54" y="38">Praxis im Kontext</text>
+  </g>
+  <g transform="translate(494 172)">
+    <circle fill="#2f7a58" cx="20" cy="20" r="20"/>
+    <text x="20" y="25" text-anchor="middle" fill="#f8fafc" font="700 16px system-ui">C</text>
+    <text class="body ink" x="54" y="16">Create</text>
+    <text class="mono muted" x="54" y="38">Skalieren &amp; teilen</text>
+  </g>
+  <g transform="translate(86 278)">
+    <rect fill="#f8fafc" stroke="#c8d2e1" x="0" y="0" width="548" height="68" rx="8"/>
+    <text class="mono muted" x="18" y="25">MAPPING</text>
+    <text class="body ink" x="18" y="50">Profil + Interessen + externer Score bestimmen Reihenfolge, Kursdetail und Fortschritt.</text>
+  </g>
+</svg>

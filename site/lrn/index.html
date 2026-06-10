@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <script src="../gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>LHIND AI LRN Course Cockpit</title>
+  <meta name="description" content="Rollenbasiertes AI LRN-Kurscockpit für externe Assessment-Level, Kursauswahl und Lernfortschritt bei LHIND.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;650;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="lrn.css">
+</head>
+<body>
+  <a class="skip-link" href="#cockpit">Direkt zum Kurscockpit</a>
+  <header class="nav-edge" aria-label="Seitennavigation">
+    <a class="wordmark" href="../index.html">
+      <span class="wordmark__mark" aria-hidden="true">AI</span>
+      <span>LHIND LRN Course Cockpit</span>
+    </a>
+    <a class="nav-edge__action" href="../assessment.html">Altes Assessment</a>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero__copy">
+        <h1 id="heroTitle">AI-Kurse nach Level</h1>
+        <p>Das Self-Assessment kommt von außen als Level 1 bis 5. Diese Seite übersetzt Profil, Interessen und Level in LRN-Kurse, Subkurse und echte Curriculum-Lessons aus dem vorhandenen Kursbestand.</p>
+        <div class="source-strip" aria-label="Quellen">
+          <span class="source-pill">Externer Score: 1-5</span>
+          <span class="source-pill">XLSX: LRN-Kursliste</span>
+          <span class="source-pill">Curriculum: kuratiertes Mapping</span>
+        </div>
+      </div>
+      <figure class="hero__figure">
+        <img src="assets/lrn-pathways.svg" width="720" height="420" alt="Diagramm: Rolle und externer Level führen zu LRN-Kurspfad und Fortschritt.">
+      </figure>
+    </section>
+
+    <section class="workbench" id="cockpit" aria-label="LRN Course Cockpit">
+      <aside class="pane pane--sticky" aria-labelledby="setupTitle">
+        <div class="pane__head">
+          <h2 id="setupTitle">Profil</h2>
+          <span class="meta-label" id="profileCount"></span>
+        </div>
+        <div class="pane__body">
+          <div class="profile-grid" id="profileGrid" role="group" aria-label="Profil auswählen"></div>
+
+          <div class="section-block">
+            <h2 class="section-title">Assessment-Level</h2>
+            <p class="control-copy">Extern übergebener Wert. Die Seite akzeptiert auch <code>?level=3&amp;profile=tc</code>.</p>
+            <div class="level-grid" id="levelGrid" role="group" aria-label="Externes Assessment-Level auswählen"></div>
+          </div>
+
+          <div class="section-block">
+            <h2 class="section-title">Interessen</h2>
+            <div class="interest-grid" id="interestGrid" role="group" aria-label="Interessen auswählen"></div>
+          </div>
+
+          <div class="action-row">
+            <button class="quiet-btn" type="button" id="resetBtn">Auswahl zurücksetzen</button>
+            <button class="quiet-btn" type="button" id="copyBtn">Pfad kopieren</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="pane" aria-labelledby="cockpitTitle">
+        <div class="pane__head">
+          <h2 id="cockpitTitle">Kurscockpit</h2>
+          <span class="meta-label">Level 1 bis 5</span>
+        </div>
+        <div class="result-summary" aria-live="polite">
+          <div class="score-line">
+            <span class="meta-label">Externer AI-Level</span>
+            <strong class="score-number" id="scoreNumber">1/5</strong>
+          </div>
+          <p class="score-copy" id="scoreCopy">Level setzen, um Kursreihenfolge und Fortschritt zu berechnen.</p>
+        </div>
+        <div class="pane__body">
+          <h2 class="section-title">Curriculum-Fortschritt</h2>
+          <div id="progressPanel"></div>
+
+          <div class="section-block">
+            <h2 class="section-title">Empfohlener LRN-Pfad</h2>
+            <div class="track-grid" id="trackGrid"></div>
+          </div>
+
+          <div class="section-block">
+            <h2 class="section-title">Kursmodule für dieses Profil</h2>
+            <div class="filters" id="courseFilters" aria-label="Kursfilter"></div>
+            <div class="course-grid" id="courseGrid"></div>
+          </div>
+
+          <div class="section-block">
+            <h2 class="section-title">Kursdetail</h2>
+            <div id="courseDetail"></div>
+          </div>
+
+          <div class="section-block">
+            <h2 class="section-title">Zielbild je AI-Fähigkeit</h2>
+            <div class="dimension-grid" id="capabilityGrid"></div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="foot-line">
+    <p>LHIND AI LRN Course Cockpit · Kuratiertes Mapping auf bestehende Curriculum-Lessons · Fortschritt kommt aus dem Lesson-/LRN-Tracking.</p>
+  </footer>
+  <div class="sr-status" id="srStatus" aria-live="polite"></div>
+
+  <script src="../progress.js"></script>
+  <script src="data.js"></script>
+  <script src="curriculum-map.js"></script>
+  <script src="lrn.js"></script>
+</body>
+</html>
