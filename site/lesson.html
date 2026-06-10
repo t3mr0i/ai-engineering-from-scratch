@@ -3501,14 +3501,14 @@
           var el = document.getElementById('codeContent');
           var heavy = src && PY_NO_WASM.test(src);
           var note = heavy
-            ? 'This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU, so its cells won’t fully run in the browser — but you can read and edit the notebook here, then run it locally.'
-            : 'Edit the cells and run them in your browser. The Python kernel runs locally via WebAssembly — nothing leaves your machine.';
+            ? 'This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU. The notebook shows the saved output already — open it to read and edit; run it locally for live results.'
+            : 'The notebook opens with the results already shown. Edit any cell and press ▶ to re-run it live in your browser (the Python kernel runs locally — nothing leaves your machine).';
 
           el.innerHTML =
             '<div class="nb-placeholder" id="nbPlaceholder">' +
             '<div class="nb-hint">' + note + '</div>' +
-            '<button class="nb-start-btn" id="nbStart">▶ Start notebook</button>' +
-            '<div class="nb-hint" style="opacity:.7">First start loads the Python runtime (a few seconds).</div>' +
+            '<button class="nb-start-btn" id="nbStart">Open notebook</button>' +
+            '<div class="nb-hint" style="opacity:.7">Results are pre-computed and visible immediately. Re-running a cell loads the Python runtime (a few seconds).</div>' +
             '</div>';
 
           document.getElementById('nbStart').addEventListener('click', function () {
