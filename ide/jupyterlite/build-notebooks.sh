@@ -33,7 +33,7 @@ for py in $(find "$REPO/phases" -name main.py); do
 
   # 2. execute to bake outputs (best effort, short timeout)
   if "$VENV/bin/jupyter" nbconvert --to notebook --execute \
-        --ExecutePreprocessor.timeout=60 \
+        --ExecutePreprocessor.timeout=90 \
         --output "$out" "$out" >/dev/null 2>&1; then
     executed=$((executed+1))
   else

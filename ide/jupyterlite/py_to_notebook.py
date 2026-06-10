@@ -38,7 +38,7 @@ def split_source(src: str):
         ):
             continue
 
-        seg = ast.get_source_segment(src, node)
+        seg = _node_source(src, node)
         if seg is None:
             continue
 
@@ -72,9 +72,29 @@ def split_source(src: str):
     return docstring, setup_src, run_src
 
 
+def _node_source(src: str, node) -> str:
+    """Source of a top-level node INCLUDING its decorators.
+
+    ast.get_source_segment starts at node.lineno, which for a decorated
+    def/class is the `def`/`class` line — dropping @dataclass, @property, etc.
+    That silently turns @dataclass classes into plain classes (no __init__),
+    breaking the run cell. We extend the start up to the first decorator line.
+    """
+    seg = ast.get_source_segment(src, node)
+    if seg is None:
+        return None
+    decos = getattr(node, "decorator_list", None)
+    if not decos:
+        return seg
+    lines = src.splitlines()
+    start = min(d.lineno for d in decos) - 1   # 0-based, first decorator
+    end = node.end_lineno                       # 1-based inclusive
+    return "\n".join(lines[start:end])
+
+
 def _join_body(src: str, body) -> str:
     """Source of a block's body statements, dedented to column 0."""
-    segs = [ast.get_source_segment(src, b) for b in body]
+    segs = [_node_source(src, b) for b in body]
     segs = [s for s in segs if s]
     if not segs:
         return ""
