@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <script src="gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LHIND · Lesson - AI Engineering from Scratch</title>
+  <title>Lesson · Agentic Software Engineering at LHIND</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
   <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum by Lufthansa Industry Solutions. 393 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
-  <meta property="og:title" content="AI Engineering from Scratch · Lesson">
+  <meta property="og:title" content="Agentic Software Engineering at LHIND · Lesson">
   <meta property="og:description" content="393 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AI Engineering from Scratch">
+  <meta name="twitter:title" content="Agentic Software Engineering at LHIND">
   <meta name="twitter:description" content="393 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1293,6 +1293,72 @@
       gap: 12px;
     }
 
+    /* Embedded JupyterLite notebook (loaded on demand inside the panel). */
+    .nb-embed {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--rule-soft);
+      background: var(--code-bg);
+    }
+    .nb-embed-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--rule-soft);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-mute);
+    }
+    .nb-embed-bar .spacer { flex: 1; }
+    .nb-embed-bar a { color: var(--blueprint); text-decoration: none; }
+    .nb-embed-bar a:hover { text-decoration: underline; }
+    .nb-frame {
+      width: 100%;
+      height: 640px;
+      border: 0;
+      display: block;
+      background: var(--code-bg);
+    }
+    /* The placeholder shown before the notebook is loaded (on-demand). */
+    .nb-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      min-height: 240px;
+      border: 1px solid var(--rule-soft);
+      background: var(--code-bg);
+      text-align: center;
+      padding: 32px 20px;
+    }
+    .nb-placeholder .nb-hint {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-mute);
+      max-width: 460px;
+      line-height: 1.5;
+    }
+    .nb-start-btn {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--paper, #fff);
+      background: var(--blueprint);
+      border: 1px solid var(--blueprint);
+      padding: 10px 22px;
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+    .nb-start-btn:hover { filter: brightness(1.1); }
+    .nb-loading {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--ink-mute);
+    }
+
     .code-editor {
       font-family: var(--font-mono);
       font-size: 0.82rem;
@@ -2021,7 +2087,7 @@
         var path = new URLSearchParams(location.search).get('path') || '';
         var url = ORIGIN + '/lesson.html?path=' + path;
         var desc = lessonDescription(md);
-        var fullTitle = title + ' · AI Engineering from Scratch';
+        var fullTitle = title + ' · Agentic Software Engineering at LHIND';
         var set = function (sel, val) { var m = document.querySelector(sel); if (m) m.setAttribute('content', val); };
 
         var canon = document.querySelector('link[rel="canonical"]');
@@ -2042,7 +2108,7 @@
           '@graph': [
             { '@type': 'LearningResource', name: title, description: desc, url: url,
               inLanguage: 'en', isAccessibleForFree: true,
-              isPartOf: { '@type': 'Course', name: 'AI Engineering from Scratch', url: ORIGIN } },
+              isPartOf: { '@type': 'Course', name: 'Agentic Software Engineering at LHIND', url: ORIGIN } },
             { '@type': 'BreadcrumbList', itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: ORIGIN },
               { '@type': 'ListItem', position: 2, name: 'Catalog', item: ORIGIN + '/catalog.html' },
@@ -2064,7 +2130,7 @@
         html = addBottomNav(html);
         el.innerHTML = '<article class="lesson-article">' + html + '</article>';
 
-        document.title = extractTitle(md) + ' - AI Engineering from Scratch';
+        document.title = extractTitle(md) + ' - Agentic Software Engineering at LHIND';
         updateLessonSeo(extractTitle(md), md);
 
         initCodeCopy();
@@ -3370,23 +3436,63 @@
       function renderCodePanel(container) {
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
-        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">C</div><div class="ai-panel-title">Run the Code</div></div><div class="ai-panel-subtitle">Edit and run this lesson in your browser</div><div id="codeContent" class="panel-loading">Loading code…</div>';
+        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">C</div><div class="ai-panel-title">Run the Code</div></div><div class="ai-panel-subtitle">A live Jupyter notebook, right here in your browser</div><div id="codeContent" class="panel-loading">Loading code…</div>';
         container.appendChild(panel);
 
         var codeUrl = lessonPath + '/code/main.py';
         var gitlabUrl = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath;
-        // JupyterLite: open this lesson as a notebook, in-browser (WASM kernel),
-        // served from the same site under jupyterlite/. No server, no login.
-        var notebookUrl = 'jupyterlite/lab/index.html?path=' + lessonPath + '.ipynb';
+        // JupyterLite single-notebook view, served from the same site under
+        // jupyterlite/. Embedded in-page via iframe (same origin → no CORS,
+        // no mixed-content, no login). Loaded on demand to keep the page fast.
+        var notebookUrl = 'jupyterlite/notebooks/index.html?path=' + lessonPath + '.ipynb';
+        var notebookFull = 'jupyterlite/lab/index.html?path=' + lessonPath + '.ipynb';
 
         fetch(codeUrl)
           .then(function (r) { if (!r.ok) throw new Error('no main.py'); return r.text(); })
-          .then(function (src) { mountPlayground(src); })
+          .then(function (src) { mountNotebook(src); })
           .catch(function () {
-            var el = document.getElementById('codeContent');
-            el.innerHTML = '<div class="panel-fallback"><a href="' + gitlabUrl + '" target="_blank" rel="noopener">View lesson on GitLab</a></div>';
+            // No main.py — still offer the notebook (it may exist) + GitLab.
+            mountNotebook(null);
           });
 
+        function mountNotebook(src) {
+          var el = document.getElementById('codeContent');
+          var heavy = src && PY_NO_WASM.test(src);
+          var note = heavy
+            ? 'This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU, so its cells won’t fully run in the browser — but you can read and edit the notebook here, then run it locally.'
+            : 'Edit the cells and run them in your browser. The Python kernel runs locally via WebAssembly — nothing leaves your machine.';
+
+          el.innerHTML =
+            '<div class="nb-placeholder" id="nbPlaceholder">' +
+            '<div class="nb-hint">' + note + '</div>' +
+            '<button class="nb-start-btn" id="nbStart">▶ Start notebook</button>' +
+            '<div class="nb-hint" style="opacity:.7">First start loads the Python runtime (a few seconds).</div>' +
+            '</div>';
+
+          document.getElementById('nbStart').addEventListener('click', function () {
+            el.innerHTML =
+              '<div class="nb-embed">' +
+              '<div class="nb-embed-bar">' +
+              '<span>Jupyter · ' + escapeHtml(lessonPath.split('/').pop()) + '</span>' +
+              '<span class="spacer"></span>' +
+              '<a href="' + notebookFull + '" target="_blank" rel="noopener">Open full screen ↗</a>' +
+              '<a href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
+              '</div>' +
+              '<div class="nb-loading" id="nbLoading" style="padding:14px">Loading notebook…</div>' +
+              '<iframe class="nb-frame" id="nbFrame" title="Lesson notebook" ' +
+              'src="' + notebookUrl + '" allow="cross-origin-isolated"></iframe>' +
+              '</div>';
+            var frame = document.getElementById('nbFrame');
+            frame.style.visibility = 'hidden';
+            frame.addEventListener('load', function () {
+              var l = document.getElementById('nbLoading');
+              if (l) l.style.display = 'none';
+              frame.style.visibility = 'visible';
+            });
+          });
+        }
+
+        // (legacy pyodide playground retained below but no longer mounted)
         function mountPlayground(src) {
           var el = document.getElementById('codeContent');
           var runLocal = 'python ' + lessonPath + '/code/main.py';
@@ -3399,7 +3505,7 @@
               '<div class="code-note">This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU, so it can’t run in the browser. Run it locally:</div>' +
               '<div class="code-card-run">' + escapeHtml(runLocal) + '</div>' +
               '<div class="code-card-actions">' +
-              '<a class="code-card-btn" href="' + notebookUrl + '" target="_blank" rel="noopener">Open in Notebook</a>' +
+              '<a class="code-card-btn" href="' + notebookFull + '" target="_blank" rel="noopener">Open in Notebook</a>' +
               '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
               '<button class="code-card-btn code-card-copy" data-command="' + escapeAttr(runLocal) + '">Copy command</button>' +
               '</div></div>';
@@ -3413,7 +3519,7 @@
             '<div class="code-card-actions">' +
             '<button class="code-card-btn code-run">▶ Run</button>' +
             '<button class="code-card-btn code-reset">Reset</button>' +
-            '<a class="code-card-btn" href="' + notebookUrl + '" target="_blank" rel="noopener">Open in Notebook</a>' +
+            '<a class="code-card-btn" href="' + notebookFull + '" target="_blank" rel="noopener">Open in Notebook</a>' +
             '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
             '<span class="code-run-status"></span>' +
             '</div>' +
