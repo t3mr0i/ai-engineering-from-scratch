@@ -1,0 +1,68 @@
+{
+  "lesson": "44-ai-for-sales-product-consulting",
+  "title": "AI for Sales and Product Consulting",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the main risk of AI-generated customer-facing material?",
+      "options": [
+        "It can invent context, overstate value, or weaken trust if unchecked",
+        "It is always too short",
+        "It never needs sources",
+        "It removes stakeholder review"
+      ],
+      "correct": 0,
+      "explanation": "Customer-facing outputs need source checks and review."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["customer signal", "CPU cache", "font size", "audio codec"],
+      "correct": 0,
+      "explanation": "Customer signal is a preparation and evidence signal."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked sales/product consulting AI plan with controls and rationale",
+        "An automatic contract",
+        "A final customer promise",
+        "A CRM replacement"
+      ],
+      "correct": 0,
+      "explanation": "The artifact helps choose controls before customer material is used."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["stakeholder review", "invent customer facts", "skip source check", "hide proposal risk"],
+      "correct": 0,
+      "explanation": "Stakeholder review protects customer trust."
+    },
+    {
+      "stage": "post",
+      "question": "When should customer-facing AI material require stronger controls?",
+      "options": [
+        "When proposal risk, weak customer evidence, or high impact is present",
+        "Only when the document is internal",
+        "Only when no customer is involved",
+        "Never; polished text is enough"
+      ],
+      "correct": 0,
+      "explanation": "Customer-facing material needs stronger controls when risk or impact is high."
+    },
+    {
+      "stage": "post",
+      "question": "What should AI improve in sales and product consulting?",
+      "options": [
+        "Preparation, value-story clarity, and follow-up discipline",
+        "Fact invention",
+        "Unreviewed proposal promises",
+        "Source-free claims"
+      ],
+      "correct": 0,
+      "explanation": "The lesson focuses on better preparation and trusted follow-up."
+    }
+  ]
+}

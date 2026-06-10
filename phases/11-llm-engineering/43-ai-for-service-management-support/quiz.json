@@ -1,0 +1,68 @@
+{
+  "lesson": "43-ai-for-service-management-support",
+  "title": "AI for Service Management and Support",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What must AI support automation preserve?",
+      "options": [
+        "Service ownership, escalation criteria, and support quality",
+        "Hidden uncertainty",
+        "Unreviewed ticket closure",
+        "No knowledge updates"
+      ],
+      "correct": 0,
+      "explanation": "AI support should reduce friction without hiding accountability or service risk."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["SLA pressure", "font weight", "GPU vendor", "audio sample rate"],
+      "correct": 0,
+      "explanation": "SLA pressure is a service-management signal."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked support AI readiness plan with controls and rationale",
+        "A production ticketing system",
+        "An automatic incident closure",
+        "A service contract"
+      ],
+      "correct": 0,
+      "explanation": "The artifact helps choose controls for support workflows."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["escalation path", "hide SLA risk", "skip knowledge updates", "remove service scope"],
+      "correct": 0,
+      "explanation": "Escalation paths preserve accountability."
+    },
+    {
+      "stage": "post",
+      "question": "When should service AI require stronger controls?",
+      "options": [
+        "When ticket volume, SLA pressure, or escalation risk is high",
+        "Only when the ticket text is short",
+        "Only when no users are affected",
+        "Never; support automation is always safe"
+      ],
+      "correct": 0,
+      "explanation": "High-impact service workflows need stronger readiness controls."
+    },
+    {
+      "stage": "post",
+      "question": "Why are confidence thresholds useful?",
+      "options": [
+        "They prevent silent automation failure and trigger review or escalation",
+        "They remove all human support",
+        "They approve every response",
+        "They hide uncertainty from agents"
+      ],
+      "correct": 0,
+      "explanation": "Confidence thresholds keep uncertain cases in controlled paths."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "lesson": "40-ai-for-hr-people-processes",
+  "title": "AI for HR and People Processes",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why do HR AI use cases need stricter controls?",
+      "options": [
+        "They can involve personal data, fairness, employee impact, and manager accountability",
+        "They never affect people",
+        "They never require review",
+        "They are only formatting tasks"
+      ],
+      "correct": 0,
+      "explanation": "HR workflows often affect employees directly and require clear human accountability."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["personal data", "font size", "GPU temperature", "video bitrate"],
+      "correct": 0,
+      "explanation": "Personal data is one of the HR AI triage signals."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked HR AI triage plan with controls and rationale",
+        "An automatic personnel decision",
+        "A payroll system",
+        "A legal approval"
+      ],
+      "correct": 0,
+      "explanation": "The artifact supports triage and control selection, not automated HR decisions."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["human decision owner", "skip privacy review", "hide employee impact", "remove fairness checks"],
+      "correct": 0,
+      "explanation": "A human decision owner is required for people-related decisions."
+    },
+    {
+      "stage": "post",
+      "question": "When should an HR AI use case require a launch gate?",
+      "options": [
+        "When employee impact, personal data, and uncertainty are high",
+        "Only when the prompt is long",
+        "Only when no manager is involved",
+        "Never; HR AI is always low risk"
+      ],
+      "correct": 0,
+      "explanation": "High-impact HR use cases need explicit review before rollout."
+    },
+    {
+      "stage": "post",
+      "question": "What should communication clarify in HR AI workflows?",
+      "options": [
+        "Where AI supports and where humans decide",
+        "That AI owns all decisions",
+        "That review is unnecessary",
+        "That data sensitivity does not matter"
+      ],
+      "correct": 0,
+      "explanation": "Trust depends on clear boundaries between AI support and human accountability."
+    }
+  ]
+}

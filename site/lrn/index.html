@@ -25,18 +25,8 @@
 
   <main class="page">
     <section class="hero" aria-labelledby="heroTitle">
-      <div class="hero__copy">
-        <h1 id="heroTitle">AI-Kurse nach Level</h1>
-        <p>Das Self-Assessment kommt von außen als Level 1 bis 5. Diese Seite übersetzt Profil, Interessen und Level in LRN-Kurse, Subkurse und echte Curriculum-Lessons aus dem vorhandenen Kursbestand.</p>
-        <div class="source-strip" aria-label="Quellen">
-          <span class="source-pill">Externer Score: 1-5</span>
-          <span class="source-pill">XLSX: LRN-Kursliste</span>
-          <span class="source-pill">Curriculum: kuratiertes Mapping</span>
-        </div>
-      </div>
-      <figure class="hero__figure">
-        <img src="assets/lrn-pathways.svg" width="720" height="420" alt="Diagramm: Rolle und externer Level führen zu LRN-Kurspfad und Fortschritt.">
-      </figure>
+      <h1 id="heroTitle">AI-Kurse nach Level</h1>
+      <p>Profil und Level wählen — die Seite zeigt die passenden LRN-Kurse und deinen Fortschritt.</p>
     </section>
 
     <section class="workbench" id="cockpit" aria-label="LRN Course Cockpit">
@@ -71,23 +61,8 @@
           <h2 id="cockpitTitle">Kurscockpit</h2>
           <span class="meta-label">Level 1 bis 5</span>
         </div>
-        <div class="result-summary" aria-live="polite">
-          <div class="score-line">
-            <span class="meta-label">Externer AI-Level</span>
-            <strong class="score-number" id="scoreNumber">1/5</strong>
-          </div>
-          <p class="score-copy" id="scoreCopy">Level setzen, um Kursreihenfolge und Fortschritt zu berechnen.</p>
-        </div>
         <div class="pane__body">
-          <h2 class="section-title">Curriculum-Fortschritt</h2>
-          <div id="progressPanel"></div>
-
-          <div class="section-block">
-            <h2 class="section-title">Empfohlener LRN-Pfad</h2>
-            <div class="track-grid" id="trackGrid"></div>
-          </div>
-
-          <div class="section-block">
+          <div class="section-block section-block--first">
             <h2 class="section-title">Kursmodule für dieses Profil</h2>
             <div class="filters" id="courseFilters" aria-label="Kursfilter"></div>
             <div class="course-grid" id="courseGrid"></div>
@@ -96,11 +71,6 @@
           <div class="section-block">
             <h2 class="section-title">Kursdetail</h2>
             <div id="courseDetail"></div>
-          </div>
-
-          <div class="section-block">
-            <h2 class="section-title">Zielbild je AI-Fähigkeit</h2>
-            <div class="dimension-grid" id="capabilityGrid"></div>
           </div>
         </div>
       </section>

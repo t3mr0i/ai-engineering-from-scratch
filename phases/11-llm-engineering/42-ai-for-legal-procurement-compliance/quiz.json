@@ -1,0 +1,68 @@
+{
+  "lesson": "42-ai-for-legal-procurement-compliance",
+  "title": "AI for Legal, Procurement, and Compliance",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What boundary should legal and procurement AI workflows preserve?",
+      "options": [
+        "AI can prepare and structure work, but humans own interpretation, negotiation, and decisions",
+        "AI owns all obligations",
+        "Generated summaries never need review",
+        "Confidentiality checks are optional"
+      ],
+      "correct": 0,
+      "explanation": "AI support does not remove accountable legal or procurement review."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["vendor clause", "font contrast", "audio codec", "screen width"],
+      "correct": 0,
+      "explanation": "Vendor clause is one of the review signals."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked legal/procurement review plan with controls and rationale",
+        "A signed contract",
+        "A final legal opinion",
+        "A vendor approval"
+      ],
+      "correct": 0,
+      "explanation": "The artifact structures review preparation; it is not a legal decision."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["clause register", "ignore obligations", "skip legal reviewer", "remove evidence"],
+      "correct": 0,
+      "explanation": "A clause register keeps key terms traceable."
+    },
+    {
+      "stage": "post",
+      "question": "When should legal or procurement AI work require a launch gate?",
+      "options": [
+        "When obligation risk, confidential terms, or missing evidence create high impact",
+        "Only when the document is short",
+        "Only when no vendor is involved",
+        "Never; AI summaries are always safe"
+      ],
+      "correct": 0,
+      "explanation": "High-risk generated review work needs explicit human review."
+    },
+    {
+      "stage": "post",
+      "question": "What should vendor-term summaries remain linked to?",
+      "options": [
+        "The source clauses and evidence used for the review",
+        "Only the model's wording",
+        "An unreviewed prompt",
+        "A generic template"
+      ],
+      "correct": 0,
+      "explanation": "Traceability protects legal and procurement decisions."
+    }
+  ]
+}

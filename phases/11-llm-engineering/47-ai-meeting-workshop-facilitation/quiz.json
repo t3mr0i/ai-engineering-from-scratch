@@ -1,0 +1,68 @@
+{
+  "lesson": "47-ai-meeting-workshop-facilitation",
+  "title": "AI Meeting Facilitation and Workshop Design",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Where does the biggest value of AI meeting support often start?",
+      "options": [
+        "Before the meeting, by clarifying outcomes, agenda, decisions, and follow-up",
+        "Only after the meeting, by writing a generic summary",
+        "By removing the facilitator",
+        "By hiding action items"
+      ],
+      "correct": 0,
+      "explanation": "Better meeting design starts before the session."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["unclear outcome", "batch size", "license file", "screen DPI"],
+      "correct": 0,
+      "explanation": "Unclear outcomes require stronger facilitation design."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked meeting or workshop plan with facilitation controls",
+        "A calendar server",
+        "A video recording",
+        "An automatic decision"
+      ],
+      "correct": 0,
+      "explanation": "The artifact recommends facilitation controls for collaboration scenarios."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["decision log", "ignore follow-up", "skip agenda", "remove outcomes"],
+      "correct": 0,
+      "explanation": "A decision log records decisions, owners, and reasons."
+    },
+    {
+      "stage": "post",
+      "question": "When does a meeting need stronger AI-supported preparation?",
+      "options": [
+        "When the audience is mixed, the outcome is unclear, a decision is needed, or follow-up risk is high",
+        "Only when no one attends",
+        "Only when no action is expected",
+        "Never; summaries are enough"
+      ],
+      "correct": 0,
+      "explanation": "These signals indicate a need for stronger facilitation controls."
+    },
+    {
+      "stage": "post",
+      "question": "What should AI meeting support produce?",
+      "options": [
+        "Clear agenda, facilitation script, decision log, and action tracker",
+        "Only a transcript",
+        "Unassigned tasks",
+        "A longer meeting"
+      ],
+      "correct": 0,
+      "explanation": "The lesson focuses on outcomes and follow-up, not summary-only usage."
+    }
+  ]
+}

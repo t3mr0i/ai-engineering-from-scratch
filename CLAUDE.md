@@ -103,6 +103,51 @@ per-user attribution; confirm the gateway's auth model and finalize
 
 ---
 
+## 3. LRN course taxonomy and numbering
+
+The LRN cockpit is a role/level learning product. Do not expose raw curriculum
+phase labels such as `P11` or lesson labels such as `L02` in LRN UI. Those
+phase/lesson numbers are only source links into `phases/...`.
+
+Use this hierarchy everywhere in `site/lrn/*` and in LRN mode of
+`site/lesson.html`:
+
+```text
+Profile -> External level -> Learning path -> Course -> Unit -> Activity
+Rxx     -> LVx            -> LPxx          -> Cxx    -> Uxx  -> Axx
+```
+
+Stable codes:
+
+- Profiles: `R01-BSC`, `R02-PVS`, `R03-TC`, `R04-AM`, `R05-PMA`,
+  `R06-CF`, `R07-LEAD`.
+- External assessment levels: `LV1` through `LV5`. These are the numbers the
+  external self-assessment passes in; do not render self-assessment questions.
+- Learning paths: `LP01` Core AI Foundation Path, `LP02` Consulting & Value
+  Creation Path, `LP03` Technology & Engineering Delivery Path, `LP04`
+  Leadership & Transformation Path, `LP05` Corporate Functions Enablement Path.
+- Course display codes: `C01`, `C02`, ... derived from the order in
+  `window.LrnData.courses`. Keep the original course id (`AI-04`,
+  `PROMPT-01`, etc.) next to the display code because those ids map to real LRN
+  course inventory.
+- Units are local to a course and must be numbered `U01`, `U02`, ...
+  according to the order in `window.LrnCurriculumMap.courseMaps[courseId]`.
+- Activities are local to a unit in the cockpit (`U02 · A03`) and sequential
+  across the course in the lesson shell (`A05/12`).
+
+When adding or remapping content:
+
+- Add or reorder courses in `site/lrn/data.js`; add or reorder unit/activity
+  mappings in `site/lrn/curriculum-map.js`.
+- Keep lesson `path` values as raw curriculum paths, but show LRN labels in the
+  UI.
+- A complete context key should read like
+  `R03-TC / LV4 / LP03 / C08`, optionally followed by `U02 / A03`.
+- Use "Learning Path", "Course", "Unit", and "Activity" in LRN UI. Avoid
+  "Phase", "Lesson number", "Subcourse", and raw `Pxx/Lxx` labels in LRN UI.
+
+---
+
 ## Git
 
 - Canonical remote: `lhind` →

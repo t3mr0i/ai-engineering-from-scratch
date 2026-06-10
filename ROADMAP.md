@@ -269,7 +269,7 @@ Total estimated time: ~314 hours, at your own pace.
 | 25 | [Speculative Decoding and EAGLE](phases/10-llms-from-scratch/25-speculative-decoding) | ✅ | ~75 min |
 | 34 | [Gradient Checkpointing and Activation Recomputation](phases/10-llms-from-scratch/34-gradient-checkpointing) | ✅ | ~70 min |
 
-## Phase 11: LLM Engineering — ✅ (~34 hours)
+## Phase 11: LLM Engineering — ✅ (~42 hours)
 
 | # | Lesson | Status | Est. |
 |---|--------|--------|------|
@@ -312,6 +312,16 @@ Total estimated time: ~314 hours, at your own pace.
 | 37 | [AI Vendor and Procurement Evaluation](phases/11-llm-engineering/37-ai-vendor-procurement-evaluation) | ✅ | ~45 min |
 | 38 | [AI Operations and Incident Response](phases/11-llm-engineering/38-ai-operations-incident-response) | ✅ | ~45 min |
 | 39 | [AI Portfolio and Roadmap Management](phases/11-llm-engineering/39-ai-portfolio-roadmap-management) | ✅ | ~45 min |
+| 40 | [AI for HR and People Processes](phases/11-llm-engineering/40-ai-for-hr-people-processes) | ✅ | ~45 min |
+| 41 | [AI for Finance and Controlling](phases/11-llm-engineering/41-ai-for-finance-controlling) | ✅ | ~45 min |
+| 42 | [AI for Legal, Procurement, and Compliance](phases/11-llm-engineering/42-ai-for-legal-procurement-compliance) | ✅ | ~45 min |
+| 43 | [AI for Service Management and Support](phases/11-llm-engineering/43-ai-for-service-management-support) | ✅ | ~45 min |
+| 44 | [AI for Sales and Product Consulting](phases/11-llm-engineering/44-ai-for-sales-product-consulting) | ✅ | ~45 min |
+| 45 | [AI for Corporate Communications and Marketing](phases/11-llm-engineering/45-ai-for-corporate-communications-marketing) | ✅ | ~45 min |
+| 46 | [AI Learning Design and Knowledge Transfer](phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer) | ✅ | ~45 min |
+| 47 | [AI Meeting Facilitation and Workshop Design](phases/11-llm-engineering/47-ai-meeting-workshop-facilitation) | ✅ | ~45 min |
+| 48 | [AI Project Reporting and Steering](phases/11-llm-engineering/48-ai-project-reporting-steering) | ✅ | ~45 min |
+| 49 | [AI Data Quality and Master Data Processes](phases/11-llm-engineering/49-ai-data-quality-master-data-processes) | ✅ | ~45 min |
 
 ## Phase 12: Multimodal AI — ✅ (~65 hours)
 

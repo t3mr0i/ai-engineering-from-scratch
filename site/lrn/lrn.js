@@ -10,11 +10,11 @@
   var state = loadState();
 
   var levelDefinitions = [
-    { value: 1, label: "Basic", stage: "Acquire", focusLevels: ["Acquire"], copy: "Einstieg: Grundlagen, sichere Toolnutzung und Orientierung." },
-    { value: 2, label: "Foundation", stage: "Acquire", focusLevels: ["Acquire", "Deepen"], copy: "Solide Basis: Grundlagen festigen und erste Praxisbausteine starten." },
-    { value: 3, label: "Practitioner", stage: "Deepen", focusLevels: ["Deepen"], copy: "Praxisniveau: Rollenbezogene Anwendung und konkrete Use Cases vertiefen." },
-    { value: 4, label: "Advanced", stage: "Deepen", focusLevels: ["Deepen", "Create"], copy: "Fortgeschritten: komplexe Kontexte, Transfer und Skalierung vorbereiten." },
-    { value: 5, label: "Expert", stage: "Create", focusLevels: ["Create"], copy: "High end: neue AI-Ansätze gestalten, teilen und als Multiplikator wirken." }
+    { value: 1, code: "LV1", label: "Basic", stage: "Acquire", focusLevels: ["Acquire"], copy: "Einstieg: Grundlagen, sichere Toolnutzung und Orientierung." },
+    { value: 2, code: "LV2", label: "Foundation", stage: "Acquire", focusLevels: ["Acquire", "Deepen"], copy: "Solide Basis: Grundlagen festigen und erste Praxisbausteine starten." },
+    { value: 3, code: "LV3", label: "Practitioner", stage: "Deepen", focusLevels: ["Deepen"], copy: "Praxisniveau: Rollenbezogene Anwendung und konkrete Use Cases vertiefen." },
+    { value: 4, code: "LV4", label: "Advanced", stage: "Deepen", focusLevels: ["Deepen", "Create"], copy: "Fortgeschritten: komplexe Kontexte, Transfer und Skalierung vorbereiten." },
+    { value: 5, code: "LV5", label: "Expert", stage: "Create", focusLevels: ["Create"], copy: "High end: neue AI-Ansätze gestalten, teilen und als Multiplikator wirken." }
   ];
 
   var els = {
@@ -25,7 +25,6 @@
     scoreNumber: document.getElementById("scoreNumber"),
     scoreCopy: document.getElementById("scoreCopy"),
     progressPanel: document.getElementById("progressPanel"),
-    trackGrid: document.getElementById("trackGrid"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
     courseDetail: document.getElementById("courseDetail"),
@@ -139,11 +138,10 @@
     renderInterests();
     renderSummary(computed);
     renderProgress(computed);
-    renderTracks(computed);
     renderFilters();
     renderCourses(computed);
     renderCourseDetail(computed);
-    renderCapabilities();
+    renderCapabilities(computed);
   }
 
   function renderProfiles() {
@@ -154,7 +152,7 @@
       btn.className = "profile-btn";
       btn.setAttribute("aria-pressed", String(state.profileId === profile.id));
       btn.innerHTML = "<strong></strong><span></span>";
-      btn.querySelector("strong").textContent = profile.label;
+      btn.querySelector("strong").textContent = profileCode(profile) + " · " + profile.label;
       btn.querySelector("span").textContent = profile.segment + " · " + profile.description;
       btn.addEventListener("click", function () {
         state.profileId = profile.id;
@@ -175,7 +173,7 @@
       btn.setAttribute("aria-pressed", String(state.externalLevel === level.value));
       btn.innerHTML = "<strong></strong><span></span>";
       btn.querySelector("strong").textContent = String(level.value);
-      btn.querySelector("span").textContent = level.label;
+      btn.querySelector("span").textContent = level.code + " · " + level.label;
       btn.addEventListener("click", function () {
         state.externalLevel = level.value;
         state.activeCourseId = null;
@@ -210,81 +208,43 @@
   }
 
   function renderSummary(computed) {
-    els.scoreNumber.textContent = computed.level.value + "/5";
-    els.scoreCopy.textContent = computed.level.copy + " Fokus: " + computed.level.focusLevels.join(" + ") + " für " + computed.profile.label + ".";
+    if (els.scoreNumber) els.scoreNumber.textContent = computed.level.value + "/5";
+    if (els.scoreCopy) els.scoreCopy.textContent = computed.level.copy;
   }
 
   function renderProgress(computed) {
+    if (!els.progressPanel) return;
     var stats = computed.progressStats;
     var panel = document.createElement("div");
     panel.className = "progress-overview";
 
     var meter = progressMeter(stats.percent, "Curriculum-Fortschritt im empfohlenen Kurspool");
-    var metrics = document.createElement("div");
-    metrics.className = "metric-grid";
-    [
-      { label: "Empfohlene Kurse", value: String(stats.courseCount) },
-      { label: "Curriculum-Lessons", value: String(stats.lessonCount) },
-      { label: "Im Lesson-System erledigt", value: stats.completedLessons + "/" + stats.lessonCount }
-    ].forEach(function (item) {
-      var box = document.createElement("div");
-      box.className = "metric-box";
-      box.innerHTML = "<span></span><strong></strong>";
-      box.querySelector("span").textContent = item.label;
-      box.querySelector("strong").textContent = item.value;
-      metrics.appendChild(box);
-    });
+    panel.appendChild(meter);
 
-    var copy = document.createElement("p");
-    copy.className = "mapping-note";
-    copy.textContent = "Kein manuelles Abhaken auf dieser Seite. Completion kommt aus dem Lesson-/LRN-Tracking, sobald die verlinkten Lessons bearbeitet werden.";
-
-    panel.append(meter, metrics, copy);
-    replaceChildren(els.progressPanel, [panel]);
-  }
-
-  function renderTracks(computed) {
-    var tracks = data.tracks.filter(function (track) {
-      return track.profileIds.indexOf(state.profileId) !== -1;
-    });
-
-    replaceChildren(els.trackGrid, tracks.map(function (track) {
-      var card = document.createElement("article");
-      card.className = "track-card";
-      var title = document.createElement("h3");
-      title.textContent = track.label;
-      card.appendChild(title);
-
-      track.stages.forEach(function (stage) {
-        var group = document.createElement("div");
-        group.className = "cluster-group";
-        var level = document.createElement("span");
-        level.className = "level-pill";
-        level.dataset.level = stage.label;
-        level.textContent = stage.label;
-        if (computed.level.focusLevels.indexOf(stage.label) !== -1) level.dataset.focus = "true";
-        group.appendChild(level);
-        stage.courses.forEach(function (courseId) {
-          var course = courseById[courseId];
-          if (!course) return;
-          var chip = document.createElement("button");
-          chip.type = "button";
-          chip.className = "module-pill module-pill--button";
-          chip.textContent = course.id;
-          chip.title = course.title;
-          chip.addEventListener("click", function () {
-            activateCourse(course.id);
-          });
-          group.appendChild(chip);
-        });
-        card.appendChild(group);
+    if (stats.completedLessons === 0) {
+      var line = document.createElement("p");
+      line.className = "progress-line";
+      line.textContent = stats.courseCount + " empfohlene Kurse · " + stats.lessonCount + " Aktivitäten · noch nichts erledigt";
+      panel.appendChild(line);
+    } else {
+      var metrics = document.createElement("div");
+      metrics.className = "metric-grid";
+      [
+        { label: "Empfohlene Kurse", value: String(stats.courseCount) },
+        { label: "LRN-Aktivitäten", value: String(stats.lessonCount) },
+        { label: "Im Lesson-System erledigt", value: stats.completedLessons + "/" + stats.lessonCount }
+      ].forEach(function (item) {
+        var box = document.createElement("div");
+        box.className = "metric-box";
+        box.innerHTML = "<span></span><strong></strong>";
+        box.querySelector("span").textContent = item.label;
+        box.querySelector("strong").textContent = item.value;
+        metrics.appendChild(box);
       });
+      panel.appendChild(metrics);
+    }
 
-      var p = document.createElement("p");
-      p.textContent = "Für Level " + computed.level.value + " werden " + computed.level.focusLevels.join(" und ") + "-Bausteine priorisiert.";
-      card.appendChild(p);
-      return card;
-    }));
+    replaceChildren(els.progressPanel, [panel]);
   }
 
   function renderFilters() {
@@ -310,10 +270,13 @@
     }));
   }
 
+  var lastVisibleSignature = null;
+
   function renderCourses(computed) {
     var visible = filterCourses(computed.entries);
 
     if (!visible.length) {
+      lastVisibleSignature = "";
       var empty = document.createElement("div");
       empty.className = "empty-state";
       empty.textContent = "Keine Kurse in diesem Filter. Wechseln Sie auf 'Alle', um den gesamten profilrelevanten Pool zu sehen.";
@@ -321,8 +284,14 @@
       return;
     }
 
-    replaceChildren(els.courseGrid, visible.map(function (entry) {
-      return courseCard(entry.course, entry);
+    // Stagger the reveal only when the card SET changes (filter/profile/level),
+    // not when re-rendering after selecting a card — otherwise the grid flickers.
+    var signature = visible.map(function (entry) { return entry.course.id; }).join(",");
+    var animate = signature !== lastVisibleSignature;
+    lastVisibleSignature = signature;
+
+    replaceChildren(els.courseGrid, visible.map(function (entry, index) {
+      return courseCard(entry.course, entry, animate ? index : -1);
     }));
   }
 
@@ -346,9 +315,9 @@
     head.className = "course-detail__head";
     var eyebrow = document.createElement("span");
     eyebrow.className = "path-eyebrow";
-    eyebrow.textContent = "LRN Skill Path · Syllabus";
+    eyebrow.textContent = contextKeyForCourse(course) + " · Syllabus";
     var title = document.createElement("h3");
-    title.textContent = course.id + " · " + course.title;
+    title.textContent = courseCode(course) + " · " + course.id + " · " + course.title;
     head.append(eyebrow, title);
 
     var summary = document.createElement("p");
@@ -371,16 +340,18 @@
     lessonCount.className = "module-pill";
     lessonCount.textContent = stats.lessonCount + " Aktivitäten";
     meta.appendChild(lessonCount);
+    pathCodesForCourse(course.id).forEach(function (code) {
+      var pathPill = document.createElement("span");
+      pathPill.className = "module-pill";
+      pathPill.textContent = code;
+      meta.appendChild(pathPill);
+    });
     var format = document.createElement("span");
     format.className = "module-pill";
     format.textContent = "Self-paced";
     meta.appendChild(format);
 
-    var note = document.createElement("p");
-    note.className = "mapping-note";
-    note.textContent = "Codecademy-Struktur: ein klarer Skill Path mit Units, Aktivitäten, Knowledge Checks und einem sichtbaren Next-Step. Completion kommt aus dem Lesson-/LRN-Tracking.";
-
-    detail.append(head, summary, meta, pathSummary(course, stats, nextLesson), progressMeter(stats.percent, "Fortschritt " + course.title), note);
+    detail.append(head, summary, meta, pathSummary(course, stats, nextLesson), progressMeter(stats.percent, "Fortschritt " + course.title));
 
     if (!map.length) {
       var emptyMap = document.createElement("div");
@@ -388,26 +359,22 @@
       emptyMap.textContent = "Für diesen Kurs ist noch kein Curriculum-Mapping gepflegt.";
       detail.appendChild(emptyMap);
     } else {
-      map.forEach(function (subcourse) {
-        detail.appendChild(subcourseCard(subcourse, course.id));
+      map.forEach(function (subcourse, subcourseIndex) {
+        detail.appendChild(subcourseCard(subcourse, course.id, subcourseIndex));
       });
-    }
-
-    if (curriculum.omittedGroups && curriculum.omittedGroups.length) {
-      detail.appendChild(omittedGroups());
     }
 
     replaceChildren(els.courseDetail, [detail]);
   }
 
-  function subcourseCard(subcourse, courseId) {
+  function subcourseCard(subcourse, courseId, subcourseIndex) {
     var stats = subcourseProgress(subcourse);
     var card = document.createElement("section");
     card.className = "subcourse-card";
     var head = document.createElement("div");
     head.className = "subcourse-card__head";
     var title = document.createElement("h4");
-    title.textContent = "Unit · " + subcourse.title;
+    title.textContent = unitCode(subcourseIndex) + " · " + subcourse.title;
     var pill = document.createElement("span");
     pill.className = "advice-pill";
     pill.dataset.tone = subcourse.decision === "core" ? "warn" : "ok";
@@ -420,6 +387,7 @@
     var unitMeta = document.createElement("div");
     unitMeta.className = "unit-meta";
     [
+      { label: "Unit-Code", value: unitCode(subcourseIndex) },
       { label: "Aktivitäten", value: String(stats.lessonCount) },
       { label: "Erledigt", value: stats.completedLessons + "/" + stats.lessonCount },
       { label: "Status", value: stats.percent === 100 ? "fertig" : stats.visitedLessons ? "in Arbeit" : "offen" }
@@ -433,8 +401,8 @@
 
     var list = document.createElement("div");
     list.className = "lesson-list";
-    subcourse.lessons.forEach(function (lesson) {
-      list.appendChild(lessonLink(lesson, courseId, subcourse));
+    subcourse.lessons.forEach(function (lesson, lessonIndex) {
+      list.appendChild(lessonLink(lesson, courseId, subcourse, subcourseIndex, lessonIndex));
     });
 
     card.append(head, note, unitMeta, progressMeter(stats.percent, "Unit-Fortschritt " + subcourse.title), list);
@@ -444,6 +412,10 @@
   function pathSummary(course, stats, nextLesson) {
     var wrap = document.createElement("div");
     wrap.className = "path-summary";
+
+    var context = document.createElement("p");
+    context.className = "path-context";
+    context.textContent = contextKeyForCourse(course);
 
     var metrics = document.createElement("div");
     metrics.className = "path-summary__metrics";
@@ -468,17 +440,18 @@
       action.addEventListener("click", function (event) { event.preventDefault(); });
     }
 
-    wrap.append(metrics, action);
+    wrap.append(context, metrics, action);
     return wrap;
   }
 
-  function lessonLink(lesson, courseId, subcourse) {
+  function lessonLink(lesson, courseId, subcourse, subcourseIndex, lessonIndex) {
     var progress = lessonProgress(lesson.path);
     var a = document.createElement("a");
     a.className = "lesson-link";
     a.href = lessonHref(lesson.path, courseId);
     a.innerHTML = "<span></span><strong></strong><small></small><em></em>";
-    a.querySelector("span").textContent = lessonPathLabel(lesson.path);
+    a.querySelector("span").textContent = activityLabel(subcourseIndex, lessonIndex);
+    a.querySelector("span").title = lesson.path;
     a.querySelector("strong").textContent = lesson.title;
     a.querySelector("small").textContent = activityType(lesson, subcourse);
     a.querySelector("em").textContent = progress.label;
@@ -486,28 +459,11 @@
     return a;
   }
 
-  function omittedGroups() {
-    var wrap = document.createElement("section");
-    wrap.className = "omitted-groups";
-    var h = document.createElement("h4");
-    h.textContent = "Bewusst nicht als Pflichtteil gezogen";
-    var list = document.createElement("div");
-    list.className = "omitted-list";
-    curriculum.omittedGroups.forEach(function (group) {
-      var item = document.createElement("p");
-      item.innerHTML = "<strong></strong><span></span>";
-      item.querySelector("strong").textContent = group.label;
-      item.querySelector("span").textContent = group.reason;
-      list.appendChild(item);
-    });
-    wrap.append(h, list);
-    return wrap;
-  }
-
-  function renderCapabilities() {
+  function renderCapabilities(computed) {
+    if (!els.capabilityGrid) return;
     var groups = {};
     data.capabilities.forEach(function (capability) {
-      var target = capability.targets[state.profileId] || "n. a.";
+      var target = capability.targets[state.profileId] || capability.targets.all || "n. a.";
       if (!groups[capability.cluster]) groups[capability.cluster] = [];
       groups[capability.cluster].push({ capability: capability, target: target });
     });
@@ -517,20 +473,23 @@
       card.className = "capability-card";
       var title = document.createElement("h3");
       title.textContent = cluster;
+      var context = document.createElement("p");
+      context.textContent = profileCode(computed.profile) + " · Zielniveau aus Capability Matrix";
       var list = document.createElement("div");
       list.className = "module-list";
       groups[cluster].forEach(function (item) {
         var pill = document.createElement("span");
         pill.className = "level-pill";
         pill.dataset.level = normalizeLevelLabel(item.target);
-        pill.textContent = item.capability.id + " · " + item.target;
+        pill.textContent = "CAP" + String(item.capability.id).padStart(2, "0") + " · " + item.target;
         pill.title = item.capability.title;
         list.appendChild(pill);
       });
-      card.append(title, list);
+      card.append(title, context, list);
       return card;
     }));
   }
+
 
   function compute() {
     var profile = profileById[state.profileId];
@@ -597,10 +556,16 @@
     });
   }
 
-  function courseCard(course, entry) {
+  function courseCard(course, entry, index) {
     var card = document.createElement("article");
     card.className = "course-card";
     card.dataset.active = String(state.activeCourseId === course.id);
+    // Stagger only when the set changed (index >= 0): 45ms/card, capped at 8 steps
+    // so a 19-card grid still settles in ~360ms.
+    if (index >= 0) {
+      card.className += " course-card--enter";
+      card.style.setProperty("--enter-delay", Math.min(index, 8) * 45 + "ms");
+    }
 
     var button = document.createElement("button");
     button.type = "button";
@@ -611,7 +576,7 @@
     });
 
     var h = document.createElement("h3");
-    h.textContent = course.id + " · " + course.title;
+    h.textContent = courseCode(course) + " · " + course.id + " · " + course.title;
     var summary = document.createElement("p");
     summary.textContent = course.summary;
 
@@ -631,15 +596,15 @@
     });
     var lessons = document.createElement("span");
     lessons.className = "module-pill";
-    lessons.textContent = entry.progress.lessonCount + " Lessons";
+    lessons.textContent = entry.progress.lessonCount + " Aktivitäten";
     meta.appendChild(lessons);
 
     var modules = document.createElement("div");
     modules.className = "module-list";
-    courseMap(course.id).forEach(function (subcourse) {
+    courseMap(course.id).forEach(function (subcourse, subcourseIndex) {
       var chip = document.createElement("span");
       chip.className = "module-pill";
-      chip.textContent = "Unit: " + subcourse.title;
+      chip.textContent = unitCode(subcourseIndex) + " · " + subcourse.title;
       modules.appendChild(chip);
     });
 
@@ -656,7 +621,7 @@
     state.activeCourseId = courseId;
     saveState();
     render();
-    announce("Kursmapping geöffnet: " + courseById[courseId].title + ".");
+    announce("Syllabus geöffnet: " + courseById[courseId].title + ".");
     els.courseDetail.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
@@ -789,18 +754,18 @@
     var stats = computed.progressStats;
     var lines = [
       "LHIND AI LRN Course Cockpit",
-      "Profil: " + computed.profile.label,
-      "Externer Level: " + computed.level.value + "/5 (" + computed.level.label + ")",
+      "Profil: " + profileCode(computed.profile) + " " + computed.profile.label,
+      "Externer Level: " + computed.level.code + " / " + computed.level.value + "/5 (" + computed.level.label + ")",
       "Fokus: " + computed.level.focusLevels.join(" + "),
       "Interessen: " + state.interests.map(function (id) {
         return data.interests.find(function (interest) { return interest.id === id; }).label;
       }).join(", "),
-      "Curriculum-Fortschritt: " + stats.percent + "% (" + stats.completedLessons + "/" + stats.lessonCount + " Lessons)",
+      "LRN-Fortschritt: " + stats.percent + "% (" + stats.completedLessons + "/" + stats.lessonCount + " Aktivitäten)",
       "",
       "Empfohlene Kurse:"
     ];
     courses.forEach(function (entry) {
-      lines.push("- " + entry.course.id + " " + entry.course.title + " [" + entry.progress.completedLessons + "/" + entry.progress.lessonCount + " Lessons]");
+      lines.push("- " + contextKeyForCourse(entry.course) + " " + entry.course.id + " " + entry.course.title + " [" + entry.progress.completedLessons + "/" + entry.progress.lessonCount + " Aktivitäten]");
     });
     return lines.join("\n");
   }
@@ -811,20 +776,58 @@
     return "Kern";
   }
 
-  function lessonPathLabel(path) {
-    var parts = path.split("/");
-    var phase = parts[1] || "";
-    var lesson = parts[2] || "";
-    var phaseNumber = (phase.match(/^(\d+)/) || [])[1] || phase;
-    var lessonNumber = (lesson.match(/^(\d+)/) || [])[1] || lesson.slice(0, 2);
-    return "P" + phaseNumber + " · L" + lessonNumber;
+  function profileCode(profile) {
+    return profile && profile.code ? profile.code : "R??";
   }
 
-  function lessonHref(path, courseId) {
-    var prefix = window.location.pathname.indexOf("/lrn/") !== -1 ? "../" : "";
-    var query = "path=" + encodeURIComponent(path);
-    if (courseId) query += "&course=" + encodeURIComponent(courseId);
-    return prefix + "lesson.html?" + query;
+  function trackCode(track) {
+    if (track && track.code) return track.code;
+    var index = data.tracks.indexOf(track);
+    return "LP" + String(index + 1).padStart(2, "0");
+  }
+
+  function stageCode(stageLabel) {
+    if (stageLabel === "Acquire") return "LV1-2";
+    if (stageLabel === "Deepen") return "LV3-4";
+    if (stageLabel === "Create") return "LV5";
+    return "LV?";
+  }
+
+  function courseCode(course) {
+    var index = data.courses.indexOf(course);
+    return "C" + String(index + 1).padStart(2, "0");
+  }
+
+  function unitCode(index) {
+    return "U" + String(index + 1).padStart(2, "0");
+  }
+
+  function activityCode(index) {
+    return "A" + String(index + 1).padStart(2, "0");
+  }
+
+  function activityLabel(subcourseIndex, lessonIndex) {
+    return unitCode(subcourseIndex) + " · " + activityCode(lessonIndex);
+  }
+
+  function pathCodesForCourse(courseId) {
+    return data.tracks.filter(function (track) {
+      return track.profileIds.indexOf(state.profileId) !== -1 || track.profileIds.indexOf("all") !== -1;
+    }).filter(function (track) {
+      return track.stages.some(function (stage) {
+        return stage.courses.indexOf(courseId) !== -1;
+      });
+    }).map(function (track) {
+      return trackCode(track);
+    });
+  }
+
+  function contextKeyForCourse(course) {
+    var codes = pathCodesForCourse(course.id);
+    var pathCode = codes.length ? codes.join("+") : "LP??";
+    return profileCode(profileById[state.profileId]) + " / " + (levelDefinitions.find(function (item) {
+      return item.value === Number(state.externalLevel);
+    }) || levelDefinitions[0]).code + " / " + pathCode + " / " + courseCode(course);
   }
 
   function normalizeLevelLabel(value) {
@@ -832,6 +835,13 @@
     if (value === "Advanced" || value === "Deepen") return "Deepen";
     if (value === "Basic" || value === "Acquire") return "Acquire";
     return "n. a.";
+  }
+
+  function lessonHref(path, courseId) {
+    var prefix = window.location.pathname.indexOf("/lrn/") !== -1 ? "../" : "";
+    var query = "path=" + encodeURIComponent(path);
+    if (courseId) query += "&course=" + encodeURIComponent(courseId);
+    return prefix + "lesson.html?" + query;
   }
 
   function toggleInterest(id) {

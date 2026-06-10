@@ -1,0 +1,83 @@
+# AI Project Reporting and Steering
+
+> AI project reporting works when status, risks, dependencies, and decisions are tied back to current source evidence.
+
+**Type:** Build
+**Languages:** Python
+**Prerequisites:** Phase 11 Lesson 25 (AI Cost and Value Economics), Phase 11 Lesson 29 (Decision Making with AI)
+**Time:** ~45 minutes
+**Capability:** Project Management - AI-Supported Steering
+
+## Learning Objectives
+
+- Identify project reporting scenarios where AI can support steering
+- Build a reporting triage artifact in Python
+- Map status drift, risk unclear, dependency gap, and decision request to controls
+- Select reporting controls before steering material is shared
+- Explain why AI-generated status needs source snapshots and explicit decision questions
+
+## The Problem
+
+AI can turn notes, tickets, and project updates into polished status reports. The risk is that old data, unclear risks, and hidden dependencies become a confident narrative that steering groups cannot act on.
+
+## The Concept
+
+Project reporting should connect evidence to action. AI can support the draft, but the report needs source snapshots, RAG status, risk owners, and a clear steering question.
+
+```mermaid
+flowchart LR
+    S[Source snapshot] --> R[RAG status]
+    R --> K[Risk owner]
+    K --> Q[Steering question]
+    Q --> D[Decision]
+```
+
+### Signals to Look For
+
+- status drift
+- risk unclear
+- dependency gap
+- decision request
+
+### Controls to Teach
+
+- source snapshot
+- rag status
+- risk owner
+- steering question
+
+### Target Roles
+
+- Project Management & Agility
+- Leadership
+- Products & Value Streams
+- Business & Strategy Consulting
+
+## Build It
+
+In the lab you build an AI steering-report planner. It ranks reporting scenarios and recommends controls before sharing status.
+
+Run it locally:
+
+```bash
+cd phases/11-llm-engineering/48-ai-project-reporting-steering/code
+python3 main.py
+python3 -m unittest discover tests -v
+```
+
+## Use It
+
+Use the artifact for steering packs, weekly status updates, dependency reviews, risk reports, and executive summaries.
+
+## Reusable Artifact
+
+AI steering-report control sheet.
+
+The template in `outputs/sheet-project-reporting-steering.md` can be used before AI-assisted project reports are sent.
+
+## Key Takeaways
+
+- AI status reporting must cite current source evidence.
+- RAG status should be connected to risks and decisions.
+- Ambiguous risks need named owners.
+- Steering groups need clear questions, not only polished summaries.

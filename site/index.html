@@ -5,7 +5,7 @@
   <script src="gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>LHIND AI LRN Course Cockpit</title>
-  <meta name="description" content="Rollenbasiertes AI LRN-Kurscockpit für externe Assessment-Level, echte LRN-Kurse und kuratierte Curriculum-Lesson-Mappings bei LHIND.">
+  <meta name="description" content="Rollenbasiertes AI LRN-Kurscockpit für externe Assessment-Level, echte LRN-Kurse und sauber nummerierte LRN-Pfade, Units und Aktivitäten bei LHIND.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,16 +27,7 @@
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__copy">
         <h1 id="heroTitle">AI-Kurse nach Level</h1>
-        <p>Das Self-Assessment kommt von außen als Level 1 bis 5. Diese Seite übersetzt Profil, Interessen und Level in LRN-Kurse, Subkurse und echte Curriculum-Lessons aus dem vorhandenen Kursbestand.</p>
-        <div class="source-strip" aria-label="Quellen">
-          <span class="source-pill">Externer Score: 1-5</span>
-          <span class="source-pill">XLSX: LRN-Kursliste</span>
-          <span class="source-pill">Curriculum: kuratiertes Mapping</span>
-        </div>
       </div>
-      <figure class="hero__figure">
-        <img src="lrn/assets/lrn-pathways.svg" width="720" height="420" alt="Diagramm: Rolle und externer Level führen zu LRN-Kurspfad und Curriculum-Fortschritt.">
-      </figure>
     </section>
 
     <section class="workbench" id="cockpit" aria-label="LRN Course Cockpit">
@@ -83,11 +74,6 @@
           <div id="progressPanel"></div>
 
           <div class="section-block">
-            <h2 class="section-title">Empfohlener LRN-Pfad</h2>
-            <div class="track-grid" id="trackGrid"></div>
-          </div>
-
-          <div class="section-block">
             <h2 class="section-title">Kursmodule für dieses Profil</h2>
             <div class="filters" id="courseFilters" aria-label="Kursfilter"></div>
             <div class="course-grid" id="courseGrid"></div>
@@ -108,7 +94,7 @@
   </main>
 
   <footer class="foot-line">
-    <p>LHIND AI LRN Course Cockpit · Kuratiertes Mapping auf bestehende Curriculum-Lessons · Fortschritt kommt aus dem Lesson-/LRN-Tracking.</p>
+    <p>LHIND AI LRN Course Cockpit · Kuratiertes Mapping auf LRN-Pfade, Units und Aktivitäten · Fortschritt kommt aus dem Lesson-/LRN-Tracking.</p>
   </footer>
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 

@@ -1,0 +1,68 @@
+{
+  "lesson": "46-ai-learning-design-knowledge-transfer",
+  "title": "AI Learning Design and Knowledge Transfer",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the main weakness of generic AI-generated training text?",
+      "options": [
+        "It can create content volume without role transfer or behavior change",
+        "It always contains too many tests",
+        "It cannot mention learning objectives",
+        "It removes the need for practice"
+      ],
+      "correct": 0,
+      "explanation": "Learning design must target role outcomes and transfer."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["practice need", "cache miss", "thread lock", "audio channel"],
+      "correct": 0,
+      "explanation": "Practice need indicates that learners must perform a task, not just read content."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact recommend?",
+      "options": [
+        "The right learning form and controls for an enablement scenario",
+        "A final HR policy",
+        "A neural network optimizer",
+        "A replacement for managers"
+      ],
+      "correct": 0,
+      "explanation": "The artifact maps learning signals to forms and controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["knowledge check", "remove objectives", "skip practice", "hide learner role"],
+      "correct": 0,
+      "explanation": "Knowledge checks provide evidence that learning happened."
+    },
+    {
+      "stage": "post",
+      "question": "When is a workshop a better fit than a micro lesson?",
+      "options": [
+        "When learners need guided practice, discussion, and role-specific transfer",
+        "When no practice is required",
+        "When the topic has no audience",
+        "When completion evidence must be avoided"
+      ],
+      "correct": 0,
+      "explanation": "Workshops are useful when practice and discussion matter."
+    },
+    {
+      "stage": "post",
+      "question": "What should AI learning design start with?",
+      "options": [
+        "Role outcome, target behavior, practice task, and transfer evidence",
+        "A long generic article",
+        "A random prompt",
+        "A list of tools without context"
+      ],
+      "correct": 0,
+      "explanation": "Transfer-focused design keeps AI-generated training useful."
+    }
+  ]
+}

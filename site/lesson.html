@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson · Agentic Software Engineering at LHIND</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum by Lufthansa Industry Solutions. 405 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
+  <meta name="description" content="A lesson from the Agentic Software Engineering at LHIND curriculum by Lufthansa Industry Solutions. 420 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
   <meta property="og:title" content="Agentic Software Engineering at LHIND · Lesson">
-  <meta property="og:description" content="405 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
+  <meta property="og:description" content="420 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Agentic Software Engineering at LHIND">
-  <meta name="twitter:description" content="405 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
+  <meta name="twitter:description" content="420 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2199,7 +2199,15 @@
       }
 
       function lrnLessonOrdinal(index) {
-        return String(index + 1).padStart(2, '0') + '/' + String(lrnContext.total).padStart(2, '0');
+        return lrnActivityCode(index) + '/' + String(lrnContext.total).padStart(2, '0');
+      }
+
+      function lrnUnitCode(index) {
+        return 'U' + String(index + 1).padStart(2, '0');
+      }
+
+      function lrnActivityCode(index) {
+        return 'A' + String(index + 1).padStart(2, '0');
       }
 
       function lrnDecisionLabel(decision) {
@@ -2236,7 +2244,7 @@
         lrnContext.groups.forEach(function (group, groupIndex) {
           var unitProgress = lrnUnitProgress(group);
           html += '<div class="lrn-sidebar-subcourse">';
-          html += '<div class="lrn-sidebar-subcourse-title">Unit ' + String(groupIndex + 1).padStart(2, '0') + ' · ' + escapeHtml(group.title) + ' · ' + unitProgress.completed + '/' + unitProgress.total + '</div>';
+          html += '<div class="lrn-sidebar-subcourse-title">' + lrnUnitCode(groupIndex) + ' · ' + escapeHtml(group.title) + ' · ' + unitProgress.completed + '/' + unitProgress.total + '</div>';
           group.lessons.forEach(function (lesson) {
             var flatIndex = -1;
             for (var i = 0; i < lrnContext.lessons.length; i++) {
@@ -2251,7 +2259,7 @@
             html += '<span class="sidebar-lesson-dot ' + state + '"></span>';
             html += '<span class="lrn-sidebar-lesson-text">';
             html += '<span>' + escapeHtml(lesson.title) + '</span>';
-            html += '<span class="lrn-sidebar-lesson-meta">' + (flatIndex >= 0 ? lrnLessonOrdinal(flatIndex) + ' · ' : '') + escapeHtml(lrnLessonProgressLabel(lesson.path)) + '</span>';
+            html += '<span class="lrn-sidebar-lesson-meta">' + (flatIndex >= 0 ? lrnActivityCode(flatIndex) + ' · ' : '') + escapeHtml(lrnLessonProgressLabel(lesson.path)) + '</span>';
             html += '</span>';
             html += '</a>';
           });
@@ -2443,7 +2451,7 @@
             return p.replace(/[*_`]/g, '').slice(0, 200);
           }
         }
-        return '405 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
+        return '420 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
       }
 
       // Client-side per-lesson SEO. Robust indexing comes with build-time
@@ -2528,7 +2536,7 @@
         var html = '<section class="lrn-lesson-banner" aria-label="LRN Kurskontext">';
         html += '<div class="lrn-lesson-kicker">';
         html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnContext.course.id) + '</span>';
-        html += '<span class="lrn-lesson-pill">Unit ' + String(current.groupIndex + 1).padStart(2, '0') + '</span>';
+        html += '<span class="lrn-lesson-pill">' + lrnUnitCode(current.groupIndex) + '</span>';
         html += '<span class="lrn-lesson-pill">Activity ' + escapeHtml(lrnLessonOrdinal(lrnContext.currentIndex)) + '</span>';
         html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnLessonProgressLabel(current.path)) + '</span>';
         html += '</div>';
@@ -2536,8 +2544,8 @@
         html += '<p><strong>Unit:</strong> ' + escapeHtml(current.groupTitle) + '. Diese Aktivität ist Teil des kuratierten LRN-Syllabus; die globale Phasen-Navigation ist hier ausgeblendet.</p>';
         html += '<div class="lrn-lesson-banner__actions">';
         html += '<a class="lrn-lesson-action" href="index.html">Zur Kursübersicht</a>';
-        if (lrnContext.prev) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.prev.path) + '">Vorherige Lesson</a>';
-        if (lrnContext.next) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.next.path) + '">Nächste Lesson</a>';
+        if (lrnContext.prev) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.prev.path) + '">Vorherige Aktivität</a>';
+        if (lrnContext.next) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.next.path) + '">Nächste Aktivität</a>';
         html += '</div>';
         html += '</section>';
         return html;
@@ -3697,7 +3705,7 @@
         var nav = '<div class="lesson-nav-bottom">';
         if (lrnContext.prev) {
           nav += '<a class="lesson-nav-btn prev" href="' + lrnLessonHref(lrnContext.prev.path) + '">';
-          nav += '<span class="nav-label">&larr; Vorherige LRN-Lesson</span>';
+          nav += '<span class="nav-label">&larr; Vorherige Aktivität</span>';
           nav += '<span class="nav-title">' + escapeHtml(lrnContext.prev.title) + '</span>';
           nav += '</a>';
         } else {
@@ -3705,7 +3713,7 @@
         }
         if (lrnContext.next) {
           nav += '<a class="lesson-nav-btn next" href="' + lrnLessonHref(lrnContext.next.path) + '">';
-          nav += '<span class="nav-label">Nächste LRN-Lesson &rarr;</span>';
+          nav += '<span class="nav-label">Nächste Aktivität &rarr;</span>';
           nav += '<span class="nav-title">' + escapeHtml(lrnContext.next.title) + '</span>';
           nav += '</a>';
         } else {
@@ -3723,10 +3731,6 @@
         if (!container || !lessonPath) return;
 
         if (lrnContext) {
-          // LRN flow keeps its quiz/path panels, but the notebook is the
-          // centerpiece — show it first here too.
-          renderCodePanel(container);
-          renderOutputsPanel(container);
           renderQuizPanel(container);
           renderLearningPathPanel(container);
           renderContinuePanel(container);
@@ -4293,7 +4297,7 @@
 
           html += '<a class="timeline-item ' + cls + '" href="' + lrnLessonHref(item.path) + '" title="' + escapeAttr(item.title) + '">';
           html += '<div class="timeline-dot"></div>';
-          html += '<div class="timeline-label">' + escapeHtml(item.title) + '</div>';
+          html += '<div class="timeline-label">' + lrnActivityCode(idx) + ' · ' + escapeHtml(item.title) + '</div>';
           html += '</a>';
         });
         if (hiddenAfter > 0) {

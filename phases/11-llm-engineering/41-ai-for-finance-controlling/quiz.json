@@ -1,0 +1,68 @@
+{
+  "lesson": "41-ai-for-finance-controlling",
+  "title": "AI for Finance and Controlling",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why must AI-generated finance narratives be reviewed carefully?",
+      "options": [
+        "They can sound plausible while hiding weak data, wrong assumptions, or missing approvals",
+        "Finance data never changes",
+        "AI owns all approvals",
+        "Variance explanations do not need evidence"
+      ],
+      "correct": 0,
+      "explanation": "Finance outputs require source traceability and approval controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is explicitly part of this lesson?",
+      "options": ["source mismatch", "font size", "network theme", "video codec"],
+      "correct": 0,
+      "explanation": "Source mismatch is one finance-control signal."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked finance AI review plan with controls and rationale",
+        "An automatic financial approval",
+        "A production ERP system",
+        "A guaranteed forecast"
+      ],
+      "correct": 0,
+      "explanation": "The artifact supports review and control selection."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["assumption log", "skip source trace", "hide approval owner", "ignore variance"],
+      "correct": 0,
+      "explanation": "An assumption log makes finance reasoning visible."
+    },
+    {
+      "stage": "post",
+      "question": "When should finance AI work require a launch gate?",
+      "options": [
+        "When impact, uncertainty, and approval or source risk are high",
+        "Only when the wording is polished",
+        "Only when no numbers are involved",
+        "Never; finance AI is always low risk"
+      ],
+      "correct": 0,
+      "explanation": "High-risk finance workflows need explicit review before use."
+    },
+    {
+      "stage": "post",
+      "question": "What should variance explanations be linked to?",
+      "options": [
+        "Evidence and source data",
+        "Only tone preferences",
+        "Unreviewed assumptions",
+        "A generic prompt"
+      ],
+      "correct": 0,
+      "explanation": "Finance narratives should remain traceable to evidence."
+    }
+  ]
+}

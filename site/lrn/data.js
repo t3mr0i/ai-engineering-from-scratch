@@ -92,6 +92,7 @@ window.LrnData = {
   profiles: [
     {
       id: "bsc",
+      code: "R01-BSC",
       label: "Business & Strategy Consulting",
       segment: "BSC",
       description: "Consulting, Business Analyse, Strategie, Prozess- und Kundenkontext.",
@@ -99,6 +100,7 @@ window.LrnData = {
     },
     {
       id: "pvs",
+      code: "R02-PVS",
       label: "Products & Value Streams",
       segment: "PVS",
       description: "Product Management, Product Sales, Value Streams und produktnahe Beratung.",
@@ -106,6 +108,7 @@ window.LrnData = {
     },
     {
       id: "tc",
+      code: "R03-TC",
       label: "Technology Consulting",
       segment: "TC",
       description: "Engineering, Architektur, Security, Cloud, IoT, Data und technische Umsetzung.",
@@ -113,6 +116,7 @@ window.LrnData = {
     },
     {
       id: "am",
+      code: "R04-AM",
       label: "Application Management",
       segment: "AM",
       description: "Service Technology, Service Management, Betrieb und Operations-nahe Rollen.",
@@ -120,6 +124,7 @@ window.LrnData = {
     },
     {
       id: "pma",
+      code: "R05-PMA",
       label: "Project Management & Agility",
       segment: "PMA",
       description: "Project Management, Product Ownership, Agility und Transformation Delivery.",
@@ -127,6 +132,7 @@ window.LrnData = {
     },
     {
       id: "corp",
+      code: "R06-CF",
       label: "Corporate Functions",
       segment: "CF",
       description: "HR, Finance, Legal, Communications, Procurement und interne Fachfunktionen.",
@@ -134,6 +140,7 @@ window.LrnData = {
     },
     {
       id: "lead",
+      code: "R07-LEAD",
       label: "Leadership",
       segment: "Leadership",
       description: "People Leadership, Portfolio-Entscheidungen und strategische AI-Transformation.",
@@ -574,6 +581,136 @@ window.LrnData = {
       modules: ["Portfolio board", "Review cadence", "Scaling decision"]
     },
     {
+      id: "AI-28",
+      title: "AI for HR and People Processes",
+      status: "neu aus Rollen-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["corp", "lead", "pma"],
+      dimensions: ["data", "change"],
+      interests: ["governance", "leadership"],
+      levels: ["Deepen", "Create"],
+      format: "People-process triage, fairness check, communication script",
+      summary: "AI in HR-Workflows mit Datenschutz, Fairness, Mitarbeiterwirkung und menschlicher Entscheidungshoheit einsetzen.",
+      modules: ["People-process triage", "Fairness review", "Human decision owner"]
+    },
+    {
+      id: "AI-29",
+      title: "AI for Finance and Controlling",
+      status: "neu aus Rollen-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["corp", "lead", "bsc"],
+      dimensions: ["data", "business"],
+      interests: ["governance", "leadership", "consulting"],
+      levels: ["Deepen", "Create"],
+      format: "Finance review sheet, variance check, assumption log",
+      summary: "AI für Finanzkommentare, Forecasts und Controlling nutzen, ohne Quellen, Annahmen und Freigaben zu verlieren.",
+      modules: ["Source trace", "Assumption log", "Approval owner"]
+    },
+    {
+      id: "AI-30",
+      title: "AI for Legal, Procurement, and Compliance",
+      status: "neu aus Rollen-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["corp", "lead", "bsc", "pma"],
+      dimensions: ["data", "business"],
+      interests: ["governance", "consulting", "leadership"],
+      levels: ["Deepen", "Create"],
+      format: "Clause triage, vendor-term review, decision record",
+      summary: "AI zur Vorbereitung juristischer, Procurement- und Compliance-Arbeit nutzen, mit klarer menschlicher Prüfung.",
+      modules: ["Clause register", "Legal reviewer", "Decision record"]
+    },
+    {
+      id: "AI-31",
+      title: "AI for Service Management and Support",
+      status: "neu aus Rollen-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["am", "tc", "pma", "lead"],
+      dimensions: ["business", "data"],
+      interests: ["engineering", "governance", "productivity"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Support triage, confidence threshold, escalation checklist",
+      summary: "AI für Ticket-Triage, Wissensartikel, Supportantworten und Incident-Handoffs mit Service-Kontrollen einsetzen.",
+      modules: ["Service scope", "Confidence threshold", "Escalation path"]
+    },
+    {
+      id: "AI-32",
+      title: "AI for Sales and Product Consulting",
+      status: "neu aus Rollen-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["pvs", "bsc", "lead"],
+      dimensions: ["business", "prompting"],
+      interests: ["consulting", "productivity", "leadership"],
+      levels: ["Deepen", "Create"],
+      format: "Customer-context prep, value-story review, follow-up plan",
+      summary: "AI für Discovery, Product Consulting, Angebotsvorbereitung und Follow-up nutzen, ohne Kundensignale zu erfinden.",
+      modules: ["Customer signal", "Value story", "Stakeholder review"]
+    },
+    {
+      id: "AI-33",
+      title: "AI for Corporate Communications and Marketing",
+      status: "neu aus Rollen-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["corp", "lead", "bsc", "pma", "pvs"],
+      dimensions: ["change", "prompting", "business"],
+      interests: ["leadership", "productivity", "consulting"],
+      levels: ["Deepen", "Create"],
+      format: "Message review, tone check, source pack, approval workflow",
+      summary: "AI für interne und externe Kommunikation nutzen, ohne Quellen, Tonalität, Freigaben und Markenwirkung zu verlieren.",
+      modules: ["Source pack", "Tone check", "Approval owner"]
+    },
+    {
+      id: "AI-34",
+      title: "AI Learning Design and Knowledge Transfer",
+      status: "neu aus Enablement-Gap",
+      source: "DOCX/XLSX enablement gap",
+      profileIds: ["corp", "lead", "pma", "bsc"],
+      dimensions: ["change", "prompting"],
+      interests: ["leadership", "productivity"],
+      levels: ["Deepen", "Create"],
+      format: "Learning objective check, practice design, knowledge check, transfer plan",
+      summary: "AI nutzen, um rollenbasierte Trainings, Job Aids, Workshops und Transferchecks schneller und wirksamer zu bauen.",
+      modules: ["Role outcome", "Practice task", "Knowledge check"]
+    },
+    {
+      id: "AI-35",
+      title: "AI Meeting Facilitation and Workshop Design",
+      status: "neu aus Produktivitäts-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["change", "business", "prompting"],
+      interests: ["productivity", "leadership", "consulting"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Agenda contract, facilitation script, decision log, action tracker",
+      summary: "AI für bessere Meetings und Workshops einsetzen: klare Outcomes, Entscheidungen und Follow-up statt nur Zusammenfassungen.",
+      modules: ["Agenda contract", "Decision log", "Action tracker"]
+    },
+    {
+      id: "AI-36",
+      title: "AI Project Reporting and Steering",
+      status: "neu aus Delivery-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["pma", "lead", "bsc", "pvs", "corp", "tc", "am"],
+      dimensions: ["business", "change", "data"],
+      interests: ["leadership", "consulting", "governance"],
+      levels: ["Deepen", "Create"],
+      format: "Status evidence, RAG check, risk owner, steering question",
+      summary: "AI für Projektstatus, Steering Packs und Entscheidungsunterlagen nutzen, mit klarer Evidenz und Entscheidungsfrage.",
+      modules: ["Source snapshot", "RAG status", "Steering ask"]
+    },
+    {
+      id: "AI-37",
+      title: "AI Data Quality and Master Data Processes",
+      status: "neu aus Daten-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["tc", "am", "corp", "lead", "bsc", "pma"],
+      dimensions: ["data", "business"],
+      interests: ["governance", "engineering", "consulting"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Data owner, quality rule, sample check, issue backlog",
+      summary: "Datenqualitäts- und Stammdatenlücken erkennen, bevor AI-Workflows schlechte Quellen skalieren.",
+      modules: ["Data owner", "Quality rule", "Sample check"]
+    },
+    {
       id: "CHAMP-01",
       title: "AI Champion / Community Lead",
       status: "Rollenformat aus DOCX",
@@ -590,41 +727,56 @@ window.LrnData = {
   tracks: [
     {
       id: "baseline",
-      label: "Basis für alle Rollen",
+      code: "LP01",
+      label: "Core AI Foundation Path",
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24"] },
-        { label: "Deepen", courses: ["PROMPT-01", "AI-18", "AI-23"] }
+        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37"] },
+        { label: "Deepen", courses: ["PROMPT-01", "AI-18", "AI-23", "AI-33"] }
       ]
     },
     {
       id: "consulting",
-      label: "Consulting & Value Path",
+      code: "LP02",
+      label: "Consulting & Value Creation Path",
       profileIds: ["bsc", "pvs", "pma"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25"] },
-        { label: "Create", courses: ["AI-19", "AI-27", "CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36"] },
+        { label: "Create", courses: ["AI-19", "AI-27", "AI-32", "AI-33", "CHAMP-01"] }
       ]
     },
     {
       id: "technology",
-      label: "Technology Path",
+      code: "LP03",
+      label: "Technology & Engineering Delivery Path",
       profileIds: ["tc", "am"],
       stages: [
         { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
-        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26"] },
+        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37"] },
         { label: "Create", courses: ["AI-19", "AI-25", "CHAMP-01"] }
       ]
     },
     {
       id: "leadership",
+      code: "LP04",
       label: "Leadership & Transformation Path",
       profileIds: ["lead", "corp", "pma", "bsc"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27"] },
+        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-35", "AI-36", "AI-37"] },
         { label: "Create", courses: ["AI-19", "CHAMP-01"] }
+      ]
+    },
+    {
+      id: "corporate-functions",
+      code: "LP05",
+      label: "Corporate Functions Enablement Path",
+      profileIds: ["corp"],
+      stages: [
+        { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37"] },
+        { label: "Deepen", courses: ["AI-10", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-36"] },
+        { label: "Create", courses: ["AI-20", "AI-21", "CHAMP-01"] }
       ]
     }
   ]

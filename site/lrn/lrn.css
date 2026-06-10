@@ -151,19 +151,11 @@ button {
 }
 
 .hero {
-  display: grid;
-  gap: var(--space-xl);
-  align-items: end;
-  padding-block: var(--space-2xl) var(--space-xl);
-}
-
-.hero__copy {
-  max-width: 68ch;
+  padding-block: var(--space-xl) var(--space-lg);
 }
 
 .hero h1 {
   margin: 0;
-  max-width: 13ch;
   color: var(--color-ink);
   font-family: var(--font-display);
   font-size: var(--text-display);
@@ -175,53 +167,20 @@ button {
 
 .hero p {
   max-width: 62ch;
-  margin: var(--space-md) 0 0;
+  margin: var(--space-sm) 0 0;
   color: var(--color-ink-2);
   font-size: var(--text-md);
-}
-
-.hero__figure {
-  margin: 0;
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-md);
-  background: var(--color-paper);
-  box-shadow: var(--shadow-whisper);
-}
-
-.hero__figure img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: inherit;
-}
-
-.source-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  margin-block-start: var(--space-lg);
-}
-
-.source-pill {
-  display: inline-flex;
-  min-height: 32px;
-  align-items: center;
-  padding: 0 var(--space-sm);
-  border: 1px solid var(--color-rule);
-  border-radius: 999px;
-  color: var(--color-muted);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  white-space: nowrap;
 }
 
 .workbench {
   display: grid;
   gap: var(--space-lg);
   align-items: start;
+  min-width: 0;
 }
 
 .pane {
+  min-width: 0;
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
   background: color-mix(in oklch, var(--color-paper) 94%, transparent);
@@ -233,6 +192,7 @@ button {
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-md);
+  min-width: 0;
   padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--color-rule);
 }
@@ -247,23 +207,24 @@ button {
 }
 
 .pane__body {
+  min-width: 0;
   padding: var(--space-lg);
 }
 
 .meta-label {
+  min-width: 0;
   color: var(--color-muted);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .profile-grid,
 .level-grid,
 .interest-grid,
-.course-grid,
-.track-grid,
-.dimension-grid {
+.course-grid {
   display: grid;
   gap: var(--space-sm);
 }
@@ -292,11 +253,13 @@ button {
   display: grid;
   gap: var(--space-2xs);
   justify-items: start;
+  min-width: 0;
   padding: var(--space-sm);
   text-align: start;
 }
 
 .profile-btn strong {
+  overflow-wrap: anywhere;
   font-size: var(--text-sm);
 }
 
@@ -391,7 +354,7 @@ button {
 .profile-btn:active,
 .level-btn:active,
 .interest-btn:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(0.98);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -459,35 +422,6 @@ button {
   font-size: 0.92em;
 }
 
-.result-summary {
-  display: grid;
-  gap: var(--space-md);
-  padding: var(--space-lg);
-  border-bottom: 1px solid var(--color-rule);
-  background: var(--color-paper-2);
-}
-
-.score-line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-md);
-}
-
-.score-number {
-  color: var(--color-accent);
-  font-family: var(--font-display);
-  font-size: 5rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 0.9;
-}
-
-.score-copy {
-  margin: 0;
-  color: var(--color-ink-2);
-}
-
 .spec-sheet {
   width: 100%;
   border-collapse: collapse;
@@ -552,9 +486,7 @@ button {
   color: var(--color-ink);
 }
 
-.course-card,
-.track-card,
-.capability-card {
+.course-card {
   display: grid;
   gap: var(--space-sm);
   padding: var(--space-md);
@@ -563,9 +495,7 @@ button {
   background: var(--color-paper);
 }
 
-.course-card h3,
-.track-card h3,
-.capability-card h3 {
+.course-card h3 {
   margin: 0;
   color: var(--color-ink);
   font-size: var(--text-md);
@@ -573,17 +503,14 @@ button {
   letter-spacing: 0;
 }
 
-.course-card p,
-.track-card p,
-.capability-card p {
+.course-card p {
   margin: 0;
   color: var(--color-ink-2);
   font-size: var(--text-sm);
 }
 
 .course-meta,
-.module-list,
-.cluster-group {
+.module-list {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
@@ -602,12 +529,12 @@ button {
   transform: translateY(1px);
 }
 
-.level-pill[data-focus="true"] {
-  box-shadow: inset 0 0 0 1px var(--color-accent);
-}
-
 .section-block {
   margin-block-start: var(--space-xl);
+}
+
+.section-block--first {
+  margin-block-start: 0;
 }
 
 .section-block > .section-title {
@@ -631,6 +558,13 @@ button {
 .progress-overview {
   display: grid;
   gap: var(--space-md);
+}
+
+.progress-line {
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
 }
 
 .metric-grid {
@@ -697,6 +631,23 @@ button {
   overflow: clip;
 }
 
+/* Stagger-in on (re)render — reveal curve, capped delay set inline per index */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.course-card--enter {
+  animation: card-enter 360ms var(--ease-out) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
 .course-card[data-active="true"] {
   border-color: var(--color-accent);
 }
@@ -712,18 +663,26 @@ button {
   color: inherit;
   cursor: pointer;
   text-align: start;
+  /* scale settles with overshoot (spring 400/25); brightness leads (faster than scale) */
   transition:
     background-color var(--dur-short) var(--ease-out),
-    transform var(--dur-micro) var(--ease-out);
+    filter var(--dur-micro) linear,
+    transform 260ms var(--ease-spring);
 }
 
+/* press: snappy spring 600/20 — fast in, no overshoot */
 .course-card__button:active {
-  transform: translateY(1px);
+  filter: brightness(0.97);
+  transform: scale(0.985);
+  transition-duration: 90ms, 90ms, 90ms;
+  transition-timing-function: var(--ease-out), linear, var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .course-card__button:hover {
     background: var(--color-paper-2);
+    filter: brightness(1.04);
+    transform: scale(1.012);
   }
 }
 
@@ -765,7 +724,6 @@ button {
 
 .course-detail h3,
 .subcourse-card h4,
-.omitted-groups h4,
 .module-progress h4 {
   margin: 0;
   color: var(--color-ink);
@@ -778,12 +736,6 @@ button {
   color: var(--color-ink-2);
 }
 
-.mapping-note {
-  margin: 0;
-  color: var(--color-muted);
-  font-size: var(--text-sm);
-}
-
 .path-summary {
   display: grid;
   gap: var(--space-md);
@@ -791,6 +743,15 @@ button {
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
   background: var(--color-paper-2);
+}
+
+.path-context {
+  margin: 0;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
 }
 
 .path-summary__metrics {
@@ -842,8 +803,7 @@ button {
   cursor: default;
 }
 
-.subcourse-card,
-.omitted-groups {
+.subcourse-card {
   display: grid;
   gap: var(--space-sm);
   padding-block-start: var(--space-md);
@@ -859,7 +819,7 @@ button {
 
 .unit-meta {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-xs);
 }
 
@@ -970,29 +930,6 @@ button {
   }
 }
 
-.omitted-list {
-  display: grid;
-  gap: var(--space-xs);
-}
-
-.omitted-list p {
-  display: grid;
-  gap: var(--space-2xs);
-  margin: 0;
-  padding: var(--space-sm);
-  border: 1px dashed var(--color-rule-2);
-  border-radius: var(--radius-sm);
-}
-
-.omitted-list strong {
-  color: var(--color-ink);
-}
-
-.omitted-list span {
-  color: var(--color-muted);
-  font-size: var(--text-sm);
-}
-
 .module-progress {
   display: grid;
   gap: var(--space-sm);
@@ -1074,10 +1011,6 @@ button {
 }
 
 @media (min-width: 60rem) {
-  .hero {
-    grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.65fr);
-  }
-
   .workbench {
     grid-template-columns: minmax(280px, 0.36fr) minmax(0, 1fr);
   }
@@ -1090,11 +1023,6 @@ button {
   .course-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .track-grid,
-  .dimension-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 52rem) {
@@ -1103,10 +1031,6 @@ button {
   }
 
   .hero h1 {
-    font-size: 4rem;
-  }
-
-  .score-number {
     font-size: 4rem;
   }
 
@@ -1179,18 +1103,9 @@ button {
     font-size: 2.75rem;
   }
 
-  .score-number {
-    font-size: 3rem;
-  }
-
   .pane__head,
-  .pane__body,
-  .result-summary {
+  .pane__body {
     padding-inline: var(--space-md);
-  }
-
-  .score-line {
-    display: grid;
   }
 
   .rating-scale {
@@ -1215,5 +1130,15 @@ button {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 150ms !important;
+  }
+
+  /* No stagger reveal, no spring overshoot — content appears in place. */
+  .course-card--enter {
+    animation: none;
+  }
+
+  .course-card__button:hover,
+  .course-card__button:active {
+    transform: none;
   }
 }

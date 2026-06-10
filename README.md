@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a1a1a?style=flat-square&labelColor=fafaf5" alt="MIT License"></a>
-  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-393-3553ff?style=flat-square&labelColor=fafaf5" alt="393 lessons"></a>
+  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-420-3553ff?style=flat-square&labelColor=fafaf5" alt="420 lessons"></a>
   <a href="#contents"><img src="https://img.shields.io/badge/phases-20-3553ff?style=flat-square&labelColor=fafaf5" alt="20 phases"></a>
   <a href="https://github.com/rohitg00/ai-engineering-from-scratch/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/ai-engineering-from-scratch?style=flat-square&labelColor=fafaf5&color=3553ff" alt="GitHub stars"></a>
   <a href="https://aiengineeringfromscratch.com"><img src="https://img.shields.io/badge/web-aiengineeringfromscratch.com-3553ff?style=flat-square&labelColor=fafaf5" alt="Website"></a>
@@ -548,7 +548,7 @@ Twenty phases. Click any phase to expand its lesson list.
 </details>
 
 <details id="phase-11">
-<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>39 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
+<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>49 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
 <br/>
 
 | # | Lesson | Type | Lang |
@@ -592,6 +592,16 @@ Twenty phases. Click any phase to expand its lesson list.
 | 37 | [AI Vendor and Procurement Evaluation](phases/11-llm-engineering/37-ai-vendor-procurement-evaluation/) | Build | Python |
 | 38 | [AI Operations and Incident Response](phases/11-llm-engineering/38-ai-operations-incident-response/) | Build | Python |
 | 39 | [AI Portfolio and Roadmap Management](phases/11-llm-engineering/39-ai-portfolio-roadmap-management/) | Build | Python |
+| 40 | [AI for HR and People Processes](phases/11-llm-engineering/40-ai-for-hr-people-processes/) | Build | Python |
+| 41 | [AI for Finance and Controlling](phases/11-llm-engineering/41-ai-for-finance-controlling/) | Build | Python |
+| 42 | [AI for Legal, Procurement, and Compliance](phases/11-llm-engineering/42-ai-for-legal-procurement-compliance/) | Build | Python |
+| 43 | [AI for Service Management and Support](phases/11-llm-engineering/43-ai-for-service-management-support/) | Build | Python |
+| 44 | [AI for Sales and Product Consulting](phases/11-llm-engineering/44-ai-for-sales-product-consulting/) | Build | Python |
+| 45 | [AI for Corporate Communications and Marketing](phases/11-llm-engineering/45-ai-for-corporate-communications-marketing/) | Build | Python |
+| 46 | [AI Learning Design and Knowledge Transfer](phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer/) | Build | Python |
+| 47 | [AI Meeting Facilitation and Workshop Design](phases/11-llm-engineering/47-ai-meeting-workshop-facilitation/) | Build | Python |
+| 48 | [AI Project Reporting and Steering](phases/11-llm-engineering/48-ai-project-reporting-steering/) | Build | Python |
+| 49 | [AI Data Quality and Master Data Processes](phases/11-llm-engineering/49-ai-data-quality-master-data-processes/) | Build | Python |
 
 </details>
 

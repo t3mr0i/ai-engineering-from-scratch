@@ -1,5 +1,5 @@
 window.LrnCurriculumMap = {
-  source: "AI Engineering from Scratch curriculum",
+  source: "Agentic Software Engineering at LHIND curriculum",
   note: "Curated subset: use the lessons that fit LHIND LRN role courses, combine overlapping lessons into subcourses, omit deep model-training or modality-specific material unless it directly supports the role course.",
   courseMaps: {
     "AI-09": [
@@ -992,6 +992,317 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" },
           { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" }
+        ]
+      }
+    ],
+    "AI-28": [
+      {
+        title: "People-process triage",
+        decision: "core",
+        note: "Frames HR AI support around privacy, fairness and human decision ownership.",
+        lessons: [
+          { path: "phases/11-llm-engineering/40-ai-for-hr-people-processes", title: "AI for HR and People Processes" },
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" }
+        ]
+      },
+      {
+        title: "Fairness and workforce impact",
+        decision: "core",
+        note: "Connects HR AI use to fair treatment and accountable role design.",
+        lessons: [
+          { path: "phases/18-ethics-safety-alignment/20-bias-representational-harm", title: "Bias and Representational Harm in LLMs" },
+          { path: "phases/18-ethics-safety-alignment/21-fairness-criteria-group-individual-counterfactual", title: "Fairness Criteria" },
+          { path: "phases/11-llm-engineering/28-ai-workforce-strategy", title: "AI Workforce Strategy" }
+        ]
+      },
+      {
+        title: "Communication and review",
+        decision: "optional",
+        note: "For HR teams preparing manager communication and employee-facing guidance.",
+        lessons: [
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
+        ]
+      }
+    ],
+    "AI-29": [
+      {
+        title: "Finance analysis controls",
+        decision: "core",
+        note: "Keeps finance narratives tied to sources, assumptions and approval ownership.",
+        lessons: [
+          { path: "phases/11-llm-engineering/41-ai-for-finance-controlling", title: "AI for Finance and Controlling" },
+          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
+        ]
+      },
+      {
+        title: "Forecast and value economics",
+        decision: "core",
+        note: "Connects finance work to uncertainty, value case and operating cost.",
+        lessons: [
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/17-infrastructure-and-production/27-finops-llms", title: "FinOps for LLMs" },
+          { path: "phases/19-capstone-projects/73-perplexity-calibration", title: "Perplexity and Calibration" }
+        ]
+      },
+      {
+        title: "Reporting quality",
+        decision: "optional",
+        note: "For teams turning AI-assisted analysis into management reporting.",
+        lessons: [
+          { path: "phases/19-capstone-projects/71-classical-metrics", title: "Classical Metrics" },
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" }
+        ]
+      }
+    ],
+    "AI-30": [
+      {
+        title: "Legal and procurement review",
+        decision: "core",
+        note: "Separates AI preparation from accountable legal and procurement judgment.",
+        lessons: [
+          { path: "phases/11-llm-engineering/42-ai-for-legal-procurement-compliance", title: "AI for Legal, Procurement, and Compliance" },
+          { path: "phases/11-llm-engineering/37-ai-vendor-procurement-evaluation", title: "AI Vendor and Procurement Evaluation" },
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" }
+        ]
+      },
+      {
+        title: "Evidence and obligations",
+        decision: "core",
+        note: "Keeps clauses, obligations and compliance evidence traceable.",
+        lessons: [
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
+          { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks" },
+          { path: "phases/18-ethics-safety-alignment/26-model-system-dataset-cards", title: "Model, System, and Dataset Cards" }
+        ]
+      },
+      {
+        title: "Secure vendor workflow",
+        decision: "optional",
+        note: "For procurement teams evaluating AI suppliers with security-sensitive data.",
+        lessons: [
+          { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
+          { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security — Secrets, API Key Rotation, Audit Logs, Guardrails" }
+        ]
+      }
+    ],
+    "AI-31": [
+      {
+        title: "Service AI readiness",
+        decision: "core",
+        note: "Maps support automation to service scope, confidence and escalation.",
+        lessons: [
+          { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" },
+          { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
+          { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" }
+        ]
+      },
+      {
+        title: "Support quality and escalation",
+        decision: "core",
+        note: "Prevents support automation from hiding uncertainty or incident risk.",
+        lessons: [
+          { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
+          { path: "phases/17-infrastructure-and-production/13-llm-observability", title: "LLM Observability Stack Selection" },
+          { path: "phases/17-infrastructure-and-production/23-sre-for-ai", title: "SRE for AI" }
+        ]
+      },
+      {
+        title: "Knowledge improvement loop",
+        decision: "optional",
+        note: "For service teams turning support learnings into better knowledge articles.",
+        lessons: [
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
+        ]
+      }
+    ],
+    "AI-32": [
+      {
+        title: "Customer-context preparation",
+        decision: "core",
+        note: "Keeps product and sales AI outputs grounded in actual customer evidence.",
+        lessons: [
+          { path: "phases/11-llm-engineering/44-ai-for-sales-product-consulting", title: "AI for Sales and Product Consulting" },
+          { path: "phases/11-llm-engineering/23-ai-enhanced-user-research", title: "AI-Enhanced User Research" },
+          { path: "phases/11-llm-engineering/26-consultative-prompting", title: "Consultative Prompting" }
+        ]
+      },
+      {
+        title: "Value story and proposal review",
+        decision: "core",
+        note: "Connects customer-facing material to value hypotheses and review discipline.",
+        lessons: [
+          { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" },
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent" }
+        ]
+      },
+      {
+        title: "Follow-up discipline",
+        decision: "optional",
+        note: "For teams turning discovery and proposal work into accountable next steps.",
+        lessons: [
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
+        ]
+      }
+    ],
+    "AI-33": [
+      {
+        title: "Message review and source discipline",
+        decision: "core",
+        note: "Keeps AI-assisted messages grounded in sources, tone and approval.",
+        lessons: [
+          { path: "phases/11-llm-engineering/45-ai-for-corporate-communications-marketing", title: "AI for Corporate Communications and Marketing" },
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/11-llm-engineering/26-consultative-prompting", title: "Consultative Prompting" }
+        ]
+      },
+      {
+        title: "Claims, risk and approval",
+        decision: "core",
+        note: "Connects communication quality to Responsible AI and decision ownership.",
+        lessons: [
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/12-guardrails", title: "Guardrails, Safety & Content Filtering" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
+        ]
+      },
+      {
+        title: "Change and channel planning",
+        decision: "optional",
+        note: "For teams using AI to prepare change messages and internal campaigns.",
+        lessons: [
+          { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" },
+          { path: "phases/11-llm-engineering/34-ai-champion-enablement", title: "AI Champion Enablement" }
+        ]
+      }
+    ],
+    "AI-34": [
+      {
+        title: "Role-based learning design",
+        decision: "core",
+        note: "Turns broad AI training needs into role outcomes and practice tasks.",
+        lessons: [
+          { path: "phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer", title: "AI Learning Design and Knowledge Transfer" },
+          { path: "phases/11-llm-engineering/31-hands-on-prompt-clinic", title: "Hands-on Prompt Clinic" },
+          { path: "phases/11-llm-engineering/34-ai-champion-enablement", title: "AI Champion Enablement" }
+        ]
+      },
+      {
+        title: "Practice and assessment",
+        decision: "core",
+        note: "Adds evidence that learners can apply the skill in a realistic task.",
+        lessons: [
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" },
+          { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
+          { path: "phases/14-agent-engineering/38-verification-gates", title: "Verification Gates" }
+        ]
+      },
+      {
+        title: "Transfer into daily work",
+        decision: "optional",
+        note: "For enablement owners who need manager handoff and community follow-up.",
+        lessons: [
+          { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" },
+          { path: "phases/11-llm-engineering/28-ai-workforce-strategy", title: "AI Workforce Strategy" }
+        ]
+      }
+    ],
+    "AI-35": [
+      {
+        title: "Meeting and workshop preparation",
+        decision: "core",
+        note: "Uses AI before the session to clarify outcome, agenda and audience.",
+        lessons: [
+          { path: "phases/11-llm-engineering/47-ai-meeting-workshop-facilitation", title: "AI Meeting Facilitation and Workshop Design" },
+          { path: "phases/11-llm-engineering/26-consultative-prompting", title: "Consultative Prompting" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
+        ]
+      },
+      {
+        title: "Decision and action capture",
+        decision: "core",
+        note: "Turns AI meeting support into decision logs and accountable follow-up.",
+        lessons: [
+          { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" },
+          { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" },
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" }
+        ]
+      },
+      {
+        title: "Reusable meeting artifacts",
+        decision: "optional",
+        note: "For teams standardizing agendas, summaries, action trackers and facilitation prompts.",
+        lessons: [
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent" }
+        ]
+      }
+    ],
+    "AI-36": [
+      {
+        title: "Steering report controls",
+        decision: "core",
+        note: "Keeps AI-assisted status reporting tied to source evidence and decisions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/48-ai-project-reporting-steering", title: "AI Project Reporting and Steering" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" },
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" }
+        ]
+      },
+      {
+        title: "Evidence, status and quality",
+        decision: "core",
+        note: "Connects reports to data literacy, source snapshots and evaluation habits.",
+        lessons: [
+          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
+        ]
+      },
+      {
+        title: "Risk, dependency and roadmap view",
+        decision: "optional",
+        note: "For PMO and leadership teams turning reports into portfolio decisions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" },
+          { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" }
+        ]
+      }
+    ],
+    "AI-37": [
+      {
+        title: "Data-quality readiness",
+        decision: "core",
+        note: "Prevents AI workflows from scaling duplicated, stale or undefined data.",
+        lessons: [
+          { path: "phases/11-llm-engineering/49-ai-data-quality-master-data-processes", title: "AI Data Quality and Master Data Processes" },
+          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
+          { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" }
+        ]
+      },
+      {
+        title: "Governance and definitions",
+        decision: "core",
+        note: "Connects data ownership, definitions and compliance evidence.",
+        lessons: [
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/18-ethics-safety-alignment/27-data-provenance-training-governance", title: "Data Provenance and Training-Data Governance" },
+          { path: "phases/18-ethics-safety-alignment/26-model-system-dataset-cards", title: "Model, System, and Dataset Cards" }
+        ]
+      },
+      {
+        title: "Operational quality loop",
+        decision: "optional",
+        note: "For service and operations teams turning quality issues into improvement backlogs.",
+        lessons: [
+          { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" },
+          { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" },
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
         ]
       }
     ],
