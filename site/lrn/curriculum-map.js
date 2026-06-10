@@ -1617,6 +1617,322 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
+    "AI-48": [
+      {
+        title: "Business application use-case fit",
+        decision: "core",
+        note: "For SAP, Salesforce, Microsoft Business Solutions and ERP/CRM workflows where system boundaries matter.",
+        lessons: [
+          { path: "phases/11-llm-engineering/60-ai-business-applications-erp-crm-consulting", title: "AI Business Applications, ERP, and CRM Consulting" },
+          { path: "phases/11-llm-engineering/49-ai-data-quality-master-data-processes", title: "AI Data Quality and Master Data Processes" },
+          { path: "phases/11-llm-engineering/56-ai-business-analysis-process-discovery", title: "AI Business Analysis and Process Discovery" }
+        ]
+      },
+      {
+        title: "Enterprise workflow and automation",
+        decision: "core",
+        note: "Connects business application AI to process discovery and automation feasibility.",
+        lessons: [
+          { path: "phases/11-llm-engineering/50-ai-process-analysis-automation-design", title: "AI Process Analysis and Automation Design" },
+          { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" },
+          { path: "phases/11-llm-engineering/24-use-case-spotting-automation-discovery", title: "AI Use Case Spotting and Automation Discovery" }
+        ]
+      },
+      {
+        title: "Architecture and vendor constraints",
+        decision: "optional",
+        note: "For teams turning application ideas into architecture, procurement or vendor decisions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/54-ai-architecture-decision-governance", title: "AI Architecture Decision Governance" },
+          { path: "phases/11-llm-engineering/37-ai-vendor-procurement-evaluation", title: "AI Vendor and Procurement Evaluation" }
+        ]
+      }
+    ],
+    "AI-49": [
+      {
+        title: "Platform-aware AI design",
+        decision: "core",
+        note: "Frames cloud, data platform and IoT AI ideas around data movement, latency and ownership.",
+        lessons: [
+          { path: "phases/11-llm-engineering/61-ai-cloud-data-platform-use-case-design", title: "AI Cloud, Data Platform, and IoT Use Case Design" },
+          { path: "phases/11-llm-engineering/54-ai-architecture-decision-governance", title: "AI Architecture Decision Governance" },
+          { path: "phases/11-llm-engineering/05-context-engineering", title: "Context Engineering" }
+        ]
+      },
+      {
+        title: "Data boundaries and RAG patterns",
+        decision: "core",
+        note: "Connects platform use cases to knowledge assistants, RAG and data literacy.",
+        lessons: [
+          { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
+          { path: "phases/11-llm-engineering/06-rag", title: "RAG: Retrieval-Augmented Generation" },
+          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" }
+        ]
+      },
+      {
+        title: "Operations and cost constraints",
+        decision: "optional",
+        note: "For teams sizing platform ideas for production cost, observability and operations.",
+        lessons: [
+          { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" },
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/17-infrastructure-and-production/27-finops-llms", title: "FinOps for LLMs" }
+        ]
+      }
+    ],
+    "AI-50": [
+      {
+        title: "Reporting narrative review",
+        decision: "core",
+        note: "Turns AI-assisted BI commentary into an auditable metric, chart and evidence review.",
+        lessons: [
+          { path: "phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling", title: "AI BI Reporting and Data Storytelling" },
+          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
+          { path: "phases/11-llm-engineering/48-ai-project-reporting-steering", title: "AI Project Reporting and Steering" }
+        ]
+      },
+      {
+        title: "Metrics and decision quality",
+        decision: "core",
+        note: "Connects reports to decision boundaries, value metrics and classical evaluation habits.",
+        lessons: [
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" },
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/19-capstone-projects/71-classical-metrics", title: "Classical Metrics" }
+        ]
+      },
+      {
+        title: "Chart and story review",
+        decision: "optional",
+        note: "For teams reviewing generated summaries, chart claims and reporting prose.",
+        lessons: [
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
+        ]
+      }
+    ],
+    "AI-51": [
+      {
+        title: "Human review workflow",
+        decision: "core",
+        note: "Designs explicit review roles, approval gates and escalation paths for AI-supported work.",
+        lessons: [
+          { path: "phases/11-llm-engineering/63-ai-human-review-approval-workflows", title: "AI Human Review and Approval Workflow Design" },
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" }
+        ]
+      },
+      {
+        title: "Quality and approval gates",
+        decision: "core",
+        note: "Links human review to evaluation discipline and production verification gates.",
+        lessons: [
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" },
+          { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
+          { path: "phases/14-agent-engineering/38-verification-gates", title: "Verification Gates" }
+        ]
+      },
+      {
+        title: "User impact and escalation",
+        decision: "optional",
+        note: "For service, HR or customer-facing teams where review failures affect people directly.",
+        lessons: [
+          { path: "phases/11-llm-engineering/53-ai-customer-communication-service-quality", title: "AI Customer Communication and Service Quality" },
+          { path: "phases/11-llm-engineering/40-ai-for-hr-people-processes", title: "AI for HR and People Processes" }
+        ]
+      }
+    ],
+    "AI-52": [
+      {
+        title: "Operating model design",
+        decision: "core",
+        note: "Defines ownership, services and governance cadence for AI work that crosses team boundaries.",
+        lessons: [
+          { path: "phases/11-llm-engineering/64-ai-operating-model-center-of-excellence", title: "AI Operating Model and Center of Excellence" },
+          { path: "phases/11-llm-engineering/34-ai-champion-enablement", title: "AI Champion Enablement" },
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" }
+        ]
+      },
+      {
+        title: "Standards, reuse and assets",
+        decision: "core",
+        note: "Connects the operating model to reusable learning assets, knowledge governance and skill libraries.",
+        lessons: [
+          { path: "phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer", title: "AI Learning Design and Knowledge Transfer" },
+          { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" },
+          { path: "phases/13-tools-and-protocols/22-skills-and-agent-sdks", title: "Skills and Agent SDKs" }
+        ]
+      },
+      {
+        title: "Governance cadence",
+        decision: "optional",
+        note: "For leaders deciding which AI work should scale, stop, standardize or move into a shared service.",
+        lessons: [
+          { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" },
+          { path: "phases/11-llm-engineering/59-ai-value-realization-benefits-tracking", title: "AI Value Realization and Benefits Tracking" },
+          { path: "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape", title: "AI Ecosystem and Vendor Landscape" }
+        ]
+      }
+    ],
+    "AI-53": [
+      {
+        title: "Service desk runbook automation",
+        decision: "core",
+        note: "For Application Management and Service Management teams turning repeated tickets into grounded assistance.",
+        lessons: [
+          { path: "phases/11-llm-engineering/65-ai-service-desk-runbook-automation", title: "AI Service Desk Runbook and Knowledge Automation" },
+          { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" },
+          { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" }
+        ]
+      },
+      {
+        title: "Knowledge and escalation controls",
+        decision: "core",
+        note: "Connects service automation to source articles, customer impact and human handoff.",
+        lessons: [
+          { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" },
+          { path: "phases/11-llm-engineering/53-ai-customer-communication-service-quality", title: "AI Customer Communication and Service Quality" },
+          { path: "phases/11-llm-engineering/63-ai-human-review-approval-workflows", title: "AI Human Review and Approval Workflow Design" }
+        ]
+      },
+      {
+        title: "Metrics and incident improvement",
+        decision: "optional",
+        note: "For service teams measuring whether automation reduces load without hiding incidents.",
+        lessons: [
+          { path: "phases/11-llm-engineering/48-ai-project-reporting-steering", title: "AI Project Reporting and Steering" },
+          { path: "phases/11-llm-engineering/59-ai-value-realization-benefits-tracking", title: "AI Value Realization and Benefits Tracking" },
+          { path: "phases/17-infrastructure-and-production/23-sre-for-ai", title: "SRE for AI" }
+        ]
+      }
+    ],
+    "AI-54": [
+      {
+        title: "Business threat triage",
+        decision: "core",
+        note: "Gives business teams a lightweight way to spot AI security review triggers early.",
+        lessons: [
+          { path: "phases/11-llm-engineering/66-ai-security-threat-triage-business-teams", title: "AI Security Review and Threat Triage for Business Teams" },
+          { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" }
+        ]
+      },
+      {
+        title: "Controls and evidence",
+        decision: "core",
+        note: "Connects early triage to risk controls, evaluation and security evidence.",
+        lessons: [
+          { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" },
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" },
+          { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security, Secrets and Audit" }
+        ]
+      },
+      {
+        title: "Architecture and vendor escalation",
+        decision: "optional",
+        note: "For cases where security triage changes architecture, procurement or tool approval.",
+        lessons: [
+          { path: "phases/11-llm-engineering/37-ai-vendor-procurement-evaluation", title: "AI Vendor and Procurement Evaluation" },
+          { path: "phases/11-llm-engineering/54-ai-architecture-decision-governance", title: "AI Architecture Decision Governance" }
+        ]
+      }
+    ],
+    "AI-55": [
+      {
+        title: "Experiment design",
+        decision: "core",
+        note: "Turns AI product ideas into hypotheses, metrics and controlled decisions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/67-ai-product-experiment-feedback-analytics", title: "AI Product Experiment Design and Feedback Analytics" },
+          { path: "phases/11-llm-engineering/55-ai-product-backlog-prioritization", title: "AI Product Backlog and Prioritization" },
+          { path: "phases/11-llm-engineering/24-use-case-spotting-automation-discovery", title: "AI Use Case Spotting and Automation Discovery" }
+        ]
+      },
+      {
+        title: "Feedback analytics",
+        decision: "core",
+        note: "Connects user feedback, BI storytelling and decision quality.",
+        lessons: [
+          { path: "phases/11-llm-engineering/23-ai-enhanced-user-research", title: "AI-Enhanced User Research" },
+          { path: "phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling", title: "AI BI Reporting and Data Storytelling" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
+        ]
+      },
+      {
+        title: "Scale or stop decisions",
+        decision: "optional",
+        note: "For product leaders deciding whether a pilot should scale, improve or stop.",
+        lessons: [
+          { path: "phases/11-llm-engineering/59-ai-value-realization-benefits-tracking", title: "AI Value Realization and Benefits Tracking" },
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" },
+          { path: "phases/17-infrastructure-and-production/21-ab-testing-llm-features", title: "A/B Testing LLM Features" }
+        ]
+      }
+    ],
+    "AI-56": [
+      {
+        title: "Role enablement and adoption",
+        decision: "core",
+        note: "Turns rollout impact into role narratives, manager briefs and practice tasks.",
+        lessons: [
+          { path: "phases/11-llm-engineering/68-ai-adoption-communications-role-enablement", title: "AI Adoption Communications and Role-Based Enablement" },
+          { path: "phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis", title: "AI Change Impact and Stakeholder Analysis" },
+          { path: "phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer", title: "AI Learning Design and Knowledge Transfer" }
+        ]
+      },
+      {
+        title: "Communication assets",
+        decision: "core",
+        note: "Connects adoption messaging to communication, meetings and customer-facing language.",
+        lessons: [
+          { path: "phases/11-llm-engineering/45-ai-for-corporate-communications-marketing", title: "AI for Corporate Communications and Marketing" },
+          { path: "phases/11-llm-engineering/47-ai-meeting-workshop-facilitation", title: "AI Meeting Facilitation and Workshop Design" },
+          { path: "phases/11-llm-engineering/53-ai-customer-communication-service-quality", title: "AI Customer Communication and Service Quality" }
+        ]
+      },
+      {
+        title: "Adoption measurement",
+        decision: "optional",
+        note: "For teams that need evidence of behavior change after communication.",
+        lessons: [
+          { path: "phases/11-llm-engineering/59-ai-value-realization-benefits-tracking", title: "AI Value Realization and Benefits Tracking" },
+          { path: "phases/11-llm-engineering/48-ai-project-reporting-steering", title: "AI Project Reporting and Steering" },
+          { path: "phases/11-llm-engineering/34-ai-champion-enablement", title: "AI Champion Enablement" }
+        ]
+      }
+    ],
+    "AI-57": [
+      {
+        title: "Prompt library governance",
+        decision: "core",
+        note: "Makes prompt libraries reusable without turning them into stale copy-paste repositories.",
+        lessons: [
+          { path: "phases/11-llm-engineering/69-ai-prompt-library-governance-reuse", title: "AI Prompt Library Governance and Reuse" },
+          { path: "phases/11-llm-engineering/31-hands-on-prompt-clinic", title: "Hands-on Prompt Clinic" },
+          { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" }
+        ]
+      },
+      {
+        title: "Reusable prompt patterns",
+        decision: "core",
+        note: "Connects governed prompt assets to consultative prompting, context engineering and reusable skill patterns.",
+        lessons: [
+          { path: "phases/11-llm-engineering/26-consultative-prompting", title: "Consultative Prompting" },
+          { path: "phases/11-llm-engineering/05-context-engineering", title: "Context Engineering" },
+          { path: "phases/13-tools-and-protocols/22-skills-and-agent-sdks", title: "Skills and Agent SDKs" }
+        ]
+      },
+      {
+        title: "Risk and evaluation",
+        decision: "optional",
+        note: "For shared prompts that affect compliance, quality or safety-sensitive work.",
+        lessons: [
+          { path: "phases/11-llm-engineering/12-guardrails", title: "Guardrails, Safety & Content Filtering" },
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
+        ]
+      }
+    ],
     "CHAMP-01": [
       {
         title: "Champion delivery discipline",
