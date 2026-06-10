@@ -1,0 +1,68 @@
+{
+  "lesson": "62-ai-bi-reporting-data-storytelling",
+  "title": "AI BI Reporting and Data Storytelling",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the main risk of AI-written reporting narratives?",
+      "options": [
+        "They can overstate ambiguous metrics, misleading charts, or weak causality",
+        "They always include too many metric definitions",
+        "They cannot summarize dashboards",
+        "They remove all decisions"
+      ],
+      "correct": 0,
+      "explanation": "AI reporting narratives need evidence and interpretation controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["causality claim", "screen zoom", "CSS border", "audio latency"],
+      "correct": 0,
+      "explanation": "Causality claims need careful review before being written into reporting narratives."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked reporting narrative review plan with controls",
+        "A full BI dashboard",
+        "A database migration",
+        "A charting library"
+      ],
+      "correct": 0,
+      "explanation": "The artifact maps reporting risks to review controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["metric definition", "hide chart risk", "skip decision context", "state correlation as causation"],
+      "correct": 0,
+      "explanation": "Metric definitions make AI-written data stories reviewable."
+    },
+    {
+      "stage": "post",
+      "question": "When should a reporting narrative require review?",
+      "options": [
+        "When decision impact is high or metrics, charts, causality, or audience context are risky",
+        "Only when nobody will use the report",
+        "Only when all metrics are obvious",
+        "Never; AI summaries are enough"
+      ],
+      "correct": 0,
+      "explanation": "High-impact reporting narratives need controls."
+    },
+    {
+      "stage": "post",
+      "question": "What should be clear before sharing AI-generated BI text?",
+      "options": [
+        "Metric definition, chart check, causality warning, and decision context",
+        "Only title and date",
+        "Only color palette",
+        "No audience context"
+      ],
+      "correct": 0,
+      "explanation": "These controls prevent misleading reporting narratives."
+    }
+  ]
+}
