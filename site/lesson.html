@@ -1315,10 +1315,12 @@
     .nb-embed-bar a:hover { text-decoration: underline; }
     .nb-frame {
       width: 100%;
-      height: 640px;
+      height: 720px;
       border: 0;
       display: block;
       background: var(--code-bg);
+      resize: vertical;
+      overflow: auto;
     }
     /* The placeholder shown before the notebook is loaded (on-demand). */
     .nb-placeholder {
@@ -1879,6 +1881,7 @@
       var currentPhaseIndex = -1;
       var currentLessonIndex = -1;
       var flatLessons = [];
+      window.flatLessons = flatLessons;   // expose for not-found suggestions
 
       if (typeof PHASES !== 'undefined') {
         for (var i = 0; i < PHASES.length; i++) {
@@ -2056,13 +2059,51 @@
               });
           })
           .catch(function () {
-            showError('Lesson not found', 'Could not fetch the lesson at <code>' + escapeHtml(path) + '</code>. It may not have been written yet.');
+            var suggestion = suggestLesson(path);
+            var msg = 'Could not fetch the lesson at <code>' + escapeHtml(path) + '</code>.';
+            if (suggestion) {
+              msg += ' Did you mean <a href="lesson.html?path=' + encodeURIComponent(suggestion.path) + '">'
+                + escapeHtml(suggestion.lessonName || suggestion.path) + '</a>? '
+                + '(The link may have been cut off.)';
+            } else {
+              msg += ' It may not have been written yet, or the link was cut off.';
+            }
+            showError('Lesson not found', msg, true);
           });
       }
 
-      function showError(title, msg) {
+      // Find the closest real lesson to a possibly-truncated/typo'd path.
+      // Prefix match first (covers cut-off links like ".../01-the-"),
+      // then a loose contains/overlap fallback.
+      function suggestLesson(path) {
+        var lessons = window.flatLessons || [];
+        if (!lessons.length || !path) return null;
+        var p = String(path).replace(/\/+$/, '');
+        // exact prefix: the typed path is the start of a real lesson path
+        for (var i = 0; i < lessons.length; i++) {
+          if (lessons[i].path && lessons[i].path.indexOf(p) === 0) return lessons[i];
+        }
+        // same phase + lesson-slug prefix
+        var lastSeg = p.split('/').pop();
+        var phasePart = p.split('/').slice(0, 2).join('/');
+        var best = null, bestScore = 0;
+        for (var j = 0; j < lessons.length; j++) {
+          var lp = lessons[j].path || '';
+          var score = 0;
+          if (lp.indexOf(phasePart) === 0) score += 2;          // same phase
+          if (lastSeg && lp.indexOf(lastSeg) !== -1) score += 2; // slug overlap
+          if (score > bestScore) { bestScore = score; best = lessons[j]; }
+        }
+        return bestScore >= 2 ? best : null;
+      }
+
+      function showError(title, msg, showCatalog) {
         var el = document.getElementById('lessonContent');
-        el.innerHTML = '<div class="lesson-error"><h2>' + title + '</h2><p>' + msg + '</p><a href="index.html" class="btn btn-primary">Back to Home</a></div>';
+        var actions = '<a href="index.html" class="btn btn-primary">Back to Home</a>';
+        if (showCatalog) {
+          actions += ' <a href="catalog.html" class="btn">Browse all lessons</a>';
+        }
+        el.innerHTML = '<div class="lesson-error"><h2>' + title + '</h2><p>' + msg + '</p>' + actions + '</div>';
       }
 
       function lessonDescription(md) {
@@ -3304,8 +3345,9 @@
         var container = document.getElementById('aiPanels');
         if (!container || !lessonPath) return;
 
-        renderOutputsPanel(container);
+        // Notebook first — it's the centerpiece, right after the lesson text.
         renderCodePanel(container);
+        renderOutputsPanel(container);
         renderQuizPanel(container);
         renderLearningPathPanel(container);
         renderContinuePanel(container);
