@@ -193,6 +193,7 @@
 
   <script src="data.js?v=20260525a"></script>
   <script src="capabilities.js?v=20260525a"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     (function () {
       var root = document.documentElement;
@@ -354,7 +355,8 @@
         var list = document.getElementById('pathList');
         list.innerHTML = '';
         if (!items.length) {
-          list.innerHTML = '<p style="color:var(--text-muted)">No gaps — you meet every target for your role. 🎉</p>';
+          list.innerHTML = '<p style="color:var(--text-muted)">No gaps — you meet every target for your role. <i data-lucide="party-popper" style="width:1em;height:1em;vertical-align:-0.15em"></i></p>';
+          if (window.lucide) lucide.createIcons();
           return;
         }
         var lastCluster = null;

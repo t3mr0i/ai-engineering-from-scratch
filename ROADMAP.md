@@ -269,7 +269,7 @@ Total estimated time: ~314 hours, at your own pace.
 | 25 | [Speculative Decoding and EAGLE](phases/10-llms-from-scratch/25-speculative-decoding) | ✅ | ~75 min |
 | 34 | [Gradient Checkpointing and Activation Recomputation](phases/10-llms-from-scratch/34-gradient-checkpointing) | ✅ | ~70 min |
 
-## Phase 11: LLM Engineering — ✅ (~42 hours)
+## Phase 11: LLM Engineering — ✅ (~46 hours)
 
 | # | Lesson | Status | Est. |
 |---|--------|--------|------|
@@ -322,6 +322,11 @@ Total estimated time: ~314 hours, at your own pace.
 | 47 | [AI Meeting Facilitation and Workshop Design](phases/11-llm-engineering/47-ai-meeting-workshop-facilitation) | ✅ | ~45 min |
 | 48 | [AI Project Reporting and Steering](phases/11-llm-engineering/48-ai-project-reporting-steering) | ✅ | ~45 min |
 | 49 | [AI Data Quality and Master Data Processes](phases/11-llm-engineering/49-ai-data-quality-master-data-processes) | ✅ | ~45 min |
+| 50 | [AI Process Analysis and Automation Design](phases/11-llm-engineering/50-ai-process-analysis-automation-design) | ✅ | ~45 min |
+| 51 | [AI Risk Management and Internal Controls](phases/11-llm-engineering/51-ai-risk-management-internal-controls) | ✅ | ~45 min |
+| 52 | [AI Knowledge Management and Content Governance](phases/11-llm-engineering/52-ai-knowledge-management-content-governance) | ✅ | ~45 min |
+| 53 | [AI Customer Communication and Service Quality](phases/11-llm-engineering/53-ai-customer-communication-service-quality) | ✅ | ~45 min |
+| 54 | [AI Architecture Decision Governance](phases/11-llm-engineering/54-ai-architecture-decision-governance) | ✅ | ~45 min |
 
 ## Phase 12: Multimodal AI — ✅ (~65 hours)
 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <script src="../gate.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kurs · LHIND AI Lernkatalog</title>
+  <meta name="description" content="Kursdetail und Syllabus im LHIND AI Lernkatalog.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;650;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="lrn.css">
+</head>
+<body>
+  <a class="skip-link" href="#courseMain">Direkt zum Kursdetail</a>
+  <header class="nav-edge" aria-label="Seitennavigation">
+    <a class="wordmark" href="../index.html">
+      <span class="wordmark__mark" aria-hidden="true">AI</span>
+      <span>LHIND Lernkatalog</span>
+    </a>
+    <nav class="nav-links" aria-label="Abschnitte">
+      <a id="backLink" href="index.html">Kurse</a>
+      <a href="../index.html">Curriculum</a>
+    </nav>
+    <div class="nav-edge__spacer" aria-hidden="true"></div>
+  </header>
+
+  <main class="page page--detail" id="courseMain">
+    <a class="back-link" id="backLinkTop" href="index.html">
+      <span aria-hidden="true">←</span> Zurück zu den Kursen
+    </a>
+    <div id="courseRoot"></div>
+  </main>
+
+  <footer class="foot-line">
+    <p>LHIND AI Lernkatalog · Kuratiertes Mapping auf bestehende Curriculum-Lessons · Fortschritt kommt aus dem Lesson-/LRN-Tracking.</p>
+  </footer>
+  <div class="sr-status" id="srStatus" aria-live="polite"></div>
+
+  <script src="../progress.js"></script>
+  <script src="data.js"></script>
+  <script src="curriculum-map.js"></script>
+  <script src="course.js"></script>
+</body>
+</html>

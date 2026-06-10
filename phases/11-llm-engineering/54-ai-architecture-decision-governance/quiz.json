@@ -1,0 +1,68 @@
+{
+  "lesson": "54-ai-architecture-decision-governance",
+  "title": "AI Architecture Decision Governance",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why should AI architecture decisions be recorded?",
+      "options": [
+        "Because model, vendor, security, and cost choices can become expensive defaults",
+        "Because tradeoffs should be hidden",
+        "Because reversibility never matters",
+        "Because ADRs replace security review"
+      ],
+      "correct": 0,
+      "explanation": "Recorded decisions preserve context and tradeoffs."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["vendor lock-in", "line height", "image filter", "keyboard shortcut"],
+      "correct": 0,
+      "explanation": "Vendor lock-in raises governance needs."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked architecture decision plan with governance controls",
+        "A final production system",
+        "A cloud invoice",
+        "A user survey"
+      ],
+      "correct": 0,
+      "explanation": "The artifact recommends a design note, ADR, or review path."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["threat model", "ignore cost", "skip review", "hide alternatives"],
+      "correct": 0,
+      "explanation": "Threat models are part of architecture decision governance."
+    },
+    {
+      "stage": "post",
+      "question": "When does an AI architecture decision need stronger governance?",
+      "options": [
+        "When impact is high, reversibility is low, or security, vendor, or cost tradeoffs exist",
+        "Only when no security boundary exists",
+        "Only when the choice is trivial",
+        "Never; implementation details are enough"
+      ],
+      "correct": 0,
+      "explanation": "Impact, reversibility, and tradeoffs drive review level."
+    },
+    {
+      "stage": "post",
+      "question": "What should an AI architecture decision record include?",
+      "options": [
+        "Decision, alternatives, consequences, threat model, and cost tradeoff",
+        "Only the chosen vendor name",
+        "No alternatives",
+        "No revisit trigger"
+      ],
+      "correct": 0,
+      "explanation": "ADRs should preserve context and consequences for future teams."
+    }
+  ]
+}

@@ -1306,6 +1306,162 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
+    "AI-38": [
+      {
+        title: "Process and automation triage",
+        decision: "core",
+        note: "Starts automation work with process signals, exceptions and fallback controls.",
+        lessons: [
+          { path: "phases/11-llm-engineering/50-ai-process-analysis-automation-design", title: "AI Process Analysis and Automation Design" },
+          { path: "phases/11-llm-engineering/24-use-case-spotting-automation-discovery", title: "AI Use Case Spotting and Automation Discovery" },
+          { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" }
+        ]
+      },
+      {
+        title: "Value, cost and pilot controls",
+        decision: "core",
+        note: "Connects automation candidates to measurable value and bounded pilot design.",
+        lessons: [
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" },
+          { path: "phases/15-autonomous-systems/13-cost-governors", title: "Action Budgets, Iteration Caps, and Cost Governors" }
+        ]
+      },
+      {
+        title: "Human-in-the-loop design",
+        decision: "optional",
+        note: "For process owners deciding where humans remain accountable.",
+        lessons: [
+          { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" },
+          { path: "phases/14-agent-engineering/36-scope-contracts", title: "Scope Contracts and Task Boundaries" }
+        ]
+      }
+    ],
+    "AI-39": [
+      {
+        title: "Risk and control evidence",
+        decision: "core",
+        note: "Turns AI governance principles into owners, controls and audit evidence.",
+        lessons: [
+          { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" },
+          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+        ]
+      },
+      {
+        title: "Security and policy exceptions",
+        decision: "core",
+        note: "Adds practical security controls for higher-impact AI use cases.",
+        lessons: [
+          { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
+          { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security — Secrets, API Key Rotation, Audit Logs, Guardrails" },
+          { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks — EU, US, UK, Korea" }
+        ]
+      },
+      {
+        title: "Decision ownership",
+        decision: "optional",
+        note: "For leadership and control teams assigning accountability.",
+        lessons: [
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" },
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" }
+        ]
+      }
+    ],
+    "AI-40": [
+      {
+        title: "Knowledge source governance",
+        decision: "core",
+        note: "Prepares content owners, freshness checks and access rules for AI retrieval.",
+        lessons: [
+          { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" },
+          { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
+          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" }
+        ]
+      },
+      {
+        title: "Retrieval and source quality",
+        decision: "core",
+        note: "Connects governance to chunking, retrieval quality and answer trust.",
+        lessons: [
+          { path: "phases/11-llm-engineering/06-rag", title: "RAG — Retrieval-Augmented Generation" },
+          { path: "phases/05-nlp-foundations-to-advanced/23-chunking-strategies-rag", title: "Chunking Strategies for RAG" },
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
+        ]
+      },
+      {
+        title: "Content improvement loop",
+        decision: "optional",
+        note: "For teams maintaining SharePoint, knowledge bases and assistant sources.",
+        lessons: [
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" }
+        ]
+      }
+    ],
+    "AI-41": [
+      {
+        title: "Customer response quality",
+        decision: "core",
+        note: "Keeps AI-assisted service replies accurate, empathetic and escalatable.",
+        lessons: [
+          { path: "phases/11-llm-engineering/53-ai-customer-communication-service-quality", title: "AI Customer Communication and Service Quality" },
+          { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" },
+          { path: "phases/11-llm-engineering/45-ai-for-corporate-communications-marketing", title: "AI for Corporate Communications and Marketing" }
+        ]
+      },
+      {
+        title: "Confidence and escalation",
+        decision: "core",
+        note: "Links uncertain answers to thresholds, escalation and support quality.",
+        lessons: [
+          { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
+          { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" },
+          { path: "phases/17-infrastructure-and-production/13-llm-observability", title: "LLM Observability Stack Selection" }
+        ]
+      },
+      {
+        title: "Knowledge-backed replies",
+        decision: "optional",
+        note: "For teams using knowledge bases and assistants in customer communication.",
+        lessons: [
+          { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" },
+          { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" }
+        ]
+      }
+    ],
+    "AI-42": [
+      {
+        title: "Architecture decision governance",
+        decision: "core",
+        note: "Records material AI design choices before they become hard-to-reverse defaults.",
+        lessons: [
+          { path: "phases/11-llm-engineering/54-ai-architecture-decision-governance", title: "AI Architecture Decision Governance" },
+          { path: "phases/11-llm-engineering/37-ai-vendor-procurement-evaluation", title: "AI Vendor and Procurement Evaluation" },
+          { path: "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape", title: "AI Ecosystem and Vendor Landscape" }
+        ]
+      },
+      {
+        title: "Security, cost and operational tradeoffs",
+        decision: "core",
+        note: "Connects architecture decisions to threat models, cost models and operations.",
+        lessons: [
+          { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" }
+        ]
+      },
+      {
+        title: "Implementation boundaries",
+        decision: "optional",
+        note: "For architecture teams aligning designs with tools, schemas and MCP boundaries.",
+        lessons: [
+          { path: "phases/11-llm-engineering/14-model-context-protocol", title: "Model Context Protocol (MCP)" },
+          { path: "phases/13-tools-and-protocols/05-tool-schema-design", title: "Tool Schema Design" },
+          { path: "phases/14-agent-engineering/36-scope-contracts", title: "Scope Contracts and Task Boundaries" }
+        ]
+      }
+    ],
     "CHAMP-01": [
       {
         title: "Champion delivery discipline",

@@ -87,7 +87,10 @@
       var pct = Math.min(100, gib / REF * 100);
       bar.style.width = pct + '%';
       barWrap.classList.toggle('over', gib > REF);
-      meta.textContent = (gib > REF ? '⚠ exceeds ' : '') + Math.round(gib / REF * 100) + '% of one ' + REF + ' GiB GPU';
+      var warn = gib > REF
+        ? '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.15em;margin-right:.3em"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>exceeds '
+        : '';
+      meta.innerHTML = warn + Math.round(gib / REF * 100) + '% of one ' + REF + ' GiB GPU';
       formula.textContent = '2 · ' + state.layers + ' layers · ' + state.kvHeads + ' kv-heads · ' + state.headDim +
         ' head-dim · ' + fmtInt(state.seq) + ' tokens · ' + state.batch + ' batch · ' + state.dbytes + ' B';
     };

@@ -71,3 +71,6 @@ scripts/.pyodide/
 ide/jupyter/lessons/
 site/phases/
 site/jupyterlite/
+
+# Lazyweb MCP tool cache
+.lazyweb/

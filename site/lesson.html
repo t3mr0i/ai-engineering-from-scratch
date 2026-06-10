@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson · Agentic Software Engineering at LHIND</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="A lesson from the Agentic Software Engineering at LHIND curriculum by Lufthansa Industry Solutions. 420 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
+  <meta name="description" content="A lesson from the Agentic Software Engineering at LHIND curriculum by Lufthansa Industry Solutions. 430 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
   <meta property="og:title" content="Agentic Software Engineering at LHIND · Lesson">
-  <meta property="og:description" content="420 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
+  <meta property="og:description" content="430 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Agentic Software Engineering at LHIND">
-  <meta name="twitter:description" content="420 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
+  <meta name="twitter:description" content="430 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -257,72 +257,65 @@
       color: var(--ink-mute);
     }
 
-    .lrn-lesson-banner {
-      border: 1px solid var(--blueprint);
-      background: var(--blueprint-tint);
-      padding: 20px 22px;
-      margin-bottom: 34px;
+    /* Compact LRN context top-bar (replaces the old boxed banner). */
+    .lrn-lesson-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 8px 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--rule-soft);
     }
 
-    .lrn-lesson-kicker {
+    .lrn-bar-main {
       display: flex;
+      align-items: baseline;
       flex-wrap: wrap;
       gap: 8px;
-      align-items: center;
-      margin-bottom: 12px;
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
-    .lrn-lesson-pill {
+    .lrn-bar-pill {
       font-family: var(--font-mono);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--blueprint);
       border: 1px solid var(--blueprint);
-      padding: 3px 8px;
-      background: var(--bg);
+      padding: 1px 6px;
+      line-height: 1.5;
     }
 
-    .lrn-lesson-banner h2 {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 3vw, 1.9rem);
-      line-height: 1;
-      color: var(--blueprint);
-      margin: 0 0 10px;
-      padding: 0;
-      border: 0;
-    }
-
-    .lrn-lesson-banner p {
-      margin: 0;
-      font-family: var(--font-body);
-      font-size: 0.98rem;
-      line-height: 1.55;
-      color: var(--ink);
-      text-align: left;
-    }
-
-    .lrn-lesson-banner__actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .lrn-lesson-action {
+    .lrn-bar-title {
       font-family: var(--font-mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      border: 1px solid var(--rule-soft);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .lrn-bar-unit {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-mute);
+    }
+
+    .lrn-bar-nav {
+      display: flex;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .lrn-bar-nav a {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
       color: var(--ink-soft);
-      background: var(--bg);
-      padding: 6px 10px;
       text-decoration: none;
     }
 
-    .lrn-lesson-action:hover {
-      border-color: var(--blueprint);
+    .lrn-bar-nav a:hover {
       color: var(--blueprint);
     }
 
@@ -2451,7 +2444,7 @@
             return p.replace(/[*_`]/g, '').slice(0, 200);
           }
         }
-        return '420 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
+        return '430 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
       }
 
       // Client-side per-lesson SEO. Robust indexing comes with build-time
@@ -2500,6 +2493,12 @@
         document.head.appendChild(s);
       }
 
+      // Lucide icons (inline SVG) used in rendered lesson headings, in place of
+      // emojis. currentColor + 1em so they inherit the heading's color and size.
+      var LUCIDE_SVG_ATTRS = 'viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.12em;margin-right:.35em"';
+      var LUCIDE_TARGET = '<svg ' + LUCIDE_SVG_ATTRS + '><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
+      var LUCIDE_FLASK = '<svg ' + LUCIDE_SVG_ATTRS + '><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></svg>';
+
       function renderLesson(md) {
         var el = document.getElementById('lessonContent');
         var html = '';
@@ -2533,20 +2532,22 @@
       function renderLrnLessonBanner() {
         if (!lrnContext) return '';
         var current = lrnContext.current;
-        var html = '<section class="lrn-lesson-banner" aria-label="LRN Kurskontext">';
-        html += '<div class="lrn-lesson-kicker">';
-        html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnContext.course.id) + '</span>';
-        html += '<span class="lrn-lesson-pill">' + lrnUnitCode(current.groupIndex) + '</span>';
-        html += '<span class="lrn-lesson-pill">Activity ' + escapeHtml(lrnLessonOrdinal(lrnContext.currentIndex)) + '</span>';
-        html += '<span class="lrn-lesson-pill">' + escapeHtml(lrnLessonProgressLabel(current.path)) + '</span>';
+        var html = '<section class="lrn-lesson-bar" aria-label="LRN Kurskontext">';
+        // Left: compact pills + title + unit, all on one line.
+        html += '<div class="lrn-bar-main">';
+        html += '<span class="lrn-bar-pill">' + escapeHtml(lrnContext.course.id) + '</span>';
+        html += '<span class="lrn-bar-pill">' + lrnUnitCode(current.groupIndex) + '</span>';
+        html += '<span class="lrn-bar-pill">Activity ' + escapeHtml(lrnLessonOrdinal(lrnContext.currentIndex)) + '</span>';
+        html += '<span class="lrn-bar-pill">' + escapeHtml(lrnLessonProgressLabel(current.path)) + '</span>';
+        html += '<span class="lrn-bar-title">' + escapeHtml(lrnContext.course.title) + '</span>';
+        html += '<span class="lrn-bar-unit">' + escapeHtml(current.groupTitle) + '</span>';
         html += '</div>';
-        html += '<h2>' + escapeHtml(lrnContext.course.title) + '</h2>';
-        html += '<p><strong>Unit:</strong> ' + escapeHtml(current.groupTitle) + '. Diese Aktivität ist Teil des kuratierten LRN-Syllabus; die globale Phasen-Navigation ist hier ausgeblendet.</p>';
-        html += '<div class="lrn-lesson-banner__actions">';
-        html += '<a class="lrn-lesson-action" href="index.html">Zur Kursübersicht</a>';
-        if (lrnContext.prev) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.prev.path) + '">Vorherige Aktivität</a>';
-        if (lrnContext.next) html += '<a class="lrn-lesson-action" href="' + lrnLessonHref(lrnContext.next.path) + '">Nächste Aktivität</a>';
-        html += '</div>';
+        // Right: compact nav links (no big buttons).
+        html += '<nav class="lrn-bar-nav">';
+        if (lrnContext.prev) html += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Vorherige Aktivität">←</a>';
+        html += '<a href="index.html">Übersicht</a>';
+        if (lrnContext.next) html += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Nächste Aktivität">→</a>';
+        html += '</nav>';
         html += '</section>';
         return html;
       }
@@ -2923,7 +2924,7 @@
                   break;
                 }
               }
-              out += '<div class="learning-objectives"><div class="learning-objectives-title">&#127919; Learning Objectives</div><ul>';
+              out += '<div class="learning-objectives"><div class="learning-objectives-title">' + LUCIDE_TARGET + ' Learning Objectives</div><ul>';
               for (var oi = 0; oi < objItems.length; oi++) {
                 out += '<li>' + inlineFormat(objItems[oi]) + '</li>';
               }
@@ -2935,7 +2936,7 @@
               out += flushLabChallenge();
               inLabChallenge = true;
               out += '<div class="lab-challenge">';
-              out += '<h2 id="' + slug2 + '">&#128171; Lab Challenge</h2>';
+              out += '<h2 id="' + slug2 + '">' + LUCIDE_FLASK + ' Lab Challenge</h2>';
               continue;
             }
             out += flushLabChallenge();

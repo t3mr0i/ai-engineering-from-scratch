@@ -6,35 +6,30 @@
   var curriculum = window.LrnCurriculumMap || { courseMaps: {}, omittedGroups: [] };
   var progressApi = window.AIFSProgress || null;
   var profileById = indexBy(data.profiles, "id");
-  var courseById = indexBy(data.courses, "id");
   var state = loadState();
 
   var levelDefinitions = [
-    { value: 1, code: "LV1", label: "Basic", stage: "Acquire", focusLevels: ["Acquire"], copy: "Einstieg: Grundlagen, sichere Toolnutzung und Orientierung." },
-    { value: 2, code: "LV2", label: "Foundation", stage: "Acquire", focusLevels: ["Acquire", "Deepen"], copy: "Solide Basis: Grundlagen festigen und erste Praxisbausteine starten." },
-    { value: 3, code: "LV3", label: "Practitioner", stage: "Deepen", focusLevels: ["Deepen"], copy: "Praxisniveau: Rollenbezogene Anwendung und konkrete Use Cases vertiefen." },
-    { value: 4, code: "LV4", label: "Advanced", stage: "Deepen", focusLevels: ["Deepen", "Create"], copy: "Fortgeschritten: komplexe Kontexte, Transfer und Skalierung vorbereiten." },
-    { value: 5, code: "LV5", label: "Expert", stage: "Create", focusLevels: ["Create"], copy: "High end: neue AI-Ansätze gestalten, teilen und als Multiplikator wirken." }
+    { value: 1, label: "Basic", focusLevels: ["Acquire"] },
+    { value: 2, label: "Foundation", focusLevels: ["Acquire", "Deepen"] },
+    { value: 3, label: "Practitioner", focusLevels: ["Deepen"] },
+    { value: 4, label: "Advanced", focusLevels: ["Deepen", "Create"] },
+    { value: 5, label: "Expert", focusLevels: ["Create"] }
   ];
 
   var els = {
-    profileCount: document.getElementById("profileCount"),
-    profileGrid: document.getElementById("profileGrid"),
-    levelGrid: document.getElementById("levelGrid"),
-    interestGrid: document.getElementById("interestGrid"),
-    scoreNumber: document.getElementById("scoreNumber"),
-    scoreCopy: document.getElementById("scoreCopy"),
-    progressPanel: document.getElementById("progressPanel"),
+    profileSelect: document.getElementById("profileSelect"),
+    levelSelect: document.getElementById("levelSelect"),
+    interestChips: document.getElementById("interestChips"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
-    courseDetail: document.getElementById("courseDetail"),
-    capabilityGrid: document.getElementById("capabilityGrid"),
+    resultLine: document.getElementById("resultLine"),
+    searchInput: document.getElementById("searchInput"),
     resetBtn: document.getElementById("resetBtn"),
-    copyBtn: document.getElementById("copyBtn"),
     srStatus: document.getElementById("srStatus")
   };
 
   applyExternalParams();
+  renderControls();
   render();
   wireActions();
   if (progressApi && progressApi.onChange) progressApi.onChange(render);
@@ -113,138 +108,85 @@
       state.interests = ["foundation", "productivity"];
       state.filter = "recommended";
       state.activeCourseId = null;
+      if (els.searchInput) els.searchInput.value = "";
       saveState();
+      renderControls();
       render();
       announce("Auswahl zurückgesetzt. Lesson-Fortschritt bleibt im Lesson-System erhalten.");
     });
 
-    els.copyBtn.addEventListener("click", function () {
-      var text = buildShareText();
-      copyText(text).then(function () {
-        els.copyBtn.textContent = "Kopiert";
-        announce("LRN-Pfad wurde in die Zwischenablage kopiert.");
-        window.setTimeout(function () { els.copyBtn.textContent = "Pfad kopieren"; }, 1800);
-      }).catch(function () {
-        announce("Kopieren ist in diesem Browser nicht verfügbar.");
-      });
-    });
+    if (els.searchInput) {
+      els.searchInput.addEventListener("input", render);
+    }
+    var searchForm = document.getElementById("searchForm");
+    if (searchForm) {
+      searchForm.addEventListener("submit", function (event) { event.preventDefault(); });
+    }
+  }
+
+  // Controls (profile + level selects, interest chips) only need to render
+  // when the underlying selection set changes — not on every progress tick.
+  function renderControls() {
+    renderProfileSelect();
+    renderLevelSelect();
+    renderInterestChips();
   }
 
   function render() {
     var computed = compute();
-    ensureActiveCourse(computed);
-    renderProfiles();
-    renderLevelControl();
-    renderInterests();
-    renderSummary(computed);
-    renderProgress(computed);
+    renderProfileSelect();
+    renderLevelSelect();
+    renderInterestChips();
     renderFilters();
     renderCourses(computed);
-    renderCourseDetail(computed);
-    renderCapabilities(computed);
   }
 
-  function renderProfiles() {
-    els.profileCount.textContent = data.profiles.length + " Profile";
-    replaceChildren(els.profileGrid, data.profiles.map(function (profile) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "profile-btn";
-      btn.setAttribute("aria-pressed", String(state.profileId === profile.id));
-      btn.innerHTML = "<strong></strong><span></span>";
-      btn.querySelector("strong").textContent = profileCode(profile) + " · " + profile.label;
-      btn.querySelector("span").textContent = profile.segment + " · " + profile.description;
-      btn.addEventListener("click", function () {
-        state.profileId = profile.id;
-        state.activeCourseId = null;
-        saveState();
-        render();
-        announce("Profil gesetzt: " + profile.label + ".");
+  function renderProfileSelect() {
+    var select = els.profileSelect;
+    if (select.options.length !== data.profiles.length) {
+      select.textContent = "";
+      data.profiles.forEach(function (profile) {
+        var opt = document.createElement("option");
+        opt.value = profile.id;
+        opt.textContent = profile.label;
+        opt.title = profileCode(profile);
+        select.appendChild(opt);
       });
-      return btn;
-    }));
+    }
+    select.value = state.profileId;
   }
 
-  function renderLevelControl() {
-    replaceChildren(els.levelGrid, levelDefinitions.map(function (level) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "level-btn";
-      btn.setAttribute("aria-pressed", String(state.externalLevel === level.value));
-      btn.innerHTML = "<strong></strong><span></span>";
-      btn.querySelector("strong").textContent = String(level.value);
-      btn.querySelector("span").textContent = level.code + " · " + level.label;
-      btn.addEventListener("click", function () {
-        state.externalLevel = level.value;
-        state.activeCourseId = null;
-        saveState();
-        render();
-        announce("Assessment-Level gesetzt: " + level.value + ".");
+  function renderLevelSelect() {
+    var select = els.levelSelect;
+    if (select.options.length !== levelDefinitions.length) {
+      select.textContent = "";
+      levelDefinitions.forEach(function (level) {
+        var opt = document.createElement("option");
+        opt.value = String(level.value);
+        opt.textContent = level.value + " · " + level.label;
+        select.appendChild(opt);
       });
-      return btn;
-    }));
+    }
+    select.value = String(state.externalLevel);
   }
 
-  function renderInterests() {
-    replaceChildren(els.interestGrid, data.interests.map(function (interest) {
+  function renderInterestChips() {
+    replaceChildren(els.interestChips, data.interests.map(function (interest) {
       var selected = state.interests.indexOf(interest.id) !== -1;
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "interest-btn";
+      btn.className = "chip";
       btn.setAttribute("aria-pressed", String(selected));
-      var label = document.createElement("strong");
-      label.textContent = interest.label;
-      var hint = document.createElement("span");
-      hint.textContent = interest.hint;
-      btn.append(label, hint);
+      btn.textContent = interest.label;
+      btn.title = interest.hint;
       btn.addEventListener("click", function () {
         toggleInterest(interest.id);
-        state.activeCourseId = null;
         saveState();
+        renderInterestChips();
         render();
       });
       return btn;
     }));
-  }
-
-  function renderSummary(computed) {
-    if (els.scoreNumber) els.scoreNumber.textContent = computed.level.value + "/5";
-    if (els.scoreCopy) els.scoreCopy.textContent = computed.level.copy;
-  }
-
-  function renderProgress(computed) {
-    if (!els.progressPanel) return;
-    var stats = computed.progressStats;
-    var panel = document.createElement("div");
-    panel.className = "progress-overview";
-
-    var meter = progressMeter(stats.percent, "Curriculum-Fortschritt im empfohlenen Kurspool");
-    panel.appendChild(meter);
-
-    if (stats.completedLessons === 0) {
-      var line = document.createElement("p");
-      line.className = "progress-line";
-      line.textContent = stats.courseCount + " empfohlene Kurse · " + stats.lessonCount + " Aktivitäten · noch nichts erledigt";
-      panel.appendChild(line);
-    } else {
-      var metrics = document.createElement("div");
-      metrics.className = "metric-grid";
-      [
-        { label: "Empfohlene Kurse", value: String(stats.courseCount) },
-        { label: "LRN-Aktivitäten", value: String(stats.lessonCount) },
-        { label: "Im Lesson-System erledigt", value: stats.completedLessons + "/" + stats.lessonCount }
-      ].forEach(function (item) {
-        var box = document.createElement("div");
-        box.className = "metric-box";
-        box.innerHTML = "<span></span><strong></strong>";
-        box.querySelector("span").textContent = item.label;
-        box.querySelector("strong").textContent = item.value;
-        metrics.appendChild(box);
-      });
-      panel.appendChild(metrics);
-    }
-
-    replaceChildren(els.progressPanel, [panel]);
   }
 
   function renderFilters() {
@@ -258,12 +200,13 @@
     replaceChildren(els.courseFilters, options.map(function (option) {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "filter-chip";
+      btn.className = "chip chip--filter";
       btn.textContent = option.label;
       btn.setAttribute("aria-pressed", String(state.filter === option.id));
       btn.addEventListener("click", function () {
         state.filter = option.id;
         saveState();
+        renderFilters();
         render();
       });
       return btn;
@@ -274,18 +217,25 @@
 
   function renderCourses(computed) {
     var visible = filterCourses(computed.entries);
+    visible = applySearch(visible);
+
+    if (els.resultLine) {
+      els.resultLine.textContent = visible.length === 1
+        ? "1 Kurs"
+        : visible.length + " Kurse";
+    }
 
     if (!visible.length) {
       lastVisibleSignature = "";
       var empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.textContent = "Keine Kurse in diesem Filter. Wechseln Sie auf 'Alle', um den gesamten profilrelevanten Pool zu sehen.";
+      empty.textContent = "Keine Kurse in diesem Filter. Wechsle auf 'Alle' oder passe die Suche an.";
       replaceChildren(els.courseGrid, [empty]);
       return;
     }
 
-    // Stagger the reveal only when the card SET changes (filter/profile/level),
-    // not when re-rendering after selecting a card — otherwise the grid flickers.
+    // Stagger the reveal only when the card SET changes (filter/profile/level/search),
+    // not when re-rendering after a progress tick — otherwise the grid flickers.
     var signature = visible.map(function (entry) { return entry.course.id; }).join(",");
     var animate = signature !== lastVisibleSignature;
     lastVisibleSignature = signature;
@@ -295,201 +245,38 @@
     }));
   }
 
-  function renderCourseDetail(computed) {
-    var course = courseById[state.activeCourseId] || (computed.entries[0] && computed.entries[0].course);
-    if (!course) {
-      var empty = document.createElement("div");
-      empty.className = "empty-state";
-      empty.textContent = "Noch kein Kurs ausgewählt.";
-      replaceChildren(els.courseDetail, [empty]);
-      return;
-    }
-
-    var map = courseMap(course.id);
-    var stats = courseProgress(course);
-    var nextLesson = nextLessonForCourse(course.id);
-    var detail = document.createElement("article");
-    detail.className = "course-detail";
-
-    var head = document.createElement("div");
-    head.className = "course-detail__head";
-    var eyebrow = document.createElement("span");
-    eyebrow.className = "path-eyebrow";
-    eyebrow.textContent = contextKeyForCourse(course) + " · Syllabus";
-    var title = document.createElement("h3");
-    title.textContent = courseCode(course) + " · " + course.id + " · " + course.title;
-    head.append(eyebrow, title);
-
-    var summary = document.createElement("p");
-    summary.textContent = course.summary;
-
-    var meta = document.createElement("div");
-    meta.className = "course-meta";
-    course.levels.forEach(function (level) {
-      var pill = document.createElement("span");
-      pill.className = "level-pill";
-      pill.dataset.level = level;
-      pill.textContent = level;
-      meta.appendChild(pill);
+  function applySearch(entries) {
+    var term = els.searchInput ? els.searchInput.value.trim().toLowerCase() : "";
+    if (!term) return entries;
+    return entries.filter(function (entry) {
+      var course = entry.course;
+      return (course.title + " " + course.summary).toLowerCase().indexOf(term) !== -1;
     });
-    var status = document.createElement("span");
-    status.className = "module-pill";
-    status.textContent = stats.subcourseCount + " Units";
-    meta.appendChild(status);
-    var lessonCount = document.createElement("span");
-    lessonCount.className = "module-pill";
-    lessonCount.textContent = stats.lessonCount + " Aktivitäten";
-    meta.appendChild(lessonCount);
-    pathCodesForCourse(course.id).forEach(function (code) {
-      var pathPill = document.createElement("span");
-      pathPill.className = "module-pill";
-      pathPill.textContent = code;
-      meta.appendChild(pathPill);
-    });
-    var format = document.createElement("span");
-    format.className = "module-pill";
-    format.textContent = "Self-paced";
-    meta.appendChild(format);
-
-    detail.append(head, summary, meta, pathSummary(course, stats, nextLesson), progressMeter(stats.percent, "Fortschritt " + course.title));
-
-    if (!map.length) {
-      var emptyMap = document.createElement("div");
-      emptyMap.className = "empty-state";
-      emptyMap.textContent = "Für diesen Kurs ist noch kein Curriculum-Mapping gepflegt.";
-      detail.appendChild(emptyMap);
-    } else {
-      map.forEach(function (subcourse, subcourseIndex) {
-        detail.appendChild(subcourseCard(subcourse, course.id, subcourseIndex));
-      });
-    }
-
-    replaceChildren(els.courseDetail, [detail]);
   }
 
-  function subcourseCard(subcourse, courseId, subcourseIndex) {
-    var stats = subcourseProgress(subcourse);
-    var card = document.createElement("section");
-    card.className = "subcourse-card";
-    var head = document.createElement("div");
-    head.className = "subcourse-card__head";
-    var title = document.createElement("h4");
-    title.textContent = unitCode(subcourseIndex) + " · " + subcourse.title;
-    var pill = document.createElement("span");
-    pill.className = "advice-pill";
-    pill.dataset.tone = subcourse.decision === "core" ? "warn" : "ok";
-    pill.textContent = decisionLabel(subcourse.decision);
-    head.append(title, pill);
+  function courseCard(course, entry, index) {
+    var card = document.createElement("a");
+    card.className = "course-card";
+    card.href = courseHref(course.id);
+    // Stagger only when the set changed (index >= 0): 45ms/card, capped at 8 steps
+    // so a 19-card grid still settles in ~360ms.
+    if (index >= 0) {
+      card.className += " course-card--enter";
+      card.style.setProperty("--enter-delay", Math.min(index, 8) * 45 + "ms");
+    }
 
-    var note = document.createElement("p");
-    note.textContent = subcourse.note || "";
+    var h = document.createElement("h3");
+    h.textContent = course.title;
+    h.title = courseCode(course) + " · " + course.id;
 
-    var unitMeta = document.createElement("div");
-    unitMeta.className = "unit-meta";
-    [
-      { label: "Unit-Code", value: unitCode(subcourseIndex) },
-      { label: "Aktivitäten", value: String(stats.lessonCount) },
-      { label: "Erledigt", value: stats.completedLessons + "/" + stats.lessonCount },
-      { label: "Status", value: stats.percent === 100 ? "fertig" : stats.visitedLessons ? "in Arbeit" : "offen" }
-    ].forEach(function (item) {
-      var chip = document.createElement("span");
-      chip.innerHTML = "<strong></strong><em></em>";
-      chip.querySelector("strong").textContent = item.value;
-      chip.querySelector("em").textContent = item.label;
-      unitMeta.appendChild(chip);
-    });
+    var meta = document.createElement("p");
+    meta.className = "course-card__meta";
+    meta.textContent = (entry.kind === "recommended" ? "Empfohlen" : "Optional")
+      + " · " + entry.progress.lessonCount + " Aktivitäten";
 
-    var list = document.createElement("div");
-    list.className = "lesson-list";
-    subcourse.lessons.forEach(function (lesson, lessonIndex) {
-      list.appendChild(lessonLink(lesson, courseId, subcourse, subcourseIndex, lessonIndex));
-    });
-
-    card.append(head, note, unitMeta, progressMeter(stats.percent, "Unit-Fortschritt " + subcourse.title), list);
+    card.append(h, meta, progressMeter(entry.progress.percent, "Fortschritt " + course.title));
     return card;
   }
-
-  function pathSummary(course, stats, nextLesson) {
-    var wrap = document.createElement("div");
-    wrap.className = "path-summary";
-
-    var context = document.createElement("p");
-    context.className = "path-context";
-    context.textContent = contextKeyForCourse(course);
-
-    var metrics = document.createElement("div");
-    metrics.className = "path-summary__metrics";
-    [
-      { label: "Units", value: String(stats.subcourseCount) },
-      { label: "Aktivitäten", value: String(stats.lessonCount) },
-      { label: "Fortschritt", value: stats.percent + "%" }
-    ].forEach(function (item) {
-      var metric = document.createElement("div");
-      metric.innerHTML = "<strong></strong><span></span>";
-      metric.querySelector("strong").textContent = item.value;
-      metric.querySelector("span").textContent = item.label;
-      metrics.appendChild(metric);
-    });
-
-    var action = document.createElement("a");
-    action.className = "path-continue";
-    action.href = nextLesson ? lessonHref(nextLesson.path, course.id) : "#";
-    action.textContent = nextLesson ? "Weiterlernen: " + nextLesson.title : "Kurs vollständig";
-    if (!nextLesson) {
-      action.setAttribute("aria-disabled", "true");
-      action.addEventListener("click", function (event) { event.preventDefault(); });
-    }
-
-    wrap.append(context, metrics, action);
-    return wrap;
-  }
-
-  function lessonLink(lesson, courseId, subcourse, subcourseIndex, lessonIndex) {
-    var progress = lessonProgress(lesson.path);
-    var a = document.createElement("a");
-    a.className = "lesson-link";
-    a.href = lessonHref(lesson.path, courseId);
-    a.innerHTML = "<span></span><strong></strong><small></small><em></em>";
-    a.querySelector("span").textContent = activityLabel(subcourseIndex, lessonIndex);
-    a.querySelector("span").title = lesson.path;
-    a.querySelector("strong").textContent = lesson.title;
-    a.querySelector("small").textContent = activityType(lesson, subcourse);
-    a.querySelector("em").textContent = progress.label;
-    a.querySelector("em").dataset.state = progress.state;
-    return a;
-  }
-
-  function renderCapabilities(computed) {
-    if (!els.capabilityGrid) return;
-    var groups = {};
-    data.capabilities.forEach(function (capability) {
-      var target = capability.targets[state.profileId] || capability.targets.all || "n. a.";
-      if (!groups[capability.cluster]) groups[capability.cluster] = [];
-      groups[capability.cluster].push({ capability: capability, target: target });
-    });
-
-    replaceChildren(els.capabilityGrid, Object.keys(groups).map(function (cluster) {
-      var card = document.createElement("article");
-      card.className = "capability-card";
-      var title = document.createElement("h3");
-      title.textContent = cluster;
-      var context = document.createElement("p");
-      context.textContent = profileCode(computed.profile) + " · Zielniveau aus Capability Matrix";
-      var list = document.createElement("div");
-      list.className = "module-list";
-      groups[cluster].forEach(function (item) {
-        var pill = document.createElement("span");
-        pill.className = "level-pill";
-        pill.dataset.level = normalizeLevelLabel(item.target);
-        pill.textContent = "CAP" + String(item.capability.id).padStart(2, "0") + " · " + item.target;
-        pill.title = item.capability.title;
-        list.appendChild(pill);
-      });
-      card.append(title, context, list);
-      return card;
-    }));
-  }
-
 
   function compute() {
     var profile = profileById[state.profileId];
@@ -497,17 +284,7 @@
       return item.value === Number(state.externalLevel);
     }) || levelDefinitions[0];
     var entries = rankedCourses(profile, level);
-    var recommended = entries.filter(function (entry) {
-      return entry.kind === "recommended";
-    });
-
-    return {
-      profile: profile,
-      level: level,
-      entries: entries,
-      recommended: recommended,
-      progressStats: progressStats(recommended.length ? recommended.map(function (entry) { return entry.course; }) : entries.map(function (entry) { return entry.course; }))
-    };
+    return { profile: profile, level: level, entries: entries };
   }
 
   function rankedCourses(profile, level) {
@@ -556,84 +333,6 @@
     });
   }
 
-  function courseCard(course, entry, index) {
-    var card = document.createElement("article");
-    card.className = "course-card";
-    card.dataset.active = String(state.activeCourseId === course.id);
-    // Stagger only when the set changed (index >= 0): 45ms/card, capped at 8 steps
-    // so a 19-card grid still settles in ~360ms.
-    if (index >= 0) {
-      card.className += " course-card--enter";
-      card.style.setProperty("--enter-delay", Math.min(index, 8) * 45 + "ms");
-    }
-
-    var button = document.createElement("button");
-    button.type = "button";
-    button.className = "course-card__button";
-    button.setAttribute("aria-pressed", String(state.activeCourseId === course.id));
-    button.addEventListener("click", function () {
-      activateCourse(course.id);
-    });
-
-    var h = document.createElement("h3");
-    h.textContent = courseCode(course) + " · " + course.id + " · " + course.title;
-    var summary = document.createElement("p");
-    summary.textContent = course.summary;
-
-    var meta = document.createElement("div");
-    meta.className = "course-meta";
-    var kind = document.createElement("span");
-    kind.className = "advice-pill";
-    kind.dataset.tone = entry.kind === "recommended" ? "warn" : "ok";
-    kind.textContent = entry.kind === "recommended" ? "empfohlen" : "optional";
-    meta.appendChild(kind);
-    course.levels.forEach(function (level) {
-      var pill = document.createElement("span");
-      pill.className = "level-pill";
-      pill.dataset.level = level;
-      pill.textContent = level;
-      meta.appendChild(pill);
-    });
-    var lessons = document.createElement("span");
-    lessons.className = "module-pill";
-    lessons.textContent = entry.progress.lessonCount + " Aktivitäten";
-    meta.appendChild(lessons);
-
-    var modules = document.createElement("div");
-    modules.className = "module-list";
-    courseMap(course.id).forEach(function (subcourse, subcourseIndex) {
-      var chip = document.createElement("span");
-      chip.className = "module-pill";
-      chip.textContent = unitCode(subcourseIndex) + " · " + subcourse.title;
-      modules.appendChild(chip);
-    });
-
-    var action = document.createElement("span");
-    action.className = "course-open";
-    action.textContent = state.activeCourseId === course.id ? "Syllabus geöffnet" : "Syllabus öffnen";
-
-    button.append(h, summary, meta, modules, progressMeter(entry.progress.percent, "Fortschritt " + course.title), action);
-    card.appendChild(button);
-    return card;
-  }
-
-  function activateCourse(courseId) {
-    state.activeCourseId = courseId;
-    saveState();
-    render();
-    announce("Syllabus geöffnet: " + courseById[courseId].title + ".");
-    els.courseDetail.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  }
-
-  function ensureActiveCourse(computed) {
-    var available = computed.entries.some(function (entry) {
-      return entry.course.id === state.activeCourseId;
-    });
-    if (!available) {
-      state.activeCourseId = computed.recommended[0] ? computed.recommended[0].course.id : computed.entries[0] && computed.entries[0].course.id;
-    }
-  }
-
   function progressMeter(percent, label) {
     var wrap = document.createElement("div");
     wrap.className = "progress-meter";
@@ -648,25 +347,6 @@
     text.textContent = percent + "%";
     wrap.append(bar, text);
     return wrap;
-  }
-
-  function progressStats(courses) {
-    var unique = {};
-    courses.forEach(function (course) {
-      lessonPaths(course.id).forEach(function (path) {
-        unique[path] = true;
-      });
-    });
-    var paths = Object.keys(unique);
-    var completed = paths.filter(function (path) {
-      return lessonProgress(path).state === "completed";
-    }).length;
-    return {
-      courseCount: courses.length,
-      lessonCount: paths.length,
-      completedLessons: completed,
-      percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
-    };
   }
 
   function courseProgress(course) {
@@ -684,44 +364,6 @@
       visitedLessons: visited,
       percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
     };
-  }
-
-  function subcourseProgress(subcourse) {
-    var paths = subcourse.lessons.map(function (lesson) { return lesson.path; });
-    var completed = paths.filter(function (path) {
-      return lessonProgress(path).state === "completed";
-    }).length;
-    var visited = paths.filter(function (path) {
-      return lessonProgress(path).state !== "open";
-    }).length;
-    return {
-      lessonCount: paths.length,
-      completedLessons: completed,
-      visitedLessons: visited,
-      percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
-    };
-  }
-
-  function nextLessonForCourse(courseId) {
-    var lessons = [];
-    courseMap(courseId).forEach(function (subcourse) {
-      subcourse.lessons.forEach(function (lesson) {
-        lessons.push(lesson);
-      });
-    });
-    if (!lessons.length) return null;
-    return lessons.find(function (lesson) {
-      return lessonProgress(lesson.path).state !== "completed";
-    }) || lessons[0];
-  }
-
-  function activityType(lesson, subcourse) {
-    var title = (lesson.title || "").toLowerCase();
-    var unit = (subcourse && subcourse.title || "").toLowerCase();
-    if (/eval|test|qa|verification|review|guardrail|compliance|risk|assessment/.test(title + " " + unit)) return "Knowledge Check";
-    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return "Praxisaktivität";
-    if (subcourse && subcourse.decision === "condense") return "Guided Lesson";
-    return "Lesson";
   }
 
   function lessonProgress(path) {
@@ -748,49 +390,8 @@
     return curriculum.courseMaps && curriculum.courseMaps[courseId] ? curriculum.courseMaps[courseId] : [];
   }
 
-  function buildShareText() {
-    var computed = compute();
-    var courses = computed.recommended.slice(0, 8);
-    var stats = computed.progressStats;
-    var lines = [
-      "LHIND AI LRN Course Cockpit",
-      "Profil: " + profileCode(computed.profile) + " " + computed.profile.label,
-      "Externer Level: " + computed.level.code + " / " + computed.level.value + "/5 (" + computed.level.label + ")",
-      "Fokus: " + computed.level.focusLevels.join(" + "),
-      "Interessen: " + state.interests.map(function (id) {
-        return data.interests.find(function (interest) { return interest.id === id; }).label;
-      }).join(", "),
-      "LRN-Fortschritt: " + stats.percent + "% (" + stats.completedLessons + "/" + stats.lessonCount + " Aktivitäten)",
-      "",
-      "Empfohlene Kurse:"
-    ];
-    courses.forEach(function (entry) {
-      lines.push("- " + contextKeyForCourse(entry.course) + " " + entry.course.id + " " + entry.course.title + " [" + entry.progress.completedLessons + "/" + entry.progress.lessonCount + " Aktivitäten]");
-    });
-    return lines.join("\n");
-  }
-
-  function decisionLabel(decision) {
-    if (decision === "condense") return "zusammengefasst";
-    if (decision === "optional") return "optional";
-    return "Kern";
-  }
-
   function profileCode(profile) {
     return profile && profile.code ? profile.code : "R??";
-  }
-
-  function trackCode(track) {
-    if (track && track.code) return track.code;
-    var index = data.tracks.indexOf(track);
-    return "LP" + String(index + 1).padStart(2, "0");
-  }
-
-  function stageCode(stageLabel) {
-    if (stageLabel === "Acquire") return "LV1-2";
-    if (stageLabel === "Deepen") return "LV3-4";
-    if (stageLabel === "Create") return "LV5";
-    return "LV?";
   }
 
   function courseCode(course) {
@@ -798,50 +399,8 @@
     return "C" + String(index + 1).padStart(2, "0");
   }
 
-  function unitCode(index) {
-    return "U" + String(index + 1).padStart(2, "0");
-  }
-
-  function activityCode(index) {
-    return "A" + String(index + 1).padStart(2, "0");
-  }
-
-  function activityLabel(subcourseIndex, lessonIndex) {
-    return unitCode(subcourseIndex) + " · " + activityCode(lessonIndex);
-  }
-
-  function pathCodesForCourse(courseId) {
-    return data.tracks.filter(function (track) {
-      return track.profileIds.indexOf(state.profileId) !== -1 || track.profileIds.indexOf("all") !== -1;
-    }).filter(function (track) {
-      return track.stages.some(function (stage) {
-        return stage.courses.indexOf(courseId) !== -1;
-      });
-    }).map(function (track) {
-      return trackCode(track);
-    });
-  }
-
-  function contextKeyForCourse(course) {
-    var codes = pathCodesForCourse(course.id);
-    var pathCode = codes.length ? codes.join("+") : "LP??";
-    return profileCode(profileById[state.profileId]) + " / " + (levelDefinitions.find(function (item) {
-      return item.value === Number(state.externalLevel);
-    }) || levelDefinitions[0]).code + " / " + pathCode + " / " + courseCode(course);
-  }
-
-  function normalizeLevelLabel(value) {
-    if (value === "Expert" || value === "Create") return "Create";
-    if (value === "Advanced" || value === "Deepen") return "Deepen";
-    if (value === "Basic" || value === "Acquire") return "Acquire";
-    return "n. a.";
-  }
-
-  function lessonHref(path, courseId) {
-    var prefix = window.location.pathname.indexOf("/lrn/") !== -1 ? "../" : "";
-    var query = "path=" + encodeURIComponent(path);
-    if (courseId) query += "&course=" + encodeURIComponent(courseId);
-    return prefix + "lesson.html?" + query;
+  function courseHref(courseId) {
+    return "course.html?id=" + encodeURIComponent(courseId);
   }
 
   function toggleInterest(id) {
@@ -898,25 +457,22 @@
     els.srStatus.textContent = text;
   }
 
-  function copyText(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text);
+  // Selects fire on change; wire after element refs exist.
+  els.profileSelect.addEventListener("change", function () {
+    if (profileById[els.profileSelect.value]) {
+      state.profileId = els.profileSelect.value;
+      saveState();
+      render();
+      announce("Profil gesetzt: " + profileById[state.profileId].label + ".");
     }
-    return new Promise(function (resolve, reject) {
-      var area = document.createElement("textarea");
-      area.value = text;
-      area.setAttribute("readonly", "");
-      area.style.position = "fixed";
-      area.style.insetBlockStart = "-1000px";
-      document.body.appendChild(area);
-      area.select();
-      try {
-        document.execCommand("copy") ? resolve() : reject(new Error("copy failed"));
-      } catch (error) {
-        reject(error);
-      } finally {
-        document.body.removeChild(area);
-      }
-    });
-  }
+  });
+
+  els.levelSelect.addEventListener("change", function () {
+    if (validLevel(els.levelSelect.value)) {
+      state.externalLevel = Number(els.levelSelect.value);
+      saveState();
+      render();
+      announce("Assessment-Level gesetzt: " + state.externalLevel + ".");
+    }
+  });
 })();

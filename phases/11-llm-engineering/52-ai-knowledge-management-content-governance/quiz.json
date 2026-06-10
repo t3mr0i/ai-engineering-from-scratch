@@ -1,0 +1,68 @@
+{
+  "lesson": "52-ai-knowledge-management-content-governance",
+  "title": "AI Knowledge Management and Content Governance",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why do AI assistants need governed knowledge sources?",
+      "options": [
+        "Because retrieval can make stale or wrong sources look authoritative",
+        "Because content owners are never needed",
+        "Because access rules should be ignored",
+        "Because duplicate answers improve trust"
+      ],
+      "correct": 0,
+      "explanation": "Source governance protects trust in AI-assisted answers."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["stale content", "GPU thread", "audio bitrate", "font baseline"],
+      "correct": 0,
+      "explanation": "Stale content is a core knowledge-source risk."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked content-governance readiness plan",
+        "A complete knowledge base",
+        "An access-control server",
+        "A final policy"
+      ],
+      "correct": 0,
+      "explanation": "The artifact ranks source risks and recommends controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["freshness check", "ignore source rank", "remove owners", "skip access review"],
+      "correct": 0,
+      "explanation": "Freshness checks help decide whether content is AI-ready."
+    },
+    {
+      "stage": "post",
+      "question": "When should content be cleaned up before AI use?",
+      "options": [
+        "When content is stale, duplicated, ownerless, or access-sensitive",
+        "Only when no one uses it",
+        "Only when it is already reviewed",
+        "Never; retrieval solves source quality"
+      ],
+      "correct": 0,
+      "explanation": "These signals can make AI answers unreliable or unsafe."
+    },
+    {
+      "stage": "post",
+      "question": "What should every important knowledge source have?",
+      "options": [
+        "Owner, freshness check, source rank, and access rule",
+        "No review date",
+        "Unlimited access",
+        "Conflicting duplicates"
+      ],
+      "correct": 0,
+      "explanation": "These controls make knowledge sources ready for AI assistants."
+    }
+  ]
+}

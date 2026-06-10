@@ -711,6 +711,71 @@ window.LrnData = {
       modules: ["Data owner", "Quality rule", "Sample check"]
     },
     {
+      id: "AI-38",
+      title: "AI Process Analysis and Automation Design",
+      status: "neu aus Prozess-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pvs", "pma", "am", "tc", "corp", "lead"],
+      dimensions: ["business", "change"],
+      interests: ["consulting", "leadership", "engineering"],
+      levels: ["Deepen", "Create"],
+      format: "Process map, exception log, value check, human fallback",
+      summary: "AI-Automatisierungsideen erst nach Prozessverständnis, Exception-Analyse und Pilotkontrollen bewerten.",
+      modules: ["Process map", "Exception log", "Automation pilot"]
+    },
+    {
+      id: "AI-39",
+      title: "AI Risk Management and Internal Controls",
+      status: "neu aus Governance-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["corp", "lead", "bsc", "pma", "tc", "am"],
+      dimensions: ["data", "business", "change"],
+      interests: ["governance", "leadership", "consulting"],
+      levels: ["Deepen", "Create"],
+      format: "Risk register, control test, audit trail, approval owner",
+      summary: "AI-Risiken mit Ownern, Kontrollen, Audit-Evidence und Policy-Exception-Review steuerbar machen.",
+      modules: ["Risk register", "Control test", "Audit evidence"]
+    },
+    {
+      id: "AI-40",
+      title: "AI Knowledge Management and Content Governance",
+      status: "neu aus Knowledge-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["data", "prompting", "change"],
+      interests: ["governance", "productivity", "engineering"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Content owner, freshness check, source ranking, access rule",
+      summary: "Wissensquellen für AI Search und interne Assistenten kuratieren, bevor Retrieval falsche Quellen verstärkt.",
+      modules: ["Source owner", "Freshness check", "Access rule"]
+    },
+    {
+      id: "AI-41",
+      title: "AI Customer Communication and Service Quality",
+      status: "neu aus Service-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["am", "pvs", "bsc", "corp", "lead"],
+      dimensions: ["business", "prompting", "change"],
+      interests: ["productivity", "consulting", "leadership"],
+      levels: ["Acquire", "Deepen", "Create"],
+      format: "Response source, empathy check, confidence threshold, escalation path",
+      summary: "AI-assistierte Kundenantworten mit Quellen, Empathie, Confidence und Eskalationspfad absichern.",
+      modules: ["Response source", "Empathy check", "Escalation path"]
+    },
+    {
+      id: "AI-42",
+      title: "AI Architecture Decision Governance",
+      status: "neu aus Architektur-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["tc", "pvs", "am", "lead", "bsc", "pma"],
+      dimensions: ["business", "data"],
+      interests: ["engineering", "governance", "leadership"],
+      levels: ["Deepen", "Create"],
+      format: "ADR, threat model, cost model, architecture review",
+      summary: "AI-Architekturentscheidungen zu Modellen, Vendoren, Security Boundaries und Kosten nachvollziehbar festhalten.",
+      modules: ["ADR", "Threat model", "Cost tradeoff"]
+    },
+    {
       id: "CHAMP-01",
       title: "AI Champion / Community Lead",
       status: "Rollenformat aus DOCX",
@@ -731,8 +796,8 @@ window.LrnData = {
       label: "Core AI Foundation Path",
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37"] },
-        { label: "Deepen", courses: ["PROMPT-01", "AI-18", "AI-23", "AI-33"] }
+        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
+        { label: "Deepen", courses: ["PROMPT-01", "AI-18", "AI-23", "AI-33", "AI-39"] }
       ]
     },
     {
@@ -742,8 +807,8 @@ window.LrnData = {
       profileIds: ["bsc", "pvs", "pma"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36"] },
-        { label: "Create", courses: ["AI-19", "AI-27", "AI-32", "AI-33", "CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36", "AI-38", "AI-39", "AI-41"] },
+        { label: "Create", courses: ["AI-19", "AI-27", "AI-32", "AI-33", "AI-42", "CHAMP-01"] }
       ]
     },
     {
@@ -753,8 +818,8 @@ window.LrnData = {
       profileIds: ["tc", "am"],
       stages: [
         { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
-        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37"] },
-        { label: "Create", courses: ["AI-19", "AI-25", "CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-41"] },
+        { label: "Create", courses: ["AI-19", "AI-25", "AI-42", "CHAMP-01"] }
       ]
     },
     {
@@ -764,8 +829,8 @@ window.LrnData = {
       profileIds: ["lead", "corp", "pma", "bsc"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-35", "AI-36", "AI-37"] },
-        { label: "Create", courses: ["AI-19", "CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-35", "AI-36", "AI-37", "AI-38", "AI-39", "AI-40", "AI-41"] },
+        { label: "Create", courses: ["AI-19", "AI-42", "CHAMP-01"] }
       ]
     },
     {
@@ -774,8 +839,8 @@ window.LrnData = {
       label: "Corporate Functions Enablement Path",
       profileIds: ["corp"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37"] },
-        { label: "Deepen", courses: ["AI-10", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-36"] },
+        { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
+        { label: "Deepen", courses: ["AI-10", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-36", "AI-38", "AI-39"] },
         { label: "Create", courses: ["AI-20", "AI-21", "CHAMP-01"] }
       ]
     }

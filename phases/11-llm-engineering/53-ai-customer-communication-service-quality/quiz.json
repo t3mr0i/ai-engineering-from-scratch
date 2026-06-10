@@ -1,0 +1,68 @@
+{
+  "lesson": "53-ai-customer-communication-service-quality",
+  "title": "AI Customer Communication and Service Quality",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the main risk of AI-assisted service replies?",
+      "options": [
+        "They can sound professional while source confidence, empathy, or escalation is weak",
+        "They always include too much empathy",
+        "They remove every SLA",
+        "They cannot summarize a ticket"
+      ],
+      "correct": 0,
+      "explanation": "Service replies need evidence, tone, confidence, and escalation checks."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["sla risk", "token cache", "screen reader", "image contrast"],
+      "correct": 0,
+      "explanation": "SLA risk changes response priority and review level."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked customer-response quality plan with controls",
+        "A final customer contract",
+        "A support database",
+        "An automatic refund"
+      ],
+      "correct": 0,
+      "explanation": "The artifact maps service signals to response controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["escalation path", "hide uncertainty", "skip empathy check", "ignore SLA"],
+      "correct": 0,
+      "explanation": "Escalation paths protect customers when confidence is low or impact is high."
+    },
+    {
+      "stage": "post",
+      "question": "When should AI-assisted customer communication receive stronger review?",
+      "options": [
+        "When customers are frustrated, response confidence is low, SLA is at risk, or escalation is needed",
+        "Only when no customer is affected",
+        "Only when the answer is fully certain",
+        "Never; tone is enough"
+      ],
+      "correct": 0,
+      "explanation": "These signals indicate higher service quality risk."
+    },
+    {
+      "stage": "post",
+      "question": "What should be checked before sending an AI-assisted service reply?",
+      "options": [
+        "Source, empathy, confidence threshold, and escalation path",
+        "Only grammar",
+        "Only word count",
+        "No ticket context"
+      ],
+      "correct": 0,
+      "explanation": "These checks keep customer communication accurate and accountable."
+    }
+  ]
+}
