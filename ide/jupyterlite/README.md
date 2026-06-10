@@ -19,9 +19,13 @@ or before a CI deploy that should refresh notebooks.**
 ## How to build
 
 ```bash
-# 1. isolated venv with jupyterlite + pyodide kernel + jupytext
+# 1. isolated venv with jupyterlite + pyodide kernel + jupytext + jupyter-server.
+#    jupyter-server is REQUIRED: without it, `--contents` silently fails to
+#    build the contents index (api/contents/all.json), and embedded notebooks
+#    error with "Could not find content with path ...". The .ipynb files get
+#    copied but JupyterLite can't see them.
 python3 -m venv /tmp/jlite-venv
-/tmp/jlite-venv/bin/pip install jupyterlite-core jupyterlite-pyodide-kernel jupytext
+/tmp/jlite-venv/bin/pip install jupyterlite-core jupyterlite-pyodide-kernel jupytext jupyter-server
 
 # 2. convert every lesson main.py -> notebook
 rm -rf /tmp/jlite-content && mkdir -p /tmp/jlite-content
