@@ -1,0 +1,48 @@
+{
+  "lesson": "68-ai-adoption-communications-role-enablement",
+  "title": "AI Adoption Communications and Role-Based Enablement",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why should AI adoption communication be role-specific?",
+      "options": ["Different roles experience different workflow changes", "It makes messages longer", "It avoids practice tasks", "It replaces manager support"],
+      "correct": 0,
+      "explanation": "Each role needs to know what changes, what remains human, and how to practice safely."
+    },
+    {
+      "stage": "check",
+      "question": "Which control helps managers support local adoption?",
+      "options": ["Manager brief", "Model temperature", "Token counter", "Hidden prompt"],
+      "correct": 0,
+      "explanation": "A manager brief gives leaders talking points, concerns, and escalation triggers."
+    },
+    {
+      "stage": "check",
+      "question": "What does a practice task add to an AI rollout?",
+      "options": ["A way to turn communication into behavior", "A guarantee of perfect adoption", "A security exemption", "A replacement for feedback"],
+      "correct": 0,
+      "explanation": "Practice tasks help people learn the new behavior in a concrete workflow."
+    },
+    {
+      "stage": "check",
+      "question": "What should happen when the message gap is high?",
+      "options": ["Launch silently", "Clarify the role narrative before scaling", "Remove the feedback channel", "Skip managers"],
+      "correct": 1,
+      "explanation": "A message gap means the audience does not yet understand the change."
+    },
+    {
+      "stage": "post",
+      "question": "Which rollout needs a full enablement plan?",
+      "options": ["High role impact with resistance signals and manager dependency", "A personal prompt tip", "A hidden prototype", "A completed archival task"],
+      "correct": 0,
+      "explanation": "High role impact and friction require structured communication and enablement."
+    },
+    {
+      "stage": "post",
+      "question": "Why is a feedback channel part of adoption communication?",
+      "options": ["It makes questions, risks, and adoption blockers visible", "It replaces training", "It removes the need for managers", "It guarantees tool usage"],
+      "correct": 0,
+      "explanation": "Feedback channels keep concerns and adoption blockers visible after launch."
+    }
+  ]
+}
