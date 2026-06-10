@@ -3723,6 +3723,10 @@
         if (!container || !lessonPath) return;
 
         if (lrnContext) {
+          // LRN flow keeps its quiz/path panels, but the notebook is the
+          // centerpiece — show it first here too.
+          renderCodePanel(container);
+          renderOutputsPanel(container);
           renderQuizPanel(container);
           renderLearningPathPanel(container);
           renderContinuePanel(container);
@@ -3872,17 +3876,28 @@
         // no mixed-content, no login). Loaded on demand to keep the page fast.
         var notebookUrl = 'jupyterlite/notebooks/index.html?path=' + lessonPath + '.ipynb';
         var notebookFull = 'jupyterlite/lab/index.html?path=' + lessonPath + '.ipynb';
+        // The notebook content lives under jupyterlite/files/. Not every lesson
+        // has one — probe it so we never embed an iframe that 404s.
+        var notebookFile = 'jupyterlite/files/' + lessonPath + '.ipynb';
 
-        fetch(codeUrl)
-          .then(function (r) { if (!r.ok) throw new Error('no main.py'); return r.text(); })
-          .then(function (src) { mountNotebook(src); })
-          .catch(function () {
-            // No main.py — still offer the notebook (it may exist) + GitLab.
-            mountNotebook(null);
-          });
+        Promise.all([
+          fetch(codeUrl).then(function (r) { return r.ok ? r.text() : null; }).catch(function () { return null; }),
+          fetch(notebookFile, { method: 'HEAD' }).then(function (r) { return r.ok; }).catch(function () { return false; })
+        ]).then(function (res) { mountNotebook(res[0], res[1]); });
 
-        function mountNotebook(src) {
+        function mountNotebook(src, hasNotebook) {
           var el = document.getElementById('codeContent');
+          if (!hasNotebook) {
+            // No notebook for this lesson — offer the code + GitLab instead of
+            // an empty Jupyter shell.
+            el.innerHTML =
+              '<div class="nb-placeholder">' +
+              '<div class="nb-hint">No in-browser notebook for this lesson yet. View the code and run it locally:</div>' +
+              '<div class="code-card-actions">' +
+              '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
+              '</div></div>';
+            return;
+          }
           var heavy = src && PY_NO_WASM.test(src);
           var note = heavy
             ? 'This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU. The notebook shows the saved output already — open it to read and edit; run it locally for live results.'
