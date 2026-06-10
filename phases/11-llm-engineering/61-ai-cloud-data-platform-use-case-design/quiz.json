@@ -1,0 +1,68 @@
+{
+  "lesson": "61-ai-cloud-data-platform-use-case-design",
+  "title": "AI Cloud, Data Platform, and IoT Use Case Design",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why do platform constraints matter for AI use cases?",
+      "options": [
+        "Because latency, residency, streaming, and platform dependency can change the architecture",
+        "Because every AI use case has the same architecture",
+        "Because data boundaries do not matter",
+        "Because cloud choice is never relevant"
+      ],
+      "correct": 0,
+      "explanation": "Platform constraints can determine whether an AI architecture is feasible."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["data residency", "font size", "audio bit depth", "keyboard layout"],
+      "correct": 0,
+      "explanation": "Data residency is a core platform and architecture constraint."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked platform-aware AI use case plan with controls",
+        "A deployed cloud service",
+        "An IoT device firmware",
+        "A cost invoice"
+      ],
+      "correct": 0,
+      "explanation": "The artifact recommends architecture controls for platform-aware use cases."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["data boundary", "ignore latency", "skip platform decision", "hide residency"],
+      "correct": 0,
+      "explanation": "Data boundaries make platform design accountable."
+    },
+    {
+      "stage": "post",
+      "question": "When does an AI use case need architecture review?",
+      "options": [
+        "When technical value and platform risk are high, especially with latency, data residency, streams, or dependencies",
+        "Only when the use case has no data",
+        "Only when platform constraints are absent",
+        "Never; all use cases can use the same pattern"
+      ],
+      "correct": 0,
+      "explanation": "High-value platform-risk use cases need architecture review."
+    },
+    {
+      "stage": "post",
+      "question": "What should be documented before choosing a cloud or platform pattern?",
+      "options": [
+        "Architecture sketch, data boundary, streaming fit, and platform decision",
+        "Only the model name",
+        "Only the vendor logo",
+        "No constraints"
+      ],
+      "correct": 0,
+      "explanation": "These controls help teams choose feasible platform designs."
+    }
+  ]
+}
