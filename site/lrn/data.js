@@ -776,6 +776,71 @@ window.LrnData = {
       modules: ["ADR", "Threat model", "Cost tradeoff"]
     },
     {
+      id: "AI-43",
+      title: "AI Product Backlog and Prioritization",
+      status: "neu aus Product-Gap",
+      source: "DOCX/XLSX role gap",
+      profileIds: ["pvs", "pma", "bsc", "lead", "tc"],
+      dimensions: ["business", "change"],
+      interests: ["consulting", "leadership"],
+      levels: ["Deepen", "Create"],
+      format: "Evidence note, scoring rubric, dependency check, decision log",
+      summary: "AI nutzen, um Backlog- und Roadmap-Entscheidungen transparenter nach Wert, Aufwand, Risiko und Abhängigkeiten zu strukturieren.",
+      modules: ["Evidence note", "Scoring rubric", "Decision log"]
+    },
+    {
+      id: "AI-44",
+      title: "AI Business Analysis and Process Discovery",
+      status: "neu aus Analysis-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["bsc", "pma", "pvs", "lead", "corp"],
+      dimensions: ["business", "prompting"],
+      interests: ["consulting", "productivity", "leadership"],
+      levels: ["Deepen", "Create"],
+      format: "Interview guide, process variant map, assumption log, evidence register",
+      summary: "AI für Stakeholder-Interviews, Prozessvarianten, Requirements und Evidenzlücken in der Business Analyse einsetzen.",
+      modules: ["Interview guide", "Variant map", "Evidence register"]
+    },
+    {
+      id: "AI-45",
+      title: "AI Test Data and Synthetic Data Governance",
+      status: "neu aus QA/Data-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["tc", "am", "pvs", "corp"],
+      dimensions: ["data"],
+      interests: ["governance", "engineering"],
+      levels: ["Deepen", "Create"],
+      format: "Data classification, coverage matrix, drift check, leakage test",
+      summary: "Synthetische und maskierte Testdaten für AI- und Softwaretests mit Privacy, Coverage und Leakage-Kontrollen nutzen.",
+      modules: ["Classification", "Coverage", "Leakage test"]
+    },
+    {
+      id: "AI-46",
+      title: "AI Change Impact and Stakeholder Analysis",
+      status: "neu aus Change-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["lead", "pma", "corp", "bsc", "pvs"],
+      dimensions: ["change", "business"],
+      interests: ["leadership", "consulting"],
+      levels: ["Deepen", "Create"],
+      format: "Impact map, stakeholder plan, communication script, manager brief",
+      summary: "AI-Rollouts nach Rollenwirkung, Stakeholdern, Kommunikationslücken und Manager-Abhängigkeiten planen.",
+      modules: ["Impact map", "Stakeholder plan", "Manager brief"]
+    },
+    {
+      id: "AI-47",
+      title: "AI Value Realization and Benefits Tracking",
+      status: "neu aus Value-Gap",
+      source: "DOCX/XLSX capability gap",
+      profileIds: ["lead", "pma", "bsc", "corp", "pvs"],
+      dimensions: ["business", "change", "data"],
+      interests: ["leadership", "consulting", "governance"],
+      levels: ["Deepen", "Create"],
+      format: "Benefit hypothesis, baseline metric, tracking cadence, owner review",
+      summary: "AI-Initiativen nach Launch auf echte Benefits, Adoption, Baselines und Portfolio-Entscheidungen verfolgen.",
+      modules: ["Benefit hypothesis", "Baseline", "Owner review"]
+    },
+    {
       id: "CHAMP-01",
       title: "AI Champion / Community Lead",
       status: "Rollenformat aus DOCX",
@@ -807,8 +872,8 @@ window.LrnData = {
       profileIds: ["bsc", "pvs", "pma"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36", "AI-38", "AI-39", "AI-41"] },
-        { label: "Create", courses: ["AI-19", "AI-27", "AI-32", "AI-33", "AI-42", "CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36", "AI-38", "AI-39", "AI-41", "AI-43", "AI-44", "AI-46"] },
+        { label: "Create", courses: ["AI-19", "AI-27", "AI-32", "AI-33", "AI-42", "AI-47", "CHAMP-01"] }
       ]
     },
     {
@@ -818,7 +883,7 @@ window.LrnData = {
       profileIds: ["tc", "am"],
       stages: [
         { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
-        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-41"] },
+        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-41", "AI-43", "AI-45"] },
         { label: "Create", courses: ["AI-19", "AI-25", "AI-42", "CHAMP-01"] }
       ]
     },
@@ -829,7 +894,7 @@ window.LrnData = {
       profileIds: ["lead", "corp", "pma", "bsc"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-35", "AI-36", "AI-37", "AI-38", "AI-39", "AI-40", "AI-41"] },
+        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-35", "AI-36", "AI-37", "AI-38", "AI-39", "AI-40", "AI-41", "AI-43", "AI-44", "AI-46", "AI-47"] },
         { label: "Create", courses: ["AI-19", "AI-42", "CHAMP-01"] }
       ]
     },
@@ -840,7 +905,7 @@ window.LrnData = {
       profileIds: ["corp"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
-        { label: "Deepen", courses: ["AI-10", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-36", "AI-38", "AI-39"] },
+        { label: "Deepen", courses: ["AI-10", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-36", "AI-38", "AI-39", "AI-44", "AI-45", "AI-46", "AI-47"] },
         { label: "Create", courses: ["AI-20", "AI-21", "CHAMP-01"] }
       ]
     }

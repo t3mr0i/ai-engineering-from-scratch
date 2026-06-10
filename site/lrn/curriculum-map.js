@@ -1462,6 +1462,161 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
+    "AI-43": [
+      {
+        title: "Backlog evidence and scoring",
+        decision: "core",
+        note: "Keeps AI-assisted prioritization transparent and comparable.",
+        lessons: [
+          { path: "phases/11-llm-engineering/55-ai-product-backlog-prioritization", title: "AI Product Backlog and Prioritization" },
+          { path: "phases/11-llm-engineering/23-ai-enhanced-user-research", title: "AI-Enhanced User Research" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
+        ]
+      },
+      {
+        title: "Value, effort and dependencies",
+        decision: "core",
+        note: "Connects backlog choices to measurable value and delivery pressure.",
+        lessons: [
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" },
+          { path: "phases/11-llm-engineering/48-ai-project-reporting-steering", title: "AI Project Reporting and Steering" }
+        ]
+      },
+      {
+        title: "Product decision records",
+        decision: "optional",
+        note: "For teams documenting roadmap and backlog decisions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
+          { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent" }
+        ]
+      }
+    ],
+    "AI-44": [
+      {
+        title: "Discovery and evidence",
+        decision: "core",
+        note: "Uses AI to reveal missing stakeholders, process variants and assumptions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/56-ai-business-analysis-process-discovery", title: "AI Business Analysis and Process Discovery" },
+          { path: "phases/11-llm-engineering/03-structured-outputs", title: "Structured Outputs" },
+          { path: "phases/11-llm-engineering/50-ai-process-analysis-automation-design", title: "AI Process Analysis and Automation Design" }
+        ]
+      },
+      {
+        title: "Structured requirements",
+        decision: "core",
+        note: "Turns discoveries into testable, reviewable artifacts.",
+        lessons: [
+          { path: "phases/11-llm-engineering/03-structured-outputs", title: "Structured Outputs" },
+          { path: "phases/13-tools-and-protocols/05-tool-schema-design", title: "Tool Schema Design" },
+          { path: "phases/14-agent-engineering/38-verification-gates", title: "Verification Gates" }
+        ]
+      },
+      {
+        title: "Workshop follow-through",
+        decision: "optional",
+        note: "For teams turning discovery into workshops, actions and decisions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/47-ai-meeting-workshop-facilitation", title: "AI Meeting Facilitation and Workshop Design" },
+          { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" }
+        ]
+      }
+    ],
+    "AI-45": [
+      {
+        title: "Synthetic data governance",
+        decision: "core",
+        note: "Frames synthetic data as governed test material, not risk-free data.",
+        lessons: [
+          { path: "phases/11-llm-engineering/57-ai-test-data-synthetic-data-governance", title: "AI Test Data and Synthetic Data Governance" },
+          { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
+          { path: "phases/11-llm-engineering/49-ai-data-quality-master-data-processes", title: "AI Data Quality and Master Data Processes" }
+        ]
+      },
+      {
+        title: "Coverage and leakage checks",
+        decision: "core",
+        note: "Connects test data to coverage, privacy and validation.",
+        lessons: [
+          { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" },
+          { path: "phases/18-ethics-safety-alignment/27-data-provenance-training-governance", title: "Data Provenance and Training-Data Governance" },
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+        ]
+      },
+      {
+        title: "Operational QA loop",
+        decision: "optional",
+        note: "For QA teams tying test data defects back to production quality.",
+        lessons: [
+          { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" },
+          { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" }
+        ]
+      }
+    ],
+    "AI-46": [
+      {
+        title: "Change impact mapping",
+        decision: "core",
+        note: "Makes role impact, manager dependency and adoption risk visible before rollout.",
+        lessons: [
+          { path: "phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis", title: "AI Change Impact and Stakeholder Analysis" },
+          { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" },
+          { path: "phases/11-llm-engineering/45-ai-for-corporate-communications-marketing", title: "AI for Corporate Communications and Marketing" }
+        ]
+      },
+      {
+        title: "Stakeholder and manager enablement",
+        decision: "core",
+        note: "Connects change analysis to learning design and champion work.",
+        lessons: [
+          { path: "phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer", title: "AI Learning Design and Knowledge Transfer" },
+          { path: "phases/11-llm-engineering/34-ai-champion-enablement", title: "AI Champion Enablement" },
+          { path: "phases/11-llm-engineering/28-ai-workforce-strategy", title: "AI Workforce Strategy" }
+        ]
+      },
+      {
+        title: "Adoption tracking",
+        decision: "optional",
+        note: "For teams connecting change plans to measurable adoption.",
+        lessons: [
+          { path: "phases/11-llm-engineering/59-ai-value-realization-benefits-tracking", title: "AI Value Realization and Benefits Tracking" },
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" }
+        ]
+      }
+    ],
+    "AI-47": [
+      {
+        title: "Benefits tracking setup",
+        decision: "core",
+        note: "Turns AI value claims into hypotheses, baselines and owner reviews.",
+        lessons: [
+          { path: "phases/11-llm-engineering/59-ai-value-realization-benefits-tracking", title: "AI Value Realization and Benefits Tracking" },
+          { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
+          { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" }
+        ]
+      },
+      {
+        title: "Adoption and outcome evidence",
+        decision: "core",
+        note: "Connects value tracking to adoption, metrics and steering decisions.",
+        lessons: [
+          { path: "phases/11-llm-engineering/48-ai-project-reporting-steering", title: "AI Project Reporting and Steering" },
+          { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" },
+          { path: "phases/17-infrastructure-and-production/21-ab-testing-llm-features", title: "A/B Testing LLM Features" }
+        ]
+      },
+      {
+        title: "Portfolio correction loop",
+        decision: "optional",
+        note: "For leaders deciding whether to continue, improve, scale or stop.",
+        lessons: [
+          { path: "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape", title: "AI Ecosystem and Vendor Landscape" },
+          { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" }
+        ]
+      }
+    ],
     "CHAMP-01": [
       {
         title: "Champion delivery discipline",

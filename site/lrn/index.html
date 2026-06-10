@@ -16,45 +16,46 @@
 <body>
   <a class="skip-link" href="#cockpit">Direkt zum Kurskatalog</a>
   <header class="nav-edge" aria-label="Seitennavigation">
-    <a class="wordmark" href="../index.html">
+    <a class="wordmark" href="index.html">
       <span class="wordmark__mark" aria-hidden="true">AI</span>
       <span>LHIND Lernkatalog</span>
     </a>
     <nav class="nav-links" aria-label="Abschnitte">
       <a href="#cockpit">Kurse</a>
-      <a href="../index.html">Curriculum</a>
+      <a href="index.html">Curriculum</a>
     </nav>
     <div class="nav-edge__spacer" aria-hidden="true"></div>
   </header>
 
   <main class="page">
     <section class="hero" aria-labelledby="heroTitle">
-      <h1 id="heroTitle">Was möchtest du lernen?</h1>
-      <p>Wähle dein Profil und Level — wir zeigen dir die passenden AI-Kurse und deinen Fortschritt.</p>
-      <form class="hero-search" role="search" id="searchForm">
-        <span class="hero-search__icon" aria-hidden="true">
-          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
-            <circle cx="9" cy="9" r="6"></circle>
-            <line x1="13.5" y1="13.5" x2="18" y2="18"></line>
-          </svg>
-        </span>
-        <input type="search" id="searchInput" placeholder="Kurse durchsuchen …" aria-label="Kurse durchsuchen" autocomplete="off">
-      </form>
+      <div class="hero__inner">
+        <span class="hero__eyebrow"><i data-lucide="sparkles" aria-hidden="true"></i> AI Lernkatalog</span>
+        <h1 id="heroTitle">Was möchtest du lernen?</h1>
+        <p>Wähle dein Profil und Level — wir zeigen dir die passenden AI-Kurse und deinen Fortschritt.</p>
+        <form class="hero-search" role="search" id="searchForm">
+          <span class="hero-search__icon" aria-hidden="true">
+            <i data-lucide="search"></i>
+          </span>
+          <input type="search" id="searchInput" placeholder="Kurse durchsuchen …" aria-label="Kurse durchsuchen" autocomplete="off">
+        </form>
+      </div>
     </section>
 
     <section class="cockpit" id="cockpit" aria-label="AI Kurskatalog">
       <div class="filter-bar" aria-label="Kursfilter">
-        <div class="filter-cluster">
-          <label class="filter-field">
-            <span class="filter-field__label">Profil</span>
-            <select id="profileSelect" class="filter-select" aria-label="Profil auswählen"></select>
-          </label>
-          <label class="filter-field">
-            <span class="filter-field__label">Level</span>
-            <select id="levelSelect" class="filter-select" aria-label="Assessment-Level auswählen"></select>
-          </label>
+        <div class="filter-group">
+          <span class="filter-group__label" id="profileLabel"><i data-lucide="user-round" aria-hidden="true"></i> Profil</span>
+          <div class="chip-row" id="profileChips" role="group" aria-labelledby="profileLabel"></div>
         </div>
-        <div class="chip-row" id="interestChips" role="group" aria-label="Interessen filtern"></div>
+        <div class="filter-group">
+          <span class="filter-group__label" id="levelLabel"><i data-lucide="bar-chart-3" aria-hidden="true"></i> Level</span>
+          <div class="chip-row" id="levelChips" role="group" aria-labelledby="levelLabel"></div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group__label" id="interestLabel"><i data-lucide="sliders-horizontal" aria-hidden="true"></i> Interessen</span>
+          <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel"></div>
+        </div>
         <button class="text-btn" type="button" id="resetBtn">Zurücksetzen</button>
       </div>
 
@@ -70,6 +71,7 @@
   </footer>
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="../progress.js"></script>
   <script src="data.js"></script>
   <script src="curriculum-map.js"></script>

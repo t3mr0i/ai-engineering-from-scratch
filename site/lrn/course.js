@@ -85,10 +85,15 @@
     action.className = "primary-cta";
     if (nextLesson) {
       action.href = lessonHref(nextLesson.path, course.id);
-      action.textContent = (stats.visitedLessons > 0 ? "Weiterlernen" : "Kurs starten");
+      var ctaLabel = document.createElement("span");
+      ctaLabel.textContent = (stats.visitedLessons > 0 ? "Weiterlernen" : "Kurs starten");
+      action.append(ctaLabel, lucideIcon("arrow-right"));
     } else {
+      action.appendChild(lucideIcon("circle-check"));
+      var doneLabel = document.createElement("span");
+      doneLabel.textContent = "Kurs vollständig";
+      action.appendChild(doneLabel);
       action.href = "#";
-      action.textContent = "Kurs vollständig";
       action.setAttribute("aria-disabled", "true");
       action.addEventListener("click", function (event) { event.preventDefault(); });
     }
@@ -114,6 +119,7 @@
     }
 
     replaceChildren(root, children);
+    refreshIcons();
   }
 
   function unitBlock(subcourse, courseId, subcourseIndex) {
@@ -163,12 +169,19 @@
     dot.className = "activity-link__dot";
     dot.dataset.state = progress.state;
     dot.setAttribute("aria-hidden", "true");
+    dot.appendChild(lucideIcon(
+      progress.state === "completed" ? "circle-check" :
+      progress.state === "visited" ? "circle-dot" : "circle"
+    ));
 
     var label = document.createElement("strong");
     label.textContent = lesson.title;
 
     var type = document.createElement("small");
-    type.textContent = activityType(lesson, subcourse);
+    type.appendChild(lucideIcon("clock"));
+    var typeText = document.createElement("span");
+    typeText.textContent = activityType(lesson, subcourse);
+    type.appendChild(typeText);
 
     var status = document.createElement("em");
     status.textContent = progress.label;
@@ -300,5 +313,18 @@
     children.forEach(function (child) {
       parent.appendChild(child);
     });
+  }
+
+  function lucideIcon(name) {
+    var i = document.createElement("i");
+    i.setAttribute("data-lucide", name);
+    i.setAttribute("aria-hidden", "true");
+    return i;
+  }
+
+  function refreshIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
   }
 })();
