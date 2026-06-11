@@ -16,7 +16,7 @@
     { value: 5, label: "Expert", focusLevels: ["Create"] }
   ];
 
-  // Max courses shown as "Empfohlen". Beyond this, level- and interest-relevant
+  // Max courses shown as "Recommended". Beyond this, level- and interest-relevant
   // courses are demoted to "Optional" so the recommended list stays focused.
   // Must be defined before the init render() below — it ran while the old
   // `var RECOMMEND_CAP = 11` (declared further down) was still hoisted-undefined,
@@ -165,7 +165,7 @@
       saveState();
       renderControls();
       render();
-      announce("Auswahl zurückgesetzt. Lesson-Fortschritt bleibt im Lesson-System erhalten.");
+      announce("Selection reset. Lesson progress stays in the lesson system.");
     });
 
     if (els.searchInput) {
@@ -182,7 +182,7 @@
       state.profileId = profile.id;
       saveState();
       render();
-      announce("Profil gesetzt: " + profile.label + ".");
+      announce("Profile set: " + profile.label + ".");
     });
 
     els.levelSelect.addEventListener("change", function () {
@@ -191,7 +191,7 @@
       state.externalLevel = level;
       saveState();
       render();
-      announce("Level gesetzt: " + level + ".");
+      announce("Level set: " + level + ".");
     });
 
     els.ctaBtn.addEventListener("click", function () {
@@ -254,8 +254,8 @@
       return entry.kind === "recommended";
     }).length;
     els.ctaLabel.textContent = count === 1
-      ? "1 passenden Kurs anzeigen"
-      : count + " passende Kurse anzeigen";
+      ? "Show 1 matching course"
+      : "Show " + count + " matching courses";
   }
 
   function renderInterestChips() {
@@ -279,11 +279,11 @@
 
   function renderFilters() {
     var options = [
-      { id: "recommended", label: "Empfohlen" },
+      { id: "recommended", label: "Recommended" },
       { id: "optional", label: "Optional" },
-      { id: "inprogress", label: "In Arbeit" },
-      { id: "completed", label: "Erledigt" },
-      { id: "all", label: "Alle" }
+      { id: "inprogress", label: "In Progress" },
+      { id: "completed", label: "Completed" },
+      { id: "all", label: "All" }
     ];
     replaceChildren(els.courseFilters, options.map(function (option) {
       var btn = document.createElement("button");
@@ -308,23 +308,23 @@
     var visible = term ? applySearch(globalCourseEntries()) : filterCourses(computed.entries);
 
     if (els.resultLine) {
-      els.resultLine.textContent = (visible.length === 1 ? "1 Kurs" : visible.length + " Kurse")
-        + (term ? " · globale Suche" : "");
+      els.resultLine.textContent = (visible.length === 1 ? "1 course" : visible.length + " courses")
+        + (term ? " · global search" : "");
     }
 
     if (!visible.length) {
       lastVisibleSignature = "";
       var empty = document.createElement("div");
       empty.className = "empty-state";
-      // When "Empfohlen" is empty but optional courses exist, the level/interest
+      // When "Recommended" is empty but optional courses exist, the level/interest
       // combination simply has no on-path match — point the user at Optional.
       var hasOptional = computed.entries.some(function (entry) { return entry.kind === "optional"; });
       if (term) {
-        empty.textContent = "Keine Kurse zu dieser Suche.";
+        empty.textContent = "No courses match this search.";
       } else if (state.filter === "recommended" && hasOptional) {
-        empty.textContent = "Für dieses Level und Interesse gibt es keinen Kurs direkt auf dem Pfad. Schau unter 'Optional' für angrenzende Kurse.";
+        empty.textContent = "There is no direct path course for this level and interest. Check Optional for adjacent courses.";
       } else {
-        empty.textContent = "Keine Kurse in diesem Filter. Wechsle auf 'Alle' oder passe die Suche an.";
+        empty.textContent = "No courses in this filter. Switch to All or adjust the search.";
       }
       replaceChildren(els.courseGrid, [empty]);
       return;
@@ -426,14 +426,14 @@
     meta.className = "course-card__meta";
     var metaText = document.createElement("span");
     metaText.textContent = entry.progress.lessonCount === 1
-      ? "1 Aktivität"
-      : entry.progress.lessonCount + " Aktivitäten";
+      ? "1 activity"
+      : entry.progress.lessonCount + " activities";
     meta.appendChild(metaText);
 
     var foot = document.createElement("div");
     foot.className = "course-card__foot";
     foot.append(
-      progressMeter(entry.progress.percent, "Fortschritt " + course.title)
+      progressMeter(entry.progress.percent, "Progress " + course.title)
     );
     var open = document.createElement("span");
     open.className = "course-card__open";
@@ -446,9 +446,9 @@
   }
 
   function courseKindLabel(kind) {
-    if (kind === "recommended") return "Empfohlen";
+    if (kind === "recommended") return "Recommended";
     if (kind === "optional") return "Optional";
-    return "Katalog";
+    return "Catalog";
   }
 
   function compute() {
@@ -590,12 +590,12 @@
 
   function lessonProgress(path) {
     if (!progressApi || !progressApi.getLessonProgress) {
-      return { state: "open", label: "offen" };
+      return { state: "open", label: "open" };
     }
     var progress = progressApi.getLessonProgress(path);
-    if (progress && progress.completedAt) return { state: "completed", label: "erledigt" };
-    if (progress && progress.visitedAt) return { state: "visited", label: "gestartet" };
-    return { state: "open", label: "offen" };
+    if (progress && progress.completedAt) return { state: "completed", label: "completed" };
+    if (progress && progress.visitedAt) return { state: "visited", label: "started" };
+    return { state: "open", label: "open" };
   }
 
   function lessonPaths(courseId) {

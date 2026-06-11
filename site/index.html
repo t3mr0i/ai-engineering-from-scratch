@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <script src="gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>LHIND AI Lernkatalog</title>
-  <meta name="description" content="Rollenbasiertes AI LRN-Kurscockpit für externe Assessment-Level, Kursauswahl und Lernfortschritt bei LHIND.">
+  <title>LHIND AI Learning Catalog</title>
+  <meta name="description" content="Role-based AI LRN course cockpit for external assessment levels, course selection, and learning progress at LHIND.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,53 +14,53 @@
   <link rel="stylesheet" href="lrn/lrn.css">
 </head>
 <body>
-  <a class="skip-link" href="#cockpit">Direkt zum Kurskatalog</a>
-  <header class="nav-edge" aria-label="Seitennavigation">
+  <a class="skip-link" href="#cockpit">Skip to course catalog</a>
+  <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
       <span class="wordmark__mark" aria-hidden="true">AI</span>
-      <span>LHIND Lernkatalog</span>
+      <span>LHIND Learning Catalog</span>
     </a>
   </header>
 
   <main class="page page--home">
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
-        <h1 id="heroTitle">Was möchtest du lernen?</h1>
-        <p>Wähle dein Profil und Level — wir zeigen dir die passenden AI-Kurse und deinen Fortschritt.</p>
+        <h1 id="heroTitle">What do you want to learn?</h1>
+        <p>Choose your profile and level. We will show you the right AI courses and your progress.</p>
         <form class="hero-search" role="search" id="searchForm">
           <span class="hero-search__icon" aria-hidden="true">
             <i data-lucide="search"></i>
           </span>
-          <input type="search" id="searchInput" placeholder="Kurse durchsuchen …" aria-label="Kurse durchsuchen" autocomplete="off">
+          <input type="search" id="searchInput" placeholder="Search courses..." aria-label="Search courses" autocomplete="off">
         </form>
       </div>
     </section>
 
-    <section class="cockpit" id="cockpit" aria-label="AI Kurskatalog">
-      <div class="selector-card" aria-label="Profil und Level wählen">
+    <section class="cockpit" id="cockpit" aria-label="AI course catalog">
+      <div class="selector-card" aria-label="Choose profile and level">
         <label class="selector-field">
-          <span class="selector-field__label"><i data-lucide="user-round" aria-hidden="true"></i> Profil</span>
-          <select id="profileSelect" aria-label="Profil wählen"></select>
+          <span class="selector-field__label"><i data-lucide="user-round" aria-hidden="true"></i> Profile</span>
+          <select id="profileSelect" aria-label="Choose profile"></select>
         </label>
         <label class="selector-field">
           <span class="selector-field__label"><i data-lucide="bar-chart-3" aria-hidden="true"></i> Level</span>
-          <select id="levelSelect" aria-label="Level wählen"></select>
+          <select id="levelSelect" aria-label="Choose level"></select>
         </label>
         <button class="selector-cta" type="button" id="ctaBtn">
-          <span id="ctaLabel">Passende Kurse anzeigen</span>
+          <span id="ctaLabel">Show matching courses</span>
           <i data-lucide="arrow-right" aria-hidden="true"></i>
         </button>
       </div>
 
-      <div class="catalog-bar" aria-label="Kursfilter">
+      <div class="catalog-bar" aria-label="Course filters">
         <div class="filter-group">
-          <span class="filter-group__label" id="interestLabel"><i data-lucide="sliders-horizontal" aria-hidden="true"></i> Interessen</span>
+          <span class="filter-group__label" id="interestLabel"><i data-lucide="sliders-horizontal" aria-hidden="true"></i> Interests</span>
           <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel"></div>
         </div>
-        <button class="text-btn" type="button" id="resetBtn">Zurücksetzen</button>
+        <button class="text-btn" type="button" id="resetBtn">Reset</button>
       </div>
 
-      <div class="seg-control" id="courseFilters" role="group" aria-label="Kursstatus filtern"></div>
+      <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status"></div>
 
       <p class="result-line" id="resultLine"></p>
       <div class="course-grid" id="courseGrid"></div>
@@ -68,7 +68,7 @@
   </main>
 
   <footer class="foot-line">
-    <p>LHIND AI Lernkatalog · Kuratiertes Mapping auf bestehende Curriculum-Lessons · Fortschritt kommt aus dem Lesson-/LRN-Tracking.</p>
+    <p>LHIND AI Learning Catalog · Curated mapping to existing curriculum lessons · Progress comes from lesson/LRN tracking.</p>
   </footer>
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 

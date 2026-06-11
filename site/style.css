@@ -231,7 +231,7 @@ p.dropcap::first-letter {
   color: var(--blueprint);
 }
 
-/* ── Lernkatalog-style header (nav-edge) — ported onto style.css tokens so
+/* ── Learning Catalog-style header (nav-edge) — ported onto style.css tokens so
    the content subpages match the root catalog without importing lrn.css. ── */
 .nav-edge {
   position: sticky;

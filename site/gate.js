@@ -34,7 +34,7 @@
     ].join(';'));
     ov.innerHTML =
       '<form id="gate-form" style="width:min(360px,86vw);text-align:center">' +
-      '<div style="font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.7;margin-bottom:18px">LHIND AI Lernkatalog</div>' +
+      '<div style="font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.7;margin-bottom:18px">LHIND AI Learning Catalog</div>' +
       '<input id="gate-pw" type="password" autocomplete="current-password" autofocus ' +
       'placeholder="Password" ' +
       'style="width:100%;box-sizing:border-box;padding:12px 14px;background:transparent;border:1px solid #415a77;color:#e0e1dd;font-family:monospace;font-size:0.95rem;outline:none">' +

@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Enablement LHIND - Konzept für Betriebsrat und PEOPLE</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d6678;
+      --line: #d8dde8;
+      --paper: #ffffff;
+      --surface: #f6f8fb;
+      --surface-strong: #eef3f8;
+      --blue: #112b66;
+      --blue-soft: #dce7f7;
+      --teal: #0f6b6e;
+      --green-soft: #e7f2ef;
+      --amber: #8a5b12;
+      --amber-soft: #fbefd9;
+      --red: #8d2f34;
+      --red-soft: #f7e3e5;
+      --shadow: 0 18px 48px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color: var(--ink);
+      background: #e9edf3;
+      font-family:
+        Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 32px auto;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(23, 32, 51, 0.08);
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: start;
+      padding: 40px 48px 34px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(220, 231, 247, 0.65), rgba(255, 255, 255, 0) 56%),
+        var(--paper);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--teal);
+      font-size: 0.78rem;
+      font-weight: 760;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 16px;
+      color: var(--blue);
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 850px;
+      margin-bottom: 0;
+      color: #30394d;
+      font-size: 1.12rem;
+      line-height: 1.6;
+    }
+
+    .doc-meta {
+      min-width: 270px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .doc-meta dl {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 10px 14px;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .doc-meta dt {
+      color: var(--muted);
+      font-weight: 680;
+    }
+
+    .doc-meta dd {
+      margin: 0;
+      font-weight: 640;
+    }
+
+    .content {
+      padding: 0 48px 48px;
+    }
+
+    .section {
+      padding: 38px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 22px;
+    }
+
+    .section-number {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    h2 {
+      margin-bottom: 8px;
+      color: var(--blue);
+      font-size: 1.65rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .section-kicker {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      color: #26304a;
+      font-size: 1.05rem;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .note,
+    .callout,
+    .principle,
+    .qa-item,
+    .mail-template {
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .callout {
+      padding: 22px;
+      border-left: 5px solid var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .callout p:last-child,
+    .note p:last-child,
+    .principle p:last-child,
+    .qa-item p:last-child {
+      margin-bottom: 0;
+    }
+
+    .note {
+      padding: 18px;
+      border-left: 5px solid var(--teal);
+      background: var(--green-soft);
+    }
+
+    .note.warning {
+      border-left-color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .note.risk {
+      border-left-color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .principle {
+      padding: 18px;
+      min-height: 100%;
+      background: var(--paper);
+    }
+
+    .principle strong,
+    .qa-item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--blue);
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pill-list li {
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: #2d374c;
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    .message-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: messages;
+    }
+
+    .message-list li {
+      position: relative;
+      padding: 16px 18px 16px 54px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      counter-increment: messages;
+    }
+
+    .message-list li::before {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: #fff;
+      content: counter(messages);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .definition-grid {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+    }
+
+    .definition-grid dt,
+    .definition-grid dd {
+      margin: 0;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .definition-grid dt {
+      background: var(--surface-strong);
+      color: var(--blue);
+      font-weight: 760;
+    }
+
+    .definition-grid dd {
+      background: var(--paper);
+    }
+
+    .definition-grid dt:last-of-type,
+    .definition-grid dd:last-of-type {
+      border-bottom: 0;
+    }
+
+    .qa-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .qa-item {
+      padding: 18px;
+      background: var(--paper);
+    }
+
+    .qa-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .mail-template {
+      padding: 24px;
+      background: #fbfcfe;
+      font-family:
+        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .mail-template .subject {
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-weight: 760;
+    }
+
+    .mail-template p {
+      margin-bottom: 14px;
+    }
+
+    .compact-list {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .compact-list li + li {
+      margin-top: 8px;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .roadmap-step {
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .roadmap-step span {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--teal);
+      font-size: 0.78rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .roadmap-step h3 {
+      margin-top: 0;
+    }
+
+    .footer-note {
+      margin-top: 32px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .masthead {
+        grid-template-columns: 1fr;
+        padding: 32px 28px;
+      }
+
+      .content {
+        padding: 0 28px 36px;
+      }
+
+      .two-col,
+      .three-col,
+      .roadmap {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .definition-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .definition-grid dt {
+        border-bottom: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: 100%;
+        margin: 0;
+        border-left: 0;
+        border-right: 0;
+      }
+
+      .masthead,
+      .content {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .doc-meta dl {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+
+    @media print {
+      html {
+        background: #fff;
+        font-size: 11pt;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .masthead {
+        padding: 24pt 28pt 20pt;
+      }
+
+      .content {
+        padding: 0 28pt 28pt;
+      }
+
+      .section {
+        break-inside: avoid;
+        padding: 22pt 0;
+      }
+
+      .qa-item,
+      .principle,
+      .roadmap-step,
+      .note,
+      .callout {
+        break-inside: avoid;
+      }
+
+      h1 {
+        font-size: 28pt;
+      }
+
+      h2 {
+        font-size: 16pt;
+      }
+
+      a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Konzeptentwurf für die interne Abstimmung</p>
+        <h1>AI Enablement LHIND: Qualifizierung mit klaren Leitplanken</h1>
+        <p class="lead">
+          Vorschlag für eine Betriebsrat-sensible Einordnung des AI-Literacy-
+          und Trainingsprogramms bei Lufthansa Industry Solutions. Der Fokus liegt
+          auf Befähigung, Transparenz, Datenschutz und sauberer Beteiligung.
+        </p>
+      </div>
+      <aside class="doc-meta" aria-label="Dokumentinformationen">
+        <dl>
+          <dt>Zielgruppe</dt>
+          <dd>Betriebsrat LHIND</dd>
+          <dt>Initiative</dt>
+          <dd>Lars Schwabe, CTO, und PEOPLE</dd>
+          <dt>Organisation</dt>
+          <dd>Lufthansa Industry Solutions</dd>
+          <dt>Status</dt>
+          <dd>Arbeitsfassung</dd>
+          <dt>Stand</dt>
+          <dd>11. Juni 2026</dd>
+        </dl>
+      </aside>
+    </header>
+
+    <div class="content">
+      <section class="section" id="executive-summary">
+        <div class="section-heading">
+          <span class="section-number">01</span>
+          <div>
+            <h2>Executive Summary</h2>
+            <p class="section-kicker">
+              Die Betriebsratskommunikation sollte das Programm nicht als
+              Tool-Rollout, sondern als Qualifizierungsrahmen erklären.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p>
+            <strong>Kernaussage:</strong> AI Enablement bei LHIND ist ein
+            Qualifizierungsangebot, kein Kontroll-, Scoring- oder
+            Leistungsbewertungsinstrument. Ziel ist, Mitarbeitende sicher,
+            souverän und verantwortungsvoll im Umgang mit KI zu machen.
+          </p>
+        </div>
+
+        <div class="two-col" style="margin-top: 24px;">
+          <div class="note">
+            <h3>Warum das jetzt relevant ist</h3>
+            <p>
+              KI verändert Arbeitsweisen in Entwicklung, Beratung,
+              Projektmanagement, Corporate Functions und Führung. Ohne
+              strukturiertes Enablement entstehen Unsicherheit,
+              Schattennutzung und uneinheitliche Qualitätsmaßstäbe.
+            </p>
+          </div>
+          <div class="note warning">
+            <h3>Was besonders sensibel ist</h3>
+            <p>
+              Trainingsdaten, Self-Assessments, Tool-Nutzung und mögliche
+              Prozessänderungen können mitbestimmungsrelevant werden. Diese
+              Punkte sollten transparent getrennt und frühzeitig mit dem
+              Betriebsrat abgestimmt werden.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="positionierung">
+        <div class="section-heading">
+          <span class="section-number">02</span>
+          <div>
+            <h2>Positionierung gegenüber dem Betriebsrat</h2>
+            <p class="section-kicker">
+              Der Ton sollte sachlich bleiben: Beschäftigte schützen,
+              Orientierung schaffen, Kompetenzen aufbauen.
+            </p>
+          </div>
+        </div>
+
+        <div class="three-col">
+          <article class="principle">
+            <strong>Qualifizierung vor Automatisierung</strong>
+            <p>
+              Das Programm befähigt Mitarbeitende, KI fundiert zu verstehen und
+              sicher anzuwenden. Es ist nicht darauf ausgelegt, Arbeitsplätze zu
+              bewerten oder zu ersetzen.
+            </p>
+          </article>
+          <article class="principle">
+            <strong>Transparenz vor Rollout</strong>
+            <p>
+              Lernpfade, Zielgruppenlogik, Datennutzung und Tool-Bezug werden
+              offengelegt. Produktive KI-Anwendungen werden separat betrachtet.
+            </p>
+          </article>
+          <article class="principle">
+            <strong>Beteiligung vor Verbindlichkeit</strong>
+            <p>
+              Verpflichtende Trainings, personenbezogene Auswertungen oder
+              arbeitsprozessbezogene KI-Nutzung werden nicht ohne passende
+              Beteiligung eingeführt.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="kernbotschaften">
+        <div class="section-heading">
+          <span class="section-number">03</span>
+          <div>
+            <h2>Kernbotschaften</h2>
+            <p class="section-kicker">
+              Diese Aussagen können in Gesprächen, Slides oder einer
+              Vorabinformation an den Betriebsrat verwendet werden.
+            </p>
+          </div>
+        </div>
+
+        <ol class="message-list">
+          <li>
+            <strong>AI Enablement ist Qualifizierung, nicht Überwachung.</strong>
+            Das Programm schafft Orientierung und Handlungssicherheit im Umgang
+            mit KI.
+          </li>
+          <li>
+            <strong>Individuelle Lernstände werden nicht zur Leistungsbewertung genutzt.</strong>
+            Self-Assessments dienen der Lernpfad-Empfehlung und der
+            Angebotsverbesserung, nicht der Personalsteuerung.
+          </li>
+          <li>
+            <strong>Rollenbasierte Lernpfade erhöhen Relevanz.</strong>
+            Unterschiedliche Tätigkeiten brauchen unterschiedliche Beispiele,
+            Risiken und Anwendungstiefen.
+          </li>
+          <li>
+            <strong>Datenschutz und Transparenz sind Teil des Designs.</strong>
+            Auswertungen sollen anonym oder aggregiert erfolgen. Wo
+            personenbezogene Daten entstehen, wird der Zweck klar begrenzt.
+          </li>
+          <li>
+            <strong>KI bleibt ein People-Thema.</strong>
+            Der gemeinsame Auftritt von CTO und PEOPLE ist wichtig, weil es um
+            Technologie, Beschäftigungsfähigkeit, Kultur und Verantwortung geht.
+          </li>
+          <li>
+            <strong>Tool-Nutzung und produktive Anwendungen werden separat geprüft.</strong>
+            Trainingsinhalte ersetzen keine Beteiligung bei konkreten Systemen,
+            Prozessänderungen oder Monitoring-Funktionen.
+          </li>
+          <li>
+            <strong>Das Programm soll Shadow-AI reduzieren.</strong>
+            Klare Leitplanken, zugelassene Werkzeuge und praktische Beispiele
+            sind wirksamer als Unsicherheit oder Verbote ohne Befähigung.
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="konzept">
+        <div class="section-heading">
+          <span class="section-number">04</span>
+          <div>
+            <h2>Konzeptentwurf</h2>
+            <p class="section-kicker">
+              Strukturierter Rahmen für Zielbild, Scope, Nicht-Ziele,
+              Datenschutz, Mitbestimmung, Rollout und Erfolgskriterien.
+            </p>
+          </div>
+        </div>
+
+        <dl class="definition-grid">
+          <dt>Zielbild</dt>
+          <dd>
+            LHIND etabliert ein strukturiertes AI-Literacy-Programm für alle
+            Mitarbeitenden. Es vermittelt gemeinsame Grundlagen, sichere Nutzung,
+            verantwortlichen Umgang und rollenspezifische Anwendungskompetenz.
+          </dd>
+
+          <dt>Kompetenzmodell</dt>
+          <dd>
+            Der Rahmen besteht aus fünf Clustern: Foundation, Engineering,
+            Product and Process, Advisory and Business Consulting sowie
+            Leadership and Strategy.
+          </dd>
+
+          <dt>Scope</dt>
+          <dd>
+            Basiskurse für alle Mitarbeitenden, ergänzt um rollenbezogene
+            Lernpfade für Technology Consulting, Business & Strategy Consulting,
+            Products & Value Streams, Application Management, Project Management
+            & Agility, Corporate Functions und Leadership.
+          </dd>
+
+          <dt>Academy-Kurse</dt>
+          <dd>
+            Startpunkt sind die Kurse AI-01 bis AI-09: GitHub Copilot, Agentic
+            Software Engineering, Architecture for AI Systems, Requirement
+            Engineering with AI, AI for Project Managers/Product Owners,
+            Personal Productivity, Data-driven Decision Making, AI for Leaders
+            und AI Fundamentals/AI for Everyone.
+          </dd>
+
+          <dt>Nicht-Ziele</dt>
+          <dd>
+            Keine individuelle Leistungsbewertung. Kein Ranking von
+            Mitarbeitenden. Keine automatisierte Profilbildung. Kein Ersatz
+            bestehender Qualifizierungs-, Beteiligungs- oder
+            Mitbestimmungsprozesse. Kein verdeckter Rollout produktiver
+            KI-Werkzeuge über Trainingsformate.
+          </dd>
+
+          <dt>Datenschutz</dt>
+          <dd>
+            Self-Assessments sollten anonym oder maximal datensparsam erfolgen.
+            Auswertungen dienen nur der Verbesserung des Angebots und der
+            Kapazitätsplanung. Keine Weitergabe individueller Ergebnisse an
+            Führungskräfte.
+          </dd>
+
+          <dt>Mitbestimmung</dt>
+          <dd>
+            Der Betriebsrat wird frühzeitig eingebunden, bevor Trainingsdaten,
+            Tool-Nutzung, verpflichtende Formate oder arbeitsprozessbezogene
+            KI-Anwendungen wirksam werden.
+          </dd>
+
+          <dt>Rollout</dt>
+          <dd>
+            Start mit Pilotgruppen und freiwilligen Grundlagenangeboten. Danach
+            aggregierte Auswertung, Anpassung der Lernpfade und gestaffelte
+            Skalierung über die LHIND Academy.
+          </dd>
+
+          <dt>Erfolgskriterien</dt>
+          <dd>
+            Teilnahmequote auf aggregierter Ebene, Zufriedenheit mit Lernangeboten,
+            wahrgenommene Handlungssicherheit, qualifizierte Use Cases, weniger
+            unsichere Shadow-AI-Nutzung, klarere Orientierung zu erlaubten Tools
+            und Eskalationswegen.
+          </dd>
+        </dl>
+
+        <h3>Capability-Cluster</h3>
+        <ul class="pill-list" aria-label="Capability-Cluster">
+          <li>Foundation</li>
+          <li>Engineering</li>
+          <li>Product and Process</li>
+          <li>Advisory and Business Consulting</li>
+          <li>Leadership and Strategy</li>
+        </ul>
+
+        <h3>Beispielhafte Kompetenzen</h3>
+        <ul class="pill-list" aria-label="Beispielhafte Kompetenzen">
+          <li>Digital & AI Terminology</li>
+          <li>Data Literacy</li>
+          <li>Personal AI Productivity</li>
+          <li>Corporate Ethics & Compliance</li>
+          <li>AI Systems and Architecture</li>
+          <li>Agentic Software Development</li>
+          <li>AI-Driven Testing & QA</li>
+          <li>AI-Augmented Requirement Engineering</li>
+          <li>AI Cost & Value Economics</li>
+          <li>AI Workforce Strategy</li>
+          <li>Decision Making with AI</li>
+        </ul>
+      </section>
+
+      <section class="section" id="leitplanken">
+        <div class="section-heading">
+          <span class="section-number">05</span>
+          <div>
+            <h2>Leitplanken für Datenschutz und Beteiligung</h2>
+            <p class="section-kicker">
+              Diese Punkte sollten vor Pilotierung und Skalierung explizit
+              festgehalten werden.
+            </p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <h3>Datensparsame Ausgestaltung</h3>
+            <ul class="compact-list">
+              <li>Self-Assessments bevorzugt anonym oder pseudonymisiert.</li>
+              <li>Keine personenbezogenen Lernstandsberichte an Führungskräfte.</li>
+              <li>Aggregierte Auswertung für Programmsteuerung und Kapazitäten.</li>
+              <li>Klare Löschfristen und Zweckbindung für entstehende Daten.</li>
+              <li>Transparente Information vor Teilnahmebeginn.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Mitbestimmungsrelevante Trigger</h3>
+            <ul class="compact-list">
+              <li>Verpflichtende Teilnahme oder Nachweispflichten.</li>
+              <li>Personenbezogene Auswertung von Trainings- oder Tooldaten.</li>
+              <li>Produktive Einführung neuer KI-Tools in Arbeitsprozessen.</li>
+              <li>Monitoring, Protokollierung oder Qualitätsmessung von Arbeit.</li>
+              <li>Rollen- oder Tätigkeitsveränderungen durch Automatisierung.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="note risk" style="margin-top: 24px;">
+          <h3>Empfohlene Formulierung</h3>
+          <p>
+            "Das Trainingsprogramm schafft keine Entscheidungsgrundlage für
+            individuelle Personalmaßnahmen. Falls im weiteren Verlauf konkrete
+            KI-Systeme, verpflichtende Lernnachweise oder arbeitsprozessbezogene
+            Änderungen eingeführt werden sollen, werden diese separat und
+            beteiligungspflichtig geprüft."
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="rollout">
+        <div class="section-heading">
+          <span class="section-number">06</span>
+          <div>
+            <h2>Vorschlag für den Rollout</h2>
+            <p class="section-kicker">
+              Ein gestufter Ansatz reduziert Risiko und schafft belastbare
+              Rückmeldungen vor der Skalierung.
+            </p>
+          </div>
+        </div>
+
+        <div class="roadmap">
+          <article class="roadmap-step">
+            <span>Phase 1</span>
+            <h3>Abstimmung</h3>
+            <p>
+              Gemeinsames Verständnis mit BR, PEOPLE, CTO-Office und Academy zu
+              Zielbild, Datenflüssen, Zielgruppenlogik und Grenzen.
+            </p>
+          </article>
+          <article class="roadmap-step">
+            <span>Phase 2</span>
+            <h3>Pilot</h3>
+            <p>
+              Freiwilliger Pilot mit ausgewählten Gruppen. Fokus auf Feedback,
+              Verständlichkeit, Praxisnutzen und Datenschutzannahmen.
+            </p>
+          </article>
+          <article class="roadmap-step">
+            <span>Phase 3</span>
+            <h3>Anpassung</h3>
+            <p>
+              Aggregierte Auswertung, Nachschärfung der Lernpfade, Entfernung
+              nicht passender Inhalte und Ergänzung LHIND-spezifischer Beispiele.
+            </p>
+          </article>
+          <article class="roadmap-step">
+            <span>Phase 4</span>
+            <h3>Skalierung</h3>
+            <p>
+              Gestaffelte Bereitstellung über die LHIND Academy mit klarer
+              Kommunikation zu Freiwilligkeit, Datenverwendung und Toolgrenzen.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="fragen">
+        <div class="section-heading">
+          <span class="section-number">07</span>
+          <div>
+            <h2>Kritische Fragen und Antwortlinien</h2>
+            <p class="section-kicker">
+              Erwartbare Fragen des Betriebsrats und belastbare, kurze
+              Antwortlinien für die Erstabstimmung.
+            </p>
+          </div>
+        </div>
+
+        <div class="qa-grid">
+          <article class="qa-item">
+            <span class="qa-label">Frage</span>
+            <strong>Werden Mitarbeitende bewertet?</strong>
+            <p>
+              Nein. Das Programm dient Qualifizierung und Orientierung.
+              Individuelle Scores werden nicht für Führung, Performance,
+              Personalentscheidungen oder Ranking genutzt.
+            </p>
+          </article>
+
+          <article class="qa-item">
+            <span class="qa-label">Frage</span>
+            <strong>Ist die Teilnahme verpflichtend?</strong>
+            <p>
+              Grundlagenmodule können perspektivisch als Pflichtqualifizierung
+              diskutiert werden, etwa für Compliance oder sichere Tool-Nutzung.
+              Das erfolgt aber nicht ohne vorherige Abstimmung. Rollenpfade
+              sollten zunächst bedarfsorientiert und transparent eingeführt
+              werden.
+            </p>
+          </article>
+
+          <article class="qa-item">
+            <span class="qa-label">Frage</span>
+            <strong>Werden Trainingsdaten personenbezogen ausgewertet?</strong>
+            <p>
+              Zielbild ist eine anonyme oder aggregierte Auswertung. Wo aus
+              technischen Gründen personenbezogene Daten entstehen, werden Zweck,
+              Zugriff, Speicherdauer und Löschung vorab transparent definiert.
+            </p>
+          </article>
+
+          <article class="qa-item">
+            <span class="qa-label">Frage</span>
+            <strong>Führt KI zu Arbeitsplatzabbau?</strong>
+            <p>
+              Das Trainingsprogramm entscheidet nicht über Automatisierung oder
+              Organisationsänderungen. Es schafft Befähigung, Transparenz und
+              sichere Nutzung. Veränderungen an Rollen, Tätigkeiten oder
+              Arbeitsprozessen bleiben separat zu prüfen und zu beteiligen.
+            </p>
+          </article>
+
+          <article class="qa-item">
+            <span class="qa-label">Frage</span>
+            <strong>Welche KI-Tools sind erlaubt?</strong>
+            <p>
+              Das Training muss klar zwischen Lerninhalten, LHIND/LHG-freigegebenen
+              Werkzeugen und nicht freigegebenen externen Werkzeugen unterscheiden.
+              Praktische Übungen sollten die geltenden internen Leitplanken
+              abbilden.
+            </p>
+          </article>
+
+          <article class="qa-item">
+            <span class="qa-label">Frage</span>
+            <strong>Wie wird Missbrauch vermieden?</strong>
+            <p>
+              Durch klare Tool-Regeln, Datenschutz- und Compliance-Inhalte,
+              menschliche Verantwortung, dokumentierte Grenzen und
+              Eskalationswege. Kritische Anwendungen werden nicht allein durch
+              Training legitimiert.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="mail">
+        <div class="section-heading">
+          <span class="section-number">08</span>
+          <div>
+            <h2>Interne E-Mail-Vorlage</h2>
+            <p class="section-kicker">
+              Direkt verwendbarer Vorschlag für Lars, PEOPLE oder den nächsten
+              internen Abstimmungsschritt.
+            </p>
+          </div>
+        </div>
+
+        <div class="mail-template">
+          <div class="subject">
+            Betreff: Konzeptionsstand AI Enablement LHIND für Abstimmung mit dem Betriebsrat
+          </div>
+
+          <p>Hallo Lars, hallo zusammen,</p>
+
+          <p>
+            ich habe den aktuellen AI-Enablement-Ansatz mit Fokus auf die
+            Zielgruppe Betriebsrat LHIND geschärft. Die Empfehlung ist, das
+            Programm klar als Qualifizierungs- und Befähigungsinitiative zu
+            positionieren, nicht als Mess-, Kontroll- oder Bewertungsinstrument.
+          </p>
+
+          <p>
+            Wichtig für die BR-Kommunikation sind aus meiner Sicht drei Punkte:
+            keine individuelle Leistungsbewertung, datensparsame beziehungsweise
+            anonyme Self-Assessments und frühzeitige Beteiligung bei allem, was
+            Tool-Nutzung, Trainingsdaten oder arbeitsprozessbezogene
+            KI-Anwendungen betrifft.
+          </p>
+
+          <p>
+            Die vorhandene Struktur mit fünf Capability-Clustern, rollenbasierten
+            Lernpfaden und den Academy-Kursen AI-01 bis AI-09 ist als Rahmen
+            tragfähig. Für den nächsten Schritt würde ich daraus eine kompakte
+            BR-Vorlage machen: Zielbild, Scope, Nicht-Ziele, Datenschutz,
+            Mitbestimmung, Rollout und Erfolgskriterien.
+          </p>
+
+          <p>
+            Mein Vorschlag wäre, diese Vorlage als Basis für eine frühe,
+            transparente Abstimmung mit dem Betriebsrat zu nutzen und dabei
+            klarzustellen, dass konkrete KI-Tools, verpflichtende Lernnachweise
+            oder arbeitsprozessbezogene Änderungen separat bewertet werden.
+          </p>
+
+          <p>Viele Grüße</p>
+        </div>
+
+        <p class="footer-note">
+          Hinweis: Diese Arbeitsfassung ersetzt keine rechtliche Prüfung und
+          keine formale Mitbestimmungsbewertung. Sie dient der fachlichen
+          Vorstrukturierung für die interne Abstimmung.
+        </p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

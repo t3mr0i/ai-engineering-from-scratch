@@ -2,7 +2,7 @@
  * Theme toggle — shared across the content subpages.
  *
  * Extracted from the former app.js (the old start page script) when the LRN
- * Lernkatalog became the root page. Sets data-theme from a stored choice, then
+ * Learning Catalog became the root page. Sets data-theme from a stored choice, then
  * the system preference, and wires the #themeToggle button (icon #themeIcon
  * shows "N" for light / "D" for dark).
  */

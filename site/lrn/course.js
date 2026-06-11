@@ -54,12 +54,12 @@
     if (!course) {
       var empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.textContent = "Kurs nicht gefunden. Zurück zum Katalog wählen.";
+      empty.textContent = "Course not found. Return to the catalog.";
       replaceChildren(root, [empty]);
       return;
     }
 
-    document.title = course.title + " · LHIND AI Lernkatalog";
+    document.title = course.title + " · LHIND AI Learning Catalog";
 
     var map = courseMap(course.id);
     var stats = courseProgress(course);
@@ -78,27 +78,27 @@
 
     var meta = document.createElement("p");
     meta.className = "course-head__meta";
-    meta.textContent = stats.subcourseCount + " Units · " + stats.lessonCount + " Aktivitäten · "
-      + stats.percent + "% erledigt";
+    meta.textContent = stats.subcourseCount + " units · " + stats.lessonCount + " activities · "
+      + stats.percent + "% completed";
 
     var action = document.createElement("a");
     action.className = "primary-cta";
     if (nextLesson) {
       action.href = lessonHref(nextLesson.path, course.id);
       var ctaLabel = document.createElement("span");
-      ctaLabel.textContent = (stats.visitedLessons > 0 ? "Weiterlernen" : "Kurs starten");
+      ctaLabel.textContent = (stats.visitedLessons > 0 ? "Continue Learning" : "Start Course");
       action.append(ctaLabel, lucideIcon("arrow-right"));
     } else {
       action.appendChild(lucideIcon("circle-check"));
       var doneLabel = document.createElement("span");
-      doneLabel.textContent = "Kurs vollständig";
+      doneLabel.textContent = "Course Complete";
       action.appendChild(doneLabel);
       action.href = "#";
       action.setAttribute("aria-disabled", "true");
       action.addEventListener("click", function (event) { event.preventDefault(); });
     }
 
-    head.append(title, summary, meta, progressMeter(stats.percent, "Fortschritt " + course.title), action);
+    head.append(title, summary, meta, progressMeter(stats.percent, "Progress " + course.title), action);
 
     var children = [head];
 
@@ -110,7 +110,7 @@
     if (!map.length) {
       var emptyMap = document.createElement("div");
       emptyMap.className = "empty-state";
-      emptyMap.textContent = "Für diesen Kurs ist noch kein Curriculum-Mapping gepflegt.";
+      emptyMap.textContent = "No curriculum mapping has been maintained for this course yet.";
       children.push(emptyMap);
     } else {
       map.forEach(function (subcourse, subcourseIndex) {
@@ -140,14 +140,14 @@
 
     var meta = document.createElement("span");
     meta.className = "unit-block__meta";
-    meta.textContent = stats.completedLessons + " von " + stats.lessonCount + " erledigt";
+    meta.textContent = stats.completedLessons + " of " + stats.lessonCount + " completed";
 
     head.append(code, title, meta);
     block.appendChild(head);
 
     var meter = progressMeter(
       stats.lessonCount ? Math.round((stats.completedLessons / stats.lessonCount) * 100) : 0,
-      "Fortschritt " + subcourse.title
+      "Progress " + subcourse.title
     );
     meter.classList.add("unit-block__meter");
     block.appendChild(meter);
@@ -193,7 +193,7 @@
 
     a.append(dot, label, type);
 
-    // "offen" on every untouched row is noise — only call out actual progress.
+    // "Open" on every untouched row is noise, so only call out actual progress.
     if (progress.state !== "open") {
       var status = document.createElement("em");
       status.textContent = progress.label;
@@ -208,7 +208,7 @@
     var title = (lesson.title || "").toLowerCase();
     var unit = (subcourse && subcourse.title || "").toLowerCase();
     if (/eval|test|qa|verification|review|guardrail|compliance|risk|assessment/.test(title + " " + unit)) return "Knowledge Check";
-    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return "Praxisaktivität";
+    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return "Practice Activity";
     if (subcourse && subcourse.decision === "condense") return "Guided Lesson";
     return "Lesson";
   }
@@ -277,12 +277,12 @@
 
   function lessonProgress(path) {
     if (!progressApi || !progressApi.getLessonProgress) {
-      return { state: "open", label: "offen" };
+      return { state: "open", label: "open" };
     }
     var progress = progressApi.getLessonProgress(path);
-    if (progress && progress.completedAt) return { state: "completed", label: "erledigt" };
-    if (progress && progress.visitedAt) return { state: "visited", label: "gestartet" };
-    return { state: "open", label: "offen" };
+    if (progress && progress.completedAt) return { state: "completed", label: "completed" };
+    if (progress && progress.visitedAt) return { state: "visited", label: "started" };
+    return { state: "open", label: "open" };
   }
 
   function lessonPaths(courseId) {
