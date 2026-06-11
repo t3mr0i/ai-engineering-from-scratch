@@ -23,6 +23,50 @@
   // so `shown < undefined` was always false and every course got demoted → 0 shown.
   var RECOMMEND_CAP = 11;
 
+  // Visual theme per course family — derived from the course's primary
+  // (first) interest. The theme drives the tile tint; the icon itself is
+  // resolved per course from its title (see COURSE_ICON_RULES).
+  var INTEREST_THEMES = {
+    foundation: { icon: "graduation-cap" },
+    productivity: { icon: "zap" },
+    consulting: { icon: "briefcase" },
+    engineering: { icon: "terminal" },
+    governance: { icon: "shield-check" },
+    leadership: { icon: "compass" }
+  };
+
+  // Title-keyword → Lucide icon. First match wins, so specific topics
+  // (security, prompts, testing) must come before broad ones (learning).
+  // Fallback: the interest theme's icon.
+  var COURSE_ICON_RULES = [
+    [/security|injection/, "shield-alert"],
+    [/responsible|trustworthy|gdpr|ethics|legal/, "scale"],
+    [/governance|risk|controls|compliance/, "shield-check"],
+    [/prompt/, "messages-square"],
+    [/copilot|code|agentic|software engineer/, "code"],
+    [/testing|qa\b|test data/, "test-tube"],
+    [/architecture|systems/, "network"],
+    [/rag|knowledge/, "database"],
+    [/documentation|content/, "file-text"],
+    [/requirement|backlog|business analysis/, "clipboard-list"],
+    [/use case|spotting|discovery|research/, "search"],
+    [/cost|value|economics|finance|benefits/, "coins"],
+    [/workforce|hr\b|people/, "users"],
+    [/change|transformation|stakeholder/, "refresh-cw"],
+    [/project|reporting|steering|portfolio|roadmap/, "layout-dashboard"],
+    [/data/, "bar-chart-3"],
+    [/green|sustainable/, "leaf"],
+    [/vendor|procurement|ecosystem/, "handshake"],
+    [/operations|incident|service|support/, "wrench"],
+    [/sales|consulting/, "briefcase"],
+    [/communication|marketing/, "megaphone"],
+    [/meeting|facilitation|workshop/, "presentation"],
+    [/automation|process/, "workflow"],
+    [/customer/, "headphones"],
+    [/leader|decision/, "compass"],
+    [/productivity/, "zap"]
+  ];
+
   var els = {
     profileSelect: document.getElementById("profileSelect"),
     levelSelect: document.getElementById("levelSelect"),
@@ -333,54 +377,10 @@
     });
   }
 
-  // Visual theme per course family — derived from the course's primary
-  // (first) interest. The theme drives the tile tint; the icon itself is
-  // resolved per course from its title (see COURSE_ICON_RULES).
-  var INTEREST_THEMES = {
-    foundation: { icon: "graduation-cap" },
-    productivity: { icon: "zap" },
-    consulting: { icon: "briefcase" },
-    engineering: { icon: "terminal" },
-    governance: { icon: "shield-check" },
-    leadership: { icon: "compass" }
-  };
-
   function courseTheme(course) {
     var primary = (course.interests || [])[0];
     return INTEREST_THEMES[primary] ? primary : "foundation";
   }
-
-  // Title-keyword → Lucide icon. First match wins, so specific topics
-  // (security, prompts, testing) must come before broad ones (learning).
-  // Fallback: the interest theme's icon.
-  var COURSE_ICON_RULES = [
-    [/security|injection/, "shield-alert"],
-    [/responsible|trustworthy|gdpr|ethics|legal/, "scale"],
-    [/governance|risk|controls|compliance/, "shield-check"],
-    [/prompt/, "messages-square"],
-    [/copilot|code|agentic|software engineer/, "code"],
-    [/testing|qa\b|test data/, "test-tube"],
-    [/architecture|systems/, "network"],
-    [/rag|knowledge/, "database"],
-    [/documentation|content/, "file-text"],
-    [/requirement|backlog|business analysis/, "clipboard-list"],
-    [/use case|spotting|discovery|research/, "search"],
-    [/cost|value|economics|finance|benefits/, "coins"],
-    [/workforce|hr\b|people/, "users"],
-    [/change|transformation|stakeholder/, "refresh-cw"],
-    [/project|reporting|steering|portfolio|roadmap/, "layout-dashboard"],
-    [/data/, "bar-chart-3"],
-    [/green|sustainable/, "leaf"],
-    [/vendor|procurement|ecosystem/, "handshake"],
-    [/operations|incident|service|support/, "wrench"],
-    [/sales|consulting/, "briefcase"],
-    [/communication|marketing/, "megaphone"],
-    [/meeting|facilitation|workshop/, "presentation"],
-    [/automation|process/, "workflow"],
-    [/customer/, "headphones"],
-    [/leader|decision/, "compass"],
-    [/productivity/, "zap"]
-  ];
 
   function courseIcon(course, theme) {
     var title = String(course.title || "").toLowerCase();
