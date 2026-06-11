@@ -146,7 +146,7 @@
     block.appendChild(head);
 
     var meter = progressMeter(
-      stats.lessonCount ? Math.round((stats.completedLessons / stats.lessonCount) * 100) : 0,
+      stats.percent,
       "Progress " + subcourse.title
     );
     meter.classList.add("unit-block__meter");
@@ -255,7 +255,7 @@
       lessonCount: paths.length,
       completedLessons: completed,
       visitedLessons: visited,
-      percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
+      percent: averageReadPercent(paths)
     };
   }
 
@@ -271,8 +271,20 @@
       lessonCount: paths.length,
       completedLessons: completed,
       visitedLessons: visited,
-      percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
+      percent: averageReadPercent(paths)
     };
+  }
+
+  // Average reading fraction across the given lessons, as a 0..100 percent.
+  // A half-read lesson contributes 0.5 and a completed one 1, so unit and
+  // course bars move with reading depth, not only on "complete".
+  function averageReadPercent(paths) {
+    if (!paths.length) return 0;
+    var sum = paths.reduce(function (acc, path) {
+      if (progressApi && progressApi.getReadFraction) return acc + progressApi.getReadFraction(path);
+      return acc + (lessonProgress(path).state === "completed" ? 1 : 0);
+    }, 0);
+    return Math.round((sum / paths.length) * 100);
   }
 
   function lessonProgress(path) {

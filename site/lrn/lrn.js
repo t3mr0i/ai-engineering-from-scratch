@@ -579,13 +579,27 @@
     var visited = paths.filter(function (path) {
       return lessonProgress(path).state !== "open";
     }).length;
+    // Percent is the average reading fraction across the course's lessons, so a
+    // half-read lesson contributes 0.5 and a completed one contributes 1. This
+    // makes the bar move while reading, not only on "complete".
+    var fractionSum = paths.reduce(function (sum, path) {
+      return sum + readFraction(path);
+    }, 0);
     return {
       subcourseCount: courseMap(course.id).length,
       lessonCount: paths.length,
       completedLessons: completed,
       visitedLessons: visited,
-      percent: paths.length ? Math.round((completed / paths.length) * 100) : 0
+      percent: paths.length ? Math.round((fractionSum / paths.length) * 100) : 0
     };
+  }
+
+  function readFraction(path) {
+    if (progressApi && progressApi.getReadFraction) {
+      return progressApi.getReadFraction(path);
+    }
+    // Fallback for an older progress.js: binary completed-or-not.
+    return lessonProgress(path).state === "completed" ? 1 : 0;
   }
 
   function lessonProgress(path) {

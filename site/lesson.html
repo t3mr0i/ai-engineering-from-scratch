@@ -2133,7 +2133,7 @@
           completed: completed,
           visited: visited,
           total: lessons.length,
-          percent: lessons.length ? Math.round((completed / lessons.length) * 100) : 0
+          percent: lrnAveragePercent(lessons)
         };
       }
 
@@ -2143,6 +2143,24 @@
         if (progress && progress.completedAt) return 'complete';
         if (progress && progress.visitedAt) return 'in-progress';
         return 'planned';
+      }
+
+      // Reading fraction (0..1) per lesson: completed counts fully, otherwise the
+      // recorded scroll depth. Averaged across lessons it gives the partial unit
+      // and course percentages shown in the sidebar and phase bar.
+      function lrnReadFraction(path) {
+        if (window.AIFSProgress && window.AIFSProgress.getReadFraction) {
+          return window.AIFSProgress.getReadFraction(path);
+        }
+        return lrnLessonProgressState(path) === 'complete' ? 1 : 0;
+      }
+
+      function lrnAveragePercent(lessonList) {
+        if (!lessonList.length) return 0;
+        var sum = lessonList.reduce(function (acc, lesson) {
+          return acc + lrnReadFraction(lesson.path);
+        }, 0);
+        return Math.round((sum / lessonList.length) * 100);
       }
 
       function lrnLessonProgressLabel(path) {
@@ -2190,7 +2208,7 @@
           completed: completed,
           visited: visited,
           total: group.lessons.length,
-          percent: group.lessons.length ? Math.round((completed / group.lessons.length) * 100) : 0
+          percent: lrnAveragePercent(group.lessons)
         };
       }
 
@@ -2315,12 +2333,34 @@
       function initScrollProgress() {
         var bar = document.getElementById('scrollProgress');
         if (!bar) return;
+        var maxFraction = 0;   // deepest scroll reached this session
+        var saveTimer = null;
+
+        function persist() {
+          saveTimer = null;
+          if (lessonPath && window.AIFSProgress && window.AIFSProgress.recordReadProgress) {
+            window.AIFSProgress.recordReadProgress(lessonPath, maxFraction);
+          }
+        }
+
         window.addEventListener('scroll', function () {
           var scrollTop = window.scrollY || document.documentElement.scrollTop;
           var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-          var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-          bar.style.width = pct + '%';
+          var fraction = docHeight > 0 ? (scrollTop / docHeight) : 0;
+          bar.style.width = (fraction * 100) + '%';
+          // Track the high-water mark and persist it, throttled, so the
+          // course/syllabus percentages reflect partial reading automatically.
+          if (fraction > maxFraction) {
+            maxFraction = fraction;
+            if (!saveTimer) saveTimer = setTimeout(persist, 800);
+          }
         }, { passive: true });
+
+        // Flush the latest depth when the user leaves the page mid-scroll.
+        window.addEventListener('pagehide', persist);
+        document.addEventListener('visibilitychange', function () {
+          if (document.visibilityState === 'hidden') persist();
+        });
       }
 
       function fetchLesson(path) {

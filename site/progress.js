@@ -56,9 +56,37 @@
 
   function ensureLesson(state, path) {
     if (!state.lessons[path]) {
-      state.lessons[path] = { answers: {}, completedAt: null, visitedAt: 0 };
+      state.lessons[path] = { answers: {}, completedAt: null, visitedAt: 0, readPct: 0 };
     }
     return state.lessons[path];
+  }
+
+  // Reading progress: the deepest scroll fraction (0..1) the user has reached in
+  // a lesson, recorded automatically while scrolling. Only ever grows (max), so
+  // scrolling back up never lowers it. 90% scroll counts as fully read.
+  var READ_FULL_THRESHOLD = 0.9;
+
+  function recordReadProgress(path, fraction) {
+    if (!path) return;
+    var pct = Math.max(0, Math.min(1, Number(fraction) || 0));
+    if (pct >= READ_FULL_THRESHOLD) pct = 1;
+    var state = read();
+    var lesson = ensureLesson(state, path);
+    var prev = lesson.readPct || 0;
+    if (pct <= prev) return; // never lower the high-water mark
+    lesson.readPct = pct;
+    write(state);
+  }
+
+  // Effective completion fraction (0..1) for one lesson: a completed lesson
+  // always counts fully; otherwise the recorded reading depth. This is what the
+  // course/syllabus percentages aggregate, so 50%-read contributes 0.5.
+  function getReadFraction(path) {
+    var lp = getLessonProgress(path);
+    if (!lp) return 0;
+    if (lp.completedAt) return 1;
+    var pct = lp.readPct || 0;
+    return pct >= READ_FULL_THRESHOLD ? 1 : pct;
   }
 
   function recordVisit(path) {
@@ -164,6 +192,8 @@
     unmarkLessonComplete: unmarkLessonComplete,
     getLessonProgress: getLessonProgress,
     isLessonComplete: isLessonComplete,
+    recordReadProgress: recordReadProgress,
+    getReadFraction: getReadFraction,
     countCompletedFromUrls: countCompletedFromUrls,
     extractPath: extractPath,
     totalCompleted: totalCompleted,
