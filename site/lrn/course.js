@@ -39,7 +39,7 @@
     } catch (error) {
       query = "";
     }
-    return "index.html" + query;
+    return "../index.html" + query;
   }
 
   function setBackLinks() {

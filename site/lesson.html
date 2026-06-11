@@ -2214,7 +2214,7 @@
 
       function buildLrnSidebar(sidebar) {
         var html = '<div class="lrn-sidebar-overview">';
-        html += '<a class="lrn-sidebar-back" href="index.html">&larr; LRN Cockpit</a>';
+        html += '<a class="lrn-sidebar-back" href="index.html">&larr; Lernkatalog</a>';
         html += '<div class="lrn-sidebar-code">' + escapeHtml(lrnContext.course.id) + '</div>';
         html += '<div class="lrn-sidebar-title">' + escapeHtml(lrnContext.course.title) + '</div>';
         html += '<div class="lrn-sidebar-progress" aria-hidden="true"><span style="width:' + lrnContext.percent + '%"></span></div>';
@@ -2412,7 +2412,7 @@
 
       function showError(title, msg, showCatalog) {
         var el = document.getElementById('lessonContent');
-        var actions = '<a href="index.html" class="btn btn-primary">' + (lrnContext ? 'Back to LRN Cockpit' : 'Back to Home') + '</a>';
+        var actions = '<a href="index.html" class="btn btn-primary">' + (lrnContext ? 'Back to catalog' : 'Back to Home') + '</a>';
         if (showCatalog) {
           actions += ' <a href="catalog.html" class="btn">Browse all lessons</a>';
         }
@@ -3707,7 +3707,7 @@
         } else {
           nav += '<a class="lesson-nav-btn next" href="index.html">';
           nav += '<span class="nav-label">Kurs abgeschlossen</span>';
-          nav += '<span class="nav-title">Zurück zum LRN Course Cockpit</span>';
+          nav += '<span class="nav-title">Zurück zum Lernkatalog</span>';
           nav += '</a>';
         }
         nav += '</div>';
@@ -4349,7 +4349,7 @@
         } else {
           html += '<div class="phase-finished">Skill Path vollständig durchlaufen</div>';
         }
-        html += '<a class="continue-link" href="index.html">Zurück zum LRN Course Cockpit</a>';
+        html += '<a class="continue-link" href="index.html">Zurück zum Lernkatalog</a>';
         html += '</div>';
         html += '</div>';
 

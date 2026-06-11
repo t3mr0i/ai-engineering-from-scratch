@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <script src="gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>LHIND AI LRN Course Cockpit</title>
-  <meta name="description" content="Rollenbasiertes AI LRN-Kurscockpit für externe Assessment-Level, echte LRN-Kurse und sauber nummerierte LRN-Pfade, Units und Aktivitäten bei LHIND.">
+  <title>LHIND AI Lernkatalog</title>
+  <meta name="description" content="Rollenbasiertes AI LRN-Kurscockpit für externe Assessment-Level, Kursauswahl und Lernfortschritt bei LHIND.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,90 +14,70 @@
   <link rel="stylesheet" href="lrn/lrn.css">
 </head>
 <body>
-  <a class="skip-link" href="#cockpit">Direkt zum Kurscockpit</a>
+  <a class="skip-link" href="#cockpit">Direkt zum Kurskatalog</a>
   <header class="nav-edge" aria-label="Seitennavigation">
     <a class="wordmark" href="index.html">
       <span class="wordmark__mark" aria-hidden="true">AI</span>
-      <span>LHIND LRN Course Cockpit</span>
+      <span>LHIND Lernkatalog</span>
     </a>
-    <a class="nav-edge__action" href="catalog.html">Curriculum-Katalog</a>
+    <nav class="nav-links" aria-label="Abschnitte">
+      <a href="#cockpit">Kurse</a>
+      <a href="catalog.html">Curriculum</a>
+    </nav>
+    <div class="nav-edge__spacer" aria-hidden="true"></div>
   </header>
 
   <main class="page">
     <section class="hero" aria-labelledby="heroTitle">
-      <div class="hero__copy">
-        <h1 id="heroTitle">AI-Kurse nach Level</h1>
+      <div class="hero__inner">
+        <h1 id="heroTitle">Was möchtest du lernen?</h1>
+        <p>Wähle dein Profil und Level — wir zeigen dir die passenden AI-Kurse und deinen Fortschritt.</p>
+        <form class="hero-search" role="search" id="searchForm">
+          <span class="hero-search__icon" aria-hidden="true">
+            <i data-lucide="search"></i>
+          </span>
+          <input type="search" id="searchInput" placeholder="Kurse durchsuchen …" aria-label="Kurse durchsuchen" autocomplete="off">
+        </form>
       </div>
     </section>
 
-    <section class="workbench" id="cockpit" aria-label="LRN Course Cockpit">
-      <aside class="pane pane--sticky" aria-labelledby="setupTitle">
-        <div class="pane__head">
-          <h2 id="setupTitle">Profil</h2>
-          <span class="meta-label" id="profileCount"></span>
+    <section class="cockpit" id="cockpit" aria-label="AI Kurskatalog">
+      <div class="selector-card" aria-label="Profil und Level wählen">
+        <label class="selector-field">
+          <span class="selector-field__label"><i data-lucide="user-round" aria-hidden="true"></i> Profil</span>
+          <select id="profileSelect" aria-label="Profil wählen"></select>
+        </label>
+        <label class="selector-field">
+          <span class="selector-field__label"><i data-lucide="bar-chart-3" aria-hidden="true"></i> Level</span>
+          <select id="levelSelect" aria-label="Level wählen"></select>
+        </label>
+        <button class="selector-cta" type="button" id="ctaBtn">
+          <span id="ctaLabel">Passende Kurse anzeigen</span>
+          <i data-lucide="arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="catalog-bar" aria-label="Kursfilter">
+        <div class="filter-group">
+          <span class="filter-group__label" id="interestLabel"><i data-lucide="sliders-horizontal" aria-hidden="true"></i> Interessen</span>
+          <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel"></div>
         </div>
-        <div class="pane__body">
-          <div class="profile-grid" id="profileGrid" role="group" aria-label="Profil auswählen"></div>
+        <button class="text-btn" type="button" id="resetBtn">Zurücksetzen</button>
+      </div>
 
-          <div class="section-block">
-            <h2 class="section-title">Assessment-Level</h2>
-            <p class="control-copy">Extern übergebener Wert. Die Seite akzeptiert auch <code>?level=3&amp;profile=tc</code>.</p>
-            <div class="level-grid" id="levelGrid" role="group" aria-label="Externes Assessment-Level auswählen"></div>
-          </div>
+      <div class="seg-control" id="courseFilters" role="group" aria-label="Kursstatus filtern"></div>
 
-          <div class="section-block">
-            <h2 class="section-title">Interessen</h2>
-            <div class="interest-grid" id="interestGrid" role="group" aria-label="Interessen auswählen"></div>
-          </div>
-
-          <div class="action-row">
-            <button class="quiet-btn" type="button" id="resetBtn">Auswahl zurücksetzen</button>
-            <button class="quiet-btn" type="button" id="copyBtn">Pfad kopieren</button>
-          </div>
-        </div>
-      </aside>
-
-      <section class="pane" aria-labelledby="cockpitTitle">
-        <div class="pane__head">
-          <h2 id="cockpitTitle">Kurscockpit</h2>
-          <span class="meta-label">Level 1 bis 5</span>
-        </div>
-        <div class="result-summary" aria-live="polite">
-          <div class="score-line">
-            <span class="meta-label">Externer AI-Level</span>
-            <strong class="score-number" id="scoreNumber">1/5</strong>
-          </div>
-          <p class="score-copy" id="scoreCopy">Level setzen, um Kursreihenfolge und Curriculum-Mapping zu berechnen.</p>
-        </div>
-        <div class="pane__body">
-          <h2 class="section-title">Curriculum-Fortschritt</h2>
-          <div id="progressPanel"></div>
-
-          <div class="section-block">
-            <h2 class="section-title">Kursmodule für dieses Profil</h2>
-            <div class="filters" id="courseFilters" aria-label="Kursfilter"></div>
-            <div class="course-grid" id="courseGrid"></div>
-          </div>
-
-          <div class="section-block">
-            <h2 class="section-title">Kursdetail</h2>
-            <div id="courseDetail"></div>
-          </div>
-
-          <div class="section-block">
-            <h2 class="section-title">Zielbild je AI-Fähigkeit</h2>
-            <div class="dimension-grid" id="capabilityGrid"></div>
-          </div>
-        </div>
-      </section>
+      <p class="result-line" id="resultLine"></p>
+      <div class="course-grid" id="courseGrid"></div>
     </section>
   </main>
 
   <footer class="foot-line">
-    <p>LHIND AI LRN Course Cockpit · Kuratiertes Mapping auf LRN-Pfade, Units und Aktivitäten · Fortschritt kommt aus dem Lesson-/LRN-Tracking.</p>
+    <p>LHIND AI Lernkatalog · Kuratiertes Mapping auf bestehende Curriculum-Lessons · Fortschritt kommt aus dem Lesson-/LRN-Tracking.</p>
   </footer>
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="progress.js"></script>
   <script src="lrn/data.js"></script>
   <script src="lrn/curriculum-map.js"></script>

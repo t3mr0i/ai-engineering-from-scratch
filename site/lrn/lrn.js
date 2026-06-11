@@ -619,7 +619,7 @@
   }
 
   function courseHref(courseId) {
-    return "course.html?id=" + encodeURIComponent(courseId);
+    return "lrn/course.html?id=" + encodeURIComponent(courseId);
   }
 
   function toggleInterest(id) {
