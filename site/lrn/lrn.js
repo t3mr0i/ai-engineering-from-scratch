@@ -17,8 +17,10 @@
   ];
 
   var els = {
-    profileChips: document.getElementById("profileChips"),
-    levelChips: document.getElementById("levelChips"),
+    profileSelect: document.getElementById("profileSelect"),
+    levelSelect: document.getElementById("levelSelect"),
+    ctaBtn: document.getElementById("ctaBtn"),
+    ctaLabel: document.getElementById("ctaLabel"),
     interestChips: document.getElementById("interestChips"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
@@ -122,65 +124,87 @@
     if (searchForm) {
       searchForm.addEventListener("submit", function (event) { event.preventDefault(); });
     }
+
+    els.profileSelect.addEventListener("change", function () {
+      var profile = profileById[els.profileSelect.value];
+      if (!profile || state.profileId === profile.id) return;
+      state.profileId = profile.id;
+      saveState();
+      render();
+      announce("Profil gesetzt: " + profile.label + ".");
+    });
+
+    els.levelSelect.addEventListener("change", function () {
+      var level = Number(els.levelSelect.value);
+      if (!validLevel(level) || state.externalLevel === level) return;
+      state.externalLevel = level;
+      saveState();
+      render();
+      announce("Level gesetzt: " + level + ".");
+    });
+
+    els.ctaBtn.addEventListener("click", function () {
+      state.filter = "recommended";
+      saveState();
+      renderFilters();
+      render();
+      els.courseGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 
-  // Controls (profile + level + interest chips) only need to render
+  // Controls (profile/level selects + interest chips) only need a full rebuild
   // when the underlying selection set changes — not on every progress tick.
   function renderControls() {
-    renderProfileChips();
-    renderLevelChips();
+    renderProfileSelect();
+    renderLevelSelect();
     renderInterestChips();
   }
 
   function render() {
     var computed = compute();
-    renderProfileChips();
-    renderLevelChips();
+    syncSelects();
     renderInterestChips();
     renderFilters();
     renderCourses(computed);
+    updateCta(computed);
     refreshIcons();
   }
 
-  function renderProfileChips() {
-    replaceChildren(els.profileChips, data.profiles.map(function (profile) {
-      var selected = state.profileId === profile.id;
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "chip";
-      btn.setAttribute("aria-pressed", String(selected));
-      btn.textContent = profile.label;
-      btn.title = profileCode(profile);
-      btn.addEventListener("click", function () {
-        if (state.profileId === profile.id) return;
-        state.profileId = profile.id;
-        saveState();
-        renderProfileChips();
-        render();
-        announce("Profil gesetzt: " + profile.label + ".");
-      });
-      return btn;
+  function renderProfileSelect() {
+    replaceChildren(els.profileSelect, data.profiles.map(function (profile) {
+      var option = document.createElement("option");
+      option.value = profile.id;
+      option.textContent = profile.label;
+      option.title = profileCode(profile);
+      return option;
     }));
+    els.profileSelect.value = state.profileId;
   }
 
-  function renderLevelChips() {
-    replaceChildren(els.levelChips, levelDefinitions.map(function (level) {
-      var selected = state.externalLevel === level.value;
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "chip";
-      btn.setAttribute("aria-pressed", String(selected));
-      btn.textContent = level.value + " · " + level.label;
-      btn.addEventListener("click", function () {
-        if (state.externalLevel === level.value) return;
-        state.externalLevel = level.value;
-        saveState();
-        renderLevelChips();
-        render();
-        announce("Level gesetzt: " + level.label + ".");
-      });
-      return btn;
+  function renderLevelSelect() {
+    replaceChildren(els.levelSelect, levelDefinitions.map(function (level) {
+      var option = document.createElement("option");
+      option.value = String(level.value);
+      option.textContent = "LV" + level.value + " · " + level.label;
+      return option;
     }));
+    els.levelSelect.value = String(state.externalLevel);
+  }
+
+  function syncSelects() {
+    if (els.profileSelect.value !== state.profileId) els.profileSelect.value = state.profileId;
+    if (els.levelSelect.value !== String(state.externalLevel)) els.levelSelect.value = String(state.externalLevel);
+  }
+
+  // CTA shows a live count of recommended courses for the current selection so
+  // changing profile/level gives immediate feedback before scrolling anywhere.
+  function updateCta(computed) {
+    var count = computed.entries.filter(function (entry) {
+      return entry.kind === "recommended";
+    }).length;
+    els.ctaLabel.textContent = count === 1
+      ? "1 passenden Kurs anzeigen"
+      : count + " passende Kurse anzeigen";
   }
 
   function renderInterestChips() {
@@ -213,7 +237,7 @@
     replaceChildren(els.courseFilters, options.map(function (option) {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "chip chip--filter";
+      btn.className = "seg-btn";
       btn.textContent = option.label;
       btn.setAttribute("aria-pressed", String(state.filter === option.id));
       btn.addEventListener("click", function () {
@@ -302,6 +326,63 @@
     });
   }
 
+  // Visual theme per course family — derived from the course's primary
+  // (first) interest. The theme drives the tile tint; the icon itself is
+  // resolved per course from its title (see COURSE_ICON_RULES).
+  var INTEREST_THEMES = {
+    foundation: { icon: "graduation-cap" },
+    productivity: { icon: "zap" },
+    consulting: { icon: "briefcase" },
+    engineering: { icon: "terminal" },
+    governance: { icon: "shield-check" },
+    leadership: { icon: "compass" }
+  };
+
+  function courseTheme(course) {
+    var primary = (course.interests || [])[0];
+    return INTEREST_THEMES[primary] ? primary : "foundation";
+  }
+
+  // Title-keyword → Lucide icon. First match wins, so specific topics
+  // (security, prompts, testing) must come before broad ones (learning).
+  // Fallback: the interest theme's icon.
+  var COURSE_ICON_RULES = [
+    [/security|injection/, "shield-alert"],
+    [/responsible|trustworthy|gdpr|ethics|legal/, "scale"],
+    [/governance|risk|controls|compliance/, "shield-check"],
+    [/prompt/, "messages-square"],
+    [/copilot|code|agentic|software engineer/, "code"],
+    [/testing|qa\b|test data/, "test-tube"],
+    [/architecture|systems/, "network"],
+    [/rag|knowledge/, "database"],
+    [/documentation|content/, "file-text"],
+    [/requirement|backlog|business analysis/, "clipboard-list"],
+    [/use case|spotting|discovery|research/, "search"],
+    [/cost|value|economics|finance|benefits/, "coins"],
+    [/workforce|hr\b|people/, "users"],
+    [/change|transformation|stakeholder/, "refresh-cw"],
+    [/project|reporting|steering|portfolio|roadmap/, "layout-dashboard"],
+    [/data/, "bar-chart-3"],
+    [/green|sustainable/, "leaf"],
+    [/vendor|procurement|ecosystem/, "handshake"],
+    [/operations|incident|service|support/, "wrench"],
+    [/sales|consulting/, "briefcase"],
+    [/communication|marketing/, "megaphone"],
+    [/meeting|facilitation|workshop/, "presentation"],
+    [/automation|process/, "workflow"],
+    [/customer/, "headphones"],
+    [/leader|decision/, "compass"],
+    [/productivity/, "zap"]
+  ];
+
+  function courseIcon(course, theme) {
+    var title = String(course.title || "").toLowerCase();
+    for (var i = 0; i < COURSE_ICON_RULES.length; i += 1) {
+      if (COURSE_ICON_RULES[i][0].test(title)) return COURSE_ICON_RULES[i][1];
+    }
+    return INTEREST_THEMES[theme].icon;
+  }
+
   function courseCard(course, entry, index) {
     var card = document.createElement("a");
     card.className = "course-card";
@@ -313,28 +394,47 @@
       card.style.setProperty("--enter-delay", Math.min(index, 8) * 45 + "ms");
     }
 
+    var theme = courseTheme(course);
+    card.dataset.theme = theme;
+
     var head = document.createElement("div");
     head.className = "course-card__head";
 
+    var tile = document.createElement("span");
+    tile.className = "course-card__tile";
+    tile.setAttribute("aria-hidden", "true");
+    tile.appendChild(lucideIcon(courseIcon(course, theme)));
+
+    var kind = document.createElement("span");
+    kind.className = "course-card__kind";
+    kind.dataset.kind = entry.kind;
+    kind.textContent = courseKindLabel(entry.kind);
+    head.append(tile, kind);
+
     var h = document.createElement("h3");
     h.textContent = course.title;
-    h.title = courseCode(course) + " · " + course.id;
+    h.title = courseCode(course) + " · " + course.id + " · " + (course.summary || "");
 
+    var meta = document.createElement("p");
+    meta.className = "course-card__meta";
+    var metaText = document.createElement("span");
+    metaText.textContent = entry.progress.lessonCount === 1
+      ? "1 Aktivität"
+      : entry.progress.lessonCount + " Aktivitäten";
+    meta.appendChild(metaText);
+
+    var foot = document.createElement("div");
+    foot.className = "course-card__foot";
+    foot.append(
+      progressMeter(entry.progress.percent, "Fortschritt " + course.title)
+    );
     var open = document.createElement("span");
     open.className = "course-card__open";
     open.setAttribute("aria-hidden", "true");
     open.appendChild(lucideIcon("arrow-right"));
-    head.append(h, open);
+    foot.appendChild(open);
 
-    var meta = document.createElement("p");
-    meta.className = "course-card__meta";
-    meta.appendChild(lucideIcon("clock"));
-    var metaText = document.createElement("span");
-    metaText.textContent = courseKindLabel(entry.kind)
-      + " · " + entry.progress.lessonCount + " Aktivitäten";
-    meta.appendChild(metaText);
-
-    card.append(head, meta, progressMeter(entry.progress.percent, "Fortschritt " + course.title));
+    card.append(head, h, meta, foot);
     return card;
   }
 
@@ -394,6 +494,7 @@
         // Recommended requires both an on-path course AND a matching interest.
         // The cap is applied below; everything else falls back to optional.
         kind: onPath && interestMatch ? "recommended" : "optional",
+        onPath: onPath,
         interestMatch: interestMatch,
         progress: progress
       };
@@ -401,6 +502,17 @@
       if (b.score !== a.score) return b.score - a.score;
       return a.course.id.localeCompare(b.course.id);
     });
+
+    // Strict matching can yield zero recommendations (e.g. a profile/level whose
+    // track stages don't intersect the chosen interests). Never present an empty
+    // recommendation: fall back to the next-best relevant courses (on-path OR
+    // interest match), which the score ordering already ranks sensibly.
+    var hasStrict = entries.some(function (entry) { return entry.kind === "recommended"; });
+    if (!hasStrict) {
+      entries.forEach(function (entry) {
+        if (entry.onPath || entry.interestMatch) entry.kind = "recommended";
+      });
+    }
 
     // Enforce the cap: demote recommended courses past RECOMMEND_CAP to optional
     // so the focused list never balloons for broad profiles/interests.

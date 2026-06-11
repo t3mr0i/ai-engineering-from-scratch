@@ -130,16 +130,27 @@
     var head = document.createElement("div");
     head.className = "unit-block__head";
 
+    var code = document.createElement("span");
+    code.className = "unit-block__code";
+    code.textContent = unitCode(subcourseIndex);
+
     var title = document.createElement("h3");
     title.textContent = subcourse.title;
     title.title = unitCode(subcourseIndex);
 
     var meta = document.createElement("span");
     meta.className = "unit-block__meta";
-    meta.textContent = stats.completedLessons + "/" + stats.lessonCount + " erledigt";
+    meta.textContent = stats.completedLessons + " von " + stats.lessonCount + " erledigt";
 
-    head.append(title, meta);
+    head.append(code, title, meta);
     block.appendChild(head);
+
+    var meter = progressMeter(
+      stats.lessonCount ? Math.round((stats.completedLessons / stats.lessonCount) * 100) : 0,
+      "Fortschritt " + subcourse.title
+    );
+    meter.classList.add("unit-block__meter");
+    block.appendChild(meter);
 
     if (subcourse.note) {
       var note = document.createElement("p");
@@ -178,16 +189,18 @@
     label.textContent = lesson.title;
 
     var type = document.createElement("small");
-    type.appendChild(lucideIcon("clock"));
-    var typeText = document.createElement("span");
-    typeText.textContent = activityType(lesson, subcourse);
-    type.appendChild(typeText);
+    type.textContent = activityType(lesson, subcourse);
 
-    var status = document.createElement("em");
-    status.textContent = progress.label;
-    status.dataset.state = progress.state;
+    a.append(dot, label, type);
 
-    a.append(dot, label, type, status);
+    // "offen" on every untouched row is noise — only call out actual progress.
+    if (progress.state !== "open") {
+      var status = document.createElement("em");
+      status.textContent = progress.label;
+      status.dataset.state = progress.state;
+      a.appendChild(status);
+    }
+
     return a;
   }
 

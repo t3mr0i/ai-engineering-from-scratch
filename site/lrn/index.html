@@ -30,7 +30,6 @@
   <main class="page">
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
-        <span class="hero__eyebrow"><i data-lucide="sparkles" aria-hidden="true"></i> AI Lernkatalog</span>
         <h1 id="heroTitle">Was möchtest du lernen?</h1>
         <p>Wähle dein Profil und Level — wir zeigen dir die passenden AI-Kurse und deinen Fortschritt.</p>
         <form class="hero-search" role="search" id="searchForm">
@@ -43,15 +42,22 @@
     </section>
 
     <section class="cockpit" id="cockpit" aria-label="AI Kurskatalog">
-      <div class="filter-bar" aria-label="Kursfilter">
-        <div class="filter-group">
-          <span class="filter-group__label" id="profileLabel"><i data-lucide="user-round" aria-hidden="true"></i> Profil</span>
-          <div class="chip-row" id="profileChips" role="group" aria-labelledby="profileLabel"></div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-group__label" id="levelLabel"><i data-lucide="bar-chart-3" aria-hidden="true"></i> Level</span>
-          <div class="chip-row" id="levelChips" role="group" aria-labelledby="levelLabel"></div>
-        </div>
+      <div class="selector-card" aria-label="Profil und Level wählen">
+        <label class="selector-field">
+          <span class="selector-field__label"><i data-lucide="user-round" aria-hidden="true"></i> Profil</span>
+          <select id="profileSelect" aria-label="Profil wählen"></select>
+        </label>
+        <label class="selector-field">
+          <span class="selector-field__label"><i data-lucide="bar-chart-3" aria-hidden="true"></i> Level</span>
+          <select id="levelSelect" aria-label="Level wählen"></select>
+        </label>
+        <button class="selector-cta" type="button" id="ctaBtn">
+          <span id="ctaLabel">Passende Kurse anzeigen</span>
+          <i data-lucide="arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="catalog-bar" aria-label="Kursfilter">
         <div class="filter-group">
           <span class="filter-group__label" id="interestLabel"><i data-lucide="sliders-horizontal" aria-hidden="true"></i> Interessen</span>
           <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel"></div>
@@ -59,7 +65,7 @@
         <button class="text-btn" type="button" id="resetBtn">Zurücksetzen</button>
       </div>
 
-      <div class="chip-row chip-row--filters" id="courseFilters" aria-label="Kursstatus filtern"></div>
+      <div class="seg-control" id="courseFilters" role="group" aria-label="Kursstatus filtern"></div>
 
       <p class="result-line" id="resultLine"></p>
       <div class="course-grid" id="courseGrid"></div>
