@@ -1,0 +1,48 @@
+{
+  "lesson": "67-ai-product-experiment-feedback-analytics",
+  "title": "AI Product Experiment Design and Feedback Analytics",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What should an AI product experiment define before rollout?",
+      "options": ["A hypothesis, success metric, feedback sample, and stop rule", "Only a model name", "Only a demo script", "Only a backlog label"],
+      "correct": 0,
+      "explanation": "A product experiment needs a decision structure, not just an implementation idea."
+    },
+    {
+      "stage": "check",
+      "question": "Why is an unclear hypothesis a risk?",
+      "options": ["The team cannot tell what it is trying to learn", "The UI will always fail", "The metric becomes unnecessary", "The model cannot be called"],
+      "correct": 0,
+      "explanation": "Without a hypothesis, feedback cannot be interpreted against a learning goal."
+    },
+    {
+      "stage": "check",
+      "question": "What does a stop rule prevent?",
+      "options": ["All user research", "Scaling weak evidence or harmful behavior", "Metric definition", "Feedback collection"],
+      "correct": 1,
+      "explanation": "A stop rule defines when the team should halt instead of scaling the idea."
+    },
+    {
+      "stage": "check",
+      "question": "Which input helps AI feedback synthesis stay credible?",
+      "options": ["Unlabeled anecdotes only", "A visible feedback sample and bias note", "A hidden prompt", "A single executive quote"],
+      "correct": 1,
+      "explanation": "The team needs to understand where the feedback came from and what bias it may contain."
+    },
+    {
+      "stage": "post",
+      "question": "Which product idea is most ready for a controlled experiment?",
+      "options": ["One with user feedback, a clear metric, and rollout risk", "One with no user segment", "One with no decision owner", "One with no success definition"],
+      "correct": 0,
+      "explanation": "Feedback, metric clarity, and known risk are good reasons to run a controlled experiment."
+    },
+    {
+      "stage": "post",
+      "question": "What should AI assist with in feedback analytics?",
+      "options": ["Synthesis under human review", "Replacing all product decisions", "Hiding negative feedback", "Removing metric checks"],
+      "correct": 0,
+      "explanation": "AI can help synthesize feedback, but product decisions still need human review and evidence."
+    }
+  ]
+}

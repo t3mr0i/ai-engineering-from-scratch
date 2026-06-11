@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a1a1a?style=flat-square&labelColor=fafaf5" alt="MIT License"></a>
-  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-430-3553ff?style=flat-square&labelColor=fafaf5" alt="430 lessons"></a>
+  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-445-3553ff?style=flat-square&labelColor=fafaf5" alt="445 lessons"></a>
   <a href="#contents"><img src="https://img.shields.io/badge/phases-20-3553ff?style=flat-square&labelColor=fafaf5" alt="20 phases"></a>
   <a href="https://github.com/rohitg00/ai-engineering-from-scratch/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/ai-engineering-from-scratch?style=flat-square&labelColor=fafaf5&color=3553ff" alt="GitHub stars"></a>
   <a href="https://aiengineeringfromscratch.com"><img src="https://img.shields.io/badge/web-aiengineeringfromscratch.com-3553ff?style=flat-square&labelColor=fafaf5" alt="Website"></a>
@@ -548,7 +548,7 @@ Twenty phases. Click any phase to expand its lesson list.
 </details>
 
 <details id="phase-11">
-<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>54 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
+<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>69 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
 <br/>
 
 | # | Lesson | Type | Lang |
@@ -607,6 +607,21 @@ Twenty phases. Click any phase to expand its lesson list.
 | 52 | [AI Knowledge Management and Content Governance](phases/11-llm-engineering/52-ai-knowledge-management-content-governance/) | Build | Python |
 | 53 | [AI Customer Communication and Service Quality](phases/11-llm-engineering/53-ai-customer-communication-service-quality/) | Build | Python |
 | 54 | [AI Architecture Decision Governance](phases/11-llm-engineering/54-ai-architecture-decision-governance/) | Build | Python |
+| 55 | [AI Product Backlog and Prioritization](phases/11-llm-engineering/55-ai-product-backlog-prioritization/) | Build | Python |
+| 56 | [AI Business Analysis and Process Discovery](phases/11-llm-engineering/56-ai-business-analysis-process-discovery/) | Build | Python |
+| 57 | [AI Test Data and Synthetic Data Governance](phases/11-llm-engineering/57-ai-test-data-synthetic-data-governance/) | Build | Python |
+| 58 | [AI Change Impact and Stakeholder Analysis](phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis/) | Build | Python |
+| 59 | [AI Value Realization and Benefits Tracking](phases/11-llm-engineering/59-ai-value-realization-benefits-tracking/) | Build | Python |
+| 60 | [AI Business Applications, ERP, and CRM Consulting](phases/11-llm-engineering/60-ai-business-applications-erp-crm-consulting/) | Build | Python |
+| 61 | [AI Cloud, Data Platform, and IoT Use Case Design](phases/11-llm-engineering/61-ai-cloud-data-platform-use-case-design/) | Build | Python |
+| 62 | [AI BI Reporting and Data Storytelling](phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling/) | Build | Python |
+| 63 | [AI Human Review and Approval Workflow Design](phases/11-llm-engineering/63-ai-human-review-approval-workflows/) | Build | Python |
+| 64 | [AI Operating Model and Center of Excellence](phases/11-llm-engineering/64-ai-operating-model-center-of-excellence/) | Build | Python |
+| 65 | [AI Service Desk Runbook and Knowledge Automation](phases/11-llm-engineering/65-ai-service-desk-runbook-automation/) | Build | Python |
+| 66 | [AI Security Review and Threat Triage for Business Teams](phases/11-llm-engineering/66-ai-security-threat-triage-business-teams/) | Build | Python |
+| 67 | [AI Product Experiment Design and Feedback Analytics](phases/11-llm-engineering/67-ai-product-experiment-feedback-analytics/) | Build | Python |
+| 68 | [AI Adoption Communications and Role-Based Enablement](phases/11-llm-engineering/68-ai-adoption-communications-role-enablement/) | Build | Python |
+| 69 | [AI Prompt Library Governance and Reuse](phases/11-llm-engineering/69-ai-prompt-library-governance-reuse/) | Build | Python |
 
 </details>
 

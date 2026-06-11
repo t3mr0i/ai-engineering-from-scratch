@@ -85,10 +85,15 @@
     action.className = "primary-cta";
     if (nextLesson) {
       action.href = lessonHref(nextLesson.path, course.id);
-      action.textContent = (stats.visitedLessons > 0 ? "Weiterlernen" : "Kurs starten");
+      var ctaLabel = document.createElement("span");
+      ctaLabel.textContent = (stats.visitedLessons > 0 ? "Weiterlernen" : "Kurs starten");
+      action.append(ctaLabel, lucideIcon("arrow-right"));
     } else {
+      action.appendChild(lucideIcon("circle-check"));
+      var doneLabel = document.createElement("span");
+      doneLabel.textContent = "Kurs vollständig";
+      action.appendChild(doneLabel);
       action.href = "#";
-      action.textContent = "Kurs vollständig";
       action.setAttribute("aria-disabled", "true");
       action.addEventListener("click", function (event) { event.preventDefault(); });
     }
@@ -114,6 +119,7 @@
     }
 
     replaceChildren(root, children);
+    refreshIcons();
   }
 
   function unitBlock(subcourse, courseId, subcourseIndex) {
@@ -124,16 +130,27 @@
     var head = document.createElement("div");
     head.className = "unit-block__head";
 
+    var code = document.createElement("span");
+    code.className = "unit-block__code";
+    code.textContent = unitCode(subcourseIndex);
+
     var title = document.createElement("h3");
     title.textContent = subcourse.title;
     title.title = unitCode(subcourseIndex);
 
     var meta = document.createElement("span");
     meta.className = "unit-block__meta";
-    meta.textContent = stats.completedLessons + "/" + stats.lessonCount + " erledigt";
+    meta.textContent = stats.completedLessons + " von " + stats.lessonCount + " erledigt";
 
-    head.append(title, meta);
+    head.append(code, title, meta);
     block.appendChild(head);
+
+    var meter = progressMeter(
+      stats.lessonCount ? Math.round((stats.completedLessons / stats.lessonCount) * 100) : 0,
+      "Fortschritt " + subcourse.title
+    );
+    meter.classList.add("unit-block__meter");
+    block.appendChild(meter);
 
     if (subcourse.note) {
       var note = document.createElement("p");
@@ -163,6 +180,10 @@
     dot.className = "activity-link__dot";
     dot.dataset.state = progress.state;
     dot.setAttribute("aria-hidden", "true");
+    dot.appendChild(lucideIcon(
+      progress.state === "completed" ? "circle-check" :
+      progress.state === "visited" ? "circle-dot" : "circle"
+    ));
 
     var label = document.createElement("strong");
     label.textContent = lesson.title;
@@ -170,11 +191,16 @@
     var type = document.createElement("small");
     type.textContent = activityType(lesson, subcourse);
 
-    var status = document.createElement("em");
-    status.textContent = progress.label;
-    status.dataset.state = progress.state;
+    a.append(dot, label, type);
 
-    a.append(dot, label, type, status);
+    // "offen" on every untouched row is noise — only call out actual progress.
+    if (progress.state !== "open") {
+      var status = document.createElement("em");
+      status.textContent = progress.label;
+      status.dataset.state = progress.state;
+      a.appendChild(status);
+    }
+
     return a;
   }
 
@@ -300,5 +326,18 @@
     children.forEach(function (child) {
       parent.appendChild(child);
     });
+  }
+
+  function lucideIcon(name) {
+    var i = document.createElement("i");
+    i.setAttribute("data-lucide", name);
+    i.setAttribute("aria-hidden", "true");
+    return i;
+  }
+
+  function refreshIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
   }
 })();

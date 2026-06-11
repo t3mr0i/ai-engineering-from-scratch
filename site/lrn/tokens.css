@@ -1,28 +1,46 @@
-/* Hallmark tokens · LHIND LRN workbench · theme: Quiet/LHIND-system */
+/* Hallmark tokens · LHIND LRN workbench · theme: Lufthansa Group 2025 brand
+   Ground-to-sky vertical gradient — deep navy (ground) up through blues to
+   light sky, with a single warm sand accent. NO yellow. Calm, airy, digital. */
 :root {
   --font-display: "IBM Plex Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-body: "IBM Plex Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
 
-  --color-paper: oklch(98% 0.008 260);
-  --color-paper-2: oklch(95% 0.012 260);
-  --color-paper-3: oklch(91% 0.018 260);
-  --color-ink: oklch(19% 0.03 260);
-  --color-ink-2: oklch(31% 0.035 260);
-  --color-muted: oklch(48% 0.025 260);
-  --color-rule: oklch(82% 0.018 260);
-  --color-rule-2: oklch(72% 0.022 260);
-  --color-accent: oklch(27% 0.13 264);
-  --color-accent-2: oklch(58% 0.13 255);
-  --color-accent-soft: oklch(92% 0.045 260);
-  --color-accent-ink: oklch(98% 0.008 260);
-  --color-warn: oklch(62% 0.115 82);
-  --color-warn-soft: oklch(94% 0.04 82);
-  --color-ok: oklch(44% 0.11 155);
-  --color-ok-soft: oklch(93% 0.045 155);
-  --color-error: oklch(52% 0.18 28);
-  --color-error-soft: oklch(94% 0.045 28);
-  --color-focus: oklch(54% 0.18 255);
+  /* ── Lufthansa ground-to-sky tones (raw brand ramp) ──────────── */
+  --lh-ground: #0A1B3D;   /* deepest navy — the ground */
+  --lh-navy:   #14366B;   /* navy */
+  --lh-mid:    #2E5C9E;   /* mid blue */
+  --lh-blue:   #5A8AC9;   /* blue */
+  --lh-sky:    #A9C7E8;   /* light sky */
+  --lh-sand:   #D9C5A0;   /* warm sand accent (sparing) */
+  --lh-sand-soft: #E8DCC8;
+  --lh-paper:  #F7F9FC;   /* cool near-white surface */
+  --lh-paper-2: #EEF3FA;
+  --lh-card:   #FCFDFF;   /* cards near-white */
+
+  /* ── Semantic tokens (names preserved so nothing breaks) ─────── */
+  --color-paper: var(--lh-paper);
+  --color-paper-2: var(--lh-paper-2);
+  --color-paper-3: #E2EAF5;
+  --color-ink: var(--lh-ground);
+  --color-ink-2: var(--lh-navy);
+  --color-muted: #5B6B86;
+  --color-rule: #D5E0EE;
+  --color-rule-2: #BFD0E5;
+  --color-accent: var(--lh-navy);      /* primary blue (navy anchor) */
+  --color-accent-2: var(--lh-blue);    /* lighter blue / sky-side */
+  --color-accent-soft: #DCE7F6;
+  --color-accent-ink: #FFFFFF;
+  /* sand is the one warm accent — used for active/hover + progress */
+  --color-sand: var(--lh-sand);
+  --color-sand-soft: var(--lh-sand-soft);
+  --color-warn: #B08A4A;               /* warm sand-toned, no yellow */
+  --color-warn-soft: #F0E7D6;
+  --color-ok: #2E7D5B;
+  --color-ok-soft: #DCEFE6;
+  --color-error: #B23B3B;
+  --color-error-soft: #F5DEDE;
+  --color-focus: var(--lh-mid);
 
   --space-3xs: 0.125rem;
   --space-2xs: 0.25rem;
@@ -57,30 +75,34 @@
   --dur-micro: 120ms;
   --dur-short: 220ms;
   --dur-long: 420ms;
-  --shadow-hairline: 0 0 0 1px oklch(30% 0.01 260 / 0.06);
-  --shadow-whisper: 0 1px 2px oklch(20% 0.01 260 / 0.07);
+  --shadow-hairline: 0 0 0 1px rgba(10, 27, 61, 0.06);
+  --shadow-whisper: 0 1px 2px rgba(10, 27, 61, 0.07);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-paper: oklch(15% 0.012 260);
-    --color-paper-2: oklch(19% 0.014 260);
-    --color-paper-3: oklch(24% 0.018 260);
-    --color-ink: oklch(95% 0.008 260);
-    --color-ink-2: oklch(86% 0.01 260);
-    --color-muted: oklch(72% 0.012 260);
-    --color-rule: oklch(34% 0.018 260);
-    --color-rule-2: oklch(46% 0.022 260);
-    --color-accent: oklch(72% 0.12 255);
-    --color-accent-2: oklch(79% 0.11 255);
-    --color-accent-soft: oklch(26% 0.055 260);
-    --color-accent-ink: oklch(15% 0.012 260);
-    --color-warn: oklch(76% 0.11 82);
-    --color-warn-soft: oklch(25% 0.045 82);
-    --color-ok: oklch(74% 0.105 155);
-    --color-ok-soft: oklch(24% 0.045 155);
-    --color-error: oklch(72% 0.14 28);
-    --color-error-soft: oklch(25% 0.055 28);
-    --color-focus: oklch(78% 0.13 255);
+    /* dark variant: deep-navy surfaces, sky-blue accents, sand kept warm */
+    --color-paper: #0A1B3D;
+    --color-paper-2: #0F2348;
+    --color-paper-3: #16305C;
+    --color-ink: #EAF1FB;
+    --color-ink-2: #C3D5EE;
+    --color-muted: #93A8C7;
+    --color-rule: #234168;
+    --color-rule-2: #335279;
+    --color-accent: #7BA6DC;
+    --color-accent-2: #A9C7E8;
+    --color-accent-soft: #18345E;
+    --color-accent-ink: #0A1B3D;
+    --color-sand: #D9C5A0;
+    --color-sand-soft: #3A3422;
+    --color-warn: #D9C5A0;
+    --color-warn-soft: #322B1A;
+    --color-ok: #6FC79C;
+    --color-ok-soft: #16352A;
+    --color-error: #E08A8A;
+    --color-error-soft: #3A1E1E;
+    --color-focus: #A9C7E8;
+    --shadow-whisper: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 }

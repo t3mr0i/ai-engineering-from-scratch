@@ -16,20 +16,20 @@
 <body>
   <a class="skip-link" href="#courseMain">Direkt zum Kursdetail</a>
   <header class="nav-edge" aria-label="Seitennavigation">
-    <a class="wordmark" href="../index.html">
+    <a class="wordmark" href="index.html">
       <span class="wordmark__mark" aria-hidden="true">AI</span>
       <span>LHIND Lernkatalog</span>
     </a>
     <nav class="nav-links" aria-label="Abschnitte">
       <a id="backLink" href="index.html">Kurse</a>
-      <a href="../index.html">Curriculum</a>
+      <a href="index.html">Curriculum</a>
     </nav>
     <div class="nav-edge__spacer" aria-hidden="true"></div>
   </header>
 
   <main class="page page--detail" id="courseMain">
     <a class="back-link" id="backLinkTop" href="index.html">
-      <span aria-hidden="true">←</span> Zurück zu den Kursen
+      <i data-lucide="arrow-left" aria-hidden="true"></i> Zurück zu den Kursen
     </a>
     <div id="courseRoot"></div>
   </main>
@@ -39,6 +39,7 @@
   </footer>
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="../progress.js"></script>
   <script src="data.js"></script>
   <script src="curriculum-map.js"></script>

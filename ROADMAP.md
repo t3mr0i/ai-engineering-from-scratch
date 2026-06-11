@@ -269,7 +269,7 @@ Total estimated time: ~314 hours, at your own pace.
 | 25 | [Speculative Decoding and EAGLE](phases/10-llms-from-scratch/25-speculative-decoding) | ✅ | ~75 min |
 | 34 | [Gradient Checkpointing and Activation Recomputation](phases/10-llms-from-scratch/34-gradient-checkpointing) | ✅ | ~70 min |
 
-## Phase 11: LLM Engineering — ✅ (~46 hours)
+## Phase 11: LLM Engineering — ✅ (~58 hours)
 
 | # | Lesson | Status | Est. |
 |---|--------|--------|------|
@@ -327,6 +327,21 @@ Total estimated time: ~314 hours, at your own pace.
 | 52 | [AI Knowledge Management and Content Governance](phases/11-llm-engineering/52-ai-knowledge-management-content-governance) | ✅ | ~45 min |
 | 53 | [AI Customer Communication and Service Quality](phases/11-llm-engineering/53-ai-customer-communication-service-quality) | ✅ | ~45 min |
 | 54 | [AI Architecture Decision Governance](phases/11-llm-engineering/54-ai-architecture-decision-governance) | ✅ | ~45 min |
+| 55 | [AI Product Backlog and Prioritization](phases/11-llm-engineering/55-ai-product-backlog-prioritization) | ✅ | ~45 min |
+| 56 | [AI Business Analysis and Process Discovery](phases/11-llm-engineering/56-ai-business-analysis-process-discovery) | ✅ | ~45 min |
+| 57 | [AI Test Data and Synthetic Data Governance](phases/11-llm-engineering/57-ai-test-data-synthetic-data-governance) | ✅ | ~45 min |
+| 58 | [AI Change Impact and Stakeholder Analysis](phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis) | ✅ | ~45 min |
+| 59 | [AI Value Realization and Benefits Tracking](phases/11-llm-engineering/59-ai-value-realization-benefits-tracking) | ✅ | ~45 min |
+| 60 | [AI Business Applications, ERP, and CRM Consulting](phases/11-llm-engineering/60-ai-business-applications-erp-crm-consulting) | ✅ | ~45 min |
+| 61 | [AI Cloud, Data Platform, and IoT Use Case Design](phases/11-llm-engineering/61-ai-cloud-data-platform-use-case-design) | ✅ | ~45 min |
+| 62 | [AI BI Reporting and Data Storytelling](phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling) | ✅ | ~45 min |
+| 63 | [AI Human Review and Approval Workflow Design](phases/11-llm-engineering/63-ai-human-review-approval-workflows) | ✅ | ~45 min |
+| 64 | [AI Operating Model and Center of Excellence](phases/11-llm-engineering/64-ai-operating-model-center-of-excellence) | ✅ | ~45 min |
+| 65 | [AI Service Desk Runbook and Knowledge Automation](phases/11-llm-engineering/65-ai-service-desk-runbook-automation) | ✅ | ~45 min |
+| 66 | [AI Security Review and Threat Triage for Business Teams](phases/11-llm-engineering/66-ai-security-threat-triage-business-teams) | ✅ | ~45 min |
+| 67 | [AI Product Experiment Design and Feedback Analytics](phases/11-llm-engineering/67-ai-product-experiment-feedback-analytics) | ✅ | ~45 min |
+| 68 | [AI Adoption Communications and Role-Based Enablement](phases/11-llm-engineering/68-ai-adoption-communications-role-enablement) | ✅ | ~45 min |
+| 69 | [AI Prompt Library Governance and Reuse](phases/11-llm-engineering/69-ai-prompt-library-governance-reuse) | ✅ | ~45 min |
 
 ## Phase 12: Multimodal AI — ✅ (~65 hours)
 

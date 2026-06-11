@@ -1,0 +1,68 @@
+{
+  "lesson": "63-ai-human-review-approval-workflows",
+  "title": "AI Human Review and Approval Workflow Design",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why is 'human in the loop' not enough by itself?",
+      "options": [
+        "Because review roles, approval gates, quality criteria, and appeal paths must be explicit",
+        "Because humans should never review AI",
+        "Because approval is always automatic",
+        "Because quality checks are irrelevant"
+      ],
+      "correct": 0,
+      "explanation": "Human review must be designed as an accountable workflow."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["approval gap", "font size", "thread pool", "screen DPI"],
+      "correct": 0,
+      "explanation": "Approval gaps show that accountable review is not yet designed."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked human-review workflow plan with controls",
+        "A final legal decision",
+        "A deployed approval system",
+        "A model training job"
+      ],
+      "correct": 0,
+      "explanation": "The artifact recommends review and approval controls for AI scenarios."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["appeal path", "hide quality uncertainty", "skip reviewer", "remove approval gate"],
+      "correct": 0,
+      "explanation": "Appeal paths protect users when AI-supported decisions affect them."
+    },
+    {
+      "stage": "post",
+      "question": "When is a mandatory approval gate appropriate?",
+      "options": [
+        "When impact and uncertainty are high and decision authority or user impact is involved",
+        "Only when the output is trivial",
+        "Only when no user is affected",
+        "Never; peer review is always enough"
+      ],
+      "correct": 0,
+      "explanation": "High-impact AI workflows need stronger approval gates."
+    },
+    {
+      "stage": "post",
+      "question": "What should a human review workflow define?",
+      "options": [
+        "Review role, approval gate, quality checklist, and appeal path",
+        "Only the AI prompt",
+        "Only the output format",
+        "No escalation path"
+      ],
+      "correct": 0,
+      "explanation": "These controls make human review inspectable and accountable."
+    }
+  ]
+}

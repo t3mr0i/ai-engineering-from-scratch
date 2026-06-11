@@ -1,0 +1,68 @@
+{
+  "lesson": "59-ai-value-realization-benefits-tracking",
+  "title": "AI Value Realization and Benefits Tracking",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why is launch not the same as AI value realization?",
+      "options": [
+        "Because value needs an owner, baseline, metric, cadence, and review",
+        "Because launch always proves value",
+        "Because adoption should not be measured",
+        "Because baselines are irrelevant"
+      ],
+      "correct": 0,
+      "explanation": "Benefits management tracks outcomes after launch."
+    },
+    {
+      "stage": "check",
+      "question": "Which signal is part of this lesson?",
+      "options": ["adoption lag", "font size", "GPU clock", "browser cache"],
+      "correct": 0,
+      "explanation": "Adoption lag can explain why expected value is not realized."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Python artifact produce?",
+      "options": [
+        "A ranked benefits-tracking plan with controls and rationale",
+        "A final budget approval",
+        "A production model",
+        "A dashboard screenshot"
+      ],
+      "correct": 0,
+      "explanation": "The artifact recommends benefits tracking controls."
+    },
+    {
+      "stage": "check",
+      "question": "Which control belongs to this lesson?",
+      "options": ["baseline metric", "skip owner review", "hide adoption", "remove benefit hypothesis"],
+      "correct": 0,
+      "explanation": "Baseline metrics make value comparisons possible."
+    },
+    {
+      "stage": "post",
+      "question": "When should an AI initiative enter a portfolio value review?",
+      "options": [
+        "When expected value is high but baselines, metrics, ownership, or adoption are weak",
+        "Only when all value is already proven",
+        "Only when no owner exists and no one cares",
+        "Never; delivery status is enough"
+      ],
+      "correct": 0,
+      "explanation": "High-value initiatives need benefits evidence and review."
+    },
+    {
+      "stage": "post",
+      "question": "What should benefits tracking connect?",
+      "options": [
+        "Benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision",
+        "Only launch date",
+        "Only tool usage without business context",
+        "No owner or cadence"
+      ],
+      "correct": 0,
+      "explanation": "Benefits tracking links intent to observed outcomes."
+    }
+  ]
+}
