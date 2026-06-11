@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <script src="gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson · Agentic Software Engineering at LHIND</title>
+  <title>Lesson · LHIND AI Lernkatalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="A lesson from the Agentic Software Engineering at LHIND curriculum by Lufthansa Industry Solutions. 445 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
+  <meta name="description" content="A lesson from the LHIND AI Lernkatalog curriculum by Lufthansa Industry Solutions. 445 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
-  <meta property="og:title" content="Agentic Software Engineering at LHIND · Lesson">
+  <meta property="og:title" content="LHIND AI Lernkatalog · Lesson">
   <meta property="og:description" content="445 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Agentic Software Engineering at LHIND">
+  <meta name="twitter:title" content="LHIND AI Lernkatalog">
   <meta name="twitter:description" content="445 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1891,34 +1891,16 @@
 
   <div class="scroll-progress" id="scrollProgress"></div>
 
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="index.html" class="logo">
-        <span class="logo-icon" aria-hidden="true"></span> LHIND · AI / FROM SCRATCH
-      </a>
-      <nav class="header-nav">
-        <a href="index.html#contents">Contents</a>
-        <a href="assessment.html">Assessment</a>
-        <a href="catalog.html">Catalog</a>
-        <a href="prereqs.html">Roadmap</a>
-        <a href="glossary.html">Glossary</a>
-        <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener" class="header-github">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m23.6004 9.5927-.0337-.0862L20.3.9814a.851.851 0 0 0-.3362-.405.8748.8748 0 0 0-.9997.0539.8748.8748 0 0 0-.29.4399l-2.2055 6.748H7.5375l-2.2057-6.748a.8573.8573 0 0 0-.29-.4412.8748.8748 0 0 0-.9997-.0537.8585.8585 0 0 0-.3362.4049L.4332 9.5015l-.0325.0862a6.0657 6.0657 0 0 0 2.0119 7.0105l.0113.0087.03.0213 4.976 3.7264 2.462 1.8633 1.4995 1.1321a1.0085 1.0085 0 0 0 1.2197 0l1.4995-1.1321 2.4619-1.8633 5.006-3.7489.0125-.01a6.0682 6.0682 0 0 0 2.0094-7.003z"/></svg>          <span>GitLab</span>
-        </a>
-      </nav>
-      <button class="search-toggle" type="button" data-cmd-palette
-        aria-label="Search (⌘K)" title="Search (⌘K)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-      </button>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" type="button">
-        <span class="theme-icon" id="themeIcon">N</span>
-      </button>
-    </div>
+  <header class="nav-edge" aria-label="Seitennavigation">
+    <a class="wordmark" href="index.html">
+      <span class="wordmark__mark" aria-hidden="true">AI</span>
+      <span>LHIND Lernkatalog</span>
+    </a>
+    <nav class="nav-links" aria-label="Abschnitte">
+      <a href="index.html">Kurse</a>
+      <a href="catalog.html">Curriculum</a>
+    </nav>
+    <div class="nav-edge__spacer" aria-hidden="true"></div>
   </header>
 
   <button class="lesson-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
@@ -2444,7 +2426,7 @@
           url += '&course=' + encodeURIComponent(lrnContext.course.id);
         }
         var desc = lessonDescription(md);
-        var fullTitle = title + ' · Agentic Software Engineering at LHIND';
+        var fullTitle = title + ' · LHIND AI Lernkatalog';
         var set = function (sel, val) { var m = document.querySelector(sel); if (m) m.setAttribute('content', val); };
 
         var canon = document.querySelector('link[rel="canonical"]');
@@ -2465,7 +2447,7 @@
           '@graph': [
             { '@type': 'LearningResource', name: title, description: desc, url: url,
               inLanguage: 'en', isAccessibleForFree: true,
-              isPartOf: { '@type': 'Course', name: 'Agentic Software Engineering at LHIND', url: ORIGIN } },
+              isPartOf: { '@type': 'Course', name: 'LHIND AI Lernkatalog', url: ORIGIN } },
             { '@type': 'BreadcrumbList', itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: ORIGIN },
               { '@type': 'ListItem', position: 2, name: 'Catalog', item: ORIGIN + '/catalog.html' },
@@ -2495,7 +2477,7 @@
         html = addBottomNav(html);
         el.innerHTML = '<article class="lesson-article">' + html + '</article>';
 
-        document.title = extractTitle(md) + (lrnContext ? ' · ' + lrnContext.course.id + ' LRN' : ' - Agentic Software Engineering at LHIND');
+        document.title = extractTitle(md) + (lrnContext ? ' · ' + lrnContext.course.id + ' LRN' : ' - LHIND AI Lernkatalog');
         updateLessonSeo(extractTitle(md), md);
 
         initCodeCopy();

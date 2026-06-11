@@ -231,117 +231,72 @@ p.dropcap::first-letter {
   color: var(--blueprint);
 }
 
-.site-header {
-  position: fixed;
+/* ── Lernkatalog-style header (nav-edge) — ported onto style.css tokens so
+   the content subpages match the root catalog without importing lrn.css. ── */
+.nav-edge {
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 100;
-  background: var(--header-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px clamp(16px, 4vw, 48px);
   border-bottom: 1px solid var(--rule-soft);
+  background: var(--header-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-.header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 32px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  border-bottom: none;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.logo:hover {
-  color: var(--blueprint);
-  border-bottom: none;
-}
-
-.logo-icon {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background: var(--blueprint);
-}
-
-.header-nav {
-  display: flex;
-  gap: 28px;
-  align-items: center;
-}
-
-.header-nav a {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  border-bottom: none;
-}
-
-.header-nav a:hover {
-  color: var(--blueprint);
-  border-bottom: none;
-}
-
-.header-github {
+.nav-edge .wordmark {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  border: 1px solid var(--rule-soft);
-  background: var(--bg-surface);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
   color: var(--ink);
-  text-transform: uppercase;
-  transition: border-color 0.15s, color 0.15s;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: none;
 }
 
-.header-github:hover {
-  border-color: var(--blueprint);
-  color: var(--blueprint);
-  border-bottom: 1px solid var(--blueprint);
+.nav-edge .wordmark__mark {
+  display: inline-grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  place-items: center;
+  border-radius: 4px;
+  background: var(--blueprint);
+  color: #fff;
+  font-size: 0.7rem;
 }
 
-.header-github svg {
-  flex-shrink: 0;
-}
-
-.theme-toggle {
-  background: transparent;
-  border: 1px solid var(--rule-soft);
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
+.nav-edge .nav-links {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  color: var(--ink);
-  transition: border-color 0.15s, color 0.15s;
+  gap: 16px;
+  margin-inline: auto;
 }
 
-.theme-toggle:hover {
-  border-color: var(--blueprint);
-  color: var(--blueprint);
+.nav-edge .nav-links a {
+  padding: 4px 8px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-radius: 4px;
+  border-bottom: none;
+}
+
+.nav-edge .nav-links a:hover {
+  color: var(--ink);
+  background: var(--bg-surface-hover);
+  border-bottom: none;
+}
+
+.nav-edge__spacer {
+  width: 1.75rem;
 }
 
 .btn {
@@ -1017,25 +972,6 @@ body.js-anim .toc-row.in-view {
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Search trigger button in the header ─────────────────────────────── */
-.search-toggle {
-  background: transparent;
-  border: 1px solid var(--rule-soft);
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-soft);
-  transition: border-color 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-
-.search-toggle:hover {
-  border-color: var(--blueprint);
-  color: var(--blueprint);
-}
-
 /* ── Palette overlay wrapper ─────────────────────────────────────────── */
 #cmdPalette {
   position: fixed;

@@ -1,5 +1,5 @@
 window.LrnCurriculumMap = {
-  source: "Agentic Software Engineering at LHIND curriculum",
+  source: "LHIND AI Lernkatalog curriculum",
   note: "Curated subset: use the lessons that fit LHIND LRN role courses, combine overlapping lessons into subcourses, omit deep model-training or modality-specific material unless it directly supports the role course.",
   courseMaps: {
     "AI-09": [

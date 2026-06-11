@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Build script for the Agentic Software Engineering at LHIND website.
+ * Build script for the LHIND AI Lernkatalog website.
  * Parses README.md, ROADMAP.md, and glossary/terms.md from the repo root
  * and generates data.js with all phase/lesson/glossary data.
  *
@@ -545,7 +545,7 @@ function writeSitemap(phases, glossaryCount) {
 function writeLlms(phases, glossaryCount, artifactCount) {
   let total = 0;
   phases.forEach(p => { total += p.lessons.filter(l => lessonPath(l.url)).length; });
-  let out = `# Agentic Software Engineering at LHIND\n\n`;
+  let out = `# LHIND AI Lernkatalog\n\n`;
   out += `> A free, open-source curriculum from Lufthansa Industry Solutions that implements every core AI algorithm from first principles — ${total} lessons across ${phases.length} phases, from core AI concepts to autonomous agents. Python, TypeScript, Rust, Julia.\n\n`;
   out += `Canonical site: ${SITE_ORIGIN}\n`;
   out += `Source: https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training\n`;
