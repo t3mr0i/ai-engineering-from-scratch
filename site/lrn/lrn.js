@@ -16,6 +16,13 @@
     { value: 5, label: "Expert", focusLevels: ["Create"] }
   ];
 
+  // Max courses shown as "Empfohlen". Beyond this, level- and interest-relevant
+  // courses are demoted to "Optional" so the recommended list stays focused.
+  // Must be defined before the init render() below — it ran while the old
+  // `var RECOMMEND_CAP = 11` (declared further down) was still hoisted-undefined,
+  // so `shown < undefined` was always false and every course got demoted → 0 shown.
+  var RECOMMEND_CAP = 11;
+
   var els = {
     profileSelect: document.getElementById("profileSelect"),
     levelSelect: document.getElementById("levelSelect"),
@@ -452,10 +459,6 @@
     var entries = rankedCourses(profile, level);
     return { profile: profile, level: level, entries: entries };
   }
-
-  // Max courses shown as "Empfohlen". Beyond this, level- and interest-relevant
-  // courses are demoted to "Optional" so the recommended list stays focused.
-  var RECOMMEND_CAP = 11;
 
   function rankedCourses(profile, level) {
     var selectedInterests = state.interests;
