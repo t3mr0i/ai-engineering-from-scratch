@@ -22,11 +22,13 @@
   --color-paper: var(--lh-paper);
   --color-paper-2: var(--lh-paper-2);
   --color-paper-3: #E2EAF5;
+  --color-card: var(--lh-card);          /* elevated card surface (dark-aware) */
   --color-ink: var(--lh-ground);
   --color-ink-2: var(--lh-navy);
   --color-muted: #5B6B86;
   --color-rule: #D5E0EE;
   --color-rule-2: #BFD0E5;
+  --color-track: #DCE4F0;                /* progress-bar empty track (dark-aware) */
   --color-accent: var(--lh-navy);      /* primary blue (navy anchor) */
   --color-accent-2: var(--lh-blue);    /* lighter blue / sky-side */
   --color-accent-soft: #DCE7F6;
@@ -85,11 +87,13 @@
     --color-paper: #0A1B3D;
     --color-paper-2: #0F2348;
     --color-paper-3: #16305C;
+    --color-card: #132B54;                 /* elevated card surface, lifted off the ground navy */
     --color-ink: #EAF1FB;
     --color-ink-2: #C3D5EE;
     --color-muted: #93A8C7;
     --color-rule: #234168;
     --color-rule-2: #335279;
+    --color-track: #234168;                /* track lifts off the dark card */
     --color-accent: #7BA6DC;
     --color-accent-2: #A9C7E8;
     --color-accent-soft: #18345E;
