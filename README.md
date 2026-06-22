@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a1a1a?style=flat-square&labelColor=fafaf5" alt="MIT License"></a>
-  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-448-3553ff?style=flat-square&labelColor=fafaf5" alt="448 lessons"></a>
+  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-490-3553ff?style=flat-square&labelColor=fafaf5" alt="490 lessons"></a>
   <a href="#contents"><img src="https://img.shields.io/badge/phases-20-3553ff?style=flat-square&labelColor=fafaf5" alt="20 phases"></a>
   <a href="https://github.com/rohitg00/ai-engineering-from-scratch/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/ai-engineering-from-scratch?style=flat-square&labelColor=fafaf5&color=3553ff" alt="GitHub stars"></a>
   <a href="https://aiengineeringfromscratch.com"><img src="https://img.shields.io/badge/web-aiengineeringfromscratch.com-3553ff?style=flat-square&labelColor=fafaf5" alt="Website"></a>
@@ -548,7 +548,7 @@ Twenty phases. Click any phase to expand its lesson list.
 </details>
 
 <details id="phase-11">
-<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>72 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
+<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>114 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
 <br/>
 
 | # | Lesson | Type | Lang |
@@ -625,6 +625,48 @@ Twenty phases. Click any phase to expand its lesson list.
 | 70 | [GitHub Copilot for Software Engineers: The Daily Workflow](phases/11-llm-engineering/70-github-copilot-daily-workflow/) | Learn | Python |
 | 71 | [Copilot Code Review and the PR Workflow](phases/11-llm-engineering/71-copilot-code-review-pr-workflow/) | Learn | Python |
 | 72 | [Copilot vs Cursor vs Claude Code, and MCP in the IDE](phases/11-llm-engineering/72-copilot-cursor-claude-code-mcp/) | Learn | Python |
+| 73 | [How AI Systems Actually Work: A Practitioner's Map](phases/11-llm-engineering/73-ai-fundamentals/) | Learn | Python |
+| 74 | [Choosing and Using AI Tools for Personal Productivity](phases/11-llm-engineering/74-ai-concepts-and-tools-for-personal/) | Learn | Python |
+| 75 | [Responsible AI in Practice: GDPR Compliance, Bias Auditing, and Guardrail Design](phases/11-llm-engineering/75-responsible-and-trustworthy-ai/) | Learn | Python |
+| 76 | [Prompt Patterns That Scale: From One-Shots to Output Contracts](phases/11-llm-engineering/76-hands-on-prompt-engineering-workshop/) | Learn | Python |
+| 77 | [AI Use Case Triage: From Discovery to Prioritized Backlog](phases/11-llm-engineering/77-ai-use-case-identification-and-business/) | Learn | Python |
+| 78 | [From LLM API Call to Production AI System: Architecture Decisions That Matter](phases/11-llm-engineering/78-ai-introduction-to-architecture-for-ai/) | Learn | Python |
+| 79 | [Agentic Software Engineering: From Prompt to Autonomous Workflow](phases/11-llm-engineering/79-ai-agentic-software-engineering/) | Learn | Python |
+| 80 | [AI Use-Case Intake: From Idea to Approved Deployment](phases/11-llm-engineering/80-corporate-ethics-and-compliance-for-ai/) | Learn | Python |
+| 81 | [AI-Driven Testing and QA: From Eval Sets to Regression Gates](phases/11-llm-engineering/81-ai-driven-testing-and-qa/) | Learn | Python |
+| 82 | [Analyzing Legacy Code with AI: The Refactoring Slice Framework](phases/11-llm-engineering/82-ai-supported-code-modernization/) | Learn | Python |
+| 83 | [Source-Grounded AI Documentation: From Draft to Deliverable](phases/11-llm-engineering/83-ai-assisted-documentation/) | Learn | Python |
+| 84 | [Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems](phases/11-llm-engineering/84-sustainable-software-and-green-coding/) | Learn | Python |
+| 85 | [From Raw Research to Validatable Decisions: AI-Enhanced User Research](phases/11-llm-engineering/85-ai-enhanced-user-research/) | Learn | Python |
+| 86 | [Spotting AI and Automation Opportunities: The Structured Intake](phases/11-llm-engineering/86-ai-and-automation-use-case-spotting/) | Learn | Python |
+| 87 | [AI Cost and Value Economics: From Token Price to Business Case](phases/11-llm-engineering/87-ai-cost-and-value-economics/) | Learn | Python |
+| 88 | [Consultative Prompting: Framing Problems for Stakeholder-Grade Output](phases/11-llm-engineering/88-consultative-prompting/) | Learn | Python |
+| 89 | [AI Ecosystem Map: Models, Platforms, and Vendor Trade-offs](phases/11-llm-engineering/89-ai-ecosystem-and-vendor-landscape/) | Learn | Python |
+| 90 | [AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps](phases/11-llm-engineering/90-ai-workforce-strategy/) | Learn | Python |
+| 91 | [AI Recommendations to Accountable Decisions: A Decision-Quality Framework](phases/11-llm-engineering/91-decision-making-with-ai/) | Learn | Python |
+| 92 | [Data Readiness for AI Projects: Assess Before You Build](phases/11-llm-engineering/92-data-literacy-for-ai-projects/) | Learn | Python |
+| 93 | [Prompt Injection and AI Security: Attack Surface Triage](phases/11-llm-engineering/93-ai-security-and-prompt-injection-defense/) | Learn | Python |
+| 94 | [Planning an Internal Knowledge Assistant: Source Accountability, Permissions, and Fallbacks](phases/11-llm-engineering/94-internal-knowledge-assistants-with-rag/) | Learn | Python |
+| 95 | [AI Vendor Evaluation: A Scoring Framework for Procurement Decisions](phases/11-llm-engineering/95-ai-vendor-and-procurement-evaluation/) | Learn | Python |
+| 96 | [AI Operations: Triage Signals, Runbooks, and Incident Response](phases/11-llm-engineering/96-ai-operations-and-incident-response/) | Learn | Python |
+| 97 | [AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff](phases/11-llm-engineering/97-ai-for-service-management-and-support/) | Learn | Python |
+| 98 | [Structured Meeting Facilitation with LLMs: From Summary to Action](phases/11-llm-engineering/98-ai-meeting-facilitation-and-workshop-design/) | Learn | Python |
+| 99 | [AI-Assisted Project Status and Steering Pack Production](phases/11-llm-engineering/99-ai-project-reporting-and-steering/) | Learn | Python |
+| 100 | [Diagnosing Data Quality Before AI Workflows Scale](phases/11-llm-engineering/100-ai-data-quality-and-master-data/) | Learn | Python |
+| 101 | [Process Analysis Before Automation: The AI Readiness Gate](phases/11-llm-engineering/101-ai-process-analysis-and-automation-design/) | Learn | Python |
+| 102 | [AI Risk Management: Owners, Controls, and Audit Evidence](phases/11-llm-engineering/102-ai-risk-management-and-internal-controls/) | Learn | Python |
+| 103 | [Source Quality Gates Before Retrieval](phases/11-llm-engineering/103-ai-knowledge-management-and-content-governance/) | Learn | Python |
+| 104 | [AI Architecture Decision Records: Governing Model, Vendor, and Boundary Choices](phases/11-llm-engineering/104-ai-architecture-decision-governance/) | Learn | Python |
+| 105 | [AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies](phases/11-llm-engineering/105-ai-product-backlog-and-prioritization/) | Learn | Python |
+| 106 | [Synthetic and Masked Test Data: Coverage, Leakage, and Governance](phases/11-llm-engineering/106-ai-test-data-and-synthetic-data/) | Learn | Python |
+| 107 | [AI Use-Case Evaluation in ERP and CRM Systems](phases/11-llm-engineering/107-ai-business-applications-erp-and-crm/) | Learn | Python |
+| 108 | [AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries](phases/11-llm-engineering/108-ai-cloud-data-platform-and-iot/) | Learn | Python |
+| 109 | [Designing Human-in-the-Loop Review and Approval Gates for AI Workflows](phases/11-llm-engineering/109-ai-human-review-and-approval-workflow/) | Learn | Python |
+| 110 | [AI Operating Model and Center of Excellence: From Pilots to Platform](phases/11-llm-engineering/110-ai-operating-model-and-center-of/) | Learn | Python |
+| 111 | [AI-Augmented Service Desk: Ticket Triage, Runbooks, and Knowledge Gap Analysis](phases/11-llm-engineering/111-ai-service-desk-runbook-and-knowledge/) | Learn | Python |
+| 112 | [AI Security Threat Triage for Business Proposals](phases/11-llm-engineering/112-ai-security-review-and-threat-triage/) | Learn | Python |
+| 113 | [Prompt Library Governance: Versioning, Ownership, and Retirement](phases/11-llm-engineering/113-ai-prompt-library-governance-and-reuse/) | Learn | Python |
+| 114 | [The AI Champion Playbook: Knowledge Transfer That Actually Sticks](phases/11-llm-engineering/114-ai-champion/) | Learn | Python |
 
 </details>
 
