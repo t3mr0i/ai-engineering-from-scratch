@@ -264,6 +264,8 @@ window.LrnCurriculumMap = {
         note: "The actual GitHub Copilot workflow: completion → chat → agent mode → server-side coding agent, with the review discipline that keeps you accountable.",
         lessons: [
           { path: "phases/11-llm-engineering/70-github-copilot-daily-workflow", title: "GitHub Copilot for Software Engineers: The Daily Workflow" },
+          { path: "phases/11-llm-engineering/71-copilot-code-review-pr-workflow", title: "Copilot Code Review and the PR Workflow" },
+          { path: "phases/11-llm-engineering/72-copilot-cursor-claude-code-mcp", title: "Copilot vs Cursor vs Claude Code, and MCP in the IDE" },
           { path: "phases/11-llm-engineering/01-prompt-engineering", title: "Prompt Engineering: Techniques & Patterns" },
           { path: "phases/15-autonomous-systems/09-coding-agent-landscape", title: "The Autonomous Coding Agent Landscape" },
           { path: "phases/15-autonomous-systems/10-claude-code-permission-modes", title: "Claude Code Permission Modes and Auto Mode" }

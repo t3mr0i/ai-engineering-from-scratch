@@ -353,7 +353,7 @@
     if (!query) {
       list.innerHTML =
         '<li class="cp-empty" role="option" aria-disabled="true">' +
-        'Type to search 446 lessons, 358 outputs, and glossary terms' +
+        'Type to search 448 lessons, 360 outputs, and glossary terms' +
         '</li>';
       _activeIdx = -1;
       return;
