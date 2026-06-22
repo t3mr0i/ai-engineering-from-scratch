@@ -115,7 +115,19 @@ The deterministic scoring layer is intentional. You do not want the ranking to c
 
 5. The lesson says LLMs should not set weights. Describe a failure scenario where a team allows the model to propose weights as well as scores. What organizational knowledge disappears, and how would you detect the problem three months later?
 
-## Key Terms
+## Consultant field notes
+
+These are the patterns a senior PM or consultant recognises after a few AI-assisted prioritization cycles. They are not in the official docs.
+
+**The model-set-weights drift.** A team starts with the model scoring only. After two quarters of "what would the model change?" someone adds weight proposals because the model "had good judgment." Six months later, the weights encode the model's preferences, and nobody can explain why the strategic bet on platform investment scored lower than the third incremental dashboard request. Symptom: stakeholder reviews feel arbitrary, and the room cannot reconstruct why a given item ranked where it did. Cure: weights and the rationale behind them are owned by named humans, written down, and revisited quarterly.
+
+**The horizon-less backlog.** AI-assisted scoring optimises for what is on the page. Long-horizon items (platform investment, tech debt, hiring) sit quietly because they do not score well in any single sprint. Symptom: the strategic roadmap exists only in the head of one person, and the model keeps re-ranking the same tactical items to the top. Cure: a separate "horizon list" outside the scoring surface, reviewed on a different cadence, with its own explicit scoring criteria.
+
+**The fabricated dependency.** The model proposes "Item A blocks Item B" because the descriptions share keywords. No human ever confirmed it. Symptom: a refactor that nobody planned is suddenly on the critical path because the model said it was a blocker. Cure: dependencies are added to the backlog only by named humans; the model may suggest candidates but cannot insert them.
+
+**The RICE-shaped monoculture.** The model is good at RICE, so every item gets a RICE score, even items for which RICE is the wrong frame (compliance work, customer commitments, strategic investments with no measurable reach). Symptom: the same scoring dimensions are applied to items where they are not meaningful, and the rankings feel wrong to anyone who knows the work. Cure: the scoring model is per-item-type, and the choice of model is itself a decision.
+
+**The senior-tribal-knowledge loss.** An experienced PM's gut sense ("this will be a 3-month migration, not 2") encodes years of pattern recognition. When the LLM scores effort without that input, the estimate is more "even" but less accurate. Symptom: estimates that look reasonable in isolation are systematically optimistic, and the gap shows up at the quarter boundary. Cure: confidence scores are not just "the model's confidence" but the team's; capture named human input alongside the model output, and surface the disagreement.
 
 | Term | What people say | What it actually means |
 |---|---|---|

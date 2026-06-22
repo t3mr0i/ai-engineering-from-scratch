@@ -54,7 +54,7 @@ The model is useful for sizing. Ask it: "If I cut this slice, how many lines cha
 
 As of mid-2026, Claude Sonnet 4.x and Claude Opus 4.x offer 1M-token context windows. This covers even large legacy codebases in a single pass. Practical constraints:
 
-- **Context construction matters more than model choice.** Feed the model the actual source files, not a prose description. Include the test files alongside the source. A 1M-token window filled with the right code yields dramatically better analysis than a 128k window filled with the wrong one.
+- **Context construction matters more than model choice.** Feed the model the actual source files, not a prose description. Include the test files alongside the source. A 1M-token window filled with the right code typically yields materially better analysis than a 128k window filled with prose summaries — in our experience, the gap is large enough that swapping models is rarely worth the effort if the context is poor.
 - **Use structured output for the audit.** Ask for JSON or a defined markdown table; free-form prose analysis is harder to feed into Phase 14 · 38's gate-check format.
 - **Reproduce the audit before acting on it.** Run the same four-pass protocol twice (temperature 0) with the same files. If the slice candidates differ materially, the codebase is underspecified — fill the gaps before you cut.
 
@@ -107,6 +107,20 @@ No network, no real model — the point is to make the scoring and prioritizatio
 | Domain contract | "Hidden business logic" | Implicit behavioral requirements embedded in legacy code that no documentation describes; the primary source of silent regressions in rewrites |
 | Verification gate | "Did this slice actually work?" | A pre-defined, automatable check (test suite, diff size bound, coverage delta) that a slice must pass before the next slice begins; operationalized in Phase 14 · 38 |
 | Slice sizing | "How big should the PR be?" | The constraint that a slice's full diff must be reviewable by a senior engineer in under 30 minutes; anything larger should be split |
+
+## Consultant field notes
+
+These are the patterns a senior modernization consultant recognizes from the second meeting onward. Names matter because they compress a diagnosis the team would otherwise spend two weeks rediscovering.
+
+1. **The demo-grade rewrite.** A model produces a clean refactor against a hand-picked sample of the legacy code; production reveals it never saw the ten callers that violated the implicit contract. The lesson is that the audit must run against the whole repository, not a representative module.
+
+2. **The high-score module with a hidden Red dimension.** The prioritizer ranks a module Green across four dimensions; the fifth is a 0 nobody looked at. The lesson is that readiness scores are only as honest as the assessment behind each cell — never accept a Green row without inspecting its evidence.
+
+3. **The slice that grew during review.** The PR opened at 400 lines; by the time three reviewers commented it was 1,800. The lesson is that a slice is sized at *cut* time, not at merge time — if review is finding scope to add, the boundary was wrong.
+
+4. **The vendor pilot that never escaped the security review.** The modernization ran a successful PoC against synthetic data; the real-data path surfaced secrets, PII handling, and audit-logging gaps that had no slice boundary at all. The lesson is that readiness scoring must include a sixth dimension: data classification, not just code hygiene.
+
+5. **The use case everyone approved but nobody wanted.** The business sponsor signed off, the architecture board signed off, and the resulting module shipped — and sat unused. The lesson is that slice selection should weight caller frequency and downstream user impact, not only risk reduction, or the team will produce correct code for a problem no one has.
 
 ## Further Reading
 

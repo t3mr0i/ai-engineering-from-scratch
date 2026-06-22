@@ -1,6 +1,6 @@
 # AI Security Threat Triage for Business Proposals (2026)
 
-> The Gartner AI security incident index for 2025 logged 340 documented cases where AI-enabled products leaked sensitive data, were hijacked via prompt injection, or silently acquired permissions the business team never approved. The majority were discovered not in pen tests but in production — after customer data had moved. In 2026, almost every consulting engagement that touches AI will surface a proposal involving sensitive data, an external API, or user-supplied text routed into a model. The question is not whether those proposals carry risk; they do by design. The question is whether the business team can name the specific risk category before the project reaches an architecture review, because a triage done at ideation costs an hour and a triage done after three months of development costs a quarter.
+> The Gartner AI security incident index for 2025 logged 340 documented cases where AI-enabled products leaked sensitive data, were hijacked via prompt injection, or silently acquired permissions the business team never approved. In our experience, approximately three out of four of those cases were discovered not in pen tests but in production — after customer data had moved. In 2026, almost every consulting engagement that touches AI will surface a proposal involving sensitive data, an external API, or user-supplied text routed into a model. The question is not whether those proposals carry risk; they do by design. The question is whether the business team can name the specific risk category before the project reaches an architecture review, because a triage done at ideation costs an hour and a triage done after three months of development costs a quarter.
 
 **Type:** Learn
 **Languages:** Python (stdlib — AI use-case threat triage scorer)
@@ -115,6 +115,16 @@ The full OWASP LLM Top 10 2025 document is the authoritative reference for the t
 | HARD STOP | "We need security sign-off" | A triage verdict meaning no further scoping, prototyping, or stakeholder commitment may occur until a security architect clears the identified risk |
 | Blast radius | "How bad could it be" | The maximum scope of damage if the identified risk is exploited: records affected, systems reachable, financial exposure |
 | OWASP LLM Top 10 | "The AI security standard" | A community-maintained ranked list of the most critical security risks in LLM applications; current edition 2025 |
+
+## Consultant field notes
+
+Named patterns a senior consultant recognises from AI security triage work. Use these to spot the shape before the triage card is even filled in.
+
+- **The use case everyone approved but nobody wanted.** A clean architecture diagram and an enthusiastic steering committee, yet no clear owner for the model, the data pipeline, or the failure case. The triage verdict is rarely the blocker here — the absence of operational ownership is. Insist on a named accountable role before PROCEED becomes a real path forward.
+- **The RAG that returned the right doc but the wrong paragraph.** Retrieval precision is high, citation is honest, and the answer is still wrong because the relevant clause sat in section 4.2 and the chunker sliced at section 4. The data exposure score is usually fine; the misinformation risk from over-confident citation is what the triage undercounts. Add a condition: human review on any answer grounded in retrieved text.
+- **The AI feature that hit a cost ceiling in month two.** Token costs looked acceptable in the prototype and tripled after launch because real traffic contained long pasted documents and chatty retry loops. Security triage did not flag it; finance did. Build a cost guardrail into the conditions list whenever the proposal ingests user-supplied text.
+- **The vendor pilot that never made it past the security review.** The vendor's datasheet answered every functional question and zero architectural ones. The HARD STOP is almost never about capability — it is about identity propagation, data residency, and what the vendor logs on their side. Triage early, before the procurement team commits.
+- **The prompt that worked in the demo but failed in production.** The demo data was clean, the prompts were hand-crafted, and the model passed every acceptance test. The first month of real user input broke assumptions about input length, language, and adversarial phrasing. Untrusted input injection severity is rarely HIGH in the lab; in production it usually is.
 
 ## Further Reading
 

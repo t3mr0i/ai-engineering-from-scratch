@@ -21,7 +21,7 @@ The engineering question is not "can AI automate this" but "have we done the ana
 |---|---|---|---|
 | **Exception map** | Categorized inventory of cases that deviate from the happy path | Observe the live process; interview the people who handle escalations | Exceptions drive the accuracy floor; an AI that handles 92% of cases cleanly and fails opaquely on the other 8% is often worse than the manual baseline |
 | **Output sensitivity** | Downstream effects of a wrong output: financial, legal, operational, reputational | Trace one output forward to the next process step and the step after that | High-sensitivity outputs require human review of AI decisions even at high accuracy; the automation design changes completely |
-| **Volume and variance profile** | Distribution of case types over time, seasonality, burst patterns | Pull 6-12 months of historical data or instrument the live queue | A process that runs stably at 200 cases/day may have a 2,000-case/day peak once a quarter; the AI system must handle both |
+| **Volume and variance profile** | Distribution of case types over time, seasonality, burst patterns | Pull 6-12 months of historical data or instrument the live queue | In our experience, processes with a steady baseline of 200 cases/day typically see peaks roughly 5-10x higher during quarter-end or seasonal events; the AI system must handle both |
 | **Manual process error rate** | How often the current process produces wrong outputs | Sample audit with a consistent rubric | Sets the minimum bar the AI must clear; also surfaces whether "automation" is fixing a process problem that has a cheaper solution |
 
 None of these can be answered from a process document or a requirements meeting. All four require direct observation of or measurement from the running process.
@@ -126,6 +126,16 @@ The 2026 trap to avoid: using a model to analyze whether a process is ready to a
 | Shadow mode | "Running in parallel" | Deploying the AI alongside the live process without routing real decisions to it; see Phase 17 · 20 |
 | Scope contract | "What the AI handles" | A formal definition of which decisions the AI owns, which it escalates, and under what conditions; see Phase 14 · 36 |
 | Circular baseline | "AI validates AI" | The failure mode where the same model used to analyze readiness is then deployed, with no independent ground-truth measurement |
+
+## Consultant field notes
+
+Patterns a senior consultant recognizes from the field:
+
+- **The prompt that worked in the demo but failed in production.** The twenty curated examples share a distribution the live process does not. Build the exception map from the live queue, not from the workshop deck.
+- **The RAG that returned the right doc but the wrong paragraph.** Retrieval hit the source document; chunking and reranking did not isolate the clause the question was about. Sensitivity scoring forces a human review layer precisely because the answer sounds confident when it is wrong.
+- **The use case everyone approved but nobody wanted.** The steering committee signed off; the people doing the work were never asked. Adoption dies in the first month because the new tool adds a step instead of removing one.
+- **The vendor pilot that never made it past the security review.** Data residency, audit logging, and tenant isolation are not model problems. Raise them in the readiness gate, not in week eleven of the pilot.
+- **The AI feature that hit a cost ceiling in month two.** Per-call inference cost and human review time scale with volume, not accuracy. A pilot at 5% of production volume will not surface the economics. Volume profile is part of the gate for a reason.
 
 ## Further Reading
 

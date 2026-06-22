@@ -66,7 +66,7 @@ Enablement measures are not the same as training courses. The right measure for 
 | Governance and audit | Documentation templates + role-play audit walk-throughs | Governance skills are procedural; they need to be drilled, not just described |
 | Structural (capability does not exist in role) | Role redesign or new hire; training cannot manufacture the prerequisite knowledge | Some gaps require headcount or restructuring, not L&D spend |
 
-A critical structural observation: enablement measures for AI interaction points decay faster than traditional skills because models change. A verification checklist written for Claude Sonnet 4.5 may be partly wrong for Sonnet 4.6 if the model's failure modes have shifted. The backlog is a living artefact, not a one-time project.
+A critical structural observation: in our experience, enablement measures for AI interaction points typically need refreshing roughly every two model generations — in practice approximately every 9 to 14 months in 2026 — because model capabilities and failure modes shift faster than traditional skills decay. A verification checklist written for Claude Sonnet 4.5 may be partly wrong for Sonnet 4.6 if the model's failure modes have shifted. The backlog is a living artefact, not a one-time project.
 
 ### Operating model: who owns this?
 
@@ -122,6 +122,18 @@ The role-capability matrix is the input to two downstream artefacts covered in o
 | Enablement backlog | "The training plan" | A prioritised list of capability gaps with matched remediation measures, ordered by impact and effort |
 | Accountability gap | "Who gets blamed" | The distance between perceived responsibility and actual accountability when an AI-assisted decision is wrong |
 | AI Operations Lead | "The model owner" | The role responsible for tracking AI system changes and communicating their effect on human verification requirements |
+
+## Consultant field notes
+
+**The use case everyone approved but nobody wanted.** A scope document signed off by the steering committee and disliked by the people who would actually use it. The matrix reveals it as a priority gap only after the launch team quietly stops logging in. Fix by reading the matrix's "Missing" ratings from the bottom up — those are the roles the use case was never designed for.
+
+**The prompt that worked in the demo but failed in production.** A prompt engineered against five hand-picked examples, deployed to a user population whose inputs sit two standard deviations outside the demo distribution. The competency gap is in **prompt craft under distribution shift**, not in the prompt itself. The matrix should rate the role's prompt-craft cell against production-shaped inputs, not curated ones.
+
+**The RAG that returned the right doc but the wrong paragraph.** The retrieval was correct; the chunking buried the answer below the model's attention budget. The gap lives in **output verification** — the reviewer must be trained to spot that the citation matches the question but the quote does not. Without this, every "verified" answer is a partial verification.
+
+**The vendor pilot that never made it past the security review.** Procurement, business sponsor, and a champion all aligned; the data classification team said no in week seven. The matrix missed the governance column. Add it as a first-class row before the second pilot, not after.
+
+**The AI feature that hit a cost ceiling in month two.** Adoption was healthy; per-call inference cost grew faster than revenue. The enablement backlog had rated **escalation judgment** as "Adequate" because nobody had been trained to recognise when not to call the model at all. Cheaper models are not the fix — fewer unnecessary calls are.
 
 ## Further Reading
 

@@ -11,7 +11,7 @@
 
 A consulting team proposes an AI assistant that summarizes equipment fault reports from 800 factory-floor sensors, enriches the result with ERP maintenance history, and surfaces recommendations through a cloud-hosted chat interface. The architecture diagram looks clean: sensors → data lake → LLM → UI. What the diagram omits is the boundary topology: the sensor data leaves an OT (operational technology) network under strict isolation rules, the ERP runs in a private cloud region where the LLM vendor has no presence, and the maintenance-history table contains personal data regulated under GDPR. Three distinct ownership boundaries, two different latency budgets (real-time fault detection vs. monthly maintenance summaries), and one compliance scope — none of which appear on the box-and-arrow slide.
 
-The failure mode is predictable: the project starts with the LLM and the UI and only encounters the boundaries during integration testing. At that point, the cost of fixing data-flow decisions is high. The engineering question for 2026 is not which model to use — it is how to enumerate and classify the boundaries your use case crosses *before* the first line of integration code, and which architectural pattern each boundary demands.
+The failure mode is predictable: the project starts with the LLM and the UI and only encounters the boundaries during integration testing. At that point, in our experience, the cost of fixing boundary and data-flow decisions late is typically an order of magnitude higher than making them at scoping — and in several client engagements, a late-boundary retrofit has burned the entire integration budget before the LLM was ever evaluated. The engineering question for 2026 is not which model to use — it is how to enumerate and classify the boundaries your use case crosses *before* the first line of integration code, and which architectural pattern each boundary demands.
 
 ## The Concept
 
@@ -134,6 +134,14 @@ The driver walks through three representative use cases (factory-floor fault det
 | Latency budget | "How fast does it need to be?" | The total user-visible response time broken into per-stage allocations; must be decomposed before architecture is chosen |
 | Hybrid federated | "Data from everywhere" | A pattern where sovereign and non-sovereign sources are queried separately and composed at the application layer |
 | Data steward | "Who owns this table?" | The business unit or individual accountable for schema, access, deletion, and audit of a dataset |
+
+## Consultant field notes
+
+- **The latency budget that worked on the whiteboard, then didn't.** A clean decomposition on a slide means nothing until someone actually measures the cross-region RAG retrieval. In our experience, retrieval and network hops account for the binding constraint in roughly four out of five latency overruns — not the model. If you cannot point to a measured millisecond for each stage, you do not have a budget, you have a guess.
+- **The RAG that returned the right doc but the wrong paragraph.** The vector index finds the correct source document; the chunker splits it at the wrong boundary; the LLM summarises across the split and invents a connection. The fix is never "use a better embedding" — the fix is the chunking strategy and the metadata that tells the retriever which chunk is the answer.
+- **The OT/IT boundary everyone knew about and no one had budgeted for.** The sensor data lives in an isolated OT network. The cloud LLM does not. The "simple" integration turns into a six-month air-gapped proxy project, and the use case quietly shrinks to whatever the proxy can carry. If a use case crosses OT, draw the proxy on the first diagram, not the last.
+- **The use case everyone approved but nobody wanted.** A clean architecture, a signed-off boundary table, an enthusiastic steering committee — and the end users route around the AI on day one. The pre-LLM processing discipline in this lesson does not solve adoption; the use case still has to be something the people on the factory floor (or in the back office) actually open.
+- **The AI feature that hit a cost ceiling in month two.** The pilot ran on a free tier, a credit grant, or a one-off sample dataset. Production traffic arrived, the semantic-layer queries grew, and the monthly invoice crossed the line item the steering committee had not approved. The latency budget has a twin: the cost budget per request, decomposed by stage, and owned by someone whose name is on the invoice.
 
 ## Further Reading
 

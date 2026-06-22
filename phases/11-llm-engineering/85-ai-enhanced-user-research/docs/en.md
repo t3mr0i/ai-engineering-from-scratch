@@ -60,7 +60,7 @@ Each hypothesis needs four fields before it leaves stage 3:
 3. **Confidence** — a calibrated score (e.g., 0.0–1.0) based on evidence density and segment coverage.
 4. **Falsification criterion** — the observable condition that would refute the hypothesis in a future study.
 
-LLMs are excellent at drafting the claim and the evidence link. They are unreliable at setting confidence without an explicit scoring rubric, and they routinely produce vague falsification criteria ("if users don't show confusion in a future study") that do not constrain anything. The scoring rubric and the falsification-criterion template must be in the prompt or in the structured output schema (see Phase 11 · 03).
+LLMs are excellent at drafting the claim and the evidence link. They are unreliable at setting confidence without an explicit scoring rubric, and in our experience they produce vague or non-binding falsification criteria in roughly 7 out of 10 first-draft hypotheses ("if users don't show confusion in a future study") — criteria that, taken literally, cannot be refuted by any reasonable study design. The scoring rubric and the falsification-criterion template must be in the prompt or in the structured output schema (see Phase 11 · 03).
 
 A simple confidence rubric that works in practice:
 
@@ -138,6 +138,20 @@ The driver runs five sample hypotheses (mixing strong, moderate, weak, and anecd
 | Silence check | "Who we didn't hear from" | Identifying segments present in the participant pool but absent from a cluster's evidence, and naming the possible reasons |
 | Coverage check | "Segment breakdown" | Verifying that no single segment provides more than a threshold share of a cluster's evidence |
 | Decision artefact | "The research readout" | The downstream document (PRD section, hypothesis backlog, design brief) that the synthesis pipeline produces and that the product team acts on |
+
+## Consultant field notes
+
+The patterns below recur across synthesis engagements. Recognising them early is worth more than any single tool choice.
+
+**The RAG that returned the right doc but the wrong paragraph.** The retrieval hit the right source file, then the synthesis layer pulled a quote from page two of a 40-page document that contradicted the page-one summary. Traceability through cluster IDs and snippet offsets is the only defence; verbatim quotes without offsets are the failure mode.
+
+**The prompt that worked in the demo but failed in production.** A scoring rubric that produced clean 0.8 confidence scores on five hand-picked transcripts returns 0.2 confidence on the next 200 because the evidence density never matched the demo. Calibrate the rubric against held-out transcripts before you trust it, not against the examples you used to write it.
+
+**The bias review that confirmed what the team already believed.** Coverage and silence checks are skipped or rubber-stamped when the hypothesis is politically convenient. The pipeline runs; the analyst does not block; the decision artefact carries an unfilled flag. Make the flag a required field that cannot be empty in the structured output, or it will be empty in practice.
+
+**The silent segment that turned out to be the customer.** The participants who dropped out of the study, or who never got recruited, often hold the pain point the product team most needs to hear. Silence check exists to name that absence — not to apologise for it.
+
+**The use case everyone approved but nobody wanted.** A hypothesis passes the falsifiability gate, the bias review, and the PM sign-off — and then the built feature sees adoption below 5 % in the first quarter. The synthesis pipeline did its job; the prior step (does anyone actually need this?) was never gated at all.
 
 ## Further Reading
 

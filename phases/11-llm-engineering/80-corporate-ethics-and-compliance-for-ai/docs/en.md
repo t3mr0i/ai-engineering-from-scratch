@@ -111,10 +111,18 @@ Open-weight models (Llama 4, Mistral Large 2) deployed on company-owned infrastr
 | Human-in-the-loop | "A human reviews it" | A defined human review step with actual authority to overrule the AI output before it has effect; rubber-stamping a recommendation does not satisfy this requirement |
 | SCCs | "Standard Contractual Clauses" | EU-approved transfer mechanism for sending personal data to a third country; must be in place before cross-border API calls that include personal data |
 
+## Consultant field notes
+
+- **The prompt that worked in the demo but failed in production.** Demos run on cleaned, sanitised data. The first production query carries a customer name, an account number, and an edge case the model has never seen. If the intake did not classify data sensitivity before the demo, the same team that celebrated week three is filling out an incident report by week four.
+- **The use case everyone approved but nobody wanted.** A sponsor signs off, legal signs off, InfoSec signs off. Then the frontline team that has to live with the AI output quietly routes around it. This almost always means the intake captured stakeholder sign-off but not end-user workflow — the "who actually clicks the button" question was never asked.
+- **The vendor pilot that never made it past the security review.** Procurement approved the vendor in principle six months ago. Security review starts, and the DPA is unsigned, the data residency is unclear, and the training-opt-out clause is buried in a tier that was never contracted. The fix is to make the security checklist a precondition of the pilot kickoff, not a deliverable of it.
+- **The AI feature that hit a cost ceiling in month two.** Per-token economics looked fine in the design doc. Real traffic, real prompts, real context windows, and a logging layer that retains full conversations for audit — the monthly invoice triples between month one and month three, and the business case quietly stops working. Intake should include a usage envelope, not just a unit price.
+- **The RAG that returned the right doc but the wrong paragraph.** Compliance approved the retrieval corpus because it was the right *source*. The system retrieved the right document and surfaced the wrong section — the one that contradicted the policy. Chunking strategy and citation grounding belong in the intake, not as a post-build tuning exercise.
+
 ## Further Reading
 
 - [EU AI Act full text — EUR-Lex](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1689) — Annex III lists all high-risk categories; Article 5 lists all prohibited uses.
 - [European Data Protection Board — Guidelines on automated decision-making](https://www.edpb.europa.eu/our-work-tools/our-documents/guidelines_en) — authoritative GDPR Article 22 interpretation.
 - [EU AI Office — GPAI model compliance](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) — the implementation guidance and codes of practice for GPAI providers and deployers.
-- [NIST AI Risk Management Framework 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US complement to the EU Act; widely used in international enterprise governance alongside the EU framework.
+- [NIST AI Risk Management Framework 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US complement to the EU Act; adopted as a baseline reference in the AI governance policies of most large multinational enterprises our teams encounter, typically alongside the EU framework.
 - [ISO/IEC 42001:2023 — AI Management System standard](https://www.iso.org/standard/81230.html) — the international management-system standard for AI; increasingly required in enterprise procurement and audit.

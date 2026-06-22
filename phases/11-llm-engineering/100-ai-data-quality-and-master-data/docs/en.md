@@ -23,7 +23,7 @@ Traditional analytics pipelines fail when data quality fails: a broken SQL join 
 - **A stale reference value** (a product code that was renamed eighteen months ago) appears in historical training data as the old name. The model learns the old name as authoritative. Downstream: the model references a product name that no longer exists in the catalogue.
 - **An inconsistent unit or taxonomy** (revenue sometimes in EUR, sometimes in kEUR; categories that were remapped after a merger) trains the model on contradictory signal. Downstream: magnitude errors or category bleed that is statistically small in aggregate but catastrophic in the tail.
 
-The amplification factor is proportional to how much the AI system generalises. A lookup table does not generalise; a language model generalises aggressively. The same underlying data defect causes an order-of-magnitude larger blast radius.
+The amplification factor is proportional to how much the AI system generalises. A lookup table does not generalise; a language model generalises aggressively. The same underlying data defect typically touches a single query path in a deterministic pipeline but propagates across thousands of inference calls per day in a generative one.
 
 ### The four data quality dimensions that matter for AI
 
@@ -128,6 +128,14 @@ The driver runs a synthetic three-domain assessment (customer, product, supplier
 | MDM (Master Data Management) | "The data governance system" | Platform and process for creating, maintaining, and distributing golden records across source systems |
 | Data contract | "Schema validation" | A formal, versioned specification of what a dataset's structure, quality, and freshness must satisfy; enforceable in CI |
 | Exposure rate | "How often it matters" | Fraction of real production queries that will hit a specific defect; determines whether a defect is a blocker or an acceptable risk |
+
+## Consultant field notes
+
+- **The dashboard that looked healthy until the model shipped.** Every per-field null rate and uniqueness metric was green in the legacy reporting stack; once the same data fed a fine-tuning corpus, contradictory labels surfaced because the legacy dashboards checked per-system health, not cross-system consistency. Lesson: a profiling run is only as good as the cross-source join it runs against.
+- **The RAG that returned the right doc but the wrong paragraph.** Retrieval precision was high on benchmark queries, but in production the chunking strategy inherited the master-data inconsistency — three product variants in three sections of one PDF, all retrieved as separate documents. Lesson: entity resolution must run before chunking, not after.
+- **The vendor pilot that never made it past the security review.** A 60-day data-quality assessment produced a clear blocker list; the vendor's remediation plan needed production read access to customer master data, which security refused. Lesson: scope the upstream data access the remediation will require before signing the assessment scope, not after.
+- **The use case everyone approved but nobody wanted.** A deduplicated golden-record feed enabled an AI workflow that solved a problem the steering committee had approved but the operational team had stopped raising because they had learned to work around it. Six months in, the workflow sat idle and the assessment work was written off. Lesson: validate end-user demand against the data fix, not against the executive sponsor.
+- **The AI feature that hit a cost ceiling in month two.** The data-quality gate was passed at kickoff, but reference-data freshness degraded as upstream systems changed ownership; the freshness filter re-ran on every query and inference cost roughly tripled before anyone traced it. Lesson: re-score freshness against the source `modified_at` distribution on a fixed cadence, not once at project start.
 
 ## Further Reading
 

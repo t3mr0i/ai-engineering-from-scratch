@@ -9,7 +9,7 @@
 
 ## The Problem
 
-Most engineering teams treat energy cost as an infrastructure concern and leave it to the platform team. The result is a category of waste that neither team owns: prompts that could produce the same answer at one-third the token count, model-size choices driven by benchmark scores rather than task fit, and API calls deployed to regions whose grid carbon intensity is three times higher than a geographically adjacent alternative. The emissions and the cost accrue silently, and neither appears in a sprint review.
+Most engineering teams treat energy cost as an infrastructure concern and leave it to the platform team. The result is a category of waste that neither team owns: in our experience, a sizable share of production prompts can be rewritten to produce the same answer at roughly one-third the token count, model-size choices are often driven by benchmark scores rather than task fit, and API calls are routinely deployed to regions whose grid carbon intensity is several times higher than a geographically adjacent alternative. The emissions and the cost accrue silently, and neither appears in a sprint review.
 
 The consulting question is sharper: when a client asks "what is the environmental footprint of our AI system," the honest answer requires tracing the decision chain from task requirements to model choice to serving region to prompt design. That chain has four distinct levers, each with a different cost of change. A consultant who can only gesture at "use a smaller model" provides no usable guidance; one who can quantify the savings of each lever can turn sustainability from a compliance checkbox into a justified engineering recommendation with a payback period.
 
@@ -122,6 +122,16 @@ Both functions run on synthetic inputs; no API key or network call is needed. Th
 | Model routing | "Right model for the job" | Dynamically assigning requests to the appropriate model tier based on task requirements |
 | PUE | "Datacenter efficiency" | Power Usage Effectiveness: total datacenter power / IT equipment power; necessary but not sufficient for carbon accounting |
 | Functional unit | "Per what" | The denominator in SCI — the unit of output a workload delivers (per request, per user, per document) |
+
+## Consultant field notes
+
+Patterns a senior consultant recognizes by the second engagement:
+
+- **The sustainability slide that names a region but not the grid mix.** "Hosted in EU-West" sounds compliant; the actual grid carbon intensity of EU regions varies by roughly 2-3× in 2026. The fix is always to surface gCO₂eq/kWh on the architecture diagram, not the country name.
+- **The green-coding checklist that lives in a wiki nobody reads.** A sustainability policy that is not wired into the model router or the deployment pipeline produces zero emissions reduction. Pair every checklist item with the runtime decision it should influence.
+- **The model-downgrade proposal that lost the room because nobody measured output quality first.** "Switch Opus to Haiku" without a validation artifact is an opinion, not a recommendation. Always run the side-by-side evaluation on a held-out set before the cost conversation.
+- **The cache that hit on dev traffic and missed on production.** Semantic cache hit rates measured on synthetic or development queries routinely overestimate production rates by a factor of two or more. Measure hit rate on real production traffic for at least one full traffic cycle before sizing the savings.
+- **The use case everyone approved for sustainability reasons and nobody wanted to use.** Green coding is sometimes used to justify a feature whose adoption is below the break-even point. Honest consulting reports the adoption rate alongside the per-request emissions, not instead of it.
 
 ## Further Reading
 

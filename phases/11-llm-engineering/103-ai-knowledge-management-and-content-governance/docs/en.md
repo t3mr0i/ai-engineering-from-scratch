@@ -1,6 +1,6 @@
 # Source Quality Gates Before Retrieval (2026)
 
-> A 2024 Gartner survey found that 60 % of enterprise RAG pilots failed to reach production not because the retrieval model was wrong, but because the source corpus was. By 2026 this is the known failure mode: an LLM cannot compensate for a corpus that mixes authoritative policy documents with outdated wikis, shadow spreadsheets, and hallucinated FAQ entries drafted by previous AI runs. The field now has a name for the discipline — AI Knowledge Management and Content Governance — and a clear engineering mandate: treat source selection and source quality as a first-class engineering gate, not an afterthought. Retrieval amplifies what is already there; it does not filter out noise, it promotes it. Getting governance right before indexing is an order of magnitude cheaper than correcting hallucinated answers that trace back to a bad source.
+> A 2024 Gartner survey found that 60 % of enterprise RAG pilots failed to reach production not because the retrieval model was wrong, but because the source corpus was. By 2026 this is the known failure mode: an LLM cannot compensate for a corpus that mixes authoritative policy documents with outdated wikis, shadow spreadsheets, and hallucinated FAQ entries drafted by previous AI runs. The field now has a name for the discipline — AI Knowledge Management and Content Governance — and a clear engineering mandate: treat source selection and source quality as a first-class engineering gate, not an afterthought. Retrieval amplifies what is already there; it does not filter out noise, it promotes it. Getting governance right before indexing is typically an order of magnitude cheaper than correcting hallucinated answers that trace back to a bad source: in our experience, fixing a governance miss post-deployment costs roughly 5–10× the equivalent ingest-time effort, once you factor in root-cause analysis, corpus re-indexing, user-facing corrections, and the audit trail that an early-stage log would have produced automatically.
 
 **Type:** Learn
 **Languages:** Python (stdlib — source quality scorer and governance policy enforcer)
@@ -134,6 +134,14 @@ The program makes the AND-gate rule explicit: a source that scores well on three
 | Supersession registry | "The replacement map" | A record linking each document to the document it replaces, used to remove outdated versions from the index automatically |
 | Corpus drift | "The index going stale" | The gradual degradation of corpus quality as documents age out of their recency window or are superseded after initial indexing |
 | Scope fit | "Does it belong here" | Whether a candidate source's content falls within the declared task domain of the assistant — independent of its authority or currency |
+
+## Consultant field notes
+
+- **The corpus that scored 0.82 recall and still shipped bad answers.** Offline retrieval metrics looked healthy; the real failure was three years of ungoverned sources feeding the index. Lesson: retrieval metrics measure the corpus you built, not the corpus you needed.
+- **The T3 document everyone trusted because it was on the intranet.** A widely-circulated AI-generated FAQ got past the gate because no one updated the tier policy. Lesson: the policy artifact is a versioned document, not a one-time decision.
+- **The superseded policy that nobody told the index about.** A new compliance document was published; the old one stayed in the corpus and kept being retrieved for six weeks. Lesson: supersession without a registry is just guessing.
+- **The recency window the team picked in the kickoff and never revisited.** Compliance domain, 36-month window — inherited from a stable technical reference domain. Old regulatory guidance stayed admissible for a year. Lesson: recency windows are domain-specific and must be set, not copied.
+- **The governance log the auditors never asked for, until they did.** Treat the log as a pipeline artifact from day one; backfilling it after a finding is roughly an order of magnitude more painful than running it from the start.
 
 ## Further Reading
 

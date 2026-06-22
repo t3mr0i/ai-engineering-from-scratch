@@ -64,7 +64,7 @@ An output contract specifies what "done" looks like before the model starts. The
 
 1. **Format**: memo, slide bullets, decision brief, risk register row, hypothesis tree. Pick one. Mixing formats inside a single prompt produces hybrid outputs that serve neither format well.
 2. **Length constraint**: not "be concise" but a specific limit — "no more than three paragraphs" or "exactly four risks, each one sentence." Vague length guidance is ignored.
-3. **Decision alignment**: name the decision the output must enable. "The partner will use this to decide whether to escalate the timeline conversation in tomorrow's steering committee." This single sentence changes the model's output more than any other single addition to a prompt.
+3. **Decision alignment**: name the decision the output must enable. "The partner will use this to decide whether to escalate the timeline conversation in tomorrow's steering committee." In our experience, this single sentence changes the model's output more than any other single addition to a prompt — typically the difference between an answer that reads as a survey and one that reads as a memo a senior partner could forward without rewriting.
 
 A complete output contract for a consulting memo looks like this:
 
@@ -135,6 +135,20 @@ No network, no real model — the point is to make the *framing policy* explicit
 | Pyramid principle | "Answer first" | Stating the conclusion before the argument; applied to prompts: state the hypothesis before the question |
 | Sycophancy | "It always agrees with me" | Model tendency to confirm the user's stated position; countered by explicit challenge instructions |
 | Ghost deck | "Adversarial draft" | Pre-client document iterated with a challenging co-author; the model plays this role in the hypothesis loop |
+
+## Consultant field notes
+
+Named patterns a senior consultant recognizes from the room, not from the model card.
+
+**The prompt that worked in the demo but failed in production.** A clean four-layer prompt — role, stakeholder, hypothesis, output contract — produces a credible memo on a single test question, and the team declares victory. The same prompt, fed ten real client questions in sequence, drifts: the role layer is silently overridden by earlier turns, the hypothesis bleeds across unrelated questions, and the output contract is honored less than half the time. The lesson: a prompt is per-invocation, not per-project. Treat each new question as a fresh frame.
+
+**The RAG that returned the right doc but the wrong paragraph.** The retrieval system surfaces the correct policy document, but the model's output quotes a neighboring paragraph that says almost the opposite. The failure is not retrieval — it is the absence of a quote-anchored output contract. Add "every factual claim must cite the exact passage you read it from" to the contract, and the wrong-paragraph failure drops sharply in our experience.
+
+**The vendor pilot that never made it past the security review.** A use case is scoped, a vendor is selected, a paid pilot runs for six weeks, and the deliverable is shelved because the security architecture review surfaces data-flow issues that were never part of the prompt design. The lesson: stakeholder context must include the security and compliance reader, not just the business sponsor. A prompt that names the CISO as a downstream reader forces the model to flag the questions the CISO will ask.
+
+**The use case everyone approved but nobody wanted.** Steering committee, business unit, and IT all signed off. Adoption stalls. The lesson encoded in consultative prompting is that belief encoding applies to the end user too, not only to the decision-maker in the room. If the prompt never names what the frontline user already believes about the tool, the output optimizes for the sponsor, not the adopter.
+
+**The AI feature that hit a cost ceiling in month two.** The pilot numbers were small. Production traffic is roughly an order of magnitude larger, the per-call LLM cost compounds with retrieval and reasoning steps, and the budget conversation resets. The lesson: any consultative prompt that goes into a production system needs an explicit cost frame in the output contract — "this answer will be generated at most N times per session" — because the consulting memo that survives the first read is also the one the CFO will reread at scale.
 
 ## Further Reading
 

@@ -9,7 +9,7 @@
 
 ## The Problem
 
-Most AI scaling efforts break at the same seam: the pilot team builds something that works, writes it into a slide deck, and the next team starts from scratch. Standards are rediscovered every sprint. Security reviews repeat from zero. Prompt libraries, evaluation harnesses, and cost-optimized model routing are reinvented in every department. The aggregate cost is invisible in any single project budget but plainly visible at the portfolio level — 40 pilots consuming engineer-months that compound toward nothing.
+Most AI scaling efforts break at the same seam: the pilot team builds something that works, writes it into a slide deck, and the next team starts from scratch. Standards are rediscovered every sprint. Security reviews repeat from zero. Prompt libraries, evaluation harnesses, and cost-optimized model routing are reinvented in every department. The aggregate cost is invisible in any single project budget but plainly visible at the portfolio level — roughly 40 pilots consuming on the order of 6–12 engineer-months each, in our experience, most of which compound toward nothing.
 
 The opposite failure is the over-engineered CoE: a committee that must approve every model call, a standards document that requires sign-off from five teams before a prototype can run, a "Center of Excellence" that has made itself a center of delay. The practical question for a technology consultant or platform engineer is not "should we have governance" but "which decisions belong to the platform and which must stay with the delivery team" — and how to draw that line before the organization builds resentment into the structure.
 
@@ -145,6 +145,16 @@ Phase 13 · 22 covered the technical layer: how skills, tool definitions, and ag
 | Governance cadence | "AI steering committee" | A defined operating rhythm (weekly/monthly/quarterly) that converts portfolio signal into decisions |
 | Maturity level | "Where we are on the journey" | One of five stages from ad hoc pilots to transformational embedding; the consulting diagnostic |
 | Model tier policy | "Which AI to use" | A standardized mapping of (task type, cost, sensitivity) to model endpoint, maintained by the CoE |
+
+## Consultant field notes
+
+Patterns a senior consultant recognizes in the room before the slides are out.
+
+- **The CoE that audited itself into irrelevance.** A central team writes a 40-page standard, requires sign-off from five stakeholders before any model call ships, and measures success by the number of reviews completed. Delivery teams route around it within two quarters and the wiki becomes the deliverable. Lesson: governance that is not enforced in CI is theater; charter the platform, not the paper.
+- **The use case everyone approved but nobody wanted.** The steering committee green-lights an AI feature because it scores well on the prioritization matrix; six months in, no business unit has adopted it because nobody consulted the operational owners who would have to live with its outputs. Lesson: a CoE without champion signal from delivery will fund elegant artifacts that never touch a workflow.
+- **The champion program that was actually a mailing list.** Champions are named in a slide, asked to attend a quarterly hour, and given no protected time. Within twelve months they have stopped attending and the central team complains the network is unresponsive. Lesson: a champion without allocated capacity is a volunteer, and volunteers stop volunteering.
+- **The embedded model that dissolved after the rotation ended.** A CoE rotates engineers into delivery teams for two years; they integrate well, deliver value, and then return to a central team that no longer has a charter. The asset library stops being maintained and the standards revert to per-team defaults within 18 months. Lesson: embedded models need a permanent home for the institutional memory or the compounding layer collapses back to ad hoc.
+- **The kill decision that never came.** A pilot has missed two milestones, consumes one champion's full sprint capacity, and produces a working demo that nobody outside the pilot team has seen. The monthly portfolio review is the forum that should kill it; in our experience, in roughly half of mid-sized programs this forum does not actually convene, and the pilot drifts for another two to three quarters before budget pressure ends it. Lesson: a governance cadence that exists on paper is not a cadence.
 
 ## Further Reading
 

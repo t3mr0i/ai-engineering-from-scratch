@@ -26,7 +26,7 @@ Not every ticket belongs in the same automation lane. The decision point is the 
 | **C — Document first** | Low | High | The fix is known but not written; priority-1 knowledge capture task before any automation attempt |
 | **D — Escalate or accept** | Low | Low | Edge case or novel incident type; route to L2/L3; AI flags pattern when volume crosses a threshold |
 
-Zone A is where automation pays immediately. Zone C is the most common finding in real audits: deterministic fixes that nobody documented, often because the analyst who knows them has been on the team for years and is treated as a human runbook.
+Zone A is where automation pays immediately. Zone C is typically the largest single zone in a real audit — in our experience, often a third or more of recurring ticket clusters land here — because deterministic fixes that nobody documented tend to accumulate with every team turnover, and the analyst who knows them is treated as a human runbook until they leave.
 
 ### Ticket clustering and pattern identification
 
@@ -116,6 +116,16 @@ The silent killer of automated resolution systems is runbook drift: the system c
 | Knowledge gap | "Nobody wrote it down" | A resolution step that analysts perform consistently but that is absent from any KB article |
 | Automability | "Can we automate it" | A composite assessment of knowledge quality + resolution determinism; not a binary |
 | HITL gate | "Human approval step" | An explicit analyst approval action required before a state-changing automation step executes |
+
+## Consultant field notes
+
+Named patterns a senior consultant recognises from this work:
+
+- **The RAG that returned the right doc but the wrong paragraph.** The retriever scored high on the article; the LLM pulled the step from a sibling section about a different system version. Lesson: chunk by runbook section, not by article, and pin the version.
+- **The prompt that worked in the demo but failed in production.** Three curated tickets, perfect answers; the real distribution has 30% noise, missing fields, and three languages. Lesson: evaluate on a stratified sample of the actual ticket stream before any go/no-go.
+- **The use case everyone approved but nobody wanted.** Endorsed by the steering committee, ignored by the floor — because the analyst's real pain was a different ticket class entirely. Lesson: validate demand with the people who close tickets, not the people who sign off on slides.
+- **The automation that hit a cost ceiling in month two.** Pilot ran on 200 tickets a week; full rollout surfaced 4,000, and the per-ticket LLM call exceeded the analyst's salary. Lesson: model the steady-state per-resolution cost before zone assignment, not after.
+- **The runbook that drifted the day after go-live.** Production change shipped Friday, runbook review scheduled for next quarter. Lesson: tie runbook staleness to change-management events, not calendar reviews.
 
 ## Further Reading
 

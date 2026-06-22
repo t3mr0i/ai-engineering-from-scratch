@@ -9,7 +9,7 @@
 
 ## The Problem
 
-Teams shipping AI features in 2026 face a governance gap that has no direct analogue in traditional software: the model they chose last quarter may be deprecated, may have changed its safety behavior in a silent update, may now cost 40% more per million tokens, or may have introduced a new residency restriction. None of these are bugs in the team's code. All of them can invalidate the original decision rationale within months.
+Teams shipping AI features in 2026 face a governance gap that has no direct analogue in traditional software: the model they chose last quarter may be deprecated, may have shifted its outputs across a minor vendor update (in our experience this happens roughly every 6–9 months for major providers), may now cost 40% more per million tokens, or may have introduced a new residency restriction. None of these are bugs in the team's code. All of them can invalidate the original decision rationale within months.
 
 The consulting question is not whether to document AI architecture decisions — the question is *what* to record so the document stays useful when conditions change. A decision log that records only "we picked GPT-4o because it was the best model" fails at the first contract renewal. A good AI ADR records the boundary conditions — the cost threshold above which the decision reverts, the latency SLA the model was measured against, the data-classification level the vendor was assessed at. These boundary conditions are the living part of the document; without them the ADR is a museum exhibit, not a governance tool.
 
@@ -128,6 +128,16 @@ No network, no model calls. The goal is to make the *governance policy* explicit
 | Model tier | "Which model" | A capability-and-cost bracket (frontier reasoning / frontier general / efficient / self-hosted) used to reason about substitutability |
 | Cost ceiling | "Budget line" | A documented monthly-spend threshold above which the current model choice must be re-evaluated |
 | Portfolio register | "Decision log" | A centralized list of all active AI ADRs with status, owner, and next-review date |
+
+## Consultant field notes
+
+Five patterns a senior consultant sees across engagements — the shapes that recur regardless of model, vendor, or industry.
+
+- **The prompt that worked in the demo but failed in production.** A small, hand-tuned prompt shipped beautifully in a 50-row evaluation; the same prompt degraded once it met real user phrasing, which is messier, multilingual, and adversarial. The decision an ADR should have recorded was not the prompt — it was the evaluation set. Without a frozen eval, "the model works" is unfalsifiable.
+- **The RAG that returned the right doc but the wrong paragraph.** The retriever hit the right source; the chunker split across a table, a list, and a sentence that contradicted the answer. The architecture looked correct in the diagram. Lesson: ADRs must record chunking and retrieval policy alongside the model choice, because the model was rarely the bottleneck.
+- **The vendor pilot that never made it past the security review.** A two-week proof-of-value produced a working integration, then stalled in legal and infosec for six months. The ADR was written after the pilot, not before — and the security boundary had no documented owner. Lesson: the ADR must exist before the pilot, with at least the data classification named, or the pilot is sunk cost.
+- **The use case everyone approved but nobody wanted.** A steering committee signed off on a high-value use case; the end users routed around it within a quarter. There was no ADR for the rollout, no owner for adoption, and no measurement of whether the feature was used. Lesson: an ADR without an adoption owner is a procurement document, not a governance document.
+- **The AI feature that hit a cost ceiling in month two.** Volume was underestimated in the cost projection — typically because the prototype volume, not production volume, was used. The ADR's cost ceiling fired exactly as designed, but the team had no cheaper tier benchmarked and no migration plan. Lesson: every ADR must record the cheaper fallback model, not just the chosen one.
 
 ## Further Reading
 

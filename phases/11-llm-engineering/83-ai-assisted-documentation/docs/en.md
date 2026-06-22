@@ -11,7 +11,7 @@
 
 Most teams discover the documentation problem at the worst possible moment: during an incident, an audit, or a handoff. The on-call engineer reads the runbook, follows the step, and finds that the configuration parameter it references was renamed six months ago. The auditor reads the architecture decision record and asks for the meeting notes it cites — which no longer exist in Confluence. These are not "AI problems." They are source-tracking problems, and AI drafting makes them worse because the model is confident, the prose is fluent, and the drift is invisible until it causes harm.
 
-The engineering question for 2026 is not whether AI should assist with documentation — the throughput gains are real and the alternative (under-documented systems) is worse — it is how to enforce source-grounding as a first-class constraint rather than a quality-check afterthought. Documentation that cannot be verified at the claim level is a liability dressed as an asset. The same principle that makes code reviews valuable — every non-trivial statement should trace to something checkable — applies to documentation, and AI drafting workflows that skip this step are shipping technical debt at a faster rate than the teams they replace.
+The engineering question for 2026 is not whether AI should assist with documentation — the throughput gains are real and the alternative (under-documented systems) is worse — it is how to enforce source-grounding as a first-class constraint rather than a quality-check afterthought. Documentation that cannot be verified at the claim level is a liability dressed as an asset. The same principle that makes code reviews valuable — every non-trivial statement should trace to something checkable — applies to documentation, and AI drafting workflows that skip this step ship technical debt that, in our experience, takes roughly twice as long to detect and repair — because the prose masks the source gap until something breaks against it.
 
 ## The Concept
 
@@ -130,6 +130,16 @@ Two rules that hold across doc types:
 | Context engineering | "Prompt with context" | The discipline of retrieving and structuring source artifacts before model inference — covered in Phase 11 · 05 |
 | MCP resource server | "Docs plugin" | A server exposing documentation sources (Confluence, GitHub, Jira) as retrievable resources for model context — covered in Phase 13 · 10 |
 | CI-integrated doc generation | "Docs in CI" | A pipeline step that generates or validates documentation from current build artifacts, failing if claims cannot be grounded |
+
+## Consultant field notes
+
+Named patterns from documentation engagements that look fine on paper and hurt in the meeting after.
+
+- **The use case everyone approved but nobody wanted.** The steering committee green-lit the AI doc assistant because the demo was clean and the procurement window was closing. Six months in, the engineers who would have to maintain it never wrote the prompt template, the source inventory stalled at three artifacts, and the team quietly reverted to hand-written Confluence pages. Lesson: a documentation tool without an internal champion and a maintained source inventory is a license, not a workflow.
+- **The RAG that returned the right doc but the wrong paragraph.** The retrieval was scoring on chunk similarity, not on the question the user actually asked, so the model answered authoritatively from a tangentially related section while the truly relevant paragraph sat three results down. Lesson: ground retrieval to the claim level, not the document level — the unit of correctness is the passage, not the file.
+- **The prompt that worked in the demo but failed in production.** The demo source was a tidy three-file sample repo; the production repo had eight years of migrations, renamed modules, and deprecated endpoints in the same paths. The model's grounding discipline held against the clean artifacts and silently substituted training-data recall against the messy ones — with no signal in the output that the source had been abandoned. Lesson: source-grounding must be tested against the actual mess, not the curated subset.
+- **The AI feature that hit a cost ceiling in month two.** The first invoice arrived and the project economics inverted: every regeneration of a "live" doc section called the frontier model with a full repository context window, and the monthly bill was on track to exceed the cost of the human author it was supposed to replace. Lesson: cost per grounded claim is the right unit, not cost per generation — and it has to be modeled before the pilot, not after.
+- **The handoff document that nobody opened until the audit.** The transition doc was generated, merged, linked from the wiki sidebar, and forgotten. The incoming team asked the same questions the outgoing team had answered in it; the auditor asked a different set and found every claim stale. Lesson: a handoff doc that is not consulted within the first two weeks of the engagement is not a handoff doc — it is a liability with a creation date.
 
 ## Further Reading
 

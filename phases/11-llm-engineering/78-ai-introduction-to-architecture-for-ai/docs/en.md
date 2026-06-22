@@ -11,7 +11,7 @@
 
 The most common failure mode on AI system projects is sequential: a team evaluates a model, gets good results on a curated test set, deploys a thin wrapper around the API, and then discovers in week two that latency spikes to 12 seconds under concurrent load, context windows overflow on real documents, the model hallucinates on proprietary data it has never seen, and there is no way to explain to the client what happened in a given session. None of these are model failures. They are architecture failures.
 
-The second-most-common failure mode is the opposite: over-engineering. Teams add RAG pipelines, vector databases, agent orchestration, custom fine-tuning, and red-team frameworks to a use case that would have been solved by a well-structured system prompt and a single-turn call. Architecture decisions are risk decisions — every layer you add is a layer that can fail, drift, or become expensive to operate. The discipline is knowing which layers a given requirement actually demands, and which can be deferred or omitted.
+The second-most-common failure mode is the opposite: over-engineering. Teams add RAG pipelines, vector databases, agent orchestration, custom fine-tuning, and red-team frameworks to a use case that would have been solved by a well-structured system prompt and a single-turn call. Architecture decisions are risk decisions — every layer you add is a layer that can fail, drift, or add to the monthly operating bill (in our experience, each new layer typically adds a low double-digit percentage to the per-request cost once retrieval, orchestration, and observability are fully wired). The discipline is knowing which layers a given requirement actually demands, and which can be deferred or omitted.
 
 ## The Concept
 
@@ -144,6 +144,16 @@ No network, no API keys — the point is to run the decision logic yourself and 
 | Groundedness | "Does it match the sources?" | Whether a generated answer is supported by retrieved or provided reference material |
 | Data residency | "Where does the data live?" | Regulatory requirement that data be processed and stored in a specific geographic jurisdiction |
 | Managed API | "Cloud AI endpoint" | A hosted model endpoint (Azure OpenAI, Anthropic API, Bedrock) where the provider manages infrastructure |
+
+## Consultant field notes
+
+Five shapes you will see again. Name them early in the engagement; clients recognize the pattern faster than the abstract principle.
+
+- **The prompt that worked in the demo but failed in production.** A carefully crafted few-shot prompt dazzles on five curated examples, then collapses on real distribution: long inputs, adversarial users, languages it was never tested on. Lesson: never ship a prompt you have not evaluated against at least a few hundred real production queries, ideally stratified by user segment.
+- **The RAG that returned the right doc but the wrong paragraph.** The vector index hit at the document level; the chunk boundary cut the actual answer in half. The model then hallucinated the missing clause with confidence. Lesson: chunk strategy is a content-quality decision, not an embedding decision — re-rank and citation checks catch this; embedding similarity does not.
+- **The vendor pilot that never made it past the security review.** A six-week PoC ran beautifully, then stalled three months in procurement because data residency, audit logging, or model fine-tuning rights were never agreed at contract level. Lesson: involve InfoSec and legal on day one, not week eight.
+- **The use case everyone approved but nobody wanted.** A steering committee greenlit the AI assistant for case workers; six months later, adoption sits at 8% because the workflow did not match how the job actually gets done. Lesson: validate the use case with the end users, not just the sponsors — enthusiasm at the top is not a proxy for usage in the field.
+- **The AI feature that hit a cost ceiling in month two.** A prototype looked free at 200 test queries; at production volume the retrieval + LLM + re-rank stack pushed per-interaction cost past what the business case assumed, and the feature got quietly disabled. Lesson: model the cost ceiling at 10x your expected volume before approving scope, not after.
 
 ## Further Reading
 

@@ -9,7 +9,7 @@
 
 ## The Problem
 
-Project steering packs fail in two predictable ways. The first is evidence-free status: a RAG/Amber/Green indicator appears on the cover slide with no traceable source, stakeholders cannot tell whether the amber means "one minor delay" or "the MVP scope is at risk," and the meeting turns into a fact-finding exercise that should have happened before the room assembled. The second failure is the opposite: raw data dumps — sprint velocity charts, open-ticket counts, deployment frequencies — assembled without a governing decision question, so stakeholders spend 40 minutes triangulating signals the author could have pre-answered.
+Project steering packs fail in two predictable ways. The first is evidence-free status: a RAG/Amber/Green indicator appears on the cover slide with no traceable source, stakeholders cannot tell whether the amber means "one minor delay" or "the MVP scope is at risk," and the meeting turns into a fact-finding exercise that should have happened before the room assembled. The second failure is the opposite: raw data dumps — sprint velocity charts, open-ticket counts, deployment frequencies — assembled without a governing decision question, so a typical 60-minute steering meeting typically loses 20–30 minutes to triangulating signals the author could have pre-answered.
 
 The engineering question for 2026 is not whether an LLM can write a status section. It is: given a set of project signals, which ones change the steering recommendation, which decision question each section of the pack is designed to answer, and when the confidence in AI-generated synthesis is high enough to present without a human editorial pass. Phase 11 · 10 showed that evaluation gates are the discipline that keeps LLM outputs from degrading silently; this lesson applies the same thinking to reporting pipelines: treat each pack section as an LLM output that requires a defined acceptance criterion, not a document that "looks right" on a quick read.
 
@@ -121,6 +121,20 @@ No network, no LLM calls. The point is to make the decision logic executable and
 | Synthesis step | "Writing the section" | A prompt that generates narrative + traffic-light + decision closing from structured signals |
 | Quality gate | "Reviewing the output" | A mechanical checklist (source traceability, tier coverage, decision question, consistency, staleness) applied before presenting |
 | Decision question elision | "Reads smoothly but decided nothing" | A failure mode where the model omits a decision request when evidence points to a difficult trade-off |
+
+## Consultant field notes
+
+The patterns a senior PM or delivery lead recognizes after the third steering pack has failed:
+
+- **The amber that nobody could trace.** The cover-slide traffic-light had a rationale attached, but two clicks into the source it cited a Slack message from a stand-up three weeks ago. The amber was real; the evidence was a fossil. Lesson: if the timestamp is older than the staleness threshold, the section is not amber — it is unknown.
+
+- **The demo prompt that fell over in production.** The extraction JSON came back clean, the synthesis read fluently, and the stakeholder approved. Two sprints later the same section surfaced a number that turned out to be hallucinated — plausible-shaped, not present in the source. Lesson: gates that check fluency pass the demo; gates that check source traceability catch the production drift.
+
+- **The decision request buried in a status section.** Everything read green; the team had a known blocker on a third-party dependency, but it appeared as one bullet among twelve. Nobody in the room felt they were being asked a question. Lesson: if a section contains a blocker, it is not a status section — the prompt must classify it as a decision request before it reaches the deck.
+
+- **The pack that was perfect and changed nothing.** Every gate passed, the traffic-lights matched, the decision closings were explicit — and the meeting still ended with no commitments logged. Lesson: a steering pack that does not produce a written owner-and-date for every action is a status report, not a steering pack.
+
+- **The weekly pack that nobody read by week three.** The first two iterations got careful stakeholder attention; by week three the same format was being skimmed or skipped entirely. Lesson: pack reliability decays without variation; a section that repeats the same closing shape for four consecutive weeks is signalling that the underlying decision has already been made and the pack should be retired, not refreshed.
 
 ## Further Reading
 

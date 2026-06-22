@@ -86,7 +86,7 @@ The Phase 14 · 39 reviewer agent pattern generalises cleanly. The meeting artif
 - Are any actions owned by more than one person?
 - Does the artifact set cover the stated meeting goal, or is the goal itself unmet and undeclared?
 
-Running this as a two-agent loop surfaces gaps that a single extraction pass misses, at the cost of one extra model call per meeting — justified for any meeting whose output feeds external stakeholders.
+Running this as a two-agent loop surfaces gaps that a single extraction pass misses — in our experience typically 15-25% of typed artifacts return with a missing owner, an implicit decision disguised as an open question, or an undeclared action — at the cost of one extra model call per meeting, justified for any meeting whose output feeds external stakeholders.
 
 ## Use It
 
@@ -125,6 +125,20 @@ The driver runs a sample set of seven raw items and prints their classifications
 | Quality gate | "Checking the output" | Rubric-based pass/fail per artifact field; blocks publication of incomplete items |
 | Decision log | "The archive" | Permanent, queryable register of typed decisions — feeds future meetings, onboarding, audits |
 | Reversibility | "Can we change it?" | Explicit declaration of conditions under which a decision can be revisited; critical for risk framing |
+
+## Consultant field notes
+
+Patterns a senior facilitator recognises after a few dozen rooms:
+
+- **The prompt that worked in the demo but failed in production.** The elicitation chain was tuned on three transcripts from the pilot team, all in clean English, all with one clear speaker. The first real meeting had two accents, crosstalk, a presenter reading from slides, and a client who joined late. The chain still extracted artifacts — just the wrong ones, confidently. Lesson: validate the rubric on a messy transcript before you trust the output, and keep a human in the confirmation loop on every meeting where you cannot replay the room.
+
+- **The decision log that grew faster than anyone could read it.** The discipline worked. Every meeting produced typed decisions with rationale, owner, and reversibility. Six months in, the log has more than a thousand entries and no one opens it before a meeting. The system produces artifacts nobody consumes. Lesson: a decision log is only useful if future meetings actually diff against it; otherwise it is a write-only database dressed up as governance.
+
+- **The workshop that surfaced the real question in the last ten minutes.** The agenda was tight, the elicitation prompts polished, the decision frame pre-built. At minute fifty a junior participant asked the question the whole session should have started with — and there was no time to answer it. Lesson: build a ten-minute open slot into every workshop frame and protect it; the most important artifact is often the one you did not plan to produce.
+
+- **The pre-meeting brief that nobody read.** The decision frame was distributed forty-eight hours before the workshop. Half the attendees skimmed it; the other half did not open it. The facilitator spent the first twenty minutes re-explaining what was already written. Lesson: a written brief is a forcing function for the author, not a substitute for the facilitator's opening — budget the recap or run the meeting differently.
+
+- **The meeting type nobody bothered to type.** Teams adopted the four-artifact discipline for project meetings and forgot about retrospectives, hiring debriefs, and incident reviews. Those meetings kept producing flat action lists while the rest of the organisation moved to typed artifacts. Lesson: the rubric only delivers value when it is applied uniformly across meeting types; exceptions become the gaps where accountability quietly evaporates.
 
 ## Further Reading
 

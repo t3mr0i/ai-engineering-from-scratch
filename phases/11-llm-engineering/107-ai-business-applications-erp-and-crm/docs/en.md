@@ -43,7 +43,7 @@ Salesforce's AI layer in 2026 is **Agentforce**. Agentforce ships autonomous age
 
 - **Einstein Copilot** (now a component inside Agentforce) answers questions and drafts content inside the Salesforce UI. It reads CRM data. Write-back is user-initiated.
 - **Agentforce autonomous agents** execute multi-step tasks — routing cases, sending emails, updating records, booking meetings — with no user in the loop per step. This is a categorically different integration pattern: the agent holds a Salesforce credential and can commit writes at the frequency of the trigger, not the frequency of a human click.
-- **Data Cloud** is Salesforce's unified data layer. A use case that needs customer journey context beyond what lives in the core CRM objects (Accounts, Cases, Opportunities) will require a Data Cloud license and a data mapping exercise. Many AI use case scoping conversations assume Data Cloud is available when it is not in the current contract.
+- **Data Cloud** is Salesforce's unified data layer. A use case that needs customer journey context beyond what lives in the core CRM objects (Accounts, Cases, Opportunities) will require a Data Cloud license and a data mapping exercise. In our experience, the majority of Agentforce scoping workshops we observe start from a use-case sketch that quietly assumes Data Cloud is in the contract when it is not.
 - **External LLM routing**: Agentforce can route to external LLMs via MuleSoft or the Apex HTTP callout pattern. Any external routing must be evaluated under the Salesforce Shield or equivalent contract and must confirm that customer data is not retained by the external model endpoint.
 
 ### Platform anatomy: Microsoft Dynamics 365 + Copilot Studio
@@ -115,6 +115,14 @@ Running the program against five synthetic use cases shows the range: a single-p
 | Copilot Studio | "Microsoft's AI builder" | The orchestration layer for Copilot extensions across Microsoft 365 and Dynamics 365; routes Dataverse data to Azure OpenAI within the same Azure tenancy |
 | Integration pattern | "How the AI connects" | One of five tiers from read-only to open-ended autonomous action; determines the required approval tier and change-management scope |
 | RAG status | "Traffic light" | Red/Amber/Green per evaluation axis; the formal output of a use-case gate review, not a final business case |
+
+## Consultant field notes
+
+- **The demo that worked in the workshop but failed in production.** The prototype runs against a copy of the ERP tenant with anonymized data and a sandbox user. In production it hits a real customer record under a real authorization profile and the LLM surfaces a field the data owner never agreed to expose. Lesson: demo parity is a boundary problem, not a prompt problem.
+- **The RAG that returned the right document but the wrong paragraph.** Vector retrieval lands on the correct SAP or Salesforce object, then the chunker cuts mid-sentence across a header or a currency cell. The model answers confidently about something the document never said. Lesson: chunk boundaries matter as much as retrieval relevance; review the chunker before the embedder.
+- **The vendor pilot that never made it past the security review.** Joule, Agentforce, or Copilot Studio went live in a sandbox under a vendor-signed DPA. The real customer environment requires a reviewed data-processing agreement, a residency clause at the BTP subaccount or Azure region level, and a logging path that excludes prompts from vendor telemetry. By the time these surface, the budget window has closed. Lesson: start the DPA conversation in week one, not after the pilot.
+- **The use case everyone approved but nobody wanted.** A steering committee green-lights the use case because it sounds strategic. Six months in, the people who actually do the work route around the feature and keep their existing spreadsheet. Adoption numbers stall at low single digits. Lesson: a use case that no operator nominates rarely survives contact with daily work; demand a named operational sponsor, not just an executive champion.
+- **The AI feature that hit a cost ceiling in month two.** The pilot assumed a handful of users calling a read-only summarizer a few times a day. Production sees hundreds of users, each invoking the agent multiple times per case, with write-back patterns that trigger downstream notifications. The line item on the cloud bill grows roughly an order of magnitude and the business case no longer closes. Lesson: size the cost model against the integration pattern, not the demo scenario.
 
 ## Further Reading
 

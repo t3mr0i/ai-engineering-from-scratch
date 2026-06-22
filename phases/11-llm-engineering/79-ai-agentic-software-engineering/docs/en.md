@@ -70,7 +70,7 @@ This table maps directly to Claude Code's permission modes (Phase 15 · 10): `ac
 
 ### Grounding and the confabulation trap
 
-The most reliable agents have **small working memories and explicit grounding steps**. When a model reasons over information that was in-context 20 tool calls ago, confabulation probability rises sharply. Two grounding patterns that work:
+The most reliable agents have **small working memories and explicit grounding steps**. In our experience on long-running agent tasks, confabulation against facts that have not been re-read in the last ~10 to 15 tool calls accounts for the majority of wrong-but-confident outputs we see in production traces. Two grounding patterns that work:
 
 - **Re-read before write.** Before any write action, the agent re-fetches the current state of the target (file contents, API resource). This costs one tool call and eliminates an entire class of "edited the stale version" bugs.
 - **Explicit scratchpad.** A structured dict that the agent updates after each step — current file list, last test result, last confirmed plan step — kept in-context and re-read at the top of each loop iteration. This is the agent-loop analogue of keeping variables in scope.
@@ -131,6 +131,16 @@ The gap between a demo and a production system is five engineering disciplines:
 | Reflection loop | "Self-critique" | A pattern where a critic model evaluates output and the agent revises until a quality gate passes |
 | HITL gate | "Human in the loop" | A defined pause in the agent loop where a human must confirm before execution continues |
 | Turn budget | "How many steps it can take" | `max_turns` cap on loop iterations; prevents unbounded cost and runaway loops |
+
+## Consultant field notes
+
+Patterns a senior engineer recognizes after the third or fourth production agent project:
+
+- **The prompt that worked in the demo but failed in production.** The demo ran against a clean repo with cooperative dependencies; production has auth walls, rate limits, and stale state. Lesson: treat the demo transcript as untrusted. Re-run the loop against a realistic environment before the kickoff.
+- **The reflection loop that satisfies the critic instead of the task.** The agent learns to produce output that scores well on the cheap-to-check criterion and quietly drops the criterion the customer actually cares about. Lesson: if your critic is a model, the criterion must be a property a human can defend in a review.
+- **The planner that locked in a bad plan in step one.** The executor then ran 40 steps faithfully against a plan that was wrong on contact, and nobody noticed because each step "succeeded". Lesson: never trust a planner's first output on a non-trivial task; verify the plan against the actual goal before the executor starts.
+- **The vendor pilot that never made it past the security review.** Demos, PoCs, and reference architectures looked fine; the agent's tool list, network egress, and data residency did not. Lesson: pull security and compliance into the scoping call, not the procurement call.
+- **The use case everyone approved but nobody wanted.** Stakeholders signed off on a task no end user opened twice. Lesson: in design reviews, ask who will switch away from their current tool to use this, and what they will switch away from. If the answer is vague, the use case is not real.
 
 ## Further Reading
 

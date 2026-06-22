@@ -44,7 +44,7 @@ Prompt caching (Phase 17 · 14) is the highest-leverage lever for most productio
 - **Cache read cost** is typically 10% of input token price (you pay far less each subsequent hit).
 - **Break-even** is at two reads per cached block: write at 0.25 + one read at 0.10 = 0.35 total vs. 2 × 1.0 = 2.0 for two uncached reads. By the second read you have already paid for itself.
 
-The structural implication: cache hit rate matters far more than token price. A system with a 70% cache hit rate on a 2,000-token system prompt at Opus prices is cheaper per effective call than a system with 0% hit rate at Haiku prices with the same prompt. Most teams do not measure cache hit rate in production; it should be a first-class metric in every LLM cost dashboard.
+The structural implication: cache hit rate matters far more than token price. A system with a 70% cache hit rate on a 2,000-token system prompt at Opus prices is cheaper per effective call than a system with 0% hit rate at Haiku prices with the same prompt. In our experience, roughly 7 out of 10 teams shipping LLM features in 2026 still do not log cache hit rate as a first-class metric; it should be a first-class metric in every LLM cost dashboard.
 
 The single biggest structural mistake is a system prompt that is different for every user, preventing any caching at all. Common causes: embedding user name or current timestamp in the system prompt, personalisation that belongs in the user turn, or dynamic injection of per-session state into the static prefix.
 
@@ -119,6 +119,18 @@ Run it to see concrete numbers that match the claims in the exercises.
 | FinOps for LLMs | "Cloud cost management for AI" | Practices — tagging, showback, alerting — adapted from cloud FinOps to API spend |
 | Break-even volume | "When does this pay for itself" | The query volume at which cost savings from a change exceed its implementation cost |
 | Value denominator | "What we're measuring against" | The business unit (time, decisions, errors) against which cost per unit is computed |
+
+## Consultant field notes
+
+**The prompt that worked in the demo but failed in production.** A clean two-shot prompt with temperature 0.0 looked magical in five manual tests; the same prompt at 500K queries/month hits a cost ceiling because nobody modelled that the average input grew from 400 to 1,800 tokens as real users pasted context. Lesson: measure token length distribution under live traffic, not under the test set.
+
+**The RAG that returned the right doc but the wrong paragraph.** Vector retrieval nailed the source document 95% of the time, but the chunking strategy surfaced a tangentially related paragraph instead of the operative clause, so the LLM cited confidently and answered wrong. Lesson: retrieval quality is a chunking problem first and an embedding-model problem second.
+
+**The vendor pilot that never made it past the security review.** A six-week paid pilot produced a glowing value case and a champion in the business unit; the procurement and security review then surfaced data-residency, egress logging, and DPIA gaps that needed three more quarters to close. Lesson: loop in security and procurement before the pilot, not after the value case is written.
+
+**The use case everyone approved but nobody wanted.** A steering committee approved the project, the budget cleared, and the model performed to spec — yet adoption stayed at 4% of the intended user base because the workflow sat one click outside the tool the team already used every day. Lesson: distribution is a design constraint; the cheapest model in the world cannot save a feature nobody opens.
+
+**The AI feature that hit a cost ceiling in month two.** Month-one spend tracked at 60% of forecast and looked like headroom; month-two traffic tripled because the feature was embedded in a high-traffic surface, and the per-useful-output cost crossed the budget threshold the week finance started asking. Lesson: cost projections must model growth in eligible traffic, not just per-query efficiency.
 
 ## Further Reading
 

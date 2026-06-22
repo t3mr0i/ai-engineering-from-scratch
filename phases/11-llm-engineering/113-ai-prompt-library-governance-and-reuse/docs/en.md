@@ -67,7 +67,7 @@ In 2026 teams run three types of anchors:
 
 1. **Exact match**: output equals a reference string (works for structured extraction, classification).
 2. **Structural match**: output matches a schema (JSON schema validation, regex).
-3. **LLM-as-judge**: a secondary model scores the output against a rubric. Current practice uses Claude Sonnet 4.x as the judge model because it is fast and its judgment correlates well with human raters on short-form tasks (see Phase 11 · 01 for caveats on self-evaluation).
+3. **LLM-as-judge**: a secondary model scores the output against a rubric. Current practice uses Claude Sonnet 4.x as the judge model because in our experience it scores a typical 200-word anchor output in roughly one to two seconds — typically an order of magnitude faster than pulling in a human reviewer for every registry change — and its judgment correlates well with human raters on short-form tasks (see Phase 11 · 01 for caveats on self-evaluation).
 
 The anchor should be stored alongside the prompt text in the registry, not in a separate test suite that can drift. When the model upgrades — from claude-sonnet-4-5 to claude-sonnet-4-6, for example — re-running all anchors across the STABLE corpus is the regression check. This is where the registry pays back its maintenance cost.
 
@@ -140,6 +140,15 @@ The model in `code/main.py` implements the internal registry pattern because it 
 | CODEOWNERS analogy | "Someone owns it" | Every prompt record has a named owner; no version advances from REVIEW to STABLE without a non-owner reviewer |
 | LLM-as-judge | "Use a model to score it" | A secondary model (e.g. Claude Sonnet 4.x) scores prompt output against a rubric; fast but requires calibration against human raters |
 | Tombstone | "It's deprecated" | A retired registry record that persists with a redirect to the replacement, so callers get an explicit deprecation warning |
+
+## Consultant field notes
+
+A few shapes we see repeatedly across prompt-library engagements — worth naming so the team recognises them early.
+
+- **The prompt that passed the demo but failed in production.** The anchor test was tuned on a cherry-picked input the author loved; the first real batch surfaced every failure mode the demo never exercised. Lesson: the anchor has to come from a real production sample, not from the prompt author's favourite example.
+- **The "shared library" that turned into a data leak.** A prompt was checked into the central registry and promptly scraped into a vector index, a Notion export, and a vendor's evaluation harness — with internal rules, customer names, and pricing logic embedded in the system prompt. Lesson: a registry is also a data-handling surface; treat prompt text the way you treat code that contains secrets, with scoped access and a review path.
+- **The use case everyone approved but nobody wanted.** Governance passed because the prompt technically worked, but the workflow it sat inside had no caller — the upstream system already solved the problem with a regex. Lesson: a STABLE prompt in the registry is not the same as a useful one; track consumption, not just lifecycle state.
+- **The registry that hit a cost ceiling in month two.** LLM-as-judge anchors ran on every promotion, every nightly batch, and every model-upgrade regression sweep. At a few hundred STABLE prompts and three daily sweeps the judge bill overtook the team's tool budget. Lesson: anchor cost is a first-class metric; sample, do not re-run all of them, on every cycle.
 
 ## Further Reading
 

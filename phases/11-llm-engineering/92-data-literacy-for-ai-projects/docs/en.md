@@ -68,7 +68,7 @@ Document the result in a provenance record per source. The record is required in
 
 ### Evaluation coverage: the distribution mismatch trap
 
-The most expensive evaluation failure is the one where offline metrics look good but production accuracy degrades within days of launch. The cause is almost always **distribution mismatch**: the evaluation set was constructed from historical data that does not represent the query distribution the model actually receives.
+The most expensive evaluation failure is the one where offline metrics look good but production accuracy typically degrades within the first one to four weeks of launch as the real query distribution diverges from the eval set. The cause is almost always **distribution mismatch**: the evaluation set was constructed from historical data that does not represent the query distribution the model actually receives.
 
 The 2026 best practice for RAG and retrieval systems:
 
@@ -120,6 +120,20 @@ The scoring function in `code/main.py` makes this gate explicit and runnable.
 | PII scan | "We checked for personal data" | An automated + manual audit for GDPR Art. 4 personal data, including re-identifiable combinations, not just obvious fields |
 | Provenance record | "We know where the data came from" | A per-source document covering origin, chain of custody, license, and opt-out status — required input to a model card |
 | Data processing agreement | "The legal contract" | The GDPR-required agreement between data controller and processor; does not automatically cover model training as a use case |
+
+## Consultant field notes
+
+Five patterns a senior consultant recognises in week one of an AI scoping engagement:
+
+- **The RAG that returned the right doc but the wrong paragraph.** The retrieval hit was correct; the chunking strategy split the answer across a boundary the embedder could not bridge. Lesson: document-level retrieval score hides paragraph-level recall failure. Always include a chunk-level eval.
+
+- **The vendor pilot that never made it past the security review.** The data processing agreement covered display, not training; the procurement team caught it in week four. Lesson: provenance is a procurement artefact, not a data-team artefact. Loop legal in at scoping, not at pilot close.
+
+- **The use case everyone approved but nobody wanted.** The steering committee signed off; the operational users were never asked. Adoption stalled at month three with no failure mode visible in the metrics. Lesson: a stakeholder map is not a user map. Name the daily operator before the steering committee signs anything.
+
+- **The AI feature that hit a cost ceiling in month two.** Per-query LLM cost was acceptable at pilot volume; at production volume it exceeded the unit economics of the feature it was attached to. Lesson: cost per inference x expected query volume x gross margin defines the ceiling before any accuracy discussion.
+
+- **The eval set that scored 94% in the lab and 67% in week one.** Employees wrote questions against the same documents they indexed; the retrieval trivially returned the source. Lesson: a held-out split must separate query author from indexed document author. Otherwise the eval measures memorisation, not retrieval.
 
 ## Further Reading
 

@@ -79,7 +79,7 @@ Frontier models converge on the same core prompt anatomy but differ in sensitivi
 
 - **Claude Opus 4 / Sonnet 4 / Haiku 4** — explicit XML tags in prompts (`<context>`, `<task>`, `<output>`) are documented to improve parsing accuracy on long prompts. The `<function_calls>` schema in tool use is strict; the model will ignore a malformed schema rather than guess.
 - **Fable 5** — accepts JSON Schema directly in the system prompt for output formatting; enforces it via constrained decoding.
-- **GPT-4.1** — responds well to markdown section headers as structural cues; less sensitive to XML tags.
+- **GPT-4.1** — responds well to markdown section headers as structural cues; in our experience, prompts that scored ~90% with XML tags on Claude typically score within 2-3 points of that on GPT-4.1 with markdown headers swapped in, so model-specific syntax rarely moves the needle by more than a few percentage points once the contract is fixed.
 
 The cross-model rule: write output contracts in a format that is model-agnostic (a labelled template or JSON Schema) and rely on model-specific syntax only where the model's documentation says it helps. This makes prompts portable when you switch models — which you will, because model pricing, latency, and capability change every quarter.
 
@@ -130,6 +130,22 @@ No network, no model calls — the point is to make the classification and valid
 | Probe set | "Test cases for prompts" | A fixed set of varied inputs (typical, edge, adversarial) used to verify and regression-test a prompt |
 | Scope constraint | "Tell it what not to do" | Explicit exclusions in the prompt that prevent output bloat and scope creep |
 | Decompose and route | "Break it into parts" | Splitting a complex task across multiple focused prompts rather than one overloaded instruction |
+
+## Consultant field notes
+
+These are the patterns a senior prompt engineer recognises by name after a few projects. They are not in the official docs; they come from watching prompts behave in production.
+
+**The demo-vs-production gap.** A prompt that returns perfect JSON on three hand-picked demo inputs fails on the fourth in production because the developer never built a probe set. Symptom: "it worked in the workshop." Cure: ship the probe set with the prompt. The team that demos without a probe set demos twice — once to the client, once when the first production incident lands.
+
+**The clever sentence nobody can explain.** A single sentence in a prompt pulls 80% of the quality lift, but the developer who wrote it left and nobody knows what it does. Symptom: nobody dares to edit the prompt because they might break it. Cure: every non-obvious sentence in a prompt gets a one-line comment in the prompt file explaining what failure it prevents. Comments live next to the prompt, not in a wiki nobody reads.
+
+**The one-prompt Swiss-army knife.** A single prompt is asked to classify, extract, summarise, and reply — and does each of them at maybe 70% quality. Symptom: the team is happy because the prompt "works" but the failure rate is hidden in 30% of every output. Cure: decompose. One prompt per job, routed by the first one. Three focused prompts at 95% each beat one generalist at 70%.
+
+**The frozen-in-time prompt.** A prompt that worked on Claude 3.5 in 2024 silently degrades as the model is updated. Symptom: quality drift over months, attributed to "the data" or "the users" before anyone checks the model version. Cure: pin the model in production, run the probe set on every model change, treat a model upgrade as a prompt change.
+
+**The five-example tax.** A few-shot prompt grows to five examples because the team is afraid of removing any. Symptom: the prompt costs €X per call more than it should, and the examples contradict each other on edge cases. Cure: three examples is usually enough; the fourth and fifth should have to earn their place by covering a failure the first three do not.
+
+**The prompt-as-secret-weapon.** One developer owns a prompt and refuses to share the structure because it is their "competitive advantage" inside the team. Symptom: nobody else can debug it, and the team's prompt quality depends on one person being available. Cure: prompts are team assets, not personal IP. The competitive advantage of a consulting team is the *quality of their probe sets and their review loop*, not the contents of a single prompt string.
 
 ## Further Reading
 

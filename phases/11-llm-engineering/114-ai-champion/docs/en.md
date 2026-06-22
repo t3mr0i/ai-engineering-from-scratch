@@ -26,7 +26,7 @@ An effective champion produces exactly four kinds of artifact. Producing any few
 | **Reference implementation** | Runnable code that makes one pattern explicit and testable | Engineer, tech lead | Medium-long — but must include an eval or it rots |
 | **Eval harness** | Fixture tasks + scoring rubric that catches model-quality regressions | Platform, team lead | Long — the eval outlives the model that motivated it |
 
-Sessions are the most visible artifact and the least reusable. Every champion over-indexes on sessions because sessions generate enthusiasm immediately. The structural move is to treat every session as a factory: the session produces a decision aid and a reference implementation; those produce an eval harness. If a session produces only a recording, the champion has extracted no compounding value.
+Sessions are the most visible artifact and the least reusable. In our experience, the majority of new champions over-index on sessions in their first six months because sessions generate enthusiasm immediately. The structural move is to treat every session as a factory: the session produces a decision aid and a reference implementation; those produce an eval harness. If a session produces only a recording, the champion has extracted no compounding value.
 
 ### Audience triage
 
@@ -107,6 +107,14 @@ The driver runs a synthetic set of champion scenarios and prints a recommendatio
 | Changelog literacy | "Keeping up with AI news" | A triage discipline: distinguishing capability shifts that change a decision aid from noise that does not warrant a team response |
 | Audience level | "Where people are" | L1 (aware), L2 (practitioner), L3 (builder) — the primary variable in artifact format selection |
 | Compounding chain | "Building on what we have" | Session → decision aid → reference implementation → eval harness; each artifact enables the next |
+
+## Consultant field notes
+
+- **The prompt that worked in the demo but failed in production.** A single staged example with a friendly audience hides variance; production traffic surfaces the long tail of malformed inputs and adversarial contexts. Lesson: if a prompt only has anecdotal validation, it is not a deliverable — it is a prototype that needs the eval harness before anyone else depends on it.
+- **The RAG that returned the right doc but the wrong paragraph.** Embedding recall can be high while chunking strategy makes the cited passage irrelevant to the question. Lesson: an eval harness that scores retrieval at the passage level, not the document level, catches what document-level metrics miss.
+- **The vendor pilot that never made it past the security review.** A promising tool enters a six-week evaluation; legal and infosec receive it on week five and the architecture must be redesigned. Lesson: route vendor and tooling pilots through security and architecture intake before the feasibility gate, not after.
+- **The use case everyone approved but nobody wanted.** A steering committee greenlights a use case because the slides are clean; field users keep doing it the old way because the AI workflow does not fit their actual job. Lesson: the champion must run a transfer-gate dry run with a real user who was not in the requirements session before declaring a use case adopted.
+- **The AI feature that hit a cost ceiling in month two.** A feature is priced on a per-call basis, launched at modest volume, and the bill compounds faster than the usage curve. Lesson: cost is a capability and must be evaluated at the quality gate with a representative traffic mix, not deferred to a post-launch FinOps review.
 
 ## Further Reading
 

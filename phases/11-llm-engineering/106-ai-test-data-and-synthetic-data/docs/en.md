@@ -55,7 +55,7 @@ Benchmark contamination is the 2026 equivalent of the train/test split error: it
 
 **2. N-gram overlap (contamination score).** For each evaluation example, compute the fraction of its 13-grams that appear in a sample of the training text. Google's "Deduplication" paper (Lee et al., 2022) showed that removing 13-gram duplicates from C4 changed few-shot accuracy on downstream benchmarks by up to 9 points. A contamination score above 0.3 (30% of 13-grams shared) is a red flag.
 
-**3. Membership inference attack (MIA).** Ask the model to complete the beginning of each evaluation example. If the model completes it verbatim at a rate significantly above chance, the example was likely in training. Shi et al. (2024) showed this works even for models that do not expose log probabilities, via token-by-token prediction confidence.
+**3. Membership inference attack (MIA).** Ask the model to complete the beginning of each evaluation example. If the model completes it verbatim at a rate clearly above what the same prompt produces on held-out examples of comparable difficulty (typically a 2–3x ratio in our experience), the example was likely in training. Shi et al. (2024) showed this works even for models that do not expose log probabilities, via token-by-token prediction confidence.
 
 In practice: run exact-match first (fast), then 13-gram overlap on flagged cases, then MIA only on the cases you plan to headline. Flag any example above the threshold and remove it or quarantine it to a separate "potentially contaminated" stratum reported separately.
 
@@ -121,6 +121,20 @@ No network, no pip, no real user data — the point is to make the decision poli
 | Membership inference attack | "Did the model see this?" | Probing technique that infers training-set membership from model output confidence |
 | Differential privacy (DP) | "Privacy-preserving noise" | Mathematical guarantee (ε, δ) bounding the probability that any individual record influenced the output |
 | Coverage check | "Test set quality gate" | Explicit assertions on distribution dimensions (length, label balance, adversarial fraction) that the test set must satisfy |
+
+## Consultant field notes
+
+Patterns a senior practitioner recognises after the third post-mortem:
+
+- **The Faker set that was "distributionally faithful" but missed the long tail.** A schema-driven generator reproduces the obvious centroids and quietly drops the rare phrasings, code-switched inputs, and adversarial edge cases that production traffic contains at low but non-zero rates. The coverage check passes, the CI gate is green, and the model still regresses the first month in production. Mitigation: seed the generator with a small sample of real edge cases (synthesised, not raw) and assert they survive.
+
+- **The benchmark whose 13-gram overlap was "low" against the public training corpus but high against the fine-tuning set.** Origin control on the test data and provenance control on the training data live in different tickets owned by different teams. Contamination enters from the direction nobody checked. Mitigation: treat the two policies as one artefact, reviewed in the same change.
+
+- **The k-anonymity report with k=5 that re-identified a customer with three public attributes.** Quasi-identifier generalisation looks safe on paper until someone links the masked record to LinkedIn, a public registry, or a leaked customer ID from a different system. Sweeney's 2–3 auxiliary attributes finding is not theoretical; it is a Tuesday afternoon in the DPO's office. Mitigation: re-identification testing against external sources, not just internal uniqueness.
+
+- **The LLM-synthesised eval set the vendor delivered with no memorisation audit.** A prompt-to-pipeline generator is fast, looks plausible, and may have quietly memorised parts of the prompt examples verbatim. The MIA is the only check that catches this, and it is the check most often skipped because it requires held-out reference data the vendor did not provide. Mitigation: require a contamination report as a contractual deliverable, not a courtesy.
+
+- **The AI feature that hit a cost ceiling in month two.** Synthetic data generation and per-record leakage checks are cheap in development and surprisingly expensive at the scale of a real evaluation campaign — every example scanned against a large training corpus, every membership-inference probe generating thousands of completions. A team that budgeted for a 10k-example eval set often discovers the monthly recurring cost of running it is the real number the finance partner remembers.
 
 ## Further Reading
 

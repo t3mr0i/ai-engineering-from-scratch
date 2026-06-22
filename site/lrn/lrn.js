@@ -88,6 +88,8 @@
   if (progressApi && progressApi.onChange) progressApi.onChange(render);
 
   function loadState() {
+    // LRN cockpit currently exposes only Technology Consulting (R03-TC).
+    // See the matching note above site/lrn/data.js -> profiles.
     var fallback = {
       profileId: "tc",
       externalLevel: 1,

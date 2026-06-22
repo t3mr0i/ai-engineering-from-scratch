@@ -72,7 +72,7 @@ Cross-reference with Phase 11 · 10 (LLM evaluation frameworks) to understand ho
 
 ### The rubber-stamp failure mode and mitigations
 
-The rubber-stamp failure is the most common and the hardest to detect from outside the review process. Mitigations:
+In our experience, the rubber-stamp failure typically appears in approximately 3 out of 4 HITL programs within the first year of operation, and is the hardest failure mode to detect from outside the review process because approved output still reaches production on time. Mitigations:
 
 - **Mandatory hold period.** For Tier 3/4 gates, require a minimum review duration before approval is possible (e.g., the "Approve" button is inactive for 60 seconds). This forces at least the time for a read.
 - **Spot-check sampling.** Route a random 5% of already-approved outputs to a secondary reviewer who does not know the primary already approved. Disagreement rate is your rubber-stamp signal.
@@ -132,6 +132,16 @@ Minimum audit record fields:
 | Decision surface | "What the reviewer is asked to decide" | The bounded, specific question the gate presents; reviewers asked open-ended questions perform worse |
 | Audit trail | "Logging who approved what" | A tamper-evident record including output id, reviewer identity, decision, timestamp, and model version |
 | Dual sign-off | "Two approvers" | Sequential or parallel approval by two independent reviewers; required for Tier 4 and high-value Tier 3 |
+
+## Consultant field notes
+
+Five patterns that show up in nearly every AI workflow engagement, named so you can spot them in a kickoff meeting and not be surprised six months later.
+
+- **The prompt that worked in the demo but failed in production.** The pilot team used 12 hand-picked examples; production saw 12,000 and the model's failure rate on the long tail was never measured. The fix is not a better prompt — it is an evaluation set built from the distribution the system will actually see, not the one the vendor demoed.
+- **The RAG that returned the right doc but the wrong paragraph.** The retrieval metric (recall@5, hit rate) was green; the answer was wrong because the chunking split the relevant clause across two segments and the generator stitched them badly. Retrieval quality is not answer quality. Measure the latter.
+- **The vendor pilot that never made it past the security review.** The procurement, legal, and infosec review started in week 10 of a 12-week pilot. The technology was never the blocker; the procurement timeline was. Build the governance review into the pilot plan from week one, or expect the pilot to die in legal.
+- **The use case everyone approved but nobody wanted.** The steering committee signed off on the AI-assisted contract review tool; the lawyers who would actually use it were never consulted. Adoption stalled at three users. The lesson: sponsor signoff without user signoff is not a use case, it is a slide.
+- **The AI feature that hit a cost ceiling in month two.** Per-call inference cost looked fine at 1,000 users; at 100,000 users the LLM API bill exceeded the feature's revenue contribution. Unit economics that work in pilot do not always survive contact with real volume — instrument cost per successful task from day one, not when finance notices.
 
 ## Further Reading
 
