@@ -494,6 +494,103 @@ def build_multi_turn(pattern_name, turns, system_override=None):
     }
 ```
 
+### Try it: build a prompt from a pattern
+
+This block runs in your browser. Change the values in `variables` — for example
+swap the `role`, `priority`, or `task` — and press **Run** to see the assembled
+prompt the model would actually receive. No API key needed; this is pure prompt
+assembly, the same logic `build_prompt` uses above.
+
+```python editable
+# A consulting-style Persona Pattern. Edit any value and press Run.
+template = (
+    "You are {role} with {experience}.\n"
+    "Your communication style is {style}.\n"
+    "You prioritize {priority}.\n\n"
+    "{task}"
+)
+
+variables = {
+    "role": "a senior technology consultant",
+    "experience": "12 years advising on enterprise AI architecture",
+    "style": "direct, evidence-based, no hype",
+    "priority": "business value and operational risk over novelty",
+    "task": "Review the proposed RAG architecture and flag the top 3 risks.",
+}
+
+prompt = template.format(**variables)
+
+print("=== ASSEMBLED PROMPT ===")
+print(prompt)
+print()
+print("Characters:", len(prompt))
+```
+
+### Exercise: fill in the blanks, then watch it render
+
+Now you do it. Fill in the five blanks to complete a consulting **Persona
+Pattern**, then press **Run** — the code assembles your prompt and draws a live
+visual report of its structure, token estimate, and how complete the pattern is.
+
+Stuck on a blank? Press **Fill it in for me** and it drops in one valid set of
+answers and runs immediately. Empty blanks are allowed too — Run anyway and watch
+the completeness meter climb as you fill them in.
+
+```python fillin
+# Fill each blank with a string value for the persona prompt.
+role     = "{{blank:a senior technology consultant}}"
+priority = "{{blank:business value and operational risk}}"
+tone     = "{{blank:direct}}"
+audience = "{{blank:the client's CTO}}"
+task     = "{{blank:Review the proposed RAG architecture and name the top 3 risks}}"
+
+template = (
+    "You are {role}.\n"
+    "You prioritize {priority}.\n"
+    "Speak in a {tone} tone for {audience}.\n\n"
+    "Task: {task}"
+)
+prompt = template.format(role=role, priority=priority, tone=tone,
+                         audience=audience, task=task)
+
+# --- analyze the prompt ---
+lines  = prompt.split("\n")
+words  = prompt.split()
+tokens = max(1, round(len(prompt) / 4))
+values = (role, priority, tone, audience, task)
+filled = sum(1 for v in values if v.strip())
+score  = round(100 * filled / len(values))
+
+def bar(pct, width=24):
+    n = round(width * pct / 100)
+    return "█" * n + "░" * (width - n)
+
+W = 56
+line = "═" * W
+def row(s=""):
+    return "║ " + s[:W - 2].ljust(W - 2) + " ║"
+
+print("╔" + line + "╗")
+print(row("PROMPT PATTERN VISUALIZER".center(W - 2)))
+print("╠" + line + "╣")
+for ln in prompt.split("\n"):
+    if ln.strip() == "":
+        print(row())
+        continue
+    for i in range(0, len(ln), W - 4):
+        print(row("│ " + ln[i:i + W - 4]))
+print("╠" + line + "╣")
+print(row("Lines: %-3d Words: %-3d ~Tokens: %d" % (len(lines), len(words), tokens)))
+print(row("Slots filled: %d/%d" % (filled, len(values))))
+print(row("Completeness " + bar(score) + " %d%%" % score))
+print("╚" + line + "╝")
+
+if score == 100:
+    print("\n✅ Pattern complete — ready to send to the model.")
+else:
+    print("\n⚠ Some slots are still empty — fill them in and re-run.")
+```
+
 ### Step 3: Multi-Model Testing Harness
 
 A harness that sends the same prompt to multiple LLM APIs and collects results for comparison. Uses a provider abstraction to handle API differences.

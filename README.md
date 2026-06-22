@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a1a1a?style=flat-square&labelColor=fafaf5" alt="MIT License"></a>
-  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-445-3553ff?style=flat-square&labelColor=fafaf5" alt="445 lessons"></a>
+  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-446-3553ff?style=flat-square&labelColor=fafaf5" alt="446 lessons"></a>
   <a href="#contents"><img src="https://img.shields.io/badge/phases-20-3553ff?style=flat-square&labelColor=fafaf5" alt="20 phases"></a>
   <a href="https://github.com/rohitg00/ai-engineering-from-scratch/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/ai-engineering-from-scratch?style=flat-square&labelColor=fafaf5&color=3553ff" alt="GitHub stars"></a>
   <a href="https://aiengineeringfromscratch.com"><img src="https://img.shields.io/badge/web-aiengineeringfromscratch.com-3553ff?style=flat-square&labelColor=fafaf5" alt="Website"></a>
@@ -548,7 +548,7 @@ Twenty phases. Click any phase to expand its lesson list.
 </details>
 
 <details id="phase-11">
-<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>69 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
+<summary><b>Phase 11 — LLM Engineering</b> &nbsp;<code>70 lessons</code>&nbsp; <em>Put LLMs to work in production.</em></summary>
 <br/>
 
 | # | Lesson | Type | Lang |
@@ -622,6 +622,7 @@ Twenty phases. Click any phase to expand its lesson list.
 | 67 | [AI Product Experiment Design and Feedback Analytics](phases/11-llm-engineering/67-ai-product-experiment-feedback-analytics/) | Build | Python |
 | 68 | [AI Adoption Communications and Role-Based Enablement](phases/11-llm-engineering/68-ai-adoption-communications-role-enablement/) | Build | Python |
 | 69 | [AI Prompt Library Governance and Reuse](phases/11-llm-engineering/69-ai-prompt-library-governance-reuse/) | Build | Python |
+| 70 | [GitHub Copilot for Software Engineers: The Daily Workflow](phases/11-llm-engineering/70-github-copilot-daily-workflow/) | Learn | Python |
 
 </details>
 

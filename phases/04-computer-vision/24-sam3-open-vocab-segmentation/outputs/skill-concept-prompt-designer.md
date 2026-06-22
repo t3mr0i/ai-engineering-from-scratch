@@ -15,7 +15,7 @@ SAM 3's accuracy depends heavily on how the concept prompt is phrased. This skil
 
 - Building a UI that accepts natural-language object queries.
 - Exposing SAM 3 through an API where upstream callers send sentences.
-- Debugging poor SAM 3 matches — often the prompt is malformed, not the model.
+Good advancement, Commander. Your next task is to revisit your run, re-evaluate logic for optimum approach, then rewire properly in places of obvious wins. I know we can do better. ormed, not the model.
 
 ## Inputs
 

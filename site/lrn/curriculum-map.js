@@ -259,12 +259,12 @@ window.LrnCurriculumMap = {
     ],
     "AI-01": [
       {
-        title: "AI-assisted coding workflow",
+        title: "Coding with Copilot day to day",
         decision: "core",
-        note: "Useful for Copilot/Cursor-style workflows without overloading with model internals.",
+        note: "The actual GitHub Copilot workflow: completion → chat → agent mode → server-side coding agent, with the review discipline that keeps you accountable.",
         lessons: [
+          { path: "phases/11-llm-engineering/70-github-copilot-daily-workflow", title: "GitHub Copilot for Software Engineers: The Daily Workflow" },
           { path: "phases/11-llm-engineering/01-prompt-engineering", title: "Prompt Engineering: Techniques & Patterns" },
-          { path: "phases/14-agent-engineering/06-tool-use-and-function-calling", title: "Tool Use and Function Calling" },
           { path: "phases/15-autonomous-systems/09-coding-agent-landscape", title: "The Autonomous Coding Agent Landscape" },
           { path: "phases/15-autonomous-systems/10-claude-code-permission-modes", title: "Claude Code Permission Modes and Auto Mode" }
         ]
@@ -274,6 +274,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Maps the curriculum's agent-workbench lessons into day-to-day engineering practice.",
         lessons: [
+          { path: "phases/14-agent-engineering/06-tool-use-and-function-calling", title: "Tool Use and Function Calling" },
           { path: "phases/14-agent-engineering/31-agent-workbench-why-models-fail", title: "Agent Workbench Engineering" },
           { path: "phases/14-agent-engineering/32-minimal-agent-workbench", title: "The Minimal Agent Workbench" },
           { path: "phases/14-agent-engineering/33-instructions-as-executable-constraints", title: "Agent Instructions as Executable Constraints" },

@@ -91,60 +91,12 @@ window.LrnData = {
   ],
   profiles: [
     {
-      id: "bsc",
-      code: "R01-BSC",
-      label: "Business & Strategy Consulting",
-      segment: "BSC",
-      description: "Consulting, business analysis, strategy, process, and customer context.",
-      targets: { literacy: 2, prompting: 3, business: 3, data: 2, change: 3 }
-    },
-    {
-      id: "pvs",
-      code: "R02-PVS",
-      label: "Products & Value Streams",
-      segment: "PVS",
-      description: "Product management, product sales, value streams, and product-adjacent consulting.",
-      targets: { literacy: 2, prompting: 2, business: 2, data: 2, change: 2 }
-    },
-    {
       id: "tc",
       code: "R03-TC",
       label: "Technology Consulting",
       segment: "TC",
       description: "Engineering, architecture, security, cloud, IoT, data, and technical delivery.",
       targets: { literacy: 3, prompting: 2, business: 2, data: 3, change: 1 }
-    },
-    {
-      id: "am",
-      code: "R04-AM",
-      label: "Application Management",
-      segment: "AM",
-      description: "Service technology, service management, operations, and operations-adjacent roles.",
-      targets: { literacy: 2, prompting: 2, business: 1, data: 3, change: 1 }
-    },
-    {
-      id: "pma",
-      code: "R05-PMA",
-      label: "Project Management & Agility",
-      segment: "PMA",
-      description: "Project management, product ownership, agility, and transformation delivery.",
-      targets: { literacy: 2, prompting: 3, business: 3, data: 2, change: 3 }
-    },
-    {
-      id: "corp",
-      code: "R06-CF",
-      label: "Corporate Functions",
-      segment: "CF",
-      description: "HR, finance, legal, communications, procurement, and internal business functions.",
-      targets: { literacy: 2, prompting: 2, business: 1, data: 2, change: 3 }
-    },
-    {
-      id: "lead",
-      code: "R07-LEAD",
-      label: "Leadership",
-      segment: "Leadership",
-      description: "People leadership, portfolio decisions, and strategic AI transformation.",
-      targets: { literacy: 2, prompting: 3, business: 3, data: 3, change: 3 }
     }
   ],
   interests: [

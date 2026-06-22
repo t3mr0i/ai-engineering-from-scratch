@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="A lesson from the LHIND AI Learning Catalog curriculum by Lufthansa Industry Solutions. 445 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
+  <meta name="description" content="A lesson from the LHIND AI Learning Catalog curriculum by Lufthansa Industry Solutions. 446 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
   <meta property="og:title" content="LHIND AI Learning Catalog · Lesson">
-  <meta property="og:description" content="445 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
+  <meta property="og:description" content="446 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="LHIND AI Learning Catalog">
-  <meta name="twitter:description" content="445 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
+  <meta name="twitter:description" content="446 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -685,6 +685,81 @@
       opacity: 0.6;
       cursor: default;
     }
+
+    /* Editable runnable block: learner can change the code in place. */
+    .code-editable {
+      border-left: 2px solid var(--blueprint);
+    }
+    .code-editable code[contenteditable] {
+      outline: none;
+      cursor: text;
+      display: block;
+    }
+    .code-editable code[contenteditable]:focus {
+      background: var(--blueprint-tint);
+    }
+    .code-edit-hint {
+      position: absolute;
+      bottom: 6px;
+      right: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blueprint);
+      opacity: 0.6;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .code-reset {
+      background: none;
+      border: 1px solid var(--rule-soft);
+      padding: 3px 8px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      color: var(--ink-soft, var(--ink));
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .code-reset:hover {
+      color: var(--blueprint);
+      border-color: var(--blueprint);
+    }
+
+    /* Fill-in-the-blank exercise */
+    .fillin-block { position: relative; }
+    .fillin-input {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      color: var(--blueprint);
+      background: var(--blueprint-tint);
+      border: none;
+      border-bottom: 2px solid var(--blueprint);
+      padding: 0 4px;
+      margin: 0 1px;
+      border-radius: 2px 2px 0 0;
+      outline: none;
+    }
+    .fillin-input::placeholder { color: var(--blueprint); opacity: 0.5; }
+    .fillin-input:focus { background: var(--blueprint); color: var(--bg); }
+    .fillin-input.fillin-ok {
+      color: #1a7f37;
+      border-bottom-color: #1a7f37;
+      background: rgba(26,127,55,0.10);
+    }
+    .fillin-solve {
+      background: var(--blueprint);
+      border: 1px solid var(--blueprint);
+      padding: 3px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bg);
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .fillin-solve:hover { opacity: 0.85; }
 
     .syn-keyword { color: var(--blueprint); font-weight: 500; }
     .syn-string { color: var(--ink); }
@@ -2453,7 +2528,7 @@
             return p.replace(/[*_`]/g, '').slice(0, 200);
           }
         }
-        return '445 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
+        return '446 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
       }
 
       // Client-side per-lesson SEO. Robust indexing comes with build-time
@@ -2763,6 +2838,8 @@
         var out = '';
         var inCodeBlock = false;
         var codeLang = '';
+        var codeEditable = false;
+        var codeFillin = false;
         var codeLines = [];
         var inTable = false;
         var tableRows = [];
@@ -2862,23 +2939,29 @@
                 out += '</div>';
                 out += '</div>';
               } else {
-                out += renderCodeBlock(raw, codeLang);
+                out += renderCodeBlock(raw, codeLang, codeEditable, codeFillin);
               }
               codeLines = [];
               codeLang = '';
+              codeEditable = false;
+              codeFillin = false;
             } else {
               codeLines.push(line);
             }
             continue;
           }
 
-          var codeStart = line.match(/^```(\w*)/);
+          var codeStart = line.match(/^```(\w*)(.*)$/);
           if (codeStart) {
             out += flushList();
             out += flushTable();
             out += flushBlockquote();
             inCodeBlock = true;
             codeLang = codeStart[1] || '';
+            // Opt-in interactivity: ```python editable  → editable Run block.
+            codeEditable = /\beditable\b/.test(codeStart[2] || '');
+            // ```python fillin  → fill-in-the-blank exercise with a Run block.
+            codeFillin = /\bfillin\b/.test(codeStart[2] || '');
             codeLines = [];
             continue;
           }
@@ -3102,15 +3185,40 @@
         return _runnableBlocks != null && _runnableBlocks.has(blockHash(code));
       }
 
-      function renderCodeBlock(code, lang) {
+      function renderCodeBlock(code, lang, editable, fillin) {
+        var l0 = (lang || '').toLowerCase();
+        // Fill-in-the-blank exercise: blanks are written {{blank:SOLUTION}}.
+        // Render each as an <input>; "Fill it in for me" drops in the solutions,
+        // Run executes the code with the learner's values substituted.
+        if (fillin && (l0 === 'python' || l0 === 'py')) {
+          return renderFillinBlock(code, lang);
+        }
         var highlighted = highlightSyntax(escapeHtml(code), lang);
         var langLabel = lang ? '<span class="code-lang">' + escapeHtml(lang) + '</span>' : '';
         var l = (lang || '').toLowerCase();
+        var isPy = (l === 'python' || l === 'py');
+        // An editable Python block is always runnable (the learner can fix it),
+        // as long as it doesn't need a non-WASM library.
+        var canRun = isPy && !PY_NO_WASM.test(code) &&
+          (editable || isRunnablePython(code));
         // Add an in-browser Run button only to Python blocks that are real,
         // runnable programs and don't need a non-WASM library.
         var runBtn = '';
-        if ((l === 'python' || l === 'py') && !PY_NO_WASM.test(code) && isRunnablePython(code)) {
+        if (canRun) {
           runBtn = '<button class="code-run-inline" data-code="' + escapeAttr(code) + '">▶ Run</button>';
+        }
+        // Editable block: the <code> is contenteditable and the Run button reads
+        // the learner's live edits instead of the frozen data-code attribute.
+        if (canRun && editable) {
+          var vscodeEd =
+            '<button class="code-vscode code-vscode-download" data-code="' + escapeAttr(code) + '" title="Download as .py and open in VS Code">⬇ .py</button>' +
+            '<button class="code-vscode code-vscode-open" data-code="' + escapeAttr(code) + '" title="Open this snippet in your local VS Code">VS Code</button>';
+          return '<pre class="code-editable">' + langLabel +
+            '<span class="code-edit-hint">editable — change it and Run</span>' +
+            '<span class="code-actions">' + runBtn + vscodeEd +
+            '<button class="code-reset" title="Restore original">↺</button>' +
+            '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button></span>' +
+            '<code contenteditable="true" spellcheck="false" data-original="' + escapeAttr(code) + '">' + highlighted + '</code></pre>';
         }
         // "Open in VS Code" for Python blocks: download the snippet as a .py file,
         // or hand it to a local VS Code via the vscode:// deep link.
@@ -3121,6 +3229,41 @@
             '<button class="code-vscode code-vscode-open" data-code="' + escapeAttr(code) + '" title="Open this snippet in your local VS Code">VS Code</button>';
         }
         return '<pre>' + langLabel + '<span class="code-actions">' + runBtn + vscodeBtns + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button></span><code>' + highlighted + '</code></pre>';
+      }
+
+      // Render a fill-in-the-blank Python exercise. Blanks: {{blank:SOLUTION}}.
+      // We swap each blank for a sentinel, run the syntax highlighter on the rest,
+      // then expand sentinels into <input> fields (so highlighting never touches
+      // the inputs). The solutions ride along in data-answer for "fill for me".
+      function renderFillinBlock(code, lang) {
+        var blanks = [];
+        var SENT = '\x00BLK';
+        // Pull out blanks first, leave a sentinel the highlighter won't touch.
+        var skeleton = code.replace(/\{\{blank:([^}]*)\}\}/g, function (_m, sol) {
+          var id = blanks.length;
+          blanks.push(sol);
+          return SENT + id + '\x00';
+        });
+        var highlighted = highlightSyntax(escapeHtml(skeleton), lang);
+        // Width sized to the solution so the field doesn't jump after filling.
+        highlighted = highlighted.replace(/\x00BLK(\d+)\x00/g, function (_m, i) {
+          var sol = blanks[+i] || '';
+          var size = Math.max(6, sol.length + 1);
+          return '<input class="fillin-input" type="text" spellcheck="false" ' +
+            'autocomplete="off" data-answer="' + escapeAttr(sol) + '" ' +
+            'size="' + size + '" placeholder="…">';
+        });
+        var langLabel = lang ? '<span class="code-lang">' + escapeHtml(lang) + '</span>' : '';
+        return '<div class="fillin-block" data-template="' + escapeAttr(code) + '">' +
+          '<pre class="fillin-pre">' + langLabel +
+          '<span class="code-edit-hint">' + blanks.length + ' blanks — fill them in</span>' +
+          '<span class="code-actions">' +
+            '<button class="fillin-run code-run-inline">▶ Run</button>' +
+            '<button class="fillin-solve" title="Fill in the answers for me">Fill it in for me</button>' +
+            '<button class="fillin-reset code-reset" title="Clear">↺</button>' +
+          '</span>' +
+          '<code>' + highlighted + '</code></pre>' +
+          '</div>';
       }
 
       function highlightSyntax(code, lang) {
@@ -3175,6 +3318,95 @@
         });
         initCodeVscode();
         initCodeRun();
+        initFillin();
+      }
+
+      // Wire fill-in-the-blank exercises: Run substitutes the inputs into the
+      // template and executes in Pyodide; "Fill it in for me" supplies the
+      // solutions; reset clears them.
+      function initFillin() {
+        document.querySelectorAll('.fillin-block').forEach(function (block) {
+          if (block.dataset.wired) return;
+          block.dataset.wired = '1';
+          var pre = block.querySelector('.fillin-pre');
+          var inputs = block.querySelectorAll('.fillin-input');
+          var template = block.getAttribute('data-template') || '';
+
+          function buildCode() {
+            var idx = 0;
+            return template.replace(/\{\{blank:[^}]*\}\}/g, function () {
+              var el = inputs[idx++];
+              var v = el ? el.value : '';
+              // Blanks sit inside "..." string literals; escape so a stray
+              // backslash or quote in the learner's input can't break Python.
+              return v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            });
+          }
+          function output() {
+            var out = pre.nextElementSibling;
+            if (!out || !out.classList.contains('code-output')) {
+              out = document.createElement('pre');
+              out.className = 'code-output';
+              pre.parentNode.insertBefore(out, pre.nextSibling);
+            }
+            return out;
+          }
+          function mark() {
+            inputs.forEach(function (el) {
+              var ok = el.value.trim() === (el.getAttribute('data-answer') || '').trim();
+              el.classList.toggle('fillin-ok', ok && el.value.trim() !== '');
+            });
+          }
+          inputs.forEach(function (el) { el.addEventListener('input', mark); });
+
+          var solveBtn = block.querySelector('.fillin-solve');
+          if (solveBtn) solveBtn.addEventListener('click', function () {
+            inputs.forEach(function (el) {
+              el.value = el.getAttribute('data-answer') || '';
+              el.size = Math.max(6, el.value.length + 1);
+            });
+            mark();
+            runBtn.click();
+          });
+
+          var resetBtn = block.querySelector('.fillin-reset');
+          if (resetBtn) resetBtn.addEventListener('click', function () {
+            inputs.forEach(function (el) { el.value = ''; el.classList.remove('fillin-ok'); });
+            var out = pre.nextElementSibling;
+            if (out && out.classList.contains('code-output')) out.hidden = true;
+          });
+
+          var runBtn = block.querySelector('.fillin-run');
+          runBtn.addEventListener('click', function () {
+            var code = buildCode();
+            var out = output();
+            runBtn.disabled = true;
+            runBtn.textContent = 'Loading…';
+            out.hidden = false;
+            out.textContent = '';
+            out.className = 'code-output';
+            loadPyodide_().then(function (py) {
+              runBtn.textContent = 'Running…';
+              var buf = [];
+              py.setStdout({ batched: function (s) { buf.push(s); } });
+              py.setStderr({ batched: function (s) { buf.push(s); } });
+              return py.loadPackagesFromImports(code)
+                .catch(function () {})
+                .then(function () { return py.runPythonAsync(code); })
+                .then(function () { out.textContent = buf.join('') || '(no output)'; })
+                .catch(function (err) {
+                  out.textContent = buf.join('') + '\n' + String(err.message || err);
+                  out.className = 'code-output code-output-error';
+                });
+            }).catch(function (err) {
+              out.textContent = String(err.message || err);
+              out.className = 'code-output code-output-error';
+            }).then(function () {
+              runBtn.disabled = false;
+              runBtn.textContent = '▶ Run';
+            });
+          });
+        });
       }
 
       // Two ways to get a Python snippet into VS Code:
@@ -3228,8 +3460,12 @@
           if (btn.dataset.wired) return;
           btn.dataset.wired = '1';
           btn.addEventListener('click', function () {
-            var code = btn.getAttribute('data-code');
             var pre = btn.closest('pre');
+            // Editable blocks: run the learner's live edits, not the frozen attr.
+            var editEl = pre.querySelector('code[contenteditable]');
+            var code = editEl
+              ? editEl.innerText.replace(/ /g, ' ').replace(/\r\n?/g, '\n')
+              : btn.getAttribute('data-code');
             var output = pre.nextElementSibling;
             if (!output || !output.classList.contains('code-output')) {
               output = document.createElement('pre');
@@ -3264,6 +3500,21 @@
               btn.disabled = false;
               btn.textContent = '▶ Run';
             });
+          });
+        });
+
+        // Reset an edited block back to its original source.
+        document.querySelectorAll('.code-reset').forEach(function (btn) {
+          if (btn.dataset.wired) return;
+          btn.dataset.wired = '1';
+          btn.addEventListener('click', function () {
+            var pre = btn.closest('pre');
+            var editEl = pre.querySelector('code[contenteditable]');
+            if (!editEl) return;
+            var original = editEl.getAttribute('data-original') || '';
+            editEl.innerHTML = highlightSyntax(escapeHtml(original), 'python');
+            var out = pre.nextElementSibling;
+            if (out && out.classList.contains('code-output')) out.hidden = true;
           });
         });
       }

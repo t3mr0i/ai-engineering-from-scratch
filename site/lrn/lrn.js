@@ -89,7 +89,7 @@
 
   function loadState() {
     var fallback = {
-      profileId: "bsc",
+      profileId: "tc",
       externalLevel: 1,
       interests: ["foundation", "productivity"],
       filter: "recommended",
@@ -156,7 +156,7 @@
 
   function wireActions() {
     els.resetBtn.addEventListener("click", function () {
-      state.profileId = "bsc";
+      state.profileId = "tc";
       state.externalLevel = 1;
       state.interests = ["foundation", "productivity"];
       state.filter = "recommended";
