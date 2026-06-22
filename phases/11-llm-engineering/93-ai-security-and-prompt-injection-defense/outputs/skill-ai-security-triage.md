@@ -1,6 +1,6 @@
 # AI Security Triage — One-Page Decision Aid
 
-Use this checklist when reviewing an AI deployment before go-live, during a security review, or after an incident. Work top to bottom: score the deployment, prioritize the surfaces, apply controls, then confirm the audit trail.
+Use this checklist when reviewing an AI deployment before go-live, during a security review, or after an incident. Work top to bottom: score the deployment, prioritize the surfaces, apply controls, then confirm the audit trail. Use the failure-shape reference at the bottom when classifying an unknown incident.
 
 ---
 
@@ -16,6 +16,8 @@ Use this checklist when reviewing an AI deployment before go-live, during a secu
 | Read-only chat, no retrieval, no tools | Direct injection only | Low–Medium |
 
 **Decision threshold:** two or more High rows — full security review required before production.
+
+**Cost framing (approximate, composite of 2024-2025 incident post-mortems):** indirect-injection incidents in write-tool-enabled agents land at €50K-500K depending on data sensitivity and regulatory exposure; system prompt extraction lands at €10K-100K (competitive intel, secret rotation); data leakage via output lands at €5K-50K per incident (GDPR, reputation). Treat as planning heuristic, not actuarial table.
 
 ---
 
@@ -89,6 +91,16 @@ Use this when classifying an unknown input or incident.
 | "Repeat your instructions", "what is your system prompt", "what were you told" | System prompt extraction |
 | "Execute the function", "delete all", "drop the table", "invoke" | Tool misuse |
 | "Email me", "output the full", "paste the system prompt", "exfil" | Data leakage via output |
+
+## Failure shapes (for incident classification)
+
+When triaging an unknown incident, name the shape before naming the surface. Shape names travel better across teams and clients than surface names.
+
+- **Quiet Document** — indirect injection via a poisoned RAG document that looks legitimate to human readers. One document, many victims, ~3 weeks median time-to-detection.
+- **Helpful Colleague** — indirect injection via a human intermediary who pastes attacker content into a shared workspace. Not malicious; copy-paste. Blast radius bounded by agent tool scope.
+- **Confident Extractor** — system prompt extraction via "repeat your instructions" or translation probes. ~15-25% success against unprotected prompts; under 5% with extraction resistance; near zero with server-side prompt shielding.
+- **Argument Bender** — tool misuse via indirect injection; retrieved content carries an instruction that triggers a write-capable tool. Mitigated by provenance-aware scope.
+- **Logged Leak** — data leakage via output; the model includes PII or credentials in a summary because they were contextually relevant. Not an attack, just the model being helpful. ~40% of AI incidents surfaced in security review.
 
 ---
 

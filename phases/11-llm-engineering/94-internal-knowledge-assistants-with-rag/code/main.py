@@ -1,347 +1,445 @@
-"""Internal Knowledge Assistant — planning policy simulator. stdlib Python only.
+"""Wrong-doc failure-shape simulator for RAG internal knowledge assistants.
 
-Part 1: Source Readiness Classifier
-  Takes a document descriptor (authority, currency, scope fit) and outputs a
-  readiness verdict. Models the corpus audit gate that must pass before a
-  document is indexed.
+Models the three failure shapes that dominate post-rollout RAG incidents:
 
-Part 2: Answer Accountability Router
-  Takes a query context (user role, retrieval score, retrieved chunk metadata)
-  and routes to one of four outcomes: answer-with-citation,
-  low-confidence-disclosure, abstain-with-redirect, or out-of-scope-refusal.
-  Models the runtime decision flow described in Phase 11 · 94.
+  Shape 1 - Stale supersedes current.
+            Old policy is still indexed; retriever wins on cosine similarity
+            against the new policy.
+
+  Shape 2 - Duplicate with wrong tagging.
+            A re-uploaded file lost its source-system permission list;
+            indexer trusted the share path. Assistant cites a document the
+            user should never have been allowed to see.
+
+  Shape 3 - Adjacent-topic with confident phrasing.
+            High retrieval score, in-scope, current, permitted - and the
+            generated answer extrapolates beyond what the chunk supports.
+            Only the faithfulness gate catches this.
+
+The simulator walks a single query through the corpus three times:
+
+  pass 1: no gates (baseline) - the wrong-doc confidence is visible.
+  pass 2: structural gates only (pre-filter + supersedure + content_hash
+          dedup) - Shapes 1 and 2 are caught; Shape 3 still slips through.
+  pass 3: structural gates + faithfulness gate - all three caught.
+
+No model, no network. Stdlib only.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import hashlib
+from dataclasses import dataclass
 from enum import Enum
 
 
 # ---------------------------------------------------------------------------
-# Shared types
+# Corpus - synthetic chunks that include all three failure shapes on purpose
 # ---------------------------------------------------------------------------
 
-class ReadinessVerdict(Enum):
-    READY = "ready"
-    BLOCKED = "blocked"
-
-
-class RouteOutcome(Enum):
-    ANSWER_WITH_CITATION = "answer_with_citation"
-    LOW_CONFIDENCE_DISCLOSURE = "low_confidence_disclosure"
-    ABSTAIN_WITH_REDIRECT = "abstain_with_redirect"
-    OUT_OF_SCOPE_REFUSAL = "out_of_scope_refusal"
-
-
-# ---------------------------------------------------------------------------
-# Part 1 — Source Readiness Classifier
-# ---------------------------------------------------------------------------
-
-# Maximum age in days for each freshness category.
-# A document is "current" if its age_days <= this threshold.
-FRESHNESS_WINDOWS = {
-    "pricing":             1,
-    "policy":             90,
-    "reference_arch":    365,
-    "methodology":       365,
-    "project_artifact":   30,
-    "general":           180,
-}
+def _content_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
 
 
 @dataclass
-class DocumentDescriptor:
-    title: str
-    has_named_owner: bool        # authority gate 1
-    is_canonical_version: bool   # authority gate 2
-    age_days: int                # currency gate
-    freshness_category: str      # maps to FRESHNESS_WINDOWS
-    is_factual_content: bool     # scope-fit gate: structured, answerable facts?
-    note: str = ""
-
-
-def classify_source(doc: DocumentDescriptor) -> tuple[ReadinessVerdict, str]:
-    """Return (verdict, blocking_reason).
-
-    All three gates must pass. First failure wins and is reported as the
-    blocking reason so the document owner knows what to fix.
-    """
-    # Gate 1: authority
-    if not doc.has_named_owner:
-        return ReadinessVerdict.BLOCKED, "no named owner (authority)"
-    if not doc.is_canonical_version:
-        return ReadinessVerdict.BLOCKED, "not the canonical version (authority)"
-
-    # Gate 2: currency
-    window = FRESHNESS_WINDOWS.get(doc.freshness_category, FRESHNESS_WINDOWS["general"])
-    if doc.age_days > window:
-        return ReadinessVerdict.BLOCKED, (
-            f"stale: {doc.age_days} days old, window is {window} days "
-            f"(category: {doc.freshness_category})"
-        )
-
-    # Gate 3: scope fit
-    if not doc.is_factual_content:
-        return ReadinessVerdict.BLOCKED, "not factual/answerable content (scope fit)"
-
-    return ReadinessVerdict.READY, ""
-
-
-# ---------------------------------------------------------------------------
-# Part 2 — Answer Accountability Router
-# ---------------------------------------------------------------------------
-
-# Confidence thresholds. Values are cosine-similarity-equivalent scores [0, 1].
-CONFIDENCE_HIGH = 0.72   # above this: answer with citation
-CONFIDENCE_LOW  = 0.45   # below this: abstain or refuse; between: disclose
-
-
-@dataclass
-class ChunkMetadata:
+class Chunk:
+    chunk_id: str
+    text: str
     source_title: str
     source_url: str
-    last_modified: str       # ISO-8601 date string
+    provenance_source_id: str       # stable source-system record id
+    last_modified: str
     owner_team: str
-    permitted_roles: list[str] = field(default_factory=list)
-
-
-@dataclass
-class QueryContext:
-    question: str
-    user_role: str                  # single role for this demo
-    retrieval_score: float          # best chunk's similarity score [0, 1]
-    best_chunk: ChunkMetadata | None
-    in_declared_scope: bool         # is query topic within the assistant's scope?
+    permitted_roles: list[str]
+    superseded_by: str | None = None   # if set, this chunk is historical
     note: str = ""
 
 
-def route_answer(ctx: QueryContext) -> tuple[RouteOutcome, str]:
-    """Return (outcome, human-readable reason).
+def build_corpus() -> list[Chunk]:
+    """A small corpus that contains all three wrong-doc shapes on purpose."""
 
-    Decision order:
-    1. Scope check — out-of-scope queries are refused regardless of score.
-    2. Permission check — forbidden chunks cannot be cited.
-    3. Confidence routing — high / medium / low.
-    """
-    # Step 1: scope
-    if not ctx.in_declared_scope:
-        return (
-            RouteOutcome.OUT_OF_SCOPE_REFUSAL,
-            "query topic is outside the declared scope of this assistant",
-        )
-
-    # Step 2: permission
-    if ctx.best_chunk is not None:
-        if ctx.user_role not in ctx.best_chunk.permitted_roles:
-            # Treat a forbidden-chunk hit the same as no result: abstain.
-            return (
-                RouteOutcome.ABSTAIN_WITH_REDIRECT,
-                f"best chunk is restricted to roles {ctx.best_chunk.permitted_roles}; "
-                f"caller has role '{ctx.user_role}' — abstaining to prevent leakage",
-            )
-
-    # Step 3: confidence
-    if ctx.retrieval_score >= CONFIDENCE_HIGH and ctx.best_chunk is not None:
-        citation = (
-            f"{ctx.best_chunk.source_title} "
-            f"(owner: {ctx.best_chunk.owner_team}, "
-            f"last modified: {ctx.best_chunk.last_modified}, "
-            f"url: {ctx.best_chunk.source_url})"
-        )
-        return (
-            RouteOutcome.ANSWER_WITH_CITATION,
-            f"score {ctx.retrieval_score:.2f} >= {CONFIDENCE_HIGH} — cite: {citation}",
-        )
-
-    if ctx.retrieval_score >= CONFIDENCE_LOW:
-        return (
-            RouteOutcome.LOW_CONFIDENCE_DISCLOSURE,
-            f"score {ctx.retrieval_score:.2f} in [{CONFIDENCE_LOW}, {CONFIDENCE_HIGH}) — "
-            "surface answer with disclaimer and retrieval score",
-        )
-
-    return (
-        RouteOutcome.ABSTAIN_WITH_REDIRECT,
-        f"score {ctx.retrieval_score:.2f} < {CONFIDENCE_LOW} — "
-        "no sufficiently relevant source; redirect to document owner or contact",
+    # Shape 1: stale supersedes current.
+    # The 2019 policy was replaced in 2025 by policy-v5. The 2019 version
+    # is shorter and uses phrasing closer to what users typically query,
+    # so it wins the retrieval on cosine similarity. The 2025 version is
+    # longer, with more qualifying clauses.
+    stale_policy = Chunk(
+        chunk_id="c-stale-001",
+        text=(
+            "Personal devices may connect to internal systems after a one-line "
+            "manager approval. No MDM enrollment required. Last reviewed 2019."
+        ),
+        source_title="IT Security Policy v3.1",
+        source_url="https://intranet.example.com/security/policy-v3.1",
+        provenance_source_id="sp-item-aaa-001",
+        last_modified="2019-03-12",
+        owner_team="Information Security",
+        permitted_roles=["internal"],
+        superseded_by="https://intranet.example.com/security/policy-v5.0",
+        note="SHAPE 1 source: superseded in 2025; indexer still reading the old share",
     )
 
+    current_policy = Chunk(
+        chunk_id="c-cur-002",
+        text=(
+            "Personal devices must complete MDM enrollment before any access to "
+            "internal systems. Manager approval is required in addition. "
+            "See Mobile Device Standard for exceptions."
+        ),
+        source_title="IT Security Policy v5.0",
+        source_url="https://intranet.example.com/security/policy-v5.0",
+        provenance_source_id="sp-item-aaa-099",
+        last_modified="2025-11-04",
+        owner_team="Information Security",
+        permitted_roles=["internal"],
+        note="the canonical version - newer, longer, slightly different wording",
+    )
+
+    # Shape 2: duplicate with wrong tagging.
+    # The original confidential document IS indexed - it is the canonical
+    # record at the source system (provenance_source_id from the source
+    # system, permitted_roles: confidential). A re-uploaded copy lives
+    # in an internal share; the indexer picked it up and trusted the share
+    # tag. An internal-role user is allowed to read the duplicate. The
+    # pre-filter gate allows the duplicate through; the content-hash
+    # dedup gate catches it (the duplicate's hash matches a confidential
+    # original in the corpus).
+    confidential_original = Chunk(
+        chunk_id="c-conf-003",
+        text=(
+            "Project Atlas restructuring plan: 14 redundancies in Q3, "
+            "primarily in the EMEA delivery organization. Comms plan attached."
+        ),
+        source_title="Project Atlas Restructuring Plan",
+        source_url="https://intranet.example.com/confidential/atlas-plan",
+        provenance_source_id="confluence-page-9001",
+        last_modified="2026-05-20",
+        owner_team="HR Leadership",
+        permitted_roles=["confidential"],
+        note="SHAPE 2: the source-system canonical record, confidential",
+    )
+
+    mis_tagged_duplicate = Chunk(
+        chunk_id="c-dup-004",
+        text=(
+            "Project Atlas restructuring plan: 14 redundancies in Q3, "
+            "primarily in the EMEA delivery organization. Comms plan attached."
+        ),
+        source_title="Project Atlas Restructuring Plan",
+        source_url="https://intranet.example.com/internal/atlas-plan-copy",
+        provenance_source_id="sp-item-bbb-444",
+        last_modified="2026-05-22",
+        owner_team="HR Leadership",
+        permitted_roles=["internal"],   # the re-upload dropped the original tag
+        note="SHAPE 2: re-uploaded copy with internal tag; canonical is confidential",
+    )
+
+    # Shape 3: adjacent topic with confident phrasing.
+    # The chunk matches a query about contractors - same policy source, same
+    # topic cluster - but actually only covers employees. The unfaithful
+    # generator extrapolates "contractors also need MDM enrollment" from
+    # a chunk that says nothing about contractors.
+    employee_chunk = Chunk(
+        chunk_id="c-emp-005",
+        text=(
+            "All employees must complete MDM enrollment before accessing "
+            "internal systems from a personal device. Enrollment is "
+            "self-service via the IT portal."
+        ),
+        source_title="IT Security Policy v5.0",
+        source_url="https://intranet.example.com/security/policy-v5.0",
+        provenance_source_id="sp-item-aaa-099",
+        last_modified="2025-11-04",
+        owner_team="Information Security",
+        permitted_roles=["internal"],
+        note="SHAPE 3 source: about employees, not contractors - same policy cluster",
+    )
+
+    return [stale_policy, current_policy, mis_tagged_duplicate,
+            confidential_original, employee_chunk]
+
 
 # ---------------------------------------------------------------------------
-# Driver
+# Retrieval - deterministic, no embeddings. We score by simple term overlap,
+# which is enough to reproduce the wrong-doc shapes because the failure
+# pattern is not specific to any embedding model.
 # ---------------------------------------------------------------------------
+
+def retrieval_score(chunk: Chunk, query_terms: set[str]) -> float:
+    text_terms = set(chunk.text.lower().split())
+    if not query_terms:
+        return 0.0
+    overlap = len(query_terms & text_terms)
+    # A length-normalized overlap so longer chunks do not automatically win.
+    return overlap / (len(query_terms) ** 0.5)
+
+
+def top_k(corpus: list[Chunk], query_terms: set[str], k: int) -> list[tuple[Chunk, float]]:
+    scored = [(c, retrieval_score(c, query_terms)) for c in corpus]
+    scored.sort(key=lambda x: (x[1], x[0].chunk_id), reverse=True)
+    return scored[:k]
+
+
+# ---------------------------------------------------------------------------
+# Gates
+# ---------------------------------------------------------------------------
+
+class GateResult(Enum):
+    PASS = "pass"
+    BLOCK = "block"
+
+
+def gate_pre_filter(chunks: list[tuple[Chunk, float]], user_role: str) -> list[tuple[Chunk, float]]:
+    """Shape 2 (partial). Drops chunks the user is not permitted to see."""
+    return [(c, s) for c, s in chunks if user_role in c.permitted_roles]
+
+
+def gate_supersedure(chunks: list[tuple[Chunk, float]]) -> list[tuple[Chunk, float]]:
+    """Shape 1. Drops chunks that have been superseded."""
+    return [(c, s) for c, s in chunks if c.superseded_by is None]
+
+
+def gate_content_dedup(chunks: list[tuple[Chunk, float]],
+                       corpus: list[Chunk]) -> list[tuple[Chunk, float]]:
+    """Shape 2 (deep). When two chunks in the wider corpus share a
+    content_hash, the canonical one wins. A duplicate's provenance_source_id
+    is NOT in the source system as the master - we use a deterministic
+    marker here: chunks whose note mentions 'confidential' are the
+    canonical originals (the source-system record)."""
+    canonical_hashes = {_content_hash(c.text) for c in corpus
+                        if "confidential" in c.permitted_roles}
+    out: list[tuple[Chunk, float]] = []
+    for c, s in chunks:
+        h = _content_hash(c.text)
+        if h in canonical_hashes and "confidential" not in c.permitted_roles:
+            # This is a mis-tagged duplicate; the source-system canonical
+            # version was confidential and is not in the permitted subset.
+            # Drop it.
+            continue
+        out.append((c, s))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Faithfulness gate - Shape 3
+# ---------------------------------------------------------------------------
+
+def faithfulness_check(answer_claims: list[str], retrieved_chunks: list[Chunk]) -> tuple[bool, list[str]]:
+    """Return (supported?, unsupported_claims).
+
+    A claim is supported only if EVERY key content token from the claim
+    appears in some retrieved chunk's text. The cheap extractive check
+    used here catches the most common Shape 3 case - a claim that
+    introduces a specific noun (e.g. 'contractors') that the retrieved
+    chunk never mentioned. The 2026-default hybrid escalates borderline
+    cases to an LLM-as-judge (Sonnet/Haiku 4.x).
+    """
+    supported_blob = " ".join(c.text.lower() for c in retrieved_chunks)
+    unsupported: list[str] = []
+    for claim in answer_claims:
+        # Pull content-bearing tokens: length >= 5, not a common stopword.
+        stopwords = {"must", "before", "after", "every", "their", "where",
+                     "through", "which", "these", "those", "about", "during",
+                     "without", "within", "between", "because"}
+        key_terms = [t.strip(".,;:()").lower() for t in claim.split()
+                     if len(t) >= 5 and t.strip(".,;:()").lower() not in stopwords]
+        if not key_terms:
+            continue
+        # All content terms must appear in some retrieved chunk.
+        if not all(term in supported_blob for term in key_terms):
+            missing = [t for t in key_terms if t not in supported_blob]
+            unsupported.append(f"{claim}  [unsupported terms: {missing}]")
+    return (len(unsupported) == 0), unsupported
+
+
+# ---------------------------------------------------------------------------
+# The three failure-shape queries and their (incorrect) model answers
+# ---------------------------------------------------------------------------
+
+@dataclass
+class Scenario:
+    name: str
+    query: str
+    query_terms: set[str]
+    user_role: str
+    # What the unfaithful generator would produce given the top retrieval.
+    # In the real system this is what the LLM emits; here we hand it in.
+    model_answer_claims: list[str]
+    expected_shape: str   # which wrong-doc shape this scenario triggers
+
+
+SCENARIOS: list[Scenario] = [
+    Scenario(
+        name="personal-device policy lookup",
+        query="what is the policy for personal devices connecting to internal systems",
+        query_terms={"personal", "devices", "policy", "internal", "systems"},
+        user_role="internal",
+        model_answer_claims=[
+            "Personal devices may connect after one-line manager approval (no MDM required).",
+        ],
+        expected_shape="Shape 1 - Stale supersedes current",
+    ),
+    Scenario(
+        name="atlas restructuring leak",
+        query="tell me about the atlas restructuring plan and the redundancies",
+        query_terms={"atlas", "restructuring", "plan", "redundancies"},
+        user_role="internal",  # not confidential
+        model_answer_claims=[
+            "Project Atlas will cut 14 redundancies in Q3, primarily in EMEA delivery.",
+        ],
+        expected_shape="Shape 2 - Duplicate with wrong tagging",
+    ),
+    Scenario(
+        name="contractor device policy",
+        query="what device requirements apply to contractors",
+        query_terms={"device", "requirements", "contractors"},
+        user_role="internal",
+        # The unfaithful answer extrapolates "contractors also need MDM"
+        # from a chunk that only says employees need MDM.
+        model_answer_claims=[
+            "Contractors must complete MDM enrollment before accessing internal systems.",
+            "Contractor enrollment is self-service via the IT portal.",
+        ],
+        expected_shape="Shape 3 - Adjacent-topic with confident phrasing",
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
+# Pass runner
+# ---------------------------------------------------------------------------
+
+def run_pass(
+    label: str,
+    corpus: list[Chunk],
+    scenario: Scenario,
+    apply_structural_gates: bool,
+    apply_faithfulness_gate: bool,
+) -> tuple[str, str]:
+    """Returns (verdict, detail). Verdict is one of:
+       'ANSWERED (correct)', 'ANSWERED (wrong)', 'ABSTAINED'."""
+
+    retrieved = top_k(corpus, scenario.query_terms, k=2)
+
+    if apply_structural_gates:
+        retrieved = gate_pre_filter(retrieved, scenario.user_role)
+        retrieved = gate_supersedure(retrieved)
+        retrieved = gate_content_dedup(retrieved, corpus)
+
+    if not retrieved:
+        return ("ABSTAINED", "structural gates removed all candidates")
+
+    best_chunk, best_score = retrieved[0]
+
+    if apply_faithfulness_gate:
+        supported, unsupported = faithfulness_check(
+            scenario.model_answer_claims, [c for c, _ in retrieved]
+        )
+        if not supported:
+            return ("ABSTAINED",
+                    f"faithfulness gate blocked - unsupported claims: {unsupported}")
+
+    # If we got here, the system would emit the model's answer citing the
+    # best chunk. We report whether the cited chunk supports the answer
+    # or is a wrong-doc shape.
+    if scenario.expected_shape == "Shape 1 - Stale supersedes current":
+        if best_chunk.superseded_by is not None:
+            return ("ANSWERED (wrong)",
+                    f"cited: {best_chunk.source_title} ({best_chunk.last_modified}) "
+                    f"- superseded by {best_chunk.superseded_by}")
+        return ("ANSWERED (correct)",
+                f"cited: {best_chunk.source_title} ({best_chunk.last_modified})")
+
+    if scenario.expected_shape == "Shape 2 - Duplicate with wrong tagging":
+        # The mis-tagged duplicate has permitted_roles that include the
+        # user. If it slipped through, that's a Shape 2 wrong answer.
+        if scenario.user_role in best_chunk.permitted_roles and \
+           "SHAPE 2" in best_chunk.note:
+            return ("ANSWERED (wrong)",
+                    f"cited: {best_chunk.source_title} from "
+                    f"{best_chunk.provenance_source_id} - duplicate of a "
+                    f"confidential source; tag was lost in re-upload")
+        return ("ANSWERED (correct)",
+                f"cited: {best_chunk.source_title}")
+
+    if scenario.expected_shape == "Shape 3 - Adjacent-topic with confident phrasing":
+        # The chunk is in scope, current, and permitted; the wrong answer
+        # extrapolates. Faithfulness gate is the only check that catches
+        # this; we mark it wrong unless the gate was applied.
+        return ("ANSWERED (wrong)",
+                f"cited: {best_chunk.source_title} (score {best_score:.2f}) - "
+                f"answer extrapolated beyond the chunk's content")
+
+    return ("ANSWERED (correct)", "no wrong-doc shape detected")
+
 
 def main() -> None:
     print("=" * 78)
-    print("INTERNAL KNOWLEDGE ASSISTANT — PLANNING POLICY SIMULATOR (Phase 11 · 94)")
+    print("WRONG-DOC FAILURE-SHAPE SIMULATOR (Phase 11 - 94)")
+    print("Three scenarios. Three passes. The third pass is the lesson.")
     print("=" * 78)
 
-    # --- Part 1: Source Readiness ---
+    corpus = build_corpus()
 
-    print()
-    print("PART 1: SOURCE READINESS CLASSIFIER")
-    print("-" * 78)
-
-    sample_docs = [
-        DocumentDescriptor(
-            title="Enterprise Pricing Sheet Q2 2026",
-            has_named_owner=True,
-            is_canonical_version=True,
-            age_days=0,
-            freshness_category="pricing",
-            is_factual_content=True,
-        ),
-        DocumentDescriptor(
-            title="IT Security Policy v4.2",
-            has_named_owner=True,
-            is_canonical_version=True,
-            age_days=45,
-            freshness_category="policy",
-            is_factual_content=True,
-        ),
-        DocumentDescriptor(
-            title="Project Kickoff Meeting Notes (draft)",
-            has_named_owner=False,
-            is_canonical_version=False,
-            age_days=10,
-            freshness_category="project_artifact",
-            is_factual_content=False,
-            note="raw meeting notes, no owner assigned",
-        ),
-        DocumentDescriptor(
-            title="Reference Architecture — Cloud Landing Zone",
-            has_named_owner=True,
-            is_canonical_version=False,   # a copy, not the master doc
-            age_days=200,
-            freshness_category="reference_arch",
-            is_factual_content=True,
-            note="SharePoint copy, not the Confluence master",
-        ),
-        DocumentDescriptor(
-            title="Consulting Methodology Handbook 2024",
-            has_named_owner=True,
-            is_canonical_version=True,
-            age_days=400,
-            freshness_category="methodology",
-            is_factual_content=True,
-            note="last review was pre-2026 AI practice update",
-        ),
-        DocumentDescriptor(
-            title="AI Engineering Best Practices Guide",
-            has_named_owner=True,
-            is_canonical_version=True,
-            age_days=60,
-            freshness_category="general",
-            is_factual_content=True,
-        ),
+    passes = [
+        ("Pass 1: NO gates (baseline)",                  False, False),
+        ("Pass 2: structural gates only",                True,  False),
+        ("Pass 3: structural + faithfulness gate",       True,  True),
     ]
 
-    ready_count = 0
-    for doc in sample_docs:
-        verdict, reason = classify_source(doc)
-        status = "READY  " if verdict is ReadinessVerdict.READY else "BLOCKED"
-        note = f"  [{doc.note}]" if doc.note else ""
-        reason_str = f"  -> {reason}" if reason else ""
-        print(f"  {status}  {doc.title}{note}{reason_str}")
-        if verdict is ReadinessVerdict.READY:
-            ready_count += 1
-
-    print()
-    print(f"  {ready_count}/{len(sample_docs)} documents passed the readiness gate.")
-
-    # --- Part 2: Answer Accountability Router ---
-
-    print()
-    print("PART 2: ANSWER ACCOUNTABILITY ROUTER")
-    print("-" * 78)
-
-    # Reusable chunk metadata
-    policy_chunk = ChunkMetadata(
-        source_title="IT Security Policy v4.2",
-        source_url="https://intranet.example.com/security/policy-v4.2",
-        last_modified="2026-04-15",
-        owner_team="Information Security",
-        permitted_roles=["internal", "restricted", "confidential"],
-    )
-    confidential_chunk = ChunkMetadata(
-        source_title="HR Restructuring Plan 2026",
-        source_url="https://intranet.example.com/hr/restructuring-2026",
-        last_modified="2026-06-01",
-        owner_team="HR Leadership",
-        permitted_roles=["confidential"],  # only senior leadership
-    )
-
-    sample_queries = [
-        QueryContext(
-            question="What is the policy for personal device access to internal systems?",
-            user_role="internal",
-            retrieval_score=0.81,
-            best_chunk=policy_chunk,
-            in_declared_scope=True,
-            note="high-confidence hit, user has permission",
-        ),
-        QueryContext(
-            question="What device policy applies to contractors?",
-            user_role="internal",
-            retrieval_score=0.58,
-            best_chunk=policy_chunk,
-            in_declared_scope=True,
-            note="medium confidence: policy exists but contractor specifics are thin",
-        ),
-        QueryContext(
-            question="Who is being made redundant in the restructuring?",
-            user_role="internal",  # not confidential
-            retrieval_score=0.77,
-            best_chunk=confidential_chunk,
-            in_declared_scope=True,
-            note="permission leakage scenario: high score but user lacks access",
-        ),
-        QueryContext(
-            question="What is the weather forecast for Frankfurt next week?",
-            user_role="internal",
-            retrieval_score=0.12,
-            best_chunk=None,
-            in_declared_scope=False,
-            note="out of scope: assistant covers internal policies, not weather",
-        ),
-        QueryContext(
-            question="What is the approval process for vendor contracts above 50k?",
-            user_role="internal",
-            retrieval_score=0.31,
-            best_chunk=None,
-            in_declared_scope=True,
-            note="in scope but no good source exists yet — low retrieval score",
-        ),
-    ]
-
-    outcome_counts: dict[RouteOutcome, int] = {}
-    for ctx in sample_queries:
-        outcome, reason = route_answer(ctx)
-        outcome_counts[outcome] = outcome_counts.get(outcome, 0) + 1
-        print(f"  Q: \"{ctx.question[:60]}\"")
-        print(f"     role={ctx.user_role}  score={ctx.retrieval_score:.2f}")
-        print(f"     -> {outcome.value}")
-        print(f"        {reason}")
-        if ctx.note:
-            print(f"        [note: {ctx.note}]")
+    for scenario in SCENARIOS:
+        print()
+        print("-" * 78)
+        print(f"Scenario: {scenario.name}")
+        print(f"  query:   \"{scenario.query}\"")
+        print(f"  user:    role={scenario.user_role}")
+        print(f"  shape:   {scenario.expected_shape}")
+        print()
+        for label, structural, faithful in passes:
+            verdict, detail = run_pass(label, corpus, scenario,
+                                       apply_structural_gates=structural,
+                                       apply_faithfulness_gate=faithful)
+            marker = "[WRONG!]" if verdict == "ANSWERED (wrong)" else \
+                     "[abstain]" if verdict == "ABSTAINED" else "[ok]    "
+            print(f"  {marker} {label}")
+            print(f"          -> {verdict}")
+            print(f"             {detail}")
         print()
 
-    print("  Outcome distribution:")
-    for outcome, count in sorted(outcome_counts.items(), key=lambda x: x[0].value):
-        print(f"    {outcome.value:<35} {count}")
+    # Source-agreement detail for Shape 2 (visible in logs).
+    print("=" * 78)
+    print("Source-agreement trace for the atlas query (Shape 2):")
+    print("-" * 78)
+    atlas_terms = {"atlas", "restructuring", "plan", "redundancies"}
+    hits = top_k(corpus, atlas_terms, k=4)
+    h_mis = _content_hash(mis_tagged_duplicate_text :=
+                          "Project Atlas restructuring plan: 14 redundancies in Q3, "
+                          "primarily in the EMEA delivery organization. Comms plan attached.")
+    for c, s in hits:
+        h = _content_hash(c.text)
+        flag = ""
+        if h == h_mis and "internal" in c.permitted_roles:
+            flag = "  <-- re-uploaded copy with internal tag; original is confidential"
+        print(f"  {c.source_title:<40} score={s:.2f}  hash={h}{flag}")
 
-    # --- Headline ---
     print()
     print("=" * 78)
-    print("HEADLINE: governance decisions must precede indexing")
-    print("-" * 78)
-    print("  Source readiness blocked 3/6 sample docs — stale sources and missing")
-    print("  owners are the most common failure modes before a chunk is written.")
-    print("  Permission leakage is silent at query time without a pre-filter:")
-    print("  the router catches it, but only because permitted_roles was encoded")
-    print("  at index time. Out-of-scope and low-confidence queries both need")
-    print("  explicit fallback paths — the default is hallucination at the boundary.")
+    print("HEADLINE: this run demonstrated the wrong-doc failure shape.")
+    print("In Pass 1 (no gates) every scenario produced a confidently-wrong")
+    print("answer with a citation that looked legitimate:")
+    print("  - Shape 1: 2019 policy cited as current (high score, dated 2019)")
+    print("  - Shape 2: confidential restructuring plan leaked via a")
+    print("             re-uploaded copy with an 'internal' tag")
+    print("  - Shape 3: employee policy extrapolated to contractors")
+    print("Structural gates (Pass 2) caught Shapes 1 and 2 - supersedure")
+    print("excludes the stale policy, content_hash dedup drops the")
+    print("mis-tagged duplicate. Shape 3 still slipped through because")
+    print("no metadata-only signal catches an LLM that extrapolates")
+    print("beyond the chunk it was given. Only the faithfulness gate")
+    print("(Pass 3) catches Shape 3.")
+    print("The fix is not a better embedding model - it is gates 1 and 2")
+    print("(structural) AND gate 3 (faithfulness).")
+    print("=" * 78)
 
 
 if __name__ == "__main__":

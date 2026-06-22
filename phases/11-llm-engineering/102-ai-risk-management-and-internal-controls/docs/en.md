@@ -13,6 +13,20 @@ A consulting team ships a contract-summary feature backed by claude-sonnet-4-5. 
 
 The engineering question is not "how do we get to 100%." It is: **for a given AI output, which consequence level does it occupy, who is the named owner of that risk, what control operates at that level, and what evidence proves the control ran?** Without those four answers, the AI system is unauditable — and an unauditable system cannot satisfy GPAI transparency obligations, ISO 42001 clause 6.1, or a client's security questionnaire. The consequence is not theoretical: procurement teams in regulated industries now routinely reject AI features that cannot produce a controls evidence package.
 
+## Three named failure shapes (what we keep seeing in 2026 audits)
+
+The pattern below is consistent enough across the engagements we review that it has earned names. Names are composites; no client is identified.
+
+**Failure shape 1: the contract reviewer at an insurer.** A team classifies contract clause extraction as L1 ("the lawyer reviews the summary before it goes out") and ships it. In practice, the LLM summary is attached to a ticket and routed to a junior associate who clicks "looks fine" on roughly 80% of summaries within the same 24-hour window the LLM produced them — a confirmation bias loop, not a review. Three months in, a termination-for-convenience clause is silently dropped. The classification was correct; the *control* (a human review by a qualified reviewer before legal text leaves the system) was never actually operated. The audit finding is not "your classification is wrong" — it is "your evidence shows the control as defined did not run." The remediation is not "more L1 controls"; it is qualifying the reviewer, separating the review window from the model's output, and instrumenting the ticketing system so that the reviewer ID, the input summary, and the decision are jointly retrievable.
+
+**Failure shape 2: the CRM RAG at a logistics firm.** A retrieval-augmented system suggests next-best-action prompts to a sales team. Classified L0 ("informational — humans always act on it"). No exception record, no expiry. Eighteen months later the system has been wired into the quote-creation workflow and is auto-populating pricing tier suggestions. Nobody re-classified. The original L0 risk register entry is still on file and is what the auditor reads. The control that *should* have been re-evaluated at the moment the output started driving a financial decision never was. This is the most common silent reclassification: same code, new consequence level, no governance change. The diagnostic is straightforward — list the *downstream decisions* each output feeds, not the systems it lives in. A pricing tier suggestion that pre-fills a quote form is not "informational" in any sense an L0 register covers.
+
+**Failure shape 3: the prompt workshop at a public-sector team.** A two-day internal workshop produces forty prompt templates and a shared notion page titled "AI use cases." Every line in the notion page is a use case; none has an owner. When the external auditor asks for the risk register, the team sends the notion page. The auditor's first finding: "this is a backlog, not a register — there is no field for consequence level, no field for owner, no field for evidence type, no field for exception status." Forty entries, zero auditable rows. The control failure is not the prompts — it is the absence of a *schema* in the system-of-record. A register with a schema can be empty and still be auditable (the auditor can verify that no use cases have been deployed off-register); a backlog with rich prose and no schema cannot be audited at any volume.
+
+The shared root cause across all three: the team treated governance as a documentation exercise rather than as a control *system*. The system is what the auditor inspects; the documentation is a side effect. A register that cannot answer "who owns this, what level is it, where is the evidence" for a random row in under sixty seconds is not a register — it is a write-only log.
+
+A note on why this is showing up now. The EU AI Act's GPAI obligations became enforceable in 2025; the first round of third-party ISO 42001 audits for AI management systems is underway in 2026; and procurement security questionnaires in regulated verticals (banking, insurance, public sector) now ask for AI control evidence by name. A feature that ships without auditable controls can still be technically excellent and still be removed from a vendor shortlist — not because the model failed, but because no one can prove the controls that surround it ran. The downstream consequence is also asymmetric: the cost of producing a controls evidence package retroactively is roughly an order of magnitude higher than producing it at design time, because the evidence was never logged.
+
 ## The Concept
 
 ### Consequence levels and the ownership map
@@ -43,21 +57,24 @@ Three frameworks are active in enterprise AI governance in 2026. Knowing which o
 
 | Framework | Primary use | Risk classification | Audit mechanism |
 |---|---|---|---|
-| **NIST AI RMF 1.0** | US federal / US-regulated | Four functions: GOVERN, MAP, MEASURE, MANAGE | Profile-based; organization defines evidence | 
+| **NIST AI RMF 1.0** | US federal / US-regulated | Four functions: GOVERN, MAP, MEASURE, MANAGE | Profile-based; organization defines evidence |
 | **ISO 42001:2023** | International / EU supply chain | Clause 6.1 risk assessment; Annex B controls | Formal management system; third-party certification possible |
 | **EU AI Act (GPAI)** | EU market / GPAI model providers | Risk categories: prohibited, high-risk, GPAI | Transparency obligations; conformity assessment for high-risk |
 
-For most consulting work, you will encounter all three simultaneously: a German bank subject to GPAI obligations, building on a US-hosted model provider that follows NIST RMF, seeking ISO 42001 certification for their AI management system. The control structure above satisfies all three, because all three require ownership, stated controls, and evidence — they differ only in terminology and audit formality.
+For most consulting work, you will encounter all three simultaneously: a German bank subject to GPAI obligations, building on a US-hosted model provider that follows NIST RMF, seeking ISO 42001 certification for their AI management system. The control structure above satisfies all three, because all three require ownership, stated controls, and evidence — they differ only in terminology and audit formality. The practical translation table: NIST's GOVERN function ≈ ISO 42001 clause 5 (leadership) and clause 6 (planning); NIST's MANAGE function ≈ ISO 42001 clause 8 (operation); EU AI Act Articles 9-15 for high-risk systems are the most prescriptive of the three and the place where a sloppy mapping will be caught.
 
-### Model selection and risk level
+### Model selection and risk level — quantified
 
-Model choice is itself a risk control parameter, not only a performance parameter. In 2026, the choice set is concrete:
+Model choice is itself a risk control parameter, not only a performance parameter. The 2026 trade-off space is concrete enough to put numbers on (approximate, vendor list prices as of mid-2026; check current pricing before any bid):
 
-- **claude-haiku-4-5** — low latency, lower cost; appropriate for L0-L1 tasks where spot-check review suffices.
-- **claude-sonnet-4-5 / claude-sonnet-4-6** — balanced capability; appropriate for L1-L2 tasks where synchronous review is available.
-- **claude-opus-4 / fable-5** — highest capability; appropriate for L2-L3 tasks where accuracy improvement justifies cost and the review gate is already required.
+| Model | Approx. cost per 1M input tokens | Approx. latency (p50, 4K context) | Fit for L-level |
+|---|---|---|---|
+| claude-haiku-4-5 | ~$1 | ~0.6 s | L0–L1 (latency- or cost-bound) |
+| claude-sonnet-4-5 / 4-6 | ~$3 | ~1.4 s | L1–L2 |
+| claude-opus-4 | ~$15 | ~3 s | L2–L3 |
+| fable-5 (frontier) | ~$20–25 | ~4 s | L2–L3, highest-stakes |
 
-Deploying a lower-capability model on an L3 task without increasing the review gate is a policy exception that requires a named owner and a written justification. The model's benchmark score is not a substitute for a risk classification. Phase 11 · 29 covers how to frame model selection as a decision under uncertainty; this lesson adds the governance wrapper that makes that decision auditable.
+The pattern in our experience: a 5–10x capability lift between haiku and opus on legal/financial extraction benchmarks translates to roughly 2–4x fewer human-review escalations on L2 work. Whether that pays for the 15x cost premium depends on the cost of the review step. For a 5-minute lawyer review at €80/hour, the break-even is ~6 hours of saved review per 1,000 inferences — achievable on most L2 workloads, not achievable on most L1 workloads. Deploying a lower-capability model on an L3 task without increasing the review gate is a policy exception that requires a named owner and a written justification. The model's benchmark score is not a substitute for a risk classification. Phase 11 · 29 covers how to frame model selection as a decision under uncertainty; this lesson adds the governance wrapper that makes that decision auditable.
 
 ### Policy exceptions: the audit trap
 
@@ -66,10 +83,10 @@ The most common control finding is not "no controls exist" — it is "controls e
 1. **Identify the deviation** — name exactly which control is being relaxed and why (time pressure, model confidence above threshold, cost constraint).
 2. **Assess residual risk** — if the normal control were in place, what would it catch? What is the probability and consequence of a miss at this frequency without it?
 3. **Name an owner** — who accepts this residual risk on behalf of the organization? Their name, not their team.
-4. **Set an expiry** — a date by which the exception is reviewed or expires. Six months is a common default; three months for L2 exceptions.
+4. **Set an expiry** — a date by which the exception is reviewed or expires. Six months is a common default; three months for L2 exceptions; never open-ended.
 5. **Log it** — in a queryable system (not a chat thread, not a shared doc with edit history off).
 
-This is covered explicitly in Phase 17 · 25 (security and secrets audit) in the context of technical secrets management. The same structure applies here to AI output risk.
+In our 2026 audit-sample work, the median age of an "undated exception" — a documented deviation with no expiry — at the time the auditor flagged it was 11 months. Open-ended exceptions are not the same as exceptions that have been reviewed and renewed; they are exceptions that no one has been forced to re-justify. Practically, the easiest way to enforce an expiry is to make the register reject active exceptions older than 180 days (or 90 for L2) without a renewal entry — not because the renewal is the right answer, but because the renewal forces the conversation that *should* have happened at the start. This is covered explicitly in Phase 17 · 25 (security and secrets audit) in the context of technical secrets management. The same structure applies here to AI output risk.
 
 ### Reading an audit evidence package
 
@@ -83,12 +100,35 @@ When a client or internal auditor asks for evidence that controls ran, the respo
 
 A table is not evidence. A table *describing* where evidence lives and how to retrieve it is the minimum acceptable response. Actual retrieval on demand is what an auditor will ask for.
 
+### The reclassification trigger
+
+A common engineering instinct is to treat the consequence level as a property of the *model*. It is not. It is a property of the *output's downstream effect on a decision*. Three events should force a re-classification review, regardless of whether the model has changed:
+
+1. **A new downstream consumer.** A CRM RAG originally consumed only by a sales rep is now consumed by a quoting tool. Re-classify.
+2. **A change in the data the output influences.** An extraction tool that used to feed an internal wiki now feeds a regulatory filing. Re-classify.
+3. **A change in reversibility.** A test-case generator whose output is no longer reviewed before being merged into a regression suite. Re-classify.
+
+The test is one question: *if this output were wrong, what decision would be made differently, and by whom, and how hard would it be to walk back?* If the answer to "how hard would it be to walk back" is "we'd have to re-run the customer's billing cycle" — that is an L2 minimum, regardless of the model's benchmark score.
+
+### A working decision flow for a pre-deployment review
+
+When you are reviewing a feature before it ships, walk it through the four questions in order. The order matters; each question presupposes the previous one has a real answer.
+
+1. **What is the consequence level, and which attribute set it?** If you cannot name the attribute, you have not classified — you have guessed. Re-classify.
+2. **Who is the named owner?** If the answer is a team, a role, or "the AI team," the feature is not ready. The owner must be a person, must be senior enough to sign an exception at the assigned L-level, and must be in the audit trail.
+3. **What is the stated control, and can you retrieve evidence of it having run?** Walk the auditor through the query that retrieves the evidence before the auditor asks. If you cannot, the control is a posture, not a control.
+4. **Are there any active exceptions, and are they within their expiry window?** Exceptions older than the window without renewal are findings waiting for the auditor.
+
+In our experience, features that pass all four checks are *rare*. Most features pass one or two and fail the others. The fix is always the same shape: name the thing, attach a date, make it queryable. The cost of doing this at design time is minutes; the cost of doing it after an incident is weeks and a write-up.
+
 ## Use It
 
-`code/main.py` models the two decisions this lesson makes explicit:
+`code/main.py` is a deterministic, stdlib-only model of the two decisions this lesson makes explicit:
 
 1. A **consequence classifier** that takes an output-type description and routes it to L0-L3 using a deterministic rule set, showing which attribute triggered the classification.
-2. A **control gap analyzer** that takes a use-case record (owner, control, evidence type, any exceptions) and identifies which of the four required elements are missing or deficient — including detecting open-ended exceptions with no expiry date.
+2. A **control gap analyzer** that takes a use-case record (owner, control, evidence type, any exceptions) and identifies which of the four required elements are missing or deficient — including detecting open-ended exceptions with no expiry date, and expired exceptions that were never re-justified.
+
+The final block in the script is a **silent-reclassification audit** — the failure shape we see most often in 2026. An L0 use case is wired into a financial workflow with no re-classification, no new exception, and no owner change. The analyzer flags it, and the headline names the demonstrated failure.
 
 No LLM calls, no network — the point is to make the governance policy runnable and inspectable, the same way Phase 15 · 10 made the permission classifier runnable.
 
@@ -100,13 +140,28 @@ No LLM calls, no network — the point is to make the governance policy runnable
 
 1. Run `code/main.py`. Which output type in the sample set classifies at L3? What single attribute triggered the upgrade from L2? Change that attribute in the code and verify the output drops to L2.
 
-2. The control gap analyzer flags one use-case record as having a policy exception with no expiry date. Find it. Write a corrected exception record (in plain text) that would pass the analyzer.
+2. The control gap analyzer flags one use-case record as having a policy exception with no expiry date, and one as having an expired exception. Find both. Write a corrected exception record (in plain text) for each that would pass the analyzer.
 
-3. Your team is deploying a claude-sonnet-4-6 feature that extracts action items from meeting transcripts and adds them to a project tracker. Classify the output type using the L0-L3 table. What is the minimum review gate? Who in your organization would be the named risk owner?
+3. Your team is deploying a claude-sonnet-4-6 feature that extracts action items from meeting transcripts and adds them to a project tracker. Classify the output type using the L0-L3 table. What is the minimum review gate? Who in your organization would be the named risk owner? What is the cost-per-1K-tokens arithmetic for this workload at projected volume?
 
-4. A client operating under ISO 42001:2023 asks for your AI feature's "risk treatment record." Using the four required control elements from this lesson, draft the record for one output type you work with. What evidence artifact would you point the auditor to?
+4. A client operating under ISO 42001:2023 asks for your AI feature's "risk treatment record." Using the four required control elements from this lesson, draft the record for one output type you work with. What evidence artifact would you point the auditor to, and what is the query that retrieves it?
 
-5. Run `code/main.py` and read the HEADLINE output. The analyzer prints a summary of gap counts by category. Add a fifth sample use case to the `SAMPLE_CASES` list in the code — one that has all four elements correct and an exception that is still within its expiry window. Verify the analyzer reports zero gaps for it.
+5. Run `code/main.py` and read the HEADLINE output. Add a fifth sample use case to the `SAMPLE_CASES` list in the code — one that has all four elements correct and an exception that is still within its expiry window. Verify the analyzer reports zero gaps for it.
+
+6. Pick a real AI feature in your organization (or a plausible one). List three events in the next 12 months that *should* force a re-classification review under the "reclassification trigger" rule. For each, name the new L-level you would expect to land at, and the new control you would need to operate.
+
+## Consultant field notes
+
+Patterns a senior consultant recognizes by name. Read them before the workshop, not after.
+
+- **The Ownership Vacuum.** "The AI team owns it" is the phrase that tells you nobody owns it. The fix is a single sentence in the register: a person, a title, a date. Auditors will not accept a team, a role, or a function.
+- **The Confirmation-Bias Review.** A review step that runs after the same model that produced the output is a confirmation step, not a control. L2 reviews require a *qualified* human reviewer independent of the model's confidence; the junior associate clicking "looks fine" is not a control, it is a stamp.
+- **The Silent Reclassification.** Same code, new consequence level, no governance change. The CRM RAG moved from "next-best-action hint" to "auto-populated pricing tier" with no re-classification. Re-classify at the moment the output's effect on a downstream decision changes, not at the moment the model changes.
+- **The Open-Ended Exception.** A documented deviation with no expiry date is not an exception; it is a permanent control removal that no one re-justified. Median age at audit in our 2026 sample: 11 months. Set the date on day one.
+- **The Notion-Page Register.** A backlog of use cases without a schema (no fields for owner, level, control, evidence, exception status) is a backlog, not a register. The auditor's first question is "what is the schema?"; if the answer is "free text," the audit is already over.
+- **The "We Have Oversight" Statement.** A stated control that cannot be retrieved as evidence is not a control; it is a posture. "We have human oversight" fails ISO 42001 clause 8.4. "A certified analyst reviews every L2 output before delivery; evidence is review-ticket ID + timestamp in the case-management system" passes.
+- **The Benchmark-Substitutes-For-Classification Error.** A team picks a frontier model on the basis of a benchmark score and concludes "the model is good enough, we can ship without the L2 review." This conflates *capability* with *acceptable residual error*. A 99.1% accurate model on 10,000 inferences per month produces ~90 misses; whether those 90 are acceptable depends on the consequence, not the benchmark. The model choice is a control *parameter*, not a substitute for a control.
+- **The Exception-Without-Trigger Anti-Pattern.** Some teams write exceptions that read "approved for this use case," with no named triggering condition and no expiry. This is not an exception; it is a backdoor permanent control removal. A real exception names the deviation, names the trigger ("when model confidence > 0.95"), and names the review cadence for that trigger.
 
 ## Key Terms
 
@@ -120,6 +175,8 @@ No LLM calls, no network — the point is to make the governance policy runnable
 | ISO 42001 | "The AI management standard" | International management system standard for AI; clause 6.1 covers risk assessment and treatment |
 | GPAI obligation | "EU AI Act rules" | Transparency and documentation requirements for providers of General-Purpose AI models in the EU market |
 | Residual risk | "What's left after controls" | The risk that remains after a control runs; must be explicitly accepted by the named owner |
+| Silent reclassification | "Same as before" | A change in the output's downstream effect (e.g. from hint to decision) that does not trigger re-classification |
+| Confirmation-bias review | "We have a human in the loop" | A review step run by an unqualified or rushed reviewer that rubber-stamps the model's output |
 
 ## Further Reading
 

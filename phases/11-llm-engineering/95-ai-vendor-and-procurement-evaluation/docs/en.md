@@ -1,17 +1,34 @@
-# AI Vendor Evaluation: A Scoring Framework for Procurement Decisions (2026)
+# AI Vendor Evaluation: Procurement Evidence That Bites (2026)
 
-> The AI vendor market bifurcated sharply in 2025-2026: a small tier of frontier labs (Anthropic, Google DeepMind, OpenAI, Meta, Mistral) compete on model capability, while a broader tier of infrastructure vendors (AWS Bedrock, Azure AI Foundry, Google Vertex AI, Hugging Face Inference Endpoints) compete on data handling, compliance posture, and commercial terms. Procurement teams that evaluate only on benchmark scores are picking the wrong variable — by the time a contract closes, the lead model has typically been superseded by a newer checkpoint. The durable evaluation dimensions are the ones that are hard to change: where your data is processed, who holds the keys, what the exit path looks like, and how operating cost scales with real traffic. In 2026, the combination of EU AI Act tier-one obligations, cross-border data residency pressure from LHIND's GDPR context, and aggressive per-token pricing competition makes this a decision with meaningful downside risk if done casually.
+> In 2026 the AI vendor market is a two-tier system: a small frontier-lab tier (Anthropic, Google DeepMind, OpenAI, Meta, Mistral, DeepSeek) where capability and pricing move monthly, and a wider infrastructure tier (AWS Bedrock, Azure AI Foundry, Google Vertex AI, self-hosted) where data handling, compliance posture, and commercial terms are what change between proposals. The trap is evaluating on the variable that moves. By the time a procurement paper is signed, the lead model has typically been superseded by a newer checkpoint; the dimensions that survive a contract cycle are the hard-to-change ones: data residency, key custody, exit path, and how operating cost scales with real production traffic. In an LHIND GDPR context layered with EU AI Act tier-one obligations, a casual evaluation is a decision with a six-figure downside — not because the model was wrong, but because the procurement evidence was thin.
 
 **Type:** Learn
-**Languages:** Python (stdlib — vendor scorecard engine + portfolio comparison)
+**Languages:** Python (stdlib — vendor scorecard engine + hard-gate enforcement + cost-trap detector)
 **Prerequisites:** Phase 17 · 26 (Compliance frameworks), Phase 17 · 27 (FinOps for LLMs)
-**Time:** ~45 minutes
+**Time:** ~50 minutes
+
+## What the 2026 market actually looks like
+
+The market has settled into a working topology that you should be able to price from memory at the start of an evaluation. The figures below are approximate as of early 2026 and drift monthly; re-quote at the start of every engagement.
+
+- **Frontier API, real-time, input**: roughly $3-4 per million tokens (Sonnet 4.6-class, GPT-4o-class). Cheaper "mini" tiers at roughly $0.20-0.40.
+- **Frontier API, real-time, output**: roughly $15-18 per million tokens. Output is 4-6x input across the frontier tier.
+- **Self-hosted open weights, marginal cost at scale**: roughly $0.50-1.50 per million tokens once you include amortised GPU, networking, and ops; the upfront GPU bill is the real cost (eight H100s for a production-grade deployment sit in the $250-400K capex range, depending on vendor and memory configuration).
+- **Batch inference discount**: 50-80% off the real-time list, with an SLA measured in hours (typically 4-24 hours; tightening in 2026). Not a candidate for interactive workloads.
+- **Eval set sizing**: 50 prompts catches roughly 80% of the capability gap in our experience; 200 prompts catches roughly 95%. Below 50 you are ranking noise; above 200 you are in diminishing returns unless the task distribution is bimodal.
+- **Cert currency**: SOC 2 Type II reports cover 6-12 month audit windows. A report older than 12 months needs a bridge letter to be procurement-grade; a Type I report (point-in-time design review) is not sufficient for regulated engagements.
+
+The procurement trap is not that the numbers are wrong; the numbers are roughly right. The trap is that the spreadsheet you build the comparison in is allowed to assume a workload the deployment will not have.
 
 ## The Problem
 
 Most AI procurement decisions in consulting contexts are made on two inputs: a live demo and a price-per-token comparison run in a spreadsheet against current traffic estimates. Both inputs are misleading. The demo uses a handpicked prompt set that does not represent production load; the cost model ignores context window growth, caching dynamics, and the latency-cost tradeoff that becomes material at scale. Six months after go-live, the team discovers that their vendor's data processing agreement forbids fine-tuning on customer data, that the audit logs required for their SOC 2 review are behind a paid add-on, or that moving to a different provider would require a six-month re-integration effort because they built against a proprietary tool-calling format.
 
 The engineering question is not "which model scores highest on MMLU today." It is: for the specific combination of data classification, regulatory exposure, integration architecture, and expected traffic curve this client operates under, which vendor-and-deployment-model combination minimizes long-term risk while remaining commercially viable? That question has at least six independent dimensions, and collapsing them to one score is the failure mode.
+
+### The demo-data disqualification
+
+The contract reviewer at a mid-sized insurer evaluated three vendors for a claims-triage RAG in 2025. Vendor C scored highest on a custom eval set the team built from 200 anonymized claims — 87% accuracy, 12% over Vendor A, 6% over Vendor B. The recommendation memo went to procurement. The legal team then read the DPA. Vendor C's DPA included a clause permitting the vendor to use customer prompts for model improvement unless the customer explicitly opted out via a paid enterprise add-on (roughly 30% above the quoted price). The insurer's data classification policy forbids that class of opt-out by default — the only acceptable answer was "no training on customer data, period, in the DPA." Vendor C was disqualified eight hours before contract signing. The fallback to Vendor A cost six weeks of project delay and approximately 180,000 EUR in unbilled consulting time. The lesson: capability is the visible layer; the disqualification lives in the documents that scorecards do not read.
 
 ## The Concept
 
@@ -22,27 +39,29 @@ A rigorous vendor evaluation decomposes into six dimensions that each require a 
 | Dimension | Core question | Evidence to collect |
 |---|---|---|
 | **Model capability** | Does the model meet the task's accuracy bar at acceptable latency? | Evals on representative production prompts; latency p50/p95 under realistic concurrency |
-| **Data handling and residency** | Where is data processed, stored, and used for training? | Data Processing Agreement; DPA annex on subprocessors; region availability map |
+| **Data handling and residency** | Where is data processed, stored, and used for training? | Signed Data Processing Agreement; DPA annex on subprocessors; region availability map |
 | **Security posture** | What controls protect data in transit and at rest? | SOC 2 Type II report; ISO 27001 cert; pen-test summary; encryption key management documentation |
 | **Compliance certifications** | Does the vendor's certification coverage match the client's regulatory exposure? | Cert matrix (GDPR, HIPAA, BSI C5, EU AI Act Annex III classification) |
 | **Integration and lock-in risk** | How deeply does the integration couple to vendor-specific interfaces? | API surface analysis; tool-calling format compatibility; fine-tuned model portability |
 | **Economics and exit planning** | What does total cost look like at 2x and 10x current traffic? | Token pricing ladder; batch vs. real-time discount; egress cost; cost of switching |
 
+The hard-gate layer sits *above* the scorecard. A vendor that scores 4/4 on capability but fails to provide a signed DPA is disqualified, not penalised. Scorecards rank; gates filter.
+
 ### Capability: what evals actually tell you
 
 Benchmark scores (MMLU, HumanEval, MATH) are useful for rough positioning but should never be the primary evaluation signal in a procurement context. The reasons:
 
-- Frontier model rankings rotate quarterly. The leader on a given benchmark in Q1 is often third or fourth by Q3.
+- Frontier model rankings rotate quarterly. The leader on a given benchmark in Q1 is often third or fourth by Q3. In 2026, the same vendor can release three checkpoints in a procurement window, so any scorecard locked to a model name is a moving target.
 - Production task distributions differ from benchmark distributions. A model that leads on coding benchmarks may underperform on structured extraction from German-language documents — which is what your engagement actually needs.
-- Latency is a first-class dimension that benchmarks omit. Claude Sonnet 4.6 running at 40-60 tokens/second has a materially different UX from a slower model with a slightly higher accuracy score.
+- Latency is a first-class dimension that benchmarks omit. Sonnet 4.6 running at 40-60 tokens/second has a materially different UX from a slower model with a slightly higher accuracy score. For interactive chat the latency ceiling is roughly 300 ms to first token; for batch document processing it is hours.
 
-The right evaluation artifact is a **task-representative eval set**: 50-200 real prompts drawn from the client's actual use case, scored by a domain expert, run against the shortlisted models under realistic concurrency. This takes two to four days to build but survives vendor model updates because you re-run it, not rebuild it.
+The right evaluation artefact is a **task-representative eval set**: 50-200 real prompts drawn from the client's actual use case, scored by a domain expert, run against the shortlisted models under realistic concurrency. This takes two to four days to build but survives vendor model updates because you re-run it, not rebuild it. In our experience, the 50-prompt eval set catches roughly 80% of the capability gap; the additional 150 prompts are diminishing returns unless the task distribution is bimodal.
 
 ### Data handling: the GDPR and EU AI Act layer
 
 For LHIND engagements, two frameworks shape the data handling evaluation:
 
-**GDPR**: The data processor/controller distinction matters at the API call level. When your application sends a prompt containing personal data to a model API, the vendor is acting as a data processor. The vendor must provide a signed DPA, must name all subprocessors (GPU cloud providers, inference infrastructure), must commit to not training on your data by default, and must support data subject rights (deletion, access) through documented mechanisms. AWS Bedrock, Azure AI Foundry, and Anthropic's Enterprise API all provide compliant DPAs. Some smaller vendors do not.
+**GDPR**: The data processor/controller distinction matters at the API call level. When your application sends a prompt containing personal data to a model API, the vendor is acting as a data processor. The vendor must provide a signed DPA, must name all subprocessors (GPU cloud providers, inference infrastructure), must commit to not training on your data by default, and must support data subject rights (deletion, access) through documented mechanisms. AWS Bedrock, Azure AI Foundry, and the major frontier-lab Enterprise APIs all provide compliant DPAs. Some smaller vendors do not. A signed DPA is a hard gate for any non-anonymized call.
 
 **EU AI Act (in force August 2024, obligations phasing through 2026)**: General-purpose AI models with over 10^25 FLOPs of training compute are subject to Annex XI transparency obligations. Providers of these models must publish technical documentation, maintain incident registers, and implement copyright policies. When a client's application falls into a high-risk AI system category (Annex III: employment decisions, credit scoring, biometric systems, law enforcement), additional conformity assessment and human oversight requirements apply to the deploying organization — meaning your client, not just the model vendor.
 
@@ -52,14 +71,16 @@ The practical procurement implication: ask vendors for their EU AI Act readiness
 
 | Certification | What it covers | What it does not cover |
 |---|---|---|
-| SOC 2 Type II | Controls in operation over an audit period (typically 6-12 months) | Does not cover the underlying GPU cloud provider's physical security |
-| ISO 27001 | Information security management system | Certificate scope matters: check whether inference APIs are in scope |
-| BSI C5 | German Federal Office standard; required for German public-sector cloud | Providers: AWS, Azure, Google Cloud have C5; model API vendors vary |
-| ISO 42001 | AI management system standard (2023); increasingly required | Very few model API vendors have this yet in 2026 |
+| **SOC 2 Type II** | Controls in operation over an audit period (typically 6-12 months) | Does not cover the underlying GPU cloud provider's physical security |
+| **ISO 27001** | Information security management system | Certificate scope matters: check whether inference APIs are in scope |
+| **BSI C5** | German Federal Office standard; required for German public-sector cloud | Some mid-tier model vendors are not certified even if the cloud they sit on is |
+| **ISO 42001** | AI management system standard (2023); increasingly required | Very few model API vendors have this yet in 2026 |
 
-The critical verification step is checking **certificate scope**. An ISO 27001 certificate for a vendor's internal IT organization does not cover the model inference API you are using. Ask for the Statement of Applicability, not just the certificate number.
+### The Statement of Applicability gap
 
-For high-sensitivity deployments, also evaluate:
+The mid-sized logistics firm shortlisting for a CRM RAG had an ISO 27001-certified vendor on the list. The procurement paper cited the certification. The privacy officer then read the Statement of Applicability (SoA): the certificate covered the vendor's internal IT, payroll, and corporate SaaS use. The SoA explicitly excluded the model inference API because that service line had launched nine months after the most recent audit. The vendor was technically accurate in claiming ISO 27001 certification and substantively wrong in implying that the certification covered the API the client would actually call. The fix was a six-week re-audit commitment from the vendor; the client accepted a bridge letter instead and added a contractual obligation to deliver the refreshed certificate within twelve months.
+
+The critical verification step is checking **certificate scope**. An ISO 27001 certificate for a vendor's internal IT organization does not cover the model inference API you are using. Ask for the Statement of Applicability, not just the certificate number. For high-sensitivity deployments, also evaluate:
 
 - **Customer-managed encryption keys (CMEK)**: Does the vendor support bringing your own key to the KMS? Required for some financial-sector clients.
 - **VPC/Private Link ingress**: Can you route inference traffic over a private network endpoint rather than the public internet? AWS Bedrock and Azure AI Foundry support this; not all providers do.
@@ -67,56 +88,93 @@ For high-sensitivity deployments, also evaluate:
 
 ### Integration and lock-in
 
-The core integration risk is building against a vendor's proprietary surface and then needing to move. The 2026 mitigation strategy is an **OpenAI-compatible API abstraction layer** — most major providers now expose an endpoint that accepts the OpenAI Chat Completions schema. Claude via `claude-3-7-sonnet-20250219` can be called through AWS Bedrock's OpenAI-compatible endpoint, reducing the blast radius of a vendor switch from "rewrite the integration" to "update the base URL and auth header."
+The core integration risk is building against a vendor's proprietary surface and then needing to move. The 2026 mitigation strategy is an **OpenAI-compatible API abstraction layer** — most major providers now expose an endpoint that accepts the OpenAI Chat Completions schema. Claude can be called through AWS Bedrock's OpenAI-compatible endpoint, reducing the blast radius of a vendor switch from "rewrite the integration" to "update the base URL and auth header."
 
 Lock-in risk by tier:
 
 - **Low risk**: Using a provider via an OpenAI-compatible endpoint with no fine-tuned models, no proprietary tool-calling format, no vendor-specific system prompt features.
-- **Medium risk**: Fine-tuned or distilled models hosted with the vendor; proprietary tool schemas; heavy use of vendor-specific features (Anthropic's extended thinking, OpenAI Assistants thread state).
-- **High risk**: Deep integration with a managed agent platform (OpenAI Assistants API, Anthropic Managed Agents), model hosting with no export path, or persistent vector store with no standard export format.
+- **Medium risk**: Fine-tuned or distilled models hosted with the vendor; proprietary tool schemas; heavy use of vendor-specific features (extended thinking, Assistants thread state).
+- **High risk**: Deep integration with a managed agent platform, model hosting with no export path, or persistent vector store with no standard export format.
 
-Cross-link: Phase 17 · 27 covers the cost dimension of these choices in detail. Phase 17 · 26 covers the compliance certification evidence chain.
+### Switching cost: the number, not the platitude
+
+"We can always switch later" is the sentence that costs projects. A working estimate for an LHIND-scale engagement, in our experience:
+
+- **Low-risk switch (OpenAI-compatible endpoint, no fine-tuning)**: 2-4 weeks of engineering. Re-integration is config; re-eval is the new model run against the existing eval set; data export is a standard dump.
+- **Medium-risk switch (fine-tuned model, proprietary tool schema, vendor-specific features in production)**: 8-16 weeks. Re-integration touches the call sites that used the proprietary schema; re-eval must rebuild the prompt-template variant of the eval set; fine-tuned weights need export, re-validation, and possibly re-fine-tuning on the new platform.
+- **High-risk switch (managed agent platform, vendor-locked vector store, or no standard export path)**: 20-30 weeks. Architecture-level changes; data export may need bespoke engineering; eval set may need to be rebuilt because the old prompts were tuned to the old platform's quirks.
+
+These ranges are why the fine-tuning tax story above is not a hypothetical. A team that fine-tunes for an 8-12 point accuracy lift, then needs to switch, is making a 3-6 month engineering commitment they did not budget for at the time the fine-tune was approved.
+
+### The fine-tuning tax
+
+A public-sector team in the LHIND portfolio built a German-language classification model fine-tuned against a vendor's hosted offering in 2024. The fine-tuning improved task accuracy by roughly 11 percentage points and looked defensible at the time. In 2026 they needed to switch providers for data residency reasons. The vendor confirmed that fine-tuned weights would be exported, but the export arrived in a non-standard format, the new provider's serving stack required re-validation, and the eval set that originally scored the model had drifted out of relevance. The "two-week migration" the team had budgeted became a five-month project with an estimated cost of approximately 320,000 EUR. The lesson: estimate switching cost *before* the fine-tune, using a real integration abstraction layer, not after.
 
 ### Economics: the three traps
 
 Phase 17 · 27 covers FinOps for LLMs in full. Three procurement-specific traps merit attention here:
 
-**The context window trap**: Vendors quote per-input-token and per-output-token prices. At low traffic, the input/output ratio is close to sample prompts. At production scale, system prompts, conversation history, and retrieved document chunks compound the input-token count. A vendor that looks 15% cheaper at quote time can be 40% more expensive at scale if your average context window is 4x larger than the benchmark prompt.
+**The context window trap**: Vendors quote per-input-token and per-output-token prices. At low traffic, the input/output ratio is close to sample prompts. At production scale, system prompts, conversation history, and retrieved document chunks compound the input-token count. A vendor that looks 15% cheaper at quote time can be 40% more expensive at scale if your average context window is 4x larger than the benchmark prompt. As a working number: Sonnet 4.6-class real-time input pricing sits in the $3-4 per million tokens range, output around $15-18; closed-weight GPT-4o-class is comparable; open-weight self-hosted at scale can land in the $0.50-1.50 range once you include infra, but the upfront GPU cost is real. These figures drift monthly — always re-quote.
 
-**The batch discount trap**: Most vendors offer significant discounts (50-80%) for batch inference with multi-hour SLAs. This is appropriate for document processing pipelines; it is not appropriate for interactive chat. Procurement proposals sometimes use batch pricing to hit a target number, then deploy to real-time endpoints at full price.
+**The batch discount trap**: Most vendors offer significant discounts (50-80%) for batch inference with multi-hour SLAs. This is appropriate for document processing pipelines; it is not appropriate for interactive chat. Procurement proposals sometimes use batch pricing to hit a target number, then deploy to real-time endpoints at full price. The batch discount is also a moving target; in 2026 several vendors tightened batch SLAs from 24 hours to 4-6 hours, narrowing the use case.
 
 **The switching cost trap**: Migrating a fine-tuned model, a customized embedding index, and a multi-turn conversation history to a new vendor typically takes two to six months of engineering. This is not a hard cost but it is a real cost that should be factored into the TCO comparison.
 
 ### Building the scorecard
 
-The output of a vendor evaluation should be a structured scorecard, not a prose comparison. Each dimension gets a weight (summing to 1.0) set by the client's risk profile. Each vendor gets a score (0-4) on each dimension based on documented evidence. The weighted total drives the recommendation, but the individual dimension scores surface the trade-offs transparently for stakeholder discussion.
+The output of a vendor evaluation should be a structured scorecard, not a prose comparison. Each dimension gets a weight (summing to 1.0) set by the client's risk profile. Each vendor gets a score (0-4) on each dimension based on documented evidence. The weighted total drives the recommendation, but the individual dimension scores surface the trade-offs transparently for stakeholder discussion. A scorecard without a hard-gate step is not a procurement artefact; it is a benchmark.
 
-For a regulated financial-sector client: data handling and security posture each get higher weight. For a rapid-prototype consulting internal tool: model capability and economics dominate. The code in this lesson makes this explicit and executable.
+For a regulated financial-sector client: data handling and security posture each get higher weight. For a rapid-prototype consulting internal tool: model capability and economics dominate. The code in this lesson makes this explicit and executable — and demonstrates what happens when the gate step is skipped.
+
+### What goes in the procurement paper
+
+A defensible procurement paper has four sections, in order, each answering one question:
+
+1. **The gate log** — which vendors were disqualified, at which gate, with the document that proved or disproved the gate. This is the section that protects you when the disqualified vendor's salesperson calls your CIO. Without it, the conversation is opinion.
+2. **The scorecard** — completed with weights, raw scores, weighted totals, and the per-vendor divergence from the leader. Include the profile used and the rationale for the weights; the profile is the most contestable part of the paper, so it has to be defensible in a stakeholder meeting.
+3. **The cost-trap re-quote** — each shortlisted vendor's quoted monthly cost vs the effective monthly cost at the production traffic profile. Include context-window growth and the deployment SLA. The trap rows are the most important cells in the paper.
+4. **The recommendation memo** — recommended vendor, profile used, top three risks, switching-cost estimate. A good memo is one page; a long memo is a sign that the author is hedging.
+
+A paper that leads with the scorecard and treats the gate log as an appendix has the analysis backwards. The gate log is the section that survives a compliance audit; the scorecard is the section that survives a stakeholder meeting.
 
 ## Use It
 
-`code/main.py` is a deterministic, stdlib-only vendor scorecard engine. It models two concepts from this lesson:
+`code/main.py` is a deterministic, stdlib-only vendor scorecard engine. It models three concepts from this lesson:
 
 1. A **scorecard evaluator** that takes a set of vendors (with scores on the six dimensions) and a client weight profile (set by engagement context), computes weighted totals, and identifies the dimension where each vendor most diverges from the leader.
-2. A **portfolio comparison** that runs the same vendors against three different client profiles (regulated enterprise, consulting internal tool, startup) and shows how the ranking shifts — making the "the right answer depends on the context" point explicit and verifiable.
+2. A **hard-gate enforcement step** that disqualifies any vendor failing a non-negotiable criterion (DPA signed, no training on customer data, SOC 2 Type II, EU residency where required) — *before* the scorecard is run. This is the step the demo-data-disqualification story above shows the cost of skipping.
+3. A **cost-trap detector** that takes a vendor's quoted price plus a real traffic profile and surfaces the batch-vs-real-time mismatch, the context-window growth effect, and the implicit switching cost. The output is a "would this quote survive production?" verdict — not just a number.
 
-The vendors and scores in the driver are illustrative but grounded in publicly available information as of early 2026.
+The drivers in each part include a vendor that *passes* the scorecard but *fails* the procurement reality, and a quote that *looks* cheap but costs 2-4x more at production scale. The final block names the specific failure shapes demonstrated.
 
 ## Ship It
 
-`outputs/skill-vendor-scorecard.md` is a one-page decision aid: a ready-to-paste scorecard template, weight profiles for common engagement types, and a go/no-go checklist for each of the six evaluation dimensions. Bring it to the first vendor evaluation working session.
+`outputs/skill-vendor-scorecard.md` is a one-page decision aid: a ready-to-paste scorecard template, weight profiles for common engagement types, a hard-gate checklist, and a per-dimension evidence-gathering prompt list. Bring it to the first vendor evaluation working session.
 
 ## Exercises
 
 1. Run `code/main.py`. Which vendor leads for the regulated-enterprise profile, and which leads for the startup profile? Find the single dimension score that drives the ranking reversal between those two profiles.
 
-2. Run `code/main.py` and examine the "divergence" output. For the regulated-enterprise winner, which dimension is its weakest relative to the second-place vendor? What evidence-gathering step would you run to close that gap before a final recommendation?
+2. In Part 2 (hard gates), the vendor that would have led the regulated-enterprise scorecard is disqualified. Identify the gate that caught it. What document would the vendor have needed to provide for it to pass?
 
-3. Your client is a German public-sector agency. Add BSI C5 certification as a hard gate (any vendor without C5 is automatically eliminated) to the scorecard logic in `code/main.py`. Which vendors survive? What does this tell you about the shortlist for that engagement type?
+3. In Part 3 (cost traps), the cheapest quote by list price is not the cheapest at production scale. Identify the trap (batch discount, context window, or switching cost) that drives the reversal and quantify the multiplier.
 
-4. A vendor salesperson quotes you a price that looks 20% cheaper than AWS Bedrock. They used batch-inference pricing in their quote. Sketch the three questions you ask in the next five minutes to determine whether the comparison is apples-to-apples.
+4. Your client is a German public-sector agency. Add BSI C5 certification as a hard gate (any vendor without C5 is automatically eliminated) to the scorecard logic in `code/main.py`. Which vendors survive? What does this tell you about the shortlist for that engagement type?
 
-5. Your client's application sends customer support tickets (which may contain names and account numbers) to a model API. List the four specific documents you need from the vendor before the first non-anonymized API call is permitted under GDPR.
+5. A vendor salesperson quotes you a price that looks 20% cheaper than AWS Bedrock. They used batch-inference pricing in their quote. Sketch the three questions you ask in the next five minutes to determine whether the comparison is apples-to-apples.
+
+6. Your client's application sends customer support tickets (which may contain names and account numbers) to a model API. List the four specific documents you need from the vendor before the first non-anonymized API call is permitted under GDPR.
+
+## Consultant field notes
+
+Patterns a senior evaluator recognises by name. The point of the name is so you can say "this is a case of [X]" across teams and everyone knows the failure shape.
+
+- **Demo-data disqualification** — A vendor scores top on capability because the eval was run on anonymized data; the DPA permits training on customer data by default and the data classification policy forbids opt-out by payment. The disqualification arrives at legal review, not at the scorecard. Estimate delay in weeks, not days.
+- **Statement of Applicability gap** — The vendor cites ISO 27001; the SoA excludes the inference API. The certificate is real and the marketing is technically accurate. The fix is a SoA review before the certificate is cited, not after.
+- **Batch-price quote** — A TCO comparison that mixes batch and real-time pricing hits a number that survives procurement challenge. The deployment is real-time. Always re-quote under the actual SLA the workload needs.
+- **Fine-tuning tax** — A team fine-tunes to lift accuracy by 8-12 points; the migration cost two years later is 5-10x the original fine-tuning investment. Treat fine-tuning as a long-term commitment and price the exit before you start.
+- **Context window creep** — A pricing model is built on 2K-token prompts; production averages 8K tokens once system prompt, history, and retrieval are included. The same vendor moves from cheapest to mid-tier on a spreadsheet, and the analysis still looks defensible because the math is correct. Use production traffic, not demo traffic.
+- **Demo-led procurement** — The decision is made on a live demo and a price list before the scorecard is built. The scorecard is then constructed to confirm the decision. Build the scorecard and the gate set first; run the demo last.
 
 ## Key Terms
 
@@ -129,6 +187,8 @@ The vendors and scores in the driver are illustrative but grounded in publicly a
 | CMEK | "Bring your own key" | Customer-managed encryption keys; the customer holds the KMS key material, not the vendor |
 | OpenAI-compatible endpoint | "Drop-in replacement" | An inference endpoint that accepts the OpenAI Chat Completions request schema; reduces switching cost but not lock-in from fine-tuned models |
 | Subprocessor | "Third-party vendor" | An entity the primary vendor uses to process your data; must be listed in the DPA and subject to equivalent data protection obligations |
+| Statement of Applicability | "Scope of the cert" | The ISO 27001 document that lists which controls are in scope; reading it tells you whether the inference API is covered |
+| Hard gate | "Disqualifier" | A non-negotiable criterion that removes a vendor from the shortlist before scoring; not a weighted dimension |
 | Task-representative eval | "Custom benchmark" | An evaluation set built from real production prompts for the client's use case; the only eval that survives vendor model updates |
 
 ## Further Reading

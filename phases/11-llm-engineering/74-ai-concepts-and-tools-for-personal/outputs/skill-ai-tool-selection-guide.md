@@ -32,13 +32,13 @@ or use as a pre-task checklist.
 
 ## Step 3 — Select the tool
 
-| Tool category | Best for | Watch out for |
-|---|---|---|
-| Internal RAG / Copilot M365 | Policy questions, internal knowledge retrieval | May lag on recent updates; verify currency |
-| Chat assistant (Claude, ChatGPT, Gemini) | Drafting, ideation, public-data summarization | Hallucinated specificity in numbers/names/dates |
-| Code assistant (Copilot, Cursor, Claude Code) | Inline completion, multi-file edits, code review | Secret-scan context before pasting; check what the diff changed |
-| Document intelligence | Large-volume PDF extraction, structured data | Position bias in long docs; never sole source for Tier 3+ |
-| Human-only | Regulated data, irreversible decisions | N/A |
+| Tool category | Best for | Approx cost (2026) | Watch out for |
+|---|---|---|---|
+| Internal RAG / Copilot M365 | Policy questions, internal knowledge retrieval | Infrastructure cost; marginal per query | May lag on recent updates; verify currency |
+| Chat assistant (Claude Opus/Sonnet 4.x, ChatGPT, Gemini 2.x) | Drafting, ideation, public-data summarization | $3–$15 / 1K input, $15–$75 / 1K output (frontier) | Hallucinated specificity in numbers/names/dates |
+| Code assistant (Copilot, Cursor, Claude Code) | Inline completion, multi-file edits, code review | Subscription or ~$3–$10 per active hour | Secret-scan context; attention cost on multi-file edits |
+| Document intelligence | Large-volume PDF extraction, structured data | $0.01–$0.05 per page (Azure DI) | Position bias in long docs; never sole source for Tier 3+ |
+| Human-only | Regulated data, irreversible decisions | N/A | N/A |
 
 ---
 
@@ -48,8 +48,13 @@ or use as a pre-task checklist.
 |---|---|---|
 | **Tier 1 — cosmetic** | Internal email draft, brainstorm list | Read once; adjust if needed |
 | **Tier 2 — internal decision support** | Team summary, private script | Spot-check 2-3 key claims; run code in isolation |
-| **Tier 3 — client-facing or legally binding** | Contract summary, client analysis, regulatory filing | SME review; ask targeted retrieval questions; verify all numbers/dates/negations |
+| **Tier 3 — client-facing or legally binding** | Contract summary, client analysis, regulatory filing | SME review; **ask targeted retrieval questions**; verify all numbers/dates/negations |
 | **Tier 4 — irreversible action** | Production deploy, client communication sent, data deleted | Second qualified reviewer; audit trail; rollback path confirmed |
+
+**Tier 3 summarization always requires a targeted retrieval question** about
+the most decision-critical clause in the source — even when the routing is
+clean and the summary "looks complete." A correct tool choice does not
+remove the verification step; it makes the verification step load-bearing.
 
 ---
 
@@ -74,6 +79,20 @@ Use when summarizing any document that will inform a decision.
 
 ---
 
+## Attention cost — the trade-off the tools don't tell you
+
+Supervisor attention is the actual bottleneck on knowledge work, not API cost.
+
+| Tool | Approx attention overhead | What this means in practice |
+|---|---|---|
+| Chat assistant on a focused task | 5–15% | Background in your attention; scan, edit, send |
+| Code assistant on a multi-file edit | 30–50% | Watch the diff; verify the tests |
+| Server-side coding agent (issue → PR) | 80–95% first time, 40% once task shape is trusted | Read the PR as carefully as a junior engineer's first PR |
+
+Match supervision to blast radius, not to the headline capability of the tool.
+
+---
+
 ## Quick-reference: blocked combinations
 
 These combinations are always blocked regardless of prompt quality:
@@ -89,6 +108,6 @@ These combinations are always blocked regardless of prompt quality:
 
 ## One-sentence team agreement template
 
-> We use [Internal RAG / approved chat assistant] for [task types], send only [public / anonymized internal] data to external tools, and require [SME review / second reviewer] before any AI output is used for [client-facing / irreversible] decisions.
+> We use [Internal RAG / approved chat assistant] for [task types], send only [public / anonymized internal] data to external tools, and require [SME review / second reviewer] before any AI output is used for [client-facing / irreversible] decisions. Tier 3 summarization always includes a targeted retrieval question about the most decision-critical clause in the source.
 
 Fill in the blanks with your team's approved tools and escalation path.

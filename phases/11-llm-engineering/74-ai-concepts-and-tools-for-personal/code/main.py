@@ -10,6 +10,13 @@ Part 2: Verification-Tier Classifier
   verification tier required, the checks to run, and a BLOCK flag when
   the data classification is incompatible with the chosen tool.
 
+Part 3: Failure demonstration
+  Reproduces the contract-reviewer failure shape in miniature: a
+  correctly-routed confidential contract summarization where the
+  chosen tool is fine but the position-bias follow-up question is
+  still load-bearing. The HEADLINE at the bottom names the specific
+  failure shape demonstrated.
+
 No network, no model calls. The point is to make the decision policy
 explicit and runnable, mirroring what a working consultant should do
 before typing a prompt.
@@ -63,7 +70,7 @@ class Task:
     label: str
     task_type: TaskType
     data_tier: DataTier
-    consequence_level: int          # 1–4 matching VerificationTier
+    consequence_level: int          # 1-4 matching VerificationTier
     internal_corpus_covers: bool    # True if internal RAG could answer this
     is_large_binary_document: bool  # True if source is PDF / complex binary
     note: str = ""
@@ -83,6 +90,7 @@ class VerificationDecision:
     checks: list[str]
     blocked: bool = False
     block_reason: str = ""
+    mandatory_followup: str = ""  # the targeted-retrieval question for Tier 3+
 
 
 # ---------- Part 1: Task-to-Tool Router ----------
@@ -128,12 +136,13 @@ def route_task(task: Task) -> RoutingDecision:
             block_reason="Data tier REGULATED — external tools prohibited.",
         )
 
-    # Rule 2: retrieval from internal corpus
-    if task.task_type is TaskType.RETRIEVAL and task.internal_corpus_covers:
+    # Rule 2: retrieval from internal corpus (covers both retrieval and
+    # summarization of internal documents the corpus indexes).
+    if task.internal_corpus_covers:
         return RoutingDecision(
             tool=ToolCategory.INTERNAL_RAG,
             rationale=(
-                "Question is answerable from the internal corpus. "
+                "Question or document is covered by the internal corpus. "
                 "Internal RAG keeps data inside your tenant and provides "
                 "grounded, citable answers. Escalate to chat assistant only "
                 "if RAG returns no useful result."
@@ -244,11 +253,27 @@ _TIER_CHECKS: dict[VerificationTier, list[str]] = {
 }
 
 
+# The targeted-retrieval follow-up that is mandatory for any Tier 3
+# summarization task. This is the lesson's load-bearing rule: a correct
+# tool choice does not remove the need for a targeted question, because
+# position bias and hallucinated specificity survive a correct routing.
+_T3_SUMMARY_FOLLOWUP = (
+    "After reading the summary, ask the tool one targeted retrieval question "
+    "about the most decision-critical clause in the source document "
+    "(e.g. 'What does the document say about termination rights / "
+    "liability caps / exclusivity?'). Do not skip this even when the "
+    "summary 'looks complete'."
+)
+
+
 def classify_verification(routing: RoutingDecision, task: Task) -> VerificationDecision:
     """Return the required verification tier and checks.
 
     If the routing was blocked, the verification tier is irrelevant —
     the decision is already blocked. Otherwise tier follows consequence_level.
+
+    For Tier 3 summarization tasks, the targeted-retrieval follow-up is
+    mandatory regardless of which tool produced the summary.
     """
     if routing.blocked:
         return VerificationDecision(
@@ -265,10 +290,99 @@ def classify_verification(routing: RoutingDecision, task: Task) -> VerificationD
         4: VerificationTier.T4_IRREVERSIBLE,
     }
     tier = tier_map.get(task.consequence_level, VerificationTier.T3_CLIENT)
+
+    # The load-bearing rule: Tier 3 summarization always requires a
+    # targeted-retrieval follow-up, even when the routing is clean.
+    mandatory = ""
+    if tier is VerificationTier.T3_CLIENT and task.task_type is TaskType.SUMMARIZATION:
+        mandatory = _T3_SUMMARY_FOLLOWUP
+
     return VerificationDecision(
         tier=tier,
         checks=_TIER_CHECKS[tier],
+        mandatory_followup=mandatory,
     )
+
+
+# ---------- Part 3: Failure-shape demonstration ----------
+
+def demonstrate_position_bias_failure_shape() -> None:
+    """Reproduce the contract-reviewer failure in miniature.
+
+    The shape: a 47-page supplier contract is routed to internal RAG
+    (internal data tier, corpus covers it). The summarization returns
+    a fluent, well-structured result. The contract reviewer reads the
+    summary in four minutes and signs off — never asking the targeted
+    retrieval question about the termination clause on page 34.
+
+    The routing is correct. The verification tier is correctly Tier 3.
+    The mandatory follow-up question is correctly required. The
+    failure is that the human skips the follow-up — and the simulator
+    here demonstrates exactly what the routing+verification policy
+    would have caught if the follow-up had been run.
+
+    The simulator models the middle-of-document clause being dropped
+    by the summarizer. The follow-up retrieval question is the only
+    step that would have surfaced it.
+    """
+    print("-" * 78)
+    print("PART 3 — failure shape: contract-reviewer position-bias trap")
+    print("-" * 78)
+
+    # The contract as a list of (page, clause). Page 34 has the
+    # load-bearing termination clause; everything else is "noise."
+    contract_clauses = {
+        1:  ("Definitions", "standard"),
+        4:  ("Scope of services", "standard"),
+        9:  ("Payment terms", "standard"),
+        12: ("Confidentiality", "standard"),
+        18: ("Indemnification", "standard"),
+        24: ("Limitation of liability", "standard"),
+        28: ("Force majeure", "standard"),
+        # Page 34 — the buried, decision-critical clause.
+        34: ("Termination rights", "TERMINATION EXPLICITLY EXCLUDED UNDER THIS AGREEMENT"),
+        39: ("Governing law", "standard"),
+        44: ("Dispute resolution", "standard"),
+        47: ("Signatures", "standard"),
+    }
+
+    # Simulated summarizer output: position-biased, weights pages
+    # 1-12 (front) and 44-47 (back), drops or paraphrases the middle.
+    # This mirrors what transformer-based summarizers reliably do on
+    # long documents in our experience.
+    summary_pages_seen = [1, 4, 9, 12, 44, 47]
+    summary_references_termination = False  # the load-bearing page was dropped
+
+    print(f"  Contract: 47 pages, 11 clauses, page 34 carries the")
+    print(f"            load-bearing termination clause (explicitly excluded).")
+    print()
+    print(f"  Summarizer output covers pages: {summary_pages_seen}")
+    print(f"  Summary references termination clause on page 34: "
+          f"{summary_references_termination}")
+    print()
+
+    # Step 1: the routing policy (above) already chose internal RAG
+    # and Tier 3 verification, with the mandatory follow-up.
+    # Step 2: what happens if the follow-up IS run.
+    targeted_question = (
+        "What does the contract say about termination rights?"
+    )
+    targeted_answer = contract_clauses[34][1]
+    print(f"  Targeted retrieval question: \"{targeted_question}\"")
+    print(f"  -> Tool returns: \"{targeted_answer}\"")
+    print(f"  -> Page 34 visible. Position-bias failure surfaced.")
+    print()
+
+    # Step 3: what happens if the follow-up is SKIPPED (the actual
+    # failure shape from the insurer).
+    if not summary_references_termination:
+        print("  IF THE FOLLOW-UP IS SKIPPED:")
+        print(f"    - Reviewer reads summary. Termination not mentioned.")
+        print(f"    - Reviewer signs off in 4 minutes.")
+        print(f"    - Client renewal negotiation assumes termination is available.")
+        print(f"    - Position taken on a clause the source actively excludes.")
+        print(f"    - Consequence: unwound at material cost.")
+    print()
 
 
 # ---------- Driver ----------
@@ -289,6 +403,9 @@ def evaluate(task: Task) -> None:
     print(f"  Verify: {verification.tier.value}")
     for check in verification.checks:
         print(f"    - {check}")
+    if verification.mandatory_followup:
+        print(f"  Mandatory follow-up (Tier 3 summarization):")
+        print(f"    > {verification.mandatory_followup}")
     print()
 
 
@@ -367,25 +484,55 @@ def main() -> None:
             is_large_binary_document=False,
             note="Internal data restricts external code tools; Tier 4 consequence.",
         ),
+        # The contract-reviewer failure shape, modeled with a clean
+        # Tier 3 routing so the mandatory targeted-retrieval follow-up
+        # actually fires in the live output. (The confidential version
+        # above is blocked at routing; this internal-RAG variant is
+        # where the verification step becomes load-bearing.)
+        Task(
+            label="Summarize 47-page supplier contract for internal review",
+            task_type=TaskType.SUMMARIZATION,
+            data_tier=DataTier.INTERNAL,
+            consequence_level=3,
+            internal_corpus_covers=True,
+            is_large_binary_document=False,
+            note="Internal data, internal RAG covers it. Tier 3 with "
+                 "mandatory targeted-retrieval follow-up -- the contract-"
+                 "reviewer failure shape.",
+        ),
     ]
 
     blocked_count = 0
+    followup_required = 0
     for task in sample_tasks:
         evaluate(task)
         routing = route_task(task)
+        verification = classify_verification(routing, task)
         if routing.blocked:
             blocked_count += 1
+        if verification.mandatory_followup:
+            followup_required += 1
+
+    demonstrate_position_bias_failure_shape()
 
     print("=" * 80)
-    print("HEADLINE: match the task type and data tier before typing the prompt")
+    print("HEADLINE: the failure shape was 'summarization Tier 3 with the")
+    print("targeted-retrieval follow-up skipped.' A correct tool choice")
+    print("(internal RAG, Tier 3 verification) does NOT remove the need for")
+    print("the follow-up question — it just makes the follow-up the load-")
+    print("bearing step. Position bias survives a clean routing.")
     print("-" * 80)
     print(f"  {len(sample_tasks)} tasks evaluated. {blocked_count} blocked by tool/data-tier mismatch.")
+    print(f"  {followup_required} task(s) flagged for mandatory targeted-retrieval follow-up.")
     print("  Key rules:")
     print("    1. Internal RAG first for any retrieval the internal corpus covers.")
     print("    2. Regulated data -> human-only; no external API regardless of tool quality.")
     print("    3. Confidential data + external document intelligence -> blocked.")
     print("    4. Consequence level drives verification tier, independent of tool choice.")
-    print("    5. A blocked routing does not disappear with a better prompt.")
+    print("    5. Tier 3 summarization always requires a targeted retrieval question")
+    print("       about the most decision-critical clause. A correct routing is not a")
+    print("       substitute for the follow-up; it is the precondition for it.")
+    print("    6. A blocked routing does not disappear with a better prompt.")
     print("       Fix the data classification or the tool choice, not the wording.")
 
 

@@ -1,6 +1,16 @@
 # AI Vendor Scorecard — Decision Aid for Procurement Engagements
 
-Use this one-pager to structure a vendor evaluation working session. Fill in the evidence column before scoring; a score without a document reference is an assumption, not an evaluation.
+Use this one-pager to structure a vendor evaluation working session. Build the scorecard, run the hard gates, then re-quote under real traffic. A score without a document reference is an assumption, not an evaluation; a quote without the deployment SLA is not a quote.
+
+## Procurement failure shapes (run the gates, then run the cost model)
+
+These are the failure patterns the code in `code/main.py` makes visible. Spot them in the procurement paper, not after the contract is signed.
+
+- **Demo-data disqualification** — Vendor scores top on capability because the eval was run on anonymized data; the DPA permits training on customer data by default. The disqualification arrives at legal review, not at the scorecard. Run the gates first.
+- **Statement of Applicability gap** — Vendor cites ISO 27001; the SoA excludes the inference API. Ask for the SoA, not the certificate.
+- **Batch-price quote** — Quote is 20-40% below the real-time comparison; the SLA is batch and the deployment is real-time. Re-quote under the actual deployment SLA.
+- **Fine-tuning tax** — Lift of 8-12 points from fine-tuning costs 5-10x the original investment to migrate later. Estimate the exit before the fine-tune starts.
+- **Context window creep** — Pricing model uses 2K-token prompts; production averages 8K. Use production traffic, not demo traffic.
 
 ---
 
@@ -89,6 +99,7 @@ These are non-negotiable for regulated or GDPR-scope engagements. Any vendor fai
 | Signed DPA | Must have before first non-anonymized API call | GDPR Art. 28 processor obligation |
 | No training on customer data | Must be in the DPA, not just marketing | Data minimisation; IP protection |
 | SOC 2 Type II | Must cover the inference API endpoint | Security assurance; audit trail |
+| ISO 27001 SoA covers inference API | The SoA must list the inference API in scope, not just the corporate IT org | "SoA gap" failure shape |
 | BSI C5 | Required for German public-sector clients | Procurement law; BSI recommendation |
 | EU data residency | Required if data classification prohibits third-country transfers | GDPR Chapter V; Schrems II |
 
@@ -108,5 +119,7 @@ These are non-negotiable for regulated or GDPR-scope engagements. Any vendor fai
 
 1. Completed scorecard (this template, filled in)
 2. Evidence file: one document per dimension per vendor, referenced by filename
-3. Ranking matrix: vendors by profile (use `code/main.py` in this lesson to generate)
-4. Recommendation memo: recommended vendor + profile used + top-3 risks
+3. Hard-gate log: which vendors were disqualified and at which gate (use `code/main.py` Part 2)
+4. Cost-trap re-quote: each shortlisted vendor's quoted vs effective monthly TCO under production traffic (use `code/main.py` Part 3)
+5. Ranking matrix: vendors by profile (use `code/main.py` in this lesson to generate)
+6. Recommendation memo: recommended vendor + profile used + top-3 risks

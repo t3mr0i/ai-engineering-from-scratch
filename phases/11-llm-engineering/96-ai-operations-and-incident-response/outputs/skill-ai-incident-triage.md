@@ -1,6 +1,8 @@
-# AI Incident Triage — Decision Aid
+# AI Incident Triage - Decision Aid
 
 One-page reference for on-call engineers and AI ops leads. Paste into your runbook wiki or print for the war room.
+
+**The headline failure shape:** *silent drift* — a provider swaps the serving model under the same alias. L1 transport (latency, errors) and L2 cost look clean. Only L3 AI-quality metrics (LLM-as-judge score, output-length distribution) catch it in minutes. If you own no L3 panel, this incident is weeks late at L4 satisfaction.
 
 ---
 

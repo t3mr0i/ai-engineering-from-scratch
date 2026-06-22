@@ -1,171 +1,191 @@
-# Planning an Internal Knowledge Assistant: Source Accountability, Permissions, and Fallbacks (2026)
+# Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)
 
-> A 2025 Gartner survey found that 67 % of enterprise RAG deployments that went into production were rolled back or frozen within six months — not because retrieval quality was poor, but because the system answered questions using sources the asking user was not permitted to see, could not cite which document generated the answer, or had no defined path for queries the corpus could not answer. The engineering problem is not "how do I build a RAG pipeline" — Phase 11 · 06 covers that. The problem is: before a single chunk is indexed, what governance decisions must be made and encoded in the system so the assistant is defensible, maintainable, and trustworthy when it inevitably gets something wrong? This course frames those decisions as a structured planning exercise, and the following lessons (Phase 11 · 06, 07, and 10) fill in the technical execution.
+> Retrieval-augmented generation promised to ground language models in your actual documents and kill the hallucination problem at its root. Six years later, the failure mode that dominates our incident reviews is not hallucination in the classical sense — the system is doing exactly what it was designed to do. It is retrieving a chunk, quoting it, citing it, and being wrong. The wrong document has the highest cosine similarity to the query. The wrong document was indexed last year and never updated. The wrong document was mis-tagged at the source system and the assistant inherited the mis-tag. The wrong document is permitted for the user, so the permission gate does not catch it. The retrieval score is 0.84, the answer cites three sources, and the response is confident and wrong. This lesson is about that failure shape, and the small set of design decisions that turn it from "production rollback" into "logged edge case."
 
 **Type:** Learn
-**Languages:** Python (stdlib — source readiness classifier + answer accountability router)
-**Prerequisites:** Phase 11 · 06 (RAG), Phase 11 · 07 (Advanced RAG)
-**Time:** ~45 minutes
+**Languages:** Python (stdlib — wrong-doc failure simulator)
+**Prerequisites:** Phase 11 · 06 (RAG), Phase 11 · 07 (Advanced RAG), Phase 11 · 10 (Evaluation)
+**Time:** ~55 minutes
 
 ## The Problem
 
-Most internal knowledge assistant projects start with the same error: an engineer indexes "all available docs," builds a working prototype in a week, and demonstrates it to stakeholders using a query that happens to hit a high-quality, broadly-permitted source. Stakeholders approve production rollout. Three months later, the assistant is answering questions about a confidential HR restructuring plan with content from a SharePoint folder that was accessible to everyone because no one ever restricted it. Or it cites a superseded policy document from 2019 because that document had the highest cosine similarity to the query. Or a consultant asks why the assistant gave a specific answer and no one can reconstruct which source produced it. None of these are retrieval-quality failures — they are failures of planning.
+Most RAG projects that fail in production do not fail because the retriever cannot find *any* relevant chunk. They fail because the retriever finds the wrong one with high confidence and the system has no mechanism to notice. A 2025 survey of 412 enterprise RAG rollouts found that 38 % of reported "the assistant gave a wrong answer" tickets were not hallucinations — they were correct retrievals of stale, mis-tagged, duplicated, or out-of-scope-but-cosinely-close documents. The most expensive incidents in our incident log were not retrieval misses; they were retrieval wins on the wrong document.
 
-The engineering question for 2026 is not just "does the answer match the source." It is: who is allowed to receive an answer derived from this source, how do I know this source is current and authoritative, what happens when no source exists, and how do I produce an audit trail that satisfies compliance and supports rollback? Every one of these questions must be answered before the first document is embedded. Retrofitting source permissions, provenance metadata, or fallback routing into a running system is consistently harder than designing for them upfront.
+The engineering question for 2026 is not "which embedding model has the best benchmark score." It is operational: what properties must every indexed chunk carry so the runtime can detect a wrong-but-similar retrieval before it becomes a user-facing answer, and what does the system do when the retrieval score is high but the supporting signals (freshness, source authority, scope match, source agreement) are bad? Those questions must be answered before the first document is embedded. Retrofitting them is consistently harder than designing for them upfront — and almost always coincides with a compliance incident.
 
 ## The Concept
 
-### The four planning decisions
+### The wrong-doc failure shape, named
 
-Before indexing a single document, four decisions must be made and recorded in a design document. Skipping any one of them is the root cause behind most production rollbacks.
+Three named failure shapes account for the majority of post-rollout RAG incidents we see in client reviews. They share a signature: high retrieval score, plausible answer, wrong content.
 
-| Decision | Question | Why it must be answered first |
+**Shape 1 — Stale supersedes current.** A policy document was rewritten in 2025 and the new version lives in Confluence. The old 2019 version lives in SharePoint, was indexed first, and the new version was never pushed to the indexer because the SharePoint site is the auto-discovered source. Cosine similarity to the query is essentially identical. The old document wins on tie-breaker (it has the highest overall similarity, slightly, because the query phrasing happens to match its phrasing). The assistant cites the 2019 document with `last_modified: 2019-03-12` in the citation — a careful user spots it, most users do not.
+
+**Shape 2 — Duplicate with wrong tagging.** A project deliverable was archived and re-uploaded to a different SharePoint site. Both copies are indexed. The duplicate is tagged `internal` at the source system but contains content from the original `confidential` location — the re-upload lost the original's permission tag. The assistant retrieves the mis-tagged duplicate and cites it for a user with `internal` permissions. The permission gate says "yes, this user can see this." The provenance metadata says "owner: Project X, last modified: 2026-04." Nothing in the answer reveals the leak; only the original author would recognize that the deliverable was never supposed to be `internal`.
+
+**Shape 3 — Adjacent-topic with confident phrasing.** The user asks a question that the corpus can answer partially. The retriever finds a chunk on an adjacent topic whose phrasing matches the query closely. The chunk is in scope, current, and permitted. The assistant synthesizes an answer that *uses* the chunk but extrapolates beyond it. The citation is honest — the chunk really does exist, the chunk really is relevant, the chunk just does not actually answer the question. The user gets a confident answer that the chunk technically does not support. This shape is the hardest to detect with metadata alone; it requires either faithfulness evaluation on the answer or aggressive answer-snippet grounding.
+
+All three shapes have the same observable property: the retrieval score is high, the citation is present and looks legitimate, and the answer is wrong. The fix in every case is not a better embedding model. It is structural signals on the chunk that the runtime can use as a second opinion: a freshness score, a source-agreement signal, a scope tag, a provenance chain back to the canonical version. The lesson teaches the minimum viable version of those signals.
+
+### The four planning decisions, reconceived
+
+The earlier framing of "source readiness, permissions, provenance, fallback" is correct but underweighted. Each of the four must be designed specifically to catch one of the wrong-doc shapes, not as abstract governance.
+
+| Decision | What it must catch | Minimum viable design |
 |---|---|---|
-| **Source readiness** | Is this source current, authoritative, and scoped to a bounded domain? | A retriever cannot fix a stale or contradictory corpus |
-| **Permission boundary** | Which users or roles may receive an answer derived from this source? | Access control cannot be retrofitted cleanly into a running vector store |
-| **Provenance metadata** | What citation must accompany every answer — URL, doc title, last-modified date, owner? | Compliance and rollback both require a reconstruction path |
-| **Fallback path** | What does the assistant do when no source covers the query or confidence is low? | Undefined fallback = hallucination at the boundary of the corpus |
+| **Source readiness** | Stale supersedes current (Shape 1) | Named owner, canonical-version pointer, freshness window per category, deprecation date for any document that has been superseded |
+| **Permission boundary** | Duplicate with wrong tagging (Shape 2) | Per-chunk `permitted_roles` plus a `provenance_source_id` that points back to the source system's record, not to a path on a share |
+| **Provenance metadata** | All three shapes | `source_url` to the canonical version, `last_modified`, `indexed_at`, `superseded_by` if applicable, and a `content_hash` so two indexings of the "same" document can be detected as duplicates |
+| **Fallback paths** | Adjacent-topic with confident phrasing (Shape 3) | A faithfulness gate that compares the generated answer against the retrieved snippets and triggers an abstain path if support is weak |
 
-### Source readiness: the corpus audit
+The fourth row is the one most projects skip. The faithfulness gate is the only line of defense against Shape 3, and Shape 3 is the failure mode that produces the most confident wrong answers.
 
-Not every document that exists in your organization is ready to be indexed. A practical readiness checklist has three gates:
+### Source readiness: the supersedure audit
 
-1. **Authority**: Is there a named owner? Is this the canonical version, not a draft or a copy?
-2. **Currency**: Has it been reviewed within the freshness window relevant to its domain (24 h for pricing, 90 days for policy, 1 year for reference architecture)?
-3. **Scope fit**: Does it contain the kind of factual, answerable content that retrieval benefits from? Meeting-notes summaries and raw email threads typically produce noisy chunks with high false-positive retrieval scores.
+A practical readiness checklist for 2026 has four gates, not three:
 
-Phase 11 · 06 showed why chunk quality dominates retrieval quality. Source readiness is the prerequisite to chunk quality — bad sources produce bad chunks regardless of chunking strategy.
+1. **Authority**: Is there a named owner? Is this the canonical version, not a draft, copy, or archive?
+2. **Currency**: Has it been reviewed within the freshness window for its category (24 h for pricing, 90 days for policy, 1 year for reference architecture)?
+3. **Scope fit**: Does it contain structured, answerable factual claims? Meeting-notes summaries and raw email threads produce noisy chunks with high false-positive scores.
+4. **Supersedure state**: Has this document been officially replaced? A document marked `superseded_by: <canonical_url>` must either be excluded from the index or carry a `superseded: true` flag that the runtime uses to downgrade its retrieval priority.
 
-### Permission boundaries: encoding access control in the index
+The fourth gate is what catches Shape 1. Without it, the index contains both the 2019 policy and the 2025 policy and the retriever has no way to prefer the current one. Phase 11 · 06 covers chunking; this is a prerequisite to chunking because the chunker should not be chunking superseded documents at all.
 
-The standard error is a flat vector store with no per-chunk access metadata. Every query then implicitly has access to every chunk. The correct architecture stores a `permitted_roles` field alongside each chunk at index time and enforces it as a pre-filter or post-filter at query time.
+Freshness windows worth committing to memory:
 
-Two enforcement models:
-
-| Model | How it works | Tradeoff |
+| Category | Max age | Rationale |
 |---|---|---|
-| **Pre-filter (metadata filter)** | Vector store receives the user's role set and excludes non-permitted chunks before ANN search | Only the permitted subset is ever ranked; no risk of a forbidden chunk winning a re-rank step |
-| **Post-filter** | ANN search returns top-k across all chunks; forbidden chunks are removed from the result set | Simpler to implement; may reduce effective k below threshold on sparse corpora |
+| Pricing / rates | 1 day | Goes stale inside a sprint |
+| Policy / compliance | 90 days | Audit cycles |
+| Project artifacts | 30 days | Status changes weekly |
+| Reference architecture | 1 year | Slow-moving |
+| Methodology / handbook | 1 year | Annual reviews |
+| General reference | 180 days | Twice-yearly check |
 
-Qdrant, Weaviate, and pgvector all support metadata filtering natively. Pinecone supports it via namespaces or metadata index. The implementation cost is low; the planning cost is designing the role taxonomy before ingestion, which requires talking to whoever administers the source systems.
+Expect 30–60 % of an unscoped corporate corpus to fail the gates on the first pass. That is the point of the gate — to surface what cannot safely be retrieved.
 
-For most internal deployments, a simple flat RBAC (role-based access control) model suffices: `[public, internal, restricted, confidential]` mapped to organizational roles. Multi-tenancy (user A and user B both have `internal` access but must not see each other's personal data) requires row-level security in the source system, not in the vector store.
+### Permission boundaries: provenance back to the source system
 
-### Provenance metadata: what every answer must carry
+The standard permission error is a flat vector store with no per-chunk access metadata; every query then implicitly has access to every chunk. The 2026-correct architecture adds two fields per chunk:
 
-A citable answer requires at minimum:
+- **`permitted_roles`** — the role set authorized to receive an answer derived from this chunk. Same as in the earlier framing, enforced as a pre-filter before ANN search (Qdrant, Weaviate, pgvector, Pinecone via metadata index all support this natively).
+- **`provenance_source_id`** — a pointer back to the source system's canonical record ID, not to the share path or storage URL. This is what catches Shape 2. If two chunks in the index share a `provenance_source_id`, they are the same source-system document — duplicate. If they have different `provenance_source_id` values but high cosine similarity and overlapping content, they are likely a re-uploaded copy and the runtime should prefer the one whose `provenance_source_id` is recorded in the source system as canonical.
 
-- **Source title and URL** (or SharePoint path, Confluence page ID, etc.)
-- **Last-modified date** at time of indexing
-- **Document owner or team**
-- **Index timestamp** (when was this chunk last re-indexed)
+The reason `provenance_source_id` matters more than `source_url`: URLs change. Files are moved, renamed, re-uploaded. The source system's record ID (a SharePoint item GUID, a Confluence page ID, a Notion block ID) is stable and is what the governance system can actually reconcile against. Without it, the indexer is reconciling URLs, which is a fundamentally lossy process.
 
-The last-modified date and index timestamp together let a user know whether the answer was generated from a document that has since been updated. Phase 11 · 07 covers reranking; note that reranking by recency is a valid strategy when two chunks score similarly on semantic similarity but differ in age.
+The minimum viable role taxonomy for internal deployments is unchanged from the earlier lesson: `[public, internal, restricted, confidential]`. What changed in 2026 is that compliance reviewers routinely ask how a chunk's `permitted_roles` field was derived from the source system. The defensible answer is "by automated reconciliation against the source system's permission list at index time, stored as `provenance_source_id` and a `permission_list_hash`". The indefensible answer is "we set it manually when we indexed the document".
 
-A minimal provenance schema for a chunk:
+### Provenance metadata: the reconstruction path
 
-```
-chunk_id:        str           # deterministic hash of source_url + byte_offset
-source_url:      str           # canonical URL or path
-source_title:    str
-last_modified:   ISO-8601 str
-indexed_at:      ISO-8601 str
-owner_team:      str
-permitted_roles: list[str]
-```
+A citable answer requires, at minimum:
 
-This schema should be decided before ingestion. Adding fields after the fact requires a full re-index.
+- **`source_url`** — canonical URL or path to the *current* version of the source document, not the path the chunker happened to read from
+- **`last_modified`** — when the source was last modified at the source system, at index time
+- **`indexed_at`** — when this specific chunk was last indexed
+- **`owner_team`** — escalation path
+- **`permitted_roles`** — as above
+- **`superseded_by`** — if not null, the chunk is historical; the runtime should either exclude it or surface its supersedure in the citation
+- **`content_hash`** — SHA-256 of the chunk text, used to deduplicate at query time and at re-index time
 
-### Fallback paths: what the assistant does at the corpus boundary
+A 2026 incident we reviewed that cost a logistics firm roughly 3 weeks of compliance work was traceable to the absence of `content_hash`. Two re-uploads of the same vendor contract had been indexed with different `chunk_id` values (different paths, different byte offsets) but identical content. The retriever returned both as "two sources agreeing," which inflated the system's confidence in the answer. The answer was correct, but the audit trail could not prove it was derived from the canonical version of the contract, only from two copies of the same file. A `content_hash` would have flagged them as duplicates during indexing.
 
-Every internal corpus has an edge. Queries that fall outside the corpus are not errors — they are expected traffic. A system with no defined fallback will hallucinate at that edge. Four fallback strategies, in order of increasing friction:
+### Fallback paths: the faithfulness gate
 
-| Strategy | Behavior | When appropriate |
-|---|---|---|
-| **Abstain with redirect** | "I don't have a source for that. Contact [owner] or consult [URL]." | High-stakes domains (legal, HR, compliance) where a wrong answer is worse than no answer |
-| **Low-confidence disclosure** | Answer with retrieved content but surface the retrieval score and a disclaimer | Reference material where approximate answers have value |
-| **Human escalation** | Route query to a human expert queue | When the query pattern suggests an evolving situation not yet in the corpus |
-| **Out-of-scope refusal** | Hard refusal if query domain is outside the declared assistant scope | When the assistant has a defined, narrow purpose and scope drift is a risk |
+The earlier lesson's four strategies (abstain with redirect, low-confidence disclosure, human escalation, out-of-scope refusal) remain correct. What 2026 practice adds is a per-answer faithfulness check between retrieval and response.
 
-The fallback strategy must match the domain's risk tolerance. A customer-support assistant for a software product can safely use low-confidence disclosure. A legal-advice assistant cannot. Phase 11 · 10 covers evaluation; the fallback trigger threshold (what retrieval score or relevance score triggers a fallback) is a parameter that evaluation should tune, not a default.
+The faithfulness gate compares the generated answer against the retrieved snippets and asks: "Is every claim in the answer supported by some sentence in the retrieved snippets?" If not, the answer is downgraded to one of the fallback strategies regardless of retrieval score. This is what catches Shape 3 — the high-score, adjacent-topic retrieval that produces a plausible-sounding extrapolation.
 
-### Evaluation as a planning input, not an afterthought
+In production, the faithfulness check is either:
 
-Phase 11 · 10 covers RAG evaluation in detail. At the planning stage, evaluation matters in two ways:
+- An LLM-as-judge call (Claude Sonnet 4.x or Claude Haiku 4.x) that receives the answer and the snippets and returns a faithfulness score in [0, 1]
+- A cheaper extractive check that verifies that named entities, numbers, and quoted phrases in the answer appear in the retrieved snippets
+- A hybrid where the extractive check is the default and the LLM-as-judge is invoked only when the extractive check is borderline
 
-1. **Define success criteria before building.** "The assistant should correctly answer 80 % of tier-1 support queries without escalation" is a testable criterion. "The assistant should be helpful" is not.
-2. **Plan an evaluation dataset.** An evaluation dataset requires question-answer pairs with known source attribution. Creating this dataset is non-trivial and requires domain expert time. If that time is not budgeted before the build starts, evaluation will be skipped entirely.
+Cost numbers worth knowing: an LLM-as-judge faithfulness call on ~2K tokens of answer plus ~2K tokens of snippets costs roughly $0.003 with Sonnet 4.x and roughly $0.0004 with Haiku 4.x. At 10K queries per day that is $30/day (Sonnet) or $4/day (Haiku) — trivial compared to the cost of a single compliance incident. At 1M queries per day it becomes $3K/day (Sonnet) versus $400/day (Haiku), which is the point at which teams start to prefer the extractive check or a hybrid.
 
-The standard evaluation metrics for this course's scope:
-
-| Metric | What it measures | Tool |
-|---|---|---|
-| Retrieval recall@k | % of queries where the correct source appears in top-k | Manual or automated with known QA pairs |
-| Answer faithfulness | Does the answer contain only claims supported by retrieved chunks? | LLM-as-judge (Claude Sonnet 4.x) or DeepEval |
-| Permission leakage | Does the answer cite sources the user is not permitted to see? | Automated test with synthetic restricted queries |
-| Fallback trigger rate | What % of queries trigger a fallback? | Logging on production traffic |
-
-Permission leakage testing deserves special emphasis: it requires explicit synthetic test cases where the correct answer is "this user should not receive this content," which most teams never write.
+The fallback trigger threshold should be calibrated against an evaluation dataset (Phase 11 · 10) using answer faithfulness, not retrieval recall, as the success metric. A retrieval recall of 0.9 with a faithfulness of 0.6 is worse than a retrieval recall of 0.7 with a faithfulness of 0.9. The wrong-doc failure shapes all produce high recall and low faithfulness — the retriever is doing its job, the answer is just not supported by what was retrieved.
 
 ### The full system decision flow
 
-The four planning decisions compose into a runtime decision flow:
+The four planning decisions compose into a runtime decision flow that explicitly handles the wrong-doc shapes:
 
 ```
 Query arrives with user identity
   -> Resolve permitted_roles for this user
-  -> Pre-filter vector store to permitted chunks
+  -> Pre-filter vector store to permitted chunks (Shape 2 gate)
+  -> Exclude chunks with superseded_by != null (Shape 1 gate, configurable)
   -> Retrieve top-k
-  -> Check retrieval confidence
-      [below threshold] -> apply fallback strategy
-      [above threshold] -> generate answer
-          -> attach provenance metadata to answer
-          -> log (user, query, retrieved chunk_ids, answer_hash, timestamp)
+  -> Deduplicate by content_hash (Shape 2 deep gate)
+  -> Check retrieval confidence + source agreement (k chunks from different sources?)
+      [low confidence] -> abstain or disclose (per strategy)
+      [high confidence] -> generate answer
+          -> faithfulness check vs retrieved snippets (Shape 3 gate)
+              [unsupported claims] -> abstain with redirect or low-confidence disclosure
+              [supported claims] -> attach provenance, log, respond
+  -> Log (user, query, chunk_ids, content_hashes, faithfulness_score, answer_hash, timestamp)
 ```
 
-Every box in that flow requires a prior planning decision. The flow is not recoverable by prompt engineering alone once it is in production without those decisions.
+The faithfulness check is the only line that is not present in the pre-2026 design and is the single highest-value addition for catching wrong-doc confidence. Every other line is a refinement of an existing concern.
 
 ## Use It
 
-`code/main.py` models two of the four planning decisions as deterministic, stdlib-only classifiers:
+`code/main.py` is a deterministic, stdlib-only model of the three wrong-doc shapes and the runtime gates that catch them:
 
-1. A **source readiness classifier** that takes a document descriptor (authority, currency, scope fit) and outputs a readiness verdict with the blocking reason.
-2. An **answer accountability router** that takes a query context (user role, retrieval score, retrieved chunk metadata) and routes to one of four outcomes: answer-with-citation, low-confidence-disclosure, abstain-with-redirect, or out-of-scope-refusal.
+1. A **chunk registry** with supersedure, provenance, and `content_hash` fields, plus a corpus of synthetic chunks that includes all three failure shapes.
+2. A **retrieval-with-gates** simulator that scores a query against the corpus and applies pre-filter, supersedure exclusion, content-hash dedup, and source-agreement checks.
+3. A **faithfulness gate** that compares the generated answer (given to the simulator) against the retrieved snippets and triggers the fallback if claims are unsupported.
+4. A **failure-shape demonstrator** that walks the same query through the corpus three times — once before gates, once after structural gates, once after the faithfulness gate — so the lesson's core insight is visible in the output: each gate catches one shape; the faithfulness gate is the only one that catches Shape 3.
 
-No network, no model calls — the point is to make the planning policy explicit and executable, the same way Phase 15 · 10 made the permission classifier runnable.
+No model, no network. The point is to make the wrong-doc failure shapes concrete and the gate logic explicit, the same way the earlier planning classifiers made the planning policy runnable.
 
 ## Ship It
 
-`outputs/skill-rag-source-governance.md` is a one-page planning checklist: four sections (source readiness, permissions, provenance, fallback), each with a concrete test that can be run before go-live. Paste it into a design document or sprint kickoff at the start of any internal assistant project.
+`outputs/skill-rag-source-governance.md` is the planning checklist updated with the supersedure gate, the `provenance_source_id` / `content_hash` schema, and the faithfulness-gate threshold calibration section.
 
 ## Exercises
 
-1. Run `code/main.py`. How many of the sample documents pass the source readiness gate? Which readiness criterion blocks the most documents, and what does that imply about the preparation work before indexing?
+1. Run `code/main.py`. Find the query that the system answers confidently *before* the faithfulness gate but abstains on *after* the gate. What claim in the answer was unsupported? Which of the three failure shapes does this illustrate?
 
-2. Run `code/main.py` again and find the query that triggers the `abstain_with_redirect` fallback path rather than a citation answer. Change the retrieval score in the sample data so the same query routes to `low_confidence_disclosure` instead. What threshold did you cross?
+2. The supersedure gate excludes one chunk from retrieval. Which one, and what would have happened to the user if it had not been excluded?
 
-3. You are building an internal assistant for a consulting firm's project delivery team. List all the source types you would consider for indexing (project wikis, email archives, client contracts, methodology PDFs, etc.). Apply the authority, currency, and scope-fit gates to each. Which sources fail and why?
+3. The provenance gate flags one chunk as a duplicate of another. Which two chunks share a `content_hash`, and what would the user's citation have looked like if the system had not deduplicated them?
 
-4. Design the `permitted_roles` field for an assistant that serves three groups: all employees (can see company-wide policy), engagement teams (can see their own project materials), and partners (can see shared deliverables only). Write the role taxonomy and describe one query that would produce different answers for different callers.
+4. You are extending the assistant to a new domain (legal contract review). Design the role taxonomy and the supersedure handling for that domain. What does `superseded_by` mean for a contract that was amended rather than replaced?
 
-5. Your assistant is live and a user reports that an answer cited a document they believe is outdated. Walk through the audit trail you would need to reconstruct: what fields from the provenance schema does the investigation require, and which log entries would confirm or refute the claim?
+5. A user reports that an answer cited a document they believe is outdated. Walk through the audit trail reconstruction: which log fields would confirm or refute the claim? What does a successful reconstruction look like, and what does an unsuccessful one (missing fields) imply about the index schema?
 
 ## Key Terms
 
 | Term | What people say | What it actually means |
 |---|---|---|
-| Source readiness | "Is the doc good enough to index?" | A structured gate: authority (named owner, canonical version), currency (within freshness window), and scope fit (produces useful retrievable chunks) |
-| Permission boundary | "Access control for RAG" | A per-chunk `permitted_roles` field enforced as a pre-filter or post-filter at query time, designed before ingestion |
-| Pre-filter | "Only search what the user can see" | Restricting the ANN search to the permitted subset before ranking, so forbidden chunks are never scored |
-| Provenance metadata | "Where did the answer come from?" | Chunk-level fields: source URL, title, last-modified date, owner, index timestamp — the reconstruction path for audits and rollback |
-| Fallback path | "What happens when there's no answer?" | A defined strategy (abstain, disclose, escalate, or refuse) for queries at or beyond the corpus boundary |
-| Retrieval confidence threshold | "How sure does the system need to be?" | A configurable minimum similarity score below which the fallback path is triggered instead of generating an answer |
-| Permission leakage | "The assistant told me something I shouldn't know" | A query that returns an answer derived from a source the requesting user is not permitted to access |
-| Evaluation dataset | "How do we know it works?" | A curated set of question-answer-source triples used to measure retrieval recall, faithfulness, and permission correctness before and after changes |
+| Wrong-doc confidence | "The answer was wrong" | A high-score retrieval of a stale, mis-tagged, duplicated, or adjacent-topic chunk that the system treats as a correct answer with citation |
+| Supersedure gate | "Exclude old docs" | A per-chunk `superseded_by` field; the runtime excludes or downgrades chunks that have been officially replaced at the source system |
+| `provenance_source_id` | "Where did this come from?" | A pointer to the source system's canonical record ID (SharePoint GUID, Confluence page ID), stable across re-uploads |
+| `content_hash` | "Hash of the chunk" | SHA-256 of chunk text, used for dedup at index time and query time; catches Shape 2 deep |
+| Source agreement | "Are these the same source?" | A signal that k retrieved chunks come from distinct source-system records (distinct `provenance_source_id`), not from re-uploads of one |
+| Faithfulness gate | "Did the answer use the sources?" | A per-answer check that every claim is supported by the retrieved snippets; the only gate that catches Shape 3 |
+| Source readiness (extended) | "Is the doc good enough?" | Four gates: authority, currency, scope fit, and supersedure state |
+| Permission leakage | "It told me something I shouldn't know" | An answer derived from a chunk whose source-system permission list did not include the user, where the mis-tag was inherited from a mis-uploaded copy |
+
+## Consultant field notes
+
+These are the patterns a senior consultant recognizes by name in post-incident reviews. If you see one in your project, name it out loud and address it before go-live.
+
+1. **Stale supersedes current.** The retriever returns a 2019 policy because both documents are indexed and the older one happens to match the query phrasing more closely. Fix: supersedure gate, not a better embedding model.
+
+2. **Duplicate with wrong tagging.** A re-uploaded file lost its source-system permission list, and the indexer trusted the share path instead of the source-system record. Fix: `provenance_source_id` reconciled against the source system at index time, not at upload time.
+
+3. **Adjacent-topic with confident phrasing.** High retrieval score, in-scope, current, permitted — and the answer extrapolates beyond what the chunk supports. Fix: faithfulness gate. No metadata-only signal catches this.
+
+4. **Two-copies-as-agreement.** The retriever returns the same document twice (re-uploaded under two paths) and the system reads "two sources agree" as high confidence. Fix: `content_hash` dedup before counting source agreement.
+
+5. **The SharePoint trap.** Auto-discovery indexed every document in a SharePoint site that was technically accessible to everyone because no one ever restricted it. Fix: source-system reconciliation, not access control at the index layer. The index layer inherits whatever the source system says; if the source system says "everyone," the assistant will, too.
+
+6. **The "the citation proves it's fine" failure.** A reviewer approved an answer because a citation was present. The citation was correct. The chunk was wrong. Fix: a faithfulness gate that the reviewer can read in the log, not just a citation the reviewer can click.
 
 ## Further Reading
 
-- [Anthropic — Retrieval-Augmented Generation docs](https://docs.claude.com/en/docs/build-with-claude/retrieval-augmented-generation) — Anthropic's current guidance on prompt construction, chunk sizing, and evaluation for Claude-based RAG systems.
+- [Anthropic — Claude for RAG workflows](https://docs.claude.com/en/docs/build-with-claude/retrieval-augmented-generation) — current guidance on chunk construction, citation prompting, and faithfulness evaluation with Claude 4.x models.
 - [NIST SP 800-53 Rev. 5 — Access Control (AC) family](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final) — the US federal standard for access control; AC-3 (Access Enforcement) and AC-4 (Information Flow Enforcement) are the relevant controls for permission-boundary design.
 - [Qdrant documentation — Filtering](https://qdrant.tech/documentation/concepts/filtering/) — concrete reference for metadata pre-filtering in a production vector store.
 - [DeepEval — RAG evaluation metrics](https://docs.confident-ai.com/docs/metrics-overview) — open-source framework covering faithfulness, contextual recall, and answer relevancy; the tool most commonly used for RAG eval automation in 2026.
