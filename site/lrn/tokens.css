@@ -1,112 +1,293 @@
-/* Hallmark tokens · LHIND LRN workbench · theme: Lufthansa Group 2025 brand
-   Ground-to-sky vertical gradient — deep navy (ground) up through blues to
-   light sky, with a single warm sand accent. NO yellow. Calm, airy, digital. */
+/* =========================================================================
+   LHIND LRN — Lufthansa Group Design System tokens
+   ------------------------------------------------------------------------
+   Visual language follows the Lufthansa Group corporate identity:
+   deep Core Blue, warm-grey neutrals, Lufthansa Head (display, thin) +
+   Lufthansa Text (body, light) on a quiet warm-grey page.
+
+   Marke bleibt LHIND — keine Lufthansa-Crane/Wordmark-Assets, nur die
+   visuelle Sprache (Typo, Farbe, Spacing, Komponenten-Stil).
+
+   Original Lufthansa Group DS lived in
+   logo/Lufthansa Group Design System/tokens/{colors,fonts,typography,spacing}.css
+   — those files are the source of truth for the values below.
+   ========================================================================= */
+
+/* ── Lufthansa Head (display) — embedded webfonts ─────────────────── */
+@font-face {
+  font-family: "Lufthansa Head";
+  src: url("./assets/fonts/LHGHeadWEB-Light.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Head";
+  src: url("./assets/fonts/LHGHeadWEB-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Head";
+  src: url("./assets/fonts/LHGHeadWEB-Bold.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Head";
+  src: url("./assets/fonts/LHGHeadWEB-Light.woff2") format("woff2");
+  font-weight: 100 300; font-style: normal; font-display: swap;
+}
+
+/* ── Lufthansa Text (body) ────────────────────────────────────────── */
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("./assets/fonts/LHGTextWEB-Light.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("./assets/fonts/LHGTextWEB-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("./assets/fonts/LHGTextWEB-RegularItalic.woff2") format("woff2");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("./assets/fonts/LHGTextWEB-Bold.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("./assets/fonts/LHGTextWEB-Regular.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+
+/* ── Lufthansa Serif (editorial, currently unused but available) ──── */
+@font-face {
+  font-family: "Lufthansa Serif";
+  src: url("./assets/fonts/LHGSerifWEB-Light.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Serif";
+  src: url("./assets/fonts/LHGSerifWEB-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
 :root {
-  --font-display: "IBM Plex Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "IBM Plex Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+  /* ── Lufthansa raw colour scale (brand-true) ───────────────────── */
+  --lhg-core-blue:      #05164d;
+  --lhg-blue-500:       #2d5fe4;
+  --lhg-blue-600:       #243f9b;
+  --lhg-blue-100:       #e5f1ff;
+  --lhg-white:          #ffffff;
 
-  /* ── Lufthansa ground-to-sky tones (raw brand ramp) ──────────── */
-  --lh-ground: #0A1B3D;   /* deepest navy — the ground */
-  --lh-navy:   #14366B;   /* navy */
-  --lh-mid:    #2E5C9E;   /* mid blue */
-  --lh-blue:   #5A8AC9;   /* blue */
-  --lh-sky:    #A9C7E8;   /* light sky */
-  --lh-sand:   #D9C5A0;   /* warm sand accent (sparing) */
-  --lh-sand-soft: #E8DCC8;
-  --lh-paper:  #F7F9FC;   /* cool near-white surface */
-  --lh-paper-2: #EEF3FA;
-  --lh-card:   #FCFDFF;   /* cards near-white */
+  --lhg-slate-700:      #52617c;
+  --lhg-slate-500:      #657898;
+  --lhg-grey-100:       #f9f8f8;
+  --lhg-grey-200:       #f1f0ef;
+  --lhg-grey-300:       #e3e1de;
+  --lhg-grey-400:       #cfccc8;
+  --lhg-warm-grey:      #7a7673;
 
-  /* ── Semantic tokens (names preserved so nothing breaks) ─────── */
-  --color-paper: var(--lh-paper);
-  --color-paper-2: var(--lh-paper-2);
-  --color-paper-3: #E2EAF5;
-  --color-card: var(--lh-card);          /* elevated card surface (dark-aware) */
-  --color-ink: var(--lh-ground);
-  --color-ink-2: var(--lh-navy);
-  --color-muted: #5B6B86;
-  --color-rule: #D5E0EE;
-  --color-rule-2: #BFD0E5;
-  --color-track: #DCE4F0;                /* progress-bar empty track (dark-aware) */
-  --color-accent: var(--lh-navy);      /* primary blue (navy anchor) */
-  --color-accent-2: var(--lh-blue);    /* lighter blue / sky-side */
-  --color-accent-soft: #DCE7F6;
-  --color-accent-ink: #FFFFFF;
-  /* sand is the one warm accent — used for active/hover + progress */
-  --color-sand: var(--lh-sand);
-  --color-sand-soft: var(--lh-sand-soft);
-  --color-warn: #B08A4A;               /* warm sand-toned, no yellow */
-  --color-warn-soft: #F0E7D6;
-  --color-ok: #2E7D5B;
-  --color-ok-soft: #DCEFE6;
-  --color-error: #B23B3B;
-  --color-error-soft: #F5DEDE;
-  --color-focus: var(--lh-mid);
+  --lhg-red:            #bc0a1d;
+  --lhg-teal:           #368089;
+  --lhg-purple:         #a82e61;
+  --lhg-sand:           #857461;
 
-  --space-3xs: 0.125rem;
-  --space-2xs: 0.25rem;
-  --space-xs: 0.5rem;
-  --space-sm: 0.75rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2.5rem;
-  --space-2xl: 4rem;
-  --space-3xl: 6rem;
+  --lhg-success:        #1b8a5a;
+  --lhg-warning:        #e2974b;
+  --lhg-error:          #e22743;
 
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-md: 1.125rem;
-  --text-lg: 1.375rem;
-  --text-xl: 1.75rem;
-  --text-2xl: 2.25rem;
-  --text-display: 4.75rem;
+  /* ── Semantic aliases (LHG-style) ──────────────────────────────── */
+  --color-bg:               var(--lhg-grey-100);
+  --color-surface:          var(--lhg-white);
+  --color-surface-sunken:   var(--lhg-grey-200);
+  --color-surface-inverse:  var(--lhg-core-blue);
 
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --rule-thin: 1px;
-  --rule-strong: 2px;
+  --text-primary:           var(--lhg-core-blue);
+  --text-secondary:         var(--lhg-slate-700);
+  --text-muted:             var(--lhg-warm-grey);
+  --text-on-dark:           var(--lhg-white);
+  --text-link:              var(--lhg-blue-500);
 
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  /* Spring-cushioned overshoot — CSS approximation of Framer spring(stiffness:400, damping:25). For hover lift / card settle. */
-  --ease-spring: cubic-bezier(0.34, 1.4, 0.5, 1);
-  --dur-micro: 120ms;
-  --dur-short: 220ms;
-  --dur-long: 420ms;
-  --shadow-hairline: 0 0 0 1px rgba(10, 27, 61, 0.06);
-  --shadow-whisper: 0 1px 2px rgba(10, 27, 61, 0.07);
+  --border-subtle:          var(--lhg-grey-300);
+  --border-strong:          var(--lhg-grey-400);
+  --border-focus:           var(--lhg-blue-500);
+
+  --action-primary:         var(--lhg-core-blue);
+  --action-primary-hover:   var(--lhg-blue-600);
+  --action-accent:          var(--lhg-blue-500);
+  --action-accent-hover:    var(--lhg-blue-600);
+
+  /* ── Families — Lufthansa Head (display) + Text (body) ─────────── */
+  --font-head:    "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
+  --font-text:    "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
+  --font-serif:   "Lufthansa Serif", Georgia, "Times New Roman", serif;
+  --font-mono:    ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* ── Type scale (LHG) — display thin/light, body light ─────────── */
+  --fs-display-1: clamp(48px, 6vw, 88px);
+  --fs-display-2: clamp(36px, 4.5vw, 64px);
+  --fs-h1: 44px;
+  --fs-h2: 34px;
+  --fs-h3: 26px;
+  --fs-h4: 20px;
+  --fs-lead: 21px;
+  --fs-body: 17px;
+  --fs-body-sm: 15px;
+  --fs-caption: 13px;
+  --fs-overline: 12px;
+
+  --lh-tight: 1.05;
+  --lh-snug: 1.2;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.65;
+
+  --ls-display: -0.02em;
+  --ls-heading: -0.01em;
+  --ls-body: 0;
+  --ls-overline: 0.14em;
+
+  /* ── Weights ──────────────────────────────────────────────────── */
+  --weight-thin:    200;
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-bold:    700;
+
+  /* ── Spacing (4px base) ───────────────────────────────────────── */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* ── Radii — buttons pill, cards softly rounded ───────────────── */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-pill: 999px;
+
+  /* ── Borders + shadow (soft, blue-tinted) ─────────────────────── */
+  --border-width:    1px;
+  --border-hairline: 1px solid var(--border-subtle);
+  --shadow-xs:       0 1px 2px rgba(5, 22, 77, 0.05);
+  --shadow-sm:       0 2px 8px rgba(5, 22, 77, 0.06);
+  --shadow-md:       0 5px 15px rgba(5, 22, 77, 0.08);
+  --shadow-lg:       0 14px 40px rgba(5, 22, 77, 0.12);
+  --shadow-focus:    0 0 0 3px rgba(45, 95, 228, 0.30);
+
+  /* ── Motion — calm, no bounce ─────────────────────────────────── */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:      140ms;
+  --dur-base:      240ms;
+  --dur-slow:      420ms;
+
+  /* ── Container layout ────────────────────────────────────────── */
+  --container-max: 1200px;
+  --container-pad: clamp(20px, 5vw, 64px);
+
+  /* =================================================================
+     LRN-legacy aliases (kept so every lrn.css / lrn.js selector keeps
+     resolving to a sane value). All remap to LHG above.
+     ================================================================= */
+  --font-display:       var(--font-head);
+  --font-body:          var(--font-text);
+
+  --lh-ground:          var(--lhg-core-blue);
+  --lh-navy:            #14366b;
+  --lh-mid:             #2e5c9e;
+  --lh-blue:            #5a8ac9;
+  --lh-sky:             #a9c7e8;
+  --lh-sand:            var(--lhg-sand);
+  --lh-sand-soft:       #e8dcc8;
+  --lh-paper:           var(--lhg-grey-100);
+  --lh-paper-2:         var(--lhg-grey-200);
+  --lh-card:            var(--lhg-white);
+
+  --color-paper:        var(--lhg-grey-100);
+  --color-paper-2:      var(--lhg-grey-200);
+  --color-paper-3:      #e2eaf5;
+  --color-card:         var(--lhg-white);
+  --color-ink:          var(--lhg-core-blue);
+  --color-ink-2:        #14366b;
+  --color-muted:        var(--lhg-warm-grey);
+  --color-rule:         var(--lhg-grey-300);
+  --color-rule-2:       #bfd0e5;
+  --color-track:        #dce4f0;
+  --color-accent:       var(--lhg-core-blue);
+  --color-accent-2:     var(--lhg-blue-500);
+  --color-accent-soft:  #dce7f6;
+  --color-accent-ink:   #ffffff;
+  --color-sand:         var(--lhg-sand);
+  --color-sand-soft:    #f0e7d6;
+  --color-warn:         #b08a4a;
+  --color-warn-soft:    #f0e7d6;
+  --color-ok:           var(--lhg-success);
+  --color-ok-soft:      #dcefe6;
+  --color-error:        var(--lhg-error);
+  --color-error-soft:   #f5dede;
+  --color-focus:        var(--lhg-blue-500);
+
+  --text-xs:        var(--fs-caption);
+  --text-sm:        var(--fs-body-sm);
+  --text-base:      var(--fs-body);
+  --text-md:        1.125rem;
+  --text-lg:        1.375rem;
+  --text-xl:        1.75rem;
+  --text-2xl:       2.25rem;
+  --text-display:   var(--fs-display-1);
+
+  --radius-sm:      var(--radius-sm);
+  --radius-md:      var(--radius-md);
+
+  --rule-thin:      1px;
+  --rule-strong:    2px;
+
+  --ease-in:        cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-spring:    cubic-bezier(0.34, 1.4, 0.5, 1);
+  --dur-micro:      140ms;
+  --dur-short:      240ms;
+  --dur-long:       420ms;
+  --shadow-hairline: 0 0 0 1px rgba(5, 22, 77, 0.06);
+  --shadow-whisper: 0 1px 2px rgba(5, 22, 77, 0.07);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* dark variant: deep-navy surfaces, sky-blue accents, sand kept warm */
-    --color-paper: #0A1B3D;
-    --color-paper-2: #0F2348;
-    --color-paper-3: #16305C;
-    --color-card: #132B54;                 /* elevated card surface, lifted off the ground navy */
-    --color-ink: #EAF1FB;
-    --color-ink-2: #C3D5EE;
-    --color-muted: #93A8C7;
-    --color-rule: #234168;
-    --color-rule-2: #335279;
-    --color-track: #234168;                /* track lifts off the dark card */
-    --color-accent: #7BA6DC;
-    --color-accent-2: #A9C7E8;
-    --color-accent-soft: #18345E;
-    --color-accent-ink: #0A1B3D;
-    --color-sand: #D9C5A0;
-    --color-sand-soft: #3A3422;
-    --color-warn: #D9C5A0;
-    --color-warn-soft: #322B1A;
-    --color-ok: #6FC79C;
-    --color-ok-soft: #16352A;
-    --color-error: #E08A8A;
-    --color-error-soft: #3A1E1E;
-    --color-focus: #A9C7E8;
-    --shadow-whisper: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --color-paper:       #0a1b3d;
+    --color-paper-2:     #0f2348;
+    --color-paper-3:     #16305c;
+    --color-card:        #132b54;
+    --color-ink:         #eaf1fb;
+    --color-ink-2:       #c3d5ee;
+    --color-muted:       #93a8c7;
+    --color-rule:        #234168;
+    --color-rule-2:      #335279;
+    --color-track:       #234168;
+    --color-accent:      #7ba6dc;
+    --color-accent-2:    #a9c7e8;
+    --color-accent-soft: #18345e;
+    --color-accent-ink:  #0a1b3d;
+    --color-sand:        #d9c5a0;
+    --color-sand-soft:   #3a3422;
+    --color-warn:        #d9c5a0;
+    --color-warn-soft:   #322b1a;
+    --color-ok:          #6fc79c;
+    --color-ok-soft:     #16352a;
+    --color-error:       #e08a8a;
+    --color-error-soft:  #3a1e1e;
+    --color-focus:       #a9c7e8;
+    --shadow-whisper:    0 1px 2px rgba(0, 0, 0, 0.4);
   }
 }

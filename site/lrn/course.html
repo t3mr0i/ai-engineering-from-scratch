@@ -4,29 +4,98 @@
   <meta charset="UTF-8">
   <script src="../gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Course · LHIND AI Learning Catalog</title>
-  <meta name="description" content="Course detail and syllabus in the LHIND AI Learning Catalog.">
+  <title>LHIND Learning Catalog</title>
+  <meta name="description" content="Curated AI courses and lessons for Lufthansa Industry Solutions. Choose your profile and level to see the right path.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;650;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="lrn.css">
 </head>
 <body>
   <a class="skip-link" href="#courseMain">Skip to course detail</a>
+  <noscript>
+    <p class="noscript-note">JavaScript is required to browse the LHIND Learning Catalog. The course detail page also requires JavaScript to load.</p>
+  </noscript>
+
+  <!-- Thin top nav · LHIND wordmark in Lufthansa Head Light -->
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="../index.html">
       <span class="wordmark__mark" aria-hidden="true">AI</span>
-      <span>LHIND Learning Catalog</span>
+      <span class="wordmark__text">LHIND Learning Catalog</span>
     </a>
   </header>
 
-  <main class="page page--detail" id="courseMain">
-    <a class="back-link" id="backLinkTop" href="../index.html">
-      <i data-lucide="arrow-left" aria-hidden="true"></i> Back to courses
-    </a>
-    <div id="courseRoot"></div>
+  <main class="page page--home" id="courseMain">
+    <!-- Hero · Lufthansa Head thin display, sentence case with period -->
+    <section class="hero" aria-labelledby="heroHeadline">
+      <div class="hero__inner">
+        <h1 id="heroHeadline">What do you want to learn.</h1>
+        <p class="hero__lede">
+          Choose your profile and level. We will show you the right courses and your progress.
+        </p>
+
+        <form class="hero-search" role="search" id="searchForm" onsubmit="return false;">
+          <span class="hero-search__icon" aria-hidden="true">
+            <i class="ph ph-magnifying-glass"></i>
+          </span>
+          <input
+            type="search"
+            id="searchInput"
+            name="q"
+            placeholder="Search courses…"
+            autocomplete="off"
+            aria-label="Search courses">
+        </form>
+      </div>
+    </section>
+
+    <!-- Cockpit · selector card overlaps the hero edge -->
+    <div class="cockpit">
+      <div class="selector-card" role="group" aria-label="Course filters">
+        <div class="selector-field">
+          <label class="selector-field__label" for="profileSelect">
+            <i class="ph ph-user-circle" aria-hidden="true"></i>
+            <span>Profile</span>
+          </label>
+          <select id="profileSelect" aria-label="Profile"></select>
+        </div>
+
+        <div class="selector-field">
+          <label class="selector-field__label" for="levelSelect">
+            <i class="ph ph-chart-line-up" aria-hidden="true"></i>
+            <span>Level</span>
+          </label>
+          <select id="levelSelect" aria-label="Level"></select>
+        </div>
+
+        <button type="button" id="ctaBtn" class="selector-cta">
+          <span id="ctaLabel">Show matching courses</span>
+          <i class="ph ph-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Interest chips + status segmented control -->
+      <div class="catalog-bar">
+        <div class="filter-group">
+          <span class="filter-group__label" id="interestsLabel">
+            <i class="ph ph-squares-four" aria-hidden="true"></i>
+            <span>Interests</span>
+          </span>
+          <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestsLabel"></div>
+        </div>
+
+        <button type="button" id="resetBtn" class="text-btn">Reset</button>
+
+        <div class="seg-control" id="courseFilters" role="tablist" aria-label="Course status"></div>
+      </div>
+
+      <p class="result-line" id="resultLine" aria-live="polite"></p>
+
+      <!-- Course grid · cards rendered by lrn.js -->
+      <div class="course-grid" id="courseGrid"></div>
+    </div>
+
+    <!-- Course detail mount (when ?id= present, course.js renders here) -->
+    <div id="courseRoot" hidden></div>
   </main>
 
   <footer class="foot-line">
@@ -34,10 +103,12 @@
   </footer>
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Phosphor Light icons (Lufthansa DS substitute for official LHG line-icons) -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1/src/light/index.js"></script>
   <script src="../progress.js"></script>
   <script src="data.js"></script>
   <script src="curriculum-map.js"></script>
+  <script src="lrn.js"></script>
   <script src="course.js"></script>
 </body>
 </html>

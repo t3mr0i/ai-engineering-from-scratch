@@ -89,7 +89,7 @@
       ctaLabel.textContent = (stats.visitedLessons > 0 ? "Continue Learning" : "Start Course");
       action.append(ctaLabel, lucideIcon("arrow-right"));
     } else {
-      action.appendChild(lucideIcon("circle-check"));
+      action.appendChild(lucideIcon("check-circle"));
       var doneLabel = document.createElement("span");
       doneLabel.textContent = "Course Complete";
       action.appendChild(doneLabel);
@@ -101,6 +101,30 @@
     head.append(title, summary, meta, progressMeter(stats.percent, "Progress " + course.title), action);
 
     var children = [head];
+
+    var outcomes = Array.isArray(course.outcomes) ? course.outcomes.filter(function (s) { return typeof s === "string" && s.trim().length > 0; }) : [];
+    if (outcomes.length) {
+      var outcomesBlock = document.createElement("section");
+      outcomesBlock.className = "course-head__outcomes";
+      outcomesBlock.setAttribute("aria-labelledby", "courseOutcomesTitle");
+
+      var outcomesTitle = document.createElement("h2");
+      outcomesTitle.id = "courseOutcomesTitle";
+      outcomesTitle.className = "course-head__outcomes-title";
+      outcomesTitle.textContent = "After completing this course, you can:";
+
+      var outcomesList = document.createElement("ul");
+      outcomesList.className = "course-head__outcomes-list";
+      outcomes.forEach(function (text) {
+        var li = document.createElement("li");
+        li.className = "course-head__outcomes-item";
+        li.textContent = text;
+        outcomesList.appendChild(li);
+      });
+
+      outcomesBlock.append(outcomesTitle, outcomesList);
+      children.push(outcomesBlock);
+    }
 
     var syllabusTitle = document.createElement("h2");
     syllabusTitle.className = "syllabus-title";
@@ -181,8 +205,8 @@
     dot.dataset.state = progress.state;
     dot.setAttribute("aria-hidden", "true");
     dot.appendChild(lucideIcon(
-      progress.state === "completed" ? "circle-check" :
-      progress.state === "visited" ? "circle-dot" : "circle"
+      progress.state === "completed" ? "check-circle" :
+      progress.state === "visited" ? "dot" : "circle"
     ));
 
     var label = document.createElement("strong");
@@ -342,14 +366,12 @@
 
   function lucideIcon(name) {
     var i = document.createElement("i");
-    i.setAttribute("data-lucide", name);
+    i.className = "ph ph-" + name;
     i.setAttribute("aria-hidden", "true");
     return i;
   }
 
-  function refreshIcons() {
-    if (window.lucide && typeof window.lucide.createIcons === "function") {
-      window.lucide.createIcons();
-    }
-  }
+  // Phosphor is self-rendering (web font), so this is a no-op kept for
+  // API parity with the previous Lucide-based call sites.
+  function refreshIcons() {}
 })();

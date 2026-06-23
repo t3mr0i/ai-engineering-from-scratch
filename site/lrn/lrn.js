@@ -26,45 +26,48 @@
   // Visual theme per course family — derived from the course's primary
   // (first) interest. The theme drives the tile tint; the icon itself is
   // resolved per course from its title (see COURSE_ICON_RULES).
+  // Icons are Phosphor Light names (Lufthansa DS substitutes for the
+  // official LHG line-icon set; see SKILL.md). Phosphor resolves them
+  // from the CDN font file loaded in course.html.
   var INTEREST_THEMES = {
     foundation: { icon: "graduation-cap" },
-    productivity: { icon: "zap" },
+    productivity: { icon: "lightning" },
     consulting: { icon: "briefcase" },
-    engineering: { icon: "terminal" },
+    engineering: { icon: "terminal-window" },
     governance: { icon: "shield-check" },
     leadership: { icon: "compass" }
   };
 
-  // Title-keyword → Lucide icon. First match wins, so specific topics
+  // Title-keyword → Phosphor Light icon. First match wins, so specific topics
   // (security, prompts, testing) must come before broad ones (learning).
   // Fallback: the interest theme's icon.
   var COURSE_ICON_RULES = [
-    [/security|injection/, "shield-alert"],
-    [/responsible|trustworthy|gdpr|ethics|legal/, "scale"],
+    [/security|injection/, "shield-warning"],
+    [/responsible|trustworthy|gdpr|ethics|legal/, "scales"],
     [/governance|risk|controls|compliance/, "shield-check"],
-    [/prompt/, "messages-square"],
+    [/prompt/, "chats"],
     [/copilot|code|agentic|software engineer/, "code"],
     [/testing|qa\b|test data/, "test-tube"],
-    [/architecture|systems/, "network"],
+    [/architecture|systems/, "tree-structure"],
     [/rag|knowledge/, "database"],
     [/documentation|content/, "file-text"],
-    [/requirement|backlog|business analysis/, "clipboard-list"],
-    [/use case|spotting|discovery|research/, "search"],
+    [/requirement|backlog|business analysis/, "clipboard-text"],
+    [/use case|spotting|discovery|research/, "magnifying-glass"],
     [/cost|value|economics|finance|benefits/, "coins"],
     [/workforce|hr\b|people/, "users"],
-    [/change|transformation|stakeholder/, "refresh-cw"],
-    [/project|reporting|steering|portfolio|roadmap/, "layout-dashboard"],
-    [/data/, "bar-chart-3"],
+    [/change|transformation|stakeholder/, "arrows-clockwise"],
+    [/project|reporting|steering|portfolio|roadmap/, "squares-four"],
+    [/data/, "chart-bar"],
     [/green|sustainable/, "leaf"],
     [/vendor|procurement|ecosystem/, "handshake"],
     [/operations|incident|service|support/, "wrench"],
     [/sales|consulting/, "briefcase"],
     [/communication|marketing/, "megaphone"],
-    [/meeting|facilitation|workshop/, "presentation"],
-    [/automation|process/, "workflow"],
+    [/meeting|facilitation|workshop/, "presentation-chart"],
+    [/automation|process/, "flow-arrow"],
     [/customer/, "headphones"],
     [/leader|decision/, "compass"],
-    [/productivity/, "zap"]
+    [/productivity/, "lightning"]
   ];
 
   var els = {
@@ -693,18 +696,18 @@
     els.srStatus.textContent = text;
   }
 
-  // Create a placeholder element Lucide will swap for an <svg> on createIcons().
+  // Render a Phosphor Light icon. Phosphor is a web font loaded via the
+  // CDN <script> in course.html; the icon is just a glyph on the <i> tag.
+  // Lucide → Phosphor names: callers pass the Phosphor name (COURSE_ICON_RULES
+  // and call sites below use Phosphor spellings directly).
   function lucideIcon(name) {
     var i = document.createElement("i");
-    i.setAttribute("data-lucide", name);
+    i.className = "ph ph-" + name;
     i.setAttribute("aria-hidden", "true");
     return i;
   }
 
-  // Re-run Lucide after dynamic renders so newly-created placeholders become SVGs.
-  function refreshIcons() {
-    if (window.lucide && typeof window.lucide.createIcons === "function") {
-      window.lucide.createIcons();
-    }
-  }
+  // Phosphor is self-rendering (web font), so this is a no-op kept for
+  // API parity with the previous Lucide-based call sites.
+  function refreshIcons() {}
 })();
