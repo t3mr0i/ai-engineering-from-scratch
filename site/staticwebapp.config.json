@@ -3,11 +3,7 @@
     { "route": "/glossary", "rewrite": "/glossary.html" },
     { "route": "/path", "rewrite": "/prereqs.html" },
     { "route": "/roadmap", "rewrite": "/prereqs.html" },
-    { "route": "/about", "rewrite": "/about.html" },
-    { "route": "/lrn/lrn/course.html", "rewrite": "/lrn/course.html" },
-    { "route": "/lrn/lrn/index.html", "rewrite": "/lrn/course.html" },
-    { "route": "/lrn/index.html", "rewrite": "/lrn/course.html" },
-    { "route": "/course.html", "rewrite": "/lrn/course.html" }
+    { "route": "/about", "rewrite": "/about.html" }
   ],
   "navigationFallback": {
     "rewrite": "/index.html",
