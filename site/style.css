@@ -261,6 +261,14 @@ p.dropcap::first-letter {
   border-bottom: none;
 }
 
+.nav-edge .wordmark__logo {
+  display: block;
+  height: 1.4rem;
+  width: auto;
+  max-width: 9rem;
+  object-fit: contain;
+}
+
 .nav-edge .btn {
   font-family: var(--font-mono);
   font-size: 0.8rem;
