@@ -778,7 +778,7 @@
   // and call sites below use Phosphor spellings directly).
   function lucideIcon(name) {
     var i = document.createElement("i");
-    i.className = "ph ph-" + name;
+    i.className = "ph-light ph-" + name;
     i.setAttribute("aria-hidden", "true");
     return i;
   }

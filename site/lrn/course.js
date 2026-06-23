@@ -221,7 +221,7 @@
     head.className = "unit-block__head";
 
     var icon = document.createElement("i");
-    icon.className = "ph ph-" + unitIcon(subcourse) + " unit-block__icon";
+    icon.className = "ph-light ph-" + unitIcon(subcourse) + " unit-block__icon";
     icon.setAttribute("aria-hidden", "true");
 
     var code = document.createElement("span");
@@ -439,7 +439,7 @@
 
   function lucideIcon(name) {
     var i = document.createElement("i");
-    i.className = "ph ph-" + name;
+    i.className = "ph-light ph-" + name;
     i.setAttribute("aria-hidden", "true");
     return i;
   }
