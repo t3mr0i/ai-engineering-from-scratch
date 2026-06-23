@@ -1,0 +1,151 @@
+# AI-Driven Testing and QA: From Eval Sets to Regression Gates (2026)
+
+> A 2025 survey of teams shipping LLM features found that 68 % of production regressions were caught not by automated tests but by users — because the teams had no systematic eval before deployment. By 2026 the tooling gap has closed: Anthropic, OpenAI, and Google ship hosted eval runners; NIST AI RMF 1.0 and ISO/IEC 42001 name evaluation as a required control; and model providers publish standardized test harness APIs. What has not caught up is engineering practice. Most teams still treat LLM features like deterministic code, writing assertion-heavy unit tests that shatter on every model update and missing the class of failures those tests cannot see — coherence regressions, tone drift, silent context truncation, and adversarial prompt injection.
+
+**Type:** Learn
+**Languages:** Python (stdlib — eval-set classifier + regression gate simulator)
+**Prerequisites:** Phase 11 · 10 (Evaluation), Phase 14 · 30 (Eval-driven agent development)
+**Time:** ~45 minutes
+
+## The Problem
+
+A team ships a summarisation feature backed by Claude Sonnet 4.5. They write a pytest suite: parse the JSON output, assert the keys exist, assert the length is under 500 characters. Three months later the team upgrades to Sonnet 4.6. Every test passes. Two days after launch, a product manager notices the summaries have started hedging every claim with "it is important to note that" — the tone has shifted. The tests never saw it because they measured structure, not quality.
+
+The symmetrical failure happens at the other end: a team writes no evals at all, iterates on prompts by vibe, and ships a RAG feature where 30 % of answers quietly hallucinate a date or a name. Neither failure is exotic. Both come from the same root cause: **applying unit-test intuitions to a probabilistic system that requires a different evaluation vocabulary** — one built on graded quality scores, behavioural coverage, and regression baselines rather than binary pass/fail on schema.
+
+## The Concept
+
+### The three evaluation layers
+
+LLM feature testing requires three layers that mirror the traditional pyramid but differ in what each layer can actually catch:
+
+| Layer | What it checks | Tooling | Cadence |
+|---|---|---|---|
+| **Structural** | Schema, field presence, length bounds, JSON validity | Standard assertion libraries, pytest | Every PR |
+| **Behavioural** | Quality, coherence, tone, factual grounding, task completion | LLM-as-judge, rubric scoring, human annotation | Every model/prompt change |
+| **Adversarial** | Prompt injection resistance, jailbreak surface, output poisoning | Red-team fixture sets, fuzz harness | Before prod deploy, quarterly |
+
+Teams that only build the structural layer are in the regime of the hedging-tone failure above. Teams that skip the adversarial layer are in scope for the indirect prompt injection attacks documented in Phase 18 · 15.
+
+### Eval set design
+
+An eval set is a curated collection of inputs paired with expected outputs (or grading rubrics). The design decisions that matter most:
+
+- **Coverage axes.** For a summarisation feature the axes include: long vs. short input, structured vs. unstructured source, positive vs. negative sentiment, multilingual. A test suite that covers only happy-path English prose has poor coverage even if it has 500 cases.
+- **Golden references vs. rubrics.** For tasks with one right answer (entity extraction, SQL generation) a golden reference answer enables exact-match or near-exact scoring. For generative tasks (summaries, code explanations) a rubric evaluated by a judge model is more robust. The RAGAS framework (Phase 11 · 10) formalises this for RAG-specific metrics: faithfulness, answer relevance, context precision.
+- **Fixture tasks.** A fixture task is a fixed input/output pair that should be deterministically solvable — it anchors the harness to something measurable even when the full eval set is too large to run on every commit. Phase 19 · 27 covers the fixture-task harness in detail.
+- **Minimum set size.** A set with fewer than 30 cases has so much sampling variance that a one-point metric change is meaningless. In our experience, confidence intervals on a 30-case run are typically wide enough that you cannot distinguish a true 0.3-point shift from noise; the practical floor for a production eval is 50–100 balanced cases per coverage axis.
+
+### LLM-as-judge scoring
+
+Using a model to evaluate another model's output is now standard practice. Claude Opus 4.x, GPT-4o, and Gemini 2.0 Pro all perform well as judges when given a precise rubric. Key design rules for the judge prompt:
+
+1. Define a numeric scale (1–5) with anchors for each integer. A 1-to-5 scale with anchors has much lower inter-rater variance than a vague "rate the quality."
+2. Ask the judge to output reasoning before the score (chain-of-thought). This reduces positional bias and makes disagreements auditable.
+3. Run at temperature 0. Variance in the judge output is noise in your metric.
+4. Do not use the same model family as judge and subject when you can avoid it. A Claude-as-judge-of-Claude setup can be biased toward Claude's own output style.
+5. Spot-check with human annotation on 10–15 % of cases every quarter. Judge-human agreement below 0.7 (Spearman) is a signal that your rubric needs rework.
+
+### Regression gates
+
+A regression gate is an automated decision rule applied to eval scores that determines whether a model or prompt change is safe to promote. The gate sits in CI/CD and blocks a deploy if the metric drops beyond a threshold. Three design choices define a gate:
+
+**Threshold type.** Absolute thresholds ("score must be >= 3.5 / 5") are simple but break when you change the rubric. Relative thresholds ("score must not drop more than 0.15 relative to baseline") survive rubric evolution better. Use both: an absolute floor prevents deploying a broken model, a relative cap prevents silent regression.
+
+**Metric portfolio.** A single aggregate score hides trade-offs. A useful minimum portfolio for a generative feature: task-completion rate, faithfulness (for RAG), coherence score, and latency p95. Phase 14 · 38 adds a verification-gate layer specifically for agentic workflows where tool calls must also be audited.
+
+**Baseline management.** The baseline is the eval score of the current production prompt/model pair. It must be stored in version control alongside the eval set. Upgrading the baseline without review is the "goodhart" failure: the metric becomes the target rather than the proxy for quality.
+
+### QA gate placement in the delivery pipeline
+
+```
+PR opened
+    -> structural tests (pytest, every PR, <30 s)
+    -> behavioural eval on fixture subset (LLM-as-judge, every PR, 2-5 min)
+
+Model / prompt promoted to staging
+    -> full behavioural eval on complete set (LLM-as-judge + human spot-check)
+    -> adversarial eval (red-team fixtures)
+    -> regression gate decision: PASS / BLOCK
+
+Production deploy
+    -> online A/B metric monitoring (completion rate, thumbs down rate)
+    -> weekly canary eval on live traffic sample
+```
+
+This maps to the agent verification gates in Phase 14 · 38, extended to cover the full prompt-to-production lifecycle rather than a single agent turn.
+
+### Current toolset (2026)
+
+| Tool / Framework | What it adds | When to use it |
+|---|---|---|
+| **RAGAS** | Faithfulness, answer relevance, context precision for RAG | Any retrieval-augmented feature |
+| **Anthropic Evals API** | Hosted eval runs, baseline storage, regression tracking | Teams already on Claude; avoids running judge infra |
+| **OpenAI Evals** | JSON-defined eval harness, model-graded and human-graded modes | Cross-provider benchmarking |
+| **PromptFoo** | CLI + CI integration, multiple model comparison, red-team modes | Mixed-provider teams, prompt A/B testing |
+| **LangSmith** | Tracing + eval + dataset management in one surface | Teams using LangChain / LangGraph |
+| **Braintrust** | Dataset, experiment, and scoring management; strong IDE integration | Teams who want a hosted alternative to LangSmith |
+
+For teams on the LHIND stack: the internal LLM gateway (Phase 11 · 01) does not yet expose a hosted eval surface; run the LLM-as-judge calls against the gateway and store baselines in the repo.
+
+### What evals cannot replace
+
+Evals answer "does this behave the way I specified?" They do not answer "did I specify the right thing?" A perfect score on a faithfulness rubric does not tell you the retrieved context was the right context. A perfect task-completion rate does not tell you the task was worth automating. These are design questions that belong upstream in the product specification, not downstream in the eval harness.
+
+Similarly, eval scores are a sample from a distribution. A 0.1-point drop in a 50-case set may be statistical noise; a 0.1-point drop on a 500-case balanced set is a real signal. Size matters.
+
+## Use It
+
+`code/main.py` makes the two core decisions of this lesson explicit and executable:
+
+1. An **eval-set classifier** that takes a feature description and coverage-axis inputs and emits a recommended eval set design: layer priorities, minimum set sizes per axis, judge model selection, and threshold type.
+2. A **regression gate simulator** that takes a before/after metric portfolio and applies both absolute-floor and relative-delta rules, producing `PASS`, `BLOCK`, or `WARN` with the specific rule that fired.
+
+No network, no model calls — the point is to make the decision logic transparent and testable, in the same spirit as the task-to-mode router in Phase 15 · 10.
+
+## Ship It
+
+`outputs/skill-qa-gate-designer.md` is a one-page decision aid: paste a feature description and a model/prompt change, get the recommended eval layer, fixture minimum, gate thresholds, and CI placement. Paste it into a Confluence page or a PR description the next time your team ships an LLM feature.
+
+## Exercises
+
+1. Run `code/main.py`. Which feature type triggers the adversarial layer as mandatory, and which is marked optional? Change one feature attribute so the gate decision moves from `PASS` to `WARN` — which metric rule fired?
+
+2. The regression simulator blocks one scenario even though the aggregate score improved. Find it. Explain in one sentence why an improving aggregate can hide a regression, and which metric in the portfolio caught it.
+
+3. Design an eval set for a real LLM feature you work on or know well. List: the three most important coverage axes, the golden-reference vs. rubric decision and why, and the minimum case count per axis. Estimate how long a full eval run would take at 5 seconds per LLM-as-judge call.
+
+4. Write a five-anchor rubric (scale 1–5) for one quality dimension of a generative feature (e.g. "conciseness" for a summariser). Ask a colleague to rate three sample outputs using your rubric. If your ratings differ by more than 1 point on any case, identify which anchor wording caused the ambiguity.
+
+5. Read the RAGAS docs on faithfulness scoring. Map its faithfulness metric to the three-layer table in this lesson: which layer does it sit in, which pipeline stage would you run it at, and what absolute floor would you set before blocking a deploy?
+
+## Key Terms
+
+| Term | What people say | What it actually means |
+|---|---|---|
+| Eval set | "Our test cases" | A curated input/expected-output (or rubric) collection designed along explicit coverage axes |
+| LLM-as-judge | "Let the model grade itself" | A separate judge-model run at temperature 0 with a rubric; not self-grading unless judge == subject |
+| Regression gate | "The CI quality check" | An automated pass/block rule applied to metric deltas before a model or prompt is promoted |
+| Behavioural eval | "Quality testing" | Rubric-based scoring of coherence, tone, factual grounding — not structure or schema |
+| Fixture task | "A fixed test case" | A pinned input/output pair that anchors the harness and runs on every commit |
+| Faithfulness | "Does it hallucinate?" | A RAGAS metric: what fraction of answer claims are grounded in the retrieved context |
+| Absolute floor | "Minimum score" | Gate rule blocking deploy if score drops below a fixed threshold regardless of baseline |
+| Relative delta | "Regression cap" | Gate rule blocking deploy if score drops more than X % relative to the current baseline |
+
+## Consultant field notes
+
+Named patterns a senior consultant recognises from LLM-feature delivery.
+
+- **The prompt that worked in the demo but failed in production.** The pilot ran on ten hand-picked inputs; production serves ten thousand. Edge cases (empty context, non-English input, adversarial phrasing) that the demo never saw start surfacing in week one. Lesson: an eval set sized for a demo is not an eval set sized for a launch — back-solve the minimum case count from real traffic distribution before sign-off.
+- **The RAG that returned the right doc but the wrong paragraph.** Faithfulness scored high because every claim was grounded *somewhere* in retrieved context — just not the passage the user actually needed. Lesson: a faithfulness rubric that ignores which chunk was cited will pass a system that cites the wrong evidence confidently.
+- **The use case everyone approved but nobody wanted.** The steering committee green-lit the feature; six months later usage sits below two percent of the target cohort. Evals can measure quality, not desirability — if no part of the discovery loop asks "would a real user open this on a Tuesday afternoon?", the eval will certify a feature nobody reaches for.
+- **The AI feature that hit a cost ceiling in month two.** Per-call judge-model evals plus LLM-as-judge in CI plus canary runs in production stacked into a bill that doubled the feature's infrastructure line item before the second release. Lesson: estimate the full eval-loop cost (judge calls × frequency × case count) at design time, not after the first invoice.
+- **The vendor pilot that never made it past the security review.** The team picked an eval vendor on rubric quality; the data processing addendum blocked procurement for nine months. Lesson: legal and infosec sign-off on eval tooling is a gate, not a checklist — start it in parallel with the technical evaluation, not after it.
+
+## Further Reading
+
+- [RAGAS documentation](https://docs.ragas.io) — faithfulness, answer relevance, context precision metrics for RAG evaluation.
+- [Anthropic — Model evaluation guide](https://docs.claude.com/en/docs/test-and-evaluate/eval-your-prompts) — hosted evals, rubric design, and baseline management on the Anthropic platform.
+- [PromptFoo documentation](https://promptfoo.dev/docs) — CLI-driven eval harness with red-team modes and multi-model comparison.
+- [NIST AI Risk Management Framework 1.0](https://airc.nist.gov/Home) — the governance standard that names evaluation as a required control; Chapter 4 covers MEASURE.
+- [Braintrust — Evaluations guide](https://www.braintrust.dev/docs/guides/evals) — dataset management, experiment tracking, and scoring; useful reference for hosted eval architecture patterns.
