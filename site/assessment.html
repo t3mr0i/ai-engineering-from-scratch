@@ -118,14 +118,9 @@
 
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
-      <span class="wordmark__mark" aria-hidden="true">AI</span>
+      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
       <span>LHIND Learning Catalog</span>
     </a>
-    <nav class="nav-links" aria-label="Sections">
-      <a href="index.html">Courses</a>
-      <a href="catalog.html">Curriculum</a>
-    </nav>
-    <div class="nav-edge__spacer" aria-hidden="true"></div>
   </header>
 
   <main id="main" class="container assess-page">
@@ -179,7 +174,6 @@
       <p>LHIND AI Learning Catalog · open source · free forever.</p>
       <div class="footer-links">
         <a href="index.html">Home</a>
-        <a href="catalog.html">Catalog</a>
         <a href="glossary.html">Glossary</a>
       </div>
     </div>
@@ -372,7 +366,7 @@
             var chips = x.cap.phases.map(function (pid) {
               var p = phaseById[pid];
               if (!p) return '';
-              return '<a class="lesson-chip" href="catalog.html?phase=' + pid + '">' +
+              return '<a class="lesson-chip" href="index.html">' +
                 String(pid).padStart(2, '0') + ' · ' + p.name + '</a>';
             }).join('');
             body = '<div class="path-lessons">' + chips + '</div>';

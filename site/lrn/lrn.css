@@ -135,18 +135,10 @@ button {
     background-color var(--dur-base) var(--ease-standard);
 }
 
-.wordmark__mark {
-  display: inline-grid;
-  width: 1.6rem;
-  height: 1.6rem;
-  place-items: center;
-  border-radius: var(--radius-xs);
-  background: var(--lhg-core-blue);
-  color: var(--lhg-white);
-  font-family: var(--font-text);
-  font-size: 0.7rem;
-  font-weight: var(--weight-medium);
-  letter-spacing: 0.02em;
+.wordmark__logo {
+  display: block;
+  height: 1.4rem;
+  width: auto;
 }
 
 .wordmark__text {
@@ -582,22 +574,6 @@ i[class^="ph "] {
   gap: var(--space-3);
 }
 
-.course-card__kind {
-  padding: 0.2rem 0.65rem;
-  border-radius: var(--radius-pill);
-  font-family: var(--font-text);
-  font-size: var(--fs-overline);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--ls-overline);
-  text-transform: uppercase;
-  background: var(--color-surface-sunken);
-  color: var(--text-secondary);
-}
-
-.course-card__kind[data-kind="recommended"] {
-  background: var(--lhg-blue-100);
-  color: var(--lhg-core-blue);
-}
 
 /* Fixed two-line title zone so every card's meta + progress line up,
    independent of title length. */
@@ -894,6 +870,13 @@ i[class^="ph "] {
   gap: var(--space-3);
 }
 
+.unit-block__icon {
+  flex: none;
+  color: var(--lhg-core-blue);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
 .unit-block__code {
   flex: none;
   display: inline-grid;
@@ -947,7 +930,7 @@ i[class^="ph "] {
 
 .activity-link {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto auto minmax(0, 1fr) auto auto;
   gap: var(--space-3);
   align-items: center;
   min-height: 48px;
@@ -958,6 +941,11 @@ i[class^="ph "] {
   transition:
     background-color var(--dur-base) var(--ease-standard),
     transform var(--dur-fast) var(--ease-standard);
+}
+
+.activity-link__type-icon {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
 }
 
 .activity-link + .activity-link {

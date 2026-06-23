@@ -117,26 +117,25 @@
       opacity: 0.5;
     }
 
-    .sidebar-lesson-dot {
-      width: 8px;
-      height: 8px;
+    .sidebar-lesson-icon {
+      font-size: 1.05rem;
+      line-height: 1;
       flex-shrink: 0;
-      border: 1px solid var(--ink-mute);
-      background: transparent;
+      color: var(--ink-mute);
+      width: 1.25rem;
+      text-align: center;
     }
 
-    .sidebar-lesson-dot.complete {
-      background: var(--blueprint);
-      border-color: var(--blueprint);
+    .sidebar-lesson-icon.complete {
+      color: var(--blueprint);
     }
 
-    .sidebar-lesson-dot.in-progress {
-      background: linear-gradient(135deg, var(--blueprint) 0%, var(--blueprint) 50%, transparent 50%, transparent 100%);
-      border-color: var(--blueprint);
+    .sidebar-lesson-icon.in-progress {
+      color: var(--ink-soft);
     }
 
-    .sidebar-lesson-dot.planned {
-      border-style: dashed;
+    .sidebar-lesson-link.active .sidebar-lesson-icon {
+      color: var(--blueprint);
     }
 
     .sidebar-phase-nav {
@@ -1646,7 +1645,7 @@
       align-items: center;
       gap: 0;
       overflow-x: auto;
-      padding: 24px 0;
+      padding: 20px 4px 16px;
       position: relative;
     }
 
@@ -1654,25 +1653,26 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      min-width: 92px;
+      gap: 10px;
+      min-width: 112px;
       flex-shrink: 0;
       position: relative;
       text-decoration: none;
+      padding: 4px 6px;
     }
 
     .timeline-dot {
-      width: 12px;
-      height: 12px;
+      width: 8px;
+      height: 8px;
       background: transparent;
-      border: 1px solid var(--ink-mute);
+      border: 1px solid var(--rule);
       z-index: 2;
       transition: transform 0.15s, background 0.15s, border-color 0.15s;
     }
 
     .timeline-item.current .timeline-dot {
-      width: 18px;
-      height: 18px;
+      width: 12px;
+      height: 12px;
       background: var(--blueprint);
       border-color: var(--blueprint);
     }
@@ -1684,30 +1684,48 @@
     }
 
     .timeline-line {
-      width: 36px;
+      width: 28px;
       height: 1px;
       background: var(--rule-soft);
       flex-shrink: 0;
+      opacity: 0.7;
     }
 
     .timeline-line.done,
     .timeline-line.active {
       background: var(--blueprint);
+      opacity: 1;
     }
 
     .timeline-label {
-      font-family: var(--font-body);
-      font-size: 0.84rem;
-      letter-spacing: 0;
-      text-transform: none;
-      color: var(--ink-mute);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
       text-align: center;
-      max-width: 120px;
-      line-height: 1.35;
+      max-width: 128px;
+      line-height: 1.3;
     }
 
-    .timeline-item.current .timeline-label {
+    .timeline-label-code {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      color: var(--ink-mute);
+    }
+
+    .timeline-label-name {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+    }
+
+    .timeline-item.current .timeline-label-code,
+    .timeline-item.current .timeline-label-name {
       color: var(--blueprint);
+    }
+
+    .timeline-item.current .timeline-label-name {
       font-weight: 500;
     }
 
@@ -1716,7 +1734,7 @@
       font-size: 0.78rem;
       color: var(--ink-mute);
       letter-spacing: 0.04em;
-      padding: 0 8px;
+      padding: 0 6px;
       white-space: nowrap;
     }
 
@@ -1955,8 +1973,9 @@
       .lesson-article ol li { font-size: 0.96rem; }
       .lesson-article > p:first-of-type::first-letter { font-size: 2.6rem; }
       .ai-panel { padding: 18px 12px; }
-      .timeline-item { min-width: 70px; }
-      .timeline-line { width: 20px; }
+      .timeline-item { min-width: 88px; }
+      .timeline-line { width: 16px; }
+      .timeline-label { max-width: 104px; }
     }
   </style>
 </head>
@@ -1968,14 +1987,9 @@
 
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
-      <span class="wordmark__mark" aria-hidden="true">AI</span>
+      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
       <span>LHIND Learning Catalog</span>
     </a>
-    <nav class="nav-links" aria-label="Sections">
-      <a href="index.html">Courses</a>
-      <a href="catalog.html">Curriculum</a>
-    </nav>
-    <div class="nav-edge__spacer" aria-hidden="true"></div>
   </header>
 
   <button class="lesson-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
@@ -2271,6 +2285,18 @@
         return 'core';
       }
 
+      // Compress lesson titles for tight slots (course syllabus timeline).
+      // Prefer the part before ":" or ",", drop filler words, cap at 4 tokens.
+      // The full title stays in the link's title attribute.
+      function lrnShortLabel(title) {
+        if (!title) return '';
+        var head = String(title).split(/\s*[,:]\s*/)[0];
+        var stop = { the: 1, a: 1, an: 1, and: 1, of: 1, in: 1, on: 1, for: 1, to: 1, with: 1 };
+        var words = head.split(/\s+/).filter(function (w) { return w && !stop[w.toLowerCase()]; });
+        if (!words.length) words = head.split(/\s+/).filter(Boolean);
+        return words.slice(0, 4).join(' ');
+      }
+
       function lrnUnitProgress(group) {
         var completed = 0;
         var visited = 0;
@@ -2285,6 +2311,31 @@
           total: group.lessons.length,
           percent: lrnAveragePercent(group.lessons)
         };
+      }
+
+      // Map a lesson title to a Phosphor Light icon. First match wins; keep
+      // specific topics (security, prompts, testing) before broad ones.
+      // Falls back to a generic book icon.
+      function lrnLessonIcon(title) {
+        var t = String(title || "").toLowerCase();
+        var rules = [
+          [/security|injection|exploit|cve|vulnerab/, "shield-warning"],
+          [/prompt/, "chats"],
+          [/copilot|code review|claude code|cursor|mcp/, "code"],
+          [/agent|workbench|tool use|function call/, "robot"],
+          [/evaluat|test\b|qa\b|reviewer|verif|guard/, "test-tube"],
+          [/architect|system design|pattern/, "tree-structure"],
+          [/rag|knowledge|retrieval/, "database"],
+          [/document|content|writing/, "file-text"],
+          [/requirement|backlog|discovery/, "clipboard-text"],
+          [/workflow|automation|process/, "flow-arrow"],
+          [/responsible|trust|gdpr|ethics|legal|compliance/, "scales"],
+          [/govern|risk|controls|audit/, "shield-check"]
+        ];
+        for (var i = 0; i < rules.length; i += 1) {
+          if (rules[i][0].test(t)) return rules[i][1];
+        }
+        return "book-open";
       }
 
       function buildLrnSidebar(sidebar) {
@@ -2310,11 +2361,14 @@
             }
             var active = lesson.path === lessonPath;
             var state = lrnLessonProgressState(lesson.path);
+            var iconName = state === 'complete' ? 'check-circle' : lrnLessonIcon(lesson.title);
             html += '<a class="sidebar-lesson-link' + (active ? ' active' : '') + '" href="' + lrnLessonHref(lesson.path) + '"' + (active ? ' aria-current="page"' : '') + '>';
-            html += '<span class="sidebar-lesson-dot ' + state + '"></span>';
+            html += '<i class="ph ph-' + iconName + ' sidebar-lesson-icon ' + state + '" aria-hidden="true"></i>';
             html += '<span class="lrn-sidebar-lesson-text">';
             html += '<span>' + escapeHtml(lesson.title) + '</span>';
-            html += '<span class="lrn-sidebar-lesson-meta">' + (flatIndex >= 0 ? lrnActivityCode(flatIndex) + ' · ' : '') + escapeHtml(lrnLessonProgressLabel(lesson.path)) + '</span>';
+            if (flatIndex >= 0) {
+              html += '<span class="lrn-sidebar-lesson-meta">' + lrnActivityCode(flatIndex) + '</span>';
+            }
             html += '</span>';
             html += '</a>';
           });
@@ -2511,7 +2565,7 @@
         var el = document.getElementById('lessonContent');
         var actions = '<a href="index.html" class="btn btn-primary">' + (lrnContext ? 'Back to catalog' : 'Back to Home') + '</a>';
         if (showCatalog) {
-          actions += ' <a href="catalog.html" class="btn">Browse all lessons</a>';
+          actions += ' <a href="index.html" class="btn">Browse all lessons</a>';
         }
         el.innerHTML = '<div class="lesson-error"><h2>' + title + '</h2><p>' + msg + '</p>' + actions + '</div>';
       }
@@ -2565,8 +2619,7 @@
               isPartOf: { '@type': 'Course', name: 'LHIND AI Learning Catalog', url: ORIGIN } },
             { '@type': 'BreadcrumbList', itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: ORIGIN },
-              { '@type': 'ListItem', position: 2, name: 'Catalog', item: ORIGIN + '/catalog.html' },
-              { '@type': 'ListItem', position: 3, name: title, item: url }
+              { '@type': 'ListItem', position: 2, name: title, item: url }
             ] }
           ]
         };
@@ -4526,52 +4579,7 @@
       }
 
       function renderLrnLearningPathPanel(container) {
-        var panel = document.createElement('div');
-        panel.className = 'ai-panel';
-
-        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">S</div><div class="ai-panel-title">Course Syllabus</div></div>';
-        html += '<div class="ai-panel-subtitle">' + escapeHtml(lrnContext.course.id) + ': ' + escapeHtml(lrnContext.course.title) + '</div>';
-
-        var windowSize = 7;
-        var startIdx = Math.max(0, lrnContext.currentIndex - 3);
-        var endIdx = Math.min(lrnContext.lessons.length, startIdx + windowSize);
-        startIdx = Math.max(0, endIdx - windowSize);
-        var visible = lrnContext.lessons.slice(startIdx, endIdx);
-        var hiddenBefore = startIdx;
-        var hiddenAfter = lrnContext.lessons.length - endIdx;
-
-        html += '<div class="learning-timeline">';
-        if (hiddenBefore > 0) {
-          html += '<span class="timeline-ellipsis" title="' + hiddenBefore + ' earlier lessons">&laquo; ' + hiddenBefore + '</span>';
-          html += '<div class="timeline-line done"></div>';
-        }
-        visible.forEach(function (item, vIdx) {
-          var idx = startIdx + vIdx;
-          var isCurrent = idx === lrnContext.currentIndex;
-          var isPrev = idx < lrnContext.currentIndex;
-          var cls = isCurrent ? 'current' : isPrev ? 'prev' : '';
-
-          if (vIdx > 0) {
-            var lineCls = idx <= lrnContext.currentIndex ? (idx === lrnContext.currentIndex ? 'active' : 'done') : '';
-            html += '<div class="timeline-line ' + lineCls + '"></div>';
-          }
-
-          html += '<a class="timeline-item ' + cls + '" href="' + lrnLessonHref(item.path) + '" title="' + escapeAttr(item.title) + '">';
-          html += '<div class="timeline-dot"></div>';
-          html += '<div class="timeline-label">' + lrnActivityCode(idx) + ' · ' + escapeHtml(item.title) + '</div>';
-          html += '</a>';
-        });
-        if (hiddenAfter > 0) {
-          html += '<div class="timeline-line"></div>';
-          html += '<span class="timeline-ellipsis" title="' + hiddenAfter + ' later lessons">' + hiddenAfter + ' &raquo;</span>';
-        }
-        html += '</div>';
-
-        html += '<div class="phase-progress-bar"><div class="phase-progress-fill" style="width:' + lrnContext.percent + '%"></div></div>';
-        html += '<div class="phase-progress-text">LRN progress: ' + lrnContext.completed + ' of ' + lrnContext.total + ' skill path activities completed</div>';
-
-        panel.innerHTML = html;
-        container.appendChild(panel);
+        return;
       }
 
       function renderContinuePanel(container) {
@@ -4601,7 +4609,7 @@
         var phaseSlug = extractPhaseSlug(phase, phaseIdx);
         var firstLesson = phase.lessons[0] ? extractLessonSlug(phase.lessons[0], 0) : '';
         html += '<a class="continue-link" href="lesson.html?path=phases/' + phaseSlug + '/' + firstLesson + '">Browse all Phase ' + String(phase.id).padStart(2, '0') + ' lessons</a>';
-        html += '<a class="continue-link" href="catalog.html">Full course catalog</a>';
+        html += '<a class="continue-link" href="index.html">Browse all courses</a>';
         html += '</div>';
 
         html += '</div>';

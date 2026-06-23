@@ -521,7 +521,6 @@ function writeSitemap(phases, glossaryCount) {
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     { loc: '/', priority: '1.0', freq: 'weekly' },
-    { loc: '/catalog.html', priority: '0.8', freq: 'weekly' },
     { loc: '/prereqs.html', priority: '0.7', freq: 'monthly' },
   ];
   if (glossaryCount > 0) urls.push({ loc: '/glossary.html', priority: '0.6', freq: 'monthly' });
@@ -563,7 +562,6 @@ function writeLlms(phases, glossaryCount, artifactCount) {
     out += `\n`;
   }
   out += `## Optional\n`;
-  out += `- [Catalog](${SITE_ORIGIN}/catalog.html) — full searchable lesson index\n`;
   out += `- [Roadmap](${SITE_ORIGIN}/prereqs.html) — prerequisite ordering across phases\n`;
   if (glossaryCount > 0) out += `- [Glossary](${SITE_ORIGIN}/glossary.html) — plain-language definitions of ${glossaryCount} terms\n`;
   fs.writeFileSync(path.join(__dirname, 'llms.txt'), out, 'utf8');
@@ -613,7 +611,7 @@ function syncReadme(lessons) {
 
 // ─── Keep marketing counts in sync (single source of truth = this build) ──
 function syncCounts(lessons, phaseCount, outputs) {
-  const targets = ['index.html', 'catalog.html', 'lesson.html', 'prereqs.html', 'cmdpalette.js', 'about.html'];
+  const targets = ['index.html', 'lesson.html', 'prereqs.html', 'cmdpalette.js', 'about.html'];
   for (const f of targets) {
     const p = path.join(__dirname, f);
     if (!fs.existsSync(p)) continue;
