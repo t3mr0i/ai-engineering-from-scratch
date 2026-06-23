@@ -1,0 +1,26 @@
+<!-- @dsCard group="Slides" viewport="1280x720" name="Title slide" subtitle="Deep-blue horizon title slide" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<style>
+  html,body{margin:0;height:100%}
+  .slide{width:1280px;height:720px;background:var(--lhg-core-blue);position:relative;overflow:hidden;font-family:var(--font-body);color:#fff}
+  .glow{position:absolute;right:-12%;top:-30%;width:60%;height:170%;border-radius:50%;background:radial-gradient(circle at 40% 50%, rgba(63,115,216,.55), rgba(5,22,77,0) 62%)}
+  .arc{position:absolute;left:-8%;bottom:-120%;width:120%;height:180%;border-top:1px solid rgba(255,255,255,.30);border-radius:50%}
+  .inner{position:absolute;inset:0;padding:96px;display:flex;flex-direction:column;justify-content:flex-end;z-index:2}
+  .eyebrow{font-weight:500;font-size:18px;letter-spacing:.14em;text-transform:uppercase;color:#8fb4ff;margin-bottom:24px}
+  h1{font-family:var(--font-display);font-weight:200;font-size:86px;line-height:1;letter-spacing:-.02em;color:#fff;margin:0}
+  .sub{font-weight:300;font-size:24px;color:rgba(255,255,255,.82);margin-top:28px;max-width:760px}
+  .logo{position:absolute;top:64px;left:96px;height:30px;z-index:2;filter:brightness(0) invert(1)}
+  .meta{position:absolute;bottom:64px;right:96px;font-size:15px;color:rgba(255,255,255,.6);z-index:2}
+</style></head><body>
+  <div class="slide">
+    <div class="glow"></div><div class="arc"></div>
+    <img class="logo" src="../assets/logos/lhg-lockup.svg" alt="Lufthansa Group">
+    <div class="inner">
+      <div class="eyebrow">Annual results 2024</div>
+      <h1>Shaping the future<br>of aviation.</h1>
+      <p class="sub">Connecting people, cultures and economies in a sustainable way.</p>
+    </div>
+    <div class="meta">Frankfurt · March 2025</div>
+  </div>
+</body></html>

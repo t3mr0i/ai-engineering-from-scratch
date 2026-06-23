@@ -1,0 +1,54 @@
+<!-- @dsCard group="Components" viewport="700x520" name="Core" subtitle="Buttons, icon buttons, badges, cards & the hero Stat" -->
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--lhg-grey-100);font-family:var(--font-body);padding:26px 30px}
+  .sec{margin-bottom:22px}
+  .lbl{font:500 11px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+</style></head><body><div id="root"></div>
+<script type="text/babel">
+const { Button, IconButton, Badge, Card, Stat, SegmentedControl, Divider } = window.LufthansaGroupDesignSystem_70bbed;
+const A = () => <i className="ph-light ph-arrow-right" />;
+function Demo(){
+  const [seg,setSeg]=React.useState('Return');
+  return (<div>
+    <div className="sec"><div className="lbl">Segmented control · on-dark button</div><div className="row">
+      <SegmentedControl options={["One way","Return","Multi-city"]} value={seg} onChange={setSeg}/>
+      <span style={{background:'var(--lhg-core-blue)',borderRadius:'999px',padding:6}}><Button variant="on-dark" size="sm">On dark</Button></span>
+    </div></div>
+    <div className="sec"><div className="lbl">Buttons</div><div className="row">
+      <Button variant="primary">Book a flight</Button>
+      <Button variant="accent">Continue</Button>
+      <Button variant="secondary" iconRight={<A/>}>Learn more</Button>
+      <Button variant="ghost">Filters</Button>
+      <Button variant="tertiary" iconRight={<A/>}>See all routes</Button>
+      <Button variant="primary" disabled>Disabled</Button>
+    </div></div>
+    <div className="sec"><div className="lbl">Icon buttons & badges</div><div className="row">
+      <IconButton icon="ph-magnifying-glass" label="Search" variant="outline"/>
+      <IconButton icon="ph-bell" label="Alerts"/>
+      <IconButton icon="ph-user" label="Account" variant="solid"/>
+      <Badge tone="blue">On time</Badge>
+      <Badge tone="success" icon="ph-check">Confirmed</Badge>
+      <Badge tone="teal">Sustainable</Badge>
+      <Badge tone="error">Delayed</Badge>
+    </div></div>
+    <div className="sec"><div className="lbl">Cards & stat</div><div className="row" style={{alignItems:'stretch'}}>
+      <Card elevated style={{maxWidth:300}}>
+        <Card.Eyebrow>Sustainability</Card.Eyebrow>
+        <Card.Title>Fly more sustainable today</Card.Title>
+        <Card.Body>Offset your journey with verified SAF contributions at checkout.</Card.Body>
+      </Card>
+      <Card style={{display:'flex',alignItems:'center'}}>
+        <Stat value="85" progress={85} label="Growth in %" tone="purple"/>
+      </Card>
+    </div></div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>

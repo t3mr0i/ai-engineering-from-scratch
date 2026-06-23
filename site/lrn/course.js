@@ -23,6 +23,7 @@
 
   // "Back to courses" must preserve the catalog selection. Read the same store
   // the catalog persists to and re-encode profile/level/interests as params.
+  // Point at "/" so it works from any host path (/, /lrn/, /lrn/course.html).
   function backHref() {
     var query = "";
     try {
@@ -39,7 +40,7 @@
     } catch (error) {
       query = "";
     }
-    return "../index.html" + query;
+    return "/" + query;
   }
 
   function setBackLinks() {
@@ -89,7 +90,7 @@
       ctaLabel.textContent = (stats.visitedLessons > 0 ? "Continue Learning" : "Start Course");
       action.append(ctaLabel, lucideIcon("arrow-right"));
     } else {
-      action.appendChild(lucideIcon("circle-check"));
+      action.appendChild(lucideIcon("check-circle"));
       var doneLabel = document.createElement("span");
       doneLabel.textContent = "Course Complete";
       action.appendChild(doneLabel);
@@ -101,6 +102,30 @@
     head.append(title, summary, meta, progressMeter(stats.percent, "Progress " + course.title), action);
 
     var children = [head];
+
+    var outcomes = Array.isArray(course.outcomes) ? course.outcomes.filter(function (s) { return typeof s === "string" && s.trim().length > 0; }) : [];
+    if (outcomes.length) {
+      var outcomesBlock = document.createElement("section");
+      outcomesBlock.className = "course-head__outcomes";
+      outcomesBlock.setAttribute("aria-labelledby", "courseOutcomesTitle");
+
+      var outcomesTitle = document.createElement("h2");
+      outcomesTitle.id = "courseOutcomesTitle";
+      outcomesTitle.className = "course-head__outcomes-title";
+      outcomesTitle.textContent = "After completing this course, you can:";
+
+      var outcomesList = document.createElement("ul");
+      outcomesList.className = "course-head__outcomes-list";
+      outcomes.forEach(function (text) {
+        var li = document.createElement("li");
+        li.className = "course-head__outcomes-item";
+        li.textContent = text;
+        outcomesList.appendChild(li);
+      });
+
+      outcomesBlock.append(outcomesTitle, outcomesList);
+      children.push(outcomesBlock);
+    }
 
     var syllabusTitle = document.createElement("h2");
     syllabusTitle.className = "syllabus-title";
@@ -122,6 +147,71 @@
     refreshIcons();
   }
 
+  // Phosphor Light icon for a syllabus unit, picked from the unit title.
+  // First match wins. Same vocabulary as lrn.js COURSE_ICON_RULES so a unit
+  // about "Architecture" gets tree-structure on both surfaces.
+  var UNIT_ICON_RULES = [
+    [/security|injection/, "shield-warning"],
+    [/responsible|trustworthy|gdpr|ethics|legal|compliance|risk|governance/, "shield-check"],
+    [/prompt/, "chats"],
+    [/copilot|code|agentic/, "code"],
+    [/test|qa|quality|verification/, "test-tube"],
+    [/architecture|systems|infrastructure/, "tree-structure"],
+    [/rag|knowledge|retrieval|vector/, "database"],
+    [/doc|content|writing/, "file-text"],
+    [/requirement|backlog|specification/, "clipboard-text"],
+    [/use case|spotting|discovery|research|interview/, "magnifying-glass"],
+    [/cost|value|economics|finance|budget|benefit/, "coins"],
+    [/workforce|hr|people|recruit/, "users"],
+    [/change|transformation|stakeholder|adoption/, "arrows-clockwise"],
+    [/project|reporting|steering|portfolio|roadmap|sponsor/, "squares-four"],
+    [/data|analytics|metric/, "chart-bar"],
+    [/green|sustainable|carbon/, "leaf"],
+    [/vendor|procurement|ecosystem|partner/, "handshake"],
+    [/operations|incident|service desk|support/, "wrench"],
+    [/sales|consulting|pitch/, "briefcase"],
+    [/communication|marketing|brand/, "megaphone"],
+    [/meeting|facilitation|workshop/, "presentation-chart"],
+    [/automation|process optimization/, "flow-arrow"],
+    [/customer|service/, "headphones"],
+    [/leader|decision|executive|strategy/, "compass"],
+    [/training|learning|onboard|teach/, "graduation-cap"],
+    [/prompt.*engineer|engineer.*prompt/, "function"]
+  ];
+
+  function unitIcon(subcourse) {
+    var title = String((subcourse && subcourse.title) || "").toLowerCase();
+    for (var i = 0; i < UNIT_ICON_RULES.length; i += 1) {
+      if (UNIT_ICON_RULES[i][0].test(title)) return UNIT_ICON_RULES[i][1];
+    }
+    return "book-open";
+  }
+
+  // Phosphor Light icon for a single activity (lesson). Activity titles are
+  // short and concrete — keyed on the lesson type when we can detect it,
+  // else on content keywords. Falls back to the unit's icon when no signal.
+  var ACTIVITY_ICON_RULES = [
+    [/knowledge check|quiz|test|exam|assessment|verify|guardrail|risk/, "question"],
+    [/practice|exercise|lab|workshop|project|capstone|pilot|case study/, "pencil-line"],
+    [/demo|walkthrough|preview|tour/, "play"],
+    [/recap|summary|wrap|takeaway|key point/, "list-checks"],
+    [/introduction|overview|intro|primer|getting started/, "book-open"],
+    [/concept|theory|principle|deep dive|fundamentals/, "book-open"],
+    [/hand.?on|hands-on|build|implement|code|script/, "code"],
+    [/setup|install|configure|environment|prereq/, "wrench"],
+    [/example|scenario|sample|illustration/, "lightbulb"],
+    [/tip|best practice|do and don|do's/, "lightbulb"]
+  ];
+
+  function activityIcon(lesson, subcourse) {
+    var title = String((lesson && lesson.title) || "").toLowerCase();
+    for (var i = 0; i < ACTIVITY_ICON_RULES.length; i += 1) {
+      if (ACTIVITY_ICON_RULES[i][0].test(title)) return ACTIVITY_ICON_RULES[i][1];
+    }
+    if (subcourse) return unitIcon(subcourse);
+    return "circle";
+  }
+
   function unitBlock(subcourse, courseId, subcourseIndex) {
     var stats = subcourseProgress(subcourse);
     var block = document.createElement("section");
@@ -129,6 +219,10 @@
 
     var head = document.createElement("div");
     head.className = "unit-block__head";
+
+    var icon = document.createElement("i");
+    icon.className = "ph ph-" + unitIcon(subcourse) + " unit-block__icon";
+    icon.setAttribute("aria-hidden", "true");
 
     var code = document.createElement("span");
     code.className = "unit-block__code";
@@ -142,7 +236,7 @@
     meta.className = "unit-block__meta";
     meta.textContent = stats.completedLessons + " of " + stats.lessonCount + " completed";
 
-    head.append(code, title, meta);
+    head.append(icon, code, title, meta);
     block.appendChild(head);
 
     var meter = progressMeter(
@@ -181,9 +275,12 @@
     dot.dataset.state = progress.state;
     dot.setAttribute("aria-hidden", "true");
     dot.appendChild(lucideIcon(
-      progress.state === "completed" ? "circle-check" :
-      progress.state === "visited" ? "circle-dot" : "circle"
+      progress.state === "completed" ? "check-circle" :
+      progress.state === "visited" ? "dot" : "circle"
     ));
+
+    var icon = lucideIcon(activityIcon(lesson, subcourse));
+    icon.classList.add("activity-link__type-icon");
 
     var label = document.createElement("strong");
     label.textContent = lesson.title;
@@ -191,7 +288,7 @@
     var type = document.createElement("small");
     type.textContent = activityType(lesson, subcourse);
 
-    a.append(dot, label, type);
+    a.append(dot, icon, label, type);
 
     // "Open" on every untouched row is noise, so only call out actual progress.
     if (progress.state !== "open") {
@@ -342,14 +439,12 @@
 
   function lucideIcon(name) {
     var i = document.createElement("i");
-    i.setAttribute("data-lucide", name);
+    i.className = "ph ph-" + name;
     i.setAttribute("aria-hidden", "true");
     return i;
   }
 
-  function refreshIcons() {
-    if (window.lucide && typeof window.lucide.createIcons === "function") {
-      window.lucide.createIcons();
-    }
-  }
+  // Phosphor is self-rendering (web font), so this is a no-op kept for
+  // API parity with the previous Lucide-based call sites.
+  function refreshIcons() {}
 })();

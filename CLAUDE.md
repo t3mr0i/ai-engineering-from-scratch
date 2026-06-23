@@ -44,6 +44,47 @@ set to the token above.
 `site/` is the web root: `/phases/*` is served alongside the app so lessons load
 locally with no GitHub fetch.
 
+### Manual deploy to Azure (skip Git)
+
+For fast iteration when you want to ship UI changes without going through the
+GitLab merge + CI pipeline (e.g. when the LHIND GitLab token is missing or you
+want a tighter loop on design tweaks). Assumes you are logged into `az` with an
+account that has `Contributor` on the SWA resource (run `az account show` —
+should land in subscription `338558e0-0b85-4d45-97f8-392312662da6`).
+
+```bash
+# 1. Build + regenerate runnable-block catalog
+node site/build.js
+node scripts/test_runnable_blocks.mjs
+
+# 2. Fetch deployment token (short-lived; do not commit it)
+TOKEN=$(az staticwebapp secrets list \
+  --name swa-ase-webpage --resource-group rg-ase-webpage \
+  --query "properties.apiKey" -o tsv)
+
+# 3. Stage site/ + phases/ into the deploy root
+mkdir -p .swa-deploy
+rsync -a site/ .swa-deploy/
+mkdir -p .swa-deploy/phases
+rsync -a --prune-empty-dirs --include='*/' \
+  --include='docs/en.md' --include='quiz.json' --include='code/main.py' \
+  --exclude='*' phases/ .swa-deploy/phases/
+
+# 4. Deploy
+npx --yes @azure/static-web-apps-cli@latest deploy ./.swa-deploy \
+  --deployment-token "$TOKEN" --env production --no-use-keychain
+```
+
+Notes:
+
+- The `missing property "jobs.build_and_deploy_job"` warning from the SWA CLI
+  is harmless — the workflow file referenced is only used by GitHub Actions,
+  which this manual path bypasses.
+- Token is fetched fresh each run, never written to disk. Safe to inline
+  directly in the deploy command if you prefer not to use a shell var.
+- Use this path for UI/asset changes only. Schema or curriculum changes should
+  still go through `git commit` + GitLab CI so the README stats sync runs.
+
 ---
 
 ## 2. Browser IDE backend (`ide/`, not yet deployed)

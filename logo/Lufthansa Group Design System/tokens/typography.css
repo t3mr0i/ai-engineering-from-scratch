@@ -1,0 +1,67 @@
+/* ===========================================================================
+   Lufthansa Group — Typography scale
+   Display/headlines use the Head face in THIN/LIGHT weights with tight
+   tracking (the hallmark of the new CI). Body uses the Text face in light.
+   =========================================================================== */
+:root {
+  /* Families (semantic) */
+  --font-display: var(--font-head);
+  --font-body:    var(--font-text);
+
+  /* Weights — the new CI leans thin/light for elegance */
+  --weight-thin:    200;
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-bold:    700;
+
+  /* Type scale (px-based, fluid where useful) */
+  --fs-display-1: clamp(48px, 6vw, 88px); /* @kind spacing */
+  --fs-display-2: clamp(36px, 4.5vw, 64px); /* @kind spacing */
+  --fs-h1: 44px;
+  --fs-h2: 34px;
+  --fs-h3: 26px;
+  --fs-h4: 20px;
+  --fs-lead: 21px;
+  --fs-body: 17px;
+  --fs-body-sm: 15px;
+  --fs-caption: 13px;
+  --fs-overline: 12px;
+
+  /* Line heights */
+  --lh-tight: 1.05; /* @kind other */
+  --lh-snug: 1.2; /* @kind other */
+  --lh-normal: 1.5; /* @kind other */
+  --lh-relaxed: 1.65; /* @kind other */
+
+  /* Letter spacing — display is tracked tight; overlines tracked open */
+  --ls-display: -0.02em; /* @kind other */
+  --ls-heading: -0.01em; /* @kind other */
+  --ls-body: 0; /* @kind other */
+  --ls-overline: 0.14em; /* @kind other */
+
+  /* Semantic roles */
+  --text-display-font: var(--font-display);
+  --text-display-weight: var(--weight-thin);
+  --text-heading-weight: var(--weight-light);
+  --text-body-weight: var(--weight-light);
+}
+
+/* Optional helper classes consumers may use directly */
+.lhg-display { font-family: var(--font-display); font-weight: var(--weight-thin);
+  font-size: var(--fs-display-1); line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display); color: var(--text-primary); }
+.lhg-h1 { font-family: var(--font-display); font-weight: var(--weight-light);
+  font-size: var(--fs-h1); line-height: var(--lh-snug); letter-spacing: var(--ls-heading); }
+.lhg-h2 { font-family: var(--font-display); font-weight: var(--weight-light);
+  font-size: var(--fs-h2); line-height: var(--lh-snug); letter-spacing: var(--ls-heading); }
+.lhg-h3 { font-family: var(--font-display); font-weight: var(--weight-light);
+  font-size: var(--fs-h3); line-height: var(--lh-snug); }
+.lhg-lead { font-family: var(--font-body); font-weight: var(--weight-light);
+  font-size: var(--fs-lead); line-height: var(--lh-relaxed); }
+.lhg-body { font-family: var(--font-body); font-weight: var(--weight-light);
+  font-size: var(--fs-body); line-height: var(--lh-normal); }
+.lhg-overline { font-family: var(--font-body); font-weight: var(--weight-medium);
+  font-size: var(--fs-overline); letter-spacing: var(--ls-overline);
+  text-transform: uppercase; }
+.lhg-serif { font-family: var(--font-serif); font-weight: var(--weight-regular); }

@@ -26,45 +26,119 @@
   // Visual theme per course family — derived from the course's primary
   // (first) interest. The theme drives the tile tint; the icon itself is
   // resolved per course from its title (see COURSE_ICON_RULES).
+  // Icons are Phosphor Light names (Lufthansa DS substitutes for the
+  // official LHG line-icon set; see SKILL.md). Phosphor resolves them
+  // from the CDN font file loaded in course.html.
   var INTEREST_THEMES = {
     foundation: { icon: "graduation-cap" },
-    productivity: { icon: "zap" },
+    productivity: { icon: "lightning" },
     consulting: { icon: "briefcase" },
-    engineering: { icon: "terminal" },
+    engineering: { icon: "terminal-window" },
     governance: { icon: "shield-check" },
     leadership: { icon: "compass" }
   };
 
-  // Title-keyword → Lucide icon. First match wins, so specific topics
+  // Title-keyword → Phosphor Light icon. First match wins, so specific topics
   // (security, prompts, testing) must come before broad ones (learning).
   // Fallback: the interest theme's icon.
+  // Per-course icon map (course.id → Phosphor Light name). Authoritative —
+  // a specific mapping here always wins over the keyword fallback below, so
+  // we can pin a unique, content-matched icon per course. Phosphor Light
+  // names verified against @phosphor-icons/web 2.1.2.
+  var COURSE_ICONS = {
+    "AI-09": "graduation-cap",
+    "AI-06": "lightning",
+    "RESP-01": "scales",
+    "PROMPT-01": "chats",
+    "AI-04": "clipboard-text",
+    "USECASE-01": "magnifying-glass",
+    "AI-05": "squares-four",
+    "CHANGE-01": "arrows-clockwise",
+    "AI-01": "code",
+    "AI-03": "tree-structure",
+    "AI-02": "robot",
+    "AI-07": "chart-line-up",
+    "AI-08": "compass",
+    "AI-10": "shield-check",
+    "AI-11": "test-tube",
+    "AI-12": "path",
+    "AI-13": "file-text",
+    "AI-14": "leaf",
+    "AI-15": "users-three",
+    "AI-16": "magnifying-glass",
+    "AI-17": "coins",
+    "AI-18": "chats",
+    "AI-19": "handshake",
+    "AI-20": "users",
+    "AI-21": "compass",
+    "AI-22": "chart-bar",
+    "AI-23": "shield-warning",
+    "AI-24": "database",
+    "AI-25": "handshake",
+    "AI-26": "wrench",
+    "AI-27": "squares-four",
+    "AI-28": "users",
+    "AI-29": "coins",
+    "AI-30": "scales",
+    "AI-31": "headphones",
+    "AI-32": "briefcase",
+    "AI-33": "megaphone",
+    "AI-34": "graduation-cap",
+    "AI-35": "presentation-chart",
+    "AI-36": "squares-four",
+    "AI-37": "database",
+    "AI-38": "flow-arrow",
+    "AI-39": "shield-check",
+    "AI-40": "file-text",
+    "AI-41": "headphones",
+    "AI-42": "tree-structure",
+    "AI-43": "clipboard-text",
+    "AI-44": "magnifying-glass",
+    "AI-45": "test-tube",
+    "AI-46": "arrows-clockwise",
+    "AI-47": "chart-line-up",
+    "AI-48": "briefcase",
+    "AI-49": "cloud",
+    "AI-50": "chart-bar",
+    "AI-51": "users-three",
+    "AI-52": "squares-four",
+    "AI-53": "wrench",
+    "AI-54": "shield-warning",
+    "AI-55": "lightbulb",
+    "AI-56": "megaphone",
+    "AI-57": "book-open"
+  };
+
+  // Keyword fallback for any future course id that isn't in COURSE_ICONS yet.
+  // Specific topics come before broad ones. Interest theme icon is the last
+  // resort.
   var COURSE_ICON_RULES = [
-    [/security|injection/, "shield-alert"],
-    [/responsible|trustworthy|gdpr|ethics|legal/, "scale"],
+    [/security|injection/, "shield-warning"],
+    [/responsible|trustworthy|gdpr|ethics|legal/, "scales"],
     [/governance|risk|controls|compliance/, "shield-check"],
-    [/prompt/, "messages-square"],
+    [/prompt/, "chats"],
     [/copilot|code|agentic|software engineer/, "code"],
     [/testing|qa\b|test data/, "test-tube"],
-    [/architecture|systems/, "network"],
+    [/architecture|systems/, "tree-structure"],
     [/rag|knowledge/, "database"],
     [/documentation|content/, "file-text"],
-    [/requirement|backlog|business analysis/, "clipboard-list"],
-    [/use case|spotting|discovery|research/, "search"],
+    [/requirement|backlog|business analysis/, "clipboard-text"],
+    [/use case|spotting|discovery|research/, "magnifying-glass"],
     [/cost|value|economics|finance|benefits/, "coins"],
     [/workforce|hr\b|people/, "users"],
-    [/change|transformation|stakeholder/, "refresh-cw"],
-    [/project|reporting|steering|portfolio|roadmap/, "layout-dashboard"],
-    [/data/, "bar-chart-3"],
+    [/change|transformation|stakeholder/, "arrows-clockwise"],
+    [/project|reporting|steering|portfolio|roadmap/, "squares-four"],
+    [/data/, "chart-bar"],
     [/green|sustainable/, "leaf"],
     [/vendor|procurement|ecosystem/, "handshake"],
     [/operations|incident|service|support/, "wrench"],
     [/sales|consulting/, "briefcase"],
     [/communication|marketing/, "megaphone"],
-    [/meeting|facilitation|workshop/, "presentation"],
-    [/automation|process/, "workflow"],
+    [/meeting|facilitation|workshop/, "presentation-chart"],
+    [/automation|process/, "flow-arrow"],
     [/customer/, "headphones"],
     [/leader|decision/, "compass"],
-    [/productivity/, "zap"]
+    [/productivity/, "lightning"]
   ];
 
   var els = {
@@ -383,6 +457,7 @@
   }
 
   function courseIcon(course, theme) {
+    if (course && COURSE_ICONS[course.id]) return COURSE_ICONS[course.id];
     var title = String(course.title || "").toLowerCase();
     for (var i = 0; i < COURSE_ICON_RULES.length; i += 1) {
       if (COURSE_ICON_RULES[i][0].test(title)) return COURSE_ICON_RULES[i][1];
@@ -412,11 +487,7 @@
     tile.setAttribute("aria-hidden", "true");
     tile.appendChild(lucideIcon(courseIcon(course, theme)));
 
-    var kind = document.createElement("span");
-    kind.className = "course-card__kind";
-    kind.dataset.kind = entry.kind;
-    kind.textContent = courseKindLabel(entry.kind);
-    head.append(tile, kind);
+    head.appendChild(tile);
 
     var h = document.createElement("h3");
     h.textContent = course.title;
@@ -425,9 +496,14 @@
     var meta = document.createElement("p");
     meta.className = "course-card__meta";
     var metaText = document.createElement("span");
+    // Course-Card-Meta counts the *lessons* inside the course (per
+    // LHIND LRN taxonomy: Profile → Level → Course → Unit → Activity).
+    // The cockpit already names this layer "Lesson" on the syllabus row
+    // (course.js: activityType → "Lesson"/"Guided Lesson"/"Knowledge Check"),
+    // so the catalog-side label should match.
     metaText.textContent = entry.progress.lessonCount === 1
-      ? "1 activity"
-      : entry.progress.lessonCount + " activities";
+      ? "1 lesson"
+      : entry.progress.lessonCount + " lessons";
     meta.appendChild(metaText);
 
     var foot = document.createElement("div");
@@ -443,12 +519,6 @@
 
     card.append(head, h, meta, foot);
     return card;
-  }
-
-  function courseKindLabel(kind) {
-    if (kind === "recommended") return "Recommended";
-    if (kind === "optional") return "Optional";
-    return "Catalog";
   }
 
   function compute() {
@@ -635,8 +705,15 @@
     return "C" + String(index + 1).padStart(2, "0");
   }
 
+  // Build the course-detail URL relative to where the catalog is hosted.
+  // The catalog can be served as "/" (root index.html), "/lrn/" (SWA
+  // navigationFallback rewrite), or "/lrn/course.html" itself (deep link).
+  // A bare "lrn/course.html" href double-prefixes to "/lrn/lrn/course.html"
+  // when clicked from the /lrn/ SWA fallback, so branch on the current path.
   function courseHref(courseId) {
-    return "lrn/course.html?id=" + encodeURIComponent(courseId);
+    var inLrn = /\/lrn(\/|$)/.test(location.pathname);
+    var prefix = inLrn ? "course.html" : "lrn/course.html";
+    return prefix + "?id=" + encodeURIComponent(courseId);
   }
 
   function toggleInterest(id) {
@@ -693,18 +770,18 @@
     els.srStatus.textContent = text;
   }
 
-  // Create a placeholder element Lucide will swap for an <svg> on createIcons().
+  // Render a Phosphor Light icon. Phosphor is a web font loaded via the
+  // CDN <script> in course.html; the icon is just a glyph on the <i> tag.
+  // Lucide → Phosphor names: callers pass the Phosphor name (COURSE_ICON_RULES
+  // and call sites below use Phosphor spellings directly).
   function lucideIcon(name) {
     var i = document.createElement("i");
-    i.setAttribute("data-lucide", name);
+    i.className = "ph ph-" + name;
     i.setAttribute("aria-hidden", "true");
     return i;
   }
 
-  // Re-run Lucide after dynamic renders so newly-created placeholders become SVGs.
-  function refreshIcons() {
-    if (window.lucide && typeof window.lucide.createIcons === "function") {
-      window.lucide.createIcons();
-    }
-  }
+  // Phosphor is self-rendering (web font), so this is a no-op kept for
+  // API parity with the previous Lucide-based call sites.
+  function refreshIcons() {}
 })();

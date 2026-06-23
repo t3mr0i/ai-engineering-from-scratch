@@ -1,0 +1,58 @@
+/* ===========================================================================
+   Lufthansa Group — Color tokens
+   Sourced from the live LHG brand portal theme (Frontify) + the Expressions
+   accent palette. Base scales first, then semantic aliases.
+   =========================================================================== */
+:root {
+  /* --- Brand core --------------------------------------------------------- */
+  --lhg-core-blue:      #05164d;  /* primary ink / brand navy            */
+  --lhg-blue-500:       #2d5fe4;  /* interactive / link / accent blue    */
+  --lhg-blue-600:       #243f9b;  /* hover / pressed blue                */
+  --lhg-blue-100:       #e5f1ff;  /* tint surface                        */
+  --lhg-white:          #ffffff;
+
+  /* --- Neutrals (warm grey family) --------------------------------------- */
+  --lhg-slate-700:      #52617c;  /* secondary text on light             */
+  --lhg-slate-500:      #657898;  /* muted text / icons                  */
+  --lhg-grey-100:       #f9f8f8;  /* page background                     */
+  --lhg-grey-200:       #f1f0ef;  /* sunken surface / chip               */
+  --lhg-grey-300:       #e3e1de;  /* hairline / border                  */
+  --lhg-grey-400:       #cfccc8;  /* stronger border                     */
+  --lhg-warm-grey:      #7a7673;  /* captions / tertiary                 */
+
+  /* --- Expressions accents (data viz, campaign, category coding) --------- */
+  --lhg-red:            #bc0a1d;  /* LHG Red                             */
+  --lhg-teal:           #368089;  /* LHG Teal                           */
+  --lhg-purple:         #a82e61;  /* LHG Purple                         */
+  --lhg-sand:           #857461;  /* LHG Sand                           */
+  --lhg-blue-bright:    #3f73d8;  /* Blue 500 (expressions)             */
+
+  /* --- Functional / status ----------------------------------------------- */
+  --lhg-success:        #1b8a5a;
+  --lhg-warning:        #e2974b;
+  --lhg-error:          #e22743;
+  --lhg-info:           var(--lhg-blue-500);
+
+  /* =======================================================================
+     Semantic aliases — reference these in components, not the raw scale.
+     ======================================================================= */
+  --color-bg:               var(--lhg-grey-100);
+  --color-surface:          var(--lhg-white);
+  --color-surface-sunken:   var(--lhg-grey-200);
+  --color-surface-inverse:  var(--lhg-core-blue);
+
+  --text-primary:           var(--lhg-core-blue);
+  --text-secondary:         var(--lhg-slate-700);
+  --text-muted:             var(--lhg-warm-grey);
+  --text-on-dark:           var(--lhg-white);
+  --text-link:              var(--lhg-blue-500);
+
+  --border-subtle:          var(--lhg-grey-300);
+  --border-strong:          var(--lhg-grey-400);
+  --border-focus:           var(--lhg-blue-500);
+
+  --action-primary:         var(--lhg-core-blue);
+  --action-primary-hover:   var(--lhg-blue-600);
+  --action-accent:          var(--lhg-blue-500);
+  --action-accent-hover:    var(--lhg-blue-600);
+}

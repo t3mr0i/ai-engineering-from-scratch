@@ -1,0 +1,80 @@
+/* ===========================================================================
+   Lufthansa Group — Webfonts (authentic LHG Corporate faces)
+   The licensed proprietary faces, supplied by the brand owner:
+     Lufthansa Head  (display)  — Light / Medium / Bold
+     Lufthansa Text  (body)     — Light / Regular / Italic / Bold
+     Lufthansa Serif (editorial)— Light / Regular
+   Designed by HvD Fonts (Hannes von Döhren) for Lufthansa Group.
+   =========================================================================== */
+
+/* ---- Lufthansa Head (display) ---- */
+@font-face {
+  font-family: 'Lufthansa Head';
+  src: url('../assets/fonts/LHGHeadWEB-Light.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Lufthansa Head';
+  src: url('../assets/fonts/LHGHeadWEB-Medium.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Lufthansa Head';
+  src: url('../assets/fonts/LHGHeadWEB-Bold.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+/* Light is the thinnest weight supplied — map 100–300 onto it so the
+   signature ultra-thin headlines still resolve to the real face. */
+@font-face {
+  font-family: 'Lufthansa Head';
+  src: url('../assets/fonts/LHGHeadWEB-Light.woff2') format('woff2');
+  font-weight: 100 300; font-style: normal; font-display: swap;
+}
+
+/* ---- Lufthansa Text (body) ---- */
+@font-face {
+  font-family: 'Lufthansa Text';
+  src: url('../assets/fonts/LHGTextWEB-Light.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Lufthansa Text';
+  src: url('../assets/fonts/LHGTextWEB-Regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Lufthansa Text';
+  src: url('../assets/fonts/LHGTextWEB-RegularItalic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Lufthansa Text';
+  src: url('../assets/fonts/LHGTextWEB-Bold.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+/* Map 500 (medium) onto Bold-adjacent Regular so weight requests don't fall back. */
+@font-face {
+  font-family: 'Lufthansa Text';
+  src: url('../assets/fonts/LHGTextWEB-Regular.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+
+/* ---- Lufthansa Serif (editorial) ---- */
+@font-face {
+  font-family: 'Lufthansa Serif';
+  src: url('../assets/fonts/LHGSerifWEB-Light.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Lufthansa Serif';
+  src: url('../assets/fonts/LHGSerifWEB-Regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* Brand families with safe fallbacks. */
+  --font-head:  'Lufthansa Head', 'Helvetica Neue', Arial, sans-serif;
+  --font-text:  'Lufthansa Text', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Lufthansa Serif', Georgia, 'Times New Roman', serif;
+  --font-mono:  ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
