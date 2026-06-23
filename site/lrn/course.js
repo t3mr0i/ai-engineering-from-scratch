@@ -181,8 +181,9 @@
 
   function unitIcon(subcourse) {
     var title = String((subcourse && subcourse.title) || "").toLowerCase();
-    for (var i = 0; i < UNIT_ICON_RULES.length; i += 1) {
-      if (UNIT_ICON_RULES[i][0].test(title)) return UNIT_ICON_RULES[i][1];
+    var rules = UNIT_ICON_RULES || [];
+    for (var i = 0; i < rules.length; i += 1) {
+      if (rules[i][0].test(title)) return rules[i][1];
     }
     return "book-open";
   }
@@ -205,8 +206,9 @@
 
   function activityIcon(lesson, subcourse) {
     var title = String((lesson && lesson.title) || "").toLowerCase();
-    for (var i = 0; i < ACTIVITY_ICON_RULES.length; i += 1) {
-      if (ACTIVITY_ICON_RULES[i][0].test(title)) return ACTIVITY_ICON_RULES[i][1];
+    var rules = ACTIVITY_ICON_RULES || [];
+    for (var i = 0; i < rules.length; i += 1) {
+      if (rules[i][0].test(title)) return rules[i][1];
     }
     if (subcourse) return unitIcon(subcourse);
     return "circle";
@@ -255,7 +257,8 @@
 
     var list = document.createElement("div");
     list.className = "activity-list";
-    subcourse.lessons.forEach(function (lesson) {
+    var lessons = Array.isArray(subcourse.lessons) ? subcourse.lessons : [];
+    lessons.forEach(function (lesson) {
       list.appendChild(activityLink(lesson, courseId, subcourse));
     });
     block.appendChild(list);
