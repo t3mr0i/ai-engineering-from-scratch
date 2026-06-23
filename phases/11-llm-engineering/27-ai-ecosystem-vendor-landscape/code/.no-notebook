@@ -1,0 +1,5 @@
+# Marker: this lesson is pure theory (vendor comparison / compliance / scoring)
+# and does NOT benefit from an in-browser notebook. The build pipeline
+# (ide/jupyterlite/build-notebooks.sh) reads this marker and skips both
+# notebook.py and main.py for this lesson — the LRN Notebook panel then shows
+# the "No interactive notebook for this lesson" placeholder.

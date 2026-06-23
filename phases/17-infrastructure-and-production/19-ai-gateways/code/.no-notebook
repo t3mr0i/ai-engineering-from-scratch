@@ -1,0 +1,3 @@
+# Marker: this lesson is conceptual (gateway routing simulator with random latency)
+# and does NOT exercise a real LLM call. Build pipeline skips it; LRN panel
+# shows the "no notebook" placeholder.
