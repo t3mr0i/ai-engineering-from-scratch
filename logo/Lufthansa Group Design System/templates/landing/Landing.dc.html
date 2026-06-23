@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Corporate landing" description="Lufthansa Group hero landing with headline, stat band and CTA — built from the DS components." -->
+<helmet>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<script src="./ds-base.js"></script>
+</helmet>
+<div style="font-family:var(--font-body);color:var(--lhg-core-blue);background:var(--lhg-grey-100);min-height:100vh">
+
+  <!-- Top bar -->
+  <header style="display:flex;align-items:center;gap:14px;max-width:1120px;margin:0 auto;padding:24px 40px">
+    <img src="../../assets/logos/lh-crane.svg" alt="" style="height:24px">
+    <img src="../../assets/logos/lhg-lockup.svg" alt="Lufthansa Group" style="height:14px">
+    <nav style="margin-left:auto;display:flex;gap:26px;font-weight:300;font-size:15px">
+      <a href="#" style="color:var(--lhg-core-blue);text-decoration:none">Group</a>
+      <a href="#" style="color:var(--lhg-core-blue);text-decoration:none">Responsibility</a>
+      <a href="#" style="color:var(--lhg-core-blue);text-decoration:none">Investors</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section style="position:relative;overflow:hidden;background:var(--lhg-core-blue);color:#fff;border-radius:28px;max-width:1120px;margin:8px auto 0;padding:96px 56px 104px">
+    <div style="position:absolute;right:-10%;top:-40%;width:65%;height:180%;background:radial-gradient(circle at 35% 50%, rgba(63,115,216,.55), rgba(5,22,77,0) 62%);pointer-events:none"></div>
+    <div style="position:absolute;left:-10%;bottom:-130%;width:120%;height:185%;border-top:1px solid rgba(255,255,255,.28);border-radius:50%;pointer-events:none"></div>
+    <div style="position:relative;max-width:760px">
+      <span style="font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8fb4ff">Connecting a sustainable world</span>
+      <h1 style="font-family:var(--font-display);font-weight:200;letter-spacing:-.02em;line-height:1.02;font-size:clamp(46px,6vw,82px);color:#fff;margin:22px 0 0">Shaping the future of aviation.</h1>
+      <p style="font-weight:300;font-size:20px;line-height:1.6;color:rgba(255,255,255,.82);max-width:520px;margin:22px 0 36px">We are connecting people, cultures and economies in a responsible way — across five airlines and more than 250 destinations worldwide.</p>
+      <div style="display:flex;gap:14px">
+        <x-import component-from-global-scope="LufthansaGroupDesignSystem_70bbed.Button" variant="accent" hint-size="190px,52px">Discover the Group</x-import>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stat band -->
+  <section style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;max-width:1120px;margin:0 auto;padding:64px 40px">
+    <div><div style="font-family:var(--font-display);font-weight:200;font-size:52px;letter-spacing:-.02em;line-height:1">5</div><div style="font-weight:300;font-size:14.5px;color:var(--lhg-slate-700);margin-top:10px">Passenger airlines</div></div>
+    <div style="border-left:1px solid var(--lhg-grey-300);padding-left:32px"><div style="font-family:var(--font-display);font-weight:200;font-size:52px;letter-spacing:-.02em;line-height:1">250<span style="font-size:20px;color:var(--lhg-blue-500)">+</span></div><div style="font-weight:300;font-size:14.5px;color:var(--lhg-slate-700);margin-top:10px">Destinations worldwide</div></div>
+    <div style="border-left:1px solid var(--lhg-grey-300);padding-left:32px"><div style="font-family:var(--font-display);font-weight:200;font-size:52px;letter-spacing:-.02em;line-height:1">1.673</div><div style="font-weight:300;font-size:14.5px;color:var(--lhg-slate-700);margin-top:10px">Adjusted EBIT, Mio €</div></div>
+    <div style="border-left:1px solid var(--lhg-grey-300);padding-left:32px"><div style="font-family:var(--font-display);font-weight:200;font-size:52px;letter-spacing:-.02em;line-height:1">30<span style="font-size:20px;color:var(--lhg-blue-500)">%</span></div><div style="font-weight:300;font-size:14.5px;color:var(--lhg-slate-700);margin-top:10px">Less CO₂ on new aircraft</div></div>
+  </section>
+
+  <!-- Quote -->
+  <section style="background:var(--lhg-grey-200);border-radius:20px;max-width:1120px;margin:0 auto 64px;padding:72px 56px;text-align:center">
+    <img src="../../assets/logos/lh-crane.svg" alt="" style="height:30px;margin-bottom:26px">
+    <p style="font-family:var(--font-serif);font-weight:400;font-size:clamp(24px,3vw,36px);line-height:1.34;color:var(--lhg-core-blue);margin:0;max-width:760px;margin-left:auto;margin-right:auto">&ldquo;We are connecting people, cultures and economies in a sustainable way.&rdquo;</p>
+  </section>
+
+</div>
+</x-dc>
+</body>
+</html>

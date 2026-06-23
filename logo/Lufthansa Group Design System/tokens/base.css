@@ -1,0 +1,40 @@
+/* ===========================================================================
+   Lufthansa Group — base element defaults (light reset + brand body styles)
+   =========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  color: var(--text-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  letter-spacing: var(--ls-heading);
+  line-height: var(--lh-snug);
+  color: var(--text-primary);
+  margin: 0 0 0.5em;
+}
+h1 { font-size: var(--fs-h1); font-weight: var(--weight-thin); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); font-family: var(--font-body); font-weight: var(--weight-medium); }
+
+p { margin: 0 0 1em; }
+
+a { color: var(--text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+::selection { background: var(--lhg-blue-100); color: var(--lhg-core-blue); }
+
+:focus-visible { outline: none; box-shadow: var(--shadow-focus); border-radius: var(--radius-xs); }

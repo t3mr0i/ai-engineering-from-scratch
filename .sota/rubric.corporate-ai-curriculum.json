@@ -1,0 +1,30 @@
+{
+  "domain": "corporate-ai-curriculum",
+  "version": 1,
+  "capabilities": [
+    { "id": "role-based-learning-plans",        "tier": "table-stakes", "test": "Catalog of plans organized by role/track (AI engineer, TC, security, …)" },
+    { "id": "plan-milestones",                  "tier": "table-stakes", "test": "Each plan names its milestones (units/activities) with progression" },
+    { "id": "curated-course-maps",             "tier": "table-stakes", "test": "12+ hand-curated end-to-end course maps" },
+    { "id": "consultant-framing",              "tier": "table-stakes", "test": "Lessons written for client-room use (not generic intro)" },
+    { "id": "compliance-coverage",             "tier": "table-stakes", "test": "GDPR, EU AI Act, bias/audit as explicit courses" },
+    { "id": "lrn-cockpit",                     "tier": "table-stakes", "test": "Dedicated route showing courses + per-course progress" },
+    { "id": "progress-tracking",               "tier": "table-stakes", "test": "Per-lesson progress feeds course/syllabus percentages" },
+    { "id": "placement-quiz",                  "tier": "table-stakes", "test": "Placement assessment mapping prior knowledge to starting point" },
+    { "id": "per-phase-and-lesson-quiz",       "tier": "table-stakes", "test": "Per-phase + per-lesson quizzes with persisted answers" },
+    { "id": "open-source-lesson-pool",         "tier": "table-stakes", "test": "Curriculum grounded in re-usable open lesson pool" },
+    { "id": "in-browser-execution",            "tier": "table-stakes", "test": "Browser Python execution with no install, no auth" },
+    { "id": "static-deployment",               "tier": "table-stakes", "test": "Public static deployment" },
+    { "id": "plan-assignment-and-reporting",   "tier": "table-stakes", "test": "Manager/L&D can assign plans and view team progress + reporting" },
+    { "id": "applied-skills-assessment",       "tier": "table-stakes", "test": "Lab/scenario assessment issuing a verifiable skill credential" },
+    { "id": "role-outcome-statements",         "tier": "table-stakes", "test": "Each LP/course states 'After X you can …' in role-task terms" },
+    { "id": "llm-crawler-discoverability",     "tier": "edge",         "test": "Curriculum content surfaced to LLM crawlers" },
+    { "id": "industry-recognized-certificate", "tier": "edge",         "test": "Org- or partner-issued credential recognizable to hiring managers" },
+    { "id": "credential-verification",         "tier": "edge",         "test": "Third party can verify credential by URL/ID" },
+    { "id": "scorm-xapi-export",               "tier": "edge",         "test": "Completions exported as xAPI/SCORM to flow into corporate LMS" },
+    { "id": "ai-assisted-plan-authoring",      "tier": "edge",         "test": "Curators can assemble a new plan from existing modules with AI assist" },
+    { "id": "translation-localization",        "tier": "edge",         "test": "UI + content available in languages beyond English" },
+    { "id": "consultant-case-library",         "tier": "edge",         "test": "Anonymized real-world case studies from own engagements" },
+    { "id": "facilitator-toolkit",             "tier": "edge",         "test": "Instructor-led delivery pack (decks, workshop scripts)" },
+    { "id": "compliance-evidence-bundle",      "tier": "edge",         "test": "Downloadable audit-evidence bundle for client-assurance" }
+  ]
+}

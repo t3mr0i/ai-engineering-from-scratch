@@ -1,0 +1,32 @@
+<!-- @dsCard group="Slides" viewport="1280x720" name="Image + text slide" subtitle="Full-bleed photo paired with a content column" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<style>
+  html,body{margin:0;height:100%}
+  .slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;font-family:var(--font-body);display:grid;grid-template-columns:1fr 1fr}
+  .photo{position:relative;overflow:hidden}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .col{box-sizing:border-box;padding:88px 80px;display:flex;flex-direction:column;justify-content:center}
+  .eyebrow{font-weight:500;font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--lhg-blue-500)}
+  h2{font-family:var(--font-display);font-weight:200;font-size:46px;line-height:1.06;letter-spacing:-.02em;color:var(--lhg-core-blue);margin:16px 0 22px}
+  p{font-weight:300;font-size:19px;line-height:1.6;color:var(--text-secondary);margin:0 0 26px}
+  ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+  li{display:flex;align-items:flex-start;gap:12px;font-weight:300;font-size:17px;color:var(--text-secondary)}
+  li i{color:var(--lhg-blue-500);font-size:22px;margin-top:1px}
+  .logo{position:absolute;bottom:48px;left:80px;height:20px;z-index:2}
+</style></head><body>
+  <div class="slide">
+    <div class="photo"><img src="../assets/photography/turquoise-phone.jpg" alt=""></div>
+    <div class="col">
+      <div class="eyebrow">Innovation</div>
+      <h2>Aviation revolutionized by technology.</h2>
+      <p>Digital cabins, AI-assisted operations and a renewed fleet are reshaping every step of the journey.</p>
+      <ul>
+        <li><i class="ph-light ph-check"></i>Personalized travel companion in every pocket</li>
+        <li><i class="ph-light ph-check"></i>Predictive maintenance across the fleet</li>
+        <li><i class="ph-light ph-check"></i>Real-time, end-to-end journey visibility</li>
+      </ul>
+    </div>
+    <img class="logo" src="../assets/logos/lhg-lockup.svg" alt="Lufthansa Group">
+  </div>
+</body></html>
