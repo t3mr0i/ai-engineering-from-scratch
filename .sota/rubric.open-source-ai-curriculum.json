@@ -1,0 +1,20 @@
+{
+  "domain": "open-source-ai-curriculum",
+  "version": 1,
+  "capabilities": [
+    { "id": "structured-curriculum-index",       "tier": "table-stakes", "test": "Top-level README/index organizes content by difficulty or progression (Beginner/Intermediate/Advanced or Phase N/Unit N)" },
+    { "id": "multi-language-runnable-code",      "tier": "table-stakes", "test": "At least one lesson ships runnable code in more than one programming language (e.g. Python + TypeScript/Rust/Julia)" },
+    { "id": "llm-rag-agent-coverage",            "tier": "table-stakes", "test": "Repo includes lessons/projects covering LLM usage, RAG, and agents (the modern stack)" },
+    { "id": "model-context-protocol-coverage",   "tier": "table-stakes", "test": "Repo has dedicated MCP lessons/projects showing how to build or use MCP servers/clients" },
+    { "id": "from-scratch-implementation-track", "tier": "table-stakes", "test": "Repo teaches at least one core algorithm (attention, transformer, optimizer) implemented from scratch alongside the production library version" },
+    { "id": "browser-or-zero-install-execution", "tier": "table-stakes", "test": "Lessons can be run without local setup (browser IDE, Colab notebook, or Pyodide/WebAssembly)" },
+    { "id": "placement-or-self-assessment",      "tier": "table-stakes", "test": "Repo provides a way for learners to find their starting level (placement quiz, skill self-assessment, or roadmap prerequisite map)" },
+    { "id": "reusable-artifact-per-lesson",      "tier": "table-stakes", "test": "Each lesson produces a concrete artifact the learner can take away (prompt, skill, agent, MCP server, notebook)" },
+    { "id": "public-static-site",                "tier": "table-stakes", "test": "Curriculum has a public web-rendered view (static site, JupyterBook, GitHub Pages, or MkDocs)" },
+    { "id": "assessment-per-lesson",             "tier": "edge",         "test": "Each lesson has a quiz or exercise that checks understanding (with answers provided)" },
+    { "id": "progress-tracking",                 "tier": "edge",         "test": "Learner can see progress across lessons/units (persisted state, completion checkmarks, or syllabus-level percentage)" },
+    { "id": "automated-test-suite",              "tier": "edge",         "test": "Repo has automated tests that validate runnable code blocks or notebooks on every PR" },
+    { "id": "installable-package",               "tier": "edge",         "test": "Repo ships an installable Python package (pip-installable) that mirrors the lesson content" },
+    { "id": "local-runnable-environment-guide",  "tier": "edge",         "test": "Repo includes a setup guide covering Python/pip/uv/Docker paths so learners can run locally" }
+  ]
+}

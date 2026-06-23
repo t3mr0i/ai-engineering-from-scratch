@@ -8,6 +8,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Shortens broad AI foundations into a business-readable entry path.",
         lessons: [
+          { path: "phases/11-llm-engineering/73-ai-fundamentals", title: "How AI Systems Actually Work: A Practitioner's Map" },
           { path: "phases/02-ml-fundamentals/01-what-is-machine-learning", title: "What Is Machine Learning" },
           { path: "phases/08-generative-ai/01-generative-models-taxonomy-history", title: "Generative Models — Taxonomy & History" },
           { path: "phases/07-transformers-deep-dive/01-why-transformers", title: "Why Transformers" },
@@ -42,6 +43,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Turns the technical prompting lessons into productivity routines.",
         lessons: [
+          { path: "phases/11-llm-engineering/74-ai-concepts-and-tools-for-personal", title: "Choosing and Using AI Tools for Personal Productivity" },
           { path: "phases/11-llm-engineering/01-prompt-engineering", title: "Prompt Engineering: Techniques & Patterns" },
           { path: "phases/11-llm-engineering/02-few-shot-cot", title: "Few-Shot, Chain-of-Thought, Tree-of-Thought" },
           { path: "phases/11-llm-engineering/03-structured-outputs", title: "Structured Outputs: JSON, Schema Validation, Constrained Decoding" }
@@ -74,6 +76,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Relevant for every role using enterprise AI tools.",
         lessons: [
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in Practice: GDPR Compliance, Bias Auditing, and Guardrail Design" },
           { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
           { path: "phases/11-llm-engineering/12-guardrails", title: "Guardrails, Safety & Content Filtering" },
           { path: "phases/18-ethics-safety-alignment/15-indirect-prompt-injection", title: "Indirect Prompt Injection" },
@@ -108,6 +111,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Hands-on prompt clinic foundation.",
         lessons: [
+          { path: "phases/11-llm-engineering/76-hands-on-prompt-engineering-workshop", title: "Prompt Patterns That Scale: From One-Shots to Output Contracts" },
           { path: "phases/11-llm-engineering/31-hands-on-prompt-clinic", title: "Hands-on Prompt Clinic" },
           { path: "phases/11-llm-engineering/01-prompt-engineering", title: "Prompt Engineering: Techniques & Patterns" },
           { path: "phases/11-llm-engineering/02-few-shot-cot", title: "Few-Shot, Chain-of-Thought, Tree-of-Thought" },
@@ -174,6 +178,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Helps teams separate feasible AI work from automation wish lists.",
         lessons: [
+          { path: "phases/11-llm-engineering/77-ai-use-case-identification-and-business", title: "AI Use Case Triage: From Discovery to Prioritized Backlog" },
           { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" },
           { path: "phases/02-ml-fundamentals/01-what-is-machine-learning", title: "What Is Machine Learning" },
           { path: "phases/02-ml-fundamentals/09-model-evaluation", title: "Model Evaluation" },
@@ -301,6 +306,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Core architecture view without forcing everyone through from-scratch model training.",
         lessons: [
+          { path: "phases/11-llm-engineering/78-ai-introduction-to-architecture-for-ai", title: "From LLM API Call to Production AI System: Architecture Decisions That Matter" },
           { path: "phases/10-llms-from-scratch/03-data-pipelines", title: "Data Pipelines for Pre-Training" },
           { path: "phases/11-llm-engineering/13-production-app", title: "Building a Production LLM Application" },
           { path: "phases/17-infrastructure-and-production/01-managed-llm-platforms", title: "Managed LLM Platforms" },
@@ -337,6 +343,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Primary agentic software engineering path.",
         lessons: [
+          { path: "phases/11-llm-engineering/79-ai-agentic-software-engineering", title: "Agentic Software Engineering: From Prompt to Autonomous Workflow" },
           { path: "phases/14-agent-engineering/01-the-agent-loop", title: "The Agent Loop" },
           { path: "phases/14-agent-engineering/02-rewoo-plan-and-execute", title: "ReWOO and Plan-and-Execute" },
           { path: "phases/14-agent-engineering/03-reflexion-verbal-rl", title: "Reflexion" },
@@ -444,6 +451,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Turns policy expectations into a repeatable intake workflow.",
         lessons: [
+          { path: "phases/11-llm-engineering/80-corporate-ethics-and-compliance-for-ai", title: "AI Use-Case Intake: From Idea to Approved Deployment" },
           { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
           { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
           { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks" }
@@ -475,6 +483,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Builds the bridge from test ideas to measurable LLM quality.",
         lessons: [
+          { path: "phases/11-llm-engineering/81-ai-driven-testing-and-qa", title: "AI-Driven Testing and QA: From Eval Sets to Regression Gates" },
           { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" },
           { path: "phases/14-agent-engineering/30-eval-driven-agent-development", title: "Eval-Driven Agent Development" }
@@ -506,6 +515,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Frames legacy modernization as a scoped, reviewable AI-assisted workflow.",
         lessons: [
+          { path: "phases/11-llm-engineering/82-ai-supported-code-modernization", title: "Analyzing Legacy Code with AI: The Refactoring Slice Framework" },
           { path: "phases/11-llm-engineering/20-code-modernization-with-ai", title: "Code Modernization with AI" },
           { path: "phases/14-agent-engineering/31-agent-workbench-why-models-fail", title: "Agent Workbench Engineering" },
           { path: "phases/14-agent-engineering/34-repo-memory-and-state", title: "Repo Memory and Durable State" }
@@ -537,6 +547,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Shows how to create useful docs without losing source traceability.",
         lessons: [
+          { path: "phases/11-llm-engineering/83-ai-assisted-documentation", title: "Source-Grounded AI Documentation: From Draft to Deliverable" },
           { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
           { path: "phases/11-llm-engineering/05-context-engineering", title: "Context Engineering" },
           { path: "phases/13-tools-and-protocols/10-mcp-resources-and-prompts", title: "MCP Resources and Prompts" }
@@ -568,6 +579,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Makes green coding concrete through right-sizing and architecture trade-offs.",
         lessons: [
+          { path: "phases/11-llm-engineering/84-sustainable-software-and-green-coding", title: "Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems" },
           { path: "phases/11-llm-engineering/22-sustainable-software-green-coding", title: "Sustainable Software and Green Coding for AI Systems" },
           { path: "phases/17-infrastructure-and-production/02-inference-platform-economics", title: "Inference Platform Economics" },
           { path: "phases/17-infrastructure-and-production/16-model-routing", title: "Model Routing as a Cost-Reduction Primitive" }
@@ -599,6 +611,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Uses AI to accelerate synthesis while keeping research assumptions visible.",
         lessons: [
+          { path: "phases/11-llm-engineering/85-ai-enhanced-user-research", title: "From Raw Research to Validatable Decisions: AI-Enhanced User Research" },
           { path: "phases/11-llm-engineering/23-ai-enhanced-user-research", title: "AI-Enhanced User Research" },
           { path: "phases/11-llm-engineering/01-prompt-engineering", title: "Prompt Engineering: Techniques & Patterns" },
           { path: "phases/11-llm-engineering/03-structured-outputs", title: "Structured Outputs: JSON, Schema Validation, Constrained Decoding" }
@@ -630,6 +643,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Turns process observations into concrete AI and automation candidates.",
         lessons: [
+          { path: "phases/11-llm-engineering/86-ai-and-automation-use-case-spotting", title: "Spotting AI and Automation Opportunities: The Structured Intake" },
           { path: "phases/11-llm-engineering/24-use-case-spotting-automation-discovery", title: "AI Use Case Spotting and Automation Discovery" },
           { path: "phases/02-ml-fundamentals/01-what-is-machine-learning", title: "What Is Machine Learning" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
@@ -661,6 +675,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Makes AI economics explicit before teams scale a solution.",
         lessons: [
+          { path: "phases/11-llm-engineering/87-ai-cost-and-value-economics", title: "AI Cost and Value Economics: From Token Price to Business Case" },
           { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
           { path: "phases/11-llm-engineering/11-caching-cost", title: "Caching, Rate Limiting & Cost Optimization" },
           { path: "phases/17-infrastructure-and-production/02-inference-platform-economics", title: "Inference Platform Economics" }
@@ -692,6 +707,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Moves prompt engineering into client and stakeholder work.",
         lessons: [
+          { path: "phases/11-llm-engineering/88-consultative-prompting", title: "Consultative Prompting: Framing Problems for Stakeholder-Grade Output" },
           { path: "phases/11-llm-engineering/26-consultative-prompting", title: "Consultative Prompting" },
           { path: "phases/11-llm-engineering/01-prompt-engineering", title: "Prompt Engineering: Techniques & Patterns" },
           { path: "phases/11-llm-engineering/02-few-shot-cot", title: "Few-Shot, Chain-of-Thought, Tree-of-Thought" }
@@ -723,6 +739,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Maps the main AI platform choices to enterprise architecture questions.",
         lessons: [
+          { path: "phases/11-llm-engineering/89-ai-ecosystem-and-vendor-landscape", title: "AI Ecosystem Map: Models, Platforms, and Vendor Trade-offs" },
           { path: "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape", title: "AI Ecosystem and Vendor Landscape" },
           { path: "phases/17-infrastructure-and-production/01-managed-llm-platforms", title: "Managed LLM Platforms" },
           { path: "phases/17-infrastructure-and-production/19-ai-gateways", title: "AI Gateways" }
@@ -755,6 +772,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Starts workforce planning at the task and capability level.",
         lessons: [
+          { path: "phases/11-llm-engineering/90-ai-workforce-strategy", title: "AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps" },
           { path: "phases/11-llm-engineering/28-ai-workforce-strategy", title: "AI Workforce Strategy" },
           { path: "phases/15-autonomous-systems/01-long-horizon-agents", title: "The Shift from Chatbots to Long-Horizon Agents" },
           { path: "phases/16-multi-agent-and-swarms/08-role-specialization", title: "Role Specialization" }
@@ -786,6 +804,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Frames AI-supported decisions around evidence and measurement.",
         lessons: [
+          { path: "phases/11-llm-engineering/91-decision-making-with-ai", title: "AI Recommendations to Accountable Decisions: A Decision-Quality Framework" },
           { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" },
           { path: "phases/02-ml-fundamentals/09-model-evaluation", title: "Model Evaluation" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
@@ -818,6 +837,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Creates a practical data-readiness check before AI pilots start.",
         lessons: [
+          { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" },
           { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
           { path: "phases/11-llm-engineering/05-context-engineering", title: "Context Engineering" },
           { path: "phases/02-ml-fundamentals/09-model-evaluation", title: "Model Evaluation" }
@@ -849,6 +869,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Introduces trust-boundary thinking for AI workflows.",
         lessons: [
+          { path: "phases/11-llm-engineering/93-ai-security-and-prompt-injection-defense", title: "Prompt Injection and AI Security: Attack Surface Triage" },
           { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
           { path: "phases/11-llm-engineering/12-guardrails", title: "Guardrails, Safety & Content Filtering" },
           { path: "phases/14-agent-engineering/27-prompt-injection-defense", title: "Prompt Injection and the PVE Defense" }
@@ -880,6 +901,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Frames internal knowledge assistants around source ownership and permissions.",
         lessons: [
+          { path: "phases/11-llm-engineering/94-internal-knowledge-assistants-with-rag", title: "Planning an Internal Knowledge Assistant: Source Accountability, Permissions, and Fallbacks" },
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
           { path: "phases/11-llm-engineering/06-rag", title: "RAG (Retrieval-Augmented Generation)" },
           { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" }
@@ -911,6 +933,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Turns vendor selection into an explicit fit and risk comparison.",
         lessons: [
+          { path: "phases/11-llm-engineering/95-ai-vendor-and-procurement-evaluation", title: "AI Vendor Evaluation: A Scoring Framework for Procurement Decisions" },
           { path: "phases/11-llm-engineering/37-ai-vendor-procurement-evaluation", title: "AI Vendor and Procurement Evaluation" },
           { path: "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape", title: "AI Ecosystem and Vendor Landscape" },
           { path: "phases/17-infrastructure-and-production/01-managed-llm-platforms", title: "Managed LLM Platforms" }
@@ -942,6 +965,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Defines production support for quality, cost, tool and safety failures.",
         lessons: [
+          { path: "phases/11-llm-engineering/96-ai-operations-and-incident-response", title: "AI Operations: Triage Signals, Runbooks, and Incident Response" },
           { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" },
           { path: "phases/17-infrastructure-and-production/13-llm-observability", title: "LLM Observability Stack Selection" },
           { path: "phases/17-infrastructure-and-production/23-sre-for-ai", title: "SRE for AI" }
@@ -1097,6 +1121,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Maps support automation to service scope, confidence and escalation.",
         lessons: [
+          { path: "phases/11-llm-engineering/97-ai-for-service-management-and-support", title: "AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff" },
           { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" },
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
           { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" }
@@ -1221,6 +1246,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Uses AI before the session to clarify outcome, agenda and audience.",
         lessons: [
+          { path: "phases/11-llm-engineering/98-ai-meeting-facilitation-and-workshop-design", title: "Structured Meeting Facilitation with LLMs: From Summary to Action" },
           { path: "phases/11-llm-engineering/47-ai-meeting-workshop-facilitation", title: "AI Meeting Facilitation and Workshop Design" },
           { path: "phases/11-llm-engineering/26-consultative-prompting", title: "Consultative Prompting" },
           { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
@@ -1252,6 +1278,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Keeps AI-assisted status reporting tied to source evidence and decisions.",
         lessons: [
+          { path: "phases/11-llm-engineering/99-ai-project-reporting-and-steering", title: "AI-Assisted Project Status and Steering Pack Production" },
           { path: "phases/11-llm-engineering/48-ai-project-reporting-steering", title: "AI Project Reporting and Steering" },
           { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" },
           { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" }
@@ -1283,6 +1310,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Prevents AI workflows from scaling duplicated, stale or undefined data.",
         lessons: [
+          { path: "phases/11-llm-engineering/100-ai-data-quality-and-master-data", title: "Diagnosing Data Quality Before AI Workflows Scale" },
           { path: "phases/11-llm-engineering/49-ai-data-quality-master-data-processes", title: "AI Data Quality and Master Data Processes" },
           { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" }
@@ -1315,6 +1343,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Starts automation work with process signals, exceptions and fallback controls.",
         lessons: [
+          { path: "phases/11-llm-engineering/101-ai-process-analysis-and-automation-design", title: "Process Analysis Before Automation: The AI Readiness Gate" },
           { path: "phases/11-llm-engineering/50-ai-process-analysis-automation-design", title: "AI Process Analysis and Automation Design" },
           { path: "phases/11-llm-engineering/24-use-case-spotting-automation-discovery", title: "AI Use Case Spotting and Automation Discovery" },
           { path: "phases/11-llm-engineering/32-ai-use-case-identification-workshop", title: "AI Use Case Identification Workshop" }
@@ -1346,6 +1375,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Turns AI governance principles into owners, controls and audit evidence.",
         lessons: [
+          { path: "phases/11-llm-engineering/102-ai-risk-management-and-internal-controls", title: "AI Risk Management: Owners, Controls, and Audit Evidence" },
           { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" },
           { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
           { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
@@ -1377,6 +1407,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Prepares content owners, freshness checks and access rules for AI retrieval.",
         lessons: [
+          { path: "phases/11-llm-engineering/103-ai-knowledge-management-and-content-governance", title: "Source Quality Gates Before Retrieval" },
           { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" },
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
           { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" }
@@ -1439,6 +1470,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Records material AI design choices before they become hard-to-reverse defaults.",
         lessons: [
+          { path: "phases/11-llm-engineering/104-ai-architecture-decision-governance", title: "AI Architecture Decision Records: Governing Model, Vendor, and Boundary Choices" },
           { path: "phases/11-llm-engineering/54-ai-architecture-decision-governance", title: "AI Architecture Decision Governance" },
           { path: "phases/11-llm-engineering/37-ai-vendor-procurement-evaluation", title: "AI Vendor and Procurement Evaluation" },
           { path: "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape", title: "AI Ecosystem and Vendor Landscape" }
@@ -1471,6 +1503,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Keeps AI-assisted prioritization transparent and comparable.",
         lessons: [
+          { path: "phases/11-llm-engineering/105-ai-product-backlog-and-prioritization", title: "AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies" },
           { path: "phases/11-llm-engineering/55-ai-product-backlog-prioritization", title: "AI Product Backlog and Prioritization" },
           { path: "phases/11-llm-engineering/23-ai-enhanced-user-research", title: "AI-Enhanced User Research" },
           { path: "phases/11-llm-engineering/29-decision-making-with-ai", title: "Decision Making with AI" }
@@ -1533,6 +1566,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Frames synthetic data as governed test material, not risk-free data.",
         lessons: [
+          { path: "phases/11-llm-engineering/106-ai-test-data-and-synthetic-data", title: "Synthetic and Masked Test Data: Coverage, Leakage, and Governance" },
           { path: "phases/11-llm-engineering/57-ai-test-data-synthetic-data-governance", title: "AI Test Data and Synthetic Data Governance" },
           { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
           { path: "phases/11-llm-engineering/49-ai-data-quality-master-data-processes", title: "AI Data Quality and Master Data Processes" }
@@ -1626,6 +1660,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "For SAP, Salesforce, Microsoft Business Solutions and ERP/CRM workflows where system boundaries matter.",
         lessons: [
+          { path: "phases/11-llm-engineering/107-ai-business-applications-erp-and-crm", title: "AI Use-Case Evaluation in ERP and CRM Systems" },
           { path: "phases/11-llm-engineering/60-ai-business-applications-erp-crm-consulting", title: "AI Business Applications, ERP, and CRM Consulting" },
           { path: "phases/11-llm-engineering/49-ai-data-quality-master-data-processes", title: "AI Data Quality and Master Data Processes" },
           { path: "phases/11-llm-engineering/56-ai-business-analysis-process-discovery", title: "AI Business Analysis and Process Discovery" }
@@ -1657,6 +1692,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Frames cloud, data platform and IoT AI ideas around data movement, latency and ownership.",
         lessons: [
+          { path: "phases/11-llm-engineering/108-ai-cloud-data-platform-and-iot", title: "AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries" },
           { path: "phases/11-llm-engineering/61-ai-cloud-data-platform-use-case-design", title: "AI Cloud, Data Platform, and IoT Use Case Design" },
           { path: "phases/11-llm-engineering/54-ai-architecture-decision-governance", title: "AI Architecture Decision Governance" },
           { path: "phases/11-llm-engineering/05-context-engineering", title: "Context Engineering" }
@@ -1720,6 +1756,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Designs explicit review roles, approval gates and escalation paths for AI-supported work.",
         lessons: [
+          { path: "phases/11-llm-engineering/109-ai-human-review-and-approval-workflow", title: "Designing Human-in-the-Loop Review and Approval Gates for AI Workflows" },
           { path: "phases/11-llm-engineering/63-ai-human-review-approval-workflows", title: "AI Human Review and Approval Workflow Design" },
           { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
           { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" }
@@ -1751,6 +1788,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Defines ownership, services and governance cadence for AI work that crosses team boundaries.",
         lessons: [
+          { path: "phases/11-llm-engineering/110-ai-operating-model-and-center-of", title: "AI Operating Model and Center of Excellence: From Pilots to Platform" },
           { path: "phases/11-llm-engineering/64-ai-operating-model-center-of-excellence", title: "AI Operating Model and Center of Excellence" },
           { path: "phases/11-llm-engineering/34-ai-champion-enablement", title: "AI Champion Enablement" },
           { path: "phases/11-llm-engineering/39-ai-portfolio-roadmap-management", title: "AI Portfolio and Roadmap Management" }
@@ -1783,6 +1821,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "For Application Management and Service Management teams turning repeated tickets into grounded assistance.",
         lessons: [
+          { path: "phases/11-llm-engineering/111-ai-service-desk-runbook-and-knowledge", title: "AI-Augmented Service Desk: Ticket Triage, Runbooks, and Knowledge Gap Analysis" },
           { path: "phases/11-llm-engineering/65-ai-service-desk-runbook-automation", title: "AI Service Desk Runbook and Knowledge Automation" },
           { path: "phases/11-llm-engineering/43-ai-for-service-management-support", title: "AI for Service Management and Support" },
           { path: "phases/11-llm-engineering/38-ai-operations-incident-response", title: "AI Operations and Incident Response" }
@@ -1815,6 +1854,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Gives business teams a lightweight way to spot AI security review triggers early.",
         lessons: [
+          { path: "phases/11-llm-engineering/112-ai-security-review-and-threat-triage", title: "AI Security Threat Triage for Business Proposals" },
           { path: "phases/11-llm-engineering/66-ai-security-threat-triage-business-teams", title: "AI Security Review and Threat Triage for Business Teams" },
           { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
           { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" }
@@ -1910,6 +1950,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Makes prompt libraries reusable without turning them into stale copy-paste repositories.",
         lessons: [
+          { path: "phases/11-llm-engineering/113-ai-prompt-library-governance-and-reuse", title: "Prompt Library Governance: Versioning, Ownership, and Retirement" },
           { path: "phases/11-llm-engineering/69-ai-prompt-library-governance-reuse", title: "AI Prompt Library Governance and Reuse" },
           { path: "phases/11-llm-engineering/31-hands-on-prompt-clinic", title: "Hands-on Prompt Clinic" },
           { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" }
@@ -1942,6 +1983,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "For multipliers who support teams and keep standards consistent.",
         lessons: [
+          { path: "phases/11-llm-engineering/114-ai-champion", title: "The AI Champion Playbook: Knowledge Transfer That Actually Sticks" },
           { path: "phases/11-llm-engineering/34-ai-champion-enablement", title: "AI Champion Enablement" },
           { path: "phases/14-agent-engineering/30-eval-driven-agent-development", title: "Eval-Driven Agent Development" },
           { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent" },

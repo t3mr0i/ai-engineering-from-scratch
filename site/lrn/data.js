@@ -89,6 +89,9 @@ window.LrnData = {
       text: "To what extent do you actively shape new AI-based solutions, workflows, or services and share your experience?"
     }
   ],
+  // LRN cockpit currently exposes only Technology Consulting (R03-TC).
+  // To restore the other six profiles, paste them back here and revert the
+  // fallback/reset defaults in site/lrn/lrn.js from "tc" to "bsc".
   profiles: [
     {
       id: "tc",
