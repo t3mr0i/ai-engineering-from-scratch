@@ -2025,6 +2025,7 @@
   <script src="progress.js?v=20260525a"></script>
   <script src="lrn/data.js?v=20260610a"></script>
   <script src="lrn/curriculum-map.js?v=20260610a"></script>
+  <script src="lrn/notebook-index.js?v=20260622a"></script>
   <script src="cmdpalette.js?v=20260525a" defer></script>
   <script src="analytics.js?v=20260525a" defer></script>
   <script src="figures.js?v=20260607a"></script>
@@ -2686,10 +2687,89 @@
         if (lrnContext.prev) html += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity">←</a>';
         html += '<a href="index.html">Overview</a>';
         if (lrnContext.next) html += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity">→</a>';
+        html += '<a href="#" id="lrnKeyBtn" title="Set API keys for notebook" aria-label="API key settings">⚙</a>';
         html += '</nav>';
         html += '</section>';
         return html;
       }
+
+      // ── API key settings (LRN mode) ─────────────────────────────────
+      // Notebooks that hit an LLM read their key from os.environ. The key is
+      // stored in localStorage (same-origin) and made visible to the Pyodide
+      // kernel via a bootstrap cell that scripts/generate_notebooks.py emits
+      // when a NotebookSpec sets requires_api_key=true. This dialog lets the
+      // learner paste their key once per browser; nothing is sent to a server.
+      function openLrnKeyDialog() {
+        var existingKey = '';
+        try {
+          // legacy key name was lrn-llm-key:openai — keep it for backward compat
+          existingKey = localStorage.getItem('lrn-llm-key:openai') || '';
+          // clean up any old anthropic key from previous setup
+          localStorage.removeItem('lrn-llm-key:anthropic');
+        } catch (e) {}
+
+        var overlay = document.createElement('div');
+        overlay.id = 'lrnKeyOverlay';
+        overlay.setAttribute('style', 'position:fixed;inset:0;background:rgba(13,27,42,.78);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:inherit');
+        overlay.innerHTML =
+          '<div style="background:#fff;color:#0d1b2a;padding:28px 30px;border-radius:8px;max-width:520px;width:92vw;box-shadow:0 18px 48px rgba(0,0,0,.35)">' +
+          '  <h3 style="margin:0 0 6px 0;font-size:1.05rem">LLM API key for in-browser notebooks</h3>' +
+          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.85rem;line-height:1.45">Some lesson notebooks call an LLM directly from your browser. Paste your key once — it stays in this browser only (localStorage, same-origin), no network upload. Leave blank for lessons that don\'t need an LLM (most do not).</p>' +
+          '  <label style="display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#415a77;margin-bottom:4px">OpenAI-compatible key (OpenAI sk-…, Groq gsk_…, OpenRouter)</label>' +
+          '  <div style="display:flex;gap:6px;align-items:stretch;margin-bottom:18px">' +
+          '    <input id="lrnKeyOpenAi" type="password" autocomplete="off" placeholder="sk-… or gsk_…" value="' + escapeAttr(existingKey) + '" style="flex:1;box-sizing:border-box;padding:9px 11px;border:1px solid #ccd6e0;border-radius:4px;font-family:monospace;font-size:.85rem">' +
+          '    <button id="lrnKeyCopy" type="button" title="Copy key to clipboard (paste into notebook cell)" style="padding:0 12px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.78rem;color:#415a77">Copy</button>' +
+          '  </div>' +
+          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.74rem;line-height:1.45">JupyterLite läuft in einer isolierten Sandbox, in die wir Keys nicht automatisch injizieren können. <b>Workflow:</b> Key hier speichern → "Copy" klicken → Notebook öffnen → in die "API-Key"-Cell pasten. Einmal pro Browser-Session genügt; das Notebook merkt sich den Key bis du den Tab schließt.</p>' +
+          '  <div style="display:flex;justify-content:flex-end;gap:8px">' +
+          '    <button id="lrnKeyClear" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Clear</button>' +
+          '    <button id="lrnKeyCancel" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Cancel</button>' +
+          '    <button id="lrnKeySave" type="button" style="padding:8px 16px;background:#415a77;color:#fff;border:1px solid #415a77;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Save</button>' +
+          '  </div>' +
+          '</div>';
+        document.body.appendChild(overlay);
+
+        function close() { overlay.remove(); }
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+        document.getElementById('lrnKeyCancel').addEventListener('click', close);
+        document.getElementById('lrnKeyCopy').addEventListener('click', function () {
+          var input = document.getElementById('lrnKeyOpenAi');
+          var key = input.value.trim();
+          if (!key) {
+            input.focus();
+            return;
+          }
+          var btn = document.getElementById('lrnKeyCopy');
+          var original = btn.textContent;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(key).then(function () {
+              btn.textContent = 'Copied ✓';
+              setTimeout(function () { btn.textContent = original; }, 1500);
+            });
+          } else {
+            input.type = 'text'; input.select(); document.execCommand('copy'); input.type = 'password';
+            btn.textContent = 'Copied ✓';
+            setTimeout(function () { btn.textContent = original; }, 1500);
+          }
+        });
+        document.getElementById('lrnKeyClear').addEventListener('click', function () {
+          try { localStorage.removeItem('lrn-llm-key:openai'); } catch (e) {}
+          close();
+        });
+        document.getElementById('lrnKeySave').addEventListener('click', function () {
+          var k = document.getElementById('lrnKeyOpenAi').value.trim();
+          try {
+            if (k) localStorage.setItem('lrn-llm-key:openai', k);
+            else localStorage.removeItem('lrn-llm-key:openai');
+          } catch (e) {}
+          close();
+        });
+      }
+      // Delegated handler so the button works no matter when the bar is rendered.
+      document.addEventListener('click', function (e) {
+        var t = e.target;
+        if (t && t.id === 'lrnKeyBtn') { e.preventDefault(); openLrnKeyDialog(); }
+      });
 
       function buildTOC() {
         var sidebar = document.getElementById('tocSidebar');
@@ -4047,6 +4127,7 @@
         if (!container || !lessonPath) return;
 
         if (lrnContext) {
+          renderLrnNotebookPanel(container);
           renderQuizPanel(container);
           renderLearningPathPanel(container);
           renderContinuePanel(container);
@@ -4181,6 +4262,140 @@
           document.head.appendChild(s);
         });
         return _pyodidePromise;
+      }
+
+      function renderLrnNotebookPanel(container) {
+        // LRN-mode counterpart of renderCodePanel: shows the lesson's notebook
+        // BEFORE the quiz so learners can walk through the example interactively
+        // first. Uses the same .nb-embed / .nb-frame CSS and lazy-mount pattern
+        // as renderCodePanel, but with lrn-* DOM ids so the two never collide
+        // (only one is mounted per page — see renderAIPanels' lrnContext branch).
+        //
+        // Allowlist: only curated hands-on lessons get a notebook panel in LRN mode.
+        // Theory lessons (no LLM hands-on) keep their main.py notebook only in the
+        // non-LRN Pyodide playground (renderCodePanel), never here.
+        var _nbCourse = (new URLSearchParams(location.search).get('course') || '').trim();
+        var _nbIdx = (window.LrnNotebookIndex && window.LrnNotebookIndex.curated) || {};
+        var _nbEntry = _nbIdx[lessonPath];
+        if (!(_nbEntry && (_nbEntry.indexOf('*') >= 0 || _nbEntry.indexOf(_nbCourse) >= 0))) {
+          return;  // not a curated hands-on for this course → no notebook panel
+        }
+        var panel = document.createElement('div');
+        panel.className = 'ai-panel';
+        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">N</div><div class="ai-panel-title">Try the Example</div></div><div class="ai-panel-subtitle">Walk through the agent flow before answering the quiz</div><div id="lrnNbContent" class="panel-loading">Loading notebook…</div>';
+        container.appendChild(panel);
+
+        var gitlabUrl = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath;
+        // Course-specific notebook fallback: a lesson that appears in several
+        // courses with divergent example domains gets a per-course notebook
+        // (<lessonPath>.<course>.ipynb). Prefer that when present, else fall back
+        // to the shared <lessonPath>.ipynb. The course id comes from ?course=.
+        var nbCourse = (new URLSearchParams(location.search).get('course') || '').trim();
+        var notebookUrl, notebookFull, notebookFile;
+        function setNotebookBase(base) {
+          notebookUrl = 'jupyterlite/notebooks/index.html?path=' + base + '.ipynb';
+          notebookFull = 'jupyterlite/lab/index.html?path=' + base + '.ipynb';
+          notebookFile = 'jupyterlite/files/' + base + '.ipynb';
+        }
+        function resolveNotebookBase() {
+          if (!nbCourse) return Promise.resolve(lessonPath);
+          var courseFile = 'jupyterlite/files/' + lessonPath + '.' + nbCourse + '.ipynb';
+          return fetch(courseFile, { method: 'HEAD' })
+            .then(function (r) { return r.ok ? (lessonPath + '.' + nbCourse) : lessonPath; })
+            .catch(function () { return lessonPath; });
+        }
+        resolveNotebookBase().then(function (base) {
+          setNotebookBase(base);
+          fetch(notebookFile, { method: 'HEAD' })
+            .then(function (r) { return r.ok; })
+            .catch(function () { return false; })
+            .then(mountLrnNotebook);
+        });
+
+        function mountLrnNotebook(hasNotebook) {
+          var el = document.getElementById('lrnNbContent');
+          if (!el) return;
+          if (!hasNotebook) {
+            // No notebook for this lesson (e.g. pure-theory lesson opted out via
+            // code/.no-notebook). Remove the whole panel rather than rendering a
+            // "no notebook" placeholder — keeps the LRN view clean for lessons
+            // that are intentionally docs-only.
+            panel.remove();
+            return;
+          }
+
+          el.innerHTML =
+            '<div class="nb-placeholder" id="lrnNbPlaceholder">' +
+            '<div class="nb-hint">The notebook shows the same example as the lesson, runnable end-to-end. Open it, step through the cells, then come back to the quiz below.</div>' +
+            '<button class="nb-start-btn" id="lrnNbStart">Open notebook</button>' +
+            '<div class="nb-hint" style="opacity:.7">Results are pre-computed and visible immediately. Re-running a cell starts the Python kernel (a few seconds, runs locally in your browser).</div>' +
+            '</div>';
+
+          document.getElementById('lrnNbStart').addEventListener('click', function () {
+            // Force a fresh load: JupyterLite caches notebooks in IndexedDB
+            // after the first open. Subsequent opens read the stale cached
+            // version even after the server file changes — bad UX when we
+            // iterate on a lesson. Wipe the JupyterLite IndexedDB for this
+            // origin before remounting, and append a cache-buster to the URL.
+            wipeJupyterLiteStorage().finally(function () {
+              var bust = '&_=' + Date.now();
+              el.innerHTML =
+                '<div class="nb-embed">' +
+                '<div class="nb-embed-bar">' +
+                '<span>Jupyter · ' + escapeHtml(lessonPath.split('/').pop()) + '</span>' +
+                '<span class="spacer"></span>' +
+                '<a href="' + notebookFull + '" target="_blank" rel="noopener">Open full screen ↗</a>' +
+                '<a href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
+                '</div>' +
+                '<div class="nb-loading" id="lrnNbLoading" style="padding:14px">Loading notebook…</div>' +
+                '<iframe class="nb-frame" id="lrnNbFrame" title="Lesson notebook" ' +
+                'src="' + notebookUrl + bust + '" allow="cross-origin-isolated"></iframe>' +
+                '</div>';
+              var frame = document.getElementById('lrnNbFrame');
+              frame.style.visibility = 'hidden';
+              frame.addEventListener('load', function () {
+                var l = document.getElementById('lrnNbLoading');
+                if (l) l.style.display = 'none';
+                frame.style.visibility = 'visible';
+              });
+            });
+          });
+        }
+      }
+
+      // Wipe JupyterLite's IndexedDB so the next iframe mount fetches notebooks
+      // fresh from the server instead of replaying a stale cached version.
+      // Best-effort: tolerate browsers that don't expose indexedDB.databases().
+      function wipeJupyterLiteStorage() {
+        return new Promise(function (resolve) {
+          if (!window.indexedDB) return resolve();
+          var done = false;
+          function finish() { if (!done) { done = true; resolve(); } }
+          try {
+            if (typeof indexedDB.databases === 'function') {
+              indexedDB.databases().then(function (dbs) {
+                var pending = (dbs || []).filter(function (d) {
+                  return d.name && /jupyter|jp|joyride|tornado/i.test(d.name);
+                });
+                if (pending.length === 0) return finish();
+                var remaining = pending.length;
+                pending.forEach(function (d) {
+                  var req = indexedDB.deleteDatabase(d.name);
+                  req.onsuccess = req.onerror = req.onblocked = function () {
+                    if (--remaining === 0) finish();
+                  };
+                });
+                setTimeout(finish, 800);
+              }, finish);
+            } else {
+              // Fallback: blind-delete by known names
+              ['JupyterLite Storage', 'jupyterlite-contents', '@jupyterlite/contents'].forEach(function (n) {
+                try { indexedDB.deleteDatabase(n); } catch (e) {}
+              });
+              setTimeout(finish, 300);
+            }
+          } catch (e) { finish(); }
+        });
       }
 
       function renderCodePanel(container) {
