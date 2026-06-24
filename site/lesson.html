@@ -446,9 +446,7 @@
       line-height: 1.7;
       color: var(--ink);
       margin-bottom: 18px;
-      text-align: justify;
-      hyphens: auto;
-      -webkit-hyphens: auto;
+      text-align: left;
     }
 
     .lesson-article > p:first-of-type::first-letter,
@@ -2987,6 +2985,13 @@
         var blockquoteLines = [];
         var mermaidBlocks = 0;
         var inLabChallenge = false;
+        var inMeta = false;
+
+        function flushMeta() {
+          if (!inMeta) return '';
+          inMeta = false;
+          return '</div>';
+        }
 
         function flushLabChallenge() {
           if (!inLabChallenge) return '';
@@ -3056,6 +3061,13 @@
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i];
 
+          // Close an open metadata strip once a non-meta, non-blank block
+          // begins (code fence, list, table, etc.), so it can't swallow them.
+          if (inMeta && !inCodeBlock && line.trim() !== '' &&
+              !line.match(/^\*\*/)) {
+            out += flushMeta();
+          }
+
           if (inCodeBlock) {
             if (line.match(/^```\s*$/)) {
               inCodeBlock = false;
@@ -3123,6 +3135,7 @@
 
           var h1 = line.match(/^# (.+)/);
           if (h1) {
+            out += flushMeta();
             out += flushList();
             out += flushLabChallenge();
             var slug = slugify(h1[1]);
@@ -3132,6 +3145,7 @@
 
           var h2 = line.match(/^## (.+)/);
           if (h2) {
+            out += flushMeta();
             out += flushList();
             var slug2 = slugify(h2[1]);
             var sectionClass = '';
@@ -3219,24 +3233,35 @@
             continue;
           }
 
-          var paraClass = '';
-          if (firstBlockquoteDone && !firstParaAfterMottoDone) {
-            var isMetaLine = line.match(/^\*\*[^*]+\*\*\s*:/);
-            if (!isMetaLine) {
-              paraClass = ' class="drop-cap"';
-              firstParaAfterMottoDone = true;
+          // Lesson metadata strip: lines like "**Type:** Learn" written before
+          // the first body paragraph. The colon sits inside the bold markers,
+          // so match label/value with the colon either inside or outside.
+          var metaMatch = !firstParaAfterMottoDone &&
+            line.match(/^\*\*\s*([^*:]+?)\s*:?\s*\*\*\s*:?\s*(.+)/);
+          if (metaMatch) {
+            if (!inMeta) {
+              out += '<div class="lesson-meta">';
+              inMeta = true;
             }
+            var metaLabel = metaMatch[1].replace(/:\s*$/, '');
+            var tagClass = /time/i.test(metaLabel) ? ' time-tag' : '';
+            out += '<span class="lesson-meta-tag' + tagClass + '"><strong>' +
+              escapeHtml(metaLabel) + ':</strong> ' + inlineFormat(metaMatch[2]) + '</span>';
+            continue;
           }
 
-          var metaMatch = line.match(/^\*\*([^*]+)\*\*:\s*(.+)/);
-          if (metaMatch && !firstParaAfterMottoDone) {
-            out += '<div class="lesson-meta-tag"><strong>' + escapeHtml(metaMatch[1]) + ':</strong> ' + inlineFormat(metaMatch[2]) + '</div>';
-            continue;
+          out += flushMeta();
+
+          var paraClass = '';
+          if (firstBlockquoteDone && !firstParaAfterMottoDone) {
+            paraClass = ' class="drop-cap"';
+            firstParaAfterMottoDone = true;
           }
 
           out += '<p' + paraClass + '>' + inlineFormat(line) + '</p>';
         }
 
+        out += flushMeta();
         out += flushList();
         out += flushTable();
         out += flushBlockquote();
