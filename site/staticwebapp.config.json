@@ -1,10 +1,37 @@
 {
   "routes": [
-    { "route": "/glossary", "rewrite": "/glossary.html" },
-    { "route": "/path", "rewrite": "/prereqs.html" },
-    { "route": "/roadmap", "rewrite": "/prereqs.html" },
-    { "route": "/about", "rewrite": "/about.html" }
+    { "route": "/.auth/login/aad", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/.auth/logout", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/login", "rewrite": "/.auth/login/aad", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/.auth/me", "allowedRoles": ["anonymous", "authenticated"] },
+
+    { "route": "/glossary", "rewrite": "/glossary.html", "allowedRoles": ["lhind"] },
+    { "route": "/path", "rewrite": "/prereqs.html", "allowedRoles": ["lhind"] },
+    { "route": "/roadmap", "rewrite": "/prereqs.html", "allowedRoles": ["lhind"] },
+    { "route": "/about", "rewrite": "/about.html", "allowedRoles": ["lhind"] },
+
+    { "route": "/*", "allowedRoles": ["lhind"] }
   ],
+  "auth": {
+    "rolesSource": "/api/GetRoles",
+    "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdIssuer": "https://login.microsoftonline.com/d9f5cb22-01c9-4956-b859-4f876f6a5c83/v2.0",
+          "clientIdSettingName": "AAD_CLIENT_ID",
+          "clientSecretSettingName": "AAD_CLIENT_SECRET"
+        },
+        "login": {
+          "loginParameters": ["scope=openid profile email"]
+        }
+      }
+    }
+  },
+  "responseOverrides": {
+    "401": { "rewrite": "/.auth/login/aad", "statusCode": 302 },
+    "403": { "rewrite": "/403.html", "statusCode": 403 },
+    "404": { "rewrite": "/index.html" }
+  },
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/phases/*", "/assets/*", "/*.{js,css,png,jpg,jpeg,svg,webp,woff2,woff,ttf,ico,md,json}"]
@@ -15,8 +42,5 @@
   "mimeTypes": {
     ".md": "text/markdown",
     ".json": "application/json"
-  },
-  "responseOverrides": {
-    "404": { "rewrite": "/index.html" }
   }
 }

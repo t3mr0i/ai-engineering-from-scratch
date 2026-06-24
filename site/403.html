@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Access restricted · LHIND Learning Catalog</title>
+  <meta name="robots" content="noindex">
+  <style>
+    html, body { margin: 0; height: 100%; }
+    body {
+      display: flex; align-items: center; justify-content: center;
+      background:
+        radial-gradient(120% 90% at 50% -20%, rgba(90,138,201,0.35) 0%, transparent 60%),
+        linear-gradient(180deg, #14366B 0%, #05164d 100%);
+      font-family: "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 300; color: #ffffff;
+    }
+    .box { width: min(420px, 86vw); text-align: center; }
+    .title {
+      font-family: "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 300; font-size: 1.5rem; letter-spacing: -0.01em;
+      line-height: 1.2; margin-bottom: 8px;
+    }
+    .over {
+      font-weight: 500; font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.72); margin-bottom: 28px;
+    }
+    .msg { font-size: 0.95rem; line-height: 1.6; color: rgba(255,255,255,0.88); margin-bottom: 28px; }
+    a.btn {
+      display: inline-block; padding: 13px 26px; background: #05164d;
+      border: 1px solid rgba(255,255,255,0.35); border-radius: 999px;
+      color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 400;
+      transition: background-color 240ms cubic-bezier(0.4,0,0.2,1);
+    }
+    a.btn:hover { background: #243f9b; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="title">Access restricted.</div>
+    <div class="over">LHIND Industry Solutions</div>
+    <p class="msg">
+      You are signed in, but this catalog is limited to LHIND accounts
+      (<strong>&#64;dlh.de</strong>). If you reached this in error, sign out and
+      sign in with your LHIND account.
+    </p>
+    <a class="btn" href="/.auth/logout?post_logout_redirect_uri=/.auth/login/aad">Sign out and try again</a>
+  </div>
+</body>
+</html>

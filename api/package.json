@@ -1,0 +1,7 @@
+{
+  "name": "ai-engineering-swa-api",
+  "version": "1.0.0",
+  "description": "Azure Static Web Apps managed functions — custom roles for Entra auth.",
+  "private": true,
+  "main": "GetRoles/index.js"
+}

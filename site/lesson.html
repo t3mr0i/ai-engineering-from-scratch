@@ -2,7 +2,6 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <script src="gate.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
@@ -19,7 +18,8 @@
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="lrn/assets/fonts/LHGHeadWEB-Light.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="lrn/assets/fonts/LHGTextWEB-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="style.css?v=20260525a">
@@ -1977,6 +1977,71 @@
       .timeline-line { width: 16px; }
       .timeline-label { max-width: 104px; }
     }
+
+    /* ── Lufthansa-calm alignment (lesson reader) ─────────────────────
+       Override the terminal mechanics baked into the lesson-article rules
+       so the reader matches the LRN cockpit it is launched from. */
+    .lesson-article h1,
+    .lesson-article h2,
+    .lesson-article h3 {
+      font-family: var(--font-display);
+      text-transform: none;
+      letter-spacing: -0.01em;
+    }
+
+    .lesson-article h1 {
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+      border-bottom: 1px solid var(--rule-soft);
+      padding-bottom: 18px;
+    }
+
+    .lesson-article h2 {
+      font-weight: 300;
+      line-height: 1.15;
+    }
+
+    /* H3 was a tracked mono overline; make it a quiet medium-weight heading. */
+    .lesson-article h3 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 1.2rem;
+      letter-spacing: -0.005em;
+      text-transform: none;
+    }
+
+    .lesson-article h2.section-build,
+    .lesson-article h2.section-use,
+    .lesson-article h2.section-ship {
+      border-left: 3px solid var(--blueprint);
+    }
+
+    /* No drop-cap in the calm editorial style. */
+    .lesson-article > p:first-of-type::first-letter,
+    .lesson-article .drop-cap::first-letter {
+      float: none;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Hairline rule, not dashed ASCII bar. */
+    .lesson-article hr {
+      height: 1px;
+      background-image: none;
+      background-color: var(--rule-soft);
+      margin: 40px 0;
+    }
+
+    /* Rounded code blocks + soft surfaces. */
+    .lesson-article pre,
+    .lesson-article code {
+      border-radius: 6px;
+    }
+    .lesson-meta-tag { border-radius: 999px; }
   </style>
 </head>
 <body>
