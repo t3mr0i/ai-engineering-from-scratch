@@ -1,36 +1,79 @@
+/* ── Lufthansa Group webfonts (shared with the LRN cockpit) ──────────
+   Fonts live in lrn/assets/fonts/; paths here are relative to this CSS
+   file (site/style.css). Declaring the faces here lets catalog.html,
+   lesson.html, and the other style.css pages render in the real LHG
+   type, matching index.html / the LRN skin. */
+@font-face {
+  font-family: "Lufthansa Head";
+  src: url("lrn/assets/fonts/LHGHeadWEB-Light.woff2") format("woff2");
+  font-weight: 100 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Head";
+  src: url("lrn/assets/fonts/LHGHeadWEB-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Head";
+  src: url("lrn/assets/fonts/LHGHeadWEB-Bold.woff2") format("woff2");
+  font-weight: 600 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("lrn/assets/fonts/LHGTextWEB-Light.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("lrn/assets/fonts/LHGTextWEB-Regular.woff2") format("woff2");
+  font-weight: 400 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("lrn/assets/fonts/LHGTextWEB-RegularItalic.woff2") format("woff2");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  src: url("lrn/assets/fonts/LHGTextWEB-Bold.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
 :root {
-  --font-display: 'VT323', ui-monospace, 'JetBrains Mono', monospace;
-  --font-body: 'Source Serif 4', 'Source Serif Pro', 'Iowan Old Style', Georgia, serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
+  /* Lufthansa Group type — Head (display, thin/light) + Text (body, light).
+     Display is no longer the VT323 terminal face; --font-display now resolves
+     to Lufthansa Head so every existing heading rule picks up the LHG look. */
+  --font-display: "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, "Consolas", monospace;
   --font-heading: var(--font-display);
 
-  /* Lufthansa Design System 2.0 — Cool Grey neutrals + Deep Blue primary.
-     Existing variable names (--blueprint, --ink, etc.) are remapped onto LH
-     tokens so the whole stylesheet picks up the palette without per-rule edits.
-     LH rule: blue and yellow never adjacent — hover on blue uses Blue Breeze. */
-  --bg: #ffffff;                       /* LH White */
-  --bg-surface: #f8fafc;               /* Cool Grey 050 */
-  --bg-surface-hover: #f1f5f9;         /* Cool Grey 100 */
-  --ink: #0f172a;                      /* Cool Grey 900 */
-  --ink-soft: #334155;                 /* Cool Grey 700 */
-  --ink-mute: #64748b;                 /* Cool Grey 500 */
-  --rule: #0f172a;                     /* Cool Grey 900 */
-  --rule-soft: #e2e8f0;                /* Cool Grey 200 */
-  --paper-rule: rgba(15, 23, 42, 0.06);
+  /* Lufthansa Group palette (from lrn/tokens.css): Core Blue primary,
+     warm-grey neutrals, slate text. Existing variable names are remapped
+     so the whole stylesheet adopts the palette without per-rule edits. */
+  --bg: #f9f8f8;                       /* LHG Grey 100 — warm page */
+  --bg-surface: #ffffff;               /* LHG White — cards */
+  --bg-surface-hover: #f1f0ef;         /* LHG Grey 200 */
+  --ink: #05164d;                      /* LHG Core Blue — primary text */
+  --ink-soft: #52617c;                 /* LHG Slate 700 */
+  --ink-mute: #7a7673;                 /* LHG Warm Grey */
+  --rule: #cfccc8;                     /* LHG Grey 400 */
+  --rule-soft: #e3e1de;                /* LHG Grey 300 — hairline */
+  --paper-rule: rgba(5, 22, 77, 0.05);
 
-  --blueprint: #05164d;               /* LH Deep Blue — primary */
+  --blueprint: #05164d;               /* LHG Core Blue — primary */
   --blueprint-tint: rgba(5, 22, 77, 0.06);
-  --blueprint-tint-strong: rgba(5, 22, 77, 0.14);
+  --blueprint-tint-strong: rgba(5, 22, 77, 0.12);
 
-  --status-complete: #05164d;          /* Deep Blue */
-  --status-in-progress: #475569;       /* Cool Grey 600 */
-  --status-planned: #cbd5e1;           /* Cool Grey 300 */
-  --warn: #8f7231;                     /* LH Gold / warning fg */
+  --status-complete: #05164d;          /* Core Blue */
+  --status-in-progress: #52617c;       /* Slate */
+  --status-planned: #cfccc8;           /* Grey 400 */
+  --warn: #b08a4a;                     /* LHG warm warning */
 
-  --code-bg: #f1f5f9;                  /* Cool Grey 100 */
+  --code-bg: #f1f0ef;                  /* LHG Grey 200 */
   --modal-bg: #ffffff;
-  --overlay-bg: rgba(15, 23, 42, 0.55);
-  --header-bg: rgba(255, 255, 255, 0.94);
+  --overlay-bg: rgba(5, 22, 77, 0.45);
+  --header-bg: rgba(249, 248, 248, 0.9);
 
   --header-offset: 92px;
 
@@ -38,45 +81,48 @@
   --text-muted: var(--ink-soft);
   --border: var(--rule-soft);
   --accent: var(--blueprint);
-  --accent-hover: #4d6995;            /* Blue Breeze 03 — interactive accent on blue */
+  --accent-hover: #243f9b;            /* LHG Blue 600 — hover on Core Blue */
   --secondary: var(--blueprint);
   --complete: var(--status-complete);
   --planned: var(--status-planned);
-  --shadow-color: var(--ink);
-  --shadow-hard: 3px 3px 0 var(--ink);
-  --shadow-hard-lg: 5px 5px 0 var(--ink);
-  --dot-color: var(--paper-rule);
+  --shadow-color: rgba(5, 22, 77, 0.1);
+  /* Lufthansa shadows are soft and blue-tinted, never hard offset blocks.
+     Names kept so existing box-shadow: var(--shadow-hard) rules go soft. */
+  --shadow-hard: 0 2px 8px rgba(5, 22, 77, 0.06);
+  --shadow-hard-lg: 0 14px 40px rgba(5, 22, 77, 0.12);
+  --dot-color: transparent;
 }
 
 [data-theme="dark"] {
-  /* LH dark mode: bg #191919, card #1a1f2e, elevated #242b3d.
-     Deep Blue is invisible on near-black, so the accent lifts to Blue Breeze
-     and hover lifts further — staying within the LH blue family, no yellow. */
-  --bg: #191919;
-  --bg-surface: #1a1f2e;
-  --bg-surface-hover: #242b3d;
-  --ink: #ffffff;
-  --ink-soft: rgba(255, 255, 255, 0.7);
-  --ink-mute: rgba(255, 255, 255, 0.5);
-  --rule: #ffffff;
-  --rule-soft: rgba(255, 255, 255, 0.16);
-  --paper-rule: rgba(255, 255, 255, 0.06);
+  /* LHG dark mode (from lrn/tokens.css): deep Core-Blue surfaces, not a
+     near-black terminal. Accent lifts to sky blue for contrast. */
+  --bg: #0a1b3d;                       /* LHG dark paper */
+  --bg-surface: #132b54;               /* LHG dark card */
+  --bg-surface-hover: #16305c;
+  --ink: #eaf1fb;
+  --ink-soft: #c3d5ee;
+  --ink-mute: #93a8c7;
+  --rule: #335279;
+  --rule-soft: #234168;
+  --paper-rule: rgba(255, 255, 255, 0.05);
 
-  --blueprint: #8aa5ff;               /* Blue Breeze lifted for dark contrast */
-  --blueprint-tint: rgba(138, 165, 255, 0.12);
-  --blueprint-tint-strong: rgba(138, 165, 255, 0.22);
+  --blueprint: #7ba6dc;               /* LHG dark accent */
+  --blueprint-tint: rgba(123, 166, 220, 0.12);
+  --blueprint-tint-strong: rgba(123, 166, 220, 0.22);
 
-  --status-complete: #8aa5ff;
-  --status-in-progress: rgba(255, 255, 255, 0.7);
-  --status-planned: #475569;          /* Cool Grey 600 */
-  --warn: #c9a55a;                    /* LH Gold, lightened for dark */
+  --status-complete: #7ba6dc;
+  --status-in-progress: #c3d5ee;
+  --status-planned: #335279;
+  --warn: #d9c5a0;
 
-  --code-bg: #1a1f2e;
-  --modal-bg: #1a1f2e;
-  --overlay-bg: rgba(0, 0, 0, 0.7);
-  --header-bg: rgba(25, 25, 25, 0.94);
+  --code-bg: #0f2348;
+  --modal-bg: #132b54;
+  --overlay-bg: rgba(5, 22, 77, 0.7);
+  --header-bg: rgba(10, 27, 61, 0.9);
 
-  --accent-hover: #b3c5ff;
+  --accent-hover: #a9c7e8;
+  --shadow-hard: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-hard-lg: 0 14px 40px rgba(0, 0, 0, 0.5);
 }
 
 *,
@@ -252,10 +298,10 @@ p.dropcap::first-letter {
   align-items: center;
   gap: 8px;
   color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0;
   text-decoration: none;
   white-space: nowrap;
   border-bottom: none;
@@ -1265,4 +1311,98 @@ body[data-palette-open] {
   .cp-footer-shortcut {
     display: none;
   }
+}
+
+/* =========================================================================
+   Lufthansa-calm alignment
+   -------------------------------------------------------------------------
+   The variables above already swing the palette + type onto the Lufthansa
+   Group system. This block neutralises the remaining "loud" mechanics that
+   were baked into individual rules (uppercase terminal headings, the dotted
+   paper background, dashed ASCII rules, drop-caps, hard offsets) so the
+   style.css pages (catalog, lesson, …) match the LRN cockpit / index.html.
+   ========================================================================= */
+
+/* Flat warm-grey page — drop the blueprint dot grid. */
+body {
+  background-image: none;
+  font-weight: 300;
+}
+
+/* Headings: Lufthansa Head, sentence case, thin, gentle negative tracking —
+   not uppercase pixel display. */
+h1, h2, h3, h4,
+.section-title {
+  text-transform: none;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+h1, .section-title { letter-spacing: -0.02em; }
+h4 { font-weight: 500; }
+
+/* Overlines (labels, subtitles) stay tracked + uppercase — that IS the LHG
+   overline style — but lose the heavy mono terminal weight. */
+.label,
+.fig-label,
+.section-subtitle {
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+/* Rules: hairline, not dashed ASCII bars. */
+.ascii-rule {
+  height: 1px;
+  background-image: none;
+  background-color: var(--rule-soft);
+  margin: 40px 0;
+}
+
+/* No drop-caps in the calm editorial style. */
+.dropcap > p:first-of-type::first-letter,
+p.dropcap::first-letter {
+  float: none;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  padding: 0;
+  color: inherit;
+}
+
+/* Links: LHG calm blue, underline on hover only. */
+a { color: var(--blueprint); }
+
+/* Buttons: pill, soft, no hard offset / uppercase terminal styling. */
+.btn,
+.nav-edge .btn {
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  transition: background var(--dur-base, 0.24s), color var(--dur-base, 0.24s),
+    border-color var(--dur-base, 0.24s), box-shadow var(--dur-base, 0.24s);
+}
+
+.btn-primary {
+  border-color: var(--blueprint);
+  box-shadow: var(--shadow-hard);
+}
+
+.btn-primary:hover {
+  box-shadow: var(--shadow-hard-lg);
+}
+
+/* Cards / surfaces: soft rounded corners to match LRN. */
+.card,
+.modal,
+.cp-panel {
+  border-radius: 12px;
+}
+
+::selection {
+  background: var(--blueprint-tint-strong);
+  color: var(--blueprint);
 }

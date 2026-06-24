@@ -258,62 +258,68 @@
       color: var(--ink-mute);
     }
 
-    /* Compact LRN context top-bar (replaces the old boxed banner). */
+    /* LRN context card — one calm block, Lufthansa type, no boxed pills. */
     .lrn-lesson-bar {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 16px;
       flex-wrap: wrap;
-      padding: 8px 0;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--rule-soft);
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      background: var(--bg-surface);
+      border: 1px solid var(--rule-soft);
+      border-radius: 12px;
     }
 
     .lrn-bar-main {
       display: flex;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 8px;
+      flex-direction: column;
+      gap: 3px;
       flex: 1 1 auto;
       min-width: 0;
     }
 
-    .lrn-bar-pill {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
+    /* Quiet breadcrumb: course · unit · activity, body font, tracked overline. */
+    .lrn-bar-crumb {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--blueprint);
-      border: 1px solid var(--blueprint);
-      padding: 1px 6px;
-      line-height: 1.5;
+      color: var(--ink-mute);
     }
 
-    .lrn-bar-title {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 600;
+    .lrn-bar-course {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
       color: var(--ink);
+      line-height: 1.3;
     }
 
     .lrn-bar-unit {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--ink-mute);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      line-height: 1.3;
     }
 
     .lrn-bar-nav {
       display: flex;
-      gap: 12px;
+      align-items: center;
+      gap: 18px;
       flex: 0 0 auto;
     }
 
     .lrn-bar-nav a {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.06em;
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
       color: var(--ink-soft);
       text-decoration: none;
+      border-bottom: none;
     }
 
     .lrn-bar-nav a:hover {
@@ -326,7 +332,7 @@
       margin-left: 240px;
       display: flex;
       justify-content: center;
-      padding: 56px 32px 96px;
+      padding: 28px 32px 96px;
     }
 
     .lesson-content {
@@ -859,14 +865,19 @@
     }
 
     .lesson-meta-tag {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 3px 10px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      letter-spacing: 0;
+      text-transform: none;
+      padding: 4px 14px;
       border: 1px solid var(--rule-soft);
       color: var(--ink-soft);
       background: transparent;
+    }
+
+    .lesson-meta-tag strong {
+      font-weight: 500;
+      color: var(--ink);
     }
 
     .lesson-meta-tag.time-tag {
@@ -1111,6 +1122,11 @@
       border: 1px solid var(--rule-soft);
       padding: 16px;
       background: var(--bg-surface);
+      cursor: zoom-in;
+    }
+
+    .mermaid-render:hover {
+      border-color: var(--blueprint);
     }
 
     .mermaid-source { display: none; }
@@ -2318,13 +2334,6 @@
         return Math.round((sum / lessonList.length) * 100);
       }
 
-      function lrnLessonProgressLabel(path) {
-        var state = lrnLessonProgressState(path);
-        if (state === 'complete') return 'completed';
-        if (state === 'in-progress') return 'started';
-        return 'open';
-      }
-
       function lrnLessonHref(path) {
         var href = 'lesson.html?path=' + encodeURIComponent(path);
         if (lrnContext && lrnContext.course) {
@@ -2701,6 +2710,8 @@
       var LUCIDE_SVG_ATTRS = 'viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.12em;margin-right:.35em"';
       var LUCIDE_TARGET = '<svg ' + LUCIDE_SVG_ATTRS + '><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
       var LUCIDE_FLASK = '<svg ' + LUCIDE_SVG_ATTRS + '><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></svg>';
+      var LUCIDE_CHECK_CIRCLE = '<svg ' + LUCIDE_SVG_ATTRS + '><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>';
+      var LUCIDE_SETTINGS = '<svg ' + LUCIDE_SVG_ATTRS + '><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>';
 
       function renderLesson(md) {
         var el = document.getElementById('lessonContent');
@@ -2736,21 +2747,23 @@
         if (!lrnContext) return '';
         var current = lrnContext.current;
         var html = '<section class="lrn-lesson-bar" aria-label="LRN course context">';
-        // Left: compact pills + title + unit, all on one line.
         html += '<div class="lrn-bar-main">';
-        html += '<span class="lrn-bar-pill">' + escapeHtml(lrnContext.course.id) + '</span>';
-        html += '<span class="lrn-bar-pill">' + lrnUnitCode(current.groupIndex) + '</span>';
-        html += '<span class="lrn-bar-pill">Activity ' + escapeHtml(lrnLessonOrdinal(lrnContext.currentIndex)) + '</span>';
-        html += '<span class="lrn-bar-pill">' + escapeHtml(lrnLessonProgressLabel(current.path)) + '</span>';
-        html += '<span class="lrn-bar-title">' + escapeHtml(lrnContext.course.title) + '</span>';
-        html += '<span class="lrn-bar-unit">' + escapeHtml(current.groupTitle) + '</span>';
+        // One quiet breadcrumb line — course · unit · activity (no boxed pills,
+        // no progress-state noise like "STARTED").
+        html += '<div class="lrn-bar-crumb">' +
+          escapeHtml(lrnContext.course.id) + ' &middot; ' +
+          lrnUnitCode(current.groupIndex) + ' &middot; Activity ' +
+          (lrnContext.currentIndex + 1) + ' of ' + lrnContext.total +
+          '</div>';
+        html += '<div class="lrn-bar-course">' + escapeHtml(lrnContext.course.title) + '</div>';
+        html += '<div class="lrn-bar-unit">' + escapeHtml(current.groupTitle) + '</div>';
         html += '</div>';
         // Right: compact nav links (no big buttons).
         html += '<nav class="lrn-bar-nav">';
-        if (lrnContext.prev) html += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity">←</a>';
+        if (lrnContext.prev) html += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity" aria-label="Previous activity">&larr;</a>';
         html += '<a href="index.html">Overview</a>';
-        if (lrnContext.next) html += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity">→</a>';
-        html += '<a href="#" id="lrnKeyBtn" title="Set API keys for notebook" aria-label="API key settings">⚙</a>';
+        if (lrnContext.next) html += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity" aria-label="Next activity">&rarr;</a>';
+        html += '<a href="#" id="lrnKeyBtn" title="Set API keys for notebook" aria-label="API key settings">' + LUCIDE_SETTINGS + '</a>';
         html += '</nav>';
         html += '</section>';
         return html;
@@ -3873,6 +3886,27 @@
             openMermaidModal(idx, btn);
           });
         });
+
+        // Click the diagram itself to expand (not just the toolbar button).
+        document.querySelectorAll('.mermaid-render').forEach(function (target) {
+          if (target._bound) return;
+          target._bound = true;
+          var idxMatch = target.id && target.id.match(/mermaid-render-(\d+)/);
+          if (!idxMatch) return;
+          var idx = idxMatch[1];
+          target.setAttribute('role', 'button');
+          target.setAttribute('tabindex', '0');
+          target.setAttribute('aria-label', 'Expand diagram');
+          target.addEventListener('click', function () {
+            openMermaidModal(idx, target);
+          });
+          target.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openMermaidModal(idx, target);
+            }
+          });
+        });
       }
 
       function initMermaidModal() {
@@ -4048,7 +4082,7 @@
       function buildQuizHtml(questions, id, title) {
         if (!questions.length) return '';
         var html = '<div class="quiz-section" id="quiz-' + id + '">';
-        html += '<div class="quiz-title">&#9989; ' + escapeHtml(title) + '</div>';
+        html += '<div class="quiz-title">' + LUCIDE_CHECK_CIRCLE + escapeHtml(title) + '</div>';
         for (var qi = 0; qi < questions.length; qi++) {
           var q = questions[qi];
           var qid = id + '-q' + qi;
