@@ -5,6 +5,11 @@
     { "route": "/login", "rewrite": "/.auth/login/aad", "allowedRoles": ["anonymous", "authenticated"] },
     { "route": "/.auth/me", "allowedRoles": ["anonymous", "authenticated"] },
 
+    { "route": "/403.html", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/*.{css,js,mjs,json,png,jpg,jpeg,gif,svg,webp,ico,woff,woff2,ttf,eot,map}", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/assets/*", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/lrn/*", "allowedRoles": ["anonymous", "authenticated"] },
+
     { "route": "/glossary", "rewrite": "/glossary.html", "allowedRoles": ["lhind"] },
     { "route": "/path", "rewrite": "/prereqs.html", "allowedRoles": ["lhind"] },
     { "route": "/roadmap", "rewrite": "/prereqs.html", "allowedRoles": ["lhind"] },
@@ -12,6 +17,9 @@
 
     { "route": "/*", "allowedRoles": ["lhind"] }
   ],
+  "platform": {
+    "apiRuntime": "node:18"
+  },
   "auth": {
     "rolesSource": "/api/GetRoles",
     "identityProviders": {
