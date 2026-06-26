@@ -315,6 +315,24 @@ p.dropcap::first-letter {
   object-fit: contain;
 }
 
+.nav-settings {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted, #415a77);
+  text-decoration: none;
+  transition: border-color 200ms ease, background-color 200ms ease, color 200ms ease;
+}
+
+.nav-settings:hover {
+  border-color: var(--rule-soft);
+  color: var(--ink);
+}
+
 .nav-edge .btn {
   font-family: var(--font-mono);
   font-size: 0.8rem;

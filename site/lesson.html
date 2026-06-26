@@ -2101,6 +2101,7 @@
     <aside class="toc-sidebar" id="tocSidebar" aria-hidden="true"></aside>
   </div>
 
+  <script src="settings.js"></script>
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260525a"></script>
   <script src="lrn/data.js?v=20260610a"></script>
@@ -2771,99 +2772,19 @@
       }
 
       // ── API key settings (LRN mode) ─────────────────────────────────
-      // Notebooks that hit an LLM read their key from window.__LRN_LLM_KEY__,
-      // which the lesson site postMessages into each JupyterLite iframe (see
-      // sendKeyToNotebook + ide/jupyterlite/lrn-key-bridge.js). The key lives
-      // in localStorage (same-origin, never uploaded). This dialog lets the
-      // learner store it once per browser; injection is automatic from then on.
-      var LRN_KEY_NAME = 'lrn-llm-key';
+      // The key dialog, storage and notebook injection now live in settings.js
+      // (window.LrnSettings) so every page shares one source of truth. These
+      // thin shims keep the local call sites (sendKeyToNotebook on iframe load)
+      // working. The nav gear (#lrnKeyBtn) opens the dialog via settings.js.
       function readLrnKey() {
-        try {
-          var k = localStorage.getItem(LRN_KEY_NAME);
-          if (k) return k;
-          // legacy key name was lrn-llm-key:openai — migrate it once.
-          var legacy = localStorage.getItem('lrn-llm-key:openai');
-          if (legacy) {
-            localStorage.setItem(LRN_KEY_NAME, legacy);
-            localStorage.removeItem('lrn-llm-key:openai');
-            return legacy;
-          }
-        } catch (e) {}
-        return '';
+        return (window.LrnSettings && window.LrnSettings.readKey()) || '';
       }
-      // Push the stored key into a freshly-loaded notebook iframe. Re-send once
-      // after a short delay in case the bridge listener wasn't ready on load.
       function sendKeyToNotebook(frame) {
-        if (!frame || !frame.contentWindow) return;
-        var msg = { type: 'lrn-llm-key', key: readLrnKey() };
-        function post() {
-          try { frame.contentWindow.postMessage(msg, window.location.origin); } catch (e) {}
-        }
-        post();
-        setTimeout(post, 500);
-      }
-      // Re-push the current key into any notebook iframe already on the page
-      // (so saving/clearing in the dialog takes effect without a reopen).
-      function pushKeyToOpenNotebooks() {
-        ['nbFrame', 'lrnNbFrame'].forEach(function (id) {
-          var f = document.getElementById(id);
-          if (f) sendKeyToNotebook(f);
-        });
+        if (window.LrnSettings) window.LrnSettings.sendKeyToNotebook(frame);
       }
       function openLrnKeyDialog() {
-        var existingKey = readLrnKey();
-        try {
-          // clean up any old anthropic key from previous setup
-          localStorage.removeItem('lrn-llm-key:anthropic');
-        } catch (e) {}
-
-        var overlay = document.createElement('div');
-        overlay.id = 'lrnKeyOverlay';
-        overlay.setAttribute('style', 'position:fixed;inset:0;background:rgba(13,27,42,.78);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:inherit');
-        overlay.innerHTML =
-          '<div style="background:#fff;color:#0d1b2a;padding:28px 30px;border-radius:8px;max-width:520px;width:92vw;box-shadow:0 18px 48px rgba(0,0,0,.35)">' +
-          '  <h3 style="margin:0 0 6px 0;font-size:1.05rem">LLM API key for in-browser notebooks</h3>' +
-          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.85rem;line-height:1.45">Some lesson notebooks call an LLM directly from your browser. Save your key once — it stays in this browser only (localStorage, same-origin), no network upload. Leave blank for lessons that don\'t need an LLM (most do not).</p>' +
-          '  <label style="display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#415a77;margin-bottom:4px">OpenAI-compatible key (OpenAI sk-…, Groq gsk_…, OpenRouter)</label>' +
-          '  <div style="display:flex;gap:6px;align-items:stretch;margin-bottom:18px">' +
-          '    <input id="lrnKeyOpenAi" type="password" autocomplete="off" placeholder="sk-… or gsk_…" value="' + escapeAttr(existingKey) + '" style="flex:1;box-sizing:border-box;padding:9px 11px;border:1px solid #ccd6e0;border-radius:4px;font-family:monospace;font-size:.85rem">' +
-          '  </div>' +
-          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.74rem;line-height:1.45">Der Key wird beim Öffnen eines Notebooks automatisch in die JupyterLite-Sandbox injiziert — kein Copy-Paste nötig. Auf dem LHIND-Netz ist ein Key optional (Gateway-Auth übers Netz); außerhalb wird er benötigt.</p>' +
-          '  <div style="display:flex;justify-content:flex-end;gap:8px">' +
-          '    <button id="lrnKeyClear" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Clear</button>' +
-          '    <button id="lrnKeyCancel" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Cancel</button>' +
-          '    <button id="lrnKeySave" type="button" style="padding:8px 16px;background:#415a77;color:#fff;border:1px solid #415a77;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Save</button>' +
-          '  </div>' +
-          '</div>';
-        document.body.appendChild(overlay);
-
-        function close() { overlay.remove(); }
-        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
-        document.getElementById('lrnKeyCancel').addEventListener('click', close);
-        document.getElementById('lrnKeyClear').addEventListener('click', function () {
-          try {
-            localStorage.removeItem(LRN_KEY_NAME);
-            localStorage.removeItem('lrn-llm-key:openai');
-          } catch (e) {}
-          pushKeyToOpenNotebooks();
-          close();
-        });
-        document.getElementById('lrnKeySave').addEventListener('click', function () {
-          var k = document.getElementById('lrnKeyOpenAi').value.trim();
-          try {
-            if (k) localStorage.setItem(LRN_KEY_NAME, k);
-            else localStorage.removeItem(LRN_KEY_NAME);
-            localStorage.removeItem('lrn-llm-key:openai');
-          } catch (e) {}
-          pushKeyToOpenNotebooks();
-          close();
-        });
+        if (window.LrnSettings) window.LrnSettings.open();
       }
-      // Delegated handler so the button works no matter when the bar is rendered.
-      document.addEventListener('click', function (e) {
-        var t = e.target;
-        if (t && t.id === 'lrnKeyBtn') { e.preventDefault(); openLrnKeyDialog(); }
-      });
 
       function buildTOC() {
         var sidebar = document.getElementById('tocSidebar');
