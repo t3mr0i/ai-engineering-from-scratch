@@ -622,6 +622,73 @@
       z-index: 2;
     }
 
+    /* Collapsed-by-default code blocks. Native <details>; summary is the toggle. */
+    .code-collapse {
+      margin: 18px 0;
+      border: 1px solid var(--rule-soft);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-surface);
+    }
+
+    .code-collapse > .code-collapse__summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      list-style: none;
+      font-family: var(--font-body);
+      user-select: none;
+    }
+
+    .code-collapse > .code-collapse__summary::-webkit-details-marker { display: none; }
+
+    /* Disclosure triangle, rotates when open. */
+    .code-collapse > .code-collapse__summary::before {
+      content: '';
+      flex: 0 0 auto;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 0 5px 7px;
+      border-color: transparent transparent transparent var(--ink-soft);
+      transition: transform 160ms ease;
+    }
+
+    .code-collapse[open] > .code-collapse__summary::before { transform: rotate(90deg); }
+
+    .code-collapse__lang {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+    }
+
+    .code-collapse__hint {
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+    }
+
+    .code-collapse[open] .code-collapse__hint { display: none; }
+
+    .code-collapse > .code-collapse__summary:hover .code-collapse__hint { color: var(--blueprint); }
+
+    /* The wrapped <pre> already has its own margin/border; reset inside details.
+       Covers the direct <pre> (normal/editable) and the nested one in fillin. */
+    .code-collapse > pre,
+    .code-collapse > .fillin-block > pre {
+      margin: 0;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      border-top: 1px solid var(--rule-soft);
+      border-radius: 0;
+    }
+
+    .code-collapse > .fillin-block { margin: 0; }
+
     .code-actions {
       position: absolute;
       top: 6px;
@@ -3376,13 +3443,29 @@
         return _runnableBlocks != null && _runnableBlocks.has(blockHash(code));
       }
 
+      // Wrap a rendered code block in a collapsed <details> so all blocks start
+      // closed and expand on click. Native element — no JS, Run/Copy buttons
+      // inside the <pre> keep working once expanded.
+      function wrapCollapsible(inner, lang, lineCount) {
+        var label = lang ? escapeHtml(lang) : 'Code';
+        var lines = lineCount ? ' &middot; ' + lineCount + ' line' + (lineCount === 1 ? '' : 's') : '';
+        return '<details class="code-collapse">' +
+          '<summary class="code-collapse__summary">' +
+            '<span class="code-collapse__lang">' + label + '</span>' +
+            '<span class="code-collapse__hint">Show code' + lines + '</span>' +
+          '</summary>' +
+          inner +
+          '</details>';
+      }
+
       function renderCodeBlock(code, lang, editable, fillin) {
         var l0 = (lang || '').toLowerCase();
+        var _lineCount = code.split('\n').length;
         // Fill-in-the-blank exercise: blanks are written {{blank:SOLUTION}}.
         // Render each as an <input>; "Fill it in for me" drops in the solutions,
         // Run executes the code with the learner's values substituted.
         if (fillin && (l0 === 'python' || l0 === 'py')) {
-          return renderFillinBlock(code, lang);
+          return wrapCollapsible(renderFillinBlock(code, lang), lang || 'python', _lineCount);
         }
         var highlighted = highlightSyntax(escapeHtml(code), lang);
         var langLabel = lang ? '<span class="code-lang">' + escapeHtml(lang) + '</span>' : '';
@@ -3404,12 +3487,12 @@
           var vscodeEd =
             '<button class="code-vscode code-vscode-download" data-code="' + escapeAttr(code) + '" title="Download as .py and open in VS Code">⬇ .py</button>' +
             '<button class="code-vscode code-vscode-open" data-code="' + escapeAttr(code) + '" title="Open this snippet in your local VS Code">VS Code</button>';
-          return '<pre class="code-editable">' + langLabel +
+          return wrapCollapsible('<pre class="code-editable">' + langLabel +
             '<span class="code-edit-hint">editable — change it and Run</span>' +
             '<span class="code-actions">' + runBtn + vscodeEd +
             '<button class="code-reset" title="Restore original">↺</button>' +
             '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button></span>' +
-            '<code contenteditable="true" spellcheck="false" data-original="' + escapeAttr(code) + '">' + highlighted + '</code></pre>';
+            '<code contenteditable="true" spellcheck="false" data-original="' + escapeAttr(code) + '">' + highlighted + '</code></pre>', lang || 'python', _lineCount);
         }
         // "Open in VS Code" for Python blocks: download the snippet as a .py file,
         // or hand it to a local VS Code via the vscode:// deep link.
@@ -3419,7 +3502,7 @@
             '<button class="code-vscode code-vscode-download" data-code="' + escapeAttr(code) + '" title="Download as .py and open in VS Code">⬇ .py</button>' +
             '<button class="code-vscode code-vscode-open" data-code="' + escapeAttr(code) + '" title="Open this snippet in your local VS Code">VS Code</button>';
         }
-        return '<pre>' + langLabel + '<span class="code-actions">' + runBtn + vscodeBtns + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button></span><code>' + highlighted + '</code></pre>';
+        return wrapCollapsible('<pre>' + langLabel + '<span class="code-actions">' + runBtn + vscodeBtns + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button></span><code>' + highlighted + '</code></pre>', lang, _lineCount);
       }
 
       // Render a fill-in-the-blank Python exercise. Blanks: {{blank:SOLUTION}}.
