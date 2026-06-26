@@ -260,60 +260,54 @@
     }
 
     /* LRN context card — one calm block, Lufthansa type, no boxed pills. */
-    .lrn-lesson-bar {
+    /* Lesson context, grouped on the right of the page header (nav-edge). */
+    .lesson-headbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      padding: 14px 18px;
-      margin-bottom: 28px;
-      background: var(--bg-surface);
-      border: 1px solid var(--rule-soft);
-      border-radius: 12px;
-    }
-
-    .lrn-bar-main {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      flex: 1 1 auto;
+      gap: 20px;
       min-width: 0;
     }
 
-    /* Quiet breadcrumb: course · unit · activity, body font, tracked overline. */
-    .lrn-bar-crumb {
+    .lesson-headbar__meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      text-align: right;
+    }
+
+    /* Quiet breadcrumb: full unit name · activity position (no codes). */
+    .lesson-headbar__crumb {
       font-family: var(--font-body);
       font-size: 0.72rem;
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--ink-mute);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .lrn-bar-course {
+    .lesson-headbar__course {
       font-family: var(--font-body);
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 500;
       color: var(--ink);
-      line-height: 1.3;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .lrn-bar-unit {
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--ink-soft);
-      line-height: 1.3;
-    }
-
-    .lrn-bar-nav {
+    .lesson-headbar__nav {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
       flex: 0 0 auto;
     }
 
-    .lrn-bar-nav a {
+    .lesson-headbar__nav a {
       display: inline-flex;
       align-items: center;
       font-family: var(--font-body);
@@ -323,8 +317,13 @@
       border-bottom: none;
     }
 
-    .lrn-bar-nav a:hover {
+    .lesson-headbar__nav a:hover {
       color: var(--blueprint);
+    }
+
+    /* On narrow screens drop the stacked text, keep the nav controls. */
+    @media (max-width: 640px) {
+      .lesson-headbar__meta { display: none; }
     }
 
     .lesson-main {
@@ -2067,11 +2066,13 @@
 
   <div class="scroll-progress" id="scrollProgress"></div>
 
-  <header class="nav-edge" aria-label="Site navigation">
+  <header class="nav-edge nav-edge--lesson" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
       <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
       <span>LHIND Learning Catalog</span>
     </a>
+    <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <div id="lessonHeaderContext" class="lesson-headbar"></div>
   </header>
 
   <button class="lesson-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
@@ -2718,7 +2719,9 @@
       function renderLesson(md) {
         var el = document.getElementById('lessonContent');
         var html = '';
-        if (lrnContext) html += renderLrnLessonBanner();
+        // LRN context now lives in the page header (nav-edge), not as a card
+        // above the lesson body. Fill the header slot instead of the content.
+        renderLessonHeaderContext();
         html += parseMd(md);
         html += '<div class="ai-panels" id="aiPanels"></div>';
         html = addBottomNav(html);
@@ -2745,30 +2748,41 @@
         });
       }
 
-      function renderLrnLessonBanner() {
-        if (!lrnContext) return '';
-        var current = lrnContext.current;
-        var html = '<section class="lrn-lesson-bar" aria-label="LRN course context">';
-        html += '<div class="lrn-bar-main">';
-        // One quiet breadcrumb line — course · unit · activity (no boxed pills,
-        // no progress-state noise like "STARTED").
-        html += '<div class="lrn-bar-crumb">' +
-          escapeHtml(lrnContext.course.id) + ' &middot; ' +
-          lrnUnitCode(current.groupIndex) + ' &middot; Activity ' +
-          (lrnContext.currentIndex + 1) + ' of ' + lrnContext.total +
-          '</div>';
-        html += '<div class="lrn-bar-course">' + escapeHtml(lrnContext.course.title) + '</div>';
-        html += '<div class="lrn-bar-unit">' + escapeHtml(current.groupTitle) + '</div>';
-        html += '</div>';
-        // Right: compact nav links (no big buttons).
-        html += '<nav class="lrn-bar-nav">';
-        if (lrnContext.prev) html += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity" aria-label="Previous activity">&larr;</a>';
-        html += '<a href="index.html">Overview</a>';
-        if (lrnContext.next) html += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity" aria-label="Next activity">&rarr;</a>';
-        html += '<a href="#" id="lrnKeyBtn" title="Set API keys for notebook" aria-label="API key settings">' + LUCIDE_SETTINGS + '</a>';
-        html += '</nav>';
-        html += '</section>';
-        return html;
+      // Fill the page header (nav-edge) with the LRN course context, grouped on
+      // the right: breadcrumb + course title stacked, nav controls beside them.
+      // The settings gear is always present (even outside LRN) so the key dialog
+      // stays reachable on every lesson.
+      function renderLessonHeaderContext() {
+        var slot = document.getElementById('lessonHeaderContext');
+        if (!slot) return;
+
+        var meta = '';
+        if (lrnContext) {
+          var current = lrnContext.current;
+          // Full names only — no Pxx/Lxx/Uxx codes (see CLAUDE.md LRN rules).
+          // Crumb: unit name · activity position. Title: full course name.
+          meta =
+            '<div class="lesson-headbar__meta">' +
+            '<div class="lesson-headbar__crumb">' +
+              escapeHtml(current.groupTitle) + ' &middot; Activity ' +
+              (lrnContext.currentIndex + 1) + ' of ' + lrnContext.total +
+            '</div>' +
+            '<div class="lesson-headbar__course">' + escapeHtml(lrnContext.course.title) + '</div>' +
+            '</div>';
+        }
+
+        var nav = '<nav class="lesson-headbar__nav" aria-label="Lesson navigation">';
+        if (lrnContext && lrnContext.prev) {
+          nav += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity" aria-label="Previous activity">&larr;</a>';
+        }
+        nav += '<a href="index.html">Overview</a>';
+        if (lrnContext && lrnContext.next) {
+          nav += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity" aria-label="Next activity">&rarr;</a>';
+        }
+        nav += '<a href="#" id="lrnKeyBtn" title="Bifrost gateway key for notebooks" aria-label="API key settings">' + LUCIDE_SETTINGS + '</a>';
+        nav += '</nav>';
+
+        slot.innerHTML = meta + nav;
       }
 
       // ── API key settings (LRN mode) ─────────────────────────────────
