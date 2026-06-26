@@ -1,43 +1,16 @@
 {
   "routes": [
-    { "route": "/.auth/login/aad", "allowedRoles": ["anonymous", "authenticated"] },
-    { "route": "/.auth/logout", "allowedRoles": ["anonymous", "authenticated"] },
-    { "route": "/login", "rewrite": "/.auth/login/aad", "allowedRoles": ["anonymous", "authenticated"] },
-    { "route": "/.auth/me", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/gate.html", "allowedRoles": ["anonymous"] },
+    { "route": "/api/gate", "allowedRoles": ["anonymous"] },
+    { "route": "/api/check", "allowedRoles": ["anonymous"] },
 
-    { "route": "/403.html", "allowedRoles": ["anonymous", "authenticated"] },
-    { "route": "/*.{css,js,mjs,json,png,jpg,jpeg,gif,svg,webp,ico,woff,woff2,ttf,eot,map}", "allowedRoles": ["anonymous", "authenticated"] },
-    { "route": "/assets/*", "allowedRoles": ["anonymous", "authenticated"] },
-    { "route": "/lrn/*", "allowedRoles": ["anonymous", "authenticated"] },
-
-    { "route": "/glossary", "rewrite": "/glossary.html", "allowedRoles": ["lhind"] },
-    { "route": "/path", "rewrite": "/prereqs.html", "allowedRoles": ["lhind"] },
-    { "route": "/roadmap", "rewrite": "/prereqs.html", "allowedRoles": ["lhind"] },
-    { "route": "/about", "rewrite": "/about.html", "allowedRoles": ["lhind"] },
-
-    { "route": "/*", "allowedRoles": ["lhind"] }
+    { "route": "/glossary", "rewrite": "/glossary.html" },
+    { "route": "/path", "rewrite": "/prereqs.html" },
+    { "route": "/roadmap", "rewrite": "/prereqs.html" },
+    { "route": "/about", "rewrite": "/about.html" }
   ],
   "platform": {
     "apiRuntime": "node:18"
-  },
-  "auth": {
-    "rolesSource": "/api/GetRoles",
-    "identityProviders": {
-      "azureActiveDirectory": {
-        "registration": {
-          "openIdIssuer": "https://login.microsoftonline.com/d9f5cb22-01c9-4956-b859-4f876f6a5c83/v2.0",
-          "clientIdSettingName": "AAD_CLIENT_ID",
-          "clientSecretSettingName": "AAD_CLIENT_SECRET"
-        },
-        "login": {
-          "loginParameters": ["scope=openid profile email"]
-        }
-      }
-    }
-  },
-  "responseOverrides": {
-    "401": { "redirect": "/.auth/login/aad", "statusCode": 302 },
-    "403": { "rewrite": "/403.html", "statusCode": 403 }
   },
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff"

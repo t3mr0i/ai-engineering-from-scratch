@@ -1,7 +1,7 @@
 {
   "name": "ai-engineering-swa-api",
   "version": "1.0.0",
-  "description": "Azure Static Web Apps managed functions — custom roles for Entra auth.",
+  "description": "Azure Static Web Apps managed functions — passcode gate for the trial.",
   "private": true,
-  "main": "GetRoles/index.js"
+  "main": "gate/index.js"
 }
