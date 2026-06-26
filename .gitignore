@@ -78,3 +78,4 @@ site/jupyterlite/
 # LRN audit/planning artifacts (large intermediate JSON/specs/docx, not product code)
 /outputs/lrn-audit
 /outputs/plan-tc-notebooks.md
+docs/argumentation-api-key-vorkonfiguriert.md

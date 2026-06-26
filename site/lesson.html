@@ -2770,16 +2770,48 @@
       }
 
       // ── API key settings (LRN mode) ─────────────────────────────────
-      // Notebooks that hit an LLM read their key from os.environ. The key is
-      // stored in localStorage (same-origin) and made visible to the Pyodide
-      // kernel via a bootstrap cell that scripts/generate_notebooks.py emits
-      // when a NotebookSpec sets requires_api_key=true. This dialog lets the
-      // learner paste their key once per browser; nothing is sent to a server.
-      function openLrnKeyDialog() {
-        var existingKey = '';
+      // Notebooks that hit an LLM read their key from window.__LRN_LLM_KEY__,
+      // which the lesson site postMessages into each JupyterLite iframe (see
+      // sendKeyToNotebook + ide/jupyterlite/lrn-key-bridge.js). The key lives
+      // in localStorage (same-origin, never uploaded). This dialog lets the
+      // learner store it once per browser; injection is automatic from then on.
+      var LRN_KEY_NAME = 'lrn-llm-key';
+      function readLrnKey() {
         try {
-          // legacy key name was lrn-llm-key:openai — keep it for backward compat
-          existingKey = localStorage.getItem('lrn-llm-key:openai') || '';
+          var k = localStorage.getItem(LRN_KEY_NAME);
+          if (k) return k;
+          // legacy key name was lrn-llm-key:openai — migrate it once.
+          var legacy = localStorage.getItem('lrn-llm-key:openai');
+          if (legacy) {
+            localStorage.setItem(LRN_KEY_NAME, legacy);
+            localStorage.removeItem('lrn-llm-key:openai');
+            return legacy;
+          }
+        } catch (e) {}
+        return '';
+      }
+      // Push the stored key into a freshly-loaded notebook iframe. Re-send once
+      // after a short delay in case the bridge listener wasn't ready on load.
+      function sendKeyToNotebook(frame) {
+        if (!frame || !frame.contentWindow) return;
+        var msg = { type: 'lrn-llm-key', key: readLrnKey() };
+        function post() {
+          try { frame.contentWindow.postMessage(msg, window.location.origin); } catch (e) {}
+        }
+        post();
+        setTimeout(post, 500);
+      }
+      // Re-push the current key into any notebook iframe already on the page
+      // (so saving/clearing in the dialog takes effect without a reopen).
+      function pushKeyToOpenNotebooks() {
+        ['nbFrame', 'lrnNbFrame'].forEach(function (id) {
+          var f = document.getElementById(id);
+          if (f) sendKeyToNotebook(f);
+        });
+      }
+      function openLrnKeyDialog() {
+        var existingKey = readLrnKey();
+        try {
           // clean up any old anthropic key from previous setup
           localStorage.removeItem('lrn-llm-key:anthropic');
         } catch (e) {}
@@ -2790,13 +2822,12 @@
         overlay.innerHTML =
           '<div style="background:#fff;color:#0d1b2a;padding:28px 30px;border-radius:8px;max-width:520px;width:92vw;box-shadow:0 18px 48px rgba(0,0,0,.35)">' +
           '  <h3 style="margin:0 0 6px 0;font-size:1.05rem">LLM API key for in-browser notebooks</h3>' +
-          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.85rem;line-height:1.45">Some lesson notebooks call an LLM directly from your browser. Paste your key once — it stays in this browser only (localStorage, same-origin), no network upload. Leave blank for lessons that don\'t need an LLM (most do not).</p>' +
+          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.85rem;line-height:1.45">Some lesson notebooks call an LLM directly from your browser. Save your key once — it stays in this browser only (localStorage, same-origin), no network upload. Leave blank for lessons that don\'t need an LLM (most do not).</p>' +
           '  <label style="display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#415a77;margin-bottom:4px">OpenAI-compatible key (OpenAI sk-…, Groq gsk_…, OpenRouter)</label>' +
           '  <div style="display:flex;gap:6px;align-items:stretch;margin-bottom:18px">' +
           '    <input id="lrnKeyOpenAi" type="password" autocomplete="off" placeholder="sk-… or gsk_…" value="' + escapeAttr(existingKey) + '" style="flex:1;box-sizing:border-box;padding:9px 11px;border:1px solid #ccd6e0;border-radius:4px;font-family:monospace;font-size:.85rem">' +
-          '    <button id="lrnKeyCopy" type="button" title="Copy key to clipboard (paste into notebook cell)" style="padding:0 12px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.78rem;color:#415a77">Copy</button>' +
           '  </div>' +
-          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.74rem;line-height:1.45">JupyterLite läuft in einer isolierten Sandbox, in die wir Keys nicht automatisch injizieren können. <b>Workflow:</b> Key hier speichern → "Copy" klicken → Notebook öffnen → in die "API-Key"-Cell pasten. Einmal pro Browser-Session genügt; das Notebook merkt sich den Key bis du den Tab schließt.</p>' +
+          '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.74rem;line-height:1.45">Der Key wird beim Öffnen eines Notebooks automatisch in die JupyterLite-Sandbox injiziert — kein Copy-Paste nötig. Auf dem LHIND-Netz ist ein Key optional (Gateway-Auth übers Netz); außerhalb wird er benötigt.</p>' +
           '  <div style="display:flex;justify-content:flex-end;gap:8px">' +
           '    <button id="lrnKeyClear" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Clear</button>' +
           '    <button id="lrnKeyCancel" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Cancel</button>' +
@@ -2808,36 +2839,22 @@
         function close() { overlay.remove(); }
         overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
         document.getElementById('lrnKeyCancel').addEventListener('click', close);
-        document.getElementById('lrnKeyCopy').addEventListener('click', function () {
-          var input = document.getElementById('lrnKeyOpenAi');
-          var key = input.value.trim();
-          if (!key) {
-            input.focus();
-            return;
-          }
-          var btn = document.getElementById('lrnKeyCopy');
-          var original = btn.textContent;
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(key).then(function () {
-              btn.textContent = 'Copied ✓';
-              setTimeout(function () { btn.textContent = original; }, 1500);
-            });
-          } else {
-            input.type = 'text'; input.select(); document.execCommand('copy'); input.type = 'password';
-            btn.textContent = 'Copied ✓';
-            setTimeout(function () { btn.textContent = original; }, 1500);
-          }
-        });
         document.getElementById('lrnKeyClear').addEventListener('click', function () {
-          try { localStorage.removeItem('lrn-llm-key:openai'); } catch (e) {}
+          try {
+            localStorage.removeItem(LRN_KEY_NAME);
+            localStorage.removeItem('lrn-llm-key:openai');
+          } catch (e) {}
+          pushKeyToOpenNotebooks();
           close();
         });
         document.getElementById('lrnKeySave').addEventListener('click', function () {
           var k = document.getElementById('lrnKeyOpenAi').value.trim();
           try {
-            if (k) localStorage.setItem('lrn-llm-key:openai', k);
-            else localStorage.removeItem('lrn-llm-key:openai');
+            if (k) localStorage.setItem(LRN_KEY_NAME, k);
+            else localStorage.removeItem(LRN_KEY_NAME);
+            localStorage.removeItem('lrn-llm-key:openai');
           } catch (e) {}
+          pushKeyToOpenNotebooks();
           close();
         });
       }
@@ -4406,7 +4423,7 @@
         }
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
-        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">N</div><div class="ai-panel-title">Try the Example</div></div><div class="ai-panel-subtitle">Walk through the agent flow before answering the quiz</div><div id="lrnNbContent" class="panel-loading">Loading notebook…</div>';
+        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">N</div><div class="ai-panel-title">Try the Example</div></div><div class="ai-panel-subtitle">Run this lesson's code before answering the quiz</div><div id="lrnNbContent" class="panel-loading">Loading notebook…</div>';
         container.appendChild(panel);
 
         var gitlabUrl = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath;
@@ -4481,6 +4498,7 @@
                 var l = document.getElementById('lrnNbLoading');
                 if (l) l.style.display = 'none';
                 frame.style.visibility = 'visible';
+                sendKeyToNotebook(frame);
               });
             });
           });
@@ -4588,6 +4606,7 @@
               var l = document.getElementById('nbLoading');
               if (l) l.style.display = 'none';
               frame.style.visibility = 'visible';
+              sendKeyToNotebook(frame);
             });
           });
         }

@@ -26,8 +26,15 @@ async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
     payload = {"model": model or lrn_llm.DEFAULT_MODEL, "messages": messages,
                "max_completion_tokens": max_tokens}
     headers = {"content-type": "application/json"}
-    if lrn_llm.API_KEY:
-        headers["Authorization"] = "Bearer " + lrn_llm.API_KEY
+    _key = lrn_llm.API_KEY
+    if not _key:
+        try:
+            import js as _js
+            _key = getattr(_js, "__LRN_LLM_KEY__", "") or ""
+        except Exception:
+            _key = ""
+    if _key:
+        headers["Authorization"] = "Bearer " + _key
     url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"
     body = json.dumps(payload)
     if _IN_PYODIDE:

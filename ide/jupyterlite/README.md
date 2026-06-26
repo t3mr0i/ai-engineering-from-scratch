@@ -40,10 +40,32 @@ done
 rm -rf /tmp/jlite-build && mkdir -p /tmp/jlite-build && cd /tmp/jlite-build
 /tmp/jlite-venv/bin/jupyter lite build --contents /tmp/jlite-content --output-dir ./_output
 
-# 4. copy into the site (gitignored) and deploy
+# 4. inject the LRN key bridge, then copy into the site (gitignored) and deploy.
+#    `jupyter lite build` regenerates every */index.html, so the bridge that
+#    receives the API key from the lesson site (postMessage -> window global)
+#    MUST be re-applied after each build — it can't live inside the app tree.
 cd -    # back to repo root
+python3 ide/jupyterlite/inject-key-bridge.py /tmp/jlite-build/_output
 rm -rf site/jupyterlite && cp -r /tmp/jlite-build/_output site/jupyterlite
 ```
+
+## API key injection (lesson site → notebook)
+
+Notebooks that call the LHIND gateway need an Authorization header **only off
+the LHIND network** (in-network is WAF/IP-authed). The lesson site holds the
+key centrally in `localStorage['lrn-llm-key']` (gear icon in the lesson
+header). The flow, all same-origin (no CORS):
+
+```
+localStorage['lrn-llm-key']
+  -> site/lesson.html postMessage({type:'lrn-llm-key', key}) to the iframe
+  -> ide/jupyterlite/lrn-key-bridge.js sets window.__LRN_LLM_KEY__
+  -> lrn_llm._key() reads it via Pyodide's `js` module
+  -> Authorization: Bearer <key>  (omitted when empty)
+```
+
+`inject-key-bridge.py` (step 4) wires the bridge into the built HTML; it is
+idempotent. Empty key is the in-network default and must keep working.
 
 Then deploy the site (see CLAUDE.md / the SWA deploy steps — remember to also
 stage `phases/` into `site/phases/` for the lesson docs).

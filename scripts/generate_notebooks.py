@@ -116,14 +116,37 @@ def main() -> int:
     ap.add_argument("--lesson", help="Generate only this lesson_path (e.g. phases/14-.../13-langgraph...)")
     ap.add_argument("--dry-run", action="store_true", help="Show what would change, don't write")
     ap.add_argument("--specs", type=Path, default=SPECS_FILE)
+    ap.add_argument(
+        "--include-all-built",
+        action="store_true",
+        help="Also allowlist EVERY lesson that builds a notebook (has code/main.py or "
+        "code/notebook*.py and no code/.no-notebook), as ['*']. Curated per-course "
+        "specs keep their finer entry; this only ADDS the built-but-uncurated lessons. "
+        "Use to surface all main.py lesson notebooks in LRN mode, not just the audit set.",
+    )
     args = ap.parse_args()
 
-    if not args.specs.exists():
+    specs_present = args.specs.exists()
+    if not specs_present and not args.include_all_built:
         print(f"Specs file not found: {args.specs}", file=sys.stderr)
         print("Run the audit workflow first: Workflow({name: 'audit-tc-courses'})", file=sys.stderr)
         return 2
 
-    data = json.loads(args.specs.read_text(encoding="utf-8"))
+    if specs_present:
+        data = json.loads(args.specs.read_text(encoding="utf-8"))
+    else:
+        # No specs locally (they are gitignored). With --include-all-built we can
+        # still refresh the allowlist: seed the curated base from the committed
+        # notebook-index.json so the audit per-course entries survive, and only ADD
+        # the built-but-uncurated lessons. Per-lesson generation is skipped.
+        print("Specs file absent; --include-all-built runs in allowlist-only mode "
+              "(no notebook.py generation, curated base read from notebook-index.json).")
+        existing = REPO / "site" / "lrn" / "notebook-index.json"
+        seeded = json.loads(existing.read_text(encoding="utf-8")).get("curated", {}) if existing.exists() else {}
+        data = {"lessons": [
+            {"lesson_path": k, "course": (c if c != "*" else None)}
+            for k, courses in seeded.items() for c in courses
+        ]}
     specs = data.get("lessons", [])
     if args.lesson:
         specs = [s for s in specs if s.get("lesson_path") == args.lesson]
@@ -132,7 +155,9 @@ def main() -> int:
             return 2
 
     n_written = n_unchanged = n_skipped = n_opted_out = 0
-    for spec in specs:
+    # In allowlist-only mode (no specs on disk) the seeded "specs" carry no cells,
+    # so skip generation entirely and jump to the allowlist refresh below.
+    for spec in (specs if specs_present else []):
         lesson_path = spec.get("lesson_path")
         if not lesson_path:
             continue
@@ -224,7 +249,30 @@ def main() -> int:
             if s.get("should_have_notebook") is False:
                 continue
             cur[s["lesson_path"]].append(s.get("course") or "*")
-        idx_obj = {"curated": {k: sorted(set(v)) for k, v in cur.items()}}
+        curated = {k: sorted(set(v)) for k, v in cur.items()}
+
+        if args.include_all_built:
+            # Add every lesson that actually builds a notebook but isn't part of the
+            # curated audit set. These are the plain main.py code demos: no per-course
+            # variant, so they get ['*']. Curated entries keep their finer per-course
+            # lists — we never overwrite an existing curated key.
+            added = 0
+            for code_dir in sorted(REPO.glob("phases/*/*/code")):
+                lesson_path = str(code_dir.parent.relative_to(REPO))
+                if lesson_path in curated:
+                    continue
+                if (code_dir / ".no-notebook").exists():
+                    continue
+                has_build = (code_dir / "main.py").exists() or any(
+                    code_dir.glob("notebook*.py")
+                )
+                if not has_build:
+                    continue
+                curated[lesson_path] = ["*"]
+                added += 1
+            print(f"--include-all-built: added {added} built-but-uncurated lesson paths")
+
+        idx_obj = {"curated": curated}
         body = json.dumps(idx_obj, ensure_ascii=False, indent=0)
         lrn = REPO / "site" / "lrn"
         (lrn / "notebook-index.json").write_text(body, encoding="utf-8")
