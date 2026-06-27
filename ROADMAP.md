@@ -539,6 +539,12 @@ parsed by `site/build.js` into the lesson catalog.
 
 ## Phase 18: Ethics, Safety & Alignment — ✅ (~31 hours)
 
+> Off the LP03 (Technology & Engineering Delivery) path. A TC engages
+> with these topics through Phase 17 (compliance · SOC 2 / GDPR / EU AI Act)
+> and Phase 11 (guardrails, prompt-injection defense, responsible AI
+> compliance). Skim for vocabulary; deep-dive only if a client engagement
+> makes alignment research the work itself.
+
 | # | Lesson | Status | Est. |
 |---|--------|--------|------|
 | 01 | [Instruction-Following as Alignment Signal](phases/18-ethics-safety-alignment/01-instruction-following-alignment-signal) | ✅ | ~45 min |
@@ -573,6 +579,13 @@ parsed by `site/build.js` into the lesson catalog.
 | 30 | [Dual-Use Risk — Cyber, Bio, Chem, Nuclear](phases/18-ethics-safety-alignment/30-dual-use-risk-cyber-bio-chem-nuclear) | ✅ | ~75 min |
 
 ## Phase 19: Capstone Projects — ✅ (~620 hours)
+
+> Off the LP03 path. These are research / engineering-portfolio capstones
+> (~620 hours total). For client delivery work, the equivalent artefact
+> is the engagement deliverable itself: a working PoC, a steering-deck,
+> a runbook, an ADR set, and a measurable eval report — none of which
+> requires building from scratch. Use Phase 11/13/14/17 lessons as the
+> vocabulary, not Phase 19 as the work plan.
 
 | # | Project | Status | Est. |
 |---|---------|--------|------|
