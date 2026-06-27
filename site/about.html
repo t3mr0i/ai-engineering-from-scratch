@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="What LHIND AI Learning Catalog is, why it exists, who builds it, and how the site is made. A free, open-source, MIT-licensed curriculum.">
+  <meta name="description" content="About the LHIND AI Learning Catalog — a working curriculum for technology consultants who build and ship AI systems for clients.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/about.html">
   <meta property="og:title" content="About · LHIND AI Learning Catalog">
-  <meta property="og:description" content="Why this curriculum exists, who builds it, and how the site is made. Free, open source, MIT.">
+  <meta property="og:description" content="About the LHIND AI Learning Catalog — a working curriculum for technology consultants who build and ship AI systems for clients.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <meta property="og:url" content="https://aiengineeringfromscratch.com/about.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="About · LHIND AI Learning Catalog">
-  <meta name="twitter:description" content="Why this curriculum exists, who builds it, and how the site is made.">
+  <meta name="twitter:description" content="A working curriculum for technology consultants who build and ship AI systems for clients.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,39 +83,41 @@
     <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </a>
+    <a href="#" id="themeToggle" class="nav-settings theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+      <span id="themeIcon" class="theme-icon">N</span>
+    </a>
   </header>
   <script src="settings.js"></script>
 
   <main class="container">
     <article class="about">
       <div class="about-eyebrow">About</div>
-      <h1>About this project</h1>
+      <h1>About the LHIND AI Learning Catalog</h1>
 
-      <p class="lede">LHIND AI Learning Catalog is a free, open-source curriculum from Lufthansa Industry Solutions that implements every core AI algorithm by hand: 490 lessons across 14 phases, from core AI concepts to autonomous agents, in Python, TypeScript, Rust, and Julia.</p>
+      <p class="lede">A working curriculum for technology consultants who build and ship AI systems for clients. Each lesson reads primary sources, ships a runnable artefact, and ends on something a TC keeps: a prompt, a rubric, an agent, or an MCP server.</p>
 
       <h2>Why it exists</h2>
-      <p>Most AI material comes in pieces, and most of it asks you to watch: the hundredth explainer video, someone else's screen, a deploy you copy without understanding. You can finish a playlist and still not be able to explain a loss curve, or wire a tool into an agent without knowing what attention is actually doing inside the model that calls it.</p>
-      <p>We built this on a different belief: you learn best by doing the work yourself, by reading, solving real exercises, and building the thing. That is how we learned it, and it is the part we enjoyed, so we wrote it down. We wrote and tuned every task list ourselves and aligned them to real learning standards. You write each algorithm from the underlying math first, then run it through the production library to see what the library was doing all along. By the time PyTorch appears, there is nothing mysterious left in it, and each lesson leaves you with something you keep: a prompt, a skill, an agent, or an MCP server.</p>
+      <p>You can finish an AI playlist and still not be able to explain a loss curve, or wire a tool into an agent without knowing what attention is doing inside the model that calls it. This curriculum is built around that gap. Every task starts from the underlying math or spec, runs against the production library, and ends on something a TC can hand a steering committee, an InfoSec reviewer, or a procurement officer.</p>
 
-      <h2>How it is made</h2>
-      <p>The lessons are authored with AI assistance and reviewed by a human against primary sources. Where a lesson states a fact, it cites the original: an RFC, a spec, or a research paper, not a secondary summary. Corrections are welcome and tracked in the open on GitLab.</p>
-      <p>The site itself is deliberately plain: hand-written HTML, CSS, and vanilla JavaScript, no framework. A single build script (<code>site/build.js</code>) reads the lesson Markdown in the repository and generates the catalog, search index, sitemap, and <code>llms.txt</code> on every deploy, so the published numbers can never drift from the source. It is hosted on Azure Static Web Apps.</p>
+      <h2>How the lessons are made</h2>
+      <p>Drafts are produced with AI assistance and reviewed against primary sources. Where a lesson states a fact, it cites the original — an RFC, a spec, a research paper — not a secondary summary. Corrections and lesson ideas are tracked in the open on GitLab and land in the next revision.</p>
+      <p>The catalog, search index, sitemap, and <code>llms.txt</code> are regenerated on every deploy from the lesson Markdown in the repository, so the published numbers cannot drift from the source. Hosting is run internally at LHIND; the source is the canonical artefact.</p>
 
       <h2>Who builds it</h2>
-      <p>Maintained by Lufthansa Industry Solutions (LHIND) and contributors. It is MIT-licensed and free forever. There is no token, no course upsell, and no gated content.</p>
+      <p>Maintained by Lufthansa Industry Solutions (LHIND) engineers and the LHIND technology-consulting community. The source is MIT-licensed.</p>
 
       <h2>Get involved</h2>
       <ul>
         <li>Read the source: <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener">LHIND GitLab · ai-training</a></li>
         <li>Found an error or have a lesson idea? <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/issues/new" target="_blank" rel="noopener">Open an issue</a>.</li>
-        <li>Start learning: <a href="index.html">browse the courses</a> or <a href="prereqs.html">follow the roadmap</a>.</li>
+        <li>Pick the next task: <a href="index.html">browse the catalog</a> or <a href="prereqs.html">check the prerequisites</a>.</li>
       </ul>
     </article>
   </main>
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>© 2026 · open source · free forever</p>
+      <p>© 2026 · LHIND · MIT-licensed</p>
       <div class="footer-links">
         <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener">GitLab</a>
         <a href="about.html">About</a>
