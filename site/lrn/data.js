@@ -436,7 +436,7 @@ window.LrnData = {
       title: "AI Workforce Strategy",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
-      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      profileIds: ["bsc", "pvs", "am", "pma", "corp", "lead"],
       dimensions: ["change", "business"],
       interests: ["leadership", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
@@ -449,7 +449,7 @@ window.LrnData = {
       title: "Decision Making with AI",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
-      profileIds: ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      profileIds: ["bsc", "pvs", "am", "pma", "corp", "lead"],
       dimensions: ["data", "change"],
       interests: ["leadership", "governance", "consulting"],
       levels: ["Deepen", "Create"],
@@ -839,7 +839,7 @@ window.LrnData = {
       title: "AI Human Review and Approval Workflow Design",
       status: "New from governance/compliance gap",
       source: "DOCX/XLSX capability gap",
-      profileIds: ["corp", "lead", "bsc", "pma", "am", "tc"],
+      profileIds: ["corp", "lead", "bsc", "pma", "am"],
       dimensions: ["data", "change"],
       interests: ["governance", "leadership"],
       levels: ["Deepen", "Create"],
@@ -852,7 +852,7 @@ window.LrnData = {
       title: "AI Operating Model and Center of Excellence",
       status: "New from leadership/operating model gap",
       source: "DOCX/XLSX role gap",
-      profileIds: ["lead", "pma", "corp", "bsc", "pvs", "tc"],
+      profileIds: ["lead", "pma", "corp", "bsc", "pvs"],
       dimensions: ["change", "business"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
@@ -930,7 +930,7 @@ window.LrnData = {
       title: "AI Champion / Community Lead",
       status: "Role format from DOCX",
       source: "DOCX",
-      profileIds: ["bsc", "pvs", "tc", "pma", "lead", "corp"],
+      profileIds: ["bsc", "pvs", "pma", "lead", "corp"],
       dimensions: ["change", "business", "prompting"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
@@ -943,7 +943,7 @@ window.LrnData = {
     {
       id: "baseline",
       code: "LP01",
-      label: "Core AI Foundation Path",
+      label: "Core AI Foundation",
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
@@ -953,7 +953,7 @@ window.LrnData = {
     {
       id: "consulting",
       code: "LP02",
-      label: "Consulting & Value Creation Path",
+      label: "Consulting & Value Creation",
       profileIds: ["bsc", "pvs", "pma"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
@@ -964,7 +964,7 @@ window.LrnData = {
     {
       id: "technology",
       code: "LP03",
-      label: "Technology & Engineering Delivery Path",
+      label: "Technology & Engineering Delivery",
       profileIds: ["tc", "am"],
       stages: [
         { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
@@ -975,7 +975,7 @@ window.LrnData = {
     {
       id: "leadership",
       code: "LP04",
-      label: "Leadership & Transformation Path",
+      label: "Leadership & Transformation",
       profileIds: ["lead", "corp", "pma", "bsc"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
@@ -986,7 +986,7 @@ window.LrnData = {
     {
       id: "corporate-functions",
       code: "LP05",
-      label: "Corporate Functions Enablement Path",
+      label: "Corporate Functions Enablement",
       profileIds: ["corp"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
