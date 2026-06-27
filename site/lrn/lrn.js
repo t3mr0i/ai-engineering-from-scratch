@@ -394,11 +394,11 @@
       // combination simply has no on-path match — point the user at Optional.
       var hasOptional = computed.entries.some(function (entry) { return entry.kind === "optional"; });
       if (term) {
-        empty.textContent = "No courses match this search.";
+        empty.textContent = "No match.";
       } else if (state.filter === "recommended" && hasOptional) {
-        empty.textContent = "There is no direct path course for this level and interest. Check Optional for adjacent courses.";
+        empty.textContent = "No on-path match. Try the All filter.";
       } else {
-        empty.textContent = "No courses in this filter. Switch to All or adjust the search.";
+        empty.textContent = "No matches. Try All or clear the search.";
       }
       replaceChildren(els.courseGrid, [empty]);
       return;
