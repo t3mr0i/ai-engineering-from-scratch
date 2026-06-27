@@ -2162,7 +2162,7 @@
       <div class="lesson-content" id="lessonContent">
         <div class="lesson-loading" id="lessonLoading">
           <div class="spinner"></div>
-          <div class="lesson-loading-text">Loading lesson...</div>
+          <div class="lesson-loading-text">Loading...</div>
         </div>
       </div>
     </main>
@@ -4702,7 +4702,7 @@
             }).catch(function (err) {
               output.textContent = String(err.message || err);
               output.className = 'code-output code-output-error';
-              status.textContent = 'Failed to load Python';
+              status.textContent = 'Python load failed';
             }).then(function () {
               runBtn.disabled = false;
             });
