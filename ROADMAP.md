@@ -4,9 +4,8 @@ Status tracker for every phase and lesson. The status glyphs in this file feed
 the website (`site/build.js` parses them into `site/data.js`); do not change
 their shape.
 
-Total estimated time: ~314 hours, at your own pace.
-
-**Legend:** ✅ Complete &nbsp;·&nbsp; 🚧 In Progress &nbsp;·&nbsp; ⬚ Planned
+**Status:** ✅ complete (per phase + per lesson). The status glyphs are
+parsed by `site/build.js` into the lesson catalog.
 
 ## Phase 0: Setup & Tooling — ✅ (~14 hours)
 
@@ -667,4 +666,8 @@ Total estimated time: ~314 hours, at your own pace.
 
 **Total: 20 phases, 503 lessons | 503 complete | ~1,050 hours estimated**
 
-Want to help? Pick any ⬚ lesson and submit a PR. See [CONTRIBUTING.md](CONTRIBUTING.md).
+For the Technology & Engineering Delivery path (R03-TC / LP03), the
+load-bearing phases are **11 (LLM Engineering)**, **13 (Tools & Protocols)**,
+**14 (Agent Engineering)**, and **17 (Infrastructure & Production)**. The
+other phases exist for the broader curriculum; see the LRN cockpit for
+profile-routed tracks.
