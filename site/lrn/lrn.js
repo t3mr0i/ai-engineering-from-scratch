@@ -162,8 +162,8 @@
   if (progressApi && progressApi.onChange) progressApi.onChange(render);
 
   function loadState() {
-    // LRN cockpit currently exposes only Technology Consulting (R03-TC).
-    // See the matching note above site/lrn/data.js -> profiles.
+    // LRN cockpit currently exposes only the Technology Consulting profile;
+    // see site/lrn/data.js -> profiles for the full set.
     var fallback = {
       profileId: "tc",
       externalLevel: 1,
@@ -241,7 +241,7 @@
       saveState();
       renderControls();
       render();
-      announce("Selection reset. Lesson progress stays in the lesson system.");
+      announce("Selection reset. Activity progress is preserved in the activity tracker.");
     });
 
     if (els.searchInput) {
@@ -694,10 +694,6 @@
 
   function courseMap(courseId) {
     return curriculum.courseMaps && curriculum.courseMaps[courseId] ? curriculum.courseMaps[courseId] : [];
-  }
-
-  function profileCode(profile) {
-    return profile && profile.code ? profile.code : "R??";
   }
 
   function courseCode(course) {
