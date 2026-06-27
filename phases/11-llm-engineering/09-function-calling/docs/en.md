@@ -283,6 +283,19 @@ def read_file(path):
     return {"path": path, "content": content, "size_bytes": len(content), "lines": content.count("\n") + 1}
 
 
+# WARNING: This sandbox is for demonstrating the tool-call wiring only.
+# A determined attacker escapes `__builtins__: {}` in seconds via
+# `(x).__class__.__base__.__subclasses__()`. In production, run user
+# code via one of:
+#   - subprocess.run(["docker", "run", "--rm", "-i",
+#                       "--network=none", "--read-only",
+#                       "--memory=256m", "--cpus=1.0",
+#                       "python:3.12-slim", "python", "-c", code])
+#   - Firecracker microVM (see Phase 17 lesson on isolation)
+#   - gVisor runsc with seccomp profile
+# The `forbidden` list below is a teaching aid, not a security boundary.
+
+
 def run_code(code, language="python"):
     if language != "python":
         return {"error": True, "message": f"Language '{language}' not supported. Only 'python' is available."}
