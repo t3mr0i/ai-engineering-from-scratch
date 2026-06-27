@@ -52,33 +52,6 @@ This is Self-Refine (Lesson 05) generalized. Any agent flow you care about can w
 - Every guardrail maps to an eval case.
 - Every learned rule (Reflexion, pro-workflow learn-rule) maps to a failure case.
 
-### Tying Phase 14 together
-
-Every lesson in Phase 14 generates eval cases:
-
-| Lesson | Eval case it generates |
-|--------|------------------------|
-| 01 Agent Loop | Budget-exhausted, infinite-loop guard |
-| 02 ReWOO | Planner replans correctly when a tool fails |
-| 03 Reflexion | Learned reflections apply on retry |
-| 05 Self-Refine/CRITIC | Judge passes refined output |
-| 06 Tool Use | Argument coercion works; unknown tools rejected |
-| 07-10 Memory | Retrieval citations match sources; stale facts invalidate |
-| 12 Workflow Patterns | Each pattern produces correct output |
-| 13 LangGraph | Resume reproduces state exactly |
-| 14 AutoGen Actors | DLQ catches crashed handlers |
-| 16 OpenAI Agents SDK | Guardrail trips on the right inputs |
-| 17 Claude Agent SDK | Subagent results return to orchestrator |
-| 19-20 Benchmarks | SWE-bench Verified score, WebArena success rate, OSWorld efficiency |
-| 21 Computer Use | Per-step safety catches injected DOM |
-| 23 OTel | Spans emit required attributes |
-| 26 Failure Modes | Detectors tag known failures |
-| 27 Prompt Injection | PVE refuses poisoned retrievals |
-| 28 Orchestration | Supervisor routes to the right specialist |
-| 29 Runtime Shapes | DLQ handles N% failure |
-
-If your eval suite has cases for each, you have covered Phase 14.
-
 ### Where eval-driven development fails
 
 - **No baseline.** Evals without a last-known-good are unreadable. Store baselines.
