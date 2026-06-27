@@ -13,7 +13,7 @@
     { value: 2, label: "Foundation", focusLevels: ["Acquire", "Deepen"] },
     { value: 3, label: "Practitioner", focusLevels: ["Deepen"] },
     { value: 4, label: "Advanced", focusLevels: ["Deepen", "Create"] },
-    { value: 5, label: "Expert", focusLevels: ["Create"] }
+    { value: 5, label: "Lead / Principal", focusLevels: ["Create"] }
   ];
 
   // Max courses shown as "Recommended". Beyond this, level- and interest-relevant
@@ -302,7 +302,6 @@
       var option = document.createElement("option");
       option.value = profile.id;
       option.textContent = profile.label;
-      option.title = profileCode(profile);
       return option;
     }));
     els.profileSelect.value = state.profileId;
@@ -330,8 +329,8 @@
       return entry.kind === "recommended";
     }).length;
     els.ctaLabel.textContent = count === 1
-      ? "Show 1 matching course"
-      : "Show " + count + " matching courses";
+      ? "Open 1 on-path task"
+      : "Open " + count + " on-path tasks";
   }
 
   function renderInterestChips() {
@@ -357,7 +356,7 @@
     var options = [
       { id: "recommended", label: "Recommended" },
       { id: "optional", label: "Optional" },
-      { id: "inprogress", label: "In Progress" },
+      { id: "inprogress", label: "Started" },
       { id: "completed", label: "Completed" },
       { id: "all", label: "All" }
     ];
@@ -384,8 +383,7 @@
     var visible = term ? applySearch(globalCourseEntries()) : filterCourses(computed.entries);
 
     if (els.resultLine) {
-      els.resultLine.textContent = (visible.length === 1 ? "1 course" : visible.length + " courses")
-        + (term ? " · global search" : "");
+      els.resultLine.textContent = (visible.length === 1 ? "1 course" : visible.length + " courses");
     }
 
     if (!visible.length) {
