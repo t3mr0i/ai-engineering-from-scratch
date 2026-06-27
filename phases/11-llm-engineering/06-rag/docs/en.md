@@ -1,6 +1,6 @@
 # RAG (Retrieval-Augmented Generation)
 
-> Your LLM knows everything up to its training cutoff. It knows nothing about your company's docs, your codebase, or last week's meeting notes. RAG solves this by retrieving relevant documents and stuffing them into the prompt. It's the most deployed pattern in production AI. If you build one thing from this course, build a RAG pipeline.
+> Your LLM knows everything up to its training cutoff. It knows nothing about your company's docs, your codebase, or last week's meeting notes. RAG solves this by retrieving relevant documents and stuffing them into the prompt. It is the most deployed pattern in production AI.
 
 **Type:** Build
 **Languages:** Python
@@ -86,7 +86,7 @@ Common embedding models (2026 lineup — see Phase 5 · 22 for full analysis):
 | Qwen3-Embedding | 4096 (Matryoshka) | Alibaba (open-weight) | Top open-weight retrieval score |
 | all-MiniLM-L6-v2 | 384 | Open-weight (Sentence Transformers) | Prototyping baseline |
 
-For this lesson, we build our own simple embedding using TF-IDF. Not because TF-IDF is what production systems use, but because it makes the concept concrete: text goes in, a vector comes out, similar texts produce similar vectors.
+Use a hosted embedder (`text-embedding-3-small`, `voyage-4`, or your gateway's default). A TC does not roll their own. The rest of this lesson assumes a hosted embedder; if you're studying embeddings from first principles, see the Phase 2 NLP track.
 
 ### Vector Similarity
 
@@ -196,37 +196,26 @@ def chunk_text(text, chunk_size=200, overlap=50):
     return chunks
 ```
 
-### Step 2: TF-IDF Embeddings
+### Step 2: Hosted Embedding Call
 
-We build a simple embedding function. TF-IDF (Term Frequency-Inverse Document Frequency) is not a neural embedding, but it converts text to vectors in a way that captures word importance. Frequent words in a document get higher TF. Rare words across the corpus get higher IDF. The product gives a vector where important, distinctive words have high values.
+In production, embedding is a single API call to a hosted model. The response is a fixed-dimension vector per chunk; the math (cosine similarity, top-k) below does not care which model produced the vector.
 
 ```python
-import math
-from collections import Counter
+import os
+import requests
 
-def build_vocabulary(documents):
-    vocab = set()
-    for doc in documents:
-        vocab.update(doc.lower().split())
-    return sorted(vocab)
+EMBEDDING_URL = os.environ["EMBEDDING_URL"]    # gateway URL, e.g. https://llm.internal/v1/embeddings
+EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]  # e.g. text-embedding-3-small
 
-def compute_tf(text, vocab):
-    words = text.lower().split()
-    count = Counter(words)
-    total = len(words)
-    return [count.get(word, 0) / total for word in vocab]
-
-def compute_idf(documents, vocab):
-    n = len(documents)
-    idf = []
-    for word in vocab:
-        doc_count = sum(1 for doc in documents if word in doc.lower().split())
-        idf.append(math.log((n + 1) / (doc_count + 1)) + 1)
-    return idf
-
-def tfidf_embed(text, vocab, idf):
-    tf = compute_tf(text, vocab)
-    return [t * i for t, i in zip(tf, idf)]
+def embed(texts):
+    response = requests.post(
+        EMBEDDING_URL,
+        headers={"Authorization": f"Bearer {os.environ['GATEWAY_TOKEN']}"},
+        json={"model": EMBEDDING_MODEL, "input": texts},
+        timeout=30,
+    )
+    response.raise_for_status()
+    return [item["embedding"] for item in response.json()["data"]]
 ```
 
 ### Step 3: Cosine Similarity Search
@@ -277,23 +266,16 @@ class RAGPipeline:
     def __init__(self):
         self.chunks = []
         self.embeddings = []
-        self.vocab = []
-        self.idf = []
 
     def index(self, documents):
         all_chunks = []
         for doc in documents:
             all_chunks.extend(chunk_text(doc))
         self.chunks = all_chunks
-        self.vocab = build_vocabulary(all_chunks)
-        self.idf = compute_idf(all_chunks, self.vocab)
-        self.embeddings = [
-            tfidf_embed(chunk, self.vocab, self.idf)
-            for chunk in all_chunks
-        ]
+        self.embeddings = embed(all_chunks)
 
     def query(self, question, top_k=5):
-        query_emb = tfidf_embed(question, self.vocab, self.idf)
+        query_emb = embed([question])[0]
         results = search(query_emb, self.embeddings, top_k)
         retrieved = [(self.chunks[i], score) for i, score in results]
         prompt = build_rag_prompt(
@@ -396,37 +378,16 @@ This lesson produces:
 
 ## Exercises
 
-1. Replace the TF-IDF embeddings with a simple bag-of-words approach (binary: 1 if word present, 0 if not). Compare retrieval quality on the sample documents. TF-IDF should outperform because it weights rare words higher.
+1. Experiment with chunk sizes: try 50, 100, 200, and 500 words on the same document set. For each size, run the same 5 queries and count how many return a relevant chunk in the top-3. Find the sweet spot where retrieval quality peaks.
 
-2. Experiment with chunk sizes: try 50, 100, 200, and 500 words on the same document set. For each size, run the same 5 queries and count how many return a relevant chunk in the top-3. Find the sweet spot where retrieval quality peaks.
+2. Add metadata to each chunk (source document name, chunk position). Modify the prompt template to include source attribution so the LLM cites its sources.
 
-3. Add metadata to each chunk (source document name, chunk position). Modify the prompt template to include source attribution so the LLM cites its sources.
-
-4. Implement a simple evaluation: given 10 question-answer pairs, run each question through the RAG pipeline, and measure what percentage of retrieved chunks contain the answer. This is retrieval recall at k.
+3. Implement a simple evaluation: given 10 question-answer pairs, run each question through the RAG pipeline, and measure what percentage of retrieved chunks contain the answer. This is retrieval recall at k.
 
 5. Build a conversation-aware RAG pipeline: maintain a history of the last 3 exchanges and include them in the prompt alongside the retrieved chunks. Test with follow-up questions like "What about enterprise?" after asking about pricing.
 
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| RAG | "AI that reads your docs" | Retrieve relevant documents, paste them into the prompt, and generate an answer grounded in those documents |
-| Embedding | "Convert text to numbers" | A dense vector representation of text where similar meanings produce similar vectors |
-| Vector database | "Search engine for AI" | A data store optimized for storing vectors and finding the nearest neighbors by similarity |
-| Chunking | "Split docs into pieces" | Breaking documents into smaller segments (typically 256-512 tokens) so each can be embedded and retrieved independently |
-| Cosine similarity | "How similar are two vectors" | The cosine of the angle between two vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| Top-k retrieval | "Get the k best matches" | Return the k most similar chunks to the query from the vector store |
-| Context window | "How much text the LLM can see" | The maximum number of tokens the LLM can process in a single request; retrieved chunks must fit within this |
-| Augmented generation | "Answer using given context" | Generating a response using retrieved documents as context rather than relying solely on trained knowledge |
-| TF-IDF | "Word importance scoring" | Term Frequency times Inverse Document Frequency; weights words by how distinctive they are within a corpus |
-| Indexing | "Preparing docs for search" | The offline process of chunking, embedding, and storing documents so they can be searched at query time |
-
 ## Further Reading
 
-- Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (2020) -- the original RAG paper from Facebook AI Research that formalized the retrieve-then-generate pattern
-- Anthropic's RAG documentation (docs.anthropic.com) -- practical guidelines for chunk sizes, prompt construction, and evaluation
-- Pinecone Learning Center, "What is RAG?" -- clear visual explanations of the RAG pipeline with production considerations
-- Sentence-BERT: Reimers & Gurevych (2019) -- the paper behind the all-MiniLM embedding models, showing how to train bi-encoders for semantic similarity
-- [Karpukhin et al., "Dense Passage Retrieval for Open-Domain Question Answering" (EMNLP 2020)](https://arxiv.org/abs/2004.04906) -- the DPR paper that proved dense bi-encoder retrieval beats BM25 on open-domain QA and set the pattern for modern RAG retrievers.
-- [LlamaIndex High-Level Concepts](https://docs.llamaindex.ai/en/stable/getting_started/concepts.html) -- the main concepts to know when building RAG pipelines: data loaders, node parsers, indices, retrievers, response synthesizers.
-- [LangChain RAG tutorial](https://python.langchain.com/docs/tutorials/rag/) -- the opposite-flavor orchestrator; chain-of-runnables view of the same retrieve-then-generate pattern.
+- Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (2020) -- the original RAG paper from Facebook AI Research that formalized the retrieve-then-generate pattern.
+- Anthropic's RAG documentation (docs.anthropic.com) -- practical guidelines for chunk sizes, prompt construction, and evaluation.
+- [Karpukhin et al., "Dense Passage Retrieval for Open-Domain Question Answering" (EMNLP 2020)](https://arxiv.org/abs/2004.04906) -- the DPR paper that proved dense bi-encoder retrieval beats BM25 on open-domain QA.
