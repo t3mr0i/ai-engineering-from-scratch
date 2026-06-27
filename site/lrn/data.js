@@ -103,7 +103,7 @@ window.LrnData = {
     }
   ],
   interests: [
-    { id: "foundation", label: "AI Literacy", hint: "Terms, tool overview", dimensions: ["literacy"] },
+    { id: "foundation", label: "Foundations", dimensions: ["literacy"] },
     { id: "productivity", label: "Productivity", hint: "Prompts, assistants, office", dimensions: ["prompting"] },
     { id: "consulting", label: "Consulting", hint: "Use Cases, Requirements", dimensions: ["business", "prompting"] },
     { id: "engineering", label: "Engineering", hint: "Agents, architecture, QA", dimensions: ["business", "data"] },
