@@ -434,7 +434,7 @@ def run_demo():
 #     price: float
 #     in_stock: bool
 #
-# response = client.beta.chat.completions.parse(
+# response = client.chat.completions.parse(
 #     model="gpt-5-mini",
 #     messages=[
 #         {"role": "system", "content": "Extract product information."},
@@ -457,7 +457,7 @@ OpenAI's structured output mode uses constrained decoding internally. Every toke
 # client = anthropic.Anthropic()
 #
 # response = client.messages.create(
-#     model="claude-opus-4-7",
+#     model="claude-opus-4",
 #     max_tokens=1024,
 #     tools=[{
 #         "name": "extract_product",
