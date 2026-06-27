@@ -97,7 +97,7 @@ cd ai-engineering-from-scratch
 python phases/01-math-foundations/01-linear-algebra-intuition/code/vectors.py
 ```
 
-**Option C — find your level *(recommended)*.** Skip ahead intelligently. Inside Claude, Cursor, Codex, OpenClaw, Hermes, or any agent with the curriculum skills installed:
+**Option C — find your level.** Skip ahead intelligently. Inside Claude, Cursor, Codex, or any agent with the curriculum skills installed:
 
 ```bash
 /find-your-level
@@ -116,9 +116,9 @@ ls phases/03-deep-learning-core/05-loss-functions/outputs/
 ### Prerequisites
 
 - You can write code (any language; Python helps).
-- You want to understand how AI **actually works**, not just call APIs.
+- You want to understand how AI works, not just call APIs.
 
-### Built-in agent skills (Claude, Cursor, Codex, OpenClaw, Hermes)
+### Built-in agent skills (Claude, Cursor, Codex)
 
 | Skill | What it does |
 |---|---|
@@ -143,7 +143,7 @@ daily workflow.
 </tr>
 <tr>
 <td valign="top">Paste into any AI assistant for expert-level help on a narrow task.</td>
-<td valign="top">Drop into Claude, Cursor, Codex, OpenClaw, Hermes, or any agent that reads <code>SKILL.md</code>.</td>
+<td valign="top">Drop into Claude, Cursor, Codex, or any agent that reads <code>SKILL.md</code>.</td>
 <td valign="top">Deploy as autonomous workers — you wrote the loop yourself in Phase 14.</td>
 <td valign="top">Plug into any MCP-compatible client. Built end-to-end in Phase 13.</td>
 </tr>
@@ -1197,17 +1197,8 @@ Free, MIT-licensed. The curriculum is maintained on sponsorship alone; see
   </picture>
 </a>
 
-If this manual helped you, star the repo. It keeps the project alive.
-
 ## License
 
-MIT. Use it however you want — fork it, teach it, sell it, ship it. Attribution appreciated,
-not required.
+MIT. Fork it, teach it, sell it, ship it. Attribution appreciated, not required.
 
 Maintained by [Rohit Ghumare](https://github.com/rohitg00) and the community.
-
-<sub>
-  <a href="https://x.com/ghumare64">@ghumare64</a> &nbsp;·&nbsp;
-  <a href="https://aiengineeringfromscratch.com">aiengineeringfromscratch.com</a> &nbsp;·&nbsp;
-  <a href="https://github.com/rohitg00/ai-engineering-from-scratch/issues/new/choose">Report / Suggest</a>
-</sub>
