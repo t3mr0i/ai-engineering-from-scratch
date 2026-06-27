@@ -28,7 +28,7 @@ Research studies (arXiv 2603.22489, Invariant Labs notifications, Unit 42 attack
 - **With MELON defense (masked re-execution + tool comparison).** >99 percent indirect-injection detection.
 - **Against adaptive attackers.** ~85 percent attack success even against state-of-the-art defenses, per a March 2026 arXiv paper.
 
-The 2026 consensus is defense-in-depth. No single check wins. You stack: scan at install time, pin hashes, gate behavior with the Rule of Two, and detect at runtime.
+The position across the security community is defense-in-depth: no single check wins. You stack: scan at install time, pin hashes, gate behavior with the Rule of Two, and detect at runtime.
 
 ## The Concept
 
