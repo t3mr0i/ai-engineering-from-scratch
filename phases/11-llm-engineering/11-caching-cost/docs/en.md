@@ -21,7 +21,7 @@ You build a RAG chatbot. It works beautifully. Users love it.
 
 Then the invoice arrives.
 
-GPT-5 costs $5 per million input tokens and $15 per million output. Claude Opus 4.7 costs $15 input / $75 output. Gemini 3 Pro costs $1.25 input / $5 output. GPT-5-mini is $0.25/$2. Prices below are illustrative; always check the provider's current pricing page.
+Pricing changes quarterly. Before you write a single number into a Statement of Work or a FinOps dashboard, pull the current input/output price per million tokens from each provider's pricing page (links in Further Reading). Build a per-request cost model from those numbers — input cost + output cost + cached-input cost — and refresh it whenever a vendor ships a new SKU. The figures below are illustrative placeholders, not quotable prices.
 
 Here is the math that kills startups:
 
@@ -224,7 +224,7 @@ MODEL_PRICING = {
     "o3": {"input": 2.00, "output": 8.00, "cached_input": 0.50},
     "o3-mini": {"input": 1.10, "output": 4.40, "cached_input": 0.55},
     "o4-mini": {"input": 1.10, "output": 4.40, "cached_input": 0.275},
-    "claude-opus-4": {"input": 15.00, "output": 75.00, "cached_input": 1.50},
+    "claude-opus-4": {"input": 15.00, "output": 75.00, "cached_input": 1.50},  # placeholder: verify cache_read rate on docs.anthropic.com before quoting
     "claude-sonnet-4": {"input": 3.00, "output": 15.00, "cached_input": 0.30},
     "claude-haiku-3.5": {"input": 0.80, "output": 4.00, "cached_input": 0.08},
     "gemini-2.5-pro": {"input": 1.25, "output": 10.00, "cached_input": 0.3125},
