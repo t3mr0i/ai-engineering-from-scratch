@@ -59,7 +59,7 @@ graph TD
 
 **Automated metrics** compare output text against reference answers using algorithms. BLEU measures n-gram overlap (originally for machine translation). ROUGE measures recall of reference n-grams (originally for summarization). BERTScore uses BERT embeddings to measure semantic similarity. These are fast and cheap -- you can score 10,000 outputs in seconds. But they miss nuance. Two answers can have zero word overlap and both be correct. One answer can have high ROUGE and be completely wrong in context.
 
-**LLM-as-judge** uses a strong model (GPT-5, Claude Opus 4.7, Gemini 3 Pro) to grade outputs against a rubric. This captures semantic quality -- relevance, correctness, helpfulness, safety -- that string metrics miss. It costs money (~$8 per 1,000 judge calls with GPT-5-mini, ~$25 with Claude Opus 4.7) but correlates 82-88% with human judgment on well-designed rubrics — see Phase 5 · 27 for the calibration recipe.
+**LLM-as-judge** uses a frontier-class model to grade outputs against a rubric. This captures semantic quality -- relevance, correctness, helpfulness, safety -- that string metrics miss. It costs money -- the order of frontier judges by $/useful-evaluation has been roughly *mini-class < sonnet-class < opus-class* since 2024, and the ratio is roughly 1 : 3 : 10. Re-quote against the provider's pricing page the morning of any procurement; the lesson does not track specific prices. A well-tuned judge correlates 82-88% with human judgment on well-designed rubrics — see Phase 5 · 27 for the calibration recipe.
 
 **Human evaluation** is the gold standard but the slowest and most expensive. Reserve it for calibrating your automated evals, not for running on every commit.
 
@@ -67,12 +67,13 @@ graph TD
 |--------|-------|-------------------|------------------------|----------|
 | BLEU/ROUGE | <1 sec | $0 | 40-60% | Translation, summarization baselines |
 | BERTScore | ~30 sec | $0 | 55-70% | Semantic similarity screening |
-| LLM-as-judge (GPT-5-mini) | ~3 min | ~$8 | 82-86% | Default CI judge; cheap, fast, calibrated |
-| LLM-as-judge (Claude Opus 4.7) | ~5 min | ~$25 | 85-88% | High-stakes scoring, safety, refusals |
-| LLM-as-judge (Gemini 3 Flash) | ~2 min | ~$3 | 80-84% | Highest-throughput judge; for 1M+ eval pass |
-| RAGAS (NLI faithfulness + judge) | ~5 min | ~$12 | 85% | RAG-specific metrics (see Phase 5 · 27) |
+| LLM-as-judge (mini-class) | ~3 min | cheapest | 82-86% | Default CI judge; cheap, fast, calibrated |
+| LLM-as-judge (sonnet-class) | ~4 min | mid-tier | 84-87% | Balanced cost/quality for production scoring |
+| LLM-as-judge (opus-class) | ~5 min | 10x mini-class | 85-88% | High-stakes scoring, safety, refusals |
+| LLM-as-judge (flash-class) | ~2 min | cheapest tier | 80-84% | Highest-throughput judge; for 1M+ eval pass |
+| RAGAS (NLI faithfulness + judge) | ~5 min | judge-dependent | 85% | RAG-specific metrics (see Phase 5 · 27) |
 | DeepEval (G-Eval + Pytest) | ~4 min | depends on judge | 80-88% | CI-native, per-PR regression gates |
-| Human expert | ~2 hours | ~$500 | 100% (by definition) | Calibration, edge cases, policy |
+| Human expert | ~2 hours | highest | 100% (by definition) | Calibration, edge cases, policy |
 
 ### LLM-as-Judge: The Workhorse
 
@@ -416,6 +417,98 @@ def word_overlap_score(reference, hypothesis):
     union = ref_words | hyp_words
     return round(len(intersection) / len(union), 4) if union else 0.0
 ```
+
+### Try It: the metric that lies
+
+A broken eval metric is worse than no metric — it gives false confidence. The
+function below is *supposed* to be ROUGE-L (which measures the longest matching
+*sequence* of words, so word order matters). But it has a bug a lot of people
+ship: it compares the two texts as unordered *bags of words*. Run it before you
+read on.
+
+Before running: the reference is `"machine learning models"` and the hypothesis
+is `"learning machine models"` — same words, shuffled order. Real ROUGE-L should
+*not* call these identical. Write your prediction: what should the score be,
+roughly — `1.0`, or less? Then run.
+
+```python
+def rouge_l_buggy(reference, hypothesis):
+    if not reference or not hypothesis:
+        return 0.0
+    ref_tokens = reference.lower().split()
+    hyp_tokens = hypothesis.lower().split()
+    # BUG: this ignores word order — it just counts shared unique words.
+    common = len(set(ref_tokens) & set(hyp_tokens))
+    if common == 0:
+        return 0.0
+    precision = common / len(hyp_tokens)
+    recall = common / len(ref_tokens)
+    return round(2 * precision * recall / (precision + recall), 4)
+
+
+print("identical: ", rouge_l_buggy("the cat sat on the mat", "the cat sat on the mat"))
+print("reordered: ", rouge_l_buggy("machine learning models", "learning machine models"))
+print("scrambled: ", rouge_l_buggy("the cat sat on the mat", "mat the on sat cat the"))
+```
+
+The buggy version scores the reordered pair `1.0` and the fully scrambled
+sentence `0.8333` — it thinks shuffled words are a near-perfect match. For an
+LLM eval that is dangerous: a model that returns the right words in the wrong
+order (and therefore the wrong meaning) would pass. **The fix:** ROUGE-L must use
+the Longest Common *Subsequence*, which respects order. Implement it below. The
+self-check compares your function against known-correct values and tells you if
+the sequence logic is right.
+
+```python
+def rouge_l_fixed(reference, hypothesis):
+    if not reference or not hypothesis:
+        return 0.0
+    ref_tokens = reference.lower().split()
+    hyp_tokens = hypothesis.lower().split()
+    m, n = len(ref_tokens), len(hyp_tokens)
+
+    # TODO: fill in the LCS dynamic-programming table.
+    # dp[i][j] = length of the longest common subsequence of the first i
+    # reference tokens and first j hypothesis tokens.
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            # Hint: if the tokens match, extend the diagonal (dp[i-1][j-1] + 1).
+            # Otherwise carry the better of dropping one token from either side.
+            dp[i][j] = 0  # <-- replace this line
+
+    lcs_length = dp[m][n]
+    if lcs_length == 0:
+        return 0.0
+    precision = lcs_length / n
+    recall = lcs_length / m
+    return round(2 * precision * recall / (precision + recall), 4)
+
+
+# --- self-check: do not edit below this line ---
+_cases = [
+    ("the cat sat on the mat", "the cat sat on the mat", 1.0),
+    ("machine learning models", "learning machine models", 0.6667),
+    ("model evaluation matters", "evaluation of the model", 0.2857),
+]
+_ok = True
+for ref, hyp, expected in _cases:
+    got = rouge_l_fixed(ref, hyp)
+    mark = "ok" if abs(got - expected) < 1e-3 else "WRONG"
+    if mark == "WRONG":
+        _ok = False
+    print(f"  {mark:5s} ref={ref!r:38s} got={got}  expected={expected}")
+
+if _ok:
+    print("\nPASS — your ROUGE-L respects word order. The reordered pair now scores 0.6667, not 1.0.")
+else:
+    print("\nNot yet. Your table is not finding the longest *ordered* match. Re-check the else branch.")
+```
+
+When it prints `PASS`, you have built a sequence-aware metric yourself — and you
+have seen first-hand why a plausible-looking eval can quietly pass bad outputs.
+The correct body is the `rouge_l_score` you wrote in Step 3; only peek after you
+have tried.
 
 ### Step 4: Build the Confidence Interval Calculator
 
