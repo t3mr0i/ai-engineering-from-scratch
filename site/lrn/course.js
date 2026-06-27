@@ -80,19 +80,19 @@
     var meta = document.createElement("p");
     meta.className = "course-head__meta";
     meta.textContent = stats.subcourseCount + " units · " + stats.lessonCount + " activities · "
-      + stats.percent + "% completed";
+      + stats.percent + "% shipped";
 
     var action = document.createElement("a");
     action.className = "primary-cta";
     if (nextLesson) {
       action.href = lessonHref(nextLesson.path, course.id);
       var ctaLabel = document.createElement("span");
-      ctaLabel.textContent = (stats.visitedLessons > 0 ? "Continue Learning" : "Start Course");
+      ctaLabel.textContent = stats.visitedLessons > 0 ? "Resume" : "Open first task";
       action.append(ctaLabel, lucideIcon("arrow-right"));
     } else {
       action.appendChild(lucideIcon("check-circle"));
       var doneLabel = document.createElement("span");
-      doneLabel.textContent = "Course Complete";
+      doneLabel.textContent = "All shipped";
       action.appendChild(doneLabel);
       action.href = "#";
       action.setAttribute("aria-disabled", "true");
@@ -112,7 +112,7 @@
       var outcomesTitle = document.createElement("h2");
       outcomesTitle.id = "courseOutcomesTitle";
       outcomesTitle.className = "course-head__outcomes-title";
-      outcomesTitle.textContent = "After completing this course, you can:";
+      outcomesTitle.textContent = "After this, you can ship:";
 
       var outcomesList = document.createElement("ul");
       outcomesList.className = "course-head__outcomes-list";
@@ -129,7 +129,7 @@
 
     var syllabusTitle = document.createElement("h2");
     syllabusTitle.className = "syllabus-title";
-    syllabusTitle.textContent = "Syllabus";
+    syllabusTitle.textContent = "Tasks";
     children.push(syllabusTitle);
 
     if (!map.length) {
@@ -307,10 +307,9 @@
   function activityType(lesson, subcourse) {
     var title = (lesson.title || "").toLowerCase();
     var unit = (subcourse && subcourse.title || "").toLowerCase();
-    if (/eval|test|qa|verification|review|guardrail|compliance|risk|assessment/.test(title + " " + unit)) return "Knowledge Check";
-    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return "Practice Activity";
-    if (subcourse && subcourse.decision === "condense") return "Guided Lesson";
-    return "Lesson";
+    if (/eval|test|qa|verification|review|guardrail|compliance|risk|assessment/.test(title + " " + unit)) return "Eval";
+    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return "Lab";
+    return "";
   }
 
   function nextLessonForCourse(courseId) {
