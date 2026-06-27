@@ -1,6 +1,6 @@
 # Model Context Protocol (MCP)
 
-> Every LLM app built before 2025 invented its own tool schema. Then Anthropic shipped MCP, Claude adopted it, OpenAI adopted it, and by 2026 it is the default wire format for connecting any LLM to any tool, data source, or agent. Write one MCP server and every host talks to it.
+> Every LLM app built before 2025 invented its own tool schema. Then Anthropic shipped MCP, Claude adopted it, OpenAI adopted it, and by 2026 it is the default wire format for connecting any LLM to any tool, data source, or agent.
 
 **Type:** Build
 **Languages:** Python
@@ -15,7 +15,7 @@ This was the pre-2025 reality. Every host (the thing running an LLM) and every s
 
 Model Context Protocol collapses that matrix. One JSON-RPC-based spec. One server exposes tools, resources, and prompts. Any compliant host — Claude Desktop, ChatGPT, Cursor, Claude Code, Zed, and a long tail of agent frameworks — can discover and call them without custom glue.
 
-As of early 2026, MCP is the default tool-and-context protocol across the big three (Anthropic, OpenAI, Google) and every major agent harness.
+MCP is the default tool-and-context protocol across the big three (Anthropic, OpenAI, Google) and every major agent harness.
 
 ## The Concept
 
@@ -181,26 +181,8 @@ Refuse to ship a server that writes to disk or calls external APIs without an ap
 2. **Medium.** Add a `resource` that exposes the last 100 lines of `/var/log/app.log`. Enforce a roots allowlist so `../etc/passwd` is blocked even if the model asks for it.
 3. **Hard.** Build an MCP proxy that multiplexes three upstream servers (Filesystem, GitHub, Postgres) into one aggregate surface. Handle name collisions and forward `notifications/tools/list_changed` cleanly.
 
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| MCP | "Tool protocol for LLMs" | JSON-RPC 2.0 spec for exposing tools, resources, and prompts to any LLM host. |
-| Host | "Claude Desktop" | The LLM application — owns the model and user UI, mounts one or more clients. |
-| Client | "Connection" | A per-server connection inside the host that speaks JSON-RPC to exactly one server. |
-| Server | "The thing with the tools" | Your code; advertises tools/resources/prompts and handles their invocation. |
-| Tool | "Function call" | Model-invokable action with a JSON Schema input and a text/JSON result. |
-| Resource | "Read-only data" | URI-addressed content (file, row, API response) the host can request. |
-| Prompt | "Saved prompt" | User-invokable template (often with arguments) surfaced as a slash-command. |
-| Stdio transport | "Local dev mode" | Parent host spawns the server as a child process; JSON-RPC over stdin/stdout. |
-| Streamable HTTP | "The 2025-06 remote transport" | POST for requests, optional SSE for server-initiated messages; replaces the older SSE-only transport. |
-
 ## Further Reading
 
 - [Model Context Protocol specification](https://modelcontextprotocol.io/specification) — canonical reference, versioned by date.
-- [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) — Filesystem, GitHub, Postgres, Slack, Puppeteer reference servers.
 - [Anthropic — Introducing MCP (Nov 2024)](https://www.anthropic.com/news/model-context-protocol) — launch post with design rationale.
-- [Python SDK](https://github.com/modelcontextprotocol/python-sdk) — official SDK used in this lesson.
 - [Security considerations for MCP](https://modelcontextprotocol.io/docs/concepts/security) — roots, destructive hints, tool poisoning.
-- [Google A2A specification](https://google.github.io/A2A/) — Agent2Agent protocol; the sibling standard for agent-to-agent communication that complements MCP's agent-to-tool scope.
-- [Anthropic — Building effective agents (Dec 2024)](https://www.anthropic.com/research/building-effective-agents) — where MCP sits in the broader pattern library for agent design (augmented LLM, workflows, autonomous agents).
