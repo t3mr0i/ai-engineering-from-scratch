@@ -89,7 +89,7 @@ window.LrnData = {
       text: "To what extent do you actively shape new AI-based solutions, workflows, or services and share your experience?"
     }
   ],
-  // LRN cockpit currently exposes only Technology Consulting (R03-TC).
+  // LRN cockpit currently exposes only the Technology Consulting profile.
   // To restore the other six profiles, paste them back here and revert the
   // fallback/reset defaults in site/lrn/lrn.js from "tc" to "bsc".
   profiles: [
@@ -98,8 +98,8 @@ window.LrnData = {
       code: "R03-TC",
       label: "Technology Consulting",
       segment: "TC",
-      description: "Engineering, architecture, security, cloud, IoT, data, and technical delivery.",
-      targets: { literacy: 3, prompting: 2, business: 2, data: 3, change: 1 }
+      description: "Architecture, integration, security, evaluation, delivery.",
+      targets: { literacy: 2, prompting: 3, business: 2, data: 3, change: 2 }
     }
   ],
   interests: [
@@ -126,7 +126,7 @@ window.LrnData = {
     { id: 13, cluster: "Advisory and Business Consulting", title: "AI & Automation Use Case Spotting", targets: { bsc: "Create", pvs: "Deepen", tc: "Deepen", am: "Acquire", pma: "Create", corp: "Acquire", lead: "Deepen", all: "Acquire" } },
     { id: 14, cluster: "Advisory and Business Consulting", title: "AI Cost & Value Economics", targets: { bsc: "Create", pvs: "Deepen", tc: "Deepen", am: "Acquire", pma: "Deepen", corp: "Acquire", lead: "Create", all: "n. a." } },
     { id: 15, cluster: "Advisory and Business Consulting", title: "Consultative Prompting", targets: { bsc: "Create", pvs: "Deepen", tc: "Deepen", am: "Deepen", pma: "Create", corp: "Acquire", lead: "Create", all: "Acquire" } },
-    { id: 16, cluster: "Advisory and Business Consulting", title: "AI Ecosystem Knowledge", targets: { bsc: "Create", pvs: "Deepen", tc: "Create", am: "Acquire", pma: "Acquire", corp: "Acquire", lead: "Deepen", all: "Acquire" } },
+    { id: 16, cluster: "Advisory and Business Consulting", title: "AI Ecosystem Knowledge", targets: { bsc: "Create", pvs: "Deepen", tc: "Deepen", am: "Acquire", pma: "Acquire", corp: "Acquire", lead: "Deepen", all: "Acquire" } },
     { id: 17, cluster: "Leadership and Strategy", title: "Managing AI Transformations", targets: { bsc: "Create", pvs: "Deepen", tc: "Acquire", am: "Acquire", pma: "Create", corp: "Acquire", lead: "Deepen", all: "n. a." } },
     { id: 18, cluster: "Leadership and Strategy", title: "AI Workforce Strategy", targets: { bsc: "Deepen", pvs: "Acquire", tc: "Acquire", am: "Acquire", pma: "Acquire", corp: "Create", lead: "Create", all: "n. a." } },
     { id: 19, cluster: "Leadership and Strategy", title: "Decision Making with AI", targets: { bsc: "Deepen", pvs: "Deepen", tc: "Acquire", am: "Acquire", pma: "Deepen", corp: "Deepen", lead: "Create", all: "n. a." } }
