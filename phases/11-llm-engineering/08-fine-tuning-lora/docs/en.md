@@ -139,16 +139,7 @@ QLoRA makes three technical contributions:
 
 ### The Quality Question
 
-Does reducing parameters or quantizing the base hurt quality? The results from multiple papers:
-
-| Method | MMLU (5-shot) | MT-Bench | HumanEval |
-|--------|--------------|----------|-----------|
-| Full fine-tune (Llama 2 7B) | 48.3 | 6.72 | 14.6 |
-| LoRA r=16 | 47.9 | 6.68 | 14.0 |
-| QLoRA r=16 (NF4) | 47.5 | 6.61 | 13.4 |
-| QLoRA r=64 (NF4) | 48.1 | 6.70 | 14.2 |
-
-LoRA at r=16 is within 1% of full fine-tuning on most benchmarks. QLoRA at r=16 loses another fraction of a percent. QLoRA at r=64 essentially matches full fine-tuning while using 90% less memory.
+Does reducing parameters or quantizing the base hurt quality? The published evidence (QLoRA paper, 2023; subsequent Llama-3-era replications) consistently shows LoRA and QLoRA landing within a few points of full fine-tuning on standard benchmarks — MMLU, MT-Bench, HumanEval — at a fraction of the memory and compute. Specific numbers shift with model family and benchmark version; before quoting them in a SoW or a steering deck, pull the latest from the QLoRA / PEFT papers and the relevant Llama-3 / Mistral / Qwen fine-tuning reports.
 
 ### Real-World Costs
 
