@@ -1,386 +1,280 @@
 # AI Engineering Glossary
 
+A working reference for **Technology Consultants (TCs)** shipping AI projects for
+clients. Each term answers one question: **what does a TC need to know about
+this to ship the project?**
+
+Pure-math concepts and research-frontier theory are not here — when you need
+them, ask a research collaborator.
+
+Last reviewed: 2026-06-27. Vendor names and prices change quarterly; re-verify
+before any procurement or contract.
+
+---
+
 ## A
 
 ### Agent
 - **What people say:** "An autonomous AI that thinks and acts on its own"
-- **What it actually means:** A while loop where an LLM decides what tool to call next, executes it, sees the result, and repeats
-- **Why it's called that:** Borrowed from philosophy — an "agent" is anything that can act in the world. In AI, it just means "LLM + tools + loop"
+- **What it actually means:** A loop that calls an LLM, lets it pick a tool, executes that tool, feeds the result back, and repeats until done. The architecture under every "AI assistant" your client is buying. Cost and reliability are driven by loop length, tool-call count, and error handling between steps.
+- **Ship it:** start every agent with a max-step limit (8-12 is normal) and a per-step budget. Without those, an agent can loop forever and blow the bill.
+- **Watch out:** an agent's failure mode is silent drift — each step looks reasonable, the trajectory compounds into nonsense. Add a check on the final output, not just per-step.
 
 ### Attention
 - **What people say:** "How the AI focuses on important parts"
-- **What it actually means:** A mechanism where every token computes a weighted sum of all other tokens' values, with weights determined by how relevant they are (via dot product of query and key vectors)
-- **Why it's called that:** The 2017 paper "Attention Is All You Need" named it by analogy to human selective attention
+- **What it actually means:** The mechanism that lets an LLM decide which prior tokens matter for the next one. Context window exists because attention's compute cost is quadratic in sequence length. Pricing, latency, and the cache-pricing math all derive from this.
+- **Why it's called that:** by analogy to human selective attention — the 2017 paper "Attention Is All You Need" named it.
 
 ### Alignment
 - **What people say:** "Making AI safe"
-- **What it actually means:** The technical challenge of making an AI system's behavior match human intentions, values, and preferences, including edge cases the designer didn't anticipate
+- **What it actually means:** How well the model's behavior matches the client's intent, including edge cases the prompt didn't anticipate. A client will say "the AI sounds rude" or "it gave a wrong answer" — that's an alignment problem, not a model-quality problem.
+- **Ship it:** the eval harness must measure alignment to the specific client's tone, refusal policy, and domain constraints, not generic accuracy.
 
 ### Autoregressive
 - **What people say:** "The AI generates one word at a time"
-- **What it actually means:** A model that predicts the next token conditioned on all previous tokens, then feeds that prediction back as input for the next step. GPT, LLaMA, and Claude are all autoregressive.
+- **What it actually means:** The model generates output one token at a time, each conditioned on all previous tokens. This is why latency is dominated by output length — TTFT is fast, total time scales with tokens out. All current frontier chat models are autoregressive.
 
-### Activation Function
-- **What people say:** "The nonlinear thing between layers"
-- **What it actually means:** A function applied after each linear layer that introduces nonlinearity. Without it, stacking any number of linear layers collapses to a single linear transformation. ReLU, GELU, and SiLU are the most common. The choice directly affects whether gradients flow during training.
+### AI Gateway
+- **What people say:** "A proxy in front of LLMs"
+- **What it actually means:** A proxy that sits between your app and one or more LLM providers. It centralizes auth, routing, retries, logging, cost attribution, and rate limiting. When the client asks "how do we govern model use across teams?" — the answer is a gateway.
+- **Watch out:** a gateway adds latency (typically 5-30 ms) and is a single point of failure. Run it in HA from day one in any production engagement.
 
-### Adam (Optimizer)
-- **What people say:** "The default optimizer"
-- **What it actually means:** Adaptive Moment Estimation. Combines momentum (first moment) with adaptive learning rates per parameter (second moment). Has bias correction for early steps. Works well across most tasks without much tuning.
-
-### AdamW
-- **What people say:** "Adam but better"
-- **What it actually means:** Adam with decoupled weight decay. In standard Adam, L2 regularization gets scaled by the adaptive learning rate per parameter, which is not what you want. AdamW applies weight decay directly to the weights, independent of the gradient statistics. The default optimizer for training transformers.
-
-### Autograd
-- **What people say:** "Automatic gradients"
-- **What it actually means:** A system that records operations on tensors and automatically computes gradients via reverse-mode differentiation. PyTorch's autograd builds a computation graph on-the-fly (dynamic graph), while JAX uses function transformations (grad). This is what makes backpropagation practical -- you write the forward pass, and the framework computes all the derivatives.
-
-## B
-
-### Batch Size
-- **What people say:** "How many examples at once"
-- **What it actually means:** The number of training examples processed in one forward/backward pass before updating weights. Larger batches give more stable gradient estimates but use more memory. Typical values: 32-512 for training, larger for inference. Batch size interacts with learning rate -- double the batch, double the LR (linear scaling rule).
-
-### Backpropagation
-- **What people say:** "How neural networks learn"
-- **What it actually means:** An algorithm that computes how much each weight contributed to the error by applying the chain rule backward through the network, then adjusts weights proportionally
-- **Why it's called that:** Errors propagate backward from output to input, layer by layer
+---
 
 ## C
 
 ### Context Window
 - **What people say:** "How much the AI can remember"
-- **What it actually means:** The maximum number of tokens (input + output) that fit in a single API call. Not memory — it's a fixed-size buffer that resets every call
+- **What it actually means:** The max tokens (input + output) the model accepts in a single call. **This is not memory.** Each call starts fresh. Anything outside the window is invisible to the model.
+- **Ship it:** pick a model whose context window covers your largest realistic input + output, with ~20% headroom. Don't pay for 1M-token contexts if your median prompt is 2K tokens.
 
 ### Chain of Thought (CoT)
 - **What people say:** "Making the AI think step by step"
-- **What it actually means:** A prompting technique where you ask the model to show its reasoning steps, which improves accuracy on multi-step problems because each step conditions the next token generation
-
-### CNN (Convolutional Neural Network)
-- **What people say:** "Image AI"
-- **What it actually means:** A neural network that uses convolution operations (sliding filters over the input) to detect local patterns. Stacking convolutions detects increasingly complex features: edges, textures, objects.
-
-### CUDA
-- **What people say:** "GPU programming"
-- **What it actually means:** NVIDIA's parallel computing platform. Lets you run matrix operations on thousands of GPU cores simultaneously. PyTorch and TensorFlow use CUDA under the hood.
+- **What it actually means:** Telling the model to "think step by step" before answering. It works because intermediate tokens condition the next-token prediction. Costs more (more output tokens) but buys accuracy on multi-step reasoning.
+- **Ship it:** enable CoT on tasks with arithmetic, multi-hop retrieval, or chained logic. Skip it for simple lookups — the extra tokens add cost and latency for no gain.
 
 ### Chunking
 - **What people say:** "Splitting documents into pieces"
-- **What it actually means:** Breaking text into segments before embedding for retrieval. Chunk size determines the granularity of search results. Too small: loses context. Too large: dilutes relevance. Common strategies: fixed-size with overlap, sentence-based, or semantic splitting. Typical chunk size: 256-512 tokens with 10-20% overlap.
-
-### Contrastive Learning
-- **What people say:** "Learning by comparison"
-- **What it actually means:** Training by pulling similar pairs closer and pushing dissimilar pairs apart in embedding space. CLIP uses this: matching image-text pairs vs non-matching ones.
+- **What it actually means:** Splitting documents into pieces before embedding for RAG. Chunk size is the single biggest lever on retrieval quality.
+- **Default:** 256-512 tokens, 10-20% overlap. Below 200, retrieval loses context. Above 1024, results dilute.
+- **Ship it:** tune chunk size against a 100-200 question gold set, not vibes.
 
 ### Cosine Similarity
 - **What people say:** "How similar two vectors are"
-- **What it actually means:** The cosine of the angle between two vectors: dot(a, b) / (||a|| * ||b||). Ranges from -1 (opposite) to 1 (identical direction). Ignores magnitude, only cares about direction. The standard similarity metric for embeddings and semantic search.
+- **What it actually means:** The standard similarity metric between two embedding vectors. Range -1 to 1; in practice RAG results cluster between 0.5 and 0.95. The "how close is close enough?" threshold differs per embedding model — never borrow thresholds across models.
+- **Why it matters:** it drives every similarity-search result the client sees. A wrong threshold = silently wrong answers.
 
-### Cross-Entropy
-- **What people say:** "The classification loss"
-- **What it actually means:** Measures the difference between two probability distributions. For classification: -sum(y_true * log(y_pred)). For language models: the negative log probability of the correct next token. Lower is better. Perplexity is just exp(cross-entropy).
+### CUDA
+- **What people say:** "GPU programming"
+- **What it actually means:** NVIDIA's GPU compute platform. A TC rarely touches CUDA directly but pays for GPU hours on hosted inference (AWS, Azure, Modal, Replicate). Pricing models are GPU-hour based.
 
-## D
-
-### Data Augmentation
-- **What people say:** "Making more training data"
-- **What it actually means:** Creating modified copies of existing data (rotate images, add noise, paraphrase text) to increase training set diversity without collecting new data. Reduces overfitting.
-
-### Decoder
-- **What people say:** "The output part"
-- **What it actually means:** In transformers, a decoder uses causal (masked) self-attention so each position can only attend to earlier positions. GPT is decoder-only. BERT is encoder-only. T5 is encoder-decoder.
-
-### Diffusion Model
-- **What people say:** "AI that generates images from noise"
-- **What it actually means:** A model trained to reverse a gradual noising process — it learns to predict and remove noise, and at generation time starts from pure noise and iteratively denoises
-
-### DPO (Direct Preference Optimization)
-- **What people say:** "A simpler RLHF"
-- **What it actually means:** A training method that skips the reward model entirely — it directly optimizes the language model to prefer the better response in pairs of human preferences
-
-### Dropout
-- **What people say:** "Randomly turning off neurons"
-- **What it actually means:** During training, randomly set a fraction of activations to zero. Forces the network to not rely on any single neuron. Turned off during inference. Simple but effective regularization.
+---
 
 ## E
 
-### Eigenvalue
-- **What people say:** "Some math thing for PCA"
-- **What it actually means:** For a matrix A, an eigenvalue lambda satisfies Av = lambda*v for some vector v. It tells you how much the matrix scales vectors in that direction. Large eigenvalues = directions of high variance in your data.
-
 ### Embedding
 - **What people say:** "Some AI magic that turns words into numbers"
-- **What it actually means:** A learned mapping from discrete items (words, images, users) to dense vectors in continuous space, where similar items end up close together
-- **Why it's called that:** The items are "embedded" in a geometric space where distance has meaning
+- **What it actually means:** A vector representation of text (or images, audio, etc.) such that similar meaning → nearby vectors. This is what powers semantic search, RAG retrieval, recommendations, and clustering.
+- **Ship it:** use a hosted embedder (`text-embedding-3-small`, `voyage-4`, `cohere-embed-v3`, or your gateway's default). Never roll your own.
+- **Watch out:** different embedding models produce incompatible vector spaces. Switching models means re-embedding the entire corpus.
 
-### Encoder
-- **What people say:** "The input part"
-- **What it actually means:** In transformers, an encoder uses bidirectional self-attention so each position can attend to all positions. BERT is encoder-only. Good for understanding tasks (classification, NER) but not generation.
+### Eval Harness
+- **What people say:** "Tests for AI outputs"
+- **What it actually means:** The test rig you build to grade model outputs. It is the document you hand a steering committee the morning the trade-off is questioned. Without one, every deployment is a hope.
+- **Components:** a gold set (100+ labeled cases), a judge model or rubric, pass/fail thresholds tied to the SLO.
+- **Watch out:** a single judge model is biased by its own training. Pairwise comparison reduces single-judge bias.
 
-### Epoch
-- **What people say:** "One pass through the data"
-- **What it actually means:** Exactly that. One complete pass through every example in the training set. Multiple epochs = seeing the data multiple times. More epochs can improve learning but risks overfitting.
+---
 
 ## F
 
-### Feature
-- **What people say:** "A column in your data"
-- **What it actually means:** An individual measurable property of the data. In classical ML, you engineer features by hand. In deep learning, the network learns features automatically from raw data.
-
 ### Few-Shot
 - **What people say:** "Give the AI some examples first"
-- **What it actually means:** Including a small number of input-output examples in the prompt before asking the model to perform a task. Typically 3-5 examples. The model pattern-matches on these examples to understand the desired format and behavior. Contrast with zero-shot (no examples) and fine-tuning (thousands of examples baked into weights).
+- **What it actually means:** Putting 3-5 examples in the prompt to show the model the format and behavior you want. Cheaper than fine-tuning, re-deployable in seconds.
+- **Ship it:** use few-shot for output-format control (JSON shape, tone, edge-case handling). Skip it for tasks where zero-shot already works — the tokens cost money.
 
-### Fine-tuning
+### Fine-Tuning
 - **What people say:** "Training the AI on your data"
-- **What it actually means:** Starting with a pre-trained model's weights and continuing training on a smaller, task-specific dataset. Only updates existing weights, doesn't add new knowledge from scratch
+- **What it actually means:** Continuing training of a pre-trained model on your smaller, task-specific dataset. It changes model weights, not just prompts. Costs GPU hours + labeling time.
+- **When to use:** when few-shot prompts get too long (you've pasted 50 examples) or when the model consistently fails on a domain-specific pattern.
+- **Watch out:** fine-tuned models drift from base-model behavior. Plan re-tuning when the base model upgrades.
 
-### Function Calling
+### Function Calling (Tool Use)
 - **What people say:** "AI that can use tools"
-- **What it actually means:** A structured way for LLMs to request execution of external functions. You define tools with JSON Schema descriptions, the model outputs a structured JSON object specifying which function to call with what arguments, your code executes it, and the result goes back to the model. Not the same as agents -- function calling is the mechanism, agents are the loop.
+- **What it actually means:** A structured protocol where the LLM outputs a JSON object naming a tool and its arguments; your code executes the tool; the result returns to the model. This is the **mechanism**; agents are the **loop**.
+- **Ship it:** define tools with strict JSON Schema. Make every side effect explicit. Log every call for cost attribution and audit.
+
+---
 
 ## G
 
 ### Guardrails
 - **What people say:** "Safety filters for AI"
-- **What it actually means:** Input/output validation layers around an LLM that detect and block harmful content, prompt injection attempts, PII leakage, or off-topic responses. Typically a pipeline: input filter -> LLM -> output filter. Can be rule-based (regex, keyword lists) or model-based (classifier that scores safety).
+- **What it actually means:** Input/output filters around the LLM that detect prompt injection, PII leakage, off-topic responses, or unsafe outputs. A TC's job is to ship an LLM app into a regulated tenant without being the person who gets fired when something goes wrong.
+- **Ship it:** defense-in-depth (input check → model → output check → audit log) catches ~95% of attacks at <50 ms latency overhead. A single layer catches ~70%.
 
 ### GPT
 - **What people say:** "ChatGPT" or "The AI"
-- **What it actually means:** Generative Pre-trained Transformer — a specific architecture that predicts the next token using a decoder-only transformer trained on large text corpora
-- **Why it's called that:** Generative (produces text), Pre-trained (trained once on large data, then adapted), Transformer (the architecture)
+- **What it actually means:** OpenAI's family of decoder-only transformer models. Specific model names change quarterly — verify on the provider's pricing page before any client deliverable.
 
-### GAN (Generative Adversarial Network)
-- **What people say:** "Two AIs fighting each other"
-- **What it actually means:** A generator network tries to create realistic data while a discriminator network tries to tell real from fake. They train together: the generator gets better at fooling the discriminator, and the discriminator gets better at detecting fakes.
+### Generative AI
+- **What people say:** "AI that creates things"
+- **What it actually means:** AI that produces novel outputs (text, images, code, audio) rather than classifying or scoring. Every client engagement you're on is in this bucket.
 
-### Gradient
-- **What people say:** "The slope"
-- **What it actually means:** A vector of partial derivatives pointing in the direction of steepest increase. In ML, you go opposite to the gradient (gradient descent) to minimize the loss.
-
-### Gradient Descent
-- **What people say:** "How AI improves"
-- **What it actually means:** An optimization algorithm that adjusts parameters in the direction that reduces the loss function most steeply, like walking downhill in a high-dimensional landscape
+---
 
 ## H
 
-### Hyperparameter
-- **What people say:** "Settings you tune"
-- **What it actually means:** Values set before training that control the training process itself: learning rate, batch size, number of layers, dropout rate. Unlike model parameters (weights), these aren't learned from data.
-
 ### Hallucination
 - **What people say:** "The AI is lying" or "making things up"
-- **What it actually means:** The model generates plausible-sounding text that isn't grounded in its training data or the given context — it's pattern-completing, not fact-retrieving
+- **What it actually means:** The model produces plausible text that isn't grounded in the input or its training data. It is **not a bug to fix** — it is a property of how LLMs work. The job is to **bound** it: retrieval-grounded prompts, output validators, attribution display.
+- **Ship it:** never deploy an LLM feature without (a) telling the user when output is uncertain, and (b) a path for the user to verify.
+
+---
 
 ## I
 
 ### Inference
 - **What people say:** "Running the AI"
-- **What it actually means:** Using a trained model to make predictions on new data. No weight updates happen. This is what you do in production: send input, get output.
+- **What it actually means:** Running a trained model on new data. No weight updates. This is what you pay the provider for: input tokens + output tokens.
+- **Cost levers:** model choice, prompt size, output size, caching, batching, region.
 
-### Inductive Bias
-- **What people say:** Never heard of it
-- **What it actually means:** The assumptions built into a model's architecture. CNNs assume local patterns matter (convolution). RNNs assume order matters (sequential processing). Transformers assume everything might relate to everything (attention). The right bias helps the model learn faster from less data.
-
-### JAX
-- **What people say:** "Google's ML framework"
-- **What it actually means:** A NumPy-compatible library that adds automatic differentiation (grad), JIT compilation (jit), automatic vectorization (vmap), and multi-device parallelism (pmap). Unlike PyTorch's object-oriented style, JAX is purely functional -- no hidden state, no in-place mutation. Used by Google DeepMind for AlphaFold, Gemini, and large-scale research.
-
-## K
-
-### KV Cache
-- **What people say:** "Makes inference faster"
-- **What it actually means:** During autoregressive generation, caching the key and value matrices from previous tokens so you don't recompute them at each step. Trades memory for speed. Essential for fast LLM inference.
+---
 
 ## L
 
-### Latent Space
-- **What people say:** "The hidden representation"
-- **What it actually means:** A compressed, learned representation space where similar inputs map to nearby points. Autoencoders, VAEs, and diffusion models all work in latent space. It's lower-dimensional than the input but captures the important structure.
-
-### Learning Rate
-- **What people say:** "How fast the AI learns"
-- **What it actually means:** A scalar that controls step size during gradient descent. Too high: overshoots the minimum and diverges. Too low: converges too slowly or gets stuck. The single most important hyperparameter.
-
 ### LLM (Large Language Model)
 - **What people say:** "AI" or "the brain"
-- **What it actually means:** A transformer-based neural network trained to predict the next token in a sequence, with billions of parameters, trained on internet-scale text data
+- **What it actually means:** A transformer-based model trained to predict the next token, on billions of parameters, on internet-scale text. The default building block of every AI engagement you'll see in 2026.
+- **Vendor classes (re-verify quarterly):** frontier (Opus / GPT-class / Gemini-class), mini (smaller, cheaper, faster), and open-weight (Llama, Mistral, Qwen).
 
-### LoRA (Low-Rank Adaptation)
-- **What people say:** "Efficient fine-tuning"
-- **What it actually means:** Instead of updating all weights, insert small low-rank matrices alongside the original weights. Only these small matrices are trained, reducing memory by 10-100x
+### Latency
+- **What people say:** "How fast the AI responds"
+- **What it actually means:** Two numbers that matter: **TTFT** (time to first token — perceived "snappiness") and **end-to-end** (last token out — total response time).
+- **Ship it targets (2026 practice):** TTFT P50 < 500 ms, TTFT P99 < 2 s, end-to-end P99 < 8 s. Above these, support load spikes.
 
-### Loss Function
-- **What people say:** "How wrong the AI is"
-- **What it actually means:** A function that measures the gap between predicted and actual output. Training minimizes this function. MSE for regression, cross-entropy for classification, contrastive loss for embeddings. The choice of loss function defines what "good" means to the model.
+---
 
 ## M
 
-### Mixed Precision
-- **What people say:** "Training trick for speed"
-- **What it actually means:** Using float16 for forward pass and most operations (faster, less memory) but keeping float32 for gradient accumulation and weight updates (more precise). Gets 2x speedup with negligible accuracy loss.
-
-### MoE (Mixture of Experts)
-- **What people say:** "Only part of the model runs"
-- **What it actually means:** A model with many "expert" subnetworks where a routing mechanism sends each input to only a few experts. The full model is huge but each forward pass is cheap because most experts are skipped. Mixtral and GPT-4 use this.
-
 ### MCP (Model Context Protocol)
 - **What people say:** "A way for AI to use tools"
-- **What it actually means:** An open protocol (JSON-RPC over stdio/HTTP) that standardizes how AI applications connect to external data sources and tools, with typed schemas for tools, resources, and prompts
+- **What it actually means:** An open standard (JSON-RPC) for connecting LLMs to external tools and data sources. Anthropic released it November 2024; adopted across most major agent frameworks since.
+- **Why a TC cares:** vendor-neutral. One MCP server works with any MCP-speaking host. The "USB-C for AI tools" framing is accurate.
 
-## N
+### Multi-Modal
+- **What people say:** "AI that handles images and audio"
+- **What it actually means:** Models that accept or produce more than text (images, audio, video). Adds cost (vision tokens are expensive) and changes prompt shape. Always verify the model's modality matrix before scoping — "it accepts images" varies wildly (size limits, resolution limits, format support).
 
-### NaN (Not a Number)
-- **What people say:** "Training crashed"
-- **What it actually means:** A floating-point value indicating undefined results (0/0, inf-inf). In training, NaN loss usually means: learning rate too high, exploding gradients, log of zero, or division by zero. Always the first thing to check when training fails.
-
-### Normalization
-- **What people say:** "Scaling the data"
-- **What it actually means:** Adjusting values to a standard range. Batch normalization normalizes across a batch. Layer normalization normalizes across features. Both stabilize training and allow higher learning rates.
+---
 
 ## O
 
-### Overfitting
-- **What people say:** "The model memorized the data"
-- **What it actually means:** The model performs well on training data but poorly on unseen data. It learned the noise, not the signal. Fix with: more data, regularization (dropout, weight decay), early stopping, data augmentation, simpler model.
+### Output Tokens
+- **What people say:** "What the model writes"
+- **What it actually means:** What the model generates. **This is where the bill lives.** Output tokens cost 3-5x more than input tokens across major providers.
+- **Ship it:** cap output length explicitly. Set max_tokens in every call. Streaming buys perceived latency but doesn't reduce token cost.
 
-### Optimizer
-- **What people say:** "The thing that updates weights"
-- **What it actually means:** An algorithm that uses gradients to update model parameters. SGD is the simplest. Adam is the most common. Each optimizer has different properties: convergence speed, memory usage, sensitivity to hyperparameters.
+---
 
 ## P
 
-### Parameter
-- **What people say:** "Model size"
-- **What it actually means:** A learnable value in the model, typically a weight or bias. "7B parameters" means 7 billion learnable numbers. Each float32 parameter takes 4 bytes, so 7B parameters = 28GB of memory just for the weights.
-
-### Perplexity
-- **What people say:** "How confused the model is"
-- **What it actually means:** The exponential of the average cross-entropy loss. Lower is better. A perplexity of 10 means the model is as uncertain as if it were choosing uniformly among 10 tokens at each step.
-
-### Precision & Recall
-- **What people say:** "Accuracy metrics"
-- **What it actually means:** Precision = of items you flagged, how many were correct. Recall = of all correct items, how many did you find. They trade off: catching every spam email (high recall) means more false alarms (low precision). F1 score is their harmonic mean. Use precision when false positives are costly, recall when false negatives are costly.
-
 ### Prompt Engineering
 - **What people say:** "Talking to AI the right way"
-- **What it actually means:** Designing the input text to reliably produce desired outputs -- including system prompts, few-shot examples, format instructions, and chain-of-thought triggers
+- **What it actually means:** Designing the input text — system prompt, few-shot examples, format instructions — to produce desired outputs reliably. The cheapest performance lever you have.
+- **Ship it:** version-control prompts like code. A/B test against your eval harness. Treat prompt changes as deploys, not edits.
 
 ### Prompt Injection
 - **What people say:** "Hacking the AI with words"
-- **What it actually means:** An attack where malicious text in the input overrides the system prompt or instructions. Direct injection: user types "Ignore previous instructions." Indirect injection: a retrieved document contains hidden instructions. The LLM equivalent of SQL injection. No complete solution exists -- defense is layers of input validation, output filtering, and privilege separation.
+- **What it actually means:** A user (or a document the user supplies) overrides the system prompt via malicious input. The LLM equivalent of SQL injection. No complete solution exists.
+- **Defense:** input validation + output filtering + privilege separation + retrieval grounding. The eval harness is your regression suite against new attack patterns.
+
+### Perplexity
+- **What people say:** "How confused the model is"
+- **What it actually means:** A training/eval metric (exp of cross-entropy loss). Not directly actionable in delivery unless you're choosing between base models on a private benchmark.
+
+---
 
 ## Q
 
-### QLoRA
-- **What people say:** "LoRA but cheaper"
-- **What it actually means:** Quantized LoRA. Keeps the frozen base model weights in 4-bit precision (NF4 format) while training LoRA adapters in 16-bit. Reduces memory by another 3-4x compared to standard LoRA. A 7B model that needs 14GB with LoRA fits in 4-6GB with QLoRA. Quality is within 1% of full fine-tuning on most benchmarks.
+### Quantization
+- **What people say:** "Making the model smaller"
+- **What it actually means:** Reducing the precision of model weights (float32 → int8 or int4) to shrink memory and speed inference. Trades a small accuracy loss for 4-8x size reduction.
+- **When a TC sees this:** on hosted inference (provider picks the quantization) and when running open-weight models on smaller GPUs.
+
+---
 
 ## R
 
 ### RAG (Retrieval-Augmented Generation)
 - **What people say:** "AI that can search"
-- **What it actually means:** A pattern where you retrieve relevant documents from a knowledge base (using embedding similarity), stuff them into the prompt, and let the LLM answer based on that context
-- **Why it's called that:** Retrieval (find documents) + Augmented (add to prompt) + Generation (LLM writes the answer)
+- **What it actually means:** Retrieve relevant documents from a knowledge base → stuff them into the prompt → let the LLM answer with that context. **The default pattern for any "ask the docs" client engagement.**
+- **Ship it:** the eval harness must test retrieval quality separately from answer quality. A wrong chunk lookup surfaces as "the AI made something up" even when the LLM did its job.
+- **Why it's called that:** Retrieval (find documents) + Augmented (add to prompt) + Generation (LLM writes the answer).
 
 ### RLHF (Reinforcement Learning from Human Feedback)
 - **What people say:** "How they make AI helpful"
-- **What it actually means:** A training pipeline: (1) collect human preferences on model outputs, (2) train a reward model on those preferences, (3) use PPO to optimize the LLM to produce higher-reward outputs
+- **What it actually means:** The training pipeline that turns a base model into a chat model. Done by the vendor, not by you. The output is a model that's "helpful" in the vendor's definition of helpful.
 
-### Quantization
-- **What people say:** "Making the model smaller"
-- **What it actually means:** Reducing the precision of model weights from float32 (4 bytes) to int8 (1 byte) or int4 (0.5 bytes). Trades a small amount of accuracy for 4-8x less memory and faster inference. GPTQ, AWQ, and GGUF are common formats.
+### Reasoning Model
+- **What people say:** "AI that thinks harder"
+- **What it actually means:** Models that emit extended chain-of-thought before answering (o-series, Claude with extended thinking, Gemini Thinking). Higher cost and latency, higher accuracy on math/code/multi-step.
+- **Ship it:** route only the hard queries to a reasoning model. Default to a fast model for lookups.
 
-### ReLU
-- **What people say:** "Activation function"
-- **What it actually means:** Rectified Linear Unit: f(x) = max(0, x). The simplest non-linear activation. Fast to compute, doesn't saturate for positive values. Used everywhere because it works and is cheap. Variants: LeakyReLU, GELU, SiLU.
-
-### ROUGE
-- **What people say:** "Summarization metric"
-- **What it actually means:** Recall-Oriented Understudy for Gisting Evaluation. Measures overlap between generated text and reference text. ROUGE-1 counts unigram matches, ROUGE-2 counts bigram matches, ROUGE-L finds the longest common subsequence. Cheap to compute but only measures surface similarity -- two sentences with the same meaning but different words score poorly.
+---
 
 ## S
 
 ### Semantic Search
 - **What people say:** "Smart search that understands meaning"
-- **What it actually means:** Finding documents by meaning rather than keyword matching. Embed the query and all documents into the same vector space, then return documents whose embeddings are closest to the query embedding. "payment failed" finds "transaction declined" even though they share no words. Powered by embedding models + vector databases.
+- **What it actually means:** Finding documents by meaning, not keywords. Embed the query and all documents, return the closest. This is the retrieval half of RAG.
+- **Watch out:** "payment failed" matches "transaction declined" — but also matches "the failure was non-payment." Embeddings don't understand negation.
 
 ### Streaming
 - **What people say:** "Seeing the response appear word by word"
-- **What it actually means:** The LLM sends tokens as they are generated rather than waiting for the complete response. Uses Server-Sent Events (SSE) or WebSocket protocols. Reduces perceived latency from seconds to milliseconds for the first token. Essential for production chat interfaces. Each chunk contains a delta (partial token or word).
-
-### Self-Attention
-- **What people say:** "How the model decides what to focus on"
-- **What it actually means:** Each token computes query, key, and value vectors. Attention weight between two tokens = dot product of their query and key, scaled and softmaxed. Output = weighted sum of value vectors. Lets every token see every other token.
-
-### SFT (Supervised Fine-Tuning)
-- **What people say:** "Teaching the model to follow instructions"
-- **What it actually means:** Fine-tuning a pre-trained model on (instruction, response) pairs. The model learns to generate the response given the instruction. This is what turns a base model into a chat model.
-
-### Softmax
-- **What people say:** "Turns numbers into probabilities"
-- **What it actually means:** softmax(x_i) = exp(x_i) / sum(exp(x_j)). Transforms a vector of arbitrary real numbers into a probability distribution (all positive, sums to 1). Used in classification heads, attention weights, and anywhere you need probabilities.
-
-### Swarm
-- **What people say:** "A bunch of AI agents working together like bees"
-- **What it actually means:** Multiple agents sharing state and coordinating through message passing, with emergent behavior arising from simple individual rules rather than central control
-
-## T
+- **What it actually means:** The provider sends tokens as the model generates them (SSE or WebSocket), instead of waiting for the full response. Reduces perceived latency from seconds to milliseconds for the first token.
+- **Ship it:** every chat UI should stream. Every batch job should not.
 
 ### System Prompt
 - **What people say:** "The AI's instructions"
-- **What it actually means:** A special message at the start of a conversation that sets the model's behavior, persona, and constraints. Processed before user messages. Not visible to the user in most UIs. Defines what the model should and shouldn't do, its tone, format preferences, and domain focus. Different from user prompts -- system prompts are set by the developer.
+- **What it actually means:** The hidden instruction block at the start of the conversation that sets the model's persona, tone, and constraints. The TC's primary lever for shaping model behavior.
+- **Watch out:** the system prompt is **not security**. A user prompt can override it via prompt injection. Treat the system prompt as UX copy, not a firewall.
 
-### Tensor
-- **What people say:** "A multi-dimensional array"
-- **What it actually means:** The fundamental data structure in deep learning frameworks. A 0D tensor is a scalar, 1D is a vector, 2D is a matrix, 3D+ is a tensor. In PyTorch and JAX, tensors track their computation history for automatic differentiation and can live on CPU or GPU. All neural network inputs, outputs, weights, and gradients are tensors.
+### SFT (Supervised Fine-Tuning)
+- **What people say:** "Teaching the model to follow instructions"
+- **What it actually means:** Fine-tuning on (instruction, response) pairs. The standard way to teach a model a new task shape. Higher cost than few-shot; lower cost than RLHF.
+
+---
+
+## T
 
 ### Token
 - **What people say:** "A word"
-- **What it actually means:** A subword unit (typically 3-4 characters in English) produced by a tokenizer like BPE. "unbelievable" might be 3 tokens: "un" + "believ" + "able"
+- **What it actually means:** The unit the model reads and writes. Not a word — a subword chunk (typically 3-4 characters in English). A sentence might be 20-40 tokens. **Pricing, context window, and latency all count in tokens, not words.**
+- **Ship it:** count tokens before shipping. Use the provider's tokenizer for cost estimates, not your own.
 
 ### Temperature
 - **What people say:** "Creativity setting"
-- **What it actually means:** A scalar that divides logits before softmax. Temperature=1 is default. Higher = flatter distribution = more random outputs. Lower = sharper distribution = more deterministic. Temperature=0 is argmax (always pick the most likely token).
-
-### Transfer Learning
-- **What people say:** "Using a pre-trained model"
-- **What it actually means:** Taking a model trained on one task and adapting it to a different task. The early layers learn general features (edges, syntax patterns) that transfer. Only the later layers need task-specific training. This is why you can fine-tune BERT for any NLP task.
+- **What it actually means:** A knob on the sampling distribution. 0 = deterministic (always pick top token). 1 = default. Higher = more random.
+- **Default for client work:** 0 for classification/extraction/JSON output. 0.7 for creative writing. Avoid >1 — quality drops fast.
 
 ### Transformer
 - **What people say:** "The architecture behind modern AI"
-- **What it actually means:** A neural network architecture that processes sequences using self-attention (letting every position attend to every other position) instead of recurrence, enabling massive parallelization
-- **Why it's called that:** It transforms input representations into output representations through attention layers
+- **What it actually means:** The architecture behind every modern LLM. You don't need to derive it. You need to know that **input cost scales with sequence length squared-ish (attention is quadratic)** — which is why long-context pricing is steeper than short-context.
 
-## U
-
-### Underfitting
-- **What people say:** "The model isn't learning"
-- **What it actually means:** The model is too simple to capture the patterns in the data. Training loss stays high. Fix with: more parameters, more layers, longer training, lower regularization, better features.
+---
 
 ## V
 
-### VAE (Variational Autoencoder)
-- **What people say:** "A generative model"
-- **What it actually means:** An autoencoder that learns a smooth latent space by forcing the encoder output to follow a Gaussian distribution. You can sample from this distribution and decode to generate new data. The reparameterization trick makes it trainable via backpropagation.
-
 ### Vector Database
 - **What people say:** "A special database for AI"
-- **What it actually means:** A database optimized for storing vectors (dense arrays of floats) and performing fast approximate nearest-neighbor search. The core operation in similarity search, RAG, and recommendation systems.
+- **What it actually means:** A database optimized for storing vectors and finding approximate nearest neighbors. Required infrastructure for any RAG system above ~10K documents.
+- **Ship it:** pick a managed one (Pinecone, Weaviate, Qdrant Cloud, pgvector on Postgres). Self-host only when data residency demands it.
 
-## W
-
-### Weight
-- **What people say:** "What the model learned"
-- **What it actually means:** A single number in a model's parameter matrix. A linear layer with input size 768 and output size 3072 has 768*3072 = 2,359,296 weights. Training adjusts each weight to minimize the loss function.
-
-### Weight Decay
-- **What people say:** "Regularization"
-- **What it actually means:** Adding a penalty proportional to the magnitude of weights to the loss function. Equivalent to L2 regularization. Prevents weights from growing too large. Typical value: 0.01-0.1.
+---
 
 ## Z
 
 ### Zero-Shot
 - **What people say:** "No training needed"
-- **What it actually means:** Using a model on a task it wasn't explicitly trained for, with no task-specific examples in the prompt. The model generalizes from pre-training. Works because large models have seen enough variety to handle new task formats.
+- **What it actually means:** Asking the model to perform a task with no examples. Works because pre-training covered the pattern. Cheapest mode — use it first, escalate to few-shot only when zero-shot fails.
