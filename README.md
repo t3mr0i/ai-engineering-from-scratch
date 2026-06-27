@@ -1082,7 +1082,7 @@ your agent. The pack source lives at
 ### Browse the entire course as JSON
 
 `scripts/build_catalog.py` walks every phase, every lesson, every artifact on
-disk and writes `catalog.json` at the repo root. One file, every course truth.
+disk and writes `catalog.json` at the repo root.
 
 ```bash
 python3 scripts/build_catalog.py               # writes <repo>/catalog.json
