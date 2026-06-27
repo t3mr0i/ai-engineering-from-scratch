@@ -750,7 +750,7 @@
 
     .code-run-inline:hover:not(:disabled) {
       background: var(--blueprint);
-      color: var(--paper, #fff);
+      color: var(--bg-surface);
     }
 
     .code-run-inline:disabled {
@@ -815,9 +815,9 @@
     .fillin-input::placeholder { color: var(--blueprint); opacity: 0.5; }
     .fillin-input:focus { background: var(--blueprint); color: var(--bg); }
     .fillin-input.fillin-ok {
-      color: #1a7f37;
-      border-bottom-color: #1a7f37;
-      background: rgba(26,127,55,0.10);
+      color: var(--status-ok);
+      border-bottom-color: var(--status-ok);
+      background: var(--status-ok-bg);
     }
     .fillin-solve {
       background: var(--blueprint);
@@ -1661,7 +1661,7 @@
       font-size: 0.82rem;
       font-weight: 600;
       letter-spacing: 0.04em;
-      color: var(--paper, #fff);
+      color: var(--bg-surface);
       background: var(--blueprint);
       border: 1px solid var(--blueprint);
       padding: 10px 22px;
@@ -1718,9 +1718,9 @@
     }
 
     .code-output-error {
-      color: #b00020;
-      border-color: #b00020;
-      background: rgba(176, 0, 32, 0.06);
+      color: var(--status-error);
+      border-color: var(--status-error);
+      background: var(--status-error-bg);
     }
 
     .learning-timeline {
@@ -2489,7 +2489,7 @@
         html += '<div class="lrn-sidebar-code">' + escapeHtml(lrnContext.course.id) + '</div>';
         html += '<div class="lrn-sidebar-title">' + escapeHtml(lrnContext.course.title) + '</div>';
         html += '<div class="lrn-sidebar-progress" aria-hidden="true"><span style="width:' + lrnContext.percent + '%"></span></div>';
-        html += '<div class="lrn-sidebar-stat">' + lrnContext.completed + '/' + lrnContext.total + ' skill path activities completed</div>';
+        html += '<div class="lrn-sidebar-counter">' + lrnContext.completed + '/' + lrnContext.total + ' tasks shipped</div>';
         html += '</div>';
 
         lrnContext.groups.forEach(function (group, groupIndex) {
@@ -2706,12 +2706,11 @@
         return bestScore >= 2 ? best : null;
       }
 
-      function showError(title, msg, showCatalog) {
+      function showError(title, msg, _showCatalog) {
         var el = document.getElementById('lessonContent');
+        // Cut #59: "Browse all lessons" duplicate button dropped; showCatalog kept
+        // for call-site compat but no longer renders a second action.
         var actions = '<a href="index.html" class="btn btn-primary">' + (lrnContext ? 'Back to catalog' : 'Back to Home') + '</a>';
-        if (showCatalog) {
-          actions += ' <a href="index.html" class="btn">Browse all lessons</a>';
-        }
         el.innerHTML = '<div class="lesson-error"><h2>' + title + '</h2><p>' + msg + '</p>' + actions + '</div>';
       }
 
@@ -2831,10 +2830,10 @@
           meta =
             '<div class="lesson-headbar__meta">' +
             '<div class="lesson-headbar__crumb">' +
-              escapeHtml(current.groupTitle) + ' &middot; Activity ' +
-              (lrnContext.currentIndex + 1) + ' of ' + lrnContext.total +
+              escapeHtml(current.groupTitle) + ' &middot; ' +
+              (lrnContext.currentIndex + 1) + ' / ' + lrnContext.total +
             '</div>' +
-            '<div class="lesson-headbar__course">' + escapeHtml(lrnContext.course.title) + '</div>' +
+            '<div class="lesson-headbar__task-title">' + escapeHtml(current.title) + '</div>' +
             '</div>';
         }
 
@@ -2847,6 +2846,7 @@
           nav += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity" aria-label="Next activity">&rarr;</a>';
         }
         nav += '<a href="#" id="lrnKeyBtn" title="Bifrost gateway key for notebooks" aria-label="API key settings">' + LUCIDE_SETTINGS + '</a>';
+        nav += '<a href="#" id="themeToggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme"><span id="themeIcon" class="theme-icon">N</span></a>';
         nav += '</nav>';
 
         slot.innerHTML = meta + nav;
@@ -5007,7 +5007,7 @@
         if (lrnContext.next) {
           html += '<a class="continue-link" href="' + lrnLessonHref(lrnContext.next.path) + '">Next activity: ' + escapeHtml(lrnContext.next.title) + '</a>';
         } else {
-          html += '<div class="phase-finished">Skill path completed</div>';
+          html += '<div class="course-finished">All tasks shipped</div>';
         }
         html += '<a class="continue-link" href="index.html">Back to Learning Catalog</a>';
         html += '</div>';
