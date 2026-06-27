@@ -35,7 +35,7 @@ The first prompt activates a generic distribution of marketing emails in the mod
 
 This gap between what you ask and what you get is the entire discipline of prompt engineering. It is not a hack or a workaround. It is the primary interface between human intent and machine capability. And it is a subset of a larger discipline -- context engineering (covered in Lesson 05) -- that deals with everything that goes into the model's context window, not just the prompt itself.
 
-Prompt engineering is not dead. The people who say it is are the same people who said CSS was dead in 2015. What changed is that it became table stakes. Every serious AI engineer needs it. The question is not whether to learn it but how deep to go.
+What changed is that it became table stakes. Every serious AI engineer needs it. The question is not whether to learn it but how deep to go.
 
 ## The Concept
 
@@ -80,7 +80,7 @@ Specific roles outperform generic ones:
 | "You are a senior backend engineer at Stripe specializing in payment systems" | Narrow, high-quality, domain-specific |
 | "You are a compiler engineer who has worked on LLVM for 10 years" | Activates deep technical knowledge on a specific topic |
 
-The more specific the role, the narrower the distribution, the higher the quality. But there is a limit. If the role is so specific that few training examples match, the model will hallucinate. "You are the world's foremost expert on quantum gravity string topology" will produce confident nonsense because the model has very little high-quality text at that intersection.
+The more specific the role, the narrower the distribution, the higher the quality. But there is a limit. If the role is so specific that few training examples match, the model will hallucinate, because there is little high-quality text at that intersection.
 
 ### Instruction Clarity: Specific Beats Vague
 
