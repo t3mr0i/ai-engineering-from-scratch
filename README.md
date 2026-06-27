@@ -211,7 +211,8 @@ the agent went wrong and explain why...
 
 ## Contents
 
-Twenty phases. Click any phase to expand its lesson list.
+Twenty phases. Click any phase to expand its lesson list. Each row is a
+folder under `phases/`.
 
 <a id="phase-0"></a>
 ### Phase 0: Setup & Tooling `12 lessons`
