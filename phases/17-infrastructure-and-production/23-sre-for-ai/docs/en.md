@@ -1,6 +1,6 @@
 # SRE for AI — Multi-Agent Incident Response, Runbooks, Predictive Detection
 
-> AI SRE uses LLMs grounded in infrastructure data (logs, runbooks, service topology) via RAG to automate investigation, documentation, and coordination phases. The 2026 architecture pattern is multi-agent orchestration — specialized agents (logs, metrics, runbooks) coordinated by a supervisor; AI proposes hypotheses and queries, humans approve judgment calls. Datadog Bits AI and Azure SRE Agent ship this as managed products. Runbooks are evolving: NeuBird Hawkeye uses adversarial evaluation (two models analyze the same incident; agreement = confidence, disagreement = uncertainty); operational memory persists across team changes. Auto-remediation stays cautious: AI suggests, humans approve. Fully autonomous action is narrow (restart pod, rollback specific deploy) with tight guardrails — anyone selling "set it and forget it" is overselling. Emerging frontier: pre-incident prediction. MIT research reports an LLM trained on historical logs + GPU temps + API error patterns predicted 89% of outages 10-15 min early. Projection: 95% of enterprise LLMs have automated failover by end-2026.
+> AI SRE uses LLMs grounded in infrastructure data (logs, runbooks, service topology) via RAG to automate investigation, documentation, and coordination phases. The 2026 architecture pattern is multi-agent orchestration — specialized agents (logs, metrics, runbooks) coordinated by a supervisor; AI proposes hypotheses and queries, humans approve judgment calls. Datadog Bits AI and Azure SRE Agent ship this as managed products. Runbooks are evolving: NeuBird Hawkeye uses adversarial evaluation (two models analyze the same incident; agreement = confidence, disagreement = uncertainty); operational memory persists across team changes. Auto-remediation stays cautious: AI suggests, humans approve. Fully autonomous action is narrow (restart pod, rollback specific deploy) with tight guardrails — anyone selling "set it and forget it" is overselling. Emerging frontier: pre-incident prediction. Prediction is feasible on telemetry-rich stacks (logs + metrics + deploy events); the constraint is always actuation, not detection — predictions without an action policy are dashboards, not SRE.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy multi-agent incident triage simulator)
@@ -12,7 +12,7 @@
 - Diagram the multi-agent AI SRE architecture: supervisor + specialized agents (logs, metrics, runbooks) + human approval gate.
 - Explain why auto-remediation is narrow (restart pod, revert deploy) rather than broad (re-architect service).
 - Name the adversarial evaluation pattern (NeuBird Hawkeye): two models agree = confidence; disagree = escalate.
-- Cite the MIT 89% early-detection result and the operational constraint: predictions without actuation are just dashboards.
+- State the operational constraint: predictions without actuation are just dashboards.
 
 ## The Problem
 
@@ -67,7 +67,7 @@ Team turnover is the silent kill of traditional SRE — tribal knowledge leaves.
 
 ### Pre-incident prediction
 
-MIT 2025 research: LLM trained on historical logs, GPU temperatures, API error patterns predicted 89% of outages 10-15 minutes before they happened on the test set.
+LLM-based early-warning is feasible on telemetry-rich stacks: logs + GPU temps + deploy events + error rates all feed the same model. Published claims of 89%+ lead-time accuracy on test sets circulate in vendor blogs and conference talks; treat any specific number as unverified until you re-measure on your own data.
 
 Reality check: predictions without actuation are dashboards. The operational question is "when we predict, what do we do?" Pre-emptive drain? Pager? Auto-scale? The answer is policy-specific.
 
@@ -85,10 +85,10 @@ Runbooks evolve from Confluence pages to versioned markdown with structured sect
 
 ### Numbers you should remember
 
-- MIT early-detection: 89% of outages, 10-15 min lead time.
 - Multi-agent triage: supervisor + (logs, metrics, runbooks) + human.
 - Safe auto-remediation set: restart pod, revert deploy, scale within bounds.
 - Adversarial eval: two models independent; agreement = confidence.
+- Early-warning lead time: vendor claims of 10-15 min exist; verify on your own data.
 
 ## Use It
 
