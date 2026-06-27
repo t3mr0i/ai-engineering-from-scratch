@@ -17,9 +17,9 @@
 
 ## The Problem
 
-You build a RAG chatbot for customer support. It works great in your demos. You ship it. Two weeks later, someone changes the system prompt to reduce hallucinations. The change works -- hallucination rate drops. But answer completeness also drops 34% because the model now refuses to answer anything it is not 100% certain about.
+You ship a RAG assistant for a client. Two weeks in, someone tightens the system prompt to reduce hallucinations. Hallucinations drop. Completeness also drops -- a third of customer questions now go unanswered. Nobody notices for 11 days. The CFO notices: the self-service channel's revenue fell, support tickets spiked, and the steering committee wants an explanation.
 
-Nobody noticed for 11 days. Revenue from the self-service channel fell. Support tickets spiked.
+**The lesson: an eval is the document a TC hands the steering committee the morning the trade-off is questioned.**
 
 This is the default outcome when you evaluate by vibes. You check a few examples, they look fine, you merge. But LLM outputs are stochastic. A prompt that works on 5 test cases can fail on the 6th. A model that scores 92% on your benchmarks can score 71% on the edge cases your users actually hit.
 
@@ -923,30 +923,11 @@ It also produces `outputs/skill-eval-patterns.md` -- a decision framework for ch
 
 5. **Build a cost tracker.** Track the token usage and cost of every judge call. Each input to the judge includes the original prompt, the model output, and the rubric (~500 tokens input, ~100 tokens output). Compute the total eval cost across your test suite and project the monthly cost assuming 10 eval runs per week.
 
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Eval | "Testing" | Systematically scoring LLM outputs against defined criteria using automated metrics, LLM judges, or human review |
-| LLM-as-judge | "AI grading" | Using a strong model (GPT-4o, Claude) to score outputs against a rubric -- correlates 80-85% with human judgment |
-| Rubric | "Scoring guide" | Anchored descriptions for each score level (1-5) that reduce judge variance by defining exactly what each score means |
-| ROUGE-L | "Text overlap" | Longest Common Subsequence-based metric measuring how much of the reference appears in the output -- recall-oriented |
-| Confidence interval | "Error bars" | A range around your measured score that tells you how much uncertainty remains -- wider with fewer test cases |
-| Regression testing | "Before/after" | Running the same eval suite on old and new prompt versions to detect quality degradation before deployment |
-| Golden test set | "Core evals" | Curated input-output pairs representing your most important use cases -- every change must pass these |
-| Pairwise comparison | "A vs B" | Showing a judge two outputs and asking which is better -- eliminates scale calibration problems |
-| Bootstrap | "Resampling" | Estimating confidence intervals by repeatedly sampling from your scores with replacement -- works with any distribution |
-| Wilson interval | "Proportion CI" | A confidence interval for pass/fail rates that works correctly even with small sample sizes or extreme proportions |
-
 ## Further Reading
 
-- [Zheng et al., 2023 -- "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"](https://arxiv.org/abs/2306.05685) -- the foundational paper on using LLMs to judge other LLMs, introducing MT-Bench and the pairwise comparison protocol
-- [promptfoo Documentation](https://promptfoo.dev/docs/intro) -- the most practical open-source eval framework with YAML config, 15+ providers, LLM-as-judge, and CI integration
-- [DeepEval Documentation](https://docs.confident-ai.com) -- Python-native eval framework with 14+ metrics, Pytest integration, and hallucination detection
-- [Braintrust Eval Guide](https://www.braintrust.dev/docs) -- production eval platform with experiment tracking, scoring functions, and dataset management
-- [Ribeiro et al., 2020 -- "Beyond Accuracy: Behavioral Testing of NLP Models with CheckList"](https://arxiv.org/abs/2005.04118) -- systematic behavioral testing methodology (minimum functionality, invariance, directional expectations) applicable to LLM evaluation
-- [LMSYS Chatbot Arena](https://chat.lmsys.org) -- live human evaluation platform where users vote on model outputs, the largest pairwise comparison dataset for LLMs
-- [Es et al., "RAGAS: Automated Evaluation of Retrieval Augmented Generation" (EACL 2024 demo)](https://arxiv.org/abs/2309.15217) -- reference-free metrics for RAG (faithfulness, answer relevancy, context precision/recall); the eval pattern that scales to prod without labelers.
+- [Zheng et al., 2023 -- "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"](https://arxiv.org/abs/2306.05685) -- the foundational paper on using LLMs to judge other LLMs.
+- [Ribeiro et al., 2020 -- "Beyond Accuracy: Behavioral Testing of NLP Models with CheckList"](https://arxiv.org/abs/2005.04118) -- systematic behavioral testing methodology applicable to LLM evaluation.
+- [Es et al., "RAGAS: Automated Evaluation of Retrieval Augmented Generation" (EACL 2024 demo)](https://arxiv.org/abs/2309.15217) -- reference-free metrics for RAG (faithfulness, answer relevancy, context precision/recall).
 - [Liu et al., "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment" (EMNLP 2023)](https://arxiv.org/abs/2303.16634) -- chain-of-thought + form-filling as a judge protocol; the calibration and bias results every judge-builder needs.
 - [Hugging Face LLM Evaluation Guidebook](https://huggingface.co/spaces/OpenEvals/evaluation-guidebook) -- practical advice on data contamination, metric selection, and reproducibility from the team maintaining the Open LLM Leaderboard.
 - [EleutherAI lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) -- the standard framework for automated benchmarks (MMLU, HellaSwag, TruthfulQA, BIG-Bench); the engine behind the Open LLM Leaderboard.
