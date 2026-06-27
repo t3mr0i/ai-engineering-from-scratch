@@ -180,9 +180,8 @@ Every model has a maximum context length. This is the total number of tokens for
 | Claude Sonnet 4.6 | 200K tokens (1M beta) | 64K tokens | Anthropic |
 | Gemini 3 Pro | 2M tokens | 64K tokens | Google |
 | Gemini 3 Flash | 1M tokens | 64K tokens | Google |
-| Llama 4 | 10M tokens | 8K tokens | Meta (open) |
-| Qwen3 Max | 256K tokens | 32K tokens | Alibaba (open) |
-| DeepSeek-V3.1 | 128K tokens | 32K tokens | DeepSeek (open) |
+
+Open-weight context windows in 2026 range from 32K (Llama 3.x variants) to 10M (Llama 4 family); verify on the model's card before committing.
 
 Context window size matters less than context window usage. A 10K token prompt that is 90% signal outperforms a 100K token prompt that is 10% signal. More context means more noise for the attention mechanism to filter through. This is why context engineering (Lesson 05) is the bigger discipline -- it decides what goes in the window, not just how the prompt is worded.
 
@@ -1030,20 +1029,19 @@ The assistant prefill (`"{"`) forces Claude to continue producing JSON without a
 ### Google: Gemini with Safety Settings
 
 ```python
-# import google.generativeai as genai
+# from google import genai
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client(api_key="your-key")
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-2.5-pro",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=genai.types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
