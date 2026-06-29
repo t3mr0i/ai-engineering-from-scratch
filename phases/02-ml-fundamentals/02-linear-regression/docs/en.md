@@ -222,6 +222,83 @@ print(f"True:    y = {TRUE_W}x + {TRUE_B}")
 print(f"R-squared: {model.r_squared(X, y):.4f}")
 ```
 
+### Try It: break it, then fix it
+
+Reading working code is not the same as understanding it. The two cells below
+each have a problem. Predict what happens *before* you run them — then run, see
+the failure, and fix it. The failure is the lesson.
+
+**A. The learning rate is too large.**
+
+Before running: the model above used `learning_rate=0.005` and converged. This
+one uses `0.5` — 100x larger. Write down your prediction: does it converge
+faster, converge to the same answer, or something else? Then run it.
+
+```python
+# Same model as Step 2, but learning_rate=0.5 instead of 0.005.
+model = LinearRegression(learning_rate=0.5)
+model.fit(X, y, epochs=30, print_every=5)
+print(f"\nLearned: y = {model.w:.4g}x + {model.b:.4g}")
+print(f"True:    y = {TRUE_W}x + {TRUE_B}")
+```
+
+You should see the cost *grow* every step instead of shrinking — `5e2`, then
+`5e17`, then `4e32` — and `w` flip sign on each epoch. The steps are so large
+that gradient descent overshoots the minimum and bounces further out each time.
+This is divergence, and it is the single most common reason "my model won't
+train." **Fix it:** change `0.5` back to a small value (try `0.01`, `0.005`,
+`0.001`) and re-run until the cost shrinks toward zero. There is no single right
+answer — that is the point. The learning rate is a dial you tune by watching the
+cost.
+
+**B. Fill in the missing gradient.**
+
+The `compute_gradients` method below is blank. This is the heart of the whole
+algorithm — the partial derivatives of MSE with respect to `w` and `b`. Derive
+them and fill them in. The self-check at the bottom compares your formula
+against a numerical gradient and tells you if you got it right — no need to
+trust the lesson, the math checks itself.
+
+```python
+class LinearRegressionGap(LinearRegression):
+    def compute_gradients(self, X, y):
+        predictions = self.predict(X)
+        n = len(y)
+        # TODO: replace these two lines.
+        # dw is the partial derivative of MSE w.r.t. w; db w.r.t. b.
+        # Hint: MSE = (1/n) * sum((w*x + b - y)^2). Differentiate, and the
+        # factor of 2 from the square comes out front.
+        dw = 0.0
+        db = 0.0
+        return dw, db
+
+
+# --- self-check: do not edit below this line ---
+m = LinearRegressionGap()
+m.w, m.b = 1.5, 2.0          # arbitrary point to test the gradient at
+dw, db = m.compute_gradients(X, y)
+
+def _cost_at(w, b):
+    return sum((w * xi + b - a) ** 2 for xi, a in zip(X, y)) / len(y)
+
+h = 1e-4
+num_dw = (_cost_at(1.5 + h, 2.0) - _cost_at(1.5 - h, 2.0)) / (2 * h)
+num_db = (_cost_at(1.5, 2.0 + h) - _cost_at(1.5, 2.0 - h)) / (2 * h)
+
+if abs(dw - num_dw) < 1e-2 and abs(db - num_db) < 1e-2:
+    print("PASS — your gradient matches the numerical check.")
+    print(f"  your dw={dw:.3f}, db={db:.3f}")
+else:
+    print("Not yet. Your gradient does not match the numerical slope.")
+    print(f"  you got    dw={dw:.3f}, db={db:.3f}")
+    print(f"  should be  dw={num_dw:.3f}, db={num_db:.3f}")
+    print("  Re-derive d/dw and d/db of the mean squared error.")
+```
+
+When it prints `PASS`, you have implemented gradient descent's core yourself —
+not read it, derived it. The solution is the `compute_gradients` you saw in
+Step 2; only check it after you have tried.
+
 ### Step 3: Normal equation (closed-form solution)
 
 ```python

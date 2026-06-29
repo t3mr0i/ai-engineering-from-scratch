@@ -1,0 +1,13 @@
+{
+  "name": "ase-gated-server",
+  "version": "1.0.0",
+  "description": "Passcode-gated static server for the LHIND AI learning catalog (replaces SWA).",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

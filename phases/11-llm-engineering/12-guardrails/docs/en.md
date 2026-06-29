@@ -75,7 +75,7 @@ Layer 1: validate before the model sees it.
 
 **Topic classification** -- determine if the input is on-topic. A banking bot should not answer questions about building explosives. Classify intent and reject off-topic requests before they reach the model. A small classifier (BERT-sized) trained on your domain works at <10ms latency.
 
-**Prompt injection detection** -- use a dedicated classifier to detect injection attempts. Models like Meta's LlamaGuard, Deepset's deberta-v3-prompt-injection, or a fine-tuned BERT can detect "ignore previous instructions" patterns with >95% accuracy. These run at 5-20ms and catch the vast majority of scripted attacks.
+**Prompt injection detection** -- use a dedicated classifier to detect injection attempts. Models like Meta's Llama Guard 4 (2B/8B/11B-Vision variants), Deepset's deberta-v3-prompt-injection, or a fine-tuned BERT can detect "ignore previous instructions" patterns with >95% accuracy. These run at 5-20ms and catch the vast majority of scripted attacks.
 
 **PII detection** -- scan input for personal data. If a user pastes their credit card number, social security number, or medical record into a chatbot, you should detect and either redact or reject it. Libraries like Microsoft Presidio detect PII in 28 entity types across 50+ languages.
 
@@ -119,7 +119,7 @@ Each layer catches what the others miss. Length checks are free. Rate limits are
 
 **OpenAI Moderation API** -- free, no usage limits. Covers hate, harassment, violence, sexual, self-harm, and more. Returns category scores from 0.0 to 1.0. Latency: ~100ms. Use it on every output even if you are using Claude or Gemini as your main model.
 
-**LlamaGuard (Meta)** -- open-source safety classifier. Works as both input and output filter. 13 unsafe categories based on the MLCommons AI Safety taxonomy. Available in 3 sizes: LlamaGuard 3 1B (fast), 8B (balanced), and the original 7B. Run locally for zero API dependency.
+**Llama Guard 4 (Meta)** -- open-source safety classifier. Works as both input and output filter. 14 unsafe categories based on the MLCommons AI Safety taxonomy (Llama Guard 4 added "Code Interpreter Abuse" over Llama Guard 3). Available in 3 sizes: 2B (fast), 8B (balanced), and 11B-Vision (image + text). Run locally for zero API dependency.
 
 **NeMo Guardrails (NVIDIA)** -- programmable rails using Colang, a domain-specific language for defining conversational boundaries. Define what the bot can talk about, how it should respond to off-topic questions, and hard blocks for dangerous requests. Integrates with any LLM.
 
@@ -130,7 +130,7 @@ Each layer catches what the others miss. Length checks are free. Rate limits are
 | Tool | Type | Categories | Latency | Cost | Open Source |
 |---|---|---|---|---|---|
 | OpenAI Moderation (`omni-moderation`) | API | 13 text + image categories | ~100ms | Free | No |
-| LlamaGuard 4 (2B / 8B) | Model | 14 MLCommons categories | ~150ms | Self-hosted | Yes |
+| Llama Guard 4 (2B / 8B) | Model | 14 MLCommons categories | ~150ms | Self-hosted | Yes |
 | NeMo Guardrails | Framework | Custom (Colang) | ~50ms + LLM | Free | Yes |
 | Guardrails AI | Library | 50+ validators on hub | ~10-50ms | Free tier + hosted | Yes |
 | LLM Guard (Protect AI) | Library | 20+ input/output scanners | ~10-100ms | Free | Yes |
@@ -768,10 +768,10 @@ if __name__ == "__main__":
 
 The Moderation API is free with no rate limits. It covers 11 categories: hate, harassment, violence, sexual content, self-harm, and their subcategories. Returns scores from 0.0 to 1.0. The `omni-moderation-latest` model handles both text and images. Latency is ~100ms. Use it on every output, even if your main model is Claude or Gemini.
 
-### LlamaGuard
+### Llama Guard 4
 
 ```python
-# LlamaGuard classifies both user prompts and model responses.
+# Llama Guard 4 classifies both user prompts and model responses.
 # Download from Hugging Face: meta-llama/Llama-Guard-3-8B
 #
 # from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -789,7 +789,7 @@ The Moderation API is free with no rate limits. It covers 11 categories: hate, h
 # print(result)
 ```
 
-LlamaGuard outputs "safe" or "unsafe" followed by the violated category code (S1-S13). It runs locally with zero API dependency. The 1B parameter version fits on a laptop GPU. The 8B version is more accurate but needs ~16GB VRAM.
+Llama Guard 4 outputs "safe" or "unsafe" followed by the violated category code (S1–S14). It runs locally with zero API dependency. The 2B parameter version fits on a laptop GPU. The 8B version is more accurate but needs ~16GB VRAM. The 11B-Vision variant accepts image inputs in addition to text.
 
 ### NeMo Guardrails
 
@@ -859,7 +859,7 @@ It also produces `outputs/skill-guardrail-patterns.md` -- a decision framework f
 
 ## Exercises
 
-1. **Build a LlamaGuard-style classifier.** Create a keyword + regex classifier that maps inputs and outputs to 13 safety categories (from the MLCommons AI Safety taxonomy: violent crimes, non-violent crimes, sex-related crimes, child sexual exploitation, specialized advice, privacy, intellectual property, indiscriminate weapons, hate, suicide, sexual content, elections, code interpreter abuse). Return the category code and confidence. Test on 50 hand-written prompts and measure precision/recall.
+1. **Build a Llama Guard 4-style classifier.** Create a keyword + regex classifier that maps inputs and outputs to 14 safety categories (from the MLCommons AI Safety taxonomy as of Llama Guard 4: violent crimes, non-violent crimes, sex-related crimes, child sexual exploitation, specialized advice, privacy, intellectual property, indiscriminate weapons, hate, suicide, sexual content, elections, code interpreter abuse, and weapons of mass destruction). Return the category code and confidence. Test on 50 hand-written prompts and measure precision/recall.
 
 2. **Implement the encoding evasion detector.** Attackers encode injection attempts in base64, ROT13, hex, leetspeak, Unicode zero-width characters, and morse code. Build a detector that decodes each encoding and runs injection detection on the decoded text. Test with 20 encoded versions of "ignore previous instructions."
 

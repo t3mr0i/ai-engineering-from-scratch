@@ -1,6 +1,6 @@
 # Evaluation & Testing LLM Applications
 
-> You would never deploy a web app without tests. You would never ship a database migration without a rollback plan. But right now, most teams ship LLM applications by reading 10 outputs and saying "yeah, looks good." That is not evaluation. That is hope. Hope is not an engineering practice. Every prompt change, every model swap, every temperature tweak changes your output distribution in ways you cannot predict by reading a handful of examples. Evaluation is the only thing standing between your application and silent degradation.
+> You would never deploy a web app without tests. You would never ship a database migration without a rollback plan. But most teams ship LLM applications by reading 10 outputs and saying "yeah, looks good." That is not evaluation. Every prompt change, every model swap, every temperature tweak changes your output distribution in ways you cannot predict by reading a handful of examples. Evaluation is the only thing standing between your application and silent degradation.
 
 **Type:** Build
 **Languages:** Python
@@ -25,7 +25,7 @@ This is the default outcome when you evaluate by vibes. You check a few examples
 
 The fix is not "be more careful." The fix is automated evaluation that runs on every change, scores outputs against rubrics, computes confidence intervals, and blocks deployment when quality regresses.
 
-Evaluation is not a nice-to-have. It is table stakes. Shipping without evals is deploying blind.
+Evaluation is table stakes. Shipping without evals is deploying blind.
 
 ## The Concept
 

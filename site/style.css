@@ -91,6 +91,13 @@
   --shadow-hard: 0 2px 8px rgba(5, 22, 77, 0.06);
   --shadow-hard-lg: 0 14px 40px rgba(5, 22, 77, 0.12);
   --dot-color: transparent;
+
+  /* Status hues (filled-in correct / code-output error) — LHG-tinted so they
+     stay readable on Core-Blue dark surfaces without going neon. */
+  --status-ok: #1b8a5a;
+  --status-ok-bg: rgba(27, 138, 90, 0.10);
+  --status-error: #b00020;
+  --status-error-bg: rgba(176, 0, 32, 0.06);
 }
 
 [data-theme="dark"] {
@@ -123,6 +130,11 @@
   --accent-hover: #a9c7e8;
   --shadow-hard: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-hard-lg: 0 14px 40px rgba(0, 0, 0, 0.5);
+
+  --status-ok: #6fc79c;
+  --status-ok-bg: rgba(111, 199, 156, 0.16);
+  --status-error: #e08a8a;
+  --status-error-bg: rgba(224, 138, 138, 0.14);
 }
 
 *,
@@ -332,6 +344,133 @@ p.dropcap::first-letter {
   border-color: var(--rule-soft);
   color: var(--ink);
 }
+
+/* Theme toggle button — text label "N" (light) / "D" (dark) so the
+   icon survives without external icon fonts and matches the existing
+   inline JS in every subpage (theme.js + the per-page IIFEs). */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
+}
+.theme-toggle:hover {
+  border-color: var(--rule-soft);
+  color: var(--ink);
+  background: var(--blueprint-tint);
+}
+.theme-toggle .theme-icon {
+  display: inline-block;
+  line-height: 1;
+}
+
+/* ── API key dialog (built by settings.js) ──────────────────────────
+   Theme-aware so it follows [data-theme="dark"] without JS work. */
+.lrn-key-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+}
+.lrn-key-dialog {
+  background: var(--modal-bg);
+  color: var(--ink);
+  padding: 28px 30px;
+  border-radius: 8px;
+  border: 1px solid var(--rule-soft);
+  max-width: 520px;
+  width: 92vw;
+  box-shadow: var(--shadow-hard-lg);
+}
+.lrn-key-title {
+  margin: 0 0 6px 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.lrn-key-lede,
+.lrn-key-foot {
+  margin: 0 0 16px 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.lrn-key-foot { font-size: 0.74rem; margin-bottom: 16px; }
+.lrn-key-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.lrn-key-row {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+.lrn-key-input {
+  flex: 1;
+  box-sizing: border-box;
+  padding: 9px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--bg-surface);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 200ms ease;
+}
+.lrn-key-input:focus { border-color: var(--blueprint); }
+.lrn-key-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.lrn-key-btn {
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+.lrn-key-btn--ghost {
+  background: var(--bg-surface);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+.lrn-key-btn--ghost:hover {
+  border-color: var(--blueprint);
+  color: var(--blueprint);
+}
+.lrn-key-btn--primary {
+  padding: 8px 16px;
+  background: var(--blueprint);
+  color: #fff;
+  border: 1px solid var(--blueprint);
+}
+.lrn-key-btn--primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 
 .nav-edge .btn {
   font-family: var(--font-mono);

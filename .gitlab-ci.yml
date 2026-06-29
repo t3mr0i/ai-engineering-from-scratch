@@ -1,12 +1,19 @@
-# GitLab CI: build the site and deploy it to Azure Static Web Apps.
+# GitLab CI: build the site and deploy it to Azure App Service.
 #
 # Web root is site/. Lesson content (phases/<phase>/<lesson>/docs/en.md and
 # quiz.json) is staged into site/phases/ so lesson.html loads it at runtime
-# with no GitHub/GitLab fetch.
+# with no GitHub/GitLab fetch. The gated Node server in server/ serves the
+# static build and runs the HMAC passcode gate on every request — no byte
+# is reachable without a valid signed cookie.
 #
-# Required CI/CD variable (Settings > CI/CD > Variables), masked & protected:
-#   AZURE_STATIC_WEB_APPS_API_TOKEN  — deployment token of the Azure SWA resource
-#                                      (az staticwebapp secrets list ... apiKey)
+# App Service: ase-site-gated  (rg-ase-webpage, germanywestcentral, plan B1)
+#
+# Required CI/CD variables (Settings > CI/CD > Variables), masked & protected:
+#   AZURE_APP_SERVICE_SP_JSON   — service-principal credentials JSON
+#                                 (az ad sp create-for-rbac --role "Website
+#                                 Contributor" --scopes /subscriptions/<sub>/
+#                                 resourceGroups/rg-ase-webpage/providers/
+#                                 Microsoft.Web/sites/ase-site-gated)
 
 stages:
   - deploy
@@ -27,13 +34,28 @@ deploy_azure:
       --include='code/main.py'
       --exclude='*'
       phases/ site/phases/
-    - npx --yes @azure/static-web-apps-cli@latest deploy ./site
-      --api-location ./api
-      --api-language node
-      --api-version 18
-      --deployment-token "$AZURE_STATIC_WEB_APPS_API_TOKEN"
-      --env production
-      --no-use-keychain
+    - apt-get update -qq && apt-get install -y -qq zip
+    # Assemble deploy package: server/ + site/ + a root package.json that
+    # starts the gated Node server. SCM_DO_BUILD_DURING_DEPLOYMENT=false on
+    # the App Service — no `npm install` needed because the server has zero
+    # npm dependencies.
+    - mkdir -p .appservice-deploy
+    - cp server/server.js server/gate-core.js server/package.json .appservice-deploy/server/
+    - cp -R site .appservice-deploy/site
+    - |
+      cat > .appservice-deploy/package.json <<'JSON'
+      {
+        "name": "ase-site-gated",
+        "version": "1.0.0",
+        "private": true,
+        "scripts": { "start": "node server/server.js" },
+        "engines": { "node": ">=18" }
+      }
+      JSON
+    - cd .appservice-deploy && zip -r -q ../deploy.zip . && cd ..
+    - az login --service-principal -u "$AZURE_APP_SERVICE_SP_CLIENT_ID" -p "$AZURE_APP_SERVICE_SP_CLIENT_SECRET" --tenant "$AZURE_APP_SERVICE_SP_TENANT_ID"
+    - az webapp deploy -n ase-site-gated -g rg-ase-webpage --src-path deploy.zip --type zip
+    - rm -rf .appservice-deploy deploy.zip
   environment:
     name: production
-    url: https://yellow-mushroom-0c0a45d03.7.azurestaticapps.net
+    url: https://ase-site-gated.azurewebsites.net

@@ -79,20 +79,20 @@
 
     var overlay = document.createElement('div');
     overlay.id = 'lrnKeyOverlay';
-    overlay.setAttribute('style', 'position:fixed;inset:0;background:rgba(13,27,42,.78);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:inherit');
+    overlay.className = 'lrn-key-overlay';
     overlay.innerHTML =
-      '<div role="dialog" aria-modal="true" aria-label="API key settings" style="background:#fff;color:#0d1b2a;padding:28px 30px;border-radius:8px;max-width:520px;width:92vw;box-shadow:0 18px 48px rgba(0,0,0,.35)">' +
-      '  <h3 style="margin:0 0 6px 0;font-size:1.05rem">Bifrost · LHIND AI Gateway key</h3>' +
-      '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.85rem;line-height:1.45">Lesson notebooks call the LLM exclusively through the <strong>Bifrost LHIND API Gateway</strong> (<code>gateway.lhind.ai</code>). Save your gateway key once — it stays in this browser only (localStorage, same-origin), no network upload.</p>' +
-      '  <label style="display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#415a77;margin-bottom:4px">Bifrost gateway key (sk-xf-…)</label>' +
-      '  <div style="display:flex;gap:6px;align-items:stretch;margin-bottom:18px">' +
-      '    <input id="lrnKeyOpenAi" type="password" autocomplete="off" placeholder="sk-xf-…" value="' + escapeAttr(existingKey) + '" style="flex:1;box-sizing:border-box;padding:9px 11px;border:1px solid #ccd6e0;border-radius:4px;font-family:monospace;font-size:.85rem">' +
+      '<div role="dialog" aria-modal="true" aria-label="API key settings" class="lrn-key-dialog">' +
+      '  <h3 class="lrn-key-title">Bifrost · LHIND AI Gateway key</h3>' +
+      '  <p class="lrn-key-lede">Lesson notebooks call the LLM exclusively through the <strong>Bifrost LHIND API Gateway</strong> (<code>gateway.lhind.ai</code>). Save your gateway key once — it stays in this browser only (localStorage, same-origin), no network upload.</p>' +
+      '  <label class="lrn-key-label">Bifrost gateway key (sk-xf-…)</label>' +
+      '  <div class="lrn-key-row">' +
+      '    <input id="lrnKeyOpenAi" class="lrn-key-input" type="password" autocomplete="off" placeholder="sk-xf-…" value="' + escapeAttr(existingKey) + '">' +
       '  </div>' +
-      '  <p style="margin:0 0 16px 0;color:#415a77;font-size:.74rem;line-height:1.45">Der Key wird beim Öffnen eines Notebooks automatisch in die JupyterLite-Sandbox injiziert — kein Copy-Paste nötig. Im LHIND-Netz ist der Key optional (das Bifrost-Gateway authentifiziert netz-/WAF-basiert); außerhalb wird er benötigt.</p>' +
-      '  <div style="display:flex;justify-content:flex-end;gap:8px">' +
-      '    <button id="lrnKeyClear" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Clear</button>' +
-      '    <button id="lrnKeyCancel" type="button" style="padding:8px 14px;background:#fff;border:1px solid #ccd6e0;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Cancel</button>' +
-      '    <button id="lrnKeySave" type="button" style="padding:8px 16px;background:#415a77;color:#fff;border:1px solid #415a77;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.82rem">Save</button>' +
+      '  <p class="lrn-key-foot">Der Key wird beim Öffnen eines Notebooks automatisch in die JupyterLite-Sandbox injiziert — kein Copy-Paste nötig. Im LHIND-Netz ist der Key optional (das Bifrost-Gateway authentifiziert netz-/WAF-basiert); außerhalb wird er benötigt.</p>' +
+      '  <div class="lrn-key-actions">' +
+      '    <button id="lrnKeyClear" type="button" class="lrn-key-btn lrn-key-btn--ghost">Clear</button>' +
+      '    <button id="lrnKeyCancel" type="button" class="lrn-key-btn lrn-key-btn--ghost">Cancel</button>' +
+      '    <button id="lrnKeySave" type="button" class="lrn-key-btn lrn-key-btn--primary">Save</button>' +
       '  </div>' +
       '</div>';
     document.body.appendChild(overlay);
