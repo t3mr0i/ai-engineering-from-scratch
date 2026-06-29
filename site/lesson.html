@@ -187,18 +187,6 @@
       color: var(--blueprint);
     }
 
-    .lrn-sidebar-code {
-      display: inline-flex;
-      font-family: var(--font-mono);
-      font-size: 0.66rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--blueprint);
-      border: 1px solid var(--blueprint);
-      padding: 2px 7px;
-      margin-bottom: 8px;
-    }
-
     .lrn-sidebar-title {
       font-family: var(--font-body);
       font-size: 1rem;
@@ -2486,7 +2474,6 @@
       function buildLrnSidebar(sidebar) {
         var html = '<div class="lrn-sidebar-overview">';
         html += '<a class="lrn-sidebar-back" href="index.html">&larr; Learning Catalog</a>';
-        html += '<div class="lrn-sidebar-code">' + escapeHtml(lrnContext.course.id) + '</div>';
         html += '<div class="lrn-sidebar-title">' + escapeHtml(lrnContext.course.title) + '</div>';
         html += '<div class="lrn-sidebar-progress" aria-hidden="true"><span style="width:' + lrnContext.percent + '%"></span></div>';
         html += '<div class="lrn-sidebar-counter">' + lrnContext.completed + '/' + lrnContext.total + ' tasks shipped</div>';
