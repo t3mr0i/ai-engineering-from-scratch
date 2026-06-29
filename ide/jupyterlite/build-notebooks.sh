@@ -21,13 +21,11 @@ PY2NB="$REPO/ide/jupyterlite/py_to_notebook.py"
 rm -rf "$CONTENT" && mkdir -p "$CONTENT"
 
 total=0; executed=0; plain=0; skipped_marker=0; skipped_prebake=0
-# Prefer notebook.py (audit-generated, lesson-tailored) over main.py.
-# We find both, then skip any main.py whose lesson also has a notebook.py.
-# A lesson can opt out of having a JupyterLite notebook by placing an empty
-# file `code/.no-notebook` next to main.py — used for pure-theory lessons
-# (vendor comparisons, compliance frameworks, etc.) where running Python in
-# the browser adds no learning value over the docs themselves.
-for py in $(find "$REPO/phases" \( -name 'notebook.py' -o -name 'notebook.*.py' -o -name main.py \) | sort); do
+# ONLY build the hand-authored notebook*.py (the curated, good notebooks).
+# Plain main.py lesson code is intentionally NOT turned into a JupyterLite
+# notebook — those auto-derived notebooks are not wanted.
+# A lesson can still opt out via an empty `code/.no-notebook` file.
+for py in $(find "$REPO/phases" \( -name 'notebook.py' -o -name 'notebook.*.py' \) | sort); do
   dir=$(dirname "$py")
   lesson=$(dirname "$dir")                           # .../phases/XX/YY
   rel=${lesson#"$REPO/"}                             # phases/XX/YY
@@ -36,11 +34,7 @@ for py in $(find "$REPO/phases" \( -name 'notebook.py' -o -name 'notebook.*.py' 
     skipped_marker=$((skipped_marker+1))
     continue
   fi
-  # main.py loses to ANY audit-generated notebook (shared notebook.py or per-course notebook.<course>.py).
-  if [[ "$base" == "main.py" ]] && ls "$dir"/notebook*.py >/dev/null 2>&1; then
-    continue
-  fi
-  # notebook.<course>.py -> phases/XX/YY.<course>.ipynb ; notebook.py/main.py -> phases/XX/YY.ipynb
+  # notebook.<course>.py -> phases/XX/YY.<course>.ipynb ; notebook.py -> phases/XX/YY.ipynb
   if [[ "$base" == notebook.*.py ]]; then
     course="${base#notebook.}"; course="${course%.py}"
     out="$CONTENT/${rel}.${course}.ipynb"
