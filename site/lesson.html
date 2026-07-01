@@ -2784,6 +2784,7 @@
         updateLessonSeo(extractTitle(md), md);
 
         initCodeCopy();
+        initGlossTooltips();
         renderMermaidBlocks();
         if (window.mountLessonFigures) window.mountLessonFigures(el);
         renderAIPanels();
@@ -2828,7 +2829,8 @@
         if (lrnContext && lrnContext.prev) {
           nav += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity" aria-label="Previous activity">&larr;</a>';
         }
-        nav += '<a href="index.html">Overview</a>';
+        var overviewHref = (lrnContext && lrnContext.course) ? 'lrn/course.html?id=' + encodeURIComponent(lrnContext.course.id) : 'index.html';
+        nav += '<a href="' + overviewHref + '">Overview</a>';
         if (lrnContext && lrnContext.next) {
           nav += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity" aria-label="Next activity">&rarr;</a>';
         }
@@ -3052,6 +3054,7 @@
       }
 
       function parseMd(md) {
+        resetGlossaryState();
         var lines = md.split(/\r?\n/);
         var out = '';
         var inCodeBlock = false;
@@ -3391,14 +3394,128 @@
         text = text.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
         text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
-        text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+        text = text.replace(/`([^`]+)`/g, function (m, inner) {
+          if (inner === 'code/main.py') {
+            return '<a href="#codeContent" class="inline-code-link"><code>' + inner + '</code></a>';
+          }
+          var outMatch = inner.match(/^outputs\/([\w.\-]+)$/);
+          if (outMatch && lessonPath) {
+            var url = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/blob/main/' + lessonPath + '/outputs/' + outMatch[1];
+            return '<a href="' + url + '" target="_blank" rel="noopener" class="inline-code-link"><code>' + inner + '</code></a>';
+          }
+          return '<code>' + inner + '</code>';
+        });
         text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (m, label, href) {
           if (/^https?:\/\/|^mailto:/i.test(href)) {
             return '<a href="' + href + '" target="_blank" rel="noopener">' + label + '</a>';
           }
           return label;
         });
+        text = glossifyText(text);
         return text;
+      }
+
+      // Wikipedia-style hover/click definitions: glossary terms and "Phase N"
+      // mentions in lesson prose get a tooltip (definition / real phase name).
+      // Single pass per inlineFormat() call, first occurrence per term per
+      // lesson only (state reset in parseMd()) — cheap, load-time only.
+      var _glossSeen = null;     // Set of lowercased terms already annotated this lesson
+      var _glossRegex = null;    // built lazily from GLOSSARY, cached across lessons
+      var _glossByLower = null;
+
+      function resetGlossaryState() {
+        _glossSeen = new Set();
+      }
+
+      function escapeRegexLiteral(s) {
+        return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+
+      function buildGlossaryRegex() {
+        if (_glossRegex || typeof GLOSSARY === 'undefined' || !GLOSSARY) return;
+        var entries = [];
+        for (var i = 0; i < GLOSSARY.length; i++) {
+          var g = GLOSSARY[i];
+          if (!g || !g.term) continue;
+          // Terms stored as "ACRONYM (Full Name)" (e.g. "MCP (Model Context
+          // Protocol)") almost never appear in lesson prose verbatim — prose
+          // says "MCP Server" or "the LLM", not the parenthetical form. Add
+          // the acronym itself as a matchable alias for the same definition.
+          var acronymMatch = g.term.match(/^([A-Za-z][A-Za-z0-9]{1,8})\s*\(/);
+          if (acronymMatch) {
+            entries.push({ term: acronymMatch[1], means: g.means, says: g.says });
+          }
+          // Skip short single-word terms — too generic, would over-match
+          // (e.g. a 3-letter term inside unrelated words/sentences).
+          if (g.term.length <= 4 && g.term.indexOf(' ') < 0) continue;
+          entries.push(g);
+        }
+        entries.sort(function (a, b) { return b.term.length - a.term.length; });
+        if (!entries.length) return;
+        _glossByLower = {};
+        var parts = [];
+        for (var j = 0; j < entries.length; j++) {
+          _glossByLower[entries[j].term.toLowerCase()] = entries[j];
+          parts.push(escapeRegexLiteral(entries[j].term));
+        }
+        _glossRegex = new RegExp('(^|[^A-Za-z0-9])(' + parts.join('|') + ')(?=$|[^A-Za-z0-9])', 'gi');
+      }
+
+      function phaseNameById(id) {
+        if (typeof PHASES === 'undefined') return null;
+        for (var i = 0; i < PHASES.length; i++) {
+          if (PHASES[i].id === id) return PHASES[i].name;
+        }
+        return null;
+      }
+
+      // Runs glossary-term and "Phase N" annotation over a chunk of already
+      // HTML-escaped/formatted text. Callers must not pass raw markdown.
+      function glossifyChunk(text) {
+        buildGlossaryRegex();
+        if (_glossRegex && _glossSeen) {
+          text = text.replace(_glossRegex, function (m, pre, term) {
+            var lower = term.toLowerCase();
+            var entry = _glossByLower[lower];
+            if (!entry || _glossSeen.has(lower)) return m;
+            _glossSeen.add(lower);
+            var def = entry.means || entry.says || '';
+            if (!def) return m;
+            return pre + '<span class="gloss-term" tabindex="0">' + term +
+              '<span class="gloss-popover" role="tooltip">' + escapeHtml(def) + '</span></span>';
+          });
+        }
+        text = text.replace(/(^|[^A-Za-z0-9])Phase\s+(\d{1,2})\b/g, function (m, pre, num) {
+          var id = parseInt(num, 10);
+          var name = phaseNameById(id);
+          if (!name) return m;
+          return pre + '<a class="gloss-term gloss-phase" href="catalog.html?phase=' + id + '">Phase ' + num +
+            '<span class="gloss-popover" role="tooltip">Phase ' + String(id).padStart(2, '0') + ' &middot; ' + escapeHtml(name) + '</span></a>';
+        });
+        return text;
+      }
+
+      // Apply glossifyChunk only to plain-text segments, never inside an
+      // existing <a> or <code> tag (avoids nested links / mangled code spans).
+      function glossifyText(html) {
+        if (!_glossSeen) return html; // resetGlossaryState() wasn't called — skip, fail silently
+        try {
+          var segments = html.split(/(<[^>]+>)/);
+          var skipDepth = 0;
+          for (var i = 0; i < segments.length; i++) {
+            var seg = segments[i];
+            if (!seg) continue;
+            if (seg.charAt(0) === '<') {
+              if (/^<(a|code)\b/i.test(seg)) skipDepth++;
+              else if (/^<\/(a|code)>/i.test(seg)) skipDepth = Math.max(0, skipDepth - 1);
+              continue;
+            }
+            if (skipDepth === 0) segments[i] = glossifyChunk(seg);
+          }
+          return segments.join('');
+        } catch (e) {
+          return html; // never let tooltip annotation break lesson rendering
+        }
       }
 
       function slugify(text) {
@@ -3580,6 +3697,31 @@
         initCodeVscode();
         initCodeRun();
         initFillin();
+      }
+
+      // Touch/click devices have no real :hover — toggle the popover on tap
+      // instead, and close it when tapping elsewhere.
+      function initGlossTooltips() {
+        document.querySelectorAll('.gloss-term').forEach(function (term) {
+          term.addEventListener('click', function (e) {
+            if (term.tagName === 'A' && !term.classList.contains('gloss-open')) {
+              // First tap on a phase link opens the tooltip instead of
+              // navigating; second tap (already open) follows the link.
+              e.preventDefault();
+            }
+            var wasOpen = term.classList.contains('gloss-open');
+            document.querySelectorAll('.gloss-term.gloss-open').forEach(function (t) {
+              if (t !== term) t.classList.remove('gloss-open');
+            });
+            term.classList.toggle('gloss-open', !wasOpen);
+          });
+        });
+        document.addEventListener('click', function (e) {
+          if (e.target.closest && e.target.closest('.gloss-term')) return;
+          document.querySelectorAll('.gloss-term.gloss-open').forEach(function (t) {
+            t.classList.remove('gloss-open');
+          });
+        });
       }
 
       // Wire fill-in-the-blank exercises: Run substitutes the inputs into the

@@ -666,6 +666,18 @@ i[class^="ph "] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   gap: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+/* Brief highlight after the CTA applies the "Recommended" filter, so the
+   effect reads as an intentional filter action rather than a bare scroll. */
+.course-grid--flash {
+  animation: grid-flash 900ms var(--ease-standard);
+}
+
+@keyframes grid-flash {
+  0% { box-shadow: 0 0 0 3px var(--lhg-core-blue); }
+  100% { box-shadow: 0 0 0 3px transparent; }
 }
 
 .course-card {
@@ -1256,7 +1268,8 @@ i[class^="ph "] {
     transition-duration: 150ms !important;
   }
 
-  .course-card--enter {
+  .course-card--enter,
+  .course-grid--flash {
     animation: none;
   }
 

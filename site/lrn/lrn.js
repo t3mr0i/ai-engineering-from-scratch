@@ -275,7 +275,11 @@
       saveState();
       renderFilters();
       render();
-      els.courseGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Scroll to the filter bar (not the grid) so the now-active "Recommended"
+      // pill is visible — otherwise the click reads as "just scrolled" because
+      // the thing that changed is pushed out of view.
+      els.courseFilters.scrollIntoView({ behavior: "smooth", block: "start" });
+      flashCourseGrid();
     });
   }
 
@@ -374,6 +378,14 @@
       });
       return btn;
     }));
+  }
+
+  // Brief highlight so the CTA's effect on the grid is perceptible even when
+  // the grid was already on-screen (restart-safe for repeat clicks).
+  function flashCourseGrid() {
+    els.courseGrid.classList.remove("course-grid--flash");
+    void els.courseGrid.offsetWidth;
+    els.courseGrid.classList.add("course-grid--flash");
   }
 
   var lastVisibleSignature = null;
