@@ -3443,7 +3443,11 @@
           // the acronym itself as a matchable alias for the same definition.
           var acronymMatch = g.term.match(/^([A-Za-z][A-Za-z0-9]{1,8})\s*\(/);
           if (acronymMatch) {
-            entries.push({ term: acronymMatch[1], means: g.means, says: g.says });
+            // isAcronym: require exact-case match at lookup time (below) —
+            // the combined regex is case-insensitive so it would otherwise
+            // also gloss common lowercase words that collide with an
+            // acronym (e.g. "rag", "cot").
+            entries.push({ term: acronymMatch[1], means: g.means, says: g.says, isAcronym: true });
           }
           // Skip short single-word terms — too generic, would over-match
           // (e.g. a 3-letter term inside unrelated words/sentences).
@@ -3478,6 +3482,7 @@
             var lower = term.toLowerCase();
             var entry = _glossByLower[lower];
             if (!entry || _glossSeen.has(lower)) return m;
+            if (entry.isAcronym && term !== entry.term) return m;
             _glossSeen.add(lower);
             var def = entry.means || entry.says || '';
             if (!def) return m;
