@@ -185,19 +185,6 @@ window.LrnData = {
       modules: ["Prompt patterns", "Output critique", "Role-based prompt cases"]
     },
     {
-      id: "AI-04",
-      title: "AI: Requirement Engineering with AI",
-      status: "Requested / in progress",
-      source: "trainings.xlsx",
-      profileIds: ["bsc", "pvs", "pma", "lead"],
-      dimensions: ["business", "prompting"],
-      interests: ["consulting", "leadership"],
-      levels: ["Deepen", "Create"],
-      format: "Case study, requirement rewrite, acceptance-criteria lab",
-      summary: "AI-supported requirements, enterprise AI strategy, stakeholder context, and strategic execution.",
-      modules: ["How to Build an Enterprise AI Strategy", "AI for Managers", "AI Strategy for Business Leaders"]
-    },
-    {
       id: "USECASE-01",
       title: "AI Use Case Identification & Business Value Assessment",
       status: "To derive from DOCX template",
@@ -209,32 +196,6 @@ window.LrnData = {
       format: "Interactive prioritization board and ROI worksheet",
       summary: "Use case identification, business value, prioritization, quick wins, and strategic projects.",
       modules: ["Use case canvas", "Value/risk matrix", "Pilot-to-scale checklist"]
-    },
-    {
-      id: "AI-05",
-      title: "AI for Project Managers and Product Owners",
-      status: "Maintained in SharePoint / internally in progress",
-      source: "trainings.xlsx",
-      profileIds: ["pma", "pvs", "bsc", "lead"],
-      dimensions: ["business", "change", "prompting"],
-      interests: ["leadership", "consulting", "productivity"],
-      levels: ["Acquire", "Deepen"],
-      format: "Planning simulator, prompt cards, project risk exercises",
-      summary: "AI for project planning, roadmaps, stakeholder communication, agile delivery, and PM-specific prompts.",
-      modules: ["Generative AI Overview for PMs", "Prompt Engineering for Project Managers", "Project Leadership in the Age of AI"]
-    },
-    {
-      id: "CHANGE-01",
-      title: "AI Change Management & Team Integration",
-      status: "To derive from DOCX template",
-      source: "DOCX",
-      profileIds: ["pma", "lead", "bsc", "pvs", "corp"],
-      dimensions: ["change"],
-      interests: ["leadership"],
-      levels: ["Deepen", "Create"],
-      format: "Role-mapping exercise, adoption plan, team intervention cases",
-      summary: "Human-in-the-loop, role clarification in AI projects, change processes, and team enablement.",
-      modules: ["Human accountability map", "Team adoption scenarios"]
     },
     {
       id: "AI-01",
@@ -274,32 +235,6 @@ window.LrnData = {
       format: "Agent workflow lab, verification rubric, sandboxed implementation task",
       summary: "Agentic AI, tool use, orchestration, reflection, agentic workflows, and engineering verification.",
       modules: ["Building AI Agents and Agentic Workflows", "Agentic AI Engineering", "Building Agentic AI Systems for Developers"]
-    },
-    {
-      id: "AI-07",
-      title: "AI: Introduction to Data-driven Decision Making",
-      status: "Maintained in SharePoint",
-      source: "trainings.xlsx",
-      profileIds: ["lead", "corp", "bsc", "pma"],
-      dimensions: ["data", "change"],
-      interests: ["leadership", "governance"],
-      levels: ["Deepen", "Create"],
-      format: "Decision case, bias check, forecast scenario",
-      summary: "AI-supported decisions, forecasting, bias, uncertainty, ethics, and leadership accountability.",
-      modules: ["AI-Augmented Decision-Making for Business Leaders", "AI Powered Decision Making"]
-    },
-    {
-      id: "AI-08",
-      title: "AI for Leaders",
-      status: "Maintained in SharePoint",
-      source: "trainings.xlsx",
-      profileIds: ["lead", "bsc", "pma", "pvs", "corp"],
-      dimensions: ["change", "business", "data"],
-      interests: ["leadership", "governance"],
-      levels: ["Deepen", "Create"],
-      format: "Executive scenario, operating-model canvas, governance checklist",
-      summary: "AI adoption, governance, workforce transformation, human-in-the-loop, and AI operating models.",
-      modules: ["Microsoft AI Foundations for Business Leaders", "Introduction to GenAI for Executives", "Applied Agentic AI for Organizational Transformation"]
     },
     {
       id: "AI-10",
@@ -436,7 +371,7 @@ window.LrnData = {
       title: "AI Workforce Strategy",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
-      profileIds: ["bsc", "pvs", "am", "pma", "corp", "lead"],
+      profileIds: ["tc", "bsc", "pvs", "am", "pma", "corp", "lead"],
       dimensions: ["change", "business"],
       interests: ["leadership", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
@@ -449,7 +384,7 @@ window.LrnData = {
       title: "Decision Making with AI",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
-      profileIds: ["bsc", "pvs", "am", "pma", "corp", "lead"],
+      profileIds: ["tc", "bsc", "pvs", "am", "pma", "corp", "lead"],
       dimensions: ["data", "change"],
       interests: ["leadership", "governance", "consulting"],
       levels: ["Deepen", "Create"],
@@ -523,58 +458,6 @@ window.LrnData = {
       modules: ["AI incident triage", "Rollback path", "Postmortem loop"]
     },
     {
-      id: "AI-27",
-      title: "AI Portfolio and Roadmap Management",
-      status: "New from capability gap",
-      source: "DOCX/XLSX capability gap",
-      profileIds: ["bsc", "pvs", "pma", "corp", "lead"],
-      dimensions: ["business", "change"],
-      interests: ["leadership", "consulting"],
-      levels: ["Deepen", "Create"],
-      format: "Portfolio board, steering cadence, kill-criteria exercise",
-      summary: "Steer AI initiatives by value, risk, dependencies, capacity, and learning progress.",
-      modules: ["Portfolio board", "Review cadence", "Scaling decision"]
-    },
-    {
-      id: "AI-28",
-      title: "AI for HR and People Processes",
-      status: "New from role gap",
-      source: "DOCX/XLSX role gap",
-      profileIds: ["corp", "lead", "pma"],
-      dimensions: ["data", "change"],
-      interests: ["governance", "leadership"],
-      levels: ["Deepen", "Create"],
-      format: "People-process triage, fairness check, communication script",
-      summary: "Use AI in HR workflows with data protection, fairness, employee impact, and human decision authority.",
-      modules: ["People-process triage", "Fairness review", "Human decision owner"]
-    },
-    {
-      id: "AI-29",
-      title: "AI for Finance and Controlling",
-      status: "New from role gap",
-      source: "DOCX/XLSX role gap",
-      profileIds: ["corp", "lead", "bsc"],
-      dimensions: ["data", "business"],
-      interests: ["governance", "leadership", "consulting"],
-      levels: ["Deepen", "Create"],
-      format: "Finance review sheet, variance check, assumption log",
-      summary: "Use AI for finance commentary, forecasts, and controlling without losing sources, assumptions, or approvals.",
-      modules: ["Source trace", "Assumption log", "Approval owner"]
-    },
-    {
-      id: "AI-30",
-      title: "AI for Legal, Procurement, and Compliance",
-      status: "New from role gap",
-      source: "DOCX/XLSX role gap",
-      profileIds: ["corp", "lead", "bsc", "pma"],
-      dimensions: ["data", "business"],
-      interests: ["governance", "consulting", "leadership"],
-      levels: ["Deepen", "Create"],
-      format: "Clause triage, vendor-term review, decision record",
-      summary: "Use AI to prepare legal, procurement, and compliance work with clear human review.",
-      modules: ["Clause register", "Legal reviewer", "Decision record"]
-    },
-    {
       id: "AI-31",
       title: "AI for Service Management and Support",
       status: "New from role gap",
@@ -586,45 +469,6 @@ window.LrnData = {
       format: "Support triage, confidence threshold, escalation checklist",
       summary: "Use AI for ticket triage, knowledge articles, support responses, and incident handoffs with service controls.",
       modules: ["Service scope", "Confidence threshold", "Escalation path"]
-    },
-    {
-      id: "AI-32",
-      title: "AI for Sales and Product Consulting",
-      status: "New from role gap",
-      source: "DOCX/XLSX role gap",
-      profileIds: ["pvs", "bsc", "lead"],
-      dimensions: ["business", "prompting"],
-      interests: ["consulting", "productivity", "leadership"],
-      levels: ["Deepen", "Create"],
-      format: "Customer-context prep, value-story review, follow-up plan",
-      summary: "Use AI for discovery, product consulting, proposal preparation, and follow-up without inventing customer signals.",
-      modules: ["Customer signal", "Value story", "Stakeholder review"]
-    },
-    {
-      id: "AI-33",
-      title: "AI for Corporate Communications and Marketing",
-      status: "New from role gap",
-      source: "DOCX/XLSX role gap",
-      profileIds: ["corp", "lead", "bsc", "pma", "pvs"],
-      dimensions: ["change", "prompting", "business"],
-      interests: ["leadership", "productivity", "consulting"],
-      levels: ["Deepen", "Create"],
-      format: "Message review, tone check, source pack, approval workflow",
-      summary: "Use AI for internal and external communication without losing sources, tone, approvals, or brand impact.",
-      modules: ["Source pack", "Tone check", "Approval owner"]
-    },
-    {
-      id: "AI-34",
-      title: "AI Learning Design and Knowledge Transfer",
-      status: "New from enablement gap",
-      source: "DOCX/XLSX enablement gap",
-      profileIds: ["corp", "lead", "pma", "bsc"],
-      dimensions: ["change", "prompting"],
-      interests: ["leadership", "productivity"],
-      levels: ["Deepen", "Create"],
-      format: "Learning objective check, practice design, knowledge check, transfer plan",
-      summary: "Use AI to build role-based training, job aids, workshops, and transfer checks faster and more effectively.",
-      modules: ["Role outcome", "Practice task", "Knowledge check"]
     },
     {
       id: "AI-35",
@@ -705,19 +549,6 @@ window.LrnData = {
       modules: ["Source owner", "Freshness check", "Access rule"]
     },
     {
-      id: "AI-41",
-      title: "AI Customer Communication and Service Quality",
-      status: "New from service gap",
-      source: "DOCX/XLSX role gap",
-      profileIds: ["am", "pvs", "bsc", "corp", "lead"],
-      dimensions: ["business", "prompting", "change"],
-      interests: ["productivity", "consulting", "leadership"],
-      levels: ["Acquire", "Deepen", "Create"],
-      format: "Response source, empathy check, confidence threshold, escalation path",
-      summary: "Safeguard AI-assisted customer responses with sources, empathy, confidence, and an escalation path.",
-      modules: ["Response source", "Empathy check", "Escalation path"]
-    },
-    {
       id: "AI-42",
       title: "AI Architecture Decision Governance",
       status: "New from architecture gap",
@@ -744,19 +575,6 @@ window.LrnData = {
       modules: ["Evidence note", "Scoring rubric", "Decision log"]
     },
     {
-      id: "AI-44",
-      title: "AI Business Analysis and Process Discovery",
-      status: "New from analysis gap",
-      source: "DOCX/XLSX capability gap",
-      profileIds: ["bsc", "pma", "pvs", "lead", "corp"],
-      dimensions: ["business", "prompting"],
-      interests: ["consulting", "productivity", "leadership"],
-      levels: ["Deepen", "Create"],
-      format: "Interview guide, process variant map, assumption log, evidence register",
-      summary: "Use AI for stakeholder interviews, process variants, requirements, and evidence gaps in business analysis.",
-      modules: ["Interview guide", "Variant map", "Evidence register"]
-    },
-    {
       id: "AI-45",
       title: "AI Test Data and Synthetic Data Governance",
       status: "New from QA/data gap",
@@ -768,32 +586,6 @@ window.LrnData = {
       format: "Data classification, coverage matrix, drift check, leakage test",
       summary: "Use synthetic and masked test data for AI and software tests with privacy, coverage, and leakage controls.",
       modules: ["Classification", "Coverage", "Leakage test"]
-    },
-    {
-      id: "AI-46",
-      title: "AI Change Impact and Stakeholder Analysis",
-      status: "New from change gap",
-      source: "DOCX/XLSX capability gap",
-      profileIds: ["lead", "pma", "corp", "bsc", "pvs"],
-      dimensions: ["change", "business"],
-      interests: ["leadership", "consulting"],
-      levels: ["Deepen", "Create"],
-      format: "Impact map, stakeholder plan, communication script, manager brief",
-      summary: "Plan AI rollouts by role impact, stakeholders, communication gaps, and manager dependencies.",
-      modules: ["Impact map", "Stakeholder plan", "Manager brief"]
-    },
-    {
-      id: "AI-47",
-      title: "AI Value Realization and Benefits Tracking",
-      status: "New from value gap",
-      source: "DOCX/XLSX capability gap",
-      profileIds: ["lead", "pma", "bsc", "corp", "pvs"],
-      dimensions: ["business", "change", "data"],
-      interests: ["leadership", "consulting", "governance"],
-      levels: ["Deepen", "Create"],
-      format: "Benefit hypothesis, baseline metric, tracking cadence, owner review",
-      summary: "Track AI initiatives after launch for real benefits, adoption, baselines, and portfolio decisions.",
-      modules: ["Benefit hypothesis", "Baseline", "Owner review"]
     },
     {
       id: "AI-48",
@@ -822,24 +614,11 @@ window.LrnData = {
       modules: ["Architecture sketch", "Data boundary", "Platform decision"]
     },
     {
-      id: "AI-50",
-      title: "AI BI Reporting and Data Storytelling",
-      status: "New from data/decision gap",
-      source: "DOCX/XLSX capability gap",
-      profileIds: ["lead", "corp", "bsc", "pma", "pvs"],
-      dimensions: ["data", "business"],
-      interests: ["governance", "leadership", "consulting"],
-      levels: ["Acquire", "Deepen", "Create"],
-      format: "Metric definition, chart check, causality warning, decision context",
-      summary: "Use AI for BI reports, management narratives, and data stories without blurring metrics, causality, or decision boundaries.",
-      modules: ["Metric definition", "Chart check", "Decision context"]
-    },
-    {
       id: "AI-51",
       title: "AI Human Review and Approval Workflow Design",
       status: "New from governance/compliance gap",
       source: "DOCX/XLSX capability gap",
-      profileIds: ["corp", "lead", "bsc", "pma", "am"],
+      profileIds: ["tc", "corp", "lead", "bsc", "pma", "am"],
       dimensions: ["data", "change"],
       interests: ["governance", "leadership"],
       levels: ["Deepen", "Create"],
@@ -852,7 +631,7 @@ window.LrnData = {
       title: "AI Operating Model and Center of Excellence",
       status: "New from leadership/operating model gap",
       source: "DOCX/XLSX role gap",
-      profileIds: ["lead", "pma", "corp", "bsc", "pvs"],
+      profileIds: ["tc", "lead", "pma", "corp", "bsc", "pvs"],
       dimensions: ["change", "business"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
@@ -887,32 +666,6 @@ window.LrnData = {
       modules: ["Data boundary", "Tool approval", "Abuse case"]
     },
     {
-      id: "AI-55",
-      title: "AI Product Experiment Design and Feedback Analytics",
-      status: "New from product/feedback gap",
-      source: "DOCX/XLSX role gap",
-      profileIds: ["pvs", "pma", "bsc", "lead"],
-      dimensions: ["business", "data", "change"],
-      interests: ["consulting", "leadership", "productivity"],
-      levels: ["Deepen", "Create"],
-      format: "Hypothesis statement, success metric, feedback sample, stop rule",
-      summary: "Structure AI product ideas as experiments with a hypothesis, feedback sample, success metric, and stop rule.",
-      modules: ["Hypothesis", "Feedback sample", "Stop rule"]
-    },
-    {
-      id: "AI-56",
-      title: "AI Adoption Communications and Role-Based Enablement",
-      status: "New from change/enablement gap",
-      source: "DOCX/XLSX capability gap",
-      profileIds: ["lead", "pma", "corp", "bsc", "pvs"],
-      dimensions: ["change", "business"],
-      interests: ["leadership", "consulting", "productivity"],
-      levels: ["Deepen", "Create"],
-      format: "Role narrative, manager brief, practice task, feedback channel",
-      summary: "Translate AI rollouts into behavior through role-specific communication, manager briefings, practice tasks, and feedback channels.",
-      modules: ["Role narrative", "Manager brief", "Feedback channel"]
-    },
-    {
       id: "AI-57",
       title: "AI Prompt Library Governance and Reuse",
       status: "New from prompt/knowledge gap",
@@ -930,7 +683,7 @@ window.LrnData = {
       title: "AI Champion / Community Lead",
       status: "Role format from DOCX",
       source: "DOCX",
-      profileIds: ["bsc", "pvs", "pma", "lead", "corp"],
+      profileIds: ["tc", "bsc", "pvs", "pma", "lead", "corp"],
       dimensions: ["change", "business", "prompting"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
@@ -946,8 +699,8 @@ window.LrnData = {
       label: "Core AI Foundation",
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
-        { label: "Deepen", courses: ["AI-06", "AI-22", "PROMPT-01", "AI-18", "AI-23", "AI-33", "AI-39", "AI-50", "AI-51", "AI-54", "AI-56", "AI-57"] }
+        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40"] },
+        { label: "Deepen", courses: ["AI-06", "AI-22", "PROMPT-01", "AI-18", "AI-23", "AI-39", "AI-51", "AI-54", "AI-57"] }
       ]
     },
     {
@@ -957,8 +710,8 @@ window.LrnData = {
       profileIds: ["bsc", "pvs", "pma"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-04", "USECASE-01", "AI-05", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36", "AI-38", "AI-39", "AI-41", "AI-43", "AI-44", "AI-46", "AI-48", "AI-50", "AI-51", "AI-54", "AI-55", "AI-56", "AI-57"] },
-        { label: "Create", courses: ["AI-19", "AI-27", "AI-32", "AI-33", "AI-42", "AI-47", "AI-52", "AI-55", "CHAMP-01"] }
+        { label: "Deepen", courses: ["USECASE-01", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36", "AI-38", "AI-39", "AI-43", "AI-48", "AI-51", "AI-54", "AI-57"] },
+        { label: "Create", courses: ["AI-19", "AI-42", "AI-52", "CHAMP-01"] }
       ]
     },
     {
@@ -968,7 +721,7 @@ window.LrnData = {
       profileIds: ["tc", "am"],
       stages: [
         { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
-        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-41", "AI-43", "AI-45", "AI-49", "AI-51", "AI-53", "AI-54", "AI-57"] },
+        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-43", "AI-45", "AI-49", "AI-51", "AI-53", "AI-54", "AI-57"] },
         { label: "Create", courses: ["AI-19", "AI-25", "AI-42", "AI-52", "AI-53", "CHAMP-01"] }
       ]
     },
@@ -979,8 +732,8 @@ window.LrnData = {
       profileIds: ["lead", "corp", "pma", "bsc"],
       stages: [
         { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-07", "AI-08", "CHANGE-01", "AI-17", "AI-20", "AI-21", "AI-25", "AI-27", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-35", "AI-36", "AI-37", "AI-38", "AI-39", "AI-40", "AI-41", "AI-43", "AI-44", "AI-46", "AI-47", "AI-48", "AI-49", "AI-50", "AI-51", "AI-54", "AI-55", "AI-56", "AI-57"] },
-        { label: "Create", courses: ["AI-19", "AI-42", "AI-52", "AI-55", "CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-17", "AI-20", "AI-21", "AI-25", "AI-35", "AI-36", "AI-37", "AI-38", "AI-39", "AI-40", "AI-43", "AI-48", "AI-49", "AI-51", "AI-54", "AI-57"] },
+        { label: "Create", courses: ["AI-19", "AI-42", "AI-52", "CHAMP-01"] }
       ]
     },
     {
@@ -989,8 +742,8 @@ window.LrnData = {
       label: "Corporate Functions Enablement",
       profileIds: ["corp"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40", "AI-41"] },
-        { label: "Deepen", courses: ["AI-10", "AI-28", "AI-29", "AI-30", "AI-33", "AI-34", "AI-36", "AI-38", "AI-39", "AI-44", "AI-45", "AI-46", "AI-47", "AI-48", "AI-50", "AI-51", "AI-53", "AI-54", "AI-56", "AI-57"] },
+        { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40"] },
+        { label: "Deepen", courses: ["AI-10", "AI-36", "AI-38", "AI-39", "AI-45", "AI-48", "AI-51", "AI-53", "AI-54", "AI-57"] },
         { label: "Create", courses: ["AI-20", "AI-21", "AI-52", "AI-57", "CHAMP-01"] }
       ]
     }

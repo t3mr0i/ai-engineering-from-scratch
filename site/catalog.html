@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson Catalog · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="Full catalog of 490 AI engineering lessons. Search, filter, and sort every lesson across all 14 phases.">
+  <meta name="description" content="Catalog of Technology Consulting AI engineering lessons. Search, filter, and sort every lesson backing a TC course.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/catalog.html">
   <meta property="og:title" content="Catalog · LHIND AI Learning Catalog">
-  <meta property="og:description" content="Search and filter 490 lessons across 14 phases. Python, TypeScript, Rust, Julia.">
+  <meta property="og:description" content="Search and filter Technology Consulting lessons. Python, TypeScript, Rust, Julia.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <meta property="og:url" content="https://aiengineeringfromscratch.com/catalog.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Catalog · LHIND AI Learning Catalog">
-  <meta name="twitter:description" content="Search and filter 490 lessons across 14 phases.">
+  <meta name="twitter:description" content="Search and filter Technology Consulting lessons.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preload" href="lrn/assets/fonts/LHGHeadWEB-Light.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="lrn/assets/fonts/LHGTextWEB-Regular.woff2" as="font" type="font/woff2" crossorigin>
@@ -243,7 +243,7 @@
     <div class="container">
       <div class="catalog-header">
         <h1>Lesson Catalog</h1>
-        <p>Every lesson across all 14 phases. Search, filter, sort.</p>
+        <p>Every lesson backing a Technology Consulting course. Search, filter, sort.</p>
       </div>
       <div class="catalog-controls">
         <input type="text" class="catalog-search" id="catalogSearch" placeholder="Search lessons...">
@@ -287,6 +287,7 @@
   </footer>
 
   <script src="data.js?v=20260525a"></script>
+  <script src="lrn/curriculum-map.js?v=20260702a"></script>
   <script src="progress.js?v=20260525a"></script>
   <script src="cmdpalette.js?v=20260525a" defer></script>
   <script>
@@ -322,20 +323,38 @@
           });
         }
 
+        // Technology Consulting scope: catalog only surfaces lessons that back
+        // at least one of the LRN cockpit's TC courses (curriculum-map.js).
+        // Every course in courseMaps carries "tc" in profileIds by construction
+        // (site/lrn/data.js), so no further profile filtering is needed here.
+        var tcLessonPaths = {};
+        if (window.LrnCurriculumMap && window.LrnCurriculumMap.courseMaps) {
+          Object.keys(window.LrnCurriculumMap.courseMaps).forEach(function (courseId) {
+            window.LrnCurriculumMap.courseMaps[courseId].forEach(function (unit) {
+              unit.lessons.forEach(function (lesson) {
+                tcLessonPaths[lesson.path] = true;
+              });
+            });
+          });
+        }
+        function lessonPathFromUrl(url) {
+          var m = (url || '').match(/tree\/main\/(.+?)\/?$/);
+          return m ? m[1] : null;
+        }
+
         var allRows = [];
         var phaseSelect = document.getElementById('catalogPhase');
 
         for (var i = 0; i < PHASES.length; i++) {
           var p = PHASES[i];
           if (p.hidden) continue;
-          var opt = document.createElement('option');
-          opt.value = String(p.id);
-          opt.textContent = String(p.id).padStart(2, '0') + ' - ' + p.name;
-          phaseSelect.appendChild(opt);
+          var phaseRows = [];
 
           for (var j = 0; j < p.lessons.length; j++) {
             var l = p.lessons[j];
-            allRows.push({
+            var path = lessonPathFromUrl(l.url);
+            if (!path || !tcLessonPaths[path]) continue;
+            phaseRows.push({
               phase: p.id,
               phaseName: p.name,
               name: l.name,
@@ -345,6 +364,13 @@
               url: l.url || ''
             });
           }
+          if (!phaseRows.length) continue;
+
+          var opt = document.createElement('option');
+          opt.value = String(p.id);
+          opt.textContent = String(p.id).padStart(2, '0') + ' - ' + p.name;
+          phaseSelect.appendChild(opt);
+          allRows = allRows.concat(phaseRows);
         }
 
         var searchInput = document.getElementById('catalogSearch');
