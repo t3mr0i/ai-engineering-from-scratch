@@ -40,6 +40,19 @@ const GATE_SECRET = process.env.GATE_SECRET;
 // self-contained, so the passcode page needs nothing else.
 const PUBLIC_PATHS = new Set(['/gate.html']);
 
+// Phase folders marked `hidden: true` in site/data.js (TC-only catalog scope).
+// The hidden flag there is client-side only (catalog rendering + search
+// index); mirror it here so the raw lesson content is actually unreachable,
+// even with a valid gate cookie. Keep in sync if the hidden set ever changes.
+const HIDDEN_PHASE_DIRS = [
+  '01-math-foundations',
+  '02-ml-fundamentals',
+  '03-deep-learning-core',
+  '04-computer-vision',
+  '06-speech-and-audio',
+  '09-reinforcement-learning',
+];
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -185,6 +198,11 @@ const server = http.createServer((req, res) => {
   if (!abs) {
     res.writeHead(400, { 'Content-Type': 'text/plain' });
     res.end('Bad request');
+    return;
+  }
+  if (HIDDEN_PHASE_DIRS.some((dir) => pathOnly.startsWith(`/phases/${dir}/`))) {
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Not found');
     return;
   }
   sendFile(res, abs);

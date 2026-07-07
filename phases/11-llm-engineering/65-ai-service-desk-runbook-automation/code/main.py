@@ -43,13 +43,13 @@ def normalize(text: str) -> str:
 
 
 def signal_matches(scenario: Scenario) -> list[str]:
-    haystack = normalize(" ".join((scenario.name, scenario.description, " ".join(scenario.signals))))
+    haystack_words = normalize(" ".join((scenario.name, scenario.description, " ".join(scenario.signals)))).split()
     matches = []
     for signal in SIGNALS:
         words = normalize(signal).split()
-        if all(word in haystack for word in words):
+        if all(word in haystack_words for word in words):
             matches.append(signal)
-        elif any(word in haystack for word in words):
+        elif any(word in haystack_words for word in words):
             matches.append(signal)
     return matches
 

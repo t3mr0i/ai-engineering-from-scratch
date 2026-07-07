@@ -2273,6 +2273,13 @@
         }
       }
 
+      // Phase scoped out of the catalog (hidden: true in data.js) — treat a
+      // deep link into it the same as a not-found lesson, don't fetch/render.
+      if (currentPhaseIndex >= 0 && PHASES[currentPhaseIndex].hidden) {
+        showError('Lesson not found', 'This lesson is not part of the current catalog.', true);
+        return;
+      }
+
       lrnContext = buildLrnContext(lrnCourseId, lessonPath);
       if (lrnContext) {
         document.body.classList.add('lrn-lesson-mode');
@@ -2522,8 +2529,8 @@
         var html = '';
 
         // Step to the nearest non-hidden phase so prev/next never link into a
-        // hidden phase. (The current lesson still renders even if its own phase
-        // is hidden — deep links survive; we just don't navigate into hidden.)
+        // hidden phase. (A deep link straight into a hidden phase is already
+        // caught above and shown as not-found, so this only guards navigation.)
         function adjacentVisiblePhaseIdx(start, dir) {
           for (var k = start + dir; k >= 0 && k < PHASES.length; k += dir) {
             if (!PHASES[k].hidden) return k;
