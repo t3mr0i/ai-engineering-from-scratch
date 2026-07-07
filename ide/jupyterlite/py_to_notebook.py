@@ -118,17 +118,6 @@ def _is_main_guard(node: ast.If) -> bool:
     )
 
 
-def _dedent(s: str) -> str:
-    """Remove the common leading indentation of a function-body segment."""
-    lines = s.splitlines()
-    if not lines:
-        return s
-    # source_segment of a body statement keeps its original indentation;
-    # strip the indentation of the first line from all lines.
-    import textwrap
-    return textwrap.dedent(s)
-
-
 def code_cell(source: str) -> dict:
     return {
         "cell_type": "code",

@@ -1,0 +1,81 @@
+/* LHG (Lufthansa Group) colour overrides for the embedded JupyterLite app.
+ *
+ * JupyterLab themes everything through --jp-* CSS custom properties (see
+ * @jupyterlab/theme-light-extension/index.css in the built output for the
+ * full set + defaults). We don't touch the theme package itself — that gets
+ * regenerated on every `jupyter lite build` — instead this stylesheet is
+ * injected after it (see inject-lhg-theme.py) so these overrides win the
+ * cascade at equal specificity.
+ *
+ * Values are pulled 1:1 from site/lrn/tokens.css (the LHG design tokens
+ * already used by the rest of the site) so the notebook UI reads as part of
+ * the same product instead of stock Jupyter blue/green/orange/red.
+ *
+ * !important on every declaration: the theme package's own stylesheet
+ * (@jupyterlab/theme-light-extension) is not a static <link> — it's injected
+ * into <head> at runtime by its webpack style-loader bundle, which appends
+ * AFTER this file's statically-injected <link>, regardless of source order in
+ * the HTML. Without !important the theme package wins the cascade at equal
+ * specificity and these overrides are silently no-ops.
+ */
+:root {
+  /* Brand ramp (spinner, active states, links, selected cell border) */
+  --jp-brand-color0: #05164d !important; /* --lhg-core-blue */
+  --jp-brand-color1: #243f9b !important; /* --lhg-blue-600 */
+  --jp-brand-color2: #2d5fe4 !important; /* --lhg-blue-500 */
+  --jp-brand-color3: #e5f1ff !important; /* --lhg-blue-100 */
+  --jp-brand-color4: #f3f8ff !important;
+
+  /* Secondary accent (progress bars, some toggle states) -> LHG teal */
+  --jp-accent-color0: #234f55 !important;
+  --jp-accent-color1: #368089 !important; /* --lhg-teal */
+  --jp-accent-color2: #8fbcc1 !important;
+  --jp-accent-color3: #dcedef !important;
+
+  /* Status colours -> LHG semantic tokens */
+  --jp-warn-color0: #a4712f !important;
+  --jp-warn-color1: #e2974b !important; /* --lhg-warning */
+  --jp-warn-color2: #eec18d !important;
+  --jp-warn-color3: #f8e6d1 !important;
+  --jp-warn-color-normal: var(--jp-warn-color1) !important;
+  --jp-warn-color-hover: var(--jp-warn-color0) !important;
+  --jp-warn-color-active: var(--jp-warn-color0) !important;
+
+  --jp-error-color0: #a81b30 !important; /* darker step of --lhg-error */
+  --jp-error-color1: #e22743 !important; /* --lhg-error */
+  --jp-error-color2: #ee7789 !important;
+  --jp-error-color3: #f9d7dc !important;
+
+  --jp-success-color0: #135f3f !important;
+  --jp-success-color1: #1b8a5a !important; /* --lhg-success */
+  --jp-success-color2: #7bc4a4 !important;
+  --jp-success-color3: #dcefe6 !important;
+
+  /* Layout surfaces -> warm-grey scale instead of pure white/md-grey */
+  --jp-layout-color0: #ffffff !important; /* --lhg-white */
+  --jp-layout-color1: #ffffff !important;
+  --jp-layout-color2: #f1f0ef !important; /* --lhg-grey-200 */
+  --jp-layout-color3: #e3e1de !important; /* --lhg-grey-300 */
+  --jp-layout-color4: #cfccc8 !important; /* --lhg-grey-400 */
+
+  --jp-border-color0: #cfccc8 !important;
+  --jp-border-color1: #cfccc8 !important;
+  --jp-border-color2: #e3e1de !important;
+  --jp-border-color3: #f1f0ef !important;
+
+  /* Text -> LHG ink scale (core blue reads as "near-black" at body sizes) */
+  --jp-ui-font-color0: #05164d !important;
+  --jp-ui-font-color1: #05164d !important;
+  --jp-ui-font-color2: #52617c !important; /* --lhg-slate-700 */
+  --jp-ui-font-color3: #7a7673 !important; /* --lhg-warm-grey */
+
+  /* Code cells */
+  --jp-cell-editor-background: #f9f8f8 !important; /* --lhg-grey-100 */
+  --jp-cell-editor-border-color: #e3e1de !important;
+  --jp-cell-editor-active-border-color: var(--jp-brand-color2) !important;
+  --jp-cell-inprompt-font-color: #2d5fe4 !important; /* --lhg-blue-500 */
+  --jp-cell-outprompt-font-color: #368089 !important; /* --lhg-teal */
+
+  /* Focus ring to match the rest of the site (site/lrn/tokens.css --shadow-focus) */
+  --jp-toolbar-box-shadow: 0 0 0 1px rgba(5, 22, 77, 0.06) !important;
+}
