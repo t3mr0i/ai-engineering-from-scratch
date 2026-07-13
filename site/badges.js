@@ -34,7 +34,7 @@
   // Tier palette — Lufthansa Group Design System expressions tones.
   // Rings map to the LHG raw scale (site/lrn/tokens.css) so the medals
   // share the corporate visual language instead of generic gold/bronze.
-  //   bronze   -> --lhg-sand      (#857461)  warm, restrained
+  //   bronze   -> LHG Blue 600    (#243f9b)  corporate blue accent
   //   silver   -> --lhg-slate-500 (#657898)  cool neutral
   //   gold     -> --lhg-warning   (#e2974b)  amber accent
   //   platinum -> --lhg-teal      (#368089)  Expressions category tone
@@ -42,7 +42,7 @@
   // carries the LHG Badge tone used for the pill label (Badge.jsx tones:
   // neutral | blue | success | warning | error | teal | purple).
   var TIERS = {
-    bronze:   { ring: '#857461', glow: 'rgba(133,116,97,0.45)',  label: 'Bronze',  tone: 'neutral' },
+    bronze:   { ring: '#243f9b', glow: 'rgba(36,63,155,0.45)',  label: 'Bronze',  tone: 'blue' },
     silver:   { ring: '#657898', glow: 'rgba(101,120,152,0.45)', label: 'Silber',  tone: 'neutral' },
     gold:     { ring: '#e2974b', glow: 'rgba(226,151,75,0.50)',  label: 'Gold',    tone: 'warning' },
     platinum: { ring: '#368089', glow: 'rgba(54,128,137,0.50)',  label: 'Platin',  tone: 'teal' }
