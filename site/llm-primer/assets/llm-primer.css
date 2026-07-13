@@ -401,27 +401,16 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:26px; h
 .emoji-big { font-size:60px; text-align:center; margin:6px 0; }
 .divider { height:1px; background:var(--card-br); margin:18px 0; border:0; }
 
-/* ---- Easter egg + takeaway (results) ---- */
-.egg-ov { position:fixed; inset:0; z-index:60; background:rgba(2,8,36,.75); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px; }
-.egg-card { width:100%; max-width:360px; background:linear-gradient(180deg, rgba(251,191,36,.14), var(--card)); border:1px solid rgba(251,191,36,.45); border-radius:20px; padding:24px; text-align:center; box-shadow:var(--shadow); animation:pop .35s cubic-bezier(.2,.9,.3,1.4) both; }
-.egg-emoji { font-size:52px; }
-.egg-code { margin:14px 0 6px; font-size:13px; }
-.egg-code b { display:inline-block; margin-top:4px; font-size:15px; letter-spacing:.5px; color:#0a1b3d; background:#fcd34d; padding:5px 12px; border-radius:999px; }
+/* ---- Results takeaway ---- */
 .prize-card { border:1px solid rgba(123,166,220,.3); background:linear-gradient(180deg, rgba(123,166,220,.07), rgba(123,166,220,.02)); text-align:left; margin-top:14px; }
 .prize-main { font-size:15.5px; font-weight:650; margin:2px 0 8px; }
 .prize-replay { margin-top:8px; }
 .results { position:relative; overflow-x:hidden; }
-.hidden-egg { position:absolute; right:-26px; bottom:6px; width:150px; height:188px; opacity:.06; cursor:pointer; transition:opacity .35s ease; z-index:1; }
-.hidden-egg.revealed { opacity:.28; }
-.egg-teaser { position:absolute; right:14px; bottom:120px; max-width:200px; background:var(--card); border:1px solid var(--card-br); border-radius:12px; padding:10px 12px; font-size:12.5px; color:var(--muted); opacity:0; transform:translateY(8px); transition:opacity .3s, transform .3s; pointer-events:none; z-index:2; }
-.egg-teaser.show { opacity:1; transform:none; }
-.egg-found { text-align:center; border:1px solid rgba(251,191,36,.45); background:linear-gradient(180deg, rgba(251,191,36,.12), rgba(251,191,36,.03)); margin-top:14px; }
-.egg-found-emoji { font-size:40px; }
-.ef-title { font-weight:800; color:#fcd34d; margin:4px 0 8px; }
 
-/* ---- Toast (kept for safety; unused in solo) ---- */
-.toast { position:fixed; left:50%; bottom:calc(110px + var(--safe-b)); transform:translate(-50%, 20px); z-index:50; background:var(--bg-2); color:var(--text); border:1px solid var(--card-br); box-shadow:var(--shadow); padding:12px 18px; border-radius:999px; font-size:14px; font-weight:600; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; width:max-content; max-width:90vw; text-align:center; }
-.toast.show { opacity:1; transform:translate(-50%, 0); }
+/* ---- Cover credit (attribution link to the original course) ---- */
+.primer-credit { margin-top:10px; }
+.primer-credit a { color:var(--accent-2); text-decoration:underline; text-underline-offset:2px; }
+.primer-credit a:hover { filter:brightness(1.15); }
 
 /* Hide the upstream "Fork me" ribbon — not relevant inside the LHIND catalog. */
 .gh-ribbon { display:none !important; }

@@ -1,8 +1,43 @@
 /* AIFS Achievement Badges — medal styles + toast + nav counter.
-   Token fallbacks keep this readable under both the catalog skin
-   (style.css: --bg-surface, --ink, --rule-soft, --shadow-hard-lg) and
-   the LRN skin (lrn.css/tokens.css). Tier colors are constant. */
+   Tier rings map to the Lufthansa Group Design System expression tones
+   (site/lrn/tokens.css: --lhg-sand, --lhg-slate-500, --lhg-warning,
+   --lhg-teal). The tier LABEL is rendered as an LHG Badge pill — the same
+   tone palette the core Badge.jsx component uses
+   (neutral | blue | success | warning | error | teal | purple), with
+   subtle tint backgrounds. Token fallbacks keep it readable under both the
+   catalog skin (style.css) and the LRN skin (lrn.css/tokens.css). */
 
+/* ── LHG Badge tone pills (mirror Badge.jsx tone tints) ──────────────── */
+.aifs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body, inherit);
+  font-weight: var(--weight-medium, 500);
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill, 999px);
+}
+.aifs-pill--neutral { background: var(--lhg-grey-200, #f1f0ef); color: var(--lhg-slate-700, #52617c); }
+.aifs-pill--blue    { background: var(--lhg-blue-100, #e5f1ff); color: var(--lhg-blue-600, #243f9b); }
+.aifs-pill--success { background: #e2f3ea;                       color: var(--lhg-success, #1b8a5a); }
+.aifs-pill--warning { background: #fbeede;                       color: #9a5a14; }
+.aifs-pill--error   { background: #fbe1e5;                       color: var(--lhg-red, #bc0a1d); }
+.aifs-pill--teal    { background: #dcecee;                       color: var(--lhg-teal, #368089); }
+.aifs-pill--purple  { background: #f3e1ea;                       color: var(--lhg-purple, #a82e61); }
+
+[data-theme="dark"] .aifs-pill--neutral { background: rgba(123,166,220,0.14); color: var(--color-ink-2, #c3d5ee); }
+[data-theme="dark"] .aifs-pill--blue    { background: rgba(123,166,220,0.18); color: var(--color-accent, #7ba6dc); }
+[data-theme="dark"] .aifs-pill--success { background: var(--color-ok-soft, #16352a); color: var(--color-ok, #6fc79c); }
+[data-theme="dark"] .aifs-pill--warning { background: var(--color-warn-soft, #322b1a); color: var(--color-warn, #d9c5a0); }
+[data-theme="dark"] .aifs-pill--error   { background: var(--color-error-soft, #3a1e1e); color: var(--color-error, #e08a8a); }
+[data-theme="dark"] .aifs-pill--teal    { background: rgba(54,128,137,0.22); color: #6fc4cc; }
+[data-theme="dark"] .aifs-pill--purple  { background: rgba(168,46,97,0.22); color: #e29cbd; }
+
+/* ── medal disc ─────────────────────────────────────────────────────── */
 .aifs-badge {
   --b-disc: var(--bg-surface, #ffffff);
   --b-ink: var(--ink, #05164d);
@@ -26,13 +61,13 @@
   display: grid;
   place-items: center;
   background: var(--b-disc);
-  border: 3px solid var(--tier-ring, #b08a4a);
-  box-shadow: 0 6px 20px var(--tier-glow, rgba(176,138,74,0.4));
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  border: 3px solid var(--tier-ring, #857461);
+  box-shadow: 0 6px 20px var(--tier-glow, rgba(133,116,97,0.4));
+  transition: transform 220ms var(--ease-standard, ease), box-shadow 220ms ease;
 }
 .aifs-badge__disc i.ph-light {
   font-size: 34px;
-  color: var(--tier-ring, #b08a4a);
+  color: var(--tier-ring, #857461);
   line-height: 1;
 }
 .aifs-badge--earned .aifs-badge__disc:hover { transform: translateY(-2px) scale(1.03); }
@@ -66,14 +101,8 @@
   line-height: 1.2;
   max-width: 110px;
 }
-.aifs-badge__tier {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--b-mute);
-}
-.aifs-badge--earned .aifs-badge__tier { color: var(--tier-ring, #b08a4a); }
+/* earned tier pills keep their tone colour; locked pills dim to neutral */
+.aifs-badge--locked .aifs-pill { background: var(--b-rule); color: var(--b-mute); }
 
 .aifs-badge__progress {
   width: 64px; height: 4px;
@@ -82,7 +111,7 @@
   overflow: hidden;
   margin-top: 2px;
 }
-.aifs-badge__bar { height: 100%; background: var(--tier-ring, #b08a4a); }
+.aifs-badge__bar { height: 100%; background: var(--tier-ring, #857461); }
 .aifs-badge__hint {
   font-family: var(--font-mono, monospace);
   font-size: 0.62rem;
@@ -98,21 +127,48 @@
 }
 
 /* summary */
-.aifs-badges-summary { display: flex; flex-direction: column; gap: 8px; max-width: 420px; }
+.aifs-badges-summary { display: flex; flex-direction: column; gap: 10px; max-width: 420px; }
 .aifs-badges-summary__count { font-family: var(--font-display, var(--font-body, inherit)); font-size: 1.4rem; color: var(--ink, #05164d); }
 .aifs-badges-summary__count strong { font-weight: 700; }
 .aifs-badges-summary__bar { height: 8px; border-radius: 999px; background: var(--rule-soft, #e3e1de); overflow: hidden; }
 .aifs-badges-summary__fill { height: 100%; background: var(--accent, #05164d); transition: width 400ms ease; }
 .aifs-badges-summary__lessons { font-size: 0.85rem; color: var(--ink-soft, #52617c); }
 
-/* nav counter */
+/* streak block (inside summary) */
+.aifs-streak {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 4px; padding: 10px 14px;
+  border-radius: var(--radius-md, 12px);
+  background: var(--bg-surface-hover, #f1f0ef);
+  border: 1px solid var(--rule-soft, #e3e1de);
+}
+.aifs-streak__icon {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--lhg-grey-200, #f1f0ef);
+  color: var(--lhg-warm-grey, #7a7673);
+}
+.aifs-streak__icon i.ph-light { font-size: 20px; }
+.aifs-streak--active .aifs-streak__icon {
+  background: #fbeede;
+  color: var(--lhg-warning, #e2974b);
+  box-shadow: 0 4px 14px rgba(226,151,75,0.4);
+}
+.aifs-streak__body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.aifs-streak__current { font-size: 0.95rem; font-weight: 700; color: var(--ink, #05164d); }
+.aifs-streak__current strong { font-size: 1.1rem; }
+.aifs-streak__best { font-size: 0.78rem; color: var(--ink-soft, #52617c); }
+[data-theme="dark"] .aifs-streak { background: var(--bg-surface-hover, #16305c); border-color: var(--rule-soft, #234168); }
+[data-theme="dark"] .aifs-streak--active .aifs-streak__icon { background: var(--color-warn-soft, #322b1a); color: var(--color-warn, #d9c5a0); }
+
+/* nav counter — gold uses the LHG warning tone */
 .badges-link { position: relative; }
 .badges-link .ph-light { font-size: 1.15rem; }
 .badges-link__count {
   position: absolute; top: -5px; right: -5px;
   min-width: 17px; height: 17px; padding: 0 4px;
   border-radius: 999px;
-  background: #d4af37; color: #05164d;
+  background: var(--lhg-warning, #e2974b); color: #05164d;
   font-size: 10px; font-weight: 800;
   font-family: var(--font-mono, monospace);
   display: none; align-items: center; justify-content: center;
@@ -148,14 +204,14 @@
   width: 42px; height: 42px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--bg-surface, #fff);
-  border: 2px solid var(--tier-ring, #d4af37);
-  box-shadow: 0 4px 14px var(--tier-glow, rgba(212,175,55,0.5));
+  border: 2px solid var(--tier-ring, #e2974b);
+  box-shadow: 0 4px 14px var(--tier-glow, rgba(226,151,75,0.5));
 }
-.aifs-badge-toast__disc i.ph-light { font-size: 20px; color: var(--tier-ring, #d4af37); }
+.aifs-badge-toast__disc i.ph-light { font-size: 20px; color: var(--tier-ring, #e2974b); }
 .aifs-badge-toast__body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .aifs-badge-toast__eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute, #7a7673); }
 .aifs-badge-toast__title { font-size: 0.95rem; font-weight: 700; color: var(--ink, #05164d); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.aifs-badge-toast__tier { font-size: 0.68rem; font-weight: 700; color: var(--tier-ring, #d4af37); }
+.aifs-badge-toast__tier { font-size: 0.68rem; font-weight: 700; color: var(--tier-ring, #e2974b); }
 
 @keyframes aifs-toast-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
 @keyframes aifs-toast-out { to { opacity: 0; transform: translateY(8px) scale(.98); } }

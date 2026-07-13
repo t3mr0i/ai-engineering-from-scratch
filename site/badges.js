@@ -31,12 +31,21 @@
     return m ? m[1] : '';
   }
 
-  // Tier palette — constant across light/dark; rings read well on both.
+  // Tier palette — Lufthansa Group Design System expressions tones.
+  // Rings map to the LHG raw scale (site/lrn/tokens.css) so the medals
+  // share the corporate visual language instead of generic gold/bronze.
+  //   bronze   -> --lhg-sand      (#857461)  warm, restrained
+  //   silver   -> --lhg-slate-500 (#657898)  cool neutral
+  //   gold     -> --lhg-warning   (#e2974b)  amber accent
+  //   platinum -> --lhg-teal      (#368089)  Expressions category tone
+  // glow is the same hue at 45% alpha for the disc shadow. Each entry also
+  // carries the LHG Badge tone used for the pill label (Badge.jsx tones:
+  // neutral | blue | success | warning | error | teal | purple).
   var TIERS = {
-    bronze:   { ring: '#b08a4a', glow: 'rgba(176,138,74,0.45)',  label: 'Bronze' },
-    silver:   { ring: '#9aa7b4', glow: 'rgba(154,167,180,0.45)', label: 'Silber' },
-    gold:     { ring: '#d4af37', glow: 'rgba(212,175,55,0.50)',  label: 'Gold' },
-    platinum: { ring: '#3fa9a0', glow: 'rgba(63,169,160,0.50)',  label: 'Platin' }
+    bronze:   { ring: '#857461', glow: 'rgba(133,116,97,0.45)',  label: 'Bronze',  tone: 'neutral' },
+    silver:   { ring: '#657898', glow: 'rgba(101,120,152,0.45)', label: 'Silber',  tone: 'neutral' },
+    gold:     { ring: '#e2974b', glow: 'rgba(226,151,75,0.50)',  label: 'Gold',    tone: 'warning' },
+    platinum: { ring: '#368089', glow: 'rgba(54,128,137,0.50)',  label: 'Platin',  tone: 'teal' }
   };
 
   // ── state helpers ──────────────────────────────────────────────────────
@@ -120,6 +129,68 @@
     return n;
   }
 
+  // ── streak / daily helpers ─────────────────────────────────────────────
+  // Day keys are "YYYY-MM-DD". `ctx.now` (a ts) lets tests inject a fixed
+  // clock; otherwise we use Date.now(). Streak counters live on
+  // state.streak (see progress.js) and are rebuilt from the raw days[] list
+  // here so badge logic is pure / testable without localStorage.
+  function nowTs(ctx) { return (ctx && typeof ctx.now === 'number') ? ctx.now : Date.now(); }
+
+  function todayKey(ctx) {
+    var P = (typeof window !== 'undefined' && window.AIFSProgress) ? window.AIFSProgress : null;
+    if (P && typeof P.toDayKey === 'function') return P.toDayKey(nowTs(ctx));
+    var d = new Date(nowTs(ctx));
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function dayDiff(a, b) {
+    var P = (typeof window !== 'undefined' && window.AIFSProgress) ? window.AIFSProgress : null;
+    if (P && typeof P.dayDiff === 'function') return P.dayDiff(a, b);
+    var da = new Date(a + 'T00:00:00'), db = new Date(b + 'T00:00:00');
+    return Math.round((db.getTime() - da.getTime()) / 86400000);
+  }
+
+  function streakInfo(state, ctx) {
+    var st = (state && state.streak) || { days: [], current: 0, best: 0, lastDay: '' };
+    var days = Array.isArray(st.days) ? st.days.slice().sort() : [];
+    if (!days.length) return { current: 0, best: 0, lastDay: '', activeToday: false };
+    // current/best may already be maintained by progress.js; recompute from
+    // raw days so this stays correct even if the stored counters drift.
+    var best = 1, cur = 1;
+    for (var i = 1; i < days.length; i++) {
+      cur = (dayDiff(days[i - 1], days[i]) === 1) ? cur + 1 : 1;
+      if (cur > best) best = cur;
+    }
+    var today = todayKey(ctx);
+    // active today OR yesterday -> streak still "current" for display
+    var last = days[days.length - 1];
+    var gapToNow = dayDiff(last, today);
+    var activeToday = (gapToNow === 0);
+    var current = (gapToNow <= 1) ? cur : 0; // gap 0/1 keeps streak; 2+ broken
+    return { current: current, best: best, lastDay: last, activeToday: activeToday };
+  }
+
+  // completions grouped by calendar day, counted from completedAt timestamps.
+  function completionsByDay(state) {
+    var map = {};
+    eachLesson(state, function (p, lp) {
+      if (!lp || !lp.completedAt) return;
+      var k = toDayKeyLocal(lp.completedAt);
+      map[k] = (map[k] || 0) + 1;
+    });
+    return map;
+  }
+  function toDayKeyLocal(ts) {
+    var d = new Date(ts);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function maxCompletionsInAnyDay(state) {
+    var map = completionsByDay(state);
+    var max = 0;
+    for (var k in map) if (hasOwn(map, k) && map[k] > max) max = map[k];
+    return max;
+  }
+
   // ── badge catalog ──────────────────────────────────────────────────────
   // Each check returns { earned:boolean, cur:number, total:number } so the
   // locked state can show progress toward the goal.
@@ -174,6 +245,26 @@
         var tot = totalCatalogLessons(c);
         var n = countCompleted(s);
         return { earned: tot > 0 && n >= tot, cur: Math.min(n, tot || 1), total: tot || 1 };
+      } },
+    // ── Streak / daily badges (require the state.streak day list) ──────────
+    { id: 'daily-sprint', title: 'Tagesziel', tier: 'bronze', icon: 'ph-battery-high',
+      desc: 'Schließe an einem einzigen Tag 3 Lektionen ab.',
+      check: function (s) { var n = maxCompletionsInAnyDay(s); return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
+    { id: 'warmed-up', title: 'Aufwärmer', tier: 'silver', icon: 'ph-fire',
+      desc: 'Lerne an 3 Tagen in Folge.',
+      check: function (s, c) { var n = streakInfo(s, c).best; return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
+    { id: 'steady-spirit', title: 'Durchhalte-Geist', tier: 'gold', icon: 'ph-flame',
+      desc: 'Erreiche eine 7-Tage-Lernstreak.',
+      check: function (s, c) { var n = streakInfo(s, c).best; return { earned: n >= 7, cur: Math.min(n, 7), total: 7 }; } },
+    { id: 'discipline', title: 'Disziplin', tier: 'gold', icon: 'ph-calendar-check',
+      desc: 'Erreiche eine 30-Tage-Lernstreak.',
+      check: function (s, c) { var n = streakInfo(s, c).best; return { earned: n >= 30, cur: Math.min(n, 30), total: 30 }; } },
+    { id: 'iron-routine', title: 'Eiserne Routine', tier: 'platinum', icon: 'ph-thermometer-simple',
+      desc: 'Sei heute aktiv und halte dabei eine Best-Streak von mindestens 14 Tagen.',
+      check: function (s, c) {
+        var st = streakInfo(s, c);
+        var ok = !!st.activeToday && st.best >= 14;
+        return { earned: ok, cur: st.best, total: 14 };
       } }
   ];
 
@@ -184,14 +275,15 @@
 
   // ── evaluate ───────────────────────────────────────────────────────────
   function evaluate(state, ctx) {
-    state = state || { lessons: {} };
+    state = state || { lessons: {}, streak: { days: [], current: 0, best: 0, lastDay: '' } };
+    if (!state.streak) state.streak = { days: [], current: 0, best: 0, lastDay: '' };
     ctx = ctx || {};
     var phases = ctx.phases || [];
     var details = {};
     var earned = [];
     for (var i = 0; i < CATALOG.length; i++) {
       var b = CATALOG[i];
-      var r = b.check(state, { phases: phases }) || { earned: false, cur: 0, total: 1 };
+      var r = b.check(state, { phases: phases, now: ctx.now }) || { earned: false, cur: 0, total: 1 };
       if (typeof r.earned !== 'boolean') r.earned = !!r.earned;
       if (typeof r.cur !== 'number') r.cur = Number(r.cur) || 0;
       if (typeof r.total !== 'number' || !r.total) r.total = 1;
@@ -222,13 +314,17 @@
       '<div class="aifs-badge__progress" aria-hidden="true">' +
       '<div class="aifs-badge__bar" style="width:' + pct + '%"></div></div>' +
       '<div class="aifs-badge__hint">' + cur + ' / ' + total + '</div>';
+    // Tier label rendered as an LHG Badge pill (subtle tint + tone color).
+    // The tone class maps to the Badge.jsx tone palette; badges.css paints it.
+    var pill = '<span class="aifs-badge__tier aifs-pill aifs-pill--' + tier.tone + '">' +
+      escapeHTML(tierLabel(badge.tier)) + '</span>';
     return '' +
       '<div class="aifs-badge ' + stateCls + ' aifs-badge--' + badge.tier + '" title="' + escapeHTML(badge.desc) + '">' +
         '<div class="aifs-badge__disc" style="--tier-ring:' + tier.ring + ';--tier-glow:' + tier.glow + '">' +
           '<i class="' + iconCls + '" aria-hidden="true"></i>' + lock +
         '</div>' +
         '<div class="aifs-badge__title">' + escapeHTML(badge.title) + '</div>' +
-        '<div class="aifs-badge__tier">' + escapeHTML(tierLabel(badge.tier)) + '</div>' +
+        pill +
         progress +
       '</div>';
   }
@@ -243,6 +339,18 @@
     return '<div class="aifs-badges-grid">' + html + '</div>';
   }
 
+  function renderStreakHTML(streak, ctx) {
+    var st = streak || { current: 0, best: 0, activeToday: false };
+    var flame = st.current > 0 ? ' aifs-streak--active' : '';
+    var today = st.activeToday ? 'heute aktiv' : 'heute noch nicht aktiv';
+    return '<div class="aifs-streak' + flame + '">' +
+      '<div class="aifs-streak__icon"><i class="ph-light ph-fire" aria-hidden="true"></i></div>' +
+      '<div class="aifs-streak__body">' +
+        '<div class="aifs-streak__current"><strong>' + st.current + '</strong> Tage in Folge</div>' +
+        '<div class="aifs-streak__best">Best-Streak: ' + st.best + ' · ' + today + '</div>' +
+      '</div></div>';
+  }
+
   function renderSummaryHTML(evalResult, extra) {
     evalResult = evalResult || { earned: [], details: {} };
     extra = extra || {};
@@ -254,6 +362,7 @@
       '<div class="aifs-badges-summary__count"><strong>' + got + '</strong> / ' + total + ' Badges</div>' +
       '<div class="aifs-badges-summary__bar"><div class="aifs-badges-summary__fill" style="width:' + pct + '%"></div></div>';
     if (lessons !== null) html += '<div class="aifs-badges-summary__lessons">' + lessons + ' Lektionen abgeschlossen</div>';
+    if (extra.streak) html += renderStreakHTML(extra.streak);
     html += '</div>';
     return html;
   }
@@ -278,20 +387,24 @@
   }
 
   function readProgressState() {
-    return (window.AIFSProgress && typeof window.AIFSProgress.getState === 'function')
-      ? window.AIFSProgress.getState() : { lessons: {} };
+    var s = (window.AIFSProgress && typeof window.AIFSProgress.getState === 'function')
+      ? window.AIFSProgress.getState() : { lessons: {}, streak: { days: [], current: 0, best: 0, lastDay: '' } };
+    if (!s.streak) s.streak = { days: [], current: 0, best: 0, lastDay: '' };
+    return s;
   }
 
-  function currentCtx() { return { phases: getPhases() }; }
+  function currentCtx() { return { phases: getPhases(), now: Date.now() }; }
 
   function renderMountTargets(res) {
     if (typeof document === 'undefined') return;
+    var ctx = currentCtx();
     var grid = document.querySelector('[data-aifs-badges-grid]');
     if (grid) grid.innerHTML = renderGridHTML(res);
     var sum = document.querySelector('[data-aifs-badges-summary]');
     if (sum) {
       var completed = window.AIFSProgress ? window.AIFSProgress.totalCompleted() : 0;
-      sum.innerHTML = renderSummaryHTML(res, { completed: completed });
+      var st = streakInfo(readProgressState(), ctx);
+      sum.innerHTML = renderSummaryHTML(res, { completed: completed, streak: st });
     }
   }
 
@@ -382,9 +495,11 @@
     extractPath: extractPath,
     evaluate: evaluate,
     byId: byId,
+    streakInfo: streakInfo,
     renderBadgeHTML: renderBadgeHTML,
     renderGridHTML: renderGridHTML,
     renderSummaryHTML: renderSummaryHTML,
+    renderStreakHTML: renderStreakHTML,
     mount: mount
   };
 

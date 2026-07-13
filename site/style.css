@@ -145,6 +145,18 @@
   box-sizing: border-box;
 }
 
+/* Fluid media baseline — raster images, video and canvas never overflow
+   their container. Class-specific rules (e.g. .wordmark__logo) keep their
+   fixed heights via higher specificity. Inline UI <svg> icons are excluded
+   on purpose so fixed-size header/toolbar icons stay pixel-stable, and the
+   lesson mermaid-render zoom container is left untouched. */
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 96px;
@@ -1065,10 +1077,6 @@ body.js-anim .toc-row.in-view {
     display: none;
   }
 
-  .nav-links {
-    display: none;
-  }
-
   .header-inner {
     height: 56px;
     padding: 0 12px;
@@ -1188,6 +1196,16 @@ body.js-anim .toc-row.in-view {
   /* Phones: drop the wordmark text, keep the logo/mark so the header
      never overflows when the icon buttons are present. */
   .nav-edge .wordmark > span:not(.wordmark__mark) {
+    display: none;
+  }
+}
+
+/* Small tablets / large phones: hide the secondary section nav
+   (Courses · Curriculum). The links remain in the page footer, and
+   the wordmark still links home, so no navigation is lost. 640px
+   matches the breakpoint used by lesson.html and assessment.html. */
+@media (max-width: 640px) {
+  .nav-links {
     display: none;
   }
 }

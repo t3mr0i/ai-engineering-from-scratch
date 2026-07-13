@@ -27,7 +27,85 @@
   var listeners = [];
 
   function emptyState() {
-    return { lessons: {}, updatedAt: 0 };
+    return { lessons: {}, streak: emptyStreak(), updatedAt: 0 };
+  }
+
+  // ── Streak tracking ───────────────────────────────────────────────────
+  // Separate, migrateable section of the schema. activeDays are stored as
+  // "YYYY-MM-DD" (local calendar day) so streak math is timezone-stable and
+  // survives Daylight Saving shifts. recordActivity() is called by every
+  // write path (visit / answer / read / complete) so any meaningful
+  // interaction counts as a "day".
+  function emptyStreak() {
+    return { days: [], current: 0, best: 0, lastDay: '' };
+  }
+
+  function toDayKey(ts) {
+    var d = new Date(ts);
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+
+  function dayDiff(a, b) {
+    // whole calendar days from a -> b (b - a). a, b are "YYYY-MM-DD".
+    var da = new Date(a + 'T00:00:00');
+    var db = new Date(b + 'T00:00:00');
+    return Math.round((db.getTime() - da.getTime()) / 86400000);
+  }
+
+  function ensureStreak(state) {
+    if (!state.streak || typeof state.streak !== 'object') state.streak = emptyStreak();
+    if (!Array.isArray(state.streak.days)) state.streak.days = [];
+    if (typeof state.streak.current !== 'number') state.streak.current = 0;
+    if (typeof state.streak.best !== 'number') state.streak.best = 0;
+    if (typeof state.streak.lastDay !== 'string') state.streak.lastDay = '';
+    return state.streak;
+  }
+
+  // recordActivity(): stamp today into the streak and update counters.
+  // idempotent — calling twice in the same day only counts the day once.
+  function recordActivity(state, ts) {
+    var streak = ensureStreak(state);
+    var today = toDayKey(typeof ts === 'number' ? ts : Date.now());
+    if (streak.lastDay === today) return;          // already counted today
+    var days = streak.days;
+    // backfill the day list (kept sorted/unique)
+    if (days.indexOf(today) < 0) {
+      days.push(today);
+      days.sort();
+    }
+    // update current/best based on the gap to the previous active day
+    if (streak.lastDay) {
+      var gap = dayDiff(streak.lastDay, today);
+      if (gap === 1) streak.current += 1;
+      else if (gap > 1) streak.current = 1;        // streak broken
+      else streak.current = Math.max(1, streak.current); // same/older day (clock skew)
+    } else {
+      streak.current = 1;
+    }
+    if (streak.current > streak.best) streak.best = streak.current;
+    streak.lastDay = today;
+  }
+
+  function recomputeStreakFromDays(streak) {
+    // Rebuild current/best from the raw days list. Used on migration so an
+    // existing days[] array (without counters) still produces correct stats.
+    if (!streak || !Array.isArray(streak.days) || !streak.days.length) {
+      if (streak) { streak.current = 0; streak.best = 0; streak.lastDay = streak.lastDay || ''; }
+      return;
+    }
+    var sorted = streak.days.slice().sort();
+    var best = 1, cur = 1;
+    for (var i = 1; i < sorted.length; i++) {
+      if (dayDiff(sorted[i - 1], sorted[i]) === 1) cur += 1;
+      else cur = 1;
+      if (cur > best) best = cur;
+    }
+    streak.current = cur;
+    streak.best = best;
+    streak.lastDay = sorted[sorted.length - 1];
   }
 
   function read() {
@@ -36,6 +114,12 @@
       if (!raw) return emptyState();
       var parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object' || !parsed.lessons) return emptyState();
+      // migrate: ensure streak section exists; if days[] present but no
+      // counters (older state), rebuild them so streaks work retroactively.
+      ensureStreak(parsed);
+      if (parsed.streak.days && parsed.streak.days.length && (!parsed.streak.best)) {
+        recomputeStreakFromDays(parsed.streak);
+      }
       return parsed;
     } catch (e) {
       return emptyState();
@@ -52,6 +136,12 @@
     for (var i = 0; i < listeners.length; i++) {
       try { listeners[i](state); } catch (_) {}
     }
+  }
+
+  // Stamp the current day as active, then persist. Called by every write
+  // path below so any interaction feeds the streak counter.
+  function touchActivity(state) {
+    try { recordActivity(state); } catch (e) { /* never let streak errors block a write */ }
   }
 
   function ensureLesson(state, path) {
@@ -75,6 +165,7 @@
     var prev = lesson.readPct || 0;
     if (pct <= prev) return; // never lower the high-water mark
     lesson.readPct = pct;
+    touchActivity(state);
     write(state);
   }
 
@@ -94,6 +185,7 @@
     var state = read();
     var lesson = ensureLesson(state, path);
     lesson.visitedAt = Date.now();
+    touchActivity(state);
     write(state);
   }
 
@@ -102,6 +194,7 @@
     var state = read();
     var lesson = ensureLesson(state, path);
     lesson.answers[qid] = { picked: picked, correct: !!correct, t: Date.now() };
+    touchActivity(state);
     write(state);
   }
 
@@ -111,6 +204,7 @@
     var lesson = ensureLesson(state, path);
     if (!lesson.completedAt) {
       lesson.completedAt = Date.now();
+      touchActivity(state);
       write(state);
     }
   }
@@ -164,6 +258,11 @@
     return n;
   }
 
+  function getStreak() {
+    var state = read();
+    return ensureStreak(state);
+  }
+
   function reset() {
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
     for (var i = 0; i < listeners.length; i++) {
@@ -198,6 +297,10 @@
     countCompletedFromUrls: countCompletedFromUrls,
     extractPath: extractPath,
     totalCompleted: totalCompleted,
+    getStreak: getStreak,
+    // exposed for tests / badges.js (pure helpers, no localStorage needed)
+    toDayKey: toDayKey,
+    dayDiff: dayDiff,
     reset: reset,
     onChange: onChange,
   };

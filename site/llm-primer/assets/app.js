@@ -13,7 +13,6 @@
   var LANG = window.APP_LANG || "en";   // active language
   var APP = document.getElementById("app");
   var STORE_KEY = "llmgame_v1";
-  var EGG_CODE = T.egg_code;             // 🥚 secret code for the easter egg (admin prize)
 
   // Fill {placeholder} tokens in a UI string. Values are inserted verbatim, so
   // escape any user/content text with esc() before passing it in.
@@ -51,38 +50,21 @@
   }
 
   // =========================================================================
-  // JOURNEY MODE (synchronized multiplayer game)
-  // SYNC == null  → solo mode: the app behaves exactly as before.
+  // Solo mode (LHIND gated static site — no backend).
+  // The upstream "journey" multiplayer mode and admin console were removed;
+  // SYNC is always null and syncMode is always false. The navigation helpers
+  // below (navCap, atLockedFrontier, …) keep their shape but degrade to solo.
   // =========================================================================
-  var SYNC = window.APP_SYNC || null;
-  var syncMode = !!SYNC;
-  // If the user deliberately chose to "go solo", this session stays in solo
-  // mode – even if a journey is currently running.
-  if (state && state.preferSolo) { syncMode = false; SYNC = null; }
-  var adminView = null;   // null | 'login' | 'console'
-  var adminData = null;   // last admin_console state
-  var adminCohort = null; // selected cohort: 'solo' | '<journeyId>' | null (=default)
-  var pollTimer = null, adminTimer = null, adminTick = null, adminDataAt = 0;
+  var SYNC = null;
+  var syncMode = false;
 
-  function joined() { return !!(SYNC && SYNC.player); }
-  function jStatus() { return SYNC && SYNC.journey ? SYNC.journey.status : null; }
-  function jUnlocked() { return SYNC && SYNC.journey ? SYNC.journey.unlocked : 0; }
+  function joined() { return false; }
+  function jStatus() { return null; }
+  function jUnlocked() { return 0; }
 
-  // Solo-only build (LHIND gated static site): there is no JSON API backend,
-  // so every call resolves to a harmless failure. Journey/admin paths read this
-  // and short-circuit; solo play never calls api() at all.
+  // No backend on the gated static site — every API call is a harmless no-op.
   function api(action, payload, method) {
     return Promise.resolve({ ok: false, error: "solo" });
-  }
-
-  // Adopt the response from join/state. Journey end → back to solo mode.
-  function applySync(res) {
-    if (!res || res.mode !== "journey") {
-      syncMode = false; SYNC = null; stopPolling();
-      return;
-    }
-    SYNC = { journey: res.journey, player: res.player, players: res.players };
-    syncMode = true;
   }
 
   // Highest reachable flow position in journey mode (server-side lock).
@@ -143,39 +125,6 @@
     }
   }
 
-  // ---- Polling: pick up status changes & unlocks in the background ----
-  // 8s: matches the backend's Edge Config unlock-propagation window (≤10s), so
-  // polling faster would only add store reads without seeing changes any sooner.
-  function startPolling() { if (!pollTimer) pollTimer = setInterval(poll, 8000); }
-  function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
-  function poll() {
-    api("state").then(function (res) {
-      if (!res || !res.ok) return;
-      var prevStatus = jStatus();
-      var prevUnlock = jUnlocked();
-      var wasMode = syncMode;
-      applySync(res);
-      // Admin console open? Keep its state fresh, but do NOT paint over the
-      // player view – otherwise the background poll throws the admin back into
-      // the lobby every few seconds. The console has its own refresh
-      // (adminTimer); closeAdmin() re-renders on close.
-      if (adminView) return;
-      if (!syncMode) { if (wasMode) render(); return; } // journey ended → solo
-
-      if (prevStatus === "lobby" && jStatus() === "live") {
-        if (state.pos === 0) { state.pos = 1; } // start: into the first lecture
-        bumpReached(); save();
-        render();
-        return;
-      }
-      if (jUnlocked() > prevUnlock) {
-        toast(fmt(T.chapter_unlocked, { n: jUnlocked() + 1 }));
-        refreshLockedNext(); // release the locked "Continue" now
-      }
-      if (joined() && jStatus() === "lobby") renderLobby(); // keep player count fresh
-    });
-  }
-
   function toast(msg) {
     var t = document.createElement("div");
     t.className = "toast"; t.textContent = msg;
@@ -183,24 +132,6 @@
     setTimeout(function () { t.classList.add("show"); }, 10);
     setTimeout(function () { t.classList.remove("show"); }, 3200);
     setTimeout(function () { if (t.parentNode) t.remove(); }, 3600);
-  }
-
-  // ---- Easter-egg reveal (shared by the temperature game & the results) ----
-  function showEggReveal() {
-    var ov = document.createElement("div");
-    ov.className = "egg-ov";
-    ov.innerHTML =
-      '<div class="egg-card">' +
-        '<div class="egg-emoji">🦜</div>' +
-        '<div class="h2">' + esc(T.egg_title) + '</div>' +
-        '<p class="muted">' + esc(T.egg_body) + '</p>' +
-        '<div class="egg-code">' + esc(T.egg_codeword_label) + '<b>' + esc(EGG_CODE) + '</b></div>' +
-        '<p class="muted small">' + esc(T.egg_tell_admins) + '</p>' +
-        '<button class="btn" id="eggClose">' + esc(T.egg_close_btn) + '</button>' +
-      "</div>";
-    ov.onclick = function (e) { if (e.target === ov) ov.remove(); };
-    document.body.appendChild(ov);
-    q("#eggClose", ov).onclick = function () { ov.remove(); };
   }
 
   // ---- Helpers ----
@@ -295,16 +226,7 @@
   }
 
   function paintScreen() {
-    if (adminView) return renderAdmin();
     if (overlay === "glossary") return renderGlossary();
-    // Journey mode: lobby waiting screen while the session hasn't started yet.
-    if (syncMode && joined() && jStatus() === "lobby") return renderLobby();
-    // Safety net: never stay beyond your own frontier. That is
-    // max(unlock, already-reached) – stepping the unlock back never pulls
-    // anyone out of already-seen content.
-    if (syncMode && jStatus() === "live" && state.pos > navCap()) {
-      state.pos = navCap(); save();
-    }
     var step = flow[state.pos];
     if (step.v === "cover") return renderCover();
     if (step.v === "lecture") return renderLecture(D.chapters[step.i]);
@@ -352,6 +274,9 @@
 
   // ---- COVER ----
   function renderCover() {
+    var credit = LANG === "de"
+      ? 'Basiert auf dem Open-Source-<a href="https://github.com/nachtgold/llm-tutorial" target="_blank" rel="noopener">llm-tutorial</a> von Kai Zimmermann'
+      : 'Based on the open-source <a href="https://github.com/nachtgold/llm-tutorial" target="_blank" rel="noopener">llm-tutorial</a> by Kai Zimmermann';
     APP.innerHTML =
       topbar(false) +
       '<div class="content cover fadein">' +
@@ -368,289 +293,21 @@
           '<div class="muted small center">' + esc(T.cover_scan) + "</div>" +
         "</div>" +
         '<p class="muted small center">' + esc(T.cover_intro) + "</p>" +
-        (syncMode ? '<p class="sync-note center">' + esc(T.cover_sync_note) + "</p>" : "") +
+        '<p class="muted small center primer-credit">' + credit + "</p>" +
         langPicker() +
       "</div>" +
       actionbar(coverCta(), "stack");
     wireCommon();
     wireLangPicker();
-    var jb = q("#joinBtn"); if (jb) jb.onclick = doJoin;
     var sb = q("#startBtn"); if (sb) sb.onclick = function () { go(1); };
-    var solo = q("#soloBtn"); if (solo) solo.onclick = startSolo;
-    var ab = q("#adminBtn"); if (ab) ab.onclick = openAdmin;
     renderQR(q("#qrbox"), window.APP_URL);
   }
 
-  // Go through this session solo even though a journey is running (no force).
-  function startSolo() {
-    state.preferSolo = true; save();
-    syncMode = false; SYNC = null; stopPolling();
-    go(1);
-  }
-
-  // Solo-only cover action: just the start button. No journey join, no admin
-  // console (the gated static site has no backend for either).
+  // Solo-only cover action: just the start button (no journey/admin backend).
   function coverCta() {
     return '<button class="btn" id="startBtn">' + esc(T.cta_start) + "</button>";
   }
 
-  // Join a running session (random identity from the server).
-  function doJoin() {
-    var b = q("#joinBtn"); if (b) { b.disabled = true; b.textContent = T.joining; }
-    api("join").then(function (res) {
-      if (res && res.ok && res.mode === "journey") {
-        applySync(res); startPolling(); render();
-      } else {
-        if (b) { b.disabled = false; b.textContent = T.cta_join; }
-        toast(T.join_failed + (res && res.error ? " (" + res.error + ")" : ""));
-      }
-    });
-  }
-
-  // ---- LOBBY (player waits for the start) ----
-  function renderLobby() {
-    var p = SYNC.player, count = SYNC.players || 1;
-    APP.innerHTML =
-      topbar(false) +
-      '<div class="content cover fadein center">' +
-        '<div class="hero-emoji">⏳</div>' +
-        '<h1 class="h1 center">' + esc(T.lobby_title) + "</h1>" +
-        '<p class="lead center">' + esc(T.lobby_you_are) + "</p>" +
-        '<div class="identity">🧑‍🚀 ' + esc(p.name) + "</div>" +
-        (p.approved
-          ? '<p class="muted center">' + esc(T.lobby_wait_approved) + "</p>"
-          : '<p class="muted center">' + esc(T.lobby_wait_unapproved) + "</p>") +
-        '<div class="lobby-count"><span class="pulse"></span>' +
-          fmt(count === 1 ? T.lobby_count_one : T.lobby_count_many, { n: count }) + "</div>" +
-      "</div>" +
-      actionbar('<button class="btn ghost" id="adminBtn">' + esc(T.admin_btn) + "</button>");
-    wireCommon();
-    q("#adminBtn").onclick = openAdmin;
-  }
-
-  // =========================================================================
-  // ADMIN CONSOLE (best used on desktop)
-  // =========================================================================
-  function openAdmin() {
-    adminView = "login"; render();
-    api("admin_me").then(function (r) { if (r && r.ok && r.admin) loadConsole(); });
-  }
-  function closeAdmin() {
-    adminView = null; adminData = null;
-    if (adminTimer) { clearInterval(adminTimer); adminTimer = null; }
-    if (adminTick) { clearInterval(adminTick); adminTick = null; }
-    render();
-  }
-  function consoleUrl() {
-    return "admin_console" + (adminCohort ? "&journey=" + encodeURIComponent(adminCohort) : "");
-  }
-
-  function loadConsole() {
-    api(consoleUrl()).then(function (r) {
-      if (!r || !r.ok) { adminView = "login"; render(); return; }
-      adminData = r; adminCohort = r.selected; adminDataAt = Date.now(); adminView = "console"; render();
-      // Background refresh – but only repaint when something actually changed
-      // and nobody is typing. Otherwise the page flickers and inputs (e.g. the
-      // journey name) are lost.
-      if (!adminTimer) adminTimer = setInterval(function () {
-        api(consoleUrl()).then(function (rr) {
-          if (!rr || !rr.ok || adminView !== "console") return;
-          var changed = consoleSig(rr) !== consoleSig(adminData);
-          adminData = rr; adminCohort = rr.selected; adminDataAt = Date.now();
-          var el = document.activeElement;
-          var typing = el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA");
-          if (changed && !typing) render();
-        });
-      }, 8000);
-      // Per-second ticker for the live timers (without a full repaint).
-      if (!adminTick) adminTick = setInterval(tickAdminTimer, 1000);
-    });
-  }
-
-  // Compact signature of the console state, to avoid unnecessary repaints.
-  function consoleSig(d) {
-    if (!d) return "";
-    var j = d.journey;
-    var base = (d.selected || "") + "/" + (j ? j.id + "|" + j.status + "|" + j.unlocked : "none");
-    var co = (d.cohorts || []).map(function (c) {
-      return c.key + c.status + c.total + c.online;
-    }).join(",");
-    var ppl = (d.players || []).map(function (p) {
-      return p.name + (p.online ? 1 : 0) + p.chapter + (p.approved ? 1 : 0);
-    }).join(",");
-    return base + "@" + co + "#" + ppl;
-  }
-
-  // Duration in seconds → "M:SS" or "Hh MMm".
-  function fmtDur(s) {
-    s = Math.max(0, s | 0);
-    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60;
-    if (h) return h + "h " + (m < 10 ? "0" : "") + m + "m";
-    return m + ":" + (ss < 10 ? "0" : "") + ss;
-  }
-  // Keeps the live timers in the admin dashboard ticking every second without
-  // re-rendering (the server value is re-based on every poll).
-  function tickAdminTimer() {
-    if (adminView !== "console" || !adminData || !adminData.timing) return;
-    var add = Math.floor((Date.now() - adminDataAt) / 1000);
-    var tm = adminData.timing;
-    var te = document.getElementById("admTimer");
-    if (te && tm.elapsed != null) te.textContent = fmt(T.adm_running_since, { dur: fmtDur(tm.elapsed + add) });
-    var su = document.getElementById("admSinceUnlock");
-    if (su && tm.sinceUnlock != null) su.textContent = fmt(T.adm_since_free, { dur: fmtDur(tm.sinceUnlock + add) });
-  }
-
-  function renderAdmin() {
-    if (adminView === "console") return renderAdminConsole();
-    return renderAdminLogin();
-  }
-
-  function renderAdminLogin() {
-    APP.innerHTML =
-      topbar(false) +
-      '<div class="content fadein admin-login">' +
-        '<h2 class="h2">' + esc(T.admin_login_title) + "</h2>" +
-        '<p class="muted small">' + esc(T.admin_login_sub) + "</p>" +
-        '<input class="adm-in" id="admUser" placeholder="' + esc(T.admin_user_ph) + '" autocomplete="username">' +
-        '<input class="adm-in" id="admPass" type="password" placeholder="' + esc(T.admin_pass_ph) + '" autocomplete="current-password">' +
-        '<div id="admErr" class="cl-feedback no" style="display:none"></div>' +
-      "</div>" +
-      actionbar('<button class="btn secondary" id="admBack">' + esc(T.back) + '</button><button class="btn" id="admGo">' + esc(T.admin_signin) + "</button>");
-    wireCommon();
-    q("#admBack").onclick = closeAdmin;
-    var submit = function () {
-      var u = q("#admUser").value.trim(), pw = q("#admPass").value;
-      var btn = q("#admGo"); btn.disabled = true; btn.textContent = "…";
-      api("admin_login", { username: u, password: pw }).then(function (r) {
-        if (r && r.ok) { loadConsole(); }
-        else { var e = q("#admErr"); e.style.display = "block"; e.textContent = T.admin_login_failed; btn.disabled = false; btn.textContent = T.admin_signin; }
-      });
-    };
-    q("#admGo").onclick = submit;
-    q("#admPass").onkeydown = function (e) { if (e.key === "Enter") submit(); };
-  }
-
-  // Status badge for a cohort (solo/journey).
-  function cohortBadge(status) { return (T.cohort_badge && T.cohort_badge[status]) || status; }
-
-  function renderAdminConsole() {
-    var d = adminData || {};
-    var tm = d.timing || null;
-    var chapters = d.chapters || D.chapters.length;
-    var cohorts = d.cohorts || [];
-    var sel = d.selected;
-    var j = d.journey;                 // journey meta of the selection (null for solo)
-    var canControl = d.controls === "active";
-    var hasActive = cohorts.some(function (c) { return c.status === "lobby" || c.status === "live"; });
-
-    // --- Switcher across all cohorts ---
-    var tabs = cohorts.map(function (c) {
-      return '<button class="cohort-tab' + (c.key === sel ? " on" : "") + '" data-key="' + esc(c.key) + '">' +
-        '<span class="ct-name">' + esc(c.name || T.journey_default_name) + "</span>" +
-        '<span class="ct-meta"><span class="ct-badge s-' + c.status + '">' + esc(cohortBadge(c.status)) + "</span>" +
-        " · " + c.online + "/" + c.total + "</span></button>";
-    }).join("");
-    var switcher =
-      '<div class="cohort-switch">' + tabs +
-        (hasActive ? "" : '<button class="cohort-tab new" id="jNew">' + esc(T.new_journey_btn) + "</button>") +
-      "</div>";
-
-    // --- Header + controls of the selection ---
-    var players = d.players || [];
-    var online = players.filter(function (p) { return p.online; }).length;
-    var headName = j ? (j.name || T.journey_default_name) : T.no_journey;
-    var headStatus = j ? j.status : "solo";
-
-    var controls = "";
-    if (j && canControl && j.status === "lobby") {
-      controls =
-        '<p class="muted small">' + T.adm_lobby_status + "</p>" +
-        '<button class="btn" id="jStart">' + esc(T.adm_start_game) + "</button>" +
-        '<button class="btn danger ghost" id="jDelete" data-id="' + j.id + '" style="margin-top:6px">' + esc(T.adm_cancel_lobby) + "</button>";
-    } else if (j && canControl && j.status === "live") {
-      var pills = "";
-      for (var i = 0; i < chapters; i++) {
-        var cnt = tm && tm.dist && tm.dist[i] ? tm.dist[i] : 0;
-        pills += '<button class="unlock-pill' + (i <= j.unlocked ? " on" : "") + '" data-ch="' + i + '">' + (i + 1) +
-          (cnt ? '<span class="pill-badge">' + cnt + "</span>" : "") + "</button>";
-      }
-      var frontier = "";
-      if (tm) {
-        var doneTxt = tm.frontierTotal ? fmt(T.adm_frontier_done, { done: tm.frontierDone, total: tm.frontierTotal }) : T.adm_frontier_none;
-        var sinceTxt = tm.sinceUnlock != null ? ' · <span id="admSinceUnlock">' + fmt(T.adm_since_free, { dur: fmtDur(tm.sinceUnlock) }) + "</span>" : "";
-        frontier = '<p class="muted small frontier-info">' + fmt(T.chapter_n, { n: j.unlocked + 1 }) + sinceTxt + " · " + doneTxt + "</p>";
-        if (tm.frontierTotal && (tm.frontierDone / tm.frontierTotal) >= 0.7 && j.unlocked < chapters - 1) {
-          frontier += '<p class="unlock-nudge">' + fmt(T.adm_nudge, { n: j.unlocked + 2 }) + "</p>";
-        }
-      }
-      controls =
-        '<p class="muted small">' + fmt(T.adm_unlocked_upto, { n: j.unlocked + 1 }) + "</p>" +
-        '<div class="unlock-row">' + pills + "</div>" + frontier +
-        '<button class="btn danger ghost" id="jArchive" style="margin-top:6px">' + esc(T.adm_end_journey) + "</button>";
-    } else if (j) {
-      controls = '<p class="muted small">' + fmt(T.adm_viewonly, { status: cohortBadge(j.status).toLowerCase() }) + "</p>" +
-        '<button class="btn danger ghost" id="jDelete" data-id="' + j.id + '">' + esc(T.adm_delete_journey) + "</button>";
-    } else {
-      controls = '<p class="muted small">' + esc(T.adm_solo_desc) + "</p>";
-    }
-
-    // --- Player table ---
-    var rows = players.length
-      ? players.map(function (p) {
-          var ch = p.chapter >= chapters ? T.adm_done_check : fmt(T.chapter_n, { n: p.chapter + 1 });
-          return '<tr class="' + (p.online ? "on" : "off") + '">' +
-            '<td>' + (p.online ? "🟢" : "⚪") + " " + esc(p.name) + "</td>" +
-            '<td>' + (p.approved ? esc(ch) : "<em>" + esc(T.adm_awaiting_approval) + "</em>") + "</td></tr>";
-        }).join("")
-      : '<tr><td colspan="2" class="muted">' + esc(T.adm_nobody_here) + "</td></tr>";
-
-    var body =
-      '<div class="card admin-card">' +
-        '<div class="admin-head"><div><div class="h2" style="margin:0">' + esc(headName) +
-          ' <span class="ct-badge s-' + headStatus + '">' + esc(cohortBadge(headStatus)) + "</span></div>" +
-          '<div class="muted small">' + fmt(T.adm_online_total, { online: online, total: players.length }) + "</div>" +
-          (tm && tm.elapsed != null && headStatus === "live" ? '<div class="adm-timer" id="admTimer">' + fmt(T.adm_running_since, { dur: fmtDur(tm.elapsed) }) + "</div>" : "") +
-          "</div></div>" +
-        controls +
-      "</div>" +
-      '<div class="card admin-card"><table class="admin-table"><thead><tr><th>' + esc(T.adm_th_person) + "</th><th>" + esc(T.adm_th_progress) + "</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
-
-    // Input row for a new journey (only if none is active).
-    var createBox = hasActive ? "" :
-      '<div class="card admin-card" id="createBox" style="display:none">' +
-        '<input class="adm-in" id="jName" placeholder="' + esc(T.journey_name_ph) + '">' +
-        '<button class="btn" id="jCreate" style="margin-top:10px">' + esc(T.journey_create_btn) + "</button>" +
-      "</div>";
-
-    APP.innerHTML =
-      topbar(false) +
-      '<div class="content fadein admin-console">' +
-        '<div class="admin-bar"><h2 class="h2" style="margin:0">' + esc(T.admin_dashboard_title) + "</h2>" +
-          '<button class="iconbtn" id="admLogout">' + esc(T.admin_logout) + "</button></div>" +
-        '<p class="muted small mobile-hint">' + esc(T.admin_desktop_hint) + "</p>" +
-        switcher + createBox + body +
-      "</div>" +
-      actionbar('<button class="btn secondary" id="admClose">' + esc(T.back_to_app) + "</button>");
-    wireCommon();
-    q("#admClose").onclick = closeAdmin;
-    q("#admLogout").onclick = function () { api("admin_logout").then(closeAdmin); };
-
-    // Switch cohort.
-    qa(".cohort-tab[data-key]").forEach(function (t) {
-      t.onclick = function () { adminCohort = t.getAttribute("data-key"); loadConsole(); };
-    });
-    var nw = q("#jNew"); if (nw) nw.onclick = function () { var b = q("#createBox"); if (b) b.style.display = "block"; var nm = q("#jName"); if (nm) nm.focus(); };
-    var c = q("#jCreate"); if (c) c.onclick = function () { adminCohort = null; api("admin_create", { name: q("#jName").value.trim() }).then(loadConsole); };
-    var s = q("#jStart"); if (s) s.onclick = function () { api("admin_start").then(loadConsole); };
-    var a = q("#jArchive"); if (a) a.onclick = function () { if (confirm(T.confirm_end_journey)) { adminCohort = null; api("admin_archive").then(loadConsole); } };
-    var del = q("#jDelete"); if (del) del.onclick = function () {
-      var msg = j && j.status === "lobby" ? T.confirm_cancel_lobby : T.confirm_delete_journey;
-      if (confirm(msg)) { adminCohort = null; api("admin_delete", { id: del.getAttribute("data-id") }).then(loadConsole); }
-    };
-    qa(".unlock-pill").forEach(function (pill) {
-      pill.onclick = function () { api("admin_unlock", { chapter: parseInt(pill.getAttribute("data-ch"), 10) }).then(loadConsole); };
-    });
-  }
 
   function renderQR(box, text) {
     if (!box || typeof QRCode === "undefined") return;
@@ -1014,7 +671,6 @@
 
   // --- 4) TEMPERATURE ---
   function gameTemperature(root, gd, onComplete) {
-    var maxReroll = 0; // 🥚 easter-egg counter: rerolls at (near) maximum temperature
     root.innerHTML =
       '<p class="hint">' + esc(gd.prompt) + "</p>" +
       '<div class="temp-row"><label>🌡️ Temperature</label><span class="temp-val" id="tval">0.70</span></div>' +
@@ -1043,20 +699,9 @@
     }
     function sample() {
       var tv = parseFloat(range.value);
-      // 🥚 Easter egg: at maximum temperature even the most unlikely gets a chance.
-      if (tv >= 1.45) {
-        maxReroll++;
-        if (!state.eggFound && (maxReroll >= 7 || Math.random() < 0.04)) { triggerEgg(); return; }
-      } else { maxReroll = 0; }
       var p = dist(tv), x = Math.random(), acc = 0, pick = gd.options[0].word;
       for (var i = 0; i < p.length; i++) { acc += p[i]; if (x <= acc) { pick = gd.options[i].word; break; } }
       q("#tsample", root).innerHTML = fmt(T.temp_sample, { story: esc(T.temp_story), pick: esc(pick) });
-      onComplete();
-    }
-    function triggerEgg() {
-      state.eggFound = true; save();
-      q("#tsample", root).innerHTML = fmt(T.temp_egg, { story: esc(T.temp_story) });
-      showEggReveal();
       onComplete();
     }
     range.addEventListener("input", draw);
@@ -1539,20 +1184,6 @@
     }
   }
 
-  // ---- Online/offline awareness (journey sync: pauses counting when offline) ----
-  var offlineBanner = null;
-  function setOnline(on) {
-    if (on) {
-      if (offlineBanner) { offlineBanner.remove(); offlineBanner = null; }
-      if (syncMode) { poll(); reportPos(); } // catch up unlocks/status immediately
-    } else if (syncMode && !offlineBanner) {
-      offlineBanner = document.createElement("div");
-      offlineBanner.className = "offline-banner";
-      offlineBanner.textContent = T.offline_banner;
-      document.body.appendChild(offlineBanner);
-    }
-  }
-
   // =========================================================================
   // ON-DEVICE "TEXT MAGICIAN" — opt-in, loads LFM2.5-350M (English) on demand.
   // English only: small models are far stronger in English than German. Loads
@@ -1834,17 +1465,6 @@
         (weak.length && o.lowscore ? '<p class="muted small">' + o.lowscore + "</p>" : "") +
         (o.replay ? '<p class="muted small prize-replay">' + o.replay + "</p>" : "") +
       "</div>";
-    // Egg collectible: found → celebration; else subtle in the background (tappable).
-    var eggHtml = state.eggFound
-      ? '<div class="card egg-found">' +
-          '<div class="egg-found-emoji">🦜</div>' +
-          '<div class="ef-title">' + esc(T.egg_found_title) + "</div>" +
-          '<div class="egg-code">' + esc(T.egg_codeword_label) + "<b>" + esc(EGG_CODE) + "</b></div>" +
-          '<div class="muted small">' + T.egg_found_hint + "</div>" +
-        "</div>"
-      : '<svg class="hidden-egg" id="hiddenEgg" viewBox="0 0 120 150" width="120" height="150" aria-hidden="true">' +
-          '<path d="M60 18 C80 18 98 48 98 82 C98 112 82 134 60 134 C38 134 22 112 22 82 C22 48 40 18 60 18 Z" fill="#c7cbff"/></svg>' +
-        '<div class="egg-teaser" id="eggTeaser">' + (o.teaser || "") + "</div>";
 
     APP.innerHTML =
       topbar(true) +
@@ -1862,33 +1482,18 @@
         '<h2 class="h2" style="text-align:left">' + esc(T.res_reflection_title) + "</h2>" +
         '<p class="muted small" style="text-align:left">' + (weak.length ? esc(T.res_reflection_weak) : esc(T.res_reflection_all)) + "</p>" +
         '<div style="text-align:left">' + reflCards + "</div>" +
-        eggHtml +
       "</div>" +
       actionbar('<button class="btn secondary" id="againBtn">' + esc(T.res_again) + '</button><button class="btn" id="glBtn">' + esc(T.glossary_btn) + "</button>");
     wireCommon();
     q("#againBtn").onclick = function () { if (confirm(T.confirm_reset)) reset(); };
     q("#glBtn").onclick = function () { overlay = "glossary"; render(); };
-    // Hidden egg: tapping (mobile) reveals the teaser – no hover needed.
-    var egg = q("#hiddenEgg");
-    if (egg) egg.onclick = function () {
-      egg.classList.add("revealed");
-      var t = q("#eggTeaser"); if (t) t.classList.add("show");
-    };
   }
 
   // ---- util ----
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
   // ---- start ----
-  if (syncMode) {
-    // In journey mode: start background polling for status/unlocks.
-    startPolling();
-  }
-  // Airplane-mode/network awareness: pauses counting in the journey when offline.
-  window.addEventListener("online", function () { setOnline(true); });
-  window.addEventListener("offline", function () { setOnline(false); });
   // Re-reserve the action bar height on rotation/resize.
   window.addEventListener("resize", fitActionbar);
-  reportPos(); // reports journey or solo progress (self-gated)
   render();
 })();
