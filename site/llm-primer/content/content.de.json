@@ -1080,31 +1080,31 @@
                 "blocks": [
                     {
                         "key": "rolle",
-                        "label": "🎭 Rolle",
+                        "label": "Rolle",
                         "text": "Du bist ein erfahrener, freundlicher Support-Agent.",
                         "points": 20
                     },
                     {
                         "key": "kontext",
-                        "label": "📋 Kontext",
+                        "label": "Kontext",
                         "text": "Der Kunde wartet seit 2 Wochen auf sein Paket und ist verärgert.",
                         "points": 20
                     },
                     {
                         "key": "format",
-                        "label": "📐 Format",
+                        "label": "Format",
                         "text": "Antworte in höchstens 4 Sätzen, höflich, mit einer konkreten Lösung.",
                         "points": 25
                     },
                     {
                         "key": "beispiel",
-                        "label": "💡 Beispiel",
+                        "label": "Beispiel",
                         "text": "Ton-Beispiel: „Das tut mir aufrichtig leid. So machen wir es wieder gut: …“",
                         "points": 20
                     },
                     {
                         "key": "schritte",
-                        "label": "🪜 Schritt für Schritt",
+                        "label": "Schritt für Schritt",
                         "text": "Überlege erst kurz, was der Kunde jetzt braucht, dann formuliere.",
                         "points": 15
                     }
@@ -1293,34 +1293,34 @@
             "id": "ondevice",
             "cat": "erweiterungen",
             "title": "Live: KI auf deinem Gerät",
-            "lecture": "<p>Zum Abschluss wird es echt. Wenn du das Modell lädst, rechnet hier eine echte <b data-g=\"inferenz\">Inferenz</b> direkt <b data-g=\"on-device\">auf deinem Gerät</b>, ganz ohne Server. Möglich macht das die <b data-g=\"quantisierung\">Quantisierung</b>. Sie schrumpft das Modell so weit, dass es überhaupt ins Handy passt.</p><p><b>Der Magier spricht Englisch.</b> Warum eigentlich? Ein richtig gutes „Deutsch“-Modell kann meistens viele Sprachen auf einmal. Das macht es groß. Zu groß für den knappen <b>Arbeitsspeicher (RAM)</b> im Handy, sodass es nicht mehr gut antwortet. Was klein genug fürs Handy ist, kann dafür am besten Englisch. Mit mehr Speicher gingen auch mehr Sprachen. Bis es so weit ist, heißt es hier: <i>English, please</i>. 😉</p><p>Tippe also einen englischen Satz und sieh zu, wie er Wort für Wort umgeschrieben wird. Das nennt man <b data-g=\"streaming\">Streaming</b>. Kleine Modelle können Text gut umformen und sind schwach bei Fakten. Das ist genau die Faustregel aus „Grenzen &amp; Risiken“. Und keine Sorge, der Pirat ist mit an Bord. 🏴‍☠️</p><p class=\"lecture-next\">Lade das Modell und verwandle einen Satz. Probier es ruhig auch im Flugmodus.</p>",
+            "lecture": "<p>Zum Abschluss wird es echt. Wenn du das Modell lädst, rechnet hier eine echte <b data-g=\"inferenz\">Inferenz</b> direkt <b data-g=\"on-device\">auf deinem Gerät</b>, ganz ohne Server. Möglich macht das die <b data-g=\"quantisierung\">Quantisierung</b>. Sie schrumpft das Modell so weit, dass es überhaupt ins Handy passt.</p><p><b>Der Magier spricht Englisch.</b> Warum eigentlich? Ein richtig gutes „Deutsch“-Modell kann meistens viele Sprachen auf einmal. Das macht es groß. Zu groß für den knappen <b>Arbeitsspeicher (RAM)</b> im Handy, sodass es nicht mehr gut antwortet. Was klein genug fürs Handy ist, kann dafür am besten Englisch. Mit mehr Speicher gingen auch mehr Sprachen. Bis es so weit ist, heißt es hier: <i>English, please</i>. </p><p>Tippe also einen englischen Satz und sieh zu, wie er Wort für Wort umgeschrieben wird. Das nennt man <b data-g=\"streaming\">Streaming</b>. Kleine Modelle können Text gut umformen und sind schwach bei Fakten. Das ist genau die Faustregel aus „Grenzen &amp; Risiken“. Und keine Sorge, der Pirat ist mit an Bord. </p><p class=\"lecture-next\">Lade das Modell und verwandle einen Satz. Probier es ruhig auch im Flugmodus.</p>",
             "game": "ondevice",
             "gameData": {
                 "sample": "Can you help me move some furniture tomorrow afternoon?",
                 "presets": [
                     {
                         "key": "formal",
-                        "label": "🎩 förmlich",
+                        "label": "förmlich",
                         "instr": "Rewrite the following sentence to be very polite and formal. Reply with only the rewritten sentence, nothing else."
                     },
                     {
                         "key": "casual",
-                        "label": "😎 lässig",
+                        "label": "lässig",
                         "instr": "Rewrite the following sentence in a casual, relaxed, friendly tone. Reply with only the rewritten sentence."
                     },
                     {
                         "key": "pirate",
-                        "label": "🏴‍☠️ Pirat",
+                        "label": "Pirat",
                         "instr": "Rewrite the following sentence in the voice of a pirate. Reply with only the rewritten sentence."
                     },
                     {
                         "key": "emoji",
-                        "label": "😀 Emoji",
+                        "label": "Emoji",
                         "instr": "Rewrite the following sentence with a few fitting emojis added. Reply with only the rewritten sentence."
                     },
                     {
                         "key": "short",
-                        "label": "✂️ kürzer",
+                        "label": "kürzer",
                         "instr": "Summarize the following in one very short sentence. Reply with only the summary."
                     }
                 ],
@@ -1328,16 +1328,16 @@
                     "input": "Can you help me move some furniture tomorrow afternoon?",
                     "out": [
                         {
-                            "label": "🎩 förmlich",
+                            "label": "förmlich",
                             "text": "Could you kindly assist me with moving some furniture tomorrow afternoon?"
                         },
                         {
-                            "label": "🏴‍☠️ Pirat",
+                            "label": "Pirat",
                             "text": "Ahoy! Lend me a hand to haul some furniture tomorrow afternoon, matey!"
                         },
                         {
-                            "label": "😀 Emoji",
-                            "text": "📅 Can you help me move some furniture tomorrow afternoon? 🛋️✨"
+                            "label": "Emoji",
+                            "text": "Can you help me move some furniture tomorrow afternoon?"
                         }
                     ]
                 }

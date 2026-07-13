@@ -229,3 +229,296 @@
 @media (max-width: 560px) {
   .aifs-badges-grid { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
 }
+
+/* ── Button styling and hover/active states for clickable badges ───── */
+button.aifs-badge {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  width: 100%;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+}
+button.aifs-badge:hover {
+  background-color: var(--bg-surface-hover, #f1f0ef);
+}
+[data-theme="dark"] button.aifs-badge:hover {
+  background-color: var(--bg-surface-hover, #16305c);
+}
+button.aifs-badge:active {
+  transform: scale(0.96);
+}
+button.aifs-badge:focus-visible {
+  outline: 2px solid var(--lhg-blue-500, #243f9b);
+  outline-offset: 4px;
+}
+button.aifs-badge:hover .aifs-badge__disc {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 8px 24px var(--tier-glow);
+}
+button.aifs-badge--locked:hover .aifs-badge__disc {
+  opacity: 0.8;
+  filter: grayscale(0.5);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* ── Hero contrast fixes for text and summary elements ─────────────── */
+.hero p {
+  color: rgba(255, 255, 255, 0.86) !important;
+}
+.hero .aifs-badges-summary__count {
+  color: #ffffff !important;
+}
+.hero .aifs-badges-summary__lessons {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.hero .aifs-badges-summary__bar {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+.hero .aifs-badges-summary__fill {
+  background: var(--lhg-warning, #e2974b) !important;
+}
+.hero .aifs-streak {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px);
+}
+.hero .aifs-streak__current {
+  color: #ffffff !important;
+}
+.hero .aifs-streak__best {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.hero .aifs-streak__icon {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+.hero .aifs-streak--active .aifs-streak__icon {
+  background: rgba(226, 151, 75, 0.2) !important;
+  color: var(--lhg-warning, #e2974b) !important;
+  box-shadow: 0 4px 14px rgba(226, 151, 75, 0.3) !important;
+}
+
+/* ── SOTA Detail Dialog Modal ───────────────────────────────────────── */
+.aifs-dialog {
+  border: 1px solid var(--rule-soft, #e3e1de);
+  border-radius: 20px;
+  background: var(--bg-surface, #ffffff);
+  box-shadow: 0 20px 50px rgba(5,22,77,0.25);
+  padding: 0;
+  max-width: 380px;
+  width: 90%;
+  overflow: visible;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  color: var(--ink, #05164d);
+}
+
+.aifs-dialog[open] {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.aifs-dialog::backdrop {
+  background: rgba(5, 22, 77, 0.4);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aifs-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+/* Enter transition starting styles */
+@starting-style {
+  .aifs-dialog[open] {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0;
+  }
+  .aifs-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.aifs-dialog__container {
+  position: relative;
+  padding: 36px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.aifs-dialog__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--bg-surface-hover, #f1f0ef);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--ink-soft, #52617c);
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.aifs-dialog__close:hover {
+  background: var(--lhg-core-blue, #05164d);
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.aifs-dialog__disc-wrapper {
+  margin-bottom: 18px;
+}
+
+.aifs-dialog__disc {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--bg-surface, #ffffff);
+  border: 4px solid var(--tier-ring, #857461);
+  box-shadow: 0 8px 30px var(--tier-glow, rgba(133,116,97,0.45));
+  position: relative;
+}
+
+.aifs-dialog__disc i.ph-light {
+  font-size: 42px;
+  color: var(--tier-ring, #857461);
+}
+
+.aifs-dialog__disc .aifs-badge__lock {
+  width: 28px;
+  height: 28px;
+  font-size: 18px !important;
+  bottom: 0px;
+  right: 0px;
+  box-shadow: 0 2px 6px rgba(5,22,77,0.3);
+}
+
+.aifs-dialog__title {
+  font-family: var(--font-display, var(--font-body, inherit));
+  font-size: 1.35rem;
+  font-weight: 500;
+  margin: 0 0 10px;
+  line-height: 1.25;
+  color: var(--ink, #05164d);
+}
+
+.aifs-dialog__tier {
+  font-size: 0.7rem;
+  padding: 6px 12px;
+  margin-bottom: 16px;
+}
+
+.aifs-dialog__desc {
+  font-family: var(--font-body, inherit);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink-soft, #52617c);
+  margin: 0 0 20px;
+}
+
+.aifs-dialog__progress-section {
+  width: 100%;
+  background: var(--bg-surface-hover, #f1f0ef);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.aifs-dialog__progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft, #52617c);
+  margin-bottom: 8px;
+}
+
+.aifs-dialog__progress-value {
+  font-family: var(--font-mono, monospace);
+}
+
+.aifs-dialog__progress-bar {
+  height: 6px;
+  background: var(--rule-soft, #e3e1de);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.aifs-dialog__progress-fill {
+  height: 100%;
+  background: var(--tier-ring, #857461);
+  width: 0;
+  transition: width 0.4s ease;
+}
+
+.aifs-dialog__status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body, inherit);
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill, 999px);
+  margin-top: 4px;
+}
+
+.aifs-dialog__status-badge--unlocked {
+  background: #e2f3ea;
+  color: var(--lhg-success, #1b8a5a);
+}
+
+.aifs-dialog__status-badge--locked {
+  background: #f1f0ef;
+  color: var(--ink-mute, #7a7673);
+}
+
+/* Dark mode overrides for dialog */
+[data-theme="dark"] .aifs-dialog {
+  border-color: var(--rule-soft, #234168);
+  background: var(--bg-surface, #132b54);
+  color: var(--ink, #eaf1fb);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .aifs-dialog__close {
+  background: var(--bg-surface-hover, #16305c);
+  color: var(--ink-soft, #93a8c7);
+}
+
+[data-theme="dark"] .aifs-dialog__progress-section {
+  background: var(--bg-surface-hover, #16305c);
+}
+
+[data-theme="dark"] .aifs-dialog__progress-bar {
+  background: var(--rule-soft, #234168);
+}
+
+[data-theme="dark"] .aifs-dialog__status-badge--unlocked {
+  background: var(--color-ok-soft, #16352a);
+  color: var(--color-ok, #6fc79c);
+}
+
+[data-theme="dark"] .aifs-dialog__status-badge--locked {
+  background: var(--bg-surface-hover, #16305c);
+  color: var(--ink-mute, #93a8c7);
+}
+

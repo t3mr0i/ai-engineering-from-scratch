@@ -48,6 +48,40 @@
     </section>
   </main>
 
+  <dialog id="badgeDetailDialog" closedby="any" class="aifs-dialog" aria-labelledby="dialogTitle">
+    <div class="aifs-dialog__container">
+      <button type="button" class="aifs-dialog__close" id="dialogCloseBtn" aria-label="Schließen">
+        <i class="ph-light ph-x"></i>
+      </button>
+      <div class="aifs-dialog__body">
+        <div class="aifs-dialog__disc-wrapper">
+          <div class="aifs-dialog__disc" id="dialogDisc">
+            <i id="dialogIcon" class="ph-light" aria-hidden="true"></i>
+            <i id="dialogLock" class="ph-light ph-lock aifs-badge__lock" aria-hidden="true" style="display: none;"></i>
+          </div>
+        </div>
+        <h2 class="aifs-dialog__title" id="dialogTitle">Badge-Titel</h2>
+        <span class="aifs-dialog__tier aifs-pill" id="dialogTier">Bronze</span>
+        <p class="aifs-dialog__desc" id="dialogDesc">Beschreibung des Badges</p>
+        
+        <div class="aifs-dialog__progress-section" id="dialogProgressSection">
+          <div class="aifs-dialog__progress-header">
+            <span class="aifs-dialog__progress-label">Fortschritt</span>
+            <span class="aifs-dialog__progress-value" id="dialogProgressValue">0 / 1</span>
+          </div>
+          <div class="aifs-dialog__progress-bar">
+            <div class="aifs-dialog__progress-fill" id="dialogProgressFill"></div>
+          </div>
+        </div>
+        
+        <div class="aifs-dialog__status-badge" id="dialogStatusBadge">
+          <i class="ph-light ph-lock"></i> Gesperrt
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+
   <script>
     (function () {
       var t = localStorage.getItem('theme') || 'light';

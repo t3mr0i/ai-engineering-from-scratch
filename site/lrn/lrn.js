@@ -46,6 +46,7 @@
   // we can pin a unique, content-matched icon per course. Phosphor Light
   // names verified against @phosphor-icons/web 2.1.2.
   var COURSE_ICONS = {
+    "PRIMER-01": "brain",
     "AI-09": "graduation-cap",
     "AI-06": "lightning",
     "RESP-01": "scales",

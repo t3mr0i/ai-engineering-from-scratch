@@ -292,14 +292,14 @@
     var pill = '<span class="aifs-badge__tier aifs-pill aifs-pill--' + tier.tone + '">' +
       escapeHTML(tierLabel(badge.tier)) + '</span>';
     return '' +
-      '<div class="aifs-badge ' + stateCls + ' aifs-badge--' + badge.tier + '" title="' + escapeHTML(badge.desc) + '">' +
+      '<button type="button" class="aifs-badge ' + stateCls + ' aifs-badge--' + badge.tier + '" data-badge-id="' + escapeHTML(badge.id) + '" aria-label="' + escapeHTML(badge.title) + ' — ' + escapeHTML(badge.desc) + '">' +
         '<div class="aifs-badge__disc" style="--tier-ring:' + tier.ring + ';--tier-glow:' + tier.glow + '">' +
           '<i class="' + iconCls + '" aria-hidden="true"></i>' + lock +
         '</div>' +
         '<div class="aifs-badge__title">' + escapeHTML(badge.title) + '</div>' +
         pill +
         progress +
-      '</div>';
+      '</button>';
   }
 
   function renderGridHTML(evalResult) {
@@ -433,6 +433,123 @@
     }
   }
 
+  function showBadgeDetails(badge, detail) {
+    var dialog = document.getElementById('badgeDetailDialog');
+    if (!dialog) return;
+
+    var earned = !!detail.earned;
+    var tier = TIERS[badge.tier] || TIERS.bronze;
+    var cur = detail.cur || 0;
+    var total = detail.total || 1;
+    var pct = Math.max(0, Math.min(100, Math.round((cur / total) * 100)));
+
+    var titleEl = document.getElementById('dialogTitle');
+    if (titleEl) titleEl.textContent = badge.title;
+
+    var descEl = document.getElementById('dialogDesc');
+    if (descEl) descEl.textContent = badge.desc;
+
+    var tierEl = document.getElementById('dialogTier');
+    if (tierEl) {
+      tierEl.textContent = tier.label;
+      tierEl.className = 'aifs-dialog__tier aifs-pill aifs-pill--' + tier.tone;
+    }
+
+    var discEl = document.getElementById('dialogDisc');
+    if (discEl) {
+      discEl.style.setProperty('--tier-ring', tier.ring);
+      discEl.style.setProperty('--tier-glow', tier.glow);
+    }
+
+    var iconEl = document.getElementById('dialogIcon');
+    if (iconEl) {
+      iconEl.className = 'ph-light ' + (badge.icon || 'ph-medal');
+      iconEl.style.color = tier.ring;
+    }
+
+    var lockEl = document.getElementById('dialogLock');
+    if (lockEl) {
+      lockEl.style.display = earned ? 'none' : 'grid';
+    }
+
+    var progressSec = document.getElementById('dialogProgressSection');
+    var progressVal = document.getElementById('dialogProgressValue');
+    var progressFill = document.getElementById('dialogProgressFill');
+
+    if (earned) {
+      if (progressSec) progressSec.style.display = 'none';
+    } else {
+      if (progressSec) {
+        progressSec.style.display = 'block';
+        if (progressVal) progressVal.textContent = cur + ' / ' + total;
+        if (progressFill) {
+          progressFill.style.setProperty('--tier-ring', tier.ring);
+          progressFill.style.width = '0%';
+          void progressFill.offsetWidth; // force reflow
+          progressFill.style.width = pct + '%';
+        }
+      }
+    }
+
+    var statusBadge = document.getElementById('dialogStatusBadge');
+    if (statusBadge) {
+      if (earned) {
+        statusBadge.className = 'aifs-dialog__status-badge aifs-dialog__status-badge--unlocked';
+        statusBadge.innerHTML = '<i class="ph-light ph-check-circle"></i> Freigeschaltet';
+      } else {
+        statusBadge.className = 'aifs-dialog__status-badge aifs-dialog__status-badge--locked';
+        statusBadge.innerHTML = '<i class="ph-light ph-lock"></i> Gesperrt';
+      }
+    }
+
+    dialog.showModal();
+  }
+
+  function initDialog() {
+    if (typeof document === 'undefined') return;
+    var dialog = document.getElementById('badgeDetailDialog');
+    if (!dialog) return;
+
+    var closeBtn = document.getElementById('dialogCloseBtn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        dialog.close();
+      });
+    }
+
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      dialog.addEventListener('click', function (event) {
+        if (event.target !== dialog) return;
+        var rect = dialog.getBoundingClientRect();
+        var isDialogContent = (
+          rect.top <= event.clientY &&
+          event.clientY <= rect.top + rect.height &&
+          rect.left <= event.clientX &&
+          event.clientX <= rect.left + rect.width
+        );
+        if (isDialogContent) return;
+        dialog.close();
+      });
+    }
+
+    document.body.addEventListener('click', function (event) {
+      var btn = event.target.closest('.aifs-badge');
+      if (!btn) return;
+
+      var badgeId = btn.getAttribute('data-badge-id');
+      if (!badgeId) return;
+
+      var badge = byId(badgeId);
+      if (!badge) return;
+
+      var state = readProgressState();
+      var res = evaluate(state, currentCtx());
+      var detail = res.details[badgeId] || { earned: false, cur: 0, total: 1 };
+
+      showBadgeDetails(badge, detail);
+    });
+  }
+
   function mount() {
     if (typeof window === 'undefined' || !window.AIFSProgress) return;
     var seen = readSeen();
@@ -443,6 +560,7 @@
     writeSeen(seen);
     renderMountTargets(res);
     updateNavCount(res.earned.length);
+    initDialog();
 
     window.AIFSProgress.onChange(function () {
       var r2 = evaluate(readProgressState(), currentCtx());

@@ -2,6 +2,16 @@ window.LrnCurriculumMap = {
   source: "LHIND AI Learning Catalog curriculum",
   note: "Curated subset: use the lessons that fit LHIND LRN role courses, combine overlapping lessons into subcourses, omit deep model-training or modality-specific material unless it directly supports the role course.",
   courseMaps: {
+    "PRIMER-01": [
+      {
+        title: "Interactive Primer",
+        decision: "core",
+        note: "Solo-paced interactive primer: tokens, context, prompting, RAG, and limits.",
+        lessons: [
+          { path: "llm-primer", title: "Interactive LLM Primer" }
+        ]
+      }
+    ],
     "AI-09": [
       {
         title: "AI literacy and terminology",

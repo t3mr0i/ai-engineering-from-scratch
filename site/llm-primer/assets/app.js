@@ -203,13 +203,13 @@
     APP.innerHTML =
       topbar(false) +
       '<div class="content cover fadein">' +
-        '<div class="hero-emoji">🧠✨</div>' +
+        '<div class="hero-emoji"><i class="ph-light ph-brain" aria-hidden="true"></i></div>' +
         '<h1 class="h1 center">' + esc(D.meta.title) + "</h1>" +
         '<p class="lead center">' + esc(D.meta.subtitle) + "</p>" +
         '<div class="badge-row">' +
-          '<span class="badge">⏱️ ' + esc(D.meta.duration) + "</span>" +
-          '<span class="badge">🎮 ' + fmt(T.cover_minigames, { n: D.chapters.length }) + "</span>" +
-          '<span class="badge">📚 ' + fmt(T.cover_terms, { n: D.glossary.length }) + "</span>" +
+          '<span class="badge"><i class="ph-light ph-clock" aria-hidden="true"></i> ' + esc(D.meta.duration) + "</span>" +
+          '<span class="badge"><i class="ph-light ph-game-controller" aria-hidden="true"></i> ' + fmt(T.cover_minigames, { n: D.chapters.length }) + "</span>" +
+          '<span class="badge"><i class="ph-light ph-books" aria-hidden="true"></i> ' + fmt(T.cover_terms, { n: D.glossary.length }) + "</span>" +
         "</div>" +
         '<div class="qrwrap">' +
           '<div class="qrbox" id="qrbox"></div>' +
@@ -609,7 +609,7 @@
   function gameTemperature(root, gd, onComplete) {
     root.innerHTML =
       '<p class="hint">' + esc(gd.prompt) + "</p>" +
-      '<div class="temp-row"><label>🌡️ Temperature</label><span class="temp-val" id="tval">0.70</span></div>' +
+      '<div class="temp-row"><label><i class="ph-light ph-thermometer" aria-hidden="true"></i> Temperature</label><span class="temp-val" id="tval">0.70</span></div>' +
       '<input type="range" id="trange" min="0.05" max="1.5" step="0.05" value="0.7">' +
       '<div class="temp-labels"><span>' + esc(T.temp_factual) + "</span><span>" + esc(T.temp_creative) + "</span></div>" +
       '<div class="dist" id="dist"></div>' +
@@ -659,12 +659,12 @@
     win.insertAdjacentHTML("beforeend", '<div class="ctx-msg sys">' + esc(gd.system) + "</div>");
     function add() {
       var text = gd.messages[idx % gd.messages.length]; idx++;
-      var d = document.createElement("div"); d.className = "ctx-msg"; d.textContent = "🧑 " + text;
+      var d = document.createElement("div"); d.className = "ctx-msg"; d.textContent = text;
       win.appendChild(d); sent.push(d);
       if (sent.length > gd.windowSize) {
         var old = sent.shift();
         old.classList.add("dropping");
-        q("#dropped", root).textContent = fmt(T.ctx_dropped, { msg: qt(old.textContent.replace("🧑 ", "")) });
+        q("#dropped", root).textContent = fmt(T.ctx_dropped, { msg: qt(old.textContent) });
         droppedOnce = true;
         setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 480);
         onComplete();
@@ -984,7 +984,7 @@
         sp.style.background = "rgba(34,211,238," + (0.06 + 0.62 * w).toFixed(3) + ")";
         if (w >= max - 0.001) sp.classList.add("attn-top");
       });
-      q("#anote", root).innerHTML = "💡 " + esc(s.note);
+      q("#anote", root).innerHTML = '<i class="ph-light ph-lightbulb" aria-hidden="true"></i> ' + esc(s.note);
       if (!done) { done = true; onComplete(); }
     }
     draw();
@@ -1027,7 +1027,7 @@
     var topK = gd.topK || 2;
     root.innerHTML =
       '<p class="hint">' + esc(T.rag_question_label) + "</p>" +
-      '<div class="rag-q">❓ ' + esc(gd.query) + "</div>" +
+      '<div class="rag-q"><i class="ph-light ph-question" aria-hidden="true"></i> ' + esc(gd.query) + "</div>" +
       '<div class="rag-steps" id="rsteps"></div>' +
       '<button class="btn" id="ragGo" style="margin-top:12px">' + esc(T.rag_start) + "</button>";
     var steps = q("#rsteps", root);
@@ -1142,7 +1142,7 @@
     aiConsentEl.className = "ai-consent";
     aiConsentEl.innerHTML =
       '<div class="aic-card">' +
-        '<div class="aic-emoji">🤖</div>' +
+        '<div class="aic-emoji"><i class="ph-light ph-robot" aria-hidden="true"></i></div>' +
         '<div class="h2">' + esc(T.aic_title) + "</div>" +
         '<p class="muted">' + T.aic_body + "</p>" +
         '<div class="aic-btns"><button class="btn" id="aicYes">' + esc(T.aic_yes) + "</button>" +
@@ -1266,7 +1266,7 @@
       if (aiState.status === "ready") return renderMagician();
       if (aiState.status === "loading") {
         root.innerHTML =
-          '<div class="mag-load"><div class="hero-emoji">🤖</div>' +
+          '<div class="mag-load"><div class="hero-emoji"><i class="ph-light ph-robot" aria-hidden="true"></i></div>' +
           '<p class="hint">' + fmt(T.mag_loading, { n: aiState.progress }) + "</p>" +
           '<div class="pm-track"><span class="pm-fill" style="width:' + aiState.progress + '%"></span></div>' +
           '<button class="btn secondary" id="magSkip" style="margin-top:12px">' + esc(T.mag_skip) + "</button></div>" +
@@ -1298,7 +1298,7 @@
     APP.innerHTML =
       topbar(true) +
       '<div class="content fadein center">' +
-        '<div class="emoji-big">📝</div>' +
+        '<div class="emoji-big"><i class="ph-light ph-clipboard-text" aria-hidden="true"></i></div>' +
         '<h2 class="h2">' + esc(T.quiz_intro_title) + "</h2>" +
         '<p class="lead">' + fmt(T.quiz_intro_lead, { n: D.quiz.length }) + "</p>" +
         '<p class="muted small">' + esc(T.quiz_intro_sub) + "</p>" +
@@ -1388,7 +1388,7 @@
       var c = catOf(k);
       return '<div class="card refl-card" style="border-left-color:' + c.color + '">' +
         '<div class="kicker"><span class="dot" style="background:' + c.color + '"></span>' + esc(c.label) + "</div>" +
-        '<div class="ah">💡 ' + esc(r.aha) + "</div>" +
+        '<div class="ah"><i class="ph-light ph-lightbulb" aria-hidden="true"></i> ' + esc(r.aha) + "</div>" +
         '<div class="fr"><b>' + esc(T.res_discuss) + "</b> " + esc(r.frage) + "</div></div>";
     }).join("");
 
@@ -1405,7 +1405,7 @@
     APP.innerHTML =
       topbar(true) +
       '<div class="content fadein center results">' +
-        '<div class="emoji-big">🏁</div>' +
+        '<div class="emoji-big"><i class="ph-light ph-flag-checkered" aria-hidden="true"></i></div>' +
         '<h2 class="h2">' + headline + "</h2>" +
         '<div class="score-ring"><div class="num">' + pct + '%<small> ' + esc(T.res_correct_label) + '</small></div></div>' +
         '<p class="muted">' + fmt(T.res_score, { correct: correct, total: total }) + "</p>" +

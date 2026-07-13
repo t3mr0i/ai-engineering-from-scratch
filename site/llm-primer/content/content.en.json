@@ -1076,31 +1076,31 @@
                 "blocks": [
                     {
                         "key": "rolle",
-                        "label": "🎭 Role",
+                        "label": "Role",
                         "text": "You are an experienced, friendly support agent.",
                         "points": 20
                     },
                     {
                         "key": "kontext",
-                        "label": "📋 Context",
+                        "label": "Context",
                         "text": "The customer has been waiting 2 weeks for their package and is upset.",
                         "points": 20
                     },
                     {
                         "key": "format",
-                        "label": "📐 Format",
+                        "label": "Format",
                         "text": "Answer in at most 4 sentences, politely, with a concrete solution.",
                         "points": 25
                     },
                     {
                         "key": "beispiel",
-                        "label": "💡 Example",
+                        "label": "Example",
                         "text": "Tone example: \"I am truly sorry about this. Here is how we will make it right: …\"",
                         "points": 20
                     },
                     {
                         "key": "schritte",
-                        "label": "🪜 Step by step",
+                        "label": "Step by step",
                         "text": "First think briefly about what the customer needs now, then write.",
                         "points": 15
                     }
@@ -1289,34 +1289,34 @@
             "id": "ondevice",
             "cat": "erweiterungen",
             "title": "Live: AI on your device",
-            "lecture": "<p>To finish, it gets real. When you load the model, a real <b data-g=\"inferenz\">inference</b> runs here directly <b data-g=\"on-device\">on your device</b>, with no server at all. What makes this possible is <b data-g=\"quantisierung\">quantization</b>. It shrinks the model far enough to even fit on a phone.</p><p>Small models are great at <b>rewriting</b> text and weak at facts. That is exactly the rule of thumb from \"Limits &amp; Risks\": lean on them to reshape what you give them, and double-check anything factual.</p><p>So type an English sentence and watch it get rewritten word by word. That is called <b data-g=\"streaming\">streaming</b>. It even works in airplane mode, because nothing ever leaves your device. And don't worry, the pirate is on board too. 🏴‍☠️</p><p class=\"lecture-next\">Load the model and transform a sentence. Feel free to try it in airplane mode.</p>",
+            "lecture": "<p>To finish, it gets real. When you load the model, a real <b data-g=\"inferenz\">inference</b> runs here directly <b data-g=\"on-device\">on your device</b>, with no server at all. What makes this possible is <b data-g=\"quantisierung\">quantization</b>. It shrinks the model far enough to even fit on a phone.</p><p>Small models are great at <b>rewriting</b> text and weak at facts. That is exactly the rule of thumb from \"Limits &amp; Risks\": lean on them to reshape what you give them, and double-check anything factual.</p><p>So type an English sentence and watch it get rewritten word by word. That is called <b data-g=\"streaming\">streaming</b>. It even works in airplane mode, because nothing ever leaves your device. And don't worry, the pirate is on board too. </p><p class=\"lecture-next\">Load the model and transform a sentence. Feel free to try it in airplane mode.</p>",
             "game": "ondevice",
             "gameData": {
                 "sample": "Can you help me move some furniture tomorrow afternoon?",
                 "presets": [
                     {
                         "key": "formal",
-                        "label": "🎩 formal",
+                        "label": "formal",
                         "instr": "Rewrite the following sentence to be very polite and formal. Reply with only the rewritten sentence, nothing else."
                     },
                     {
                         "key": "casual",
-                        "label": "😎 casual",
+                        "label": "casual",
                         "instr": "Rewrite the following sentence in a casual, relaxed, friendly tone. Reply with only the rewritten sentence."
                     },
                     {
                         "key": "pirate",
-                        "label": "🏴‍☠️ pirate",
+                        "label": "pirate",
                         "instr": "Rewrite the following sentence in the voice of a pirate. Reply with only the rewritten sentence."
                     },
                     {
                         "key": "emoji",
-                        "label": "😀 emoji",
+                        "label": "emoji",
                         "instr": "Rewrite the following sentence with a few fitting emojis added. Reply with only the rewritten sentence."
                     },
                     {
                         "key": "short",
-                        "label": "✂️ shorter",
+                        "label": "shorter",
                         "instr": "Summarize the following in one very short sentence. Reply with only the summary."
                     }
                 ],
@@ -1324,16 +1324,16 @@
                     "input": "Can you help me move some furniture tomorrow afternoon?",
                     "out": [
                         {
-                            "label": "🎩 förmlich",
+                            "label": "förmlich",
                             "text": "Could you kindly assist me with moving some furniture tomorrow afternoon?"
                         },
                         {
-                            "label": "🏴‍☠️ Pirat",
+                            "label": "Pirat",
                             "text": "Ahoy! Lend me a hand to haul some furniture tomorrow afternoon, matey!"
                         },
                         {
-                            "label": "😀 Emoji",
-                            "text": "📅 Can you help me move some furniture tomorrow afternoon? 🛋️✨"
+                            "label": "Emoji",
+                            "text": "Can you help me move some furniture tomorrow afternoon?"
                         }
                     ]
                 }

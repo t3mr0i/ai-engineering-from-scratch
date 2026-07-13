@@ -1,26 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0a1b3d">
   <meta name="robots" content="noindex">
   <title>LLM Interactive Primer · LHIND AI Learning Catalog</title>
   <meta name="description" content="Interactive 60-minute primer on large language models — 16 mini-games, a real GPT tokenizer, glossary and quiz. Part of the LHIND AI Learning Catalog.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="assets/llm-primer.css?v=1">
+  <script>
+    /* Match the theme the parent lesson page (and the rest of the site) is
+       set to — this document runs standalone inside an <iframe>, so it
+       doesn't inherit the parent's data-theme attribute automatically. */
+    (function () {
+      var root = document.documentElement;
+      var stored = localStorage.getItem('theme');
+      if (stored) {
+        root.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        root.setAttribute('data-theme', 'dark');
+      } else {
+        root.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
 </head>
 <body>
-  <header class="primer-header" aria-label="Site navigation">
-    <a class="wordmark" href="/">
-      <img src="/assets/logo/lhind-logo-white.png" alt="LHIND" />
-      <span>Learning Catalog</span>
-    </a>
-    <div class="spacer" aria-hidden="true"></div>
-    <a class="back-link" href="/">← Catalog</a>
-  </header>
-
   <div id="app" class="app"><!-- filled by assets/app.js --></div>
 
   <script>
@@ -45,7 +52,7 @@
 
     function fail() {
       var el = document.getElementById('app');
-      if (el) el.innerHTML = '<div class="content center"><div class="hero-emoji">⚠️</div><h1 class="h1">Could not load the primer</h1><p class="lead">Reload the page to try again.</p></div>';
+      if (el) el.innerHTML = '<div class="content center"><div class="hero-emoji"><i class="ph-light ph-warning-circle" aria-hidden="true"></i></div><h1 class="h1">Could not load the primer</h1><p class="lead">Reload the page to try again.</p></div>';
     }
 
     Promise.all([

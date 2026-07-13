@@ -133,6 +133,19 @@ window.LrnData = {
   ],
   courses: [
     {
+      id: "PRIMER-01",
+      title: "Interactive LLM Primer",
+      status: "Available",
+      source: "llm-primer",
+      profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+      dimensions: ["literacy"],
+      interests: ["foundation"],
+      levels: ["Acquire"],
+      format: "Interactive mini-games, real GPT tokenizer, glossary, quiz",
+      summary: "~60-minute hands-on primer on how large language models work: tokens, context, prompting, RAG, and limits, through 16 mini-games and a quiz.",
+      modules: ["Interactive LLM Primer"]
+    },
+    {
       id: "AI-09",
       title: "AI Fundamentals / AI for Everyone",
       status: "Maintained in SharePoint",
@@ -699,7 +712,7 @@ window.LrnData = {
       label: "Core AI Foundation",
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40"] },
+        { label: "Acquire", courses: ["PRIMER-01", "AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40"] },
         { label: "Deepen", courses: ["AI-06", "AI-22", "PROMPT-01", "AI-18", "AI-23", "AI-39", "AI-51", "AI-54", "AI-57"] }
       ]
     },

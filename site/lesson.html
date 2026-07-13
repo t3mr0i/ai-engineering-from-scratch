@@ -2246,14 +2246,6 @@
         window.AIFSProgress.recordVisit(lessonPath);
       }
 
-      if (lessonPath === 'llm-primer') {
-        document.getElementById('lessonContent').innerHTML = '<iframe src="/llm-primer/index.html" style="border:none;width:100%;height:100vh;display:block"></iframe>';
-        document.getElementById('lessonSidebar').style.display = 'none';
-        document.getElementById('tocSidebar').style.display = 'none';
-        document.querySelector('.lesson-sidebar-toggle').style.display = 'none';
-        return;
-      }
-
       var phaseMatch = lessonPath.match(/phases\/(\d+-[^/]+)/);
       var lessonMatch = lessonPath.match(/phases\/\d+-[^/]+\/(\d+-[^/]+)/);
       var currentPhaseSlug = phaseMatch ? phaseMatch[1] : null;
@@ -2310,6 +2302,22 @@
       buildSidebar();
       initSidebarToggle();
       initScrollProgress();
+
+      // The primer isn't a markdown lesson in PHASES — it renders inside the
+      // normal reading column (sidebar/header/TOC chrome intact), just with an
+      // <iframe> standing in for the fetched lesson body instead of markdown.
+      if (lessonPath === 'llm-primer') {
+        if (!document.getElementById('lessonSidebar').innerHTML.trim()) {
+          document.getElementById('lessonSidebar').innerHTML =
+            '<div class="sidebar-phase-header">Interactive Primer</div>' +
+            '<span class="sidebar-lesson-link active"><span class="sidebar-lesson-dot complete"></span>LLM Interactive Primer</span>' +
+            '<div class="sidebar-phase-nav"><a href="catalog.html">&larr; Back to catalog</a></div>';
+        }
+        document.getElementById('lessonContent').innerHTML =
+          '<iframe src="/llm-primer/index.html" style="border:none;width:100%;height:min(780px, calc(100vh - 180px));display:block"></iframe>';
+        return;
+      }
+
       // Load the runnable-block manifest before rendering so code blocks can be
       // decorated with a Run button as they render.
       loadRunnableManifest().then(function () { fetchLesson(lessonPath); });
