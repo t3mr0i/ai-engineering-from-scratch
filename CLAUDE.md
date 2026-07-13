@@ -3,9 +3,15 @@
 This project deploys to Azure in **two independent parts**. Know which one you're
 touching before you push.
 
+**Migration in progress:** the gated site is moving from Azure App Service to
+OpenShift (`trainingcamp-prod` namespace, cluster `ocp04`) — see §1b. Azure
+(`ase-site-gated`) stays live and is the source of truth until the OpenShift
+deployment is verified; it will be decommissioned once that's confirmed
+working.
+
 ---
 
-## 1. Gated site (live today)
+## 1. Gated site (live today, being replaced by §1b)
 
 The lesson site + the in-browser Python playground (Pyodide). Served by a small
 Node server that runs the HMAC passcode gate on every request — **no byte
@@ -102,6 +108,75 @@ Notes:
 - **SWA retirement** (`swa-ase-webpage`) — leave it running until the custom
   domain has propagated and old cookies have expired (TTL 7 days). Then stop
   / delete.
+
+---
+
+## 1b. Gated site on OpenShift (`trainingcamp-prod`, migration target)
+
+Same app as §1 — same `server/` (zero npm deps) and `site/`, just packaged as
+a container instead of an App Service zip. Manifests live in `openshift/`.
+
+- **Cluster:** `ocp04` (`aiaas-gitops-instance.apps.ocp04.app.lhind.cloud`
+  hosts the ArgoCD instance for this cluster; see `~/.claude/ARGOCD-MCP.md`
+  for MCP access — not currently used for this app, deploy is plain `oc`).
+- **Namespace:** `trainingcamp-prod`
+- **Quota:** `trainingcamp-prod-computeresources` (`NotTerminating` scope) —
+  `limits.cpu 250m`, `limits.memory 2Gi`, `requests.cpu 250m`,
+  `requests.memory 2Gi` for the whole namespace. Build pods (`oc new-build`)
+  run with an active deadline and are NOT counted against this scope, so the
+  full budget is available to the running Deployment. `openshift/deployment.yaml`
+  requests `100m/128Mi`, limits `200m/256Mi` — leaves headroom, don't raise
+  without checking the quota first.
+- **Manifests:** `openshift/Dockerfile`, `deployment.yaml`, `service.yaml`,
+  `route.yaml`, `secret.example.yaml`. Dockerfile replicates the same build
+  steps as `.gitlab-ci.yml`'s `deploy_azure` job (`node site/build.js` +
+  rsync `phases/` → `site/phases/`) as a multi-stage build; final image is
+  `node:22-alpine` running `node server/server.js`.
+
+### First deploy (manual, no CI wired up yet)
+
+```bash
+oc login <ocp04 api url> --token=... # or --web
+oc project trainingcamp-prod
+
+# 1. Secret — reuse the Azure SITE_PASSCODE/GATE_SECRET values so existing
+#    ase_gate cookies stay valid across both deployments.
+oc create secret generic ase-site-gated-secrets \
+  --from-literal=SITE_PASSCODE='<value from Azure app settings>' \
+  --from-literal=GATE_SECRET='<value from Azure app settings>'
+
+# 2. Build the image in-cluster. Build context is the repo root (the
+#    Dockerfile COPYs README.md, ROADMAP.md, glossary/, site/, phases/), but
+#    the Dockerfile itself lives in openshift/ — point the BuildConfig at it.
+oc new-build --strategy=docker --binary --name=ase-site-gated
+oc patch bc/ase-site-gated --type=merge \
+  -p '{"spec":{"strategy":{"dockerStrategy":{"dockerfilePath":"openshift/Dockerfile"}}}}'
+oc start-build ase-site-gated --from-dir=. --follow   # respects .dockerignore
+
+# 3. Deploy + expose
+oc apply -f openshift/deployment.yaml
+oc apply -f openshift/service.yaml
+oc apply -f openshift/route.yaml
+oc get route ase-site-gated -o jsonpath='{.spec.host}'
+```
+
+Verify: the route should serve `/gate.html` unauthenticated and everything
+else 302→gate / 401 without a valid cookie, same behavior as
+`ase-site-gated.azurewebsites.net` today.
+
+### Redeploy after a code change
+
+```bash
+oc start-build ase-site-gated --from-dir=. --follow   # rebuilds image
+oc rollout restart deployment/ase-site-gated          # picks up :latest
+```
+
+### After OpenShift is verified working
+
+Azure teardown (`ase-site-gated` App Service, plan `ase-site-plan`, resource
+group `rg-ase-webpage`) happens only after this is confirmed live and
+correct — not automatically. Don't delete the Azure resources as part of
+setting up OpenShift.
 
 ---
 

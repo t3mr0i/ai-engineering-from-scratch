@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ase-site-gated
+  namespace: trainingcamp-prod
+  labels:
+    app: ase-site-gated
+spec:
+  selector:
+    app: ase-site-gated
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

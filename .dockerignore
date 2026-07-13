@@ -1,0 +1,14 @@
+.git
+node_modules
+.appservice-deploy
+.swa-deploy
+deploy.zip
+*.zip
+site/jupyterlite
+site/phases
+.jupyterlite.doit.db
+.DS_Store
+.sota
+.lazyweb
+outputs
+ide

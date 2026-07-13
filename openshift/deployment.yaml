@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ase-site-gated
+  namespace: trainingcamp-prod
+  labels:
+    app: ase-site-gated
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ase-site-gated
+  template:
+    metadata:
+      labels:
+        app: ase-site-gated
+    spec:
+      containers:
+        - name: ase-site-gated
+          image: image-registry.openshift-image-registry.svc:5000/trainingcamp-prod/ase-site-gated:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: SITE_PASSCODE
+              valueFrom:
+                secretKeyRef:
+                  name: ase-site-gated-secrets
+                  key: SITE_PASSCODE
+            - name: GATE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ase-site-gated-secrets
+                  key: GATE_SECRET
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /gate.html
+              port: 8080
+            initialDelaySeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /gate.html
+              port: 8080
+            initialDelaySeconds: 10

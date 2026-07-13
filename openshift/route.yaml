@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ase-site-gated
+  namespace: trainingcamp-prod
+spec:
+  to:
+    kind: Service
+    name: ase-site-gated
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
