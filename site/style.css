@@ -148,6 +148,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 96px;
+  overflow-x: clip;
 }
 
 body {
@@ -163,6 +164,7 @@ body {
   text-rendering: optimizeLegibility;
   hyphens: auto;
   -webkit-hyphens: auto;
+  overflow-x: clip;
   transition: background-color 0.2s, color 0.2s;
 }
 
@@ -325,6 +327,52 @@ p.dropcap::first-letter {
   width: auto;
   max-width: 9rem;
   object-fit: contain;
+}
+
+/* Flexible spacer that pushes the header controls to the right edge.
+   Most subpages set this inline (style="flex:1"); declaring it here too
+   fixes catalog.html, whose spacer has no inline style. */
+.nav-edge__spacer {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* "AI" badge used by catalog.html in place of the logo image. */
+.nav-edge .wordmark__mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  background: var(--blueprint);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+
+/* Section links in the catalog header (Courses · Curriculum). */
+.nav-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.nav-links a:hover {
+  color: var(--blueprint);
 }
 
 .nav-settings {
@@ -1017,6 +1065,10 @@ body.js-anim .toc-row.in-view {
     display: none;
   }
 
+  .nav-links {
+    display: none;
+  }
+
   .header-inner {
     height: 56px;
     padding: 0 12px;
@@ -1131,6 +1183,12 @@ body.js-anim .toc-row.in-view {
     width: 30px;
     height: 30px;
     font-size: 0.85rem;
+  }
+
+  /* Phones: drop the wordmark text, keep the logo/mark so the header
+     never overflows when the icon buttons are present. */
+  .nav-edge .wordmark > span:not(.wordmark__mark) {
+    display: none;
   }
 }
 

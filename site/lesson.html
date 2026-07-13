@@ -24,6 +24,7 @@
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="style.css?v=20260525a">
+  <link rel="stylesheet" href="badges.css?v=20260713a">
   <style>
     .scroll-progress {
       position: fixed;
@@ -309,9 +310,14 @@
       color: var(--blueprint);
     }
 
-    /* On narrow screens drop the stacked text, keep the nav controls. */
+    /* On narrow screens drop the stacked text, keep the nav controls.
+       The lesson header also carries prev/Overview/next + settings/theme,
+       so it needs more room than the other pages — hide the wordmark text
+       and tighten the nav gap from 640px down. */
     @media (max-width: 640px) {
       .lesson-headbar__meta { display: none; }
+      .nav-edge .wordmark > span:not(.wordmark__mark) { display: none; }
+      .lesson-headbar__nav { gap: 12px; }
     }
 
     .lesson-main {
@@ -2047,6 +2053,9 @@
       .timeline-item { min-width: 88px; }
       .timeline-line { width: 16px; }
       .timeline-label { max-width: 104px; }
+      /* Tighten the header so logo + prev/next/overview + icons fit 320px. */
+      .nav-edge { gap: 12px; }
+      .lesson-headbar__nav { gap: 10px; }
     }
 
     /* ── Lufthansa-calm alignment (lesson reader) ─────────────────────
@@ -2127,6 +2136,10 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges">
+      <i class="ph-light ph-medal" aria-hidden="true"></i>
+      <span class="badges-link__count" id="navBadgeCount" data-show="false" aria-hidden="true">0</span>
+    </a>
     <div id="lessonHeaderContext" class="lesson-headbar"></div>
   </header>
 
@@ -2160,6 +2173,7 @@
   <script src="settings.js"></script>
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260525a"></script>
+  <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js?v=20260610a"></script>
   <script src="lrn/curriculum-map.js?v=20260610a"></script>
   <script src="lrn/notebook-index.js?v=20260622a"></script>

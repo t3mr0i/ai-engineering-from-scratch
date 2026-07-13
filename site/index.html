@@ -13,6 +13,7 @@
        CSS webfont path — robust against CDN path changes, no JS dependency. -->
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="lrn/lrn.css">
+  <link rel="stylesheet" href="badges.css?v=20260713a">
 </head>
 <body>
   <a class="skip-link" href="#cockpit">Skip to course catalog</a>
@@ -22,6 +23,10 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges">
+      <i class="ph-light ph-medal" aria-hidden="true"></i>
+      <span class="badges-link__count" id="navBadgeCount" data-show="false" aria-hidden="true">0</span>
+    </a>
     <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </a>
@@ -44,6 +49,31 @@
           <input type="search" id="searchInput" placeholder="Search courses..." aria-label="Search courses" autocomplete="off">
         </form>
       </div>
+    </section>
+
+    <section class="primer-cta" aria-label="Interactive LLM primer">
+      <style>
+        .primer-cta { max-width: 980px; margin: 18px auto 0; padding: 0 20px; }
+        .primer-cta__card { display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+          background: linear-gradient(120deg, #05164d 0%, #243f9b 100%); color:#eaf1fb;
+          border-radius: 16px; padding: 18px 22px; box-shadow: 0 12px 32px rgba(5,22,77,.18);
+          text-decoration: none; transition: filter .2s ease; }
+        .primer-cta__card:hover { filter: brightness(1.06); }
+        .primer-cta__icon { font-size: 34px; flex:0 0 auto; }
+        .primer-cta__text { flex:1 1 220px; min-width:0; }
+        .primer-cta__title { font-family: "Lufthansa Head","Helvetica Neue",Arial,sans-serif; font-weight:600; font-size: 19px; margin:0 0 2px; letter-spacing:.2px; }
+        .primer-cta__sub { margin:0; font-size: 14px; color:#c3d5ee; line-height:1.4; }
+        .primer-cta__go { flex:0 0 auto; font-size: 14px; font-weight:700; color:#05164d; background:#fff; border-radius: 999px; padding: 9px 16px; white-space:nowrap; }
+        @media (max-width: 560px){ .primer-cta__card { gap:14px; padding:16px; } .primer-cta__title{ font-size:17px; } }
+      </style>
+      <a class="primer-cta__card" href="llm-primer/">
+        <span class="primer-cta__icon" aria-hidden="true">🧠✨</span>
+        <span class="primer-cta__text">
+          <span class="primer-cta__title">Interactive LLM Primer</span>
+          <span class="primer-cta__sub">~60 min · 16 mini-games · real GPT tokenizer · glossary &amp; quiz — learn how large language models work, hands-on.</span>
+        </span>
+        <span class="primer-cta__go">Start →</span>
+      </a>
     </section>
 
     <section class="cockpit" id="cockpit" aria-label="AI course catalog">
@@ -80,6 +110,7 @@
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
   <script src="progress.js"></script>
+  <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js"></script>
   <script src="lrn/curriculum-map.js"></script>
   <script src="lrn/lrn.js"></script>

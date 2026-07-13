@@ -141,6 +141,13 @@ button {
   width: auto;
 }
 
+/* Flexible spacer pushing header controls to the right edge. Subpages
+   set this inline (style="flex:1"); declared here for robustness. */
+.nav-edge__spacer {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .wordmark__text {
   /* "LHIND Learning Catalog" in Lufthansa Head Light, sentence case */
 }
@@ -1255,6 +1262,14 @@ i[class^="ph "] {
   .activity-link em {
     grid-column: 2;
     justify-self: start;
+  }
+}
+
+/* Phones: drop the wordmark text, keep the logo so the header fits
+   alongside the icon buttons on narrow viewports. */
+@media (max-width: 30rem) {
+  .wordmark > span:not(.wordmark__mark) {
+    display: none;
   }
 }
 

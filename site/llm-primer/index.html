@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <script src="/gate-guard.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a1b3d">
+  <meta name="robots" content="noindex">
+  <title>LLM Interactive Primer · LHIND AI Learning Catalog</title>
+  <meta name="description" content="Interactive 60-minute primer on large language models — 16 mini-games, a real GPT tokenizer, glossary and quiz. Part of the LHIND AI Learning Catalog.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/llm-primer.css?v=1">
+</head>
+<body>
+  <header class="primer-header" aria-label="Site navigation">
+    <a class="wordmark" href="/">
+      <img src="/assets/logo/lhind-logo-white.png" alt="LHIND" />
+      <span>Learning Catalog</span>
+    </a>
+    <div class="spacer" aria-hidden="true"></div>
+    <a class="back-link" href="/">← Catalog</a>
+  </header>
+
+  <div id="app" class="app"><!-- filled by assets/app.js --></div>
+
+  <script>
+  /* Static bootstrap (replaces the Vercel server-rendered shell).
+     Reads the `lang` cookie (en/de, default en), fetches the matching
+     content + UI JSON packs, sets the window globals app.js expects, and
+     only then loads the vendored libs + app.js in order. Solo-only:
+     APP_SYNC is always null (no journey backend on the gated static site). */
+  (function () {
+    "use strict";
+    function cookie(n) {
+      var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)');
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+    var lang = cookie('lang');
+    if (lang !== 'en' && lang !== 'de') lang = 'en';
+    window.APP_LANG = lang;
+    window.APP_URL = location.href.split('#')[0];
+    window.APP_SYNC = null;
+
+    document.documentElement.lang = lang;
+
+    function fail() {
+      var el = document.getElementById('app');
+      if (el) el.innerHTML = '<div class="content center"><div class="hero-emoji">⚠️</div><h1 class="h1">Could not load the primer</h1><p class="lead">Reload the page to try again.</p></div>';
+    }
+
+    Promise.all([
+      fetch('content/content.' + lang + '.json', { credentials: 'same-origin' }).then(function (r) { return r.json(); }),
+      fetch('content/ui.' + lang + '.json', { credentials: 'same-origin' }).then(function (r) { return r.json(); })
+    ]).then(function (packs) {
+      window.APP_DATA = packs[0];
+      window.APP_I18N = packs[1];
+      // Load vendored libs + the app in order (async=false preserves order).
+      function addScript(src) {
+        var s = document.createElement('script');
+        s.src = src; s.async = false;
+        document.body.appendChild(s);
+      }
+      addScript('assets/qrcode.min.js?v=1');
+      addScript('assets/gpt-tokenizer.cl100k.js?v=1');
+      addScript('assets/app.js?v=1');
+    }).catch(fail);
+  })();
+  </script>
+</body>
+</html>

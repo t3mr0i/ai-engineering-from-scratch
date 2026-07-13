@@ -1,0 +1,175 @@
+/* AIFS Achievement Badges — medal styles + toast + nav counter.
+   Token fallbacks keep this readable under both the catalog skin
+   (style.css: --bg-surface, --ink, --rule-soft, --shadow-hard-lg) and
+   the LRN skin (lrn.css/tokens.css). Tier colors are constant. */
+
+.aifs-badge {
+  --b-disc: var(--bg-surface, #ffffff);
+  --b-ink: var(--ink, #05164d);
+  --b-rule: var(--rule-soft, #e3e1de);
+  --b-mute: var(--ink-mute, #7a7673);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 14px 8px 12px;
+  border-radius: 14px;
+  background: transparent;
+}
+
+.aifs-badge__disc {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--b-disc);
+  border: 3px solid var(--tier-ring, #b08a4a);
+  box-shadow: 0 6px 20px var(--tier-glow, rgba(176,138,74,0.4));
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.aifs-badge__disc i.ph-light {
+  font-size: 34px;
+  color: var(--tier-ring, #b08a4a);
+  line-height: 1;
+}
+.aifs-badge--earned .aifs-badge__disc:hover { transform: translateY(-2px) scale(1.03); }
+
+.aifs-badge__lock {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  font-size: 16px !important;
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--b-disc);
+  color: var(--b-mute);
+  box-shadow: 0 1px 4px rgba(5,22,77,0.25);
+}
+
+.aifs-badge--locked .aifs-badge__disc {
+  border-style: dashed;
+  box-shadow: none;
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+.aifs-badge--locked .aifs-badge__disc i.ph-light { color: var(--b-mute); }
+
+.aifs-badge__title {
+  font-family: var(--font-body, inherit);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--b-ink);
+  line-height: 1.2;
+  max-width: 110px;
+}
+.aifs-badge__tier {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--b-mute);
+}
+.aifs-badge--earned .aifs-badge__tier { color: var(--tier-ring, #b08a4a); }
+
+.aifs-badge__progress {
+  width: 64px; height: 4px;
+  border-radius: 999px;
+  background: var(--b-rule);
+  overflow: hidden;
+  margin-top: 2px;
+}
+.aifs-badge__bar { height: 100%; background: var(--tier-ring, #b08a4a); }
+.aifs-badge__hint {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  color: var(--b-mute);
+}
+
+/* grid */
+.aifs-badges-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  padding: 8px 0;
+}
+
+/* summary */
+.aifs-badges-summary { display: flex; flex-direction: column; gap: 8px; max-width: 420px; }
+.aifs-badges-summary__count { font-family: var(--font-display, var(--font-body, inherit)); font-size: 1.4rem; color: var(--ink, #05164d); }
+.aifs-badges-summary__count strong { font-weight: 700; }
+.aifs-badges-summary__bar { height: 8px; border-radius: 999px; background: var(--rule-soft, #e3e1de); overflow: hidden; }
+.aifs-badges-summary__fill { height: 100%; background: var(--accent, #05164d); transition: width 400ms ease; }
+.aifs-badges-summary__lessons { font-size: 0.85rem; color: var(--ink-soft, #52617c); }
+
+/* nav counter */
+.badges-link { position: relative; }
+.badges-link .ph-light { font-size: 1.15rem; }
+.badges-link__count {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: 999px;
+  background: #d4af37; color: #05164d;
+  font-size: 10px; font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  display: none; align-items: center; justify-content: center;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(5,22,77,0.3);
+}
+.badges-link__count[data-show="true"] { display: inline-flex; }
+
+/* toast */
+.aifs-badge-toasts {
+  position: fixed; right: 20px; bottom: 20px;
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: min(92vw, 340px);
+  pointer-events: none;
+}
+.aifs-badge-toast {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--rule-soft, #e3e1de);
+  box-shadow: 0 14px 40px rgba(5,22,77,0.18);
+  text-decoration: none;
+  color: inherit;
+  animation: aifs-toast-in 320ms cubic-bezier(.2,.8,.2,1);
+}
+.aifs-badge-toast:hover { text-decoration: none; transform: translateY(-1px); }
+.aifs-badge-toast--leave { animation: aifs-toast-out 300ms ease forwards; }
+.aifs-badge-toast__disc {
+  flex: none;
+  width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--bg-surface, #fff);
+  border: 2px solid var(--tier-ring, #d4af37);
+  box-shadow: 0 4px 14px var(--tier-glow, rgba(212,175,55,0.5));
+}
+.aifs-badge-toast__disc i.ph-light { font-size: 20px; color: var(--tier-ring, #d4af37); }
+.aifs-badge-toast__body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.aifs-badge-toast__eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute, #7a7673); }
+.aifs-badge-toast__title { font-size: 0.95rem; font-weight: 700; color: var(--ink, #05164d); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aifs-badge-toast__tier { font-size: 0.68rem; font-weight: 700; color: var(--tier-ring, #d4af37); }
+
+@keyframes aifs-toast-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes aifs-toast-out { to { opacity: 0; transform: translateY(8px) scale(.98); } }
+
+/* dark-mode fallbacks when a skin doesn't define the tokens */
+[data-theme="dark"] .aifs-badge,
+[data-theme="dark"] .aifs-badge-toast {
+  --b-disc: var(--bg-surface, #132b54);
+  --b-ink: var(--ink, #eaf1fb);
+  --b-rule: var(--rule-soft, #234168);
+  --b-mute: var(--ink-mute, #93a8c7);
+}
+[data-theme="dark"] .aifs-badge-toast { box-shadow: 0 14px 40px rgba(0,0,0,0.45); }
+
+@media (max-width: 560px) {
+  .aifs-badges-grid { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
+}

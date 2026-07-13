@@ -186,6 +186,7 @@
   });
 
   window.AIFSProgress = {
+    getState: function () { return read(); },
     recordVisit: recordVisit,
     recordAnswer: recordAnswer,
     markLessonComplete: markLessonComplete,

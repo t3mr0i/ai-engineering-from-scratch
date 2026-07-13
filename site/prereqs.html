@@ -391,6 +391,9 @@
       .graph-scroll-hint   { display: block; }
       .detail-sections     { grid-template-columns: 1fr; gap: 14px; }
       .detail-panel        { padding: 20px 16px; }
+      /* Container padding drops to 16px here, so the full-bleed graph
+         margin must match or it overflows the viewport horizontally. */
+      .graph-wrap          { margin: 0 -16px; }
     }
   </style>
 </head>
