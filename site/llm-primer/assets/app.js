@@ -146,7 +146,32 @@
     paintScreen();
     if (window.requestAnimationFrame) requestAnimationFrame(fitActionbar);
     else fitActionbar();
+    notifyParent();
   }
+
+  // Embedded in an <iframe> inside lesson.html, which renders the chapter
+  // list in the site's own sidebar (not duplicated here) and needs to know
+  // the current chapter + completion state to keep that nav in sync.
+  function notifyParent() {
+    if (window.parent === window) return;
+    var step = flow[state.pos];
+    var chapter = (step.v === "lecture" || step.v === "game") ? step.i : null;
+    window.parent.postMessage({
+      type: "aifs-primer-state",
+      chapter: chapter,
+      completed: Object.keys(state.doneChapters).length,
+      total: D.chapters.length,
+      doneChapters: D.chapters.map(function (c, i) { return i; }).filter(function (i) { return !!state.doneChapters[D.chapters[i].id]; })
+    }, window.location.origin);
+  }
+
+  // The sidebar's chapter links postMessage this instead of the app driving
+  // its own <a href> navigation, so a click jumps without an iframe reload.
+  window.addEventListener("message", function (event) {
+    if (event.origin !== window.location.origin || !event.data || event.data.type !== "aifs-primer-goto") return;
+    var idx = Number(event.data.chapter);
+    if (!isNaN(idx) && D.chapters[idx]) goTo(1 + idx * 2);
+  });
 
   function paintScreen() {
     if (overlay === "glossary") return renderGlossary();
@@ -306,6 +331,7 @@
   }
 
   function pushTerm(t) {
+    var termBody;
     if (!termOverlay) {
       termOverlay = document.createElement("div");
       termOverlay.className = "term-stack";
@@ -313,15 +339,19 @@
       termSheet = document.createElement("div");
       termSheet.className = "term-sheet";
       termSheet.onclick = function (e) { e.stopPropagation(); };
+      termSheet.innerHTML = '<button class="term-close" aria-label="' + esc(T.close_btn) + '">&times;</button>';
+      termSheet.querySelector(".term-close").onclick = function (e) { e.stopPropagation(); closeTermStack(); };
+      termBody = document.createElement("div");
+      termBody.className = "term-body";
+      termSheet.appendChild(termBody);
       termOverlay.appendChild(termSheet);
       document.body.appendChild(termOverlay);
     }
-    var foot = termSheet.querySelector(".term-foot");
-    if (foot) foot.remove(); // close button moves below the new panel
+    termBody = termSheet.querySelector(".term-body");
 
     // Remove an existing panel for the same term -> it slides to the end
     // instead of doubling up; keeps the list shorter.
-    var dup = termSheet.querySelector('.term-panel[data-term="' + t.id + '"]');
+    var dup = termBody.querySelector('.term-panel[data-term="' + t.id + '"]');
     if (dup) dup.remove();
 
     var c = catOf(t.cat);
@@ -332,16 +362,10 @@
       '<div class="kicker"><span class="dot" style="background:' + c.color + '"></span>' + esc(c.label) + "</div>" +
       '<div class="h2">' + esc(t.term) + "</div>" +
       '<p class="muted" style="font-size:15.5px;margin:0">' + linkifyDef(t.def, t.id) + "</p>";
-    termSheet.appendChild(panel);
+    termBody.appendChild(panel);
     wireGlLinks(panel, pushTerm); // cross-references append another panel
 
-    foot = document.createElement("div");
-    foot.className = "term-foot";
-    foot.innerHTML = '<button class="btn secondary closeT">' + esc(T.close_btn) + "</button>";
-    foot.querySelector(".closeT").onclick = function (e) { e.stopPropagation(); closeTermStack(); };
-    termSheet.appendChild(foot);
-
-    termSheet.scrollTop = termSheet.scrollHeight; // newest panel into view
+    termBody.scrollTop = termBody.scrollHeight; // newest panel into view
   }
 
   // Opened from outside (glossary list, lecture text) -> fresh list.
@@ -517,9 +541,9 @@
         var span = document.createElement("span");
         span.className = "tok";
         var col = colors[i % colors.length];
-        span.style.background = col + "33";
-        span.style.color = "#fff";
-        span.style.border = "1px solid " + col + "88";
+        span.style.background = col + "26";
+        span.style.color = col;
+        span.style.border = "1px solid " + col + "55";
         span.textContent = t.replace(/ /g, "·");
         out.appendChild(span);
       });

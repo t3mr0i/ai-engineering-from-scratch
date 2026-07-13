@@ -1694,3 +1694,124 @@ a.gloss-term {
     transition: none !important;
   }
 }
+
+/* ── Antigravity SOTA Micro-animations & Premium UI polish ──────────── */
+
+/* Smooth Transition Tokens */
+:root {
+  --sota-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --sota-ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --sota-duration: 250ms;
+}
+
+/* Standard Buttons & Control Items */
+.btn {
+  transition: background var(--sota-duration) var(--sota-ease),
+              color var(--sota-duration) var(--sota-ease),
+              border-color var(--sota-duration) var(--sota-ease),
+              transform 150ms var(--sota-ease),
+              box-shadow var(--sota-duration) var(--sota-ease) !important;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--shadow-color, rgba(5, 22, 77, 0.12));
+}
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 6px var(--shadow-color, rgba(5, 22, 77, 0.08));
+}
+.btn:focus-visible {
+  outline: 2px solid var(--blueprint);
+  outline-offset: 3px;
+}
+
+/* Copy to Clipboard button */
+.copy-btn {
+  transition: color 150ms var(--sota-ease), transform 150ms var(--sota-ease-bounce) !important;
+}
+.copy-btn:hover {
+  transform: scale(1.15);
+}
+.copy-btn:active {
+  transform: scale(0.9);
+}
+
+/* Theme Toggle Button & Rotation Effect */
+.theme-toggle {
+  transition: border-color var(--sota-duration) var(--sota-ease),
+              color var(--sota-duration) var(--sota-ease),
+              background-color var(--sota-duration) var(--sota-ease),
+              transform 150ms var(--sota-ease-bounce) !important;
+}
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+.theme-toggle:hover .theme-icon {
+  transform: rotate(360deg);
+}
+.theme-toggle .theme-icon {
+  display: inline-block;
+  transition: transform 400ms var(--sota-ease) !important;
+}
+
+/* Command Palette items sliding and arrow highlight */
+.cp-item {
+  transition: background var(--sota-duration) var(--sota-ease),
+              border-left-color var(--sota-duration) var(--sota-ease),
+              padding-left var(--sota-duration) var(--sota-ease) !important;
+}
+.cp-item:hover,
+.cp-item--active {
+  padding-left: 20px !important;
+}
+.cp-item-arrow {
+  transform: translateX(-6px);
+  transition: opacity 200ms var(--sota-ease), color 200ms var(--sota-ease), transform 200ms var(--sota-ease) !important;
+}
+.cp-item:hover .cp-item-arrow,
+.cp-item--active .cp-item-arrow {
+  transform: translateX(0);
+}
+
+/* Lesson list rows in the course view modals */
+.modal-lesson {
+  padding: 12px 10px !important;
+  border-radius: 8px;
+  transition: background var(--sota-duration) var(--sota-ease),
+              transform 200ms var(--sota-ease),
+              padding-left 200ms var(--sota-ease) !important;
+}
+.modal-lesson:hover {
+  transform: translateX(4px);
+  background: var(--blueprint-tint) !important;
+}
+.modal-lesson:active {
+  transform: translateX(2px);
+}
+.modal-lesson > a {
+  transition: color 150ms var(--sota-ease), border-color 150ms var(--sota-ease) !important;
+}
+
+/* Glossary Popover Easing */
+.gloss-popover {
+  transition: opacity var(--sota-duration) var(--sota-ease),
+              transform var(--sota-duration) var(--sota-ease),
+              visibility var(--sota-duration) !important;
+  box-shadow: 0 10px 30px rgba(5, 22, 77, 0.12) !important;
+}
+[data-theme="dark"] .gloss-popover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Reduced Motion Overrides */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .copy-btn, .theme-toggle, .theme-toggle .theme-icon, .cp-item, .cp-item-arrow, .modal-lesson {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+

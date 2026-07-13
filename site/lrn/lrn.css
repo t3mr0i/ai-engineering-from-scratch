@@ -1287,6 +1287,137 @@ i[class^="ph "] {
   }
 }
 
+/* ── Antigravity SOTA Micro-animations & Premium UI polish (LRN Cockpit) ── */
+
+/* Course card interactive transforms */
+.course-card {
+  transition: border-color var(--dur-base) var(--ease-standard),
+              transform var(--dur-base) var(--ease-standard),
+              box-shadow var(--dur-base) var(--ease-standard) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .course-card:hover {
+    transform: translateY(-5px) scale(1.01) !important;
+    box-shadow: 0 12px 28px rgba(5, 22, 77, 0.16) !important;
+  }
+  [data-theme="dark"] .course-card:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45) !important;
+  }
+}
+.course-card:active {
+  transform: translateY(-1px) scale(0.99) !important;
+}
+
+/* Card internal tiles and links hover effects */
+.course-card__tile {
+  transition: transform var(--dur-base) var(--ease-standard) !important;
+}
+.course-card:hover .course-card__tile {
+  transform: scale(1.06) rotate(1deg);
+}
+.course-card__open {
+  transition: transform var(--dur-base) var(--ease-standard),
+              background-color var(--dur-base) var(--ease-standard),
+              color var(--dur-base) var(--ease-standard),
+              border-color var(--dur-base) var(--ease-standard) !important;
+}
+.course-card:hover .course-card__open {
+  transform: translateX(4px) !important;
+}
+
+/* Segmented controls and filter buttons press scale feedback */
+.seg-btn {
+  transition: background-color var(--dur-base) var(--ease-standard),
+              color var(--dur-base) var(--ease-standard),
+              transform var(--dur-fast) var(--ease-standard) !important;
+}
+.seg-btn:active {
+  transform: scale(0.96);
+}
+
+.chip {
+  transition: background-color var(--dur-base) var(--ease-standard),
+              border-color var(--dur-base) var(--ease-standard),
+              color var(--dur-base) var(--ease-standard),
+              transform var(--dur-fast) var(--ease-standard) !important;
+}
+.chip:active {
+  transform: scale(0.96) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover:not([aria-pressed="true"]) {
+    background-color: var(--color-surface-hover, #f1f0ef);
+  }
+  [data-theme="dark"] .chip:hover:not([aria-pressed="true"]) {
+    background-color: var(--color-surface-hover, #16305c);
+  }
+}
+
+/* Selector CTA & Primary CTA hover/active scales */
+.selector-cta, .primary-cta {
+  transition: background-color var(--dur-base) var(--ease-standard),
+              transform var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-base) var(--ease-standard) !important;
+}
+.selector-cta:hover, .primary-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(5, 22, 77, 0.15);
+}
+.selector-cta:active, .primary-cta:active {
+  transform: translateY(1px) scale(0.98) !important;
+}
+
+/* Back Link Hover Shift */
+.back-link {
+  transition: color var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard) !important;
+}
+.back-link:hover {
+  transform: translateX(-4px);
+}
+
+/* Lesson unit row animations (Lufthansa Design System custom effect) */
+.activity-link {
+  position: relative;
+  overflow: hidden;
+  transition: background-color var(--dur-base) var(--ease-standard),
+              transform var(--dur-fast) var(--ease-standard),
+              padding-left var(--dur-base) var(--ease-standard) !important;
+}
+.activity-link::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 15%;
+  height: 70%;
+  width: 3px;
+  background: var(--lhg-core-blue, #05164d);
+  border-radius: 0 999px 999px 0;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-standard), left var(--dur-base) var(--ease-standard);
+}
+@media (hover: hover) and (pointer: fine) {
+  .activity-link:hover {
+    padding-left: calc(var(--space-2, 8px) + 6px) !important;
+    background: var(--color-surface-sunken) !important;
+  }
+  .activity-link:hover::before {
+    left: 0;
+    opacity: 1;
+  }
+}
+
+/* Overrides for Prefers Reduced Motion in LRN Cockpit */
+@media (prefers-reduced-motion: reduce) {
+  .course-card, .course-card__tile, .course-card__open, .seg-btn, .chip, .selector-cta, .primary-cta, .back-link, .activity-link {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  .activity-link::before {
+    display: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

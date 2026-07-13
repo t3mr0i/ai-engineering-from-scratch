@@ -343,6 +343,12 @@
     .lesson-main.lesson-main--full { padding-right: 32px; }
     .lesson-main--full .lesson-content { max-width: none; }
 
+    /* A course with exactly one lesson has nothing to navigate between —
+       the lesson-list sidebar is dead weight, not orientation. Collapse it
+       and hand that width back to the content, same as the mobile layout. */
+    .lesson-sidebar.lesson-sidebar--hidden { display: none; }
+    .lesson-main.lesson-main--no-sidebar { margin-left: 0; }
+
     .lesson-article {
       max-width: 100%;
       overflow-wrap: break-word;
@@ -2311,16 +2317,24 @@
       initSidebarToggle();
       initScrollProgress();
 
+      // A course with exactly one lesson has no sibling lessons to navigate
+      // between — the list-of-one sidebar is noise, not orientation. Hand
+      // its width back to the content instead. The primer is the exception:
+      // it has its own internal chapters, so it gets a real chapter-nav
+      // sidebar instead (built below), not the hide treatment.
+      if (lrnContext && lrnContext.total <= 1 && lessonPath !== 'llm-primer') {
+        document.getElementById('lessonSidebar').classList.add('lesson-sidebar--hidden');
+        document.querySelector('.lesson-main').classList.add('lesson-main--no-sidebar');
+        var toggleBtn = document.getElementById('sidebarToggle');
+        if (toggleBtn) toggleBtn.style.display = 'none';
+      }
+
       // The primer isn't a markdown lesson in PHASES — it renders inside the
-      // normal reading column (sidebar/header/TOC chrome intact), just with an
+      // normal reading column (header/TOC chrome intact), just with an
       // <iframe> standing in for the fetched lesson body instead of markdown.
+      // The sidebar becomes a live chapter list (its 16 mini-chapters), kept
+      // in sync with the iframe via postMessage instead of full reloads.
       if (lessonPath === 'llm-primer') {
-        if (!document.getElementById('lessonSidebar').innerHTML.trim()) {
-          document.getElementById('lessonSidebar').innerHTML =
-            '<div class="sidebar-phase-header">Interactive Primer</div>' +
-            '<span class="sidebar-lesson-link active"><span class="sidebar-lesson-dot complete"></span>LLM Interactive Primer</span>' +
-            '<div class="sidebar-phase-nav"><a href="catalog.html">&larr; Back to catalog</a></div>';
-        }
         document.querySelector('.lesson-main').classList.add('lesson-main--full');
         var primerFrame = document.createElement('iframe');
         primerFrame.src = '/llm-primer/index.html';
@@ -2343,6 +2357,70 @@
             new ResizeObserver(resizeToContent).observe(doc.documentElement);
           } catch (e) { /* cross-origin or unavailable — keep min-height fallback */ }
         });
+
+        // ---- Chapter-nav sidebar, kept in sync with the running iframe ----
+        var primerChapters = null;
+        var primerActive = null; // current chapter index, or null on cover/quiz/results
+        var primerProgress = { completed: 0, total: 0 };
+
+        function primerLangCookie() {
+          var m = document.cookie.match('(?:^|; )lang=([^;]*)');
+          var l = m ? decodeURIComponent(m[1]) : '';
+          return (l === 'en' || l === 'de') ? l : 'en';
+        }
+
+        function renderPrimerSidebar() {
+          var sidebar = document.getElementById('lessonSidebar');
+          if (!sidebar || !primerChapters) return;
+          var pct = primerProgress.total ? Math.round(primerProgress.completed / primerProgress.total * 100) : 0;
+          var html = '<div class="lrn-sidebar-overview">' +
+            '<a class="lrn-sidebar-back" href="catalog.html">&larr; Learning Catalog</a>' +
+            '<div class="lrn-sidebar-title">Interactive LLM Primer</div>' +
+            '<div class="lrn-sidebar-progress" aria-hidden="true"><span style="width:' + pct + '%"></span></div>' +
+            '<div class="lrn-sidebar-counter">' + primerProgress.completed + '/' + primerProgress.total + ' chapters done</div>' +
+            '</div>';
+          html += '<div class="lrn-sidebar-subcourse">';
+          primerChapters.forEach(function (ch, i) {
+            var active = i === primerActive;
+            var done = ch.doneFlag;
+            var iconName = done ? 'check-circle' : 'circle';
+            html += '<a href="#" class="sidebar-lesson-link primer-chapter-link' + (active ? ' active' : '') + '" data-chapter="' + i + '"' + (active ? ' aria-current="page"' : '') + '>' +
+              '<i class="ph-light ph-' + iconName + ' sidebar-lesson-icon ' + (done ? 'complete' : 'planned') + '" aria-hidden="true"></i>' +
+              '<span class="lrn-sidebar-lesson-text"><span>' + escapeHtml(ch.title) + '</span></span>' +
+              '</a>';
+          });
+          html += '</div>';
+          sidebar.innerHTML = html;
+          qa2(sidebar, '.primer-chapter-link').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+              e.preventDefault();
+              primerFrame.contentWindow.postMessage({ type: 'aifs-primer-goto', chapter: Number(a.getAttribute('data-chapter')) }, location.origin);
+            });
+          });
+        }
+        function qa2(root, sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+
+        fetch('/llm-primer/content/content.' + primerLangCookie() + '.json')
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            primerChapters = (data.chapters || []).map(function (c) { return { title: c.title, doneFlag: false }; });
+            primerProgress.total = primerChapters.length;
+            renderPrimerSidebar();
+          })
+          .catch(function () { /* sidebar just stays on the loading state */ });
+
+        window.addEventListener('message', function (event) {
+          if (event.origin !== location.origin || !event.data || event.data.type !== 'aifs-primer-state') return;
+          var msg = event.data;
+          primerActive = (typeof msg.chapter === 'number') ? msg.chapter : null;
+          primerProgress.completed = msg.completed || 0;
+          if (msg.total) primerProgress.total = msg.total;
+          if (primerChapters && Array.isArray(msg.doneChapters)) {
+            primerChapters.forEach(function (ch, i) { ch.doneFlag = msg.doneChapters.indexOf(i) !== -1; });
+          }
+          renderPrimerSidebar();
+        });
+
         return;
       }
 
