@@ -116,9 +116,11 @@ Notes:
 Same app as §1 — same `server/` (zero npm deps) and `site/`, just packaged as
 a container instead of an App Service zip. Manifests live in `openshift/`.
 
-- **Cluster:** `ocp04` (`aiaas-gitops-instance.apps.ocp04.app.lhind.cloud`
-  hosts the ArgoCD instance for this cluster; see `~/.claude/ARGOCD-MCP.md`
-  for MCP access — not currently used for this app, deploy is plain `oc`).
+- **Cluster:** `ocp03` — console at
+  `https://console-openshift-console.apps.ocp03.cloud.lhind.app.lufthansa.com`.
+  Different cluster than the ArgoCD instance in `~/.claude/ARGOCD-MCP.md`
+  (that's `ocp04`, unrelated to this app) — deploy here is plain `oc`, no
+  ArgoCD MCP access configured for `ocp03`.
 - **Namespace:** `trainingcamp-prod`
 - **Quota:** `trainingcamp-prod-computeresources` (`NotTerminating` scope) —
   `limits.cpu 250m`, `limits.memory 2Gi`, `requests.cpu 250m`,
@@ -136,7 +138,7 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
 ### First deploy (manual, no CI wired up yet)
 
 ```bash
-oc login <ocp04 api url> --token=... # or --web
+oc login <ocp03 api url> --token=... # or --web
 oc project trainingcamp-prod
 
 # 1. Secret — reuse the Azure SITE_PASSCODE/GATE_SECRET values so existing

@@ -50,88 +50,28 @@
   }
 
   // =========================================================================
-  // Solo mode (LHIND gated static site — no backend).
-  // The upstream "journey" multiplayer mode and admin console were removed;
-  // SYNC is always null and syncMode is always false. The navigation helpers
-  // below (navCap, atLockedFrontier, …) keep their shape but degrade to solo.
   // =========================================================================
-  var SYNC = null;
-  var syncMode = false;
+  // Solo mode (LHIND gated static site — no backend).
+  // The upstream journey/admin multiplayer mode was removed; progress lives in
+  // localStorage and every step is freely reachable (no server-side unlock).
+  // =========================================================================
+  var MAX_POS = flow.length - 1; // last flow index (quiz/results)
 
-  function joined() { return false; }
-  function jStatus() { return null; }
-  function jUnlocked() { return 0; }
-
-  // No backend on the gated static site — every API call is a harmless no-op.
-  function api(action, payload, method) {
-    return Promise.resolve({ ok: false, error: "solo" });
-  }
-
-  // Highest reachable flow position in journey mode (server-side lock).
-  // Chapter i: lecture = 1+2i, game = 2+2i. Quiz/results only once all unlocked.
-  function maxPos() {
-    if (!syncMode || jStatus() !== "live") return flow.length - 1;
-    var last = D.chapters.length - 1;
-    if (jUnlocked() >= last) return flow.length - 1;
-    return 2 + 2 * jUnlocked();
-  }
-
-  // Furthest point the player had already reached in THIS journey.
-  // This way, stepping the unlock back never locks anyone out of content they
-  // have already seen. Bound to a foreign/no journey → no advance.
-  function reachedPos() {
-    var jid = SYNC && SYNC.journey ? SYNC.journey.id : null;
-    if (!jid || state.reachedJid !== jid) return 0;
-    return state.reached || 0;
-  }
-  // Remembers the furthest point reached (only in live mode, per journey).
-  // Only ever called with legitimate, already-unlocked positions.
-  function bumpReached() {
-    if (!syncMode || !SYNC || !SYNC.journey || jStatus() !== "live") return;
-    var jid = SYNC.journey.id;
-    if (state.reachedJid !== jid) { state.reachedJid = jid; state.reached = 0; }
-    if ((state.pos || 0) > (state.reached || 0)) state.reached = state.pos;
-  }
-  // Actual ceiling for the player: the global unlock OR the point already
-  // reached (whichever is further). This keeps already-seen content reachable
-  // even when the host steps the unlock back.
-  function navCap() {
-    return Math.max(maxPos(), reachedPos());
-  }
-
-  // Is the player at their current frontier – the furthest point reached, with
-  // still-locked content beyond it? Then "Continue" leads nowhere until the
-  // host unlocks the next chapter. Already-seen pages (before this frontier)
-  // stay free when paging back and forth.
-  function atLockedFrontier() {
-    return syncMode && jStatus() === "live" && state.pos >= navCap() && navCap() < flow.length - 1;
-  }
-
-  // Flow position → chapter index (for the progress report to the dashboard).
-  function posToChapter(pos) {
-    var s = flow[pos];
-    if (s && (s.v === "lecture" || s.v === "game")) return s.i;
-    return pos === 0 ? 0 : D.chapters.length; // quiz/results = "done"
-  }
-  // Reports progress to the dashboard – in journey mode as a journey player,
-  // otherwise as a solo player (so admins also see users without a journey).
-  // Before the first step (cover) no solo profile is created.
-  function reportPos() {
-    var chapter = posToChapter(state.pos);
-    if (syncMode) {
-      if (joined()) api("pos", { chapter: chapter });
-    } else if (state.pos > 0) {
-      api("solo", { chapter: chapter });
-    }
-  }
-
-  function toast(msg) {
-    var t = document.createElement("div");
-    t.className = "toast"; t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(function () { t.classList.add("show"); }, 10);
-    setTimeout(function () { t.classList.remove("show"); }, 3200);
-    setTimeout(function () { if (t.parentNode) t.remove(); }, 3600);
+  // Lazily load a vendored script once (cached). The ~971 KB GPT tokenizer
+  // (only needed in chapter 2) and the QR lib (only on the cover) are NOT
+  // loaded eagerly on every visit — app.js pulls them on demand.
+  var _scripts = {};
+  function loadScript(src) {
+    if (_scripts[src]) return _scripts[src];
+    var p = new Promise(function (resolve, reject) {
+      var s = document.createElement("script");
+      s.src = src; s.async = false;
+      s.onload = function () { resolve(); };
+      s.onerror = function () { reject(new Error("load failed: " + src)); };
+      document.body.appendChild(s);
+    });
+    _scripts[src] = p;
+    return p;
   }
 
   // ---- Helpers ----
@@ -179,34 +119,17 @@
       el.onclick = function (e) { if (e) e.stopPropagation(); (onJump || showTerm)(t); };
     });
   }
-  function go(delta) { state.pos = Math.max(0, Math.min(navCap(), state.pos + delta)); bumpReached(); save(); reportPos(); render(); window.scrollTo(0, 0); }
-  function goTo(pos) { state.pos = Math.max(0, Math.min(navCap(), pos)); bumpReached(); save(); reportPos(); render(); window.scrollTo(0, 0); }
+  function go(delta) { state.pos = Math.max(0, Math.min(MAX_POS, state.pos + delta)); save(); render(); window.scrollTo(0, 0); }
+  function goTo(pos) { state.pos = Math.max(0, Math.min(MAX_POS, pos)); save(); render(); window.scrollTo(0, 0); }
 
-  // "Continue" button for lecture/game. At the locked journey frontier it is
-  // disabled and shows that we're waiting for the host.
+  // "Continue" button for lecture/game (solo: always enabled — no host unlock).
   function nextBtnHtml(label) {
-    return atLockedFrontier()
-      ? '<button class="btn" id="nextBtn" disabled>' + esc(T.wait_unlock) + '</button>'
-      : '<button class="btn" id="nextBtn">' + label + "</button>";
+    return '<button class="btn" id="nextBtn">' + label + "</button>";
   }
   function wireNext() {
     var n = q("#nextBtn");
     if (n && !n.disabled) n.onclick = function () { go(1); };
   }
-  // After an unlock, release the locked "Continue" button – without remounting
-  // the page (and a possibly running mini-game). Only on lecture/game pages, so
-  // e.g. the quiz button stays untouched.
-  function refreshLockedNext() {
-    var step = flow[state.pos];
-    if (!step || (step.v !== "game" && step.v !== "lecture")) return;
-    var n = q("#nextBtn");
-    if (n && n.disabled && !atLockedFrontier()) {
-      n.disabled = false;
-      n.textContent = T.next;
-      n.onclick = function () { go(1); };
-    }
-  }
-
   // =========================================================================
   // RENDER
   // =========================================================================
@@ -310,13 +233,18 @@
 
 
   function renderQR(box, text) {
-    if (!box || typeof QRCode === "undefined") return;
-    box.innerHTML = "";
-    try {
-      new QRCode(box, { text: text, width: 168, height: 168, colorDark: "#0b1020", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
-    } catch (e) {
-      box.innerHTML = '<div class="small" style="color:#0b1020;padding:8px">' + esc(text) + "</div>";
+    if (!box) return;
+    function paint() {
+      if (typeof QRCode === "undefined") return; // lib still loading
+      box.innerHTML = "";
+      try {
+        new QRCode(box, { text: text, width: 168, height: 168, colorDark: "#0b1020", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) {
+        box.innerHTML = '<div class="small" style="color:#0b1020;padding:8px">' + esc(text) + "</div>";
+      }
     }
+    if (typeof QRCode !== "undefined") { paint(); return; }
+    loadScript("assets/qrcode.min.js?v=1").then(paint).catch(function () {});
   }
 
   // ---- LECTURE PAGE (explanation, no game) ----
@@ -575,8 +503,9 @@
       b.onclick = function () { input.value = s; update(); };
       q("#samples", root).appendChild(b);
     });
-    // Real GPT tokenizer (cl100k_base) if the vendored lib is loaded – else a
-    // coarse heuristic as a fallback. So count & split are "real".
+    // Real GPT tokenizer (cl100k_base), loaded lazily on first mount of this
+    // chapter (the lib is ~971 KB — never loaded eagerly). Until it arrives a
+    // coarse heuristic is used; once loaded we re-tokenize the current input.
     var TKZ = window.GPTTokenizer_cl100k_base || null;
     function tokenize(text) {
       if (TKZ && text) {
@@ -623,6 +552,13 @@
     input.addEventListener("input", update);
     input.value = gd.samples[0];
     update();
+    // Lazy-load the real tokenizer now (~971 KB); re-tokenize once it's ready.
+    if (!TKZ) {
+      loadScript("assets/gpt-tokenizer.cl100k.js?v=1").then(function () {
+        TKZ = window.GPTTokenizer_cl100k_base || null;
+        if (TKZ && document.body.contains(root)) update();
+      }).catch(function () {});
+    }
   }
 
   // --- 3) PIPELINE ---

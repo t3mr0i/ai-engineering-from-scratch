@@ -2246,6 +2246,14 @@
         window.AIFSProgress.recordVisit(lessonPath);
       }
 
+      if (lessonPath === 'llm-primer') {
+        document.getElementById('lessonContent').innerHTML = '<iframe src="/llm-primer/index.html" style="border:none;width:100%;height:100vh;display:block"></iframe>';
+        document.getElementById('lessonSidebar').style.display = 'none';
+        document.getElementById('tocSidebar').style.display = 'none';
+        document.querySelector('.lesson-sidebar-toggle').style.display = 'none';
+        return;
+      }
+
       var phaseMatch = lessonPath.match(/phases\/(\d+-[^/]+)/);
       var lessonMatch = lessonPath.match(/phases\/\d+-[^/]+\/(\d+-[^/]+)/);
       var currentPhaseSlug = phaseMatch ? phaseMatch[1] : null;

@@ -11,10 +11,24 @@
   box-sizing: border-box;
 }
 
+/* Fluid media baseline — raster images, video and canvas never overflow
+   their container. Mirrors the rule in style.css so LRN-shell pages
+   (index, course, badges) get the same protection as catalog-style pages.
+   Inline UI <svg> icons are excluded on purpose so fixed-size header/toolbar
+   icons stay pixel-stable. */
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 html,
 body {
   min-height: 100%;
   overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html {

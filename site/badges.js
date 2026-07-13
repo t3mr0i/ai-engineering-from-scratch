@@ -48,53 +48,10 @@
     platinum: { ring: '#368089', glow: 'rgba(54,128,137,0.50)',  label: 'Platin',  tone: 'teal' }
   };
 
-  // ── state helpers ──────────────────────────────────────────────────────
-  function eachLesson(state, fn) {
-    var ls = (state && state.lessons) || {};
-    for (var path in ls) { if (hasOwn(ls, path)) fn(path, ls[path]); }
-  }
-  function countCompleted(state) {
-    var n = 0; eachLesson(state, function (p, lp) { if (lp && lp.completedAt) n++; }); return n;
-  }
-  function countVisited(state) {
-    var n = 0; eachLesson(state, function (p, lp) {
-      if (lp && (lp.visitedAt || lp.completedAt)) n++;
-    }); return n;
-  }
-  function countAnswered(state) {
-    var n = 0; eachLesson(state, function (p, lp) {
-      if (lp && lp.answers) { for (var q in lp.answers) if (hasOwn(lp.answers, q)) n++; }
-    }); return n;
-  }
-  function countFullyRead(state) {
-    var n = 0; eachLesson(state, function (p, lp) {
-      if (!lp) return;
-      if (lp.completedAt || (lp.readPct || 0) >= READ_FULL) n++;
-    }); return n;
-  }
-  function distinctPhasesTouched(state) {
-    var set = {};
-    eachLesson(state, function (p, lp) {
-      if (lp && (lp.visitedAt || lp.completedAt)) { var s = phaseSlugFromPath(p); if (s) set[s] = 1; }
-    });
-    return Object.keys(set).length;
-  }
-  function countPerfectQuizzes(state) {
-    // A full lesson quiz has 6 questions (1 pre + 3 check + 2 post).
-    var n = 0;
-    eachLesson(state, function (p, lp) {
-      if (!lp || !lp.answers) return;
-      var keys = Object.keys(lp.answers);
-      if (keys.length < 6) return;
-      var ok = true;
-      for (var i = 0; i < keys.length; i++) {
-        var a = lp.answers[keys[i]];
-        if (!a || !a.correct) { ok = false; break; }
-      }
-      if (ok) n++;
-    });
-    return n;
-  }
+  // Per-lesson aggregates (completed / visited / answered / fullyRead /
+  // perfectQuizzes / distinctPhases / completionsByDay) are computed in a
+  // single pass by computeAggregates() below; badge checks then read those
+  // precomputed numbers instead of each re-walking state.lessons.
   function phaseLessonPaths(phase) {
     var out = [];
     if (!phase || !phase.lessons) return out;
@@ -129,142 +86,158 @@
     return n;
   }
 
-  // ── streak / daily helpers ─────────────────────────────────────────────
-  // Day keys are "YYYY-MM-DD". `ctx.now` (a ts) lets tests inject a fixed
-  // clock; otherwise we use Date.now(). Streak counters live on
-  // state.streak (see progress.js) and are rebuilt from the raw days[] list
-  // here so badge logic is pure / testable without localStorage.
-  function nowTs(ctx) { return (ctx && typeof ctx.now === 'number') ? ctx.now : Date.now(); }
-
-  function todayKey(ctx) {
-    var P = (typeof window !== 'undefined' && window.AIFSProgress) ? window.AIFSProgress : null;
-    if (P && typeof P.toDayKey === 'function') return P.toDayKey(nowTs(ctx));
-    var d = new Date(nowTs(ctx));
+  // ── date + streak helpers (pure, no window/localStorage) ──────────────
+  // Day keys are "YYYY-MM-DD". ctx.now (a ts) lets tests inject a fixed
+  // clock. Kept self-contained so badges.test.mjs (which loads only
+  // badges.js) exercises the real math, not a window delegation.
+  function toDayKey(ts) {
+    var d = new Date(ts);
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
-
   function dayDiff(a, b) {
-    var P = (typeof window !== 'undefined' && window.AIFSProgress) ? window.AIFSProgress : null;
-    if (P && typeof P.dayDiff === 'function') return P.dayDiff(a, b);
-    var da = new Date(a + 'T00:00:00'), db = new Date(b + 'T00:00:00');
-    return Math.round((db.getTime() - da.getTime()) / 86400000);
+    return Math.round((new Date(b + 'T00:00:00').getTime() - new Date(a + 'T00:00:00').getTime()) / 86400000);
   }
+  function nowTs(ctx) { return (ctx && typeof ctx.now === 'number') ? ctx.now : Date.now(); }
 
+  // streakInfo: derive { current, best, lastDay, activeToday } from the raw
+  // days[] list (the source of truth on state.streak). Recomputed here so
+  // badge logic stays pure even if progress.js' maintained counters drift.
   function streakInfo(state, ctx) {
     var st = (state && state.streak) || { days: [], current: 0, best: 0, lastDay: '' };
     var days = Array.isArray(st.days) ? st.days.slice().sort() : [];
     if (!days.length) return { current: 0, best: 0, lastDay: '', activeToday: false };
-    // current/best may already be maintained by progress.js; recompute from
-    // raw days so this stays correct even if the stored counters drift.
     var best = 1, cur = 1;
     for (var i = 1; i < days.length; i++) {
       cur = (dayDiff(days[i - 1], days[i]) === 1) ? cur + 1 : 1;
       if (cur > best) best = cur;
     }
-    var today = todayKey(ctx);
-    // active today OR yesterday -> streak still "current" for display
+    var today = toDayKey(nowTs(ctx));
     var last = days[days.length - 1];
-    var gapToNow = dayDiff(last, today);
-    var activeToday = (gapToNow === 0);
-    var current = (gapToNow <= 1) ? cur : 0; // gap 0/1 keeps streak; 2+ broken
-    return { current: current, best: best, lastDay: last, activeToday: activeToday };
+    var gap = dayDiff(last, today);
+    // gap 0 (today) or 1 (yesterday) keeps the streak "current"; 2+ broken.
+    return { current: gap <= 1 ? cur : 0, best: best, lastDay: last, activeToday: gap === 0 };
   }
 
-  // completions grouped by calendar day, counted from completedAt timestamps.
-  function completionsByDay(state) {
-    var map = {};
-    eachLesson(state, function (p, lp) {
-      if (!lp || !lp.completedAt) return;
-      var k = toDayKeyLocal(lp.completedAt);
-      map[k] = (map[k] || 0) + 1;
-    });
-    return map;
-  }
-  function toDayKeyLocal(ts) {
-    var d = new Date(ts);
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  }
-  function maxCompletionsInAnyDay(state) {
-    var map = completionsByDay(state);
-    var max = 0;
-    for (var k in map) if (hasOwn(map, k) && map[k] > max) max = map[k];
-    return max;
+  // ── computeAggregates: ONE pass over state.lessons ────────────────────
+  // Every badge check reads from this object, so evaluate() is O(lessons)
+  // instead of O(badges × lessons). Also the unit-testable seam for the
+  // counting logic (see badges.test.mjs).
+  function computeAggregates(state, ctx) {
+    state = state || {};
+    var ls = state.lessons || {};
+    ctx = ctx || {};
+    var phases = ctx.phases || [];
+    var a = {
+      completed: 0, visited: 0, answered: 0, fullyRead: 0,
+      perfectQuizzes: 0, distinctPhases: {}, completionsByDay: {},
+      catalogTotal: totalCatalogLessons(ctx),
+      phasesMastered: 0,
+      streak: streakInfo(state, ctx)
+    };
+    for (var path in ls) {
+      if (!hasOwn(ls, path)) continue;
+      var lp = ls[path]; if (!lp) continue;
+      var active = !!(lp.visitedAt || lp.completedAt);
+      if (active) a.visited++;
+      if (lp.completedAt) {
+        a.completed++;
+        var dk = toDayKey(lp.completedAt);
+        a.completionsByDay[dk] = (a.completionsByDay[dk] || 0) + 1;
+      }
+      if (lp.completedAt || (lp.readPct || 0) >= READ_FULL) a.fullyRead++;
+      if (lp.answers) {
+        var keys = Object.keys(lp.answers);
+        for (var q = 0; q < keys.length; q++) if (hasOwn(lp.answers, keys[q])) a.answered++;
+        // a full lesson quiz is 6 questions (1 pre + 3 check + 2 post)
+        if (keys.length >= 6) {
+          var ok = true;
+          for (var i = 0; i < keys.length; i++) {
+            var an = lp.answers[keys[i]];
+            if (!an || !an.correct) { ok = false; break; }
+          }
+          if (ok) a.perfectQuizzes++;
+        }
+      }
+      if (active) { var ps = phaseSlugFromPath(path); if (ps) a.distinctPhases[ps] = 1; }
+    }
+    a.distinctPhasesCount = Object.keys(a.distinctPhases).length;
+    a.maxPerDay = 0;
+    for (var d in a.completionsByDay) if (hasOwn(a.completionsByDay, d) && a.completionsByDay[d] > a.maxPerDay) a.maxPerDay = a.completionsByDay[d];
+    a.phasesMastered = phasesMasteredCount(state, ctx);
+    return a;
   }
 
   // ── badge catalog ──────────────────────────────────────────────────────
-  // Each check returns { earned:boolean, cur:number, total:number } so the
-  // locked state can show progress toward the goal.
+  // Each check receives the precomputed aggregate object (a) from
+  // computeAggregates() and returns { earned, cur, total } so the locked
+  // state can show progress toward the goal. Checks are O(1) reads.
   var CATALOG = [
     { id: 'first-steps', title: 'Erste Schritte', tier: 'bronze', icon: 'ph-footprints',
       desc: 'Besuche deine erste Lektion.',
-      check: function (s) { var n = countVisited(s); return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
+      check: function (a) { var n = a.visited; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
     { id: 'first-quiz', title: 'Quiz-Anfänger', tier: 'bronze', icon: 'ph-question',
       desc: 'Beantworte deine erste Quiz-Frage.',
-      check: function (s) { var n = countAnswered(s); return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
+      check: function (a) { var n = a.answered; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
     { id: 'first-complete', title: 'Erste Lektion gemeistert', tier: 'bronze', icon: 'ph-check-circle',
       desc: 'Schließe deine erste Lektion ab.',
-      check: function (s) { var n = countCompleted(s); return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
+      check: function (a) { var n = a.completed; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
     { id: 'explorer', title: 'Entdecker', tier: 'bronze', icon: 'ph-compass',
       desc: 'Besuche 10 verschiedene Lektionen.',
-      check: function (s) { var n = countVisited(s); return { earned: n >= 10, cur: Math.min(n, 10), total: 10 }; } },
+      check: function (a) { var n = a.visited; return { earned: n >= 10, cur: Math.min(n, 10), total: 10 }; } },
     { id: 'bookworm', title: 'Leseratte', tier: 'bronze', icon: 'ph-book-open',
       desc: 'Lese 5 Lektionen vollständig durch (≥90% Scrolltiefe).',
-      check: function (s) { var n = countFullyRead(s); return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
+      check: function (a) { var n = a.fullyRead; return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
     { id: 'perfect-quiz', title: 'Perfektes Quiz', tier: 'silver', icon: 'ph-check-fat',
       desc: 'Beantworte in einer Lektion alle 6 Quiz-Fragen richtig.',
-      check: function (s) { var n = countPerfectQuizzes(s); return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
+      check: function (a) { var n = a.perfectQuizzes; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
     { id: 'consistent', title: 'Konsequent', tier: 'silver', icon: 'ph-target',
       desc: 'Schließe 5 Lektionen ab.',
-      check: function (s) { var n = countCompleted(s); return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
+      check: function (a) { var n = a.completed; return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
     { id: 'ten-milestone', title: 'Zehn-Meilenstein', tier: 'silver', icon: 'ph-flag',
       desc: 'Schließe 10 Lektionen ab.',
-      check: function (s) { var n = countCompleted(s); return { earned: n >= 10, cur: Math.min(n, 10), total: 10 }; } },
+      check: function (a) { var n = a.completed; return { earned: n >= 10, cur: Math.min(n, 10), total: 10 }; } },
     { id: 'polymath', title: 'Vielseitig', tier: 'silver', icon: 'ph-tree-structure',
       desc: 'Berühre Lektionen in 5 verschiedenen Phasen.',
-      check: function (s) { var n = distinctPhasesTouched(s); return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
+      check: function (a) { var n = a.distinctPhasesCount; return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
     { id: 'fifty-lessons', title: 'Fünfziger-Club', tier: 'gold', icon: 'ph-star',
       desc: 'Schließe 50 Lektionen ab.',
-      check: function (s) { var n = countCompleted(s); return { earned: n >= 50, cur: Math.min(n, 50), total: 50 }; } },
+      check: function (a) { var n = a.completed; return { earned: n >= 50, cur: Math.min(n, 50), total: 50 }; } },
     { id: 'halfway', title: 'Halbzeit', tier: 'gold', icon: 'ph-percent',
       desc: 'Schließe die Hälfte des gesamten Curriculums ab.',
-      check: function (s, c) {
-        var tot = totalCatalogLessons(c);
-        var half = Math.ceil(tot / 2);
-        var n = countCompleted(s);
-        return { earned: tot > 0 && n >= half, cur: Math.min(n, half || 1), total: half || 1 };
+      check: function (a) {
+        var half = Math.ceil(a.catalogTotal / 2);
+        return { earned: a.catalogTotal > 0 && a.completed >= half, cur: Math.min(a.completed, half || 1), total: half || 1 };
       } },
     { id: 'phase-master', title: 'Phasen-Meister', tier: 'gold', icon: 'ph-crown',
       desc: 'Schließe alle Lektionen einer Phase ab.',
-      check: function (s, c) { var n = phasesMasteredCount(s, c); return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
+      check: function (a) { var n = a.phasesMastered; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
     { id: 'hundred-club', title: 'Hunderter-Club', tier: 'gold', icon: 'ph-trophy',
       desc: 'Schließe 100 Lektionen ab.',
-      check: function (s) { var n = countCompleted(s); return { earned: n >= 100, cur: Math.min(n, 100), total: 100 }; } },
+      check: function (a) { var n = a.completed; return { earned: n >= 100, cur: Math.min(n, 100), total: 100 }; } },
     { id: 'curriculum-master', title: 'Curriculum-Meister', tier: 'platinum', icon: 'ph-medal',
       desc: 'Schließe alle Lektionen des gesamten Curriculums ab.',
-      check: function (s, c) {
-        var tot = totalCatalogLessons(c);
-        var n = countCompleted(s);
-        return { earned: tot > 0 && n >= tot, cur: Math.min(n, tot || 1), total: tot || 1 };
+      check: function (a) {
+        var tot = a.catalogTotal;
+        return { earned: tot > 0 && a.completed >= tot, cur: Math.min(a.completed, tot || 1), total: tot || 1 };
       } },
-    // ── Streak / daily badges (require the state.streak day list) ──────────
+    // ── Streak / daily badges (read a.streak / a.maxPerDay) ──────────────
     { id: 'daily-sprint', title: 'Tagesziel', tier: 'bronze', icon: 'ph-battery-high',
       desc: 'Schließe an einem einzigen Tag 3 Lektionen ab.',
-      check: function (s) { var n = maxCompletionsInAnyDay(s); return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
+      check: function (a) { var n = a.maxPerDay; return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
     { id: 'warmed-up', title: 'Aufwärmer', tier: 'silver', icon: 'ph-fire',
       desc: 'Lerne an 3 Tagen in Folge.',
-      check: function (s, c) { var n = streakInfo(s, c).best; return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
+      check: function (a) { var n = a.streak.best; return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
     { id: 'steady-spirit', title: 'Durchhalte-Geist', tier: 'gold', icon: 'ph-flame',
       desc: 'Erreiche eine 7-Tage-Lernstreak.',
-      check: function (s, c) { var n = streakInfo(s, c).best; return { earned: n >= 7, cur: Math.min(n, 7), total: 7 }; } },
+      check: function (a) { var n = a.streak.best; return { earned: n >= 7, cur: Math.min(n, 7), total: 7 }; } },
     { id: 'discipline', title: 'Disziplin', tier: 'gold', icon: 'ph-calendar-check',
       desc: 'Erreiche eine 30-Tage-Lernstreak.',
-      check: function (s, c) { var n = streakInfo(s, c).best; return { earned: n >= 30, cur: Math.min(n, 30), total: 30 }; } },
+      check: function (a) { var n = a.streak.best; return { earned: n >= 30, cur: Math.min(n, 30), total: 30 }; } },
     { id: 'iron-routine', title: 'Eiserne Routine', tier: 'platinum', icon: 'ph-thermometer-simple',
       desc: 'Sei heute aktiv und halte dabei eine Best-Streak von mindestens 14 Tagen.',
-      check: function (s, c) {
-        var st = streakInfo(s, c);
-        var ok = !!st.activeToday && st.best >= 14;
-        return { earned: ok, cur: st.best, total: 14 };
+      check: function (a) {
+        var st = a.streak;
+        return { earned: !!st.activeToday && st.best >= 14, cur: Math.min(st.best, 14), total: 14 };
       } }
   ];
 
@@ -274,23 +247,23 @@
   }
 
   // ── evaluate ───────────────────────────────────────────────────────────
+  // One aggregate pass over the lessons, then each badge check is an O(1)
+  // read over that aggregate. Returns the aggregates too so consumers
+  // (summary, tests) don't have to recompute.
   function evaluate(state, ctx) {
-    state = state || { lessons: {}, streak: { days: [], current: 0, best: 0, lastDay: '' } };
-    if (!state.streak) state.streak = { days: [], current: 0, best: 0, lastDay: '' };
-    ctx = ctx || {};
-    var phases = ctx.phases || [];
+    var agg = computeAggregates(state, ctx);
     var details = {};
     var earned = [];
     for (var i = 0; i < CATALOG.length; i++) {
       var b = CATALOG[i];
-      var r = b.check(state, { phases: phases, now: ctx.now }) || { earned: false, cur: 0, total: 1 };
+      var r = b.check(agg) || { earned: false, cur: 0, total: 1 };
       if (typeof r.earned !== 'boolean') r.earned = !!r.earned;
       if (typeof r.cur !== 'number') r.cur = Number(r.cur) || 0;
       if (typeof r.total !== 'number' || !r.total) r.total = 1;
       details[b.id] = r;
       if (r.earned) earned.push(b.id);
     }
-    return { earned: earned, details: details };
+    return { earned: earned, details: details, aggregates: agg };
   }
 
   // ── rendering (returns HTML strings; no DOM mutation here) ─────────────
@@ -339,7 +312,7 @@
     return '<div class="aifs-badges-grid">' + html + '</div>';
   }
 
-  function renderStreakHTML(streak, ctx) {
+  function renderStreakHTML(streak) {
     var st = streak || { current: 0, best: 0, activeToday: false };
     var flame = st.current > 0 ? ' aifs-streak--active' : '';
     var today = st.activeToday ? 'heute aktiv' : 'heute noch nicht aktiv';
@@ -397,13 +370,14 @@
 
   function renderMountTargets(res) {
     if (typeof document === 'undefined') return;
-    var ctx = currentCtx();
     var grid = document.querySelector('[data-aifs-badges-grid]');
     if (grid) grid.innerHTML = renderGridHTML(res);
     var sum = document.querySelector('[data-aifs-badges-summary]');
     if (sum) {
       var completed = window.AIFSProgress ? window.AIFSProgress.totalCompleted() : 0;
-      var st = streakInfo(readProgressState(), ctx);
+      // reuse the streak evaluate() already computed; fall back to a fresh
+      // compute only if a caller passed a res without aggregates.
+      var st = (res && res.aggregates && res.aggregates.streak) || streakInfo(readProgressState(), currentCtx());
       sum.innerHTML = renderSummaryHTML(res, { completed: completed, streak: st });
     }
   }
@@ -494,6 +468,7 @@
     TIERS: TIERS,
     extractPath: extractPath,
     evaluate: evaluate,
+    computeAggregates: computeAggregates,
     byId: byId,
     streakInfo: streakInfo,
     renderBadgeHTML: renderBadgeHTML,
