@@ -1138,6 +1138,12 @@
   // =========================================================================
   var aiState = { status: "idle", progress: 0, engine: null, tf: null, err: null, observer: null };
   var AI_MODEL = "LiquidAI/LFM2.5-350M-ONNX";
+  // The live on-device model loads from esm.sh + huggingface.co — both
+  // unreachable on the corporate network this site is mostly used from.
+  // Rather than show a load attempt that's doomed to fail there, skip
+  // straight to the static example. Flip back to true once the model is
+  // self-hosted (or the CDNs are allowlisted) so this isn't network-dependent.
+  var AI_LIVE_ENABLED = false;
   function notifyAi() { if (typeof aiState.observer === "function") aiState.observer(); }
 
   // ---- One-time on-device AI consent dialog ("at the start" of the lectures).
@@ -1162,6 +1168,7 @@
     q("#aicNo", aiConsentEl).onclick = function () { state.aiOptIn = false; save(); closeConsent(); };
   }
   function maybeAiConsent() {
+    if (!AI_LIVE_ENABLED) return;
     if (state.aiOptIn === undefined && !aiConsentEl) showAiConsent();
   }
 
@@ -1172,6 +1179,7 @@
   // (renderCover never calls this). LFM2.5-350M is small and doesn't crash → no
   // reload loop.
   function maybeStartAiLoad(ch) {
+    if (!AI_LIVE_ENABLED) return;
     if (state.aiOptIn !== true) return;  // strictly opt-in: no download without consent
     if (aiState.status !== "idle") return;
     var chs = D.chapters, od = -1, ci = -1, i;
@@ -1231,6 +1239,7 @@
         '</div>';
     }
     function staticOnly() { root.innerHTML = '<p class="hint">' + esc(T.mag_static_intro) + "</p>" + staticExample(); onComplete(); }
+    if (!AI_LIVE_ENABLED) return staticOnly();
     function renderMagician() {
       root.innerHTML =
         '<p class="hint">' + T.mag_hint + "</p>" +
