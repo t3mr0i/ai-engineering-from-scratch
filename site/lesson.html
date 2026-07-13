@@ -335,6 +335,14 @@
       min-width: 0;
     }
 
+    /* Embedded tools (e.g. the LLM primer) that need the full reading column
+       instead of the fixed 720px prose width — no TOC to reserve space for
+       either, so drop the right-hand gutter too. Compound selector so this
+       wins over the width-breakpoint .lesson-main paddings further below,
+       regardless of source order. */
+    .lesson-main.lesson-main--full { padding-right: 32px; }
+    .lesson-main--full .lesson-content { max-width: none; }
+
     .lesson-article {
       max-width: 100%;
       overflow-wrap: break-word;
@@ -2313,8 +2321,28 @@
             '<span class="sidebar-lesson-link active"><span class="sidebar-lesson-dot complete"></span>LLM Interactive Primer</span>' +
             '<div class="sidebar-phase-nav"><a href="catalog.html">&larr; Back to catalog</a></div>';
         }
-        document.getElementById('lessonContent').innerHTML =
-          '<iframe src="/llm-primer/index.html" style="border:none;width:100%;height:min(780px, calc(100vh - 180px));display:block"></iframe>';
+        document.querySelector('.lesson-main').classList.add('lesson-main--full');
+        var primerFrame = document.createElement('iframe');
+        primerFrame.src = '/llm-primer/index.html';
+        primerFrame.style.cssText = 'border:none;width:100%;display:block;min-height:420px;';
+        var contentEl = document.getElementById('lessonContent');
+        contentEl.innerHTML = '';
+        contentEl.appendChild(primerFrame);
+        // Same-origin iframe with no scrolling of its own — size it to match
+        // its actual content height so the page (not the widget) scrolls,
+        // and re-measure whenever that content changes (chapter navigation
+        // swaps the whole screen, so height changes on every step).
+        primerFrame.addEventListener('load', function () {
+          try {
+            var doc = primerFrame.contentDocument;
+            function resizeToContent() {
+              var h = doc.documentElement.scrollHeight;
+              if (h > 0) primerFrame.style.height = h + 'px';
+            }
+            resizeToContent();
+            new ResizeObserver(resizeToContent).observe(doc.documentElement);
+          } catch (e) { /* cross-origin or unavailable — keep min-height fallback */ }
+        });
         return;
       }
 

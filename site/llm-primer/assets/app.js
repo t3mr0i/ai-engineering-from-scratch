@@ -211,10 +211,6 @@
           '<span class="badge"><i class="ph-light ph-game-controller" aria-hidden="true"></i> ' + fmt(T.cover_minigames, { n: D.chapters.length }) + "</span>" +
           '<span class="badge"><i class="ph-light ph-books" aria-hidden="true"></i> ' + fmt(T.cover_terms, { n: D.glossary.length }) + "</span>" +
         "</div>" +
-        '<div class="qrwrap">' +
-          '<div class="qrbox" id="qrbox"></div>' +
-          '<div class="muted small center">' + esc(T.cover_scan) + "</div>" +
-        "</div>" +
         '<p class="muted small center">' + esc(T.cover_intro) + "</p>" +
         '<p class="muted small center primer-credit">' + credit + "</p>" +
         langPicker() +
@@ -223,28 +219,11 @@
     wireCommon();
     wireLangPicker();
     var sb = q("#startBtn"); if (sb) sb.onclick = function () { go(1); };
-    renderQR(q("#qrbox"), window.APP_URL);
   }
 
   // Solo-only cover action: just the start button (no journey/admin backend).
   function coverCta() {
     return '<button class="btn" id="startBtn">' + esc(T.cta_start) + "</button>";
-  }
-
-
-  function renderQR(box, text) {
-    if (!box) return;
-    function paint() {
-      if (typeof QRCode === "undefined") return; // lib still loading
-      box.innerHTML = "";
-      try {
-        new QRCode(box, { text: text, width: 168, height: 168, colorDark: "#0b1020", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
-      } catch (e) {
-        box.innerHTML = '<div class="small" style="color:#0b1020;padding:8px">' + esc(text) + "</div>";
-      }
-    }
-    if (typeof QRCode !== "undefined") { paint(); return; }
-    loadScript("assets/qrcode.min.js?v=1").then(paint).catch(function () {});
   }
 
   // ---- LECTURE PAGE (explanation, no game) ----

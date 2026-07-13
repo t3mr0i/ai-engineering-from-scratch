@@ -34,7 +34,7 @@
   /* Static bootstrap (replaces the Vercel server-rendered shell).
      Reads the `lang` cookie (en/de, default en), fetches the matching
      content + UI JSON packs, sets the window globals app.js expects, and
-     only then loads the vendored libs + app.js in order. Solo-only:
+     only then loads app.js (the vendored libs load lazily, on demand). Solo-only:
      APP_SYNC is always null (no journey backend on the gated static site). */
   (function () {
     "use strict";
