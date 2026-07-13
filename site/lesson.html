@@ -174,9 +174,10 @@
     .lrn-sidebar-back {
       display: inline-flex;
       align-items: center;
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--ink-soft);
       text-decoration: none;
@@ -340,7 +341,7 @@
        either, so drop the right-hand gutter too. Compound selector so this
        wins over the width-breakpoint .lesson-main paddings further below,
        regardless of source order. */
-    .lesson-main.lesson-main--full { padding-right: 32px; }
+    .lesson-main.lesson-main--full { padding-right: 32px; padding-top: 12px; }
     .lesson-main--full .lesson-content { max-width: none; }
 
     /* A course with exactly one lesson has nothing to navigate between —

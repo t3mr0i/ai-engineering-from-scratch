@@ -3,7 +3,7 @@
    Ported from the standalone "llm-tutorial" (MIT, nachtgold) into the LHIND AI
    Learning Catalog as a solo-only interactive primer under site/llm-primer/.
    Journey/admin multiplayer mode is disabled (no backend on the gated static
-   site); the 16 mini-games, glossary, quiz and reflection run fully client-side.
+   site); the 20 mini-games, glossary, quiz and reflection run fully client-side.
    =========================================================================== */
 (function () {
   "use strict";
@@ -753,6 +753,12 @@
   // Deliberately no right/wrong: tap, reveal the assessment, read on.
   // So the chapter doesn't feel like a quiz brought forward.
   function gameClassify(root, gd, onComplete) {
+    // Badge text defaults to the trust/caution wording (chapter 13's original
+    // use); a chapter can supply its own two-way labels via gd.trueLabel /
+    // gd.falseLabel when the reveal isn't literally about trust (e.g.
+    // "needs fine-tuning" vs. "prompting is enough").
+    var trueLabel = gd.trueLabel || T.classify_check;
+    var falseLabel = gd.falseLabel || T.classify_trust;
     root.innerHTML =
       '<p class="hint">' + esc(T.classify_hint) + "</p>" +
       '<div class="reveal-list" id="rl"></div>';
@@ -766,7 +772,7 @@
         '<div class="rv-hint muted small">' + esc(T.classify_tap) + "</div>" +
         '<div class="rv-body">' +
           '<span class="rv-badge ' + (item.risk ? "warn" : "ok") + '">' +
-            (item.risk ? esc(T.classify_check) : esc(T.classify_trust)) + "</span>" +
+            esc(item.risk ? trueLabel : falseLabel) + "</span>" +
           '<span class="rv-why">' + esc(item.why) + "</span>" +
         "</div>";
       card.onclick = function () {

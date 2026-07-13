@@ -1,9 +1,11 @@
 # LLM Interactive Primer
 
-An interactive, ~60-minute primer on large language models — 16 mini-games,
+An interactive, ~75-minute primer on large language models — 20 mini-games,
 a real GPT tokenizer, an embeddings/meaning map, an attention heatmap, a RAG
-walkthrough, a token-cost calculator, a 58-term glossary, an 18-question quiz
-with a personal reflection profile, and an optional on-device language model.
+walkthrough, a tool-calling matcher, a fine-tuning-vs-prompting and a
+model-size call, a hallucination-spotting round, a token-cost calculator,
+a 58-term glossary, an 18-question quiz with a personal reflection profile,
+and an optional on-device language model.
 
 It lives at **`/llm-primer/`** on the gated site and is linked from the LRN
 cockpit home page and the lesson catalog.
@@ -18,7 +20,7 @@ optional multiplayer "journey mode" (Vercel Blob + Edge Config + bcryptjs admin
 console) and a temperature easter egg. Neither the journey/admin backend nor
 the easter egg are needed here, so the primer runs **solo-only** on the gated
 static site: progress is stored per-device in `localStorage`, exactly like the
-upstream app without a database. All 16 mini-games, the glossary, the quiz and
+upstream app without a database. All 20 mini-games, the glossary, the quiz and
 the reflection run fully client-side. The cover links back to the original
 repository and credits the author.
 

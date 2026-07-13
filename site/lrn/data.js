@@ -142,7 +142,7 @@ window.LrnData = {
       interests: ["foundation"],
       levels: ["Acquire"],
       format: "Interactive mini-games, real GPT tokenizer, glossary, quiz",
-      summary: "~60-minute hands-on primer on how large language models work: tokens, context, prompting, RAG, and limits, through 16 mini-games and a quiz.",
+      summary: "~75-minute hands-on primer on how large language models work: tokens, context, prompting, tool use, RAG, and limits, through 20 mini-games and a quiz.",
       modules: ["Interactive LLM Primer"]
     },
     {

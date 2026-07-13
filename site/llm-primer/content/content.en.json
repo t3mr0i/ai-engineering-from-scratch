@@ -1,8 +1,8 @@
 {
     "meta": {
         "title": "Understanding LLMs",
-        "subtitle": "In 60 minutes you will learn the most important terms around large language models. With small mini-games and real visualizations.",
-        "duration": "approx. 60 minutes"
+        "subtitle": "In 75 minutes you will learn the most important terms around large language models. With small mini-games and real visualizations.",
+        "duration": "approx. 75 minutes"
     },
     "glossary": [
         {
@@ -1339,6 +1339,139 @@
                 }
             },
             "takeaway": "Modern devices can run small models themselves, offline and without a server. They are good at reshaping text and weak at facts."
+        },
+        {
+            "id": "hallucination",
+            "cat": "risiken",
+            "title": "Spotting Hallucinations",
+            "lecture": "<p>An LLM optimizes for <b data-g=\"wahrscheinlichkeit\">plausibility</b>, not truth. That's why it can produce <b data-g=\"halluzination\">hallucinations</b>: answers that sound confident and fluent but are simply made up.</p><p>The tricky part: tone gives nothing away. A hallucination reads just as convincingly as a correct answer. Only the content itself gives it away — usually through a missing source, suspiciously precise details, or knowledge past the <b data-g=\"knowledge-cutoff\">training cutoff</b>.</p><p class=\"lecture-next\">Go through a few AI answers in the mini-game and decide: solid statement, or a suspect claim?</p>",
+            "game": "classify",
+            "gameData": {
+                "items": [
+                    {
+                        "text": "“The capital of Australia is Canberra.”",
+                        "risk": false,
+                        "why": "Stable, widely-trained factual knowledge. Easy to verify online and uncontested."
+                    },
+                    {
+                        "text": "“Study XY (2024) shows that 73% of all users prefer feature Z.”",
+                        "risk": true,
+                        "why": "A very precise number plus a specific study — a classic pattern for a fabricated source. Verify it."
+                    },
+                    {
+                        "text": "“In Python, a code block line isn't terminated with a semicolon.”",
+                        "risk": false,
+                        "why": "Stable, frequently repeated technical facts are reliable."
+                    },
+                    {
+                        "text": "“Per §14(3) of the internal policy, this requires approval.”",
+                        "risk": true,
+                        "why": "Made-up clause numbers and internal documents aren't something the model actually knows — classic hallucination."
+                    },
+                    {
+                        "text": "“Our client's current CEO has been XY since last month.”",
+                        "risk": true,
+                        "why": "Current, changing facts often fall after the training cutoff — high hallucination risk."
+                    }
+                ]
+            },
+            "takeaway": "The more precise and current a number or source sounds, the more worth double-checking it — especially for studies, legal clauses, and recent events."
+        },
+        {
+            "id": "toolcalling",
+            "cat": "erweiterungen",
+            "title": "Function Calling: Using Tools",
+            "lecture": "<p>An LLM can't look anything up or calculate on its own — it only knows what was in its <b data-g=\"training\">training</b>. <b data-g=\"tool-use\">Tool use</b> changes that: the model recognizes when a task needs an external tool and calls it in a controlled way.</p><p>The tool's answer flows back into the <b data-g=\"kontextfenster\">context</b>, and the model turns that into its actual answer. An <b data-g=\"agent\">agent</b> does exactly that repeatedly until a task is done; <b data-g=\"mcp\">MCP</b> is the open standard many tools connect through in a uniform way.</p><p class=\"lecture-next\">Match each request to the right tool in the mini-game.</p>",
+            "game": "match",
+            "gameData": {
+                "pairs": [
+                    {
+                        "left": "Calculator",
+                        "right": "“What is 47 times 823?”"
+                    },
+                    {
+                        "left": "Web search",
+                        "right": "“What's today's news about company X?”"
+                    },
+                    {
+                        "left": "Calendar API",
+                        "right": "“Add the meeting tomorrow at 2pm.”"
+                    },
+                    {
+                        "left": "Database query",
+                        "right": "“How many open tickets does client Y currently have?”"
+                    }
+                ]
+            },
+            "takeaway": "The model decides WHEN a tool is needed — the actual execution always happens outside it, in your own controlled environment."
+        },
+        {
+            "id": "finetuning",
+            "cat": "erweiterungen",
+            "title": "Fine-Tuning, or Is Prompting Enough?",
+            "lecture": "<p><b data-g=\"fine-tuning\">Fine-tuning</b> further trains a model's parameters on your own examples. That's expensive, slow, and needs upkeep — worth it only once a better prompt genuinely can't solve the problem.</p><p>Rule of thumb: if the model is missing knowledge or context, <b data-g=\"rag\">RAG</b> or simply a clearer prompt usually helps — both faster and cheaper. Fine-tuning pays off mainly for a very specific style, format, or tone that prompting alone can't make reliable enough.</p><p class=\"lecture-next\">Go through typical situations in the mini-game: does a better prompt suffice, or does it need fine-tuning?</p>",
+            "game": "classify",
+            "gameData": {
+                "trueLabel": "Fine-Tuning",
+                "falseLabel": "Prompting is enough",
+                "items": [
+                    {
+                        "text": "“The model should always answer in our very distinctive brand voice — consistently, across thousands of requests a day.”",
+                        "risk": true,
+                        "why": "A very specific, stable style at high volume is a classic fine-tuning case."
+                    },
+                    {
+                        "text": "“The model should factor in current product data from our database when answering.”",
+                        "risk": false,
+                        "why": "That's a knowledge problem, not a style problem — RAG or a better prompt with context is enough."
+                    },
+                    {
+                        "text": "“Answers should be shorter and formatted as bullet points.”",
+                        "risk": false,
+                        "why": "A clear format instruction in the prompt almost always solves this — no fine-tuning needed."
+                    },
+                    {
+                        "text": "“The model should generate legal documents in a highly specialized, company-specific format with exact, recurring clauses.”",
+                        "risk": true,
+                        "why": "A highly specialized, recurring format with tight constraints is again a good fine-tuning candidate."
+                    }
+                ]
+            },
+            "takeaway": "Check the cheaper lever first: a better prompt, then RAG. Only reach for fine-tuning once style or format simply won't stay reliable otherwise."
+        },
+        {
+            "id": "modelsize",
+            "cat": "grundlagen",
+            "title": "Small or Large? Comparing Model Sizes",
+            "lecture": "<p>Not every task needs the biggest available model. Large models are more versatile and stronger at complex <b data-g=\"reasoning\">reasoning</b>, but cost more, are slower, and need more resources (see <b data-g=\"quantisierung\">quantization</b> and on-device from the last chapter).</p><p>Small models are fast, cheap, and can even run locally — but often aren't enough for layered, multi-step tasks. The trick is picking the smallest model that still works reliably for a given task.</p><p class=\"lecture-next\">Go through typical tasks in the mini-game: does this call for a small or a large model?</p>",
+            "game": "classify",
+            "gameData": {
+                "trueLabel": "Large model",
+                "falseLabel": "Small model",
+                "items": [
+                    {
+                        "text": "“Classify incoming emails into 5 fixed categories.”",
+                        "risk": false,
+                        "why": "A clearly bounded, simple classification task — a small, fast model is usually plenty."
+                    },
+                    {
+                        "text": "“Draft a multi-step strategy weighing trade-offs for a complex business decision.”",
+                        "risk": true,
+                        "why": "Complex, multi-step reasoning benefits strongly from a larger, more capable model."
+                    },
+                    {
+                        "text": "“Summarize a short internal note in two sentences.”",
+                        "risk": false,
+                        "why": "A simple, short summary — a small model is usually enough here too."
+                    },
+                    {
+                        "text": "“Debug complex, nested code spanning multiple files.”",
+                        "risk": true,
+                        "why": "Demanding technical reasoning across a lot of context typically needs a large model."
+                    }
+                ]
+            },
+            "takeaway": "Size isn't a goal in itself: look at the task first, then pick the smallest model that solves it reliably — that saves cost and time."
         }
     ],
     "quiz": [

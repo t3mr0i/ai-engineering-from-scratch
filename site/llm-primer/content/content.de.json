@@ -1,8 +1,8 @@
 {
     "meta": {
         "title": "LLM verstehen",
-        "subtitle": "In 60 Minuten lernst du die wichtigsten Begriffe rund um große Sprachmodelle. Mit kleinen Minispielen und echten Visualisierungen.",
-        "duration": "ca. 60 Minuten"
+        "subtitle": "In 75 Minuten lernst du die wichtigsten Begriffe rund um große Sprachmodelle. Mit kleinen Minispielen und echten Visualisierungen.",
+        "duration": "ca. 75 Minuten"
     },
     "glossary": [
         {
@@ -1343,6 +1343,139 @@
                 }
             },
             "takeaway": "Moderne Geräte können kleine Modelle selbst ausführen, offline und ohne Server. Sie können Text gut umformen, am besten auf Englisch. Bei Fakten sind sie schwach."
+        },
+        {
+            "id": "hallucination",
+            "cat": "risiken",
+            "title": "Halluzinationen erkennen",
+            "lecture": "<p>Ein LLM optimiert auf <b data-g=\"wahrscheinlichkeit\">Wahrscheinlichkeit</b>, nicht auf Wahrheit. Deshalb kann es <b data-g=\"halluzination\">Halluzinationen</b> produzieren: Antworten, die selbstbewusst und flüssig klingen, aber schlicht erfunden sind.</p><p>Das Tückische: Der Ton verrät nichts. Eine Halluzination liest sich genauso überzeugend wie eine korrekte Antwort. Nur der Inhalt selbst verrät es &mdash; meist durch eine fehlende Quelle, zu genaue Details oder Wissen nach dem <b data-g=\"knowledge-cutoff\">Trainingsstichtag</b>.</p><p class=\"lecture-next\">Geh im Mini-Spiel ein paar KI-Antworten durch und entscheide: robuste Aussage oder Verdachtsfall?</p>",
+            "game": "classify",
+            "gameData": {
+                "items": [
+                    {
+                        "text": "„Die Hauptstadt von Australien ist Canberra.“",
+                        "risk": false,
+                        "why": "Stabiles, oft trainiertes Faktenwissen. Leicht online nachprüfbar und unstrittig."
+                    },
+                    {
+                        "text": "„Studie XY (2024) zeigt, dass 73% aller Nutzer Feature Z bevorzugen.“",
+                        "risk": true,
+                        "why": "Sehr genaue Zahl plus konkrete Studie — klassisches Muster erfundener Belege. Quelle prüfen."
+                    },
+                    {
+                        "text": "„In Python schließt man eine Codeblock-Zeile nicht mit Semikolon ab.“",
+                        "risk": false,
+                        "why": "Stabile, oft wiederholte technische Fakten sind zuverlässig."
+                    },
+                    {
+                        "text": "„Laut §14 Abs. 3 des internen Reglements ist das genehmigungspflichtig.“",
+                        "risk": true,
+                        "why": "Erfundene Paragrafen und interne Dokumente kennt das Modell nicht — klassische Halluzination."
+                    },
+                    {
+                        "text": "„Der aktuelle CEO unseres Kunden ist seit letztem Monat XY.“",
+                        "risk": true,
+                        "why": "Aktuelle, sich ändernde Fakten liegen oft nach dem Trainingsstichtag — hohe Hallucination-Gefahr."
+                    }
+                ]
+            },
+            "takeaway": "Je genauer und aktueller eine Zahl oder Quelle klingt, desto mehr lohnt sich die Nachprüfung — gerade bei Studien, Paragrafen und aktuellen Ereignissen."
+        },
+        {
+            "id": "toolcalling",
+            "cat": "erweiterungen",
+            "title": "Function Calling: Werkzeuge nutzen",
+            "lecture": "<p>Ein LLM kann selbst nichts nachschlagen oder berechnen — es kennt nur, was im <b data-g=\"training\">Training</b> stand. <b data-g=\"tool-use\">Tool Use</b> ändert das: Das Modell erkennt, wann eine Aufgabe ein externes Werkzeug braucht, und ruft es kontrolliert auf.</p><p>Die Antwort des Tools fließt zurück in den <b data-g=\"kontextfenster\">Kontext</b>, und das Modell formuliert daraus die eigentliche Antwort. Ein <b data-g=\"agent\">Agent</b> macht genau das wiederholt, bis eine Aufgabe erledigt ist; <b data-g=\"mcp\">MCP</b> ist der offene Standard, über den viele Tools einheitlich angebunden werden.</p><p class=\"lecture-next\">Ordne im Mini-Spiel jede Anfrage dem richtigen Werkzeug zu.</p>",
+            "game": "match",
+            "gameData": {
+                "pairs": [
+                    {
+                        "left": "Taschenrechner",
+                        "right": "„Was ist 47 mal 823?“"
+                    },
+                    {
+                        "left": "Websuche",
+                        "right": "„Was ist die aktuelle Nachricht zu Firma X von heute?“"
+                    },
+                    {
+                        "left": "Kalender-API",
+                        "right": "„Trage das Meeting morgen um 14 Uhr ein.“"
+                    },
+                    {
+                        "left": "Datenbank-Abfrage",
+                        "right": "„Wie viele offene Tickets hat Kunde Y aktuell?“"
+                    }
+                ]
+            },
+            "takeaway": "Das Modell entscheidet, WANN ein Tool nötig ist — die Ausführung selbst passiert immer außerhalb, in eurer eigenen, kontrollierten Umgebung."
+        },
+        {
+            "id": "finetuning",
+            "cat": "erweiterungen",
+            "title": "Fine-Tuning oder reicht Prompting?",
+            "lecture": "<p><b data-g=\"fine-tuning\">Fine-Tuning</b> trainiert die Parameter eines Modells mit eigenen Beispielen nach. Das ist aufwendig, teuer und muss gepflegt werden — und lohnt sich nur, wenn ein besserer Prompt das Problem nicht löst.</p><p>Faustregel: Fehlt dem Modell Wissen oder Kontext, hilft meist <b data-g=\"rag\">RAG</b> oder einfach ein klarerer Prompt — beides schneller und billiger. Fine-Tuning lohnt sich vor allem für einen sehr spezifischen Stil, Format oder Ton, der mit Prompting allein nicht stabil genug gelingt.</p><p class=\"lecture-next\">Geh im Mini-Spiel typische Situationen durch: reicht ein besserer Prompt, oder braucht es Fine-Tuning?</p>",
+            "game": "classify",
+            "gameData": {
+                "trueLabel": "Fine-Tuning",
+                "falseLabel": "Prompting reicht",
+                "items": [
+                    {
+                        "text": "„Das Modell soll immer in unserem markenspezifischen, sehr eigenwilligen Tonfall antworten — bei tausenden Anfragen pro Tag konsistent.“",
+                        "risk": true,
+                        "why": "Ein sehr spezifischer, stabiler Stil bei hohem Volumen ist ein klassischer Fine-Tuning-Fall."
+                    },
+                    {
+                        "text": "„Das Modell soll aktuelle Produktdaten aus unserer Datenbank in der Antwort berücksichtigen.“",
+                        "risk": false,
+                        "why": "Das ist ein Wissensproblem, kein Stilproblem — RAG oder ein besserer Prompt mit Kontext reicht."
+                    },
+                    {
+                        "text": "„Die Antworten sollen knapper und in Stichpunkten formuliert sein.“",
+                        "risk": false,
+                        "why": "Eine klare Formatvorgabe im Prompt löst das fast immer — kein Fine-Tuning nötig."
+                    },
+                    {
+                        "text": "„Das Modell soll juristische Dokumente in einem hochspezialisierten, firmeneigenen Format mit exakten, wiederkehrenden Klauseln erzeugen.“",
+                        "risk": true,
+                        "why": "Hochspezialisiertes, wiederkehrendes Format mit engen Vorgaben ist wieder ein guter Fine-Tuning-Kandidat."
+                    }
+                ]
+            },
+            "takeaway": "Erst den günstigeren Hebel prüfen: besserer Prompt, dann RAG. Fine-Tuning erst, wenn Stil oder Format partout nicht stabil genug werden."
+        },
+        {
+            "id": "modelsize",
+            "cat": "grundlagen",
+            "title": "Klein oder groß? Modelle im Vergleich",
+            "lecture": "<p>Nicht jede Aufgabe braucht das größte verfügbare Modell. Große Modelle sind vielseitiger und stärker bei komplexem <b data-g=\"reasoning\">Reasoning</b>, kosten aber mehr, sind langsamer und brauchen mehr Ressourcen (siehe <b data-g=\"quantisierung\">Quantisierung</b> und On-Device aus dem letzten Kapitel).</p><p>Kleine Modelle sind schnell, günstig und laufen teils sogar lokal — reichen aber oft nicht für vielschichtige, mehrstufige Aufgaben. Die Kunst ist, für jede Aufgabe die kleinste Größe zu wählen, die noch zuverlässig funktioniert.</p><p class=\"lecture-next\">Geh im Mini-Spiel typische Aufgaben durch: passt hier eher ein kleines oder ein großes Modell?</p>",
+            "game": "classify",
+            "gameData": {
+                "trueLabel": "Großes Modell",
+                "falseLabel": "Kleines Modell",
+                "items": [
+                    {
+                        "text": "„Klassifiziere eingehende E-Mails in 5 feste Kategorien.“",
+                        "risk": false,
+                        "why": "Klar abgegrenzte, einfache Klassifikationsaufgabe — ein kleines, schnelles Modell reicht meist locker."
+                    },
+                    {
+                        "text": "„Erstelle eine mehrstufige Strategie mit Abwägungen für eine komplexe Geschäftsentscheidung.“",
+                        "risk": true,
+                        "why": "Komplexes Reasoning über mehrere Schritte profitiert stark von einem großen, leistungsfähigeren Modell."
+                    },
+                    {
+                        "text": "„Fasse eine kurze interne Notiz in zwei Sätzen zusammen.“",
+                        "risk": false,
+                        "why": "Einfache, kurze Zusammenfassung — auch hier reicht ein kleines Modell meist aus."
+                    },
+                    {
+                        "text": "„Debugge komplexen, verschachtelten Code über mehrere Dateien hinweg.“",
+                        "risk": true,
+                        "why": "Anspruchsvolles technisches Reasoning über viel Kontext hinweg braucht in der Regel ein großes Modell."
+                    }
+                ]
+            },
+            "takeaway": "Größe ist kein Selbstzweck: erst die Aufgabe anschauen, dann das kleinste Modell wählen, das sie zuverlässig löst — das spart Kosten und Zeit."
         }
     ],
     "quiz": [
