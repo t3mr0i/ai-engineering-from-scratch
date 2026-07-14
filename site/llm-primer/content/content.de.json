@@ -42,10 +42,22 @@
             "def": "Die einstellbaren Zahlen im Modell, die beim Training gelernt werden. Moderne LLMs haben Milliarden davon. Sie speichern das „Wissen“."
         },
         {
+            "id": "moe",
+            "term": "Mixture-of-Experts (MoE)",
+            "cat": "grundlagen",
+            "def": "Eine Architektur, bei der pro Token nur wenige spezialisierte Teilnetze („Experten“) aktiviert werden statt des gesamten Modells — mehr Kapazität, ohne pro Schritt proportional mehr Rechenleistung zu brauchen."
+        },
+        {
             "id": "training",
             "term": "Training",
             "cat": "grundlagen",
             "def": "Der einmalige, sehr teure Prozess, in dem das Modell aus Daten lernt und seine Parameter angepasst werden. Danach ist es „eingefroren“."
+        },
+        {
+            "id": "distillation",
+            "term": "Distillation",
+            "cat": "grundlagen",
+            "def": "Ein kleineres „Schüler“-Modell wird trainiert, die Ausgaben eines größeren „Lehrer“-Modells nachzuahmen — ein Großteil der Fähigkeiten bei einem Bruchteil von Größe und Kosten."
         },
         {
             "id": "trainingsdaten",
@@ -138,6 +150,12 @@
             "def": "Die konkrete Obergrenze des Kontextfensters. Lange Dokumente oder Chats stoßen daran. Dann fällt Älteres heraus."
         },
         {
+            "id": "context-rot",
+            "term": "Context Rot / „Lost in the Middle“",
+            "cat": "kontext",
+            "def": "Antwortqualität sinkt schon deutlich vor dem eigentlichen Überlaufen des Context-Fensters — Modelle achten weniger auf Informationen, die in der Mitte eines langen Kontexts vergraben sind. Der praktische Grund, Kontext klein zu halten, nicht nur um Overflow zu vermeiden."
+        },
+        {
             "id": "system-prompt",
             "term": "System-Prompt",
             "cat": "kontext",
@@ -204,10 +222,22 @@
             "def": "Ein LLM in einer Schleife: Es plant, ruft Tools auf, prüft Ergebnisse und macht weiter, bis ein Ziel erreicht ist. Dabei braucht es weniger menschliche Zwischenschritte."
         },
         {
+            "id": "cli-agentic-loop",
+            "term": "CLI (Agentic Loop)",
+            "cat": "erweiterungen",
+            "def": "Ein Kommandozeilen-Agent, der die Plan-Handeln-Prüfen-Schleife direkt in deiner Terminal-/Editor-Session ausführt, ohne eigenes Protokoll oder Paketierung — der direkteste, am wenigsten strukturierte Weg, ein Modell handeln zu lassen."
+        },
+        {
             "id": "mcp",
             "term": "MCP (Model Context Protocol)",
             "cat": "erweiterungen",
             "def": "Ein offener Standard, über den Modelle einheitlich an Tools und Datenquellen angebunden werden. Eine Art „USB für KI-Werkzeuge“."
+        },
+        {
+            "id": "skill",
+            "term": "Skill",
+            "cat": "erweiterungen",
+            "def": "Ein gebündeltes Set aus Anweisungen (+ optionalen Skripten), das ein Agent bei Bedarf für eine bestimmte Aufgabe lädt. Über ein offenes Format (agentskills.io) portabel zwischen Tools: einmal schreiben, überall nutzen."
         },
         {
             "id": "api",
@@ -256,6 +286,12 @@
             "term": "Token-Kosten / Pricing",
             "cat": "risiken",
             "def": "Bezahlt wird pro Token, für Eingabe und Ausgabe. Lange Prompts, große Kontexte und viele Aufrufe treiben die Kosten. Wichtig fürs Produktdesign."
+        },
+        {
+            "id": "prompt-caching",
+            "term": "Prompt-/Context Caching",
+            "cat": "risiken",
+            "def": "Wiederverwendung eines bereits verarbeiteten, unveränderten Kontext-Teils (z. B. ein langer System-Prompt) über mehrere Aufrufe hinweg, statt ihn jedes Mal neu zu bezahlen. Kann Kosten und Latenz bei wiederkehrendem Kontext deutlich senken."
         },
         {
             "id": "aehnlichkeit",
@@ -1439,7 +1475,8 @@
                         "risk": true,
                         "why": "Hochspezialisiertes, wiederkehrendes Format mit engen Vorgaben ist wieder ein guter Fine-Tuning-Kandidat."
                     }
-                ]
+                ],
+                "hint": "Reicht hier ein besserer Prompt, oder braucht es Fine-Tuning? Tippe jede Karte an und deck die Einschätzung auf."
             },
             "takeaway": "Erst den günstigeren Hebel prüfen: besserer Prompt, dann RAG. Fine-Tuning erst, wenn Stil oder Format partout nicht stabil genug werden."
         },
@@ -1473,7 +1510,8 @@
                         "risk": true,
                         "why": "Anspruchsvolles technisches Reasoning über viel Kontext hinweg braucht in der Regel ein großes Modell."
                     }
-                ]
+                ],
+                "hint": "Welche Modellgröße passt hier eher? Tippe jede Karte an und deck die Einschätzung auf."
             },
             "takeaway": "Größe ist kein Selbstzweck: erst die Aufgabe anschauen, dann das kleinste Modell wählen, das sie zuverlässig löst — das spart Kosten und Zeit."
         }
@@ -1731,5 +1769,28 @@
         "replay": "Nochmal? Beim zweiten Mal mit <b>eigenen</b> Eingaben experimentieren. Tokenizer, Bedeutungs-Landkarte und der englische Text-Magier reagieren auf alles, was du tippst.",
         "lowscore": "Kein perfektes Quiz? Macht nichts. Der eigentliche Gewinn ist Verständnis, nicht die Punktzahl.",
         "teaser": "Für ganz Neugierige ist irgendwo noch etwas versteckt …"
+    },
+    "extensionsOverview": {
+        "title": "CLI-Loop, MCP und Skill im Vergleich",
+        "columns": [
+            {
+                "name": "CLI (Agentic Loop)",
+                "what": "Ein Agent, der direkt in deinem Terminal oder Editor läuft und die Plan-Handeln-Prüfen-Schleife selbst durchführt.",
+                "problem": "Schnell und direkt etwas erledigen lassen, ohne zusätzliche Infrastruktur.",
+                "when": "Für schnelle, ad-hoc Aufgaben direkt in der Entwicklungsumgebung."
+            },
+            {
+                "name": "MCP",
+                "what": "Ein offener Standard, über den ein Modell einheitlich auf Tools und Datenquellen zugreift.",
+                "problem": "Tools und Datenquellen müssen nicht für jedes einzelne Modell oder Tool neu angebunden werden.",
+                "when": "Wenn mehrere Tools und Datenquellen einheitlich vielen Modellen zur Verfügung stehen sollen."
+            },
+            {
+                "name": "Skill",
+                "what": "Ein gebündeltes Set aus Anweisungen und optionalen Skripten für eine bestimmte Aufgabe, das ein Agent bei Bedarf lädt.",
+                "problem": "Wiederkehrendes Spezialwissen muss nicht bei jedem Prompt neu erklärt werden.",
+                "when": "Für wiederkehrende, klar abgegrenzte Aufgaben, die überall portabel funktionieren sollen."
+            }
+        ]
     }
 }

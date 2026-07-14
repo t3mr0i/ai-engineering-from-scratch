@@ -385,6 +385,7 @@
         '<p class="muted small">' + fmt(T.glossary_sub, { n: D.glossary.length }) + "</p>" +
         '<div class="cat-filter">' + pills + "</div>" +
         '<div class="glossary-list" id="glist"></div>' +
+        '<div id="extOverview"></div>' +
       "</div>" +
       actionbar('<button class="btn" id="closeGl">' + esc(T.close_btn) + "</button>");
     q("#closeGl").onclick = function () { overlay = null; render(); };
@@ -392,13 +393,13 @@
     var gb = q("#glossaryBtn"); if (gb) gb.onclick = function () { overlay = null; render(); };
 
     var listEl = q("#glist");
+    var extEl = q("#extOverview");
     function draw(cat) {
       listEl.innerHTML = "";
       D.glossary.filter(function (g) { return cat === "all" || g.cat === cat; }).forEach(function (g) {
         var c = catOf(g.cat);
         var item = document.createElement("div");
         item.className = "card gl-item";
-        item.style.borderLeftColor = c.color;
         item.innerHTML =
           '<span class="gl-cat">' + esc(c.label) + "</span>" +
           '<div class="gl-term">' + esc(g.term) + "</div>" +
@@ -406,6 +407,24 @@
         listEl.appendChild(item);
       });
       wireGlLinks(listEl, showTerm);
+      // Static CLI/MCP/Skill comparison, only under the Extensions filter —
+      // these three terms are easy to mix up, so a side-by-side helps once
+      // someone has filtered down to exactly that category.
+      var ov = D.extensionsOverview;
+      extEl.innerHTML = (cat === "erweiterungen" && ov) ?
+        '<div class="ext-overview">' +
+          '<div class="ext-overview__title">' + esc(ov.title) + "</div>" +
+          '<div class="ext-overview__grid">' +
+            ov.columns.map(function (col) {
+              return '<div class="ext-overview__col">' +
+                '<div class="ext-overview__name">' + esc(col.name) + "</div>" +
+                '<div class="ext-overview__row"><span class="ext-overview__lbl">' + esc(T.ext_what) + '</span>' + esc(col.what) + "</div>" +
+                '<div class="ext-overview__row"><span class="ext-overview__lbl">' + esc(T.ext_problem) + '</span>' + esc(col.problem) + "</div>" +
+                '<div class="ext-overview__row"><span class="ext-overview__lbl">' + esc(T.ext_when) + '</span>' + esc(col.when) + "</div>" +
+              "</div>";
+            }).join("") +
+          "</div>" +
+        "</div>" : "";
     }
     draw("all");
     qa(".cat-pill").forEach(function (p) {
@@ -759,8 +778,13 @@
     // "needs fine-tuning" vs. "prompting is enough").
     var trueLabel = gd.trueLabel || T.classify_check;
     var falseLabel = gd.falseLabel || T.classify_trust;
+    // Same override pattern as the labels: the default hint talks about
+    // "trusting the model", which only fits the original trust/caution
+    // framing — a chapter that repurposes this mechanic for something else
+    // (fine-tuning vs. prompting, small vs. large model) supplies its own.
+    var hint = gd.hint || T.classify_hint;
     root.innerHTML =
-      '<p class="hint">' + esc(T.classify_hint) + "</p>" +
+      '<p class="hint">' + esc(hint) + "</p>" +
       '<div class="reveal-list" id="rl"></div>';
     var listEl = q("#rl", root);
     var revealed = 0;

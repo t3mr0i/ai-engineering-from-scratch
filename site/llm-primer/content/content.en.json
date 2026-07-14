@@ -42,10 +42,22 @@
             "def": "The adjustable numbers in the model that are learned during training. Modern LLMs have billions of them. They store the \"knowledge\"."
         },
         {
+            "id": "moe",
+            "term": "Mixture-of-Experts (MoE)",
+            "cat": "grundlagen",
+            "def": "An architecture where only a few specialized sub-networks (\"experts\") activate per token instead of the whole model — more capacity without proportionally more compute per step."
+        },
+        {
             "id": "training",
             "term": "Training",
             "cat": "grundlagen",
             "def": "The one-time, very expensive process in which the model learns from data and its parameters are adjusted. After that it is \"frozen\"."
+        },
+        {
+            "id": "distillation",
+            "term": "Distillation",
+            "cat": "grundlagen",
+            "def": "Training a smaller \"student\" model to mimic a larger \"teacher\" model's outputs, transferring much of its capability at a fraction of the size and cost."
         },
         {
             "id": "trainingsdaten",
@@ -138,6 +150,12 @@
             "def": "The concrete upper bound of the context window. Long documents or chats bump into it. Then older content drops out."
         },
         {
+            "id": "context-rot",
+            "term": "Context Rot / \"Lost in the Middle\"",
+            "cat": "kontext",
+            "def": "Answer quality degrades well before the context window is actually full — models pay less attention to information buried in the middle of a long context. The practical reason to keep context small, not just to avoid hard overflow."
+        },
+        {
             "id": "system-prompt",
             "term": "System Prompt",
             "cat": "kontext",
@@ -204,10 +222,22 @@
             "def": "An LLM in a loop: it plans, calls tools, checks results and carries on until a goal is reached. It needs fewer human steps in between."
         },
         {
+            "id": "cli-agentic-loop",
+            "term": "CLI (Agentic Loop)",
+            "cat": "erweiterungen",
+            "def": "A command-line agent that runs the plan-act-check loop directly in your terminal/editor session, with no separate protocol or packaging — the most direct, least structured way to let a model act."
+        },
+        {
             "id": "mcp",
             "term": "MCP (Model Context Protocol)",
             "cat": "erweiterungen",
             "def": "An open standard for connecting models to tools and data sources in a uniform way. A kind of \"USB for AI tools\"."
+        },
+        {
+            "id": "skill",
+            "term": "Skill",
+            "cat": "erweiterungen",
+            "def": "A packaged set of instructions (+ optional scripts) an agent loads on demand for a specific task. Portable across tools via an open format (agentskills.io); write once, work everywhere."
         },
         {
             "id": "api",
@@ -256,6 +286,12 @@
             "term": "Token Cost / Pricing",
             "cat": "risiken",
             "def": "You pay per token, for both input and output. Long prompts, large contexts and many calls drive up cost. Important for product design."
+        },
+        {
+            "id": "prompt-caching",
+            "term": "Prompt/Context Caching",
+            "cat": "risiken",
+            "def": "Reusing an already-processed, unchanged part of the context (e.g. a long system prompt) across calls instead of paying to reprocess it every time. Can cut cost and latency sharply for repeated context."
         },
         {
             "id": "aehnlichkeit",
@@ -1435,7 +1471,8 @@
                         "risk": true,
                         "why": "A highly specialized, recurring format with tight constraints is again a good fine-tuning candidate."
                     }
-                ]
+                ],
+                "hint": "Does a better prompt suffice here, or does it need fine-tuning? Tap each card to reveal the assessment."
             },
             "takeaway": "Check the cheaper lever first: a better prompt, then RAG. Only reach for fine-tuning once style or format simply won't stay reliable otherwise."
         },
@@ -1469,7 +1506,8 @@
                         "risk": true,
                         "why": "Demanding technical reasoning across a lot of context typically needs a large model."
                     }
-                ]
+                ],
+                "hint": "Which model size fits better here? Tap each card to reveal the assessment."
             },
             "takeaway": "Size isn't a goal in itself: look at the task first, then pick the smallest model that solves it reliably — that saves cost and time."
         }
@@ -1727,5 +1765,28 @@
         "replay": "Again? On the second run, experiment with your <b>own</b> inputs. The tokenizer, the map of meaning and the English text magician react to anything you type.",
         "lowscore": "Not a perfect quiz? No worries. The real prize is understanding, not the score.",
         "teaser": "For the truly curious, something is still hidden somewhere …"
+    },
+    "extensionsOverview": {
+        "title": "CLI Loop, MCP, and Skill Compared",
+        "columns": [
+            {
+                "name": "CLI (Agentic Loop)",
+                "what": "An agent that runs directly in your terminal or editor, executing the plan-act-check loop itself.",
+                "problem": "Get something done quickly and directly, without extra infrastructure.",
+                "when": "For fast, ad-hoc tasks right inside your development environment."
+            },
+            {
+                "name": "MCP",
+                "what": "An open standard through which a model accesses tools and data sources in a uniform way.",
+                "problem": "Tools and data sources don't need to be wired up separately for every model or tool.",
+                "when": "When several tools and data sources should be available uniformly to many models."
+            },
+            {
+                "name": "Skill",
+                "what": "A packaged set of instructions and optional scripts for a specific task, loaded by an agent on demand.",
+                "problem": "Recurring specialized knowledge doesn't need to be re-explained in every prompt.",
+                "when": "For recurring, clearly scoped tasks that should work portably everywhere."
+            }
+        ]
     }
 }

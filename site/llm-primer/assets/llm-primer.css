@@ -144,6 +144,20 @@ body {
 .cat-pill { flex:0 0 auto; font-size:13px; font-weight:600; white-space:nowrap; padding:7px 13px; border-radius:999px; cursor:pointer; background:var(--card); border:1px solid var(--card-br); color:var(--muted); }
 .cat-pill.active { background:var(--accent); color:#fff; border-color:transparent; }
 
+/* ---- Extensions comparison (CLI loop / MCP / Skill), static block shown
+   under the Extensions glossary filter only ---- */
+.ext-overview { margin-top:16px; }
+.ext-overview__title { font-family:var(--font-display); font-weight:600; font-size:17px; margin-bottom:10px; }
+.ext-overview__grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.ext-overview__col { background:var(--card); border:1px solid var(--card-br); border-radius:var(--radius); padding:14px; }
+.ext-overview__name { font-weight:700; font-size:15px; margin-bottom:8px; }
+.ext-overview__row { font-size:13.5px; line-height:1.45; margin-top:8px; }
+.ext-overview__row:first-of-type { margin-top:0; }
+.ext-overview__lbl { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); margin-bottom:2px; }
+@media (max-width: 640px) {
+  .ext-overview__grid { grid-template-columns:1fr; }
+}
+
 .btn.ghost { background:transparent; box-shadow:none; color:var(--muted); font-weight:600; }
 .btn:disabled { opacity:.45; filter:grayscale(.3); cursor:default; }
 .btn.danger { color:#fff; background:var(--bad); }
