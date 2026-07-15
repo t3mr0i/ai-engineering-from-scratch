@@ -46,6 +46,10 @@
       toggle.setAttribute('title', toggleTitle);
       toggle.setAttribute('aria-label', toggleTitle);
     }
+
+    // Lets pages with their own bilingual JS-rendered content (badges.js)
+    // re-render without a full reload when the language toggle is clicked.
+    document.dispatchEvent(new CustomEvent('sitelang:change', { detail: { lang: lang } }));
   }
 
   // Delegated so it keeps working after pages (e.g. lesson.html) replace the

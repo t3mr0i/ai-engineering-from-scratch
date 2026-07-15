@@ -19,6 +19,27 @@
 
   function hasOwn(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
 
+  // Badge titles/descriptions and a few render-time UI strings are bilingual
+  // ({en, de} objects); everything else in this file (ids, checks) is
+  // language-independent. Falls back to 'en' when localStorage is unavailable
+  // (e.g. the node:vm sandbox in badges.test.mjs has no `localStorage`).
+  function curLang() {
+    try { return (typeof localStorage !== 'undefined' && localStorage.getItem('lang')) || 'en'; }
+    catch (e) { return 'en'; }
+  }
+  function pick(v) { return (v && typeof v === 'object') ? (v[curLang()] || v.en) : v; }
+  var STR = {
+    newBadgeUnlocked: { en: 'New badge unlocked', de: 'Neues Badge freigeschaltet' },
+    daysInARow: { en: 'days in a row', de: 'Tage in Folge' },
+    bestStreak: { en: 'Best streak', de: 'Best-Streak' },
+    activeToday: { en: 'active today', de: 'heute aktiv' },
+    notActiveToday: { en: 'not active today yet', de: 'heute noch nicht aktiv' },
+    badgesLabel: { en: 'badges', de: 'Badges' },
+    lessonsCompleted: { en: 'lessons completed', de: 'Lektionen abgeschlossen' },
+    unlocked: { en: 'Unlocked', de: 'Freigeschaltet' },
+    locked: { en: 'Locked', de: 'Gesperrt' }
+  };
+
   function extractPath(url) {
     if (!url) return '';
     var m = String(url).match(PATH_RE);
@@ -42,10 +63,10 @@
   // carries the LHG Badge tone used for the pill label (Badge.jsx tones:
   // neutral | blue | success | warning | error | teal | purple).
   var TIERS = {
-    bronze:   { ring: '#243f9b', glow: 'rgba(36,63,155,0.45)',  label: 'Bronze',  tone: 'blue' },
-    silver:   { ring: '#657898', glow: 'rgba(101,120,152,0.45)', label: 'Silber',  tone: 'neutral' },
-    gold:     { ring: '#e2974b', glow: 'rgba(226,151,75,0.50)',  label: 'Gold',    tone: 'warning' },
-    platinum: { ring: '#368089', glow: 'rgba(54,128,137,0.50)',  label: 'Platin',  tone: 'teal' }
+    bronze:   { ring: '#243f9b', glow: 'rgba(36,63,155,0.45)',  label: { en: 'Bronze',   de: 'Bronze' }, tone: 'blue' },
+    silver:   { ring: '#657898', glow: 'rgba(101,120,152,0.45)', label: { en: 'Silver',   de: 'Silber' }, tone: 'neutral' },
+    gold:     { ring: '#e2974b', glow: 'rgba(226,151,75,0.50)',  label: { en: 'Gold',     de: 'Gold' },   tone: 'warning' },
+    platinum: { ring: '#368089', glow: 'rgba(54,128,137,0.50)',  label: { en: 'Platinum', de: 'Platin' }, tone: 'teal' }
   };
 
   // Per-lesson aggregates (completed / visited / answered / fullyRead /
@@ -172,69 +193,69 @@
   // computeAggregates() and returns { earned, cur, total } so the locked
   // state can show progress toward the goal. Checks are O(1) reads.
   var CATALOG = [
-    { id: 'first-steps', title: 'Erste Schritte', tier: 'bronze', icon: 'ph-footprints',
-      desc: 'Besuche deine erste Lektion.',
+    { id: 'first-steps', title: { en: 'First Steps', de: 'Erste Schritte' }, tier: 'bronze', icon: 'ph-footprints',
+      desc: { en: 'Visit your first lesson.', de: 'Besuche deine erste Lektion.' },
       check: function (a) { var n = a.visited; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
-    { id: 'first-quiz', title: 'Quiz-Anfänger', tier: 'bronze', icon: 'ph-question',
-      desc: 'Beantworte deine erste Quiz-Frage.',
+    { id: 'first-quiz', title: { en: 'Quiz Rookie', de: 'Quiz-Anfänger' }, tier: 'bronze', icon: 'ph-question',
+      desc: { en: 'Answer your first quiz question.', de: 'Beantworte deine erste Quiz-Frage.' },
       check: function (a) { var n = a.answered; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
-    { id: 'first-complete', title: 'Erste Lektion gemeistert', tier: 'bronze', icon: 'ph-check-circle',
-      desc: 'Schließe deine erste Lektion ab.',
+    { id: 'first-complete', title: { en: 'First Lesson Mastered', de: 'Erste Lektion gemeistert' }, tier: 'bronze', icon: 'ph-check-circle',
+      desc: { en: 'Complete your first lesson.', de: 'Schließe deine erste Lektion ab.' },
       check: function (a) { var n = a.completed; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
-    { id: 'explorer', title: 'Entdecker', tier: 'bronze', icon: 'ph-compass',
-      desc: 'Besuche 10 verschiedene Lektionen.',
+    { id: 'explorer', title: { en: 'Explorer', de: 'Entdecker' }, tier: 'bronze', icon: 'ph-compass',
+      desc: { en: 'Visit 10 different lessons.', de: 'Besuche 10 verschiedene Lektionen.' },
       check: function (a) { var n = a.visited; return { earned: n >= 10, cur: Math.min(n, 10), total: 10 }; } },
-    { id: 'bookworm', title: 'Leseratte', tier: 'bronze', icon: 'ph-book-open',
-      desc: 'Lese 5 Lektionen vollständig durch (≥90% Scrolltiefe).',
+    { id: 'bookworm', title: { en: 'Bookworm', de: 'Leseratte' }, tier: 'bronze', icon: 'ph-book-open',
+      desc: { en: 'Read 5 lessons in full (≥90% scroll depth).', de: 'Lese 5 Lektionen vollständig durch (≥90% Scrolltiefe).' },
       check: function (a) { var n = a.fullyRead; return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
-    { id: 'perfect-quiz', title: 'Perfektes Quiz', tier: 'silver', icon: 'ph-check-fat',
-      desc: 'Beantworte in einer Lektion alle 6 Quiz-Fragen richtig.',
+    { id: 'perfect-quiz', title: { en: 'Perfect Quiz', de: 'Perfektes Quiz' }, tier: 'silver', icon: 'ph-check-fat',
+      desc: { en: 'Answer all 6 quiz questions correctly in one lesson.', de: 'Beantworte in einer Lektion alle 6 Quiz-Fragen richtig.' },
       check: function (a) { var n = a.perfectQuizzes; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
-    { id: 'consistent', title: 'Konsequent', tier: 'silver', icon: 'ph-target',
-      desc: 'Schließe 5 Lektionen ab.',
+    { id: 'consistent', title: { en: 'Consistent', de: 'Konsequent' }, tier: 'silver', icon: 'ph-target',
+      desc: { en: 'Complete 5 lessons.', de: 'Schließe 5 Lektionen ab.' },
       check: function (a) { var n = a.completed; return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
-    { id: 'ten-milestone', title: 'Zehn-Meilenstein', tier: 'silver', icon: 'ph-flag',
-      desc: 'Schließe 10 Lektionen ab.',
+    { id: 'ten-milestone', title: { en: 'Ten Milestone', de: 'Zehn-Meilenstein' }, tier: 'silver', icon: 'ph-flag',
+      desc: { en: 'Complete 10 lessons.', de: 'Schließe 10 Lektionen ab.' },
       check: function (a) { var n = a.completed; return { earned: n >= 10, cur: Math.min(n, 10), total: 10 }; } },
-    { id: 'polymath', title: 'Vielseitig', tier: 'silver', icon: 'ph-tree-structure',
-      desc: 'Berühre Lektionen in 5 verschiedenen Phasen.',
+    { id: 'polymath', title: { en: 'Polymath', de: 'Vielseitig' }, tier: 'silver', icon: 'ph-tree-structure',
+      desc: { en: 'Touch lessons in 5 different phases.', de: 'Berühre Lektionen in 5 verschiedenen Phasen.' },
       check: function (a) { var n = a.distinctPhasesCount; return { earned: n >= 5, cur: Math.min(n, 5), total: 5 }; } },
-    { id: 'fifty-lessons', title: 'Fünfziger-Club', tier: 'gold', icon: 'ph-star',
-      desc: 'Schließe 50 Lektionen ab.',
+    { id: 'fifty-lessons', title: { en: 'Fifty Club', de: 'Fünfziger-Club' }, tier: 'gold', icon: 'ph-star',
+      desc: { en: 'Complete 50 lessons.', de: 'Schließe 50 Lektionen ab.' },
       check: function (a) { var n = a.completed; return { earned: n >= 50, cur: Math.min(n, 50), total: 50 }; } },
-    { id: 'halfway', title: 'Halbzeit', tier: 'gold', icon: 'ph-percent',
-      desc: 'Schließe die Hälfte des gesamten Curriculums ab.',
+    { id: 'halfway', title: { en: 'Halfway', de: 'Halbzeit' }, tier: 'gold', icon: 'ph-percent',
+      desc: { en: 'Complete half of the entire curriculum.', de: 'Schließe die Hälfte des gesamten Curriculums ab.' },
       check: function (a) {
         var half = Math.ceil(a.catalogTotal / 2);
         return { earned: a.catalogTotal > 0 && a.completed >= half, cur: Math.min(a.completed, half || 1), total: half || 1 };
       } },
-    { id: 'phase-master', title: 'Phasen-Meister', tier: 'gold', icon: 'ph-crown',
-      desc: 'Schließe alle Lektionen einer Phase ab.',
+    { id: 'phase-master', title: { en: 'Phase Master', de: 'Phasen-Meister' }, tier: 'gold', icon: 'ph-crown',
+      desc: { en: 'Complete every lesson in a phase.', de: 'Schließe alle Lektionen einer Phase ab.' },
       check: function (a) { var n = a.phasesMastered; return { earned: n >= 1, cur: Math.min(n, 1), total: 1 }; } },
-    { id: 'hundred-club', title: 'Hunderter-Club', tier: 'gold', icon: 'ph-trophy',
-      desc: 'Schließe 100 Lektionen ab.',
+    { id: 'hundred-club', title: { en: 'Hundred Club', de: 'Hunderter-Club' }, tier: 'gold', icon: 'ph-trophy',
+      desc: { en: 'Complete 100 lessons.', de: 'Schließe 100 Lektionen ab.' },
       check: function (a) { var n = a.completed; return { earned: n >= 100, cur: Math.min(n, 100), total: 100 }; } },
-    { id: 'curriculum-master', title: 'Curriculum-Meister', tier: 'platinum', icon: 'ph-medal',
-      desc: 'Schließe alle Lektionen des gesamten Curriculums ab.',
+    { id: 'curriculum-master', title: { en: 'Curriculum Master', de: 'Curriculum-Meister' }, tier: 'platinum', icon: 'ph-medal',
+      desc: { en: 'Complete every lesson in the entire curriculum.', de: 'Schließe alle Lektionen des gesamten Curriculums ab.' },
       check: function (a) {
         var tot = a.catalogTotal;
         return { earned: tot > 0 && a.completed >= tot, cur: Math.min(a.completed, tot || 1), total: tot || 1 };
       } },
     // ── Streak / daily badges (read a.streak / a.maxPerDay) ──────────────
-    { id: 'daily-sprint', title: 'Tagesziel', tier: 'bronze', icon: 'ph-battery-high',
-      desc: 'Schließe an einem einzigen Tag 3 Lektionen ab.',
+    { id: 'daily-sprint', title: { en: 'Daily Sprint', de: 'Tagesziel' }, tier: 'bronze', icon: 'ph-battery-high',
+      desc: { en: 'Complete 3 lessons in a single day.', de: 'Schließe an einem einzigen Tag 3 Lektionen ab.' },
       check: function (a) { var n = a.maxPerDay; return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
-    { id: 'warmed-up', title: 'Aufwärmer', tier: 'silver', icon: 'ph-fire',
-      desc: 'Lerne an 3 Tagen in Folge.',
+    { id: 'warmed-up', title: { en: 'Warmed Up', de: 'Aufwärmer' }, tier: 'silver', icon: 'ph-fire',
+      desc: { en: 'Learn on 3 consecutive days.', de: 'Lerne an 3 Tagen in Folge.' },
       check: function (a) { var n = a.streak.best; return { earned: n >= 3, cur: Math.min(n, 3), total: 3 }; } },
-    { id: 'steady-spirit', title: 'Durchhalte-Geist', tier: 'gold', icon: 'ph-flame',
-      desc: 'Erreiche eine 7-Tage-Lernstreak.',
+    { id: 'steady-spirit', title: { en: 'Steady Spirit', de: 'Durchhalte-Geist' }, tier: 'gold', icon: 'ph-flame',
+      desc: { en: 'Reach a 7-day learning streak.', de: 'Erreiche eine 7-Tage-Lernstreak.' },
       check: function (a) { var n = a.streak.best; return { earned: n >= 7, cur: Math.min(n, 7), total: 7 }; } },
-    { id: 'discipline', title: 'Disziplin', tier: 'gold', icon: 'ph-calendar-check',
-      desc: 'Erreiche eine 30-Tage-Lernstreak.',
+    { id: 'discipline', title: { en: 'Discipline', de: 'Disziplin' }, tier: 'gold', icon: 'ph-calendar-check',
+      desc: { en: 'Reach a 30-day learning streak.', de: 'Erreiche eine 30-Tage-Lernstreak.' },
       check: function (a) { var n = a.streak.best; return { earned: n >= 30, cur: Math.min(n, 30), total: 30 }; } },
-    { id: 'iron-routine', title: 'Eiserne Routine', tier: 'platinum', icon: 'ph-thermometer-simple',
-      desc: 'Sei heute aktiv und halte dabei eine Best-Streak von mindestens 14 Tagen.',
+    { id: 'iron-routine', title: { en: 'Iron Routine', de: 'Eiserne Routine' }, tier: 'platinum', icon: 'ph-thermometer-simple',
+      desc: { en: 'Be active today while holding a best streak of at least 14 days.', de: 'Sei heute aktiv und halte dabei eine Best-Streak von mindestens 14 Tagen.' },
       check: function (a) {
         var st = a.streak;
         return { earned: !!st.activeToday && st.best >= 14, cur: Math.min(st.best, 14), total: 14 };
@@ -272,7 +293,7 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
-  function tierLabel(t) { return (TIERS[t] && TIERS[t].label) || t; }
+  function tierLabel(t) { return (TIERS[t] && pick(TIERS[t].label)) || t; }
 
   function renderBadgeHTML(badge, detail) {
     var d = detail || { earned: false, cur: 0, total: 1 };
@@ -292,11 +313,11 @@
     var pill = '<span class="aifs-badge__tier aifs-pill aifs-pill--' + tier.tone + '">' +
       escapeHTML(tierLabel(badge.tier)) + '</span>';
     return '' +
-      '<button type="button" class="aifs-badge ' + stateCls + ' aifs-badge--' + badge.tier + '" data-badge-id="' + escapeHTML(badge.id) + '" aria-label="' + escapeHTML(badge.title) + ' — ' + escapeHTML(badge.desc) + '">' +
+      '<button type="button" class="aifs-badge ' + stateCls + ' aifs-badge--' + badge.tier + '" data-badge-id="' + escapeHTML(badge.id) + '" aria-label="' + escapeHTML(pick(badge.title)) + ' — ' + escapeHTML(pick(badge.desc)) + '">' +
         '<div class="aifs-badge__disc" style="--tier-ring:' + tier.ring + ';--tier-glow:' + tier.glow + '">' +
           '<i class="' + iconCls + '" aria-hidden="true"></i>' + lock +
         '</div>' +
-        '<div class="aifs-badge__title">' + escapeHTML(badge.title) + '</div>' +
+        '<div class="aifs-badge__title">' + escapeHTML(pick(badge.title)) + '</div>' +
         pill +
         progress +
       '</button>';
@@ -315,12 +336,12 @@
   function renderStreakHTML(streak) {
     var st = streak || { current: 0, best: 0, activeToday: false };
     var flame = st.current > 0 ? ' aifs-streak--active' : '';
-    var today = st.activeToday ? 'heute aktiv' : 'heute noch nicht aktiv';
+    var today = st.activeToday ? pick(STR.activeToday) : pick(STR.notActiveToday);
     return '<div class="aifs-streak' + flame + '">' +
       '<div class="aifs-streak__icon"><i class="ph-light ph-fire" aria-hidden="true"></i></div>' +
       '<div class="aifs-streak__body">' +
-        '<div class="aifs-streak__current"><strong>' + st.current + '</strong> Tage in Folge</div>' +
-        '<div class="aifs-streak__best">Best-Streak: ' + st.best + ' · ' + today + '</div>' +
+        '<div class="aifs-streak__current"><strong>' + st.current + '</strong> ' + pick(STR.daysInARow) + '</div>' +
+        '<div class="aifs-streak__best">' + pick(STR.bestStreak) + ': ' + st.best + ' · ' + today + '</div>' +
       '</div></div>';
   }
 
@@ -332,9 +353,9 @@
     var pct = Math.round((got / total) * 100);
     var lessons = (typeof extra.completed === 'number') ? extra.completed : null;
     var html = '<div class="aifs-badges-summary">' +
-      '<div class="aifs-badges-summary__count"><strong>' + got + '</strong> / ' + total + ' Badges</div>' +
+      '<div class="aifs-badges-summary__count"><strong>' + got + '</strong> / ' + total + ' ' + pick(STR.badgesLabel) + '</div>' +
       '<div class="aifs-badges-summary__bar"><div class="aifs-badges-summary__fill" style="width:' + pct + '%"></div></div>';
-    if (lessons !== null) html += '<div class="aifs-badges-summary__lessons">' + lessons + ' Lektionen abgeschlossen</div>';
+    if (lessons !== null) html += '<div class="aifs-badges-summary__lessons">' + lessons + ' ' + pick(STR.lessonsCompleted) + '</div>';
     if (extra.streak) html += renderStreakHTML(extra.streak);
     html += '</div>';
     return html;
@@ -419,8 +440,8 @@
           '<i class="ph-light ' + (b.icon || 'ph-medal') + '" aria-hidden="true"></i>' +
         '</span>' +
         '<span class="aifs-badge-toast__body">' +
-          '<span class="aifs-badge-toast__eyebrow">Neues Badge freigeschaltet</span>' +
-          '<span class="aifs-badge-toast__title">' + escapeHTML(b.title) + '</span>' +
+          '<span class="aifs-badge-toast__eyebrow">' + escapeHTML(pick(STR.newBadgeUnlocked)) + '</span>' +
+          '<span class="aifs-badge-toast__title">' + escapeHTML(pick(b.title)) + '</span>' +
           '<span class="aifs-badge-toast__tier">' + escapeHTML(tierLabel(b.tier)) + '</span>' +
         '</span>';
       c.appendChild(el);
@@ -444,14 +465,14 @@
     var pct = Math.max(0, Math.min(100, Math.round((cur / total) * 100)));
 
     var titleEl = document.getElementById('dialogTitle');
-    if (titleEl) titleEl.textContent = badge.title;
+    if (titleEl) titleEl.textContent = pick(badge.title);
 
     var descEl = document.getElementById('dialogDesc');
-    if (descEl) descEl.textContent = badge.desc;
+    if (descEl) descEl.textContent = pick(badge.desc);
 
     var tierEl = document.getElementById('dialogTier');
     if (tierEl) {
-      tierEl.textContent = tier.label;
+      tierEl.textContent = pick(tier.label);
       tierEl.className = 'aifs-dialog__tier aifs-pill aifs-pill--' + tier.tone;
     }
 
@@ -495,10 +516,10 @@
     if (statusBadge) {
       if (earned) {
         statusBadge.className = 'aifs-dialog__status-badge aifs-dialog__status-badge--unlocked';
-        statusBadge.innerHTML = '<i class="ph-light ph-check-circle"></i> Freigeschaltet';
+        statusBadge.innerHTML = '<i class="ph-light ph-check-circle"></i> ' + escapeHTML(pick(STR.unlocked));
       } else {
         statusBadge.className = 'aifs-dialog__status-badge aifs-dialog__status-badge--locked';
-        statusBadge.innerHTML = '<i class="ph-light ph-lock"></i> Gesperrt';
+        statusBadge.innerHTML = '<i class="ph-light ph-lock"></i> ' + escapeHTML(pick(STR.locked));
       }
     }
 
@@ -580,6 +601,16 @@
     });
   }
 
+  // Re-render the grid/summary/streak in the newly selected language without
+  // re-registering the AIFSProgress.onChange listener (mount() would stack a
+  // duplicate one). Triggered by lang.js's 'sitelang:change' event.
+  function refresh() {
+    if (typeof window === 'undefined' || !window.AIFSProgress) return;
+    var res = evaluate(readProgressState(), currentCtx());
+    renderMountTargets(res);
+    updateNavCount(res.earned.length);
+  }
+
   var api = {
     version: 1,
     CATALOG: CATALOG,
@@ -593,7 +624,8 @@
     renderGridHTML: renderGridHTML,
     renderSummaryHTML: renderSummaryHTML,
     renderStreakHTML: renderStreakHTML,
-    mount: mount
+    mount: mount,
+    refresh: refresh
   };
 
   if (typeof window !== 'undefined') window.AIFSBadges = api;
@@ -603,5 +635,6 @@
     function boot() { try { mount(); } catch (e) { /* fail silently */ } }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
     else boot();
+    document.addEventListener('sitelang:change', function () { try { refresh(); } catch (e) {} });
   }
 })();

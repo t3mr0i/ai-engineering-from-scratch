@@ -148,7 +148,7 @@ test("renderBadgeHTML marks earned vs locked correctly", () => {
   assert.ok(!earnedHtml.includes("ph-lock"));
   assert.ok(lockedHtml.includes("aifs-badge--locked"));
   assert.ok(lockedHtml.includes("ph-lock"));
-  assert.ok(earnedHtml.includes("Erste Schritte"));
+  assert.ok(earnedHtml.includes("First Steps"));
 });
 
 test("byId returns null for an unknown id", () => {
@@ -265,6 +265,6 @@ test("renderStreakHTML shows current streak and best", () => {
   const html = B.renderStreakHTML({ current: 5, best: 9, activeToday: true });
   assert.ok(html.includes('aifs-streak--active'));
   assert.ok(html.includes('<strong>5</strong>'));
-  assert.ok(html.includes('Best-Streak: 9'));
-  assert.ok(html.includes('heute aktiv'));
+  assert.ok(html.includes('Best streak: 9'));
+  assert.ok(html.includes('active today'));
 });

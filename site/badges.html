@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Badges · LHIND AI Learning</title>
-  <meta name="description" content="Verdiene dir Badges, während du das AI Engineering Curriculum durcharbeitest — komplett lokal in deinem Browser.">
+  <meta name="description" content="Earn badges as you work through the AI Engineering curriculum — fully local in your browser.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://unpkg.com">
@@ -88,7 +88,10 @@
     (function () {
       var rb = document.getElementById('badgesResetBtn');
       if (rb) rb.addEventListener('click', function () {
-        if (!confirm('Gesamten Lern-Fortschritt und alle Badges zurücksetzen? Das kann nicht rückgängig gemacht werden.')) return;
+        var lang = localStorage.getItem('lang') || 'en';
+        var msg = (window.SITE_I18N && window.SITE_I18N.badges_reset_confirm && window.SITE_I18N.badges_reset_confirm[lang]) ||
+          'Reset all learning progress and badges? This cannot be undone.';
+        if (!confirm(msg)) return;
         try { localStorage.removeItem('aifs:progress:v1'); } catch (e) {}
         try { localStorage.removeItem('aifs:badges:v1'); } catch (e) {}
         if (window.AIFSProgress) { try { window.AIFSProgress.reset(); } catch (e) {} }

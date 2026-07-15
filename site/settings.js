@@ -73,6 +73,12 @@
       .replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
+  function t(key) {
+    var lang = localStorage.getItem('lang') || 'en';
+    var e = window.SITE_I18N && window.SITE_I18N[key];
+    return (e && e[lang]) || key;
+  }
+
   function openDialog() {
     if (document.getElementById('lrnKeyOverlay')) return;
     var existingKey = readKey();
@@ -83,16 +89,16 @@
     overlay.innerHTML =
       '<div role="dialog" aria-modal="true" aria-label="API key settings" class="lrn-key-dialog">' +
       '  <h3 class="lrn-key-title">Bifrost · LHIND AI Gateway key</h3>' +
-      '  <p class="lrn-key-lede">Lesson notebooks call the LLM exclusively through the <strong>Bifrost LHIND API Gateway</strong> (<code>gateway.lhind.ai</code>). Save your gateway key once — it stays in this browser only (localStorage, same-origin), no network upload.</p>' +
-      '  <label class="lrn-key-label">Bifrost gateway key (sk-xf-…)</label>' +
+      '  <p class="lrn-key-lede">' + t('key_dialog_lede') + '</p>' +
+      '  <label class="lrn-key-label">' + t('key_dialog_label') + '</label>' +
       '  <div class="lrn-key-row">' +
       '    <input id="lrnKeyOpenAi" class="lrn-key-input" type="password" autocomplete="off" placeholder="sk-xf-…" value="' + escapeAttr(existingKey) + '">' +
       '  </div>' +
-      '  <p class="lrn-key-foot">Der Key wird beim Öffnen eines Notebooks automatisch in die JupyterLite-Sandbox injiziert — kein Copy-Paste nötig. Im LHIND-Netz ist der Key optional (das Bifrost-Gateway authentifiziert netz-/WAF-basiert); außerhalb wird er benötigt.</p>' +
+      '  <p class="lrn-key-foot">' + t('key_dialog_foot') + '</p>' +
       '  <div class="lrn-key-actions">' +
-      '    <button id="lrnKeyClear" type="button" class="lrn-key-btn lrn-key-btn--ghost">Clear</button>' +
-      '    <button id="lrnKeyCancel" type="button" class="lrn-key-btn lrn-key-btn--ghost">Cancel</button>' +
-      '    <button id="lrnKeySave" type="button" class="lrn-key-btn lrn-key-btn--primary">Save</button>' +
+      '    <button id="lrnKeyClear" type="button" class="lrn-key-btn lrn-key-btn--ghost">' + t('key_dialog_clear') + '</button>' +
+      '    <button id="lrnKeyCancel" type="button" class="lrn-key-btn lrn-key-btn--ghost">' + t('key_dialog_cancel') + '</button>' +
+      '    <button id="lrnKeySave" type="button" class="lrn-key-btn lrn-key-btn--primary">' + t('key_dialog_save') + '</button>' +
       '  </div>' +
       '</div>';
     document.body.appendChild(overlay);
