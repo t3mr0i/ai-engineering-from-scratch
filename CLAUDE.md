@@ -166,6 +166,25 @@ Verify: the route should serve `/gate.html` unauthenticated and everything
 else 302→gate / 401 without a valid cookie, same behavior as
 `ase-site-gated.azurewebsites.net` today.
 
+### Public hostname: `trainingcamp.lhind.ai`
+
+`openshift/route.yaml` sets `spec.host: trainingcamp.lhind.ai` directly — the
+OCP03 router terminates that hostname itself, so no reverse-proxy Host-header
+rewrite is needed. This means:
+
+- DNS for `trainingcamp.lhind.ai` must point at the OCP03 router (the same
+  router that serves `*.apps.ocp03.cloud.lhind.app.lufthansa.com`), not at a
+  separate reverse proxy doing header rewriting.
+- The OCP wildcard cert only covers `*.apps.ocp03.cloud.lhind.app.lufthansa.com`
+  — it does **not** cover `trainingcamp.lhind.ai`. A cert for that custom
+  domain must be supplied in `route.yaml`'s `spec.tls` block
+  (`certificate`/`key`/`caCertificate`), or termination switched to
+  `reencrypt`/`passthrough` if TLS for that domain is handled upstream instead.
+- If a proxy layer for ORBIT.IO is also fronting this app, it should point
+  straight at `trainingcamp.lhind.ai` (or the OCP03 router's IP with SNI for
+  that host) — not at the generated `apps.ocp03...` route hostname, and no
+  Host-header rewrite should be applied for this app.
+
 ### Redeploy after a code change
 
 ```bash

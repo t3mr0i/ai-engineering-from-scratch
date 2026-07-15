@@ -16,37 +16,38 @@
   <link rel="stylesheet" href="badges.css?v=20260713a">
 </head>
 <body>
-  <a class="skip-link" href="#cockpit">Skip to course catalog</a>
+  <a class="skip-link" href="#cockpit" data-i18n="skip_catalog">Skip to course catalog</a>
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
       <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges">
+    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges" data-i18n-title="badges_link_title">
       <i class="ph-light ph-medal" aria-hidden="true"></i>
       <span class="badges-link__count" id="navBadgeCount" data-show="false" aria-hidden="true">0</span>
     </a>
-    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings">
+    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings" data-i18n-title="apikey_title">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </a>
-    <a href="#" id="themeToggle" class="nav-settings theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-      <span id="themeIcon" class="theme-icon">N</span>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="theme.js"></script>
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
   <script src="settings.js"></script>
 
   <main class="page page--home">
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
-        <h1 id="heroTitle">What are you shipping?</h1>
-        <p>R03-TC · LP03 · pick the task that matches the next thing on your plate.</p>
+        <h1 id="heroTitle" data-i18n="hero_title">What are you shipping?</h1>
+        <p data-i18n="hero_sub">R03-TC · LP03 · pick the task that matches the next thing on your plate.</p>
         <form class="hero-search" role="search" id="searchForm">
           <span class="hero-search__icon" aria-hidden="true">
             <i class="ph-light ph-magnifying-glass"></i>
           </span>
-          <input type="search" id="searchInput" placeholder="Search courses..." aria-label="Search courses" autocomplete="off">
+          <input type="search" id="searchInput" placeholder="Search courses..." aria-label="Search courses" autocomplete="off" data-i18n-placeholder="search_courses_ph">
         </form>
       </div>
     </section>
@@ -54,11 +55,11 @@
     <section class="cockpit" id="cockpit" aria-label="AI course catalog">
       <div class="selector-card" aria-label="Choose profile and level">
         <label class="selector-field">
-          <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> Profile</span>
+          <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="profile_label">Profile</span></span>
           <select id="profileSelect" aria-label="Choose profile"></select>
         </label>
         <label class="selector-field">
-          <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> Level</span>
+          <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> <span data-i18n="level_label">Level</span></span>
           <select id="levelSelect" aria-label="Choose level"></select>
         </label>
         <button class="selector-cta" type="button" id="ctaBtn">
@@ -69,10 +70,10 @@
 
       <div class="catalog-bar" aria-label="Course filters">
         <div class="filter-group">
-          <span class="filter-group__label" id="interestLabel"><i class="ph-light ph-squares-four" aria-hidden="true"></i> Interests</span>
+          <span class="filter-group__label" id="interestLabel"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="interests_label">Interests</span></span>
           <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel"></div>
         </div>
-        <button class="text-btn" type="button" id="resetBtn">Reset</button>
+        <button class="text-btn" type="button" id="resetBtn" data-i18n="reset_btn">Reset</button>
       </div>
 
       <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status"></div>

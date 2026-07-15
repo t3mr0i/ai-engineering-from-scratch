@@ -122,28 +122,30 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings">
+    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings" data-i18n-title="apikey_title">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </a>
-    <a href="#" id="themeToggle" class="nav-settings theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-      <span id="themeIcon" class="theme-icon">N</span>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
   <script src="settings.js"></script>
 
   <main id="main" class="container assess-page">
     <div class="assess-header">
-      <h1>AI-Literacy Self-Assessment</h1>
+      <h1 data-i18n="assess_title">AI-Literacy Self-Assessment</h1>
       <p>Pick your role, rate yourself across the 19 capabilities, and get an
          AI-Literacy score plus a learning path built from the lessons you actually need.</p>
     </div>
 
     <!-- Step 1: role -->
     <section class="assess-step active" id="step-role">
-      <label class="field-label" for="roleSelect">Your role</label>
+      <label class="field-label" for="roleSelect" data-i18n="assess_role_label">Your role</label>
       <select id="roleSelect" class="role-select" aria-label="Select your role"></select>
       <div class="btn-row">
-        <button class="btn" id="toRate" disabled>Start assessment →</button>
+        <button class="btn" id="toRate" disabled data-i18n="btn_start_assessment">Start assessment →</button>
       </div>
     </section>
 
@@ -151,8 +153,8 @@
     <section class="assess-step" id="step-rate">
       <div id="capForm"></div>
       <div class="btn-row">
-        <button class="btn secondary" id="backToRole">← Role</button>
-        <button class="btn" id="toResult">See my path →</button>
+        <button class="btn secondary" id="backToRole" data-i18n="btn_back_role">← Role</button>
+        <button class="btn" id="toResult" data-i18n="btn_see_path">See my path →</button>
       </div>
     </section>
 
@@ -166,23 +168,23 @@
           <div class="score-sub" id="scoreSub"></div>
         </div>
       </div>
-      <h2 style="margin-bottom:6px;">Your learning path</h2>
+      <h2 style="margin-bottom:6px;" data-i18n="assess_your_path">Your learning path</h2>
       <p style="color:var(--text-muted); margin-bottom:20px;">
         Capabilities below your role's target come first. Each links to the lessons that build it.</p>
       <div id="pathList"></div>
       <div class="btn-row">
-        <button class="btn secondary" id="backToRate">← Adjust ratings</button>
-        <button class="btn secondary" id="restart">Start over</button>
+        <button class="btn secondary" id="backToRate" data-i18n="btn_adjust_ratings">← Adjust ratings</button>
+        <button class="btn secondary" id="restart" data-i18n="btn_start_over">Start over</button>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>LHIND AI Learning Catalog · open source · free forever.</p>
+      <p data-i18n="footer_tagline">LHIND AI Learning Catalog · open source · free forever.</p>
       <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="glossary.html">Glossary</a>
+        <a href="index.html" data-i18n="footer_home">Home</a>
+        <a href="glossary.html" data-i18n="footer_glossary">Glossary</a>
       </div>
     </div>
   </footer>
@@ -190,28 +192,6 @@
   <script src="data.js?v=20260525a"></script>
   <script src="capabilities.js?v=20260525a"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    (function () {
-      var root = document.documentElement;
-      var stored = localStorage.getItem('theme');
-      root.setAttribute('data-theme', stored ||
-        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-      function updateIcon() {
-        var icon = document.getElementById('themeIcon');
-        if (icon) icon.textContent = root.getAttribute('data-theme') === 'light' ? 'N' : 'D';
-      }
-      updateIcon();
-      document.addEventListener('DOMContentLoaded', function () {
-        var btn = document.getElementById('themeToggle');
-        if (btn) btn.addEventListener('click', function () {
-          var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-          root.setAttribute('data-theme', next);
-          localStorage.setItem('theme', next);
-          updateIcon();
-        });
-      });
-    })();
-  </script>
 
   <script>
     (function () {
@@ -398,6 +378,5 @@
       if (state.role && Object.keys(state.ratings).length) { buildRateForm(); showStep('step-rate'); }
     })();
   </script>
-  <script src="theme.js?v=20260611a" defer></script>
 </body>
 </html>

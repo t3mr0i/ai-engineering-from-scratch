@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en" data-theme="light">
 <head>
   <script src="/gate-guard.js"></script>
   <meta charset="UTF-8">
@@ -22,20 +22,22 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges" aria-current="page">
+    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges" aria-current="page" data-i18n-title="badges_link_title">
       <i class="ph-light ph-medal" aria-hidden="true"></i>
       <span class="badges-link__count" id="navBadgeCount" data-show="false" aria-hidden="true">0</span>
     </a>
-    <a href="#" id="themeToggle" class="nav-settings theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-      <span id="themeIcon" class="theme-icon">N</span>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
 
   <main class="page" id="badgesMain">
     <section class="hero" aria-labelledby="badgesTitle">
       <div class="hero__inner">
-        <h1 id="badgesTitle">Deine Erfolge</h1>
-        <p>Sammle Badges, während du das Curriculum durcharbeitest — komplett lokal in deinem Browser.</p>
+        <h1 id="badgesTitle" data-i18n="badges_title">Deine Erfolge</h1>
+        <p data-i18n="badges_sub">Sammle Badges, während du das Curriculum durcharbeitest — komplett lokal in deinem Browser.</p>
         <div data-aifs-badges-summary></div>
       </div>
     </section>
@@ -43,14 +45,14 @@
     <section class="cockpit" aria-label="Badges">
       <div data-aifs-badges-grid></div>
       <p class="badges-reset-line">
-        <button type="button" id="badgesResetBtn" class="text-btn">Fortschritt &amp; Badges zurücksetzen</button>
+        <button type="button" id="badgesResetBtn" class="text-btn" data-i18n-html="badges_reset_btn">Fortschritt &amp; Badges zurücksetzen</button>
       </p>
     </section>
   </main>
 
   <dialog id="badgeDetailDialog" closedby="any" class="aifs-dialog" aria-labelledby="dialogTitle">
     <div class="aifs-dialog__container">
-      <button type="button" class="aifs-dialog__close" id="dialogCloseBtn" aria-label="Schließen">
+      <button type="button" class="aifs-dialog__close" id="dialogCloseBtn" aria-label="Schließen" data-i18n-title="dialog_close_aria">
         <i class="ph-light ph-x"></i>
       </button>
       <div class="aifs-dialog__body">
@@ -84,18 +86,6 @@
 
   <script>
     (function () {
-      var t = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', t);
-      var ic = document.getElementById('themeIcon');
-      if (ic) ic.textContent = t === 'light' ? 'N' : 'D';
-      var b = document.getElementById('themeToggle');
-      if (b) b.addEventListener('click', function () {
-        var cur = document.documentElement.getAttribute('data-theme');
-        var nx = cur === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', nx);
-        localStorage.setItem('theme', nx);
-        if (ic) ic.textContent = nx === 'light' ? 'N' : 'D';
-      });
       var rb = document.getElementById('badgesResetBtn');
       if (rb) rb.addEventListener('click', function () {
         if (!confirm('Gesamten Lern-Fortschritt und alle Badges zurücksetzen? Das kann nicht rückgängig gemacht werden.')) return;

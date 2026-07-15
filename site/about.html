@@ -80,33 +80,35 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings">
+    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings" data-i18n-title="apikey_title">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </a>
-    <a href="#" id="themeToggle" class="nav-settings theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-      <span id="themeIcon" class="theme-icon">N</span>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
   <script src="settings.js"></script>
 
   <main class="container">
     <article class="about">
-      <div class="about-eyebrow">About</div>
-      <h1>About the LHIND AI Learning Catalog</h1>
+      <div class="about-eyebrow" data-i18n="about_eyebrow">About</div>
+      <h1 data-i18n="about_title">About the LHIND AI Learning Catalog</h1>
 
       <p class="lede">A working curriculum for technology consultants who build and ship AI systems for clients. Each lesson reads primary sources, ships a runnable artefact, and ends on something a TC keeps: a prompt, a rubric, an agent, or an MCP server.</p>
 
-      <h2>Why it exists</h2>
+      <h2 data-i18n="about_h2_why">Why it exists</h2>
       <p>You can finish an AI playlist and still not be able to explain a loss curve, or wire a tool into an agent without knowing what attention is doing inside the model that calls it. This curriculum is built around that gap. Every task starts from the underlying math or spec, runs against the production library, and ends on something a TC can hand a steering committee, an InfoSec reviewer, or a procurement officer.</p>
 
-      <h2>How the lessons are made</h2>
+      <h2 data-i18n="about_h2_how">How the lessons are made</h2>
       <p>Drafts are produced with AI assistance and reviewed against primary sources. Where a lesson states a fact, it cites the original — an RFC, a spec, a research paper — not a secondary summary. Corrections and lesson ideas are tracked in the open on GitLab and land in the next revision.</p>
       <p>The catalog, search index, sitemap, and <code>llms.txt</code> are regenerated on every deploy from the lesson Markdown in the repository, so the published numbers cannot drift from the source. Hosting is run internally at LHIND; the source is the canonical artefact.</p>
 
-      <h2>Who builds it</h2>
+      <h2 data-i18n="about_h2_who">Who builds it</h2>
       <p>Maintained by Lufthansa Industry Solutions (LHIND) engineers and the LHIND technology-consulting community. The source is MIT-licensed.</p>
 
-      <h2>Get involved</h2>
+      <h2 data-i18n="about_h2_involved">Get involved</h2>
       <ul>
         <li>Read the source: <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener">LHIND GitLab · ai-training</a></li>
         <li>Found an error or have a lesson idea? <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/issues/new" target="_blank" rel="noopener">Open an issue</a>.</li>
@@ -120,10 +122,10 @@
       <p>© 2026 · LHIND · MIT-licensed</p>
       <div class="footer-links">
         <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener">GitLab</a>
-        <a href="about.html">About</a>
-        <a href="index.html">Courses</a>
-        <a href="glossary.html">Glossary</a>
-        <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/issues/new" target="_blank" rel="noopener">Report</a>
+        <a href="about.html" data-i18n="footer_about">About</a>
+        <a href="index.html" data-i18n="nav_courses">Courses</a>
+        <a href="glossary.html" data-i18n="footer_glossary">Glossary</a>
+        <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/issues/new" target="_blank" rel="noopener" data-i18n="footer_report_short">Report</a>
       </div>
     </div>
   </footer>
@@ -142,45 +144,9 @@
     }
   }
   </script>
-  <script>
-    (function () {
-      var root = document.documentElement;
-      var stored = localStorage.getItem('theme');
-      if (stored) {
-        root.setAttribute('data-theme', stored);
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.setAttribute('data-theme', 'light');
-      }
-
-      function updateIcon() {
-        var icon = document.getElementById('themeIcon');
-        if (!icon) return;
-        icon.textContent = root.getAttribute('data-theme') === 'light' ? 'N' : 'D';
-      }
-
-      updateIcon();
-
-      document.addEventListener('DOMContentLoaded', function () {
-        updateIcon();
-
-        var btn = document.getElementById('themeToggle');
-        if (btn) {
-          btn.addEventListener('click', function () {
-            var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            root.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            updateIcon();
-          });
-        }
-      });
-    })();
-  </script>
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260525a"></script>
   <script src="cmdpalette.js?v=20260525a" defer></script>
-  <script src="theme.js?v=20260611a" defer></script>
   <script src="analytics.js?v=20260525a" defer></script>
 </body>
 </html>

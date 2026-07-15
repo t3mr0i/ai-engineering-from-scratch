@@ -22,14 +22,14 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="#" id="themeToggle" class="nav-settings theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-      <span id="themeIcon" class="theme-icon">N</span>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
 
   <main class="page page--detail" id="courseMain">
     <a class="back-link" id="backLinkTop" href="../index.html">
-      <i class="ph-light ph-arrow-left" aria-hidden="true"></i> Back to courses
+      <i class="ph-light ph-arrow-left" aria-hidden="true"></i> <span data-i18n="back_to_courses">Back to courses</span>
     </a>
     <div id="courseRoot"></div>
   </main>
@@ -43,6 +43,7 @@
   <script src="data.js"></script>
   <script src="curriculum-map.js"></script>
   <script src="course.js"></script>
-  <script src="../theme.js"></script>
+  <script src="../i18n.js"></script>
+  <script src="../lang.js"></script>
 </body>
 </html>

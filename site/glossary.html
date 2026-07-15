@@ -178,23 +178,25 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings">
+    <a href="#" id="lrnKeyBtn" class="nav-settings" title="API key for notebooks" aria-label="API key settings" data-i18n-title="apikey_title">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </a>
-    <a href="#" id="themeToggle" class="nav-settings theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-      <span id="themeIcon" class="theme-icon">N</span>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
   <script src="settings.js"></script>
 
   <main class="glossary-page" id="main">
     <div class="container">
       <div class="glossary-header">
-        <h1>AI Glossary</h1>
+        <h1 data-i18n="glossary_title">AI Glossary</h1>
         <p>What people <em>say</em> vs what things actually <em>mean</em></p>
       </div>
       <div class="glossary-search-wrap">
-        <input type="text" class="glossary-search" id="glossarySearch" placeholder="Search terms...">
+        <input type="text" class="glossary-search" id="glossarySearch" placeholder="Search terms..." data-i18n-placeholder="glossary_search_ph">
       </div>
       <div class="glossary-count" id="glossaryCount"></div>
       <div class="glossary-list" id="glossaryList"></div>
@@ -203,11 +205,11 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>LHIND AI Learning Catalog · open source · free forever.</p>
+      <p data-i18n="footer_tagline">LHIND AI Learning Catalog · open source · free forever.</p>
       <div class="footer-links">
-        <a href="index.html">Home</a>
+        <a href="index.html" data-i18n="footer_home">Home</a>
         <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener">GitLab</a>
-              <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/issues/new" target="_blank" rel="noopener">Report / Suggest</a>
+              <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/issues/new" target="_blank" rel="noopener" data-i18n="footer_report">Report / Suggest</a>
       </div>
     </div>
   </footer>
@@ -217,37 +219,7 @@
   <script src="cmdpalette.js?v=20260525a" defer></script>
   <script>
     (function () {
-      var root = document.documentElement;
-      var stored = localStorage.getItem('theme');
-      if (stored) {
-        root.setAttribute('data-theme', stored);
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.setAttribute('data-theme', 'light');
-      }
-
-      function updateIcon() {
-        var icon = document.getElementById('themeIcon');
-        if (!icon) return;
-        icon.textContent = root.getAttribute('data-theme') === 'light' ? 'N' : 'D';
-      }
-
-      updateIcon();
-
       document.addEventListener('DOMContentLoaded', function () {
-        updateIcon();
-
-        var btn = document.getElementById('themeToggle');
-        if (btn) {
-          btn.addEventListener('click', function () {
-            var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            root.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            updateIcon();
-          });
-        }
-
         var searchInput = document.getElementById('glossarySearch');
         var listEl = document.getElementById('glossaryList');
         var countEl = document.getElementById('glossaryCount');
@@ -315,7 +287,6 @@
       });
     })();
   </script>
-  <script src="theme.js?v=20260611a" defer></script>
 <script src="analytics.js?v=20260525a" defer></script>
 </body>
 </html>

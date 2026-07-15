@@ -2141,7 +2141,7 @@
 </head>
 <body>
 
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n="skip_content">Skip to content</a>
 
   <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -2151,7 +2151,7 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges">
+    <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges" data-i18n-title="badges_link_title">
       <i class="ph-light ph-medal" aria-hidden="true"></i>
       <span class="badges-link__count" id="navBadgeCount" data-show="false" aria-hidden="true">0</span>
     </a>
@@ -2185,6 +2185,8 @@
     <aside class="toc-sidebar" id="tocSidebar" aria-hidden="true"></aside>
   </div>
 
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
   <script src="settings.js"></script>
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260525a"></script>
@@ -2217,36 +2219,6 @@
   </script>
   <script>
     (function () {
-      var root = document.documentElement;
-      var stored = localStorage.getItem('theme');
-      if (stored) {
-        root.setAttribute('data-theme', stored);
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.setAttribute('data-theme', 'light');
-      }
-      updateThemeIcon();
-
-      function updateThemeIcon() {
-        var icon = document.getElementById('themeIcon');
-        if (!icon) return;
-        var theme = root.getAttribute('data-theme');
-        icon.textContent = theme === 'light' ? 'N' : 'D';
-      }
-
-      var btn = document.getElementById('themeToggle');
-      if (btn) {
-        btn.addEventListener('click', function () {
-          var current = root.getAttribute('data-theme');
-          var next = current === 'light' ? 'dark' : 'light';
-          root.setAttribute('data-theme', next);
-          localStorage.setItem('theme', next);
-          updateThemeIcon();
-          updateMermaidThemeAndRerender();
-        });
-      }
-
       var params = new URLSearchParams(window.location.search);
       var lessonPath = params.get('path');
       var lrnCourseId = params.get('course') || params.get('lrnCourse') || params.get('courseId');
@@ -2974,15 +2946,16 @@
           nav += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity" aria-label="Previous activity">&larr;</a>';
         }
         var overviewHref = (lrnContext && lrnContext.course) ? 'lrn/course.html?id=' + encodeURIComponent(lrnContext.course.id) : 'index.html';
-        nav += '<a href="' + overviewHref + '">Overview</a>';
+        nav += '<a href="' + overviewHref + '" data-i18n="nav_overview">Overview</a>';
         if (lrnContext && lrnContext.next) {
           nav += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity" aria-label="Next activity">&rarr;</a>';
         }
         nav += '<a href="#" id="lrnKeyBtn" title="Bifrost gateway key for notebooks" aria-label="API key settings">' + LUCIDE_SETTINGS + '</a>';
-        nav += '<a href="#" id="themeToggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme"><span id="themeIcon" class="theme-icon">N</span></a>';
+        nav += '<a href="#" id="langToggle" class="lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title"><span id="langIcon" class="theme-icon">EN</span></a>';
         nav += '</nav>';
 
         slot.innerHTML = meta + nav;
+        if (window.SiteLang) window.SiteLang.translate();
       }
 
       // ── API key settings (LRN mode) ─────────────────────────────────
@@ -5306,6 +5279,5 @@
       }
     })();
   </script>
-  <script src="theme.js?v=20260611a" defer></script>
 </body>
 </html>
