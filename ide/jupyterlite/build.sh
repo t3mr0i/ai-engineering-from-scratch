@@ -4,9 +4,8 @@
 #   1. venv with jupyterlite + pyodide kernel + jupyter-server + nbconvert deps
 #   2. build-notebooks.sh -> hand-authored notebook*.py files, pre-executed
 #   3. jupyter lite build --contents -> static app + contents index
-#   4. inject-key-bridge.py + inject-lhg-theme.py -> re-apply the LRN key
-#      bridge and the LHG colour overrides (both lost on every build, since
-#      `jupyter lite build` regenerates every index.html/theme package)
+#   4. inject-lhg-theme.py -> re-apply the LHG colour overrides (lost on
+#      every build, since `jupyter lite build` regenerates every theme package)
 #   5. copy into site/jupyterlite (gitignored, deploy picks it up from disk)
 #
 # Idempotent / re-runnable: the venv is reused if already usable (skip
@@ -42,8 +41,7 @@ rm -rf "$BUILD_DIR" && mkdir -p "$BUILD_DIR"
 "$VENV/bin/jupyter" lite build --lite-dir "$REPO/ide/jupyterlite" \
   --contents "$CONTENT" --output-dir "$OUTPUT"
 
-echo "== 4. inject-key-bridge.py + inject-lhg-theme.py =="
-python3 "$REPO/ide/jupyterlite/inject-key-bridge.py" "$OUTPUT"
+echo "== 4. inject-lhg-theme.py =="
 python3 "$REPO/ide/jupyterlite/inject-lhg-theme.py" "$OUTPUT"
 
 echo "== 5. copy into site/jupyterlite =="

@@ -27,9 +27,8 @@ The one-command way:
 This chains everything below into a single idempotent script: it reuses
 `/tmp/jlite-venv` if it already has the required packages, converts the
 hand-authored `notebook*.py` files, runs `jupyter lite build`, re-applies the
-LRN key bridge and the LHG theme overrides, and refreshes `site/jupyterlite/`.
-Override `VENV` / `CONTENT` / `BUILD_DIR` env vars if you need non-default
-locations.
+LHG theme overrides, and refreshes `site/jupyterlite/`. Override `VENV` /
+`CONTENT` / `BUILD_DIR` env vars if you need non-default locations.
 
 ### What it does under the hood
 
@@ -59,44 +58,34 @@ rm -rf /tmp/jlite-build && mkdir -p /tmp/jlite-build
 /tmp/jlite-venv/bin/jupyter lite build --lite-dir ide/jupyterlite \
   --contents /tmp/jlite-content --output-dir /tmp/jlite-build/_output
 
-# 4. inject the LRN key bridge and the LHG theme overrides, then copy into the
-#    site (gitignored) and deploy. `jupyter lite build` regenerates every
-#    */index.html and the theme package on every run, so both the key bridge
-#    (receives the API key from the lesson site via postMessage -> window
-#    global) and the LHG colour overrides MUST be re-applied after each
-#    build — neither can live inside the app tree.
-python3 ide/jupyterlite/inject-key-bridge.py /tmp/jlite-build/_output
+# 4. inject the LHG theme overrides, then copy into the site (gitignored) and
+#    deploy. `jupyter lite build` regenerates every */index.html and the theme
+#    package on every run, so the LHG colour overrides MUST be re-applied
+#    after each build — they can't live inside the app tree.
 python3 ide/jupyterlite/inject-lhg-theme.py /tmp/jlite-build/_output
 rm -rf site/jupyterlite && cp -r /tmp/jlite-build/_output site/jupyterlite
 ```
 
-## API key injection (lesson site → notebook)
+## LLM gateway access (server-side proxy, no client key)
 
-Notebooks that call the LHIND gateway need an Authorization header **only off
-the LHIND network** (in-network is WAF/IP-authed). The lesson site holds the
-key centrally in `localStorage['lrn-llm-key']` (gear icon in the lesson
-header). The flow, all same-origin (no CORS):
-
-```
-localStorage['lrn-llm-key']
-  -> site/lesson.html postMessage({type:'lrn-llm-key', key}) to the iframe
-  -> ide/jupyterlite/lrn-key-bridge.js sets window.__LRN_LLM_KEY__
-  -> lrn_llm._key() reads it via Pyodide's `js` module
-  -> Authorization: Bearer <key>  (omitted when empty)
-```
-
-`inject-key-bridge.py` (step 4) wires the bridge into the built HTML; it is
-idempotent. Empty key is the in-network default and must keep working.
+Notebooks call `POST /api/llm/chat/completions` on the gated server
+(`server/server.js`, same origin as the site) instead of `gateway.lhind.ai`
+directly. The server injects the shared Bifrost gateway key from the
+`LLM_GATEWAY_KEY` env var — no key ever reaches the browser or a notebook.
+`lrn_llm.py`'s default `API_BASE` is `/api/llm`; notebooks need no key setup.
+(Previously the key lived in the lesson site's `localStorage` and was
+postMessaged into the notebook iframe via a key-bridge script — removed, no
+longer needed.)
 
 ## LHG theme overrides (stock Jupyter colours → brand colours)
 
 `ide/jupyterlite/lhg-theme.css` overrides JupyterLab's `--jp-*` CSS custom
 properties with the same LHG design tokens used elsewhere on the site (see
 `site/lrn/tokens.css`), so the notebook UI doesn't look like stock Jupyter
-Material blue/green/orange/red. Same story as the key bridge: `jupyter lite
-build` regenerates the theme package (and every `index.html`) on every run, so
-`inject-lhg-theme.py` (step 4) has to re-copy the stylesheet and re-inject the
-`<link>` tag after each build — it can't live inside the app tree either.
+Material blue/green/orange/red. `jupyter lite build` regenerates the theme
+package (and every `index.html`) on every run, so `inject-lhg-theme.py`
+(step 4) has to re-copy the stylesheet and re-inject the `<link>` tag after
+each build — it can't live inside the app tree either.
 Every declaration in `lhg-theme.css` uses `!important`: the theme package's
 own CSS is injected into `<head>` at runtime by its webpack bundle, landing
 *after* this statically-injected `<link>` regardless of source order, so

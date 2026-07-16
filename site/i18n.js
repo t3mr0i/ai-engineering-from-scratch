@@ -10,7 +10,6 @@ window.SITE_I18N = {
   nav_overview: { en: "Overview", de: "Übersicht" },
   back_to_courses: { en: "Back to courses", de: "Zurück zu den Kursen" },
   badges_link_title: { en: "Your badges", de: "Deine Badges" },
-  apikey_title: { en: "API key for notebooks", de: "API-Schlüssel für Notebooks" },
   lang_toggle_title: { en: "Switch language", de: "Sprache wechseln" },
   skip_content: { en: "Skip to content", de: "Zum Inhalt springen" },
   skip_catalog: { en: "Skip to course catalog", de: "Zum Kurskatalog springen" },
@@ -81,14 +80,6 @@ window.SITE_I18N = {
   badges_sub: { en: "Collect badges as you work through the curriculum — fully local in your browser.", de: "Sammle Badges, während du das Curriculum durcharbeitest — komplett lokal in deinem Browser." },
   badges_reset_btn: { en: "Reset progress &amp; badges", de: "Fortschritt &amp; Badges zurücksetzen" },
   dialog_close_aria: { en: "Close", de: "Schließen" },
-
-  // settings.js — API key dialog (shared across every page)
-  key_dialog_lede: { en: "Lesson notebooks call the LLM exclusively through the <strong>Bifrost LHIND API Gateway</strong> (<code>gateway.lhind.ai</code>). Save your gateway key once — it stays in this browser only (localStorage, same-origin), no network upload.", de: "Lektions-Notebooks rufen das LLM ausschließlich über das <strong>Bifrost LHIND API Gateway</strong> (<code>gateway.lhind.ai</code>) auf. Speichere deinen Gateway-Key einmal — er bleibt nur in diesem Browser (localStorage, same-origin), kein Netzwerk-Upload." },
-  key_dialog_label: { en: "Bifrost gateway key (sk-xf-…)", de: "Bifrost-Gateway-Key (sk-xf-…)" },
-  key_dialog_foot: { en: "The key is automatically injected into the JupyterLite sandbox when a notebook opens — no copy-paste needed. On the LHIND network the key is optional (the Bifrost gateway authenticates by network/WAF); outside it, the key is required.", de: "Der Key wird beim Öffnen eines Notebooks automatisch in die JupyterLite-Sandbox injiziert — kein Copy-Paste nötig. Im LHIND-Netz ist der Key optional (das Bifrost-Gateway authentifiziert netz-/WAF-basiert); außerhalb wird er benötigt." },
-  key_dialog_clear: { en: "Clear", de: "Löschen" },
-  key_dialog_cancel: { en: "Cancel", de: "Abbrechen" },
-  key_dialog_save: { en: "Save", de: "Speichern" },
 
   // badges.html — reset-progress confirm()
   badges_reset_confirm: { en: "Reset all learning progress and badges? This cannot be undone.", de: "Gesamten Lern-Fortschritt und alle Badges zurücksetzen? Das kann nicht rückgängig gemacht werden." }

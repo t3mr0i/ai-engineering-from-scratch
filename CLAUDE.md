@@ -1,113 +1,29 @@
 # CLAUDE.md — Deploy & Infrastructure
 
-This project deploys to Azure in **two independent parts**. Know which one you're
-touching before you push.
-
-**Migration in progress:** the gated site is moving from Azure App Service to
-OpenShift (`trainingcamp-prod` namespace, cluster `ocp04`) — see §1b. Azure
-(`ase-site-gated`) stays live and is the source of truth until the OpenShift
-deployment is verified; it will be decommissioned once that's confirmed
-working.
+The gated site now runs on OpenShift (`trainingcamp-prod` namespace, cluster
+`ocp03`) — see §1b for the live deploy. §1 below is kept as historical
+reference for the retired Azure deployment.
 
 ---
 
-## 1. Gated site (live today, being replaced by §1b)
+## 1. Gated site on Azure (decommissioned)
 
-The lesson site + the in-browser Python playground (Pyodide). Served by a small
-Node server that runs the HMAC passcode gate on every request — **no byte
-is reachable without a valid signed cookie**, including the 752 KB `data.js`,
-all of `/phases/*`, the JupyterLite assets, and the Pyodide WASM. No Entra,
-no gateway, no identity provider — just a shared passcode.
+Formerly hosted as App Service `ase-site-gated` (plan `ase-site-plan`,
+resource group `rg-ase-webpage`, subscription `338558e0-0b85-4d45-97f8-392312662da6`).
+**Both the App Service and its plan have been deleted** (the plan went with
+it automatically — it was the last app on that plan, `az webapp delete`
+without `--keep-empty-plan` takes the plan too). `https://ase-site-gated.azurewebsites.net`
+no longer resolves to anything. The `deploy_azure` job in `.gitlab-ci.yml`
+was removed for the same reason — it would otherwise fail on every push to
+`main` trying to deploy to a resource that no longer exists.
 
-- **Azure resource:** App Service `ase-site-gated` (Linux, Node 22, plan B1)
-- **App Service plan:** `ase-site-plan`
-- **Resource group:** `rg-ase-webpage`
-- **Region:** Germany West Central (LHIND data residency)
-- **Subscription:** `BU Technologie Consulting E/TEI - ASE - Test - Y0100`
-  (`338558e0-0b85-4d45-97f8-392312662da6`)
-- **Live URL:** https://ase-site-gated.azurewebsites.net
-- **Hosting model:** Node server in `server/` (zero npm dependencies — pure
-  `http` + `crypto`) serves `site/` statically and runs the per-request gate.
-  Only `gate.html` and `POST /api/gate` are publicly reachable; everything else
-  requires a valid `ase_gate` cookie.
+Other resources in `rg-ase-webpage` (`swa-ase-webpage`, `swa-flightdeck`,
+`flightdeckdl`) are unrelated and were left untouched.
 
-### Secrets
-
-Two values, set as App Service application settings (Configuration → Application
-settings, or `az webapp config appsettings set`). They must match what any
-existing cookies were signed with — changing `GATE_SECRET` invalidates every
-outstanding cookie.
-
-| Setting | What | Purpose |
-|---|---|---|
-| `SITE_PASSCODE` | the shared passcode | compared timing-safely on `POST /api/gate` |
-| `GATE_SECRET`    | random hex string   | HMAC-SHA256 key signing the `ase_gate` cookie |
-| `WEBSITE_RUN_FROM_PACKAGE` | unset / `0` | server reads site from disk, no package-mount |
-| `SCM_DO_BUILD_DURING_DEPLOYMENT` | `false` | server has no npm deps; skip build step |
-
-`SITE_PASSCODE` and `GATE_SECRET` never live in source.
-
-### Push it
-
-CI (`.gitlab-ci.yml`) does this automatically on push to `main` **once** the
-GitLab CI/CD variables `AZURE_APP_SERVICE_SP_CLIENT_ID`,
-`AZURE_APP_SERVICE_SP_CLIENT_SECRET`, and `AZURE_APP_SERVICE_SP_TENANT_ID`
-(masked + protected) are set. The SP needs the role `Website Contributor`
-scoped to `/subscriptions/<sub>/resourceGroups/rg-ase-webpage/providers/Microsoft.Web/sites/ase-site-gated`.
-
-### Manual deploy to Azure (skip Git)
-
-For fast iteration when you want to ship UI changes without going through the
-GitLab merge + CI pipeline. Assumes you are logged into `az` and land in
-subscription `338558e0-0b85-4d45-97f8-392312662da6`.
-
-```bash
-# 1. Build + regenerate runnable-block catalog
-node site/build.js
-node scripts/test_runnable_blocks.mjs
-
-# 2. Stage site/ + phases/ as on CI
-mkdir -p site/phases
-rsync -a --prune-empty-dirs --include='*/' \
-  --include='docs/en.md' --include='quiz.json' --include='code/main.py' \
-  --exclude='*' phases/ site/phases/
-
-# 3. Assemble deploy package (server + site + package.json)
-rm -rf .appservice-deploy deploy.zip
-mkdir -p .appservice-deploy
-cp server/server.js server/gate-core.js server/package.json .appservice-deploy/server/
-cp -R site .appservice-deploy/site
-cat > .appservice-deploy/package.json <<'JSON'
-{ "name": "ase-site-gated", "version": "1.0.0", "private": true,
-  "scripts": { "start": "node server/server.js" },
-  "engines": { "node": ">=18" } }
-JSON
-(cd .appservice-deploy && zip -r -q ../deploy.zip .)
-rm -rf .appservice-deploy
-
-# 4. Deploy (secrets already configured on the App Service)
-az webapp deploy -n ase-site-gated -g rg-ase-webpage \
-  --src-path deploy.zip --type zip
-
-# 5. Clean up
-rm -f deploy.zip
-```
-
-Notes:
-
-- The `site/jupyterlite/`, `site/phases/` and `.appservice-deploy/`
-  directories are build / deploy artefacts — never commit them.
-- The deploy zip is fully self-contained: no `npm install` runs on the App
-  Service (the server uses only Node built-ins). Deploy is fast (~25 MB zip).
-- To verify after deploy: `curl -I https://ase-site-gated.azurewebsites.net/`
-  should return `302` (HTML nav) or `401` (asset); with a valid cookie fetched
-  via `POST /api/gate` every path returns `200`.
-- **Domain migration** (for taking the custom domain over from the old SWA
-  URL): DNS changes + App Service custom-domain binding + TLS cert. Not done
-  here — see runbook in `docs/runbook-domain-cutover.md` (when written).
-- **SWA retirement** (`swa-ase-webpage`) — leave it running until the custom
-  domain has propagated and old cookies have expired (TTL 7 days). Then stop
-  / delete.
+The hosting model (Node server in `server/`, zero npm deps, HMAC passcode
+gate on every request) is unchanged — it just runs as a container on
+OpenShift now instead of an App Service zip. See §1b for the current setup,
+secrets, and deploy steps.
 
 ---
 
@@ -128,7 +44,12 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
   run with an active deadline and are NOT counted against this scope, so the
   full budget is available to the running Deployment. `openshift/deployment.yaml`
   requests `100m/128Mi`, limits `200m/256Mi` — leaves headroom, don't raise
-  without checking the quota first.
+  without checking the quota first. That headroom is *not* enough for a
+  RollingUpdate, though: it briefly needs old + new pod side by side
+  (400m limit) which exceeds the 250m quota and makes every rollout hang
+  forever on `FailedCreate: exceeded quota`. `deployment.yaml` sets
+  `strategy.type: Recreate` for this reason — confirmed necessary the first
+  time a rollout was attempted here.
 - **Manifests:** `openshift/Dockerfile`, `deployment.yaml`, `service.yaml`,
   `route.yaml`, `secret.example.yaml`. Dockerfile replicates the same build
   steps as `.gitlab-ci.yml`'s `deploy_azure` job (`node site/build.js` +
@@ -151,6 +72,13 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
   under the `default` ServiceAccount, so a dedicated `ase-site-gated`
   ServiceAccount is required and referenced via `spec.template.spec.serviceAccountName`
   in `deployment.yaml`.
+- **Passcode gate is disabled here** (`GATE_DISABLED=true` in
+  `deployment.yaml`, checked in `server/server.js`) — this route is only
+  reachable through an internal, VPN-restricted reverse proxy, so the
+  passcode was judged redundant on top of that network restriction. The
+  `SITE_PASSCODE`/`GATE_SECRET` secret is still created and wired up (harmless,
+  unused) so re-enabling the gate later is a one-line env change, not a
+  redeploy-from-scratch.
 
 ### First deploy (manual, no CI wired up yet)
 
@@ -179,28 +107,43 @@ oc apply -f openshift/route.yaml
 oc get route ase-site-gated -o jsonpath='{.spec.host}'
 ```
 
-Verify: the route should serve `/gate.html` unauthenticated and everything
-else 302→gate / 401 without a valid cookie, same behavior as
-`ase-site-gated.azurewebsites.net` today.
+Verify: `/gate.html`, `/`, and `/data.js` should all return `200` without any
+cookie — the gate is intentionally disabled here (`GATE_DISABLED=true`, see
+above). This differs from the old Azure deployment (see §1), which required
+a valid `ase_gate` cookie on everything but `/gate.html`.
 
-### Public hostname: `trainingcamp.lhind.ai`
+### Public hostname: default OCP03 domain, not `trainingcamp.lhind.ai`
 
-`openshift/route.yaml` sets `spec.host: trainingcamp.lhind.ai` directly — the
-OCP03 router terminates that hostname itself, so no reverse-proxy Host-header
-rewrite is needed. This means:
+`trainingcamp.lhind.ai` was the original plan but got dropped: `lhind.ai`
+isn't a resolvable internal DNS zone (confirmed via `nslookup` → NXDOMAIN;
+it only exists for external AI services in eLDP). Standing up a real zone
+via Kyndryl was one option, but the team picked the fast path instead —
+**no custom host at all**. `openshift/route.yaml` has no `spec.host`, so
+OpenShift generates one under the cluster's own wildcard domain:
 
-- DNS for `trainingcamp.lhind.ai` must point at the OCP03 router (the same
-  router that serves `*.apps.ocp03.cloud.lhind.app.lufthansa.com`), not at a
-  separate reverse proxy doing header rewriting.
-- The OCP wildcard cert only covers `*.apps.ocp03.cloud.lhind.app.lufthansa.com`
-  — it does **not** cover `trainingcamp.lhind.ai`. A cert for that custom
-  domain must be supplied in `route.yaml`'s `spec.tls` block
-  (`certificate`/`key`/`caCertificate`), or termination switched to
-  `reencrypt`/`passthrough` if TLS for that domain is handled upstream instead.
-- If a proxy layer for ORBIT.IO is also fronting this app, it should point
-  straight at `trainingcamp.lhind.ai` (or the OCP03 router's IP with SNI for
-  that host) — not at the generated `apps.ocp03...` route hostname, and no
-  Host-header rewrite should be applied for this app.
+```
+ase-site-gated-trainingcamp-prod.apps.ocp03.cloud.lhind.app.lufthansa.com
+```
+
+(re-derive with `oc get route ase-site-gated -o jsonpath='{.spec.host}'` —
+it's deterministic from route name + namespace, but don't hardcode it
+elsewhere in case the route is ever recreated with different metadata.)
+
+Implications:
+
+- No new DNS record and no new certificate needed — this hostname resolves
+  under the cluster's existing wildcard domain and is covered by the OCP
+  wildcard TLS cert already terminating `*.apps.ocp03.cloud.lhind.app.lufthansa.com`.
+- Any reverse proxy (internal or ORBIT.IO) fronting this app **must rewrite
+  the Host header** to the generated hostname above before forwarding —
+  this is the generic-domain case, where OpenShift's router relies on the
+  Host header to resolve Route → Service → Pod. (Contrast with a route that
+  sets a custom `spec.host` directly, where no rewrite is needed — that was
+  the `trainingcamp.lhind.ai` plan, abandoned for the DNS-zone reason above.)
+- If a friendlier public name is wanted later, revisit the DNS-zone options
+  discussed with the network team (new Kyndryl-managed zone + cert, or a
+  hostname under the existing `lhind.app.lufthansa.com` zone) — out of
+  scope for the initial deploy.
 
 ### Redeploy after a code change
 
@@ -209,12 +152,12 @@ oc start-build ase-site-gated --from-dir=. --follow   # rebuilds image
 oc rollout restart deployment/ase-site-gated          # picks up :latest
 ```
 
-### After OpenShift is verified working
+### Azure teardown
 
-Azure teardown (`ase-site-gated` App Service, plan `ase-site-plan`, resource
-group `rg-ase-webpage`) happens only after this is confirmed live and
-correct — not automatically. Don't delete the Azure resources as part of
-setting up OpenShift.
+Done — see §1. Torn down before external (VPN/reverse-proxy) reachability of
+the OpenShift deployment was confirmed, at explicit user request accepting
+that risk; only internal verification (`oc port-forward` + curl) had passed
+at that point.
 
 ---
 

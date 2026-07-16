@@ -3,7 +3,7 @@
 
 `jupyter lite build` regenerates every HTML entry and theme package, so the
 override stylesheet can't be a tracked source file inside the app — it has to
-be re-applied after each build, same as inject-key-bridge.py. This script:
+be re-applied after each build. This script:
 
   1. copies ide/jupyterlite/lhg-theme.css into <output>/lhg-theme.css
   2. injects <link rel="stylesheet" href="<rel>/lhg-theme.css"> into every

@@ -13,10 +13,13 @@
  * Everything else requires a valid `ase_gate` cookie.
  *
  * Config (App Service application settings):
- *   SITE_PASSCODE  the shared passcode
- *   GATE_SECRET    HMAC secret for the cookie
- *   PORT           injected by App Service; defaults to 8080 locally
- *   WEB_ROOT       static root; defaults to ../site
+ *   SITE_PASSCODE    the shared passcode
+ *   GATE_SECRET      HMAC secret for the cookie
+ *   GATE_DISABLED    'true' to skip the passcode gate entirely
+ *   PORT             injected by App Service; defaults to 8080 locally
+ *   WEB_ROOT         static root; defaults to ../site
+ *   LLM_GATEWAY_KEY  Bifrost gateway key, injected server-side by
+ *                    POST /api/llm/chat/completions — see handleLlmProxy
  */
 
 const http = require('http');
@@ -35,6 +38,20 @@ const PORT = process.env.PORT || 8080;
 const WEB_ROOT = path.resolve(process.env.WEB_ROOT || path.join(__dirname, '..', 'site'));
 const SITE_PASSCODE = process.env.SITE_PASSCODE;
 const GATE_SECRET = process.env.GATE_SECRET;
+// Escape hatch for deployments that are already access-restricted at the
+// network layer (e.g. an internal-only OpenShift route reachable only over
+// VPN) and don't need the passcode gate on top.
+const GATE_DISABLED = process.env.GATE_DISABLED === 'true';
+
+// Server-side proxy for the LHIND LLM gateway (Bifrost). The key lives only
+// here — notebooks call this same-origin endpoint instead of gateway.lhind.ai
+// directly, so no per-user key ever needs to reach the browser.
+const LLM_GATEWAY_URL = 'https://gateway.lhind.ai/v1/chat/completions';
+const LLM_GATEWAY_KEY = process.env.LLM_GATEWAY_KEY;
+// Per-IP request cap, independent of the passcode gate (which may be
+// disabled) — keeps one client from burning the shared gateway budget.
+const LLM_RATE_LIMIT_PER_MIN = 20;
+const llmRateState = new Map(); // ip -> { count, windowStart }
 
 // Paths a logged-out visitor may reach. Keep this minimal — gate.html is
 // self-contained, so the passcode page needs nothing else.
@@ -151,6 +168,69 @@ function handleGatePost(req, res) {
   });
 }
 
+function clientIp(req) {
+  const xff = req.headers['x-forwarded-for'];
+  if (xff) return xff.split(',')[0].trim();
+  return req.socket.remoteAddress || 'unknown';
+}
+
+function llmRateLimited(ip) {
+  const now = Date.now();
+  const entry = llmRateState.get(ip);
+  if (!entry || now - entry.windowStart > 60000) {
+    llmRateState.set(ip, { count: 1, windowStart: now });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > LLM_RATE_LIMIT_PER_MIN;
+}
+
+// Proxies notebook LLM calls to the Bifrost gateway, injecting the shared key
+// server-side. Any Authorization header the client sends is ignored — the
+// key never needs to exist in the browser.
+function handleLlmProxy(req, res) {
+  if (req.method !== 'POST') {
+    res.writeHead(405, { 'Content-Type': 'text/plain' });
+    res.end('Method Not Allowed');
+    return;
+  }
+  if (!LLM_GATEWAY_KEY) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: { message: 'LLM gateway not configured' } }));
+    return;
+  }
+  if (llmRateLimited(clientIp(req))) {
+    res.writeHead(429, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: { message: 'rate limit exceeded, try again shortly' } }));
+    return;
+  }
+  let body = '';
+  let tooBig = false;
+  req.on('data', (chunk) => {
+    body += chunk;
+    if (body.length > 1_000_000) { tooBig = true; req.destroy(); } // 1MB cap
+  });
+  req.on('end', async () => {
+    if (tooBig) return;
+    try {
+      const upstream = await fetch(LLM_GATEWAY_URL, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${LLM_GATEWAY_KEY}`,
+        },
+        body,
+      });
+      const text = await upstream.text();
+      res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
+      res.end(text);
+    } catch (err) {
+      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: { message: 'upstream request failed' } }));
+    }
+  });
+}
+
 const server = http.createServer((req, res) => {
   const url = req.url || '/';
   const pathOnly = url.split('?')[0];
@@ -166,9 +246,16 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // 1b. LLM proxy for notebooks — server-injected key, own rate limit,
+  // independent of gate state (see handleLlmProxy).
+  if (pathOnly === '/api/llm/chat/completions') {
+    handleLlmProxy(req, res);
+    return;
+  }
+
   // 2. Cookie-check endpoint kept for compatibility with gate-guard.js.
   if (pathOnly === '/api/check') {
-    const ok = Boolean(GATE_SECRET) && validToken(cookieFromRequest(req), GATE_SECRET);
+    const ok = GATE_DISABLED || (Boolean(GATE_SECRET) && validToken(cookieFromRequest(req), GATE_SECRET));
     res.writeHead(ok ? 200 : 401, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ ok }));
     return;
@@ -181,7 +268,7 @@ const server = http.createServer((req, res) => {
   }
 
   // 4. THE GATE: everything else requires a valid signed cookie.
-  if (!GATE_SECRET || !validToken(cookieFromRequest(req), GATE_SECRET)) {
+  if (!GATE_DISABLED && (!GATE_SECRET || !validToken(cookieFromRequest(req), GATE_SECRET))) {
     // HTML navigations get a friendly redirect; asset/data fetches get a hard
     // 401 so nothing renders and nothing leaks.
     const accept = req.headers.accept || '';
@@ -210,6 +297,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   const ok = SITE_PASSCODE && GATE_SECRET;
-  console.log(`gated server on :${PORT}  root=${WEB_ROOT}  configured=${Boolean(ok)}`);
-  if (!ok) console.warn('WARNING: SITE_PASSCODE / GATE_SECRET not set — gate will 500 on submit.');
+  console.log(`gated server on :${PORT}  root=${WEB_ROOT}  configured=${Boolean(ok)}  gateDisabled=${GATE_DISABLED}`);
+  if (!GATE_DISABLED && !ok) console.warn('WARNING: SITE_PASSCODE / GATE_SECRET not set — gate will 500 on submit.');
 });

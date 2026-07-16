@@ -4,13 +4,13 @@ Single source of truth for LLM-Calls aus den generierten Lesson-Notebooks. Wird
 inline in jedes Notebook eingebettet (siehe scripts/generate_notebooks.py +
 phases/<phase>/<lesson>/code/notebook.py).
 
-Default-Endpoint ist das LHIND-AI-Gateway (Bifrost, gateway.lhind.ai,
-CORS-friendly). Du kannst durch das Setzen einer anderen API_BASE jeden
-OpenAI-kompatiblen Provider nutzen. Modell-IDs sind im Format "provider/model"
-(z.B. "azure/gpt-4o").
+Default-Endpoint ist der same-origin LLM-Proxy des gated Servers
+(server/server.js, POST /api/llm/chat/completions), der den Bifrost-Gateway-
+Key server-seitig injiziert — kein Key läuft mehr im Browser. Du kannst durch
+das Setzen einer anderen API_BASE jeden OpenAI-kompatiblen Provider nutzen.
+Modell-IDs sind im Format "provider/model" (z.B. "azure/gpt-4o").
 
 Usage in a notebook:
-    lrn_llm.API_KEY = "sk-xf-..."  # LHIND-Gateway-Key (optional, je nach Netz)
     response = await lrn_llm.call([{"role": "user", "content": "Sag OK"}])
     print(lrn_llm.text(response))  # → "OK"
 
@@ -31,29 +31,15 @@ except ImportError:
     _IN_PYODIDE = False
 
 
-API_BASE = "https://gateway.lhind.ai/v1"
+API_BASE = "/api/llm"   # same-origin proxy; server injects the gateway key
 DEFAULT_MODEL = "azure/gpt-4o"   # provider/model-Format; verfügbar u.a. azure/gpt-4.1-mini
-API_KEY = ""   # set by the notebook's Step-0a cell, or via os.environ below
-
-
-def _injected_key():
-    # The lesson site postMessages the central key into the JupyterLite iframe,
-    # where lrn-key-bridge.js parks it on window.__LRN_LLM_KEY__. In Pyodide we
-    # read that via the `js` module. Outside Pyodide (local tests) there's no
-    # window → return "".
-    try:
-        import js  # only present in the Pyodide kernel
-        return (getattr(js, "__LRN_LLM_KEY__", "") or "").strip()
-    except Exception:
-        return ""
+API_KEY = ""   # only needed if API_BASE is pointed at a different provider
 
 
 def _key():
-    # Das LHIND-Gateway authentifiziert primär netz-/WAF-basiert; ein Key ist
-    # optional (für Attribution). Leerer Key → kein Authorization-Header.
-    # Priorität: explizit gesetzter API_KEY → vom Lesson-Site injizierter Key →
-    # os.environ → "".
-    return (API_KEY or _injected_key() or os.environ.get("LRN_LLM_API_KEY", "")).strip()
+    # Default path (API_BASE unchanged) needs no key — the server-side proxy
+    # injects it. Only relevant if a notebook overrides API_BASE directly.
+    return (API_KEY or os.environ.get("LRN_LLM_API_KEY", "")).strip()
 
 
 def _headers():

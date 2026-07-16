@@ -16,7 +16,7 @@ try:
 except ImportError:
     import urllib.request as _urlreq
     _IN_PYODIDE = False
-lrn_llm.API_BASE = "https://gateway.lhind.ai/v1"
+lrn_llm.API_BASE = "/api/llm"  # same-origin proxy; server injects the gateway key
 lrn_llm.DEFAULT_MODEL = "azure/gpt-4o"
 lrn_llm.API_KEY = ""  # optional; set in Step 0a
 
@@ -27,12 +27,6 @@ async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
                "max_completion_tokens": max_tokens}
     headers = {"content-type": "application/json"}
     _key = lrn_llm.API_KEY
-    if not _key:
-        try:
-            import js as _js
-            _key = getattr(_js, "__LRN_LLM_KEY__", "") or ""
-        except Exception:
-            _key = ""
     if _key:
         headers["Authorization"] = "Bearer " + _key
     url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"

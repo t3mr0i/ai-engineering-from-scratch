@@ -7,6 +7,11 @@ metadata:
     app: ase-site-gated
 spec:
   replicas: 1
+  # Namespace quota (250m cpu limit total) has no headroom for the extra pod
+  # RollingUpdate briefly needs alongside the old one — Recreate (stop old,
+  # then start new) is the only strategy that fits.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: ase-site-gated
@@ -24,6 +29,8 @@ spec:
           env:
             - name: PORT
               value: "8080"
+            - name: GATE_DISABLED
+              value: "true"
             - name: SITE_PASSCODE
               valueFrom:
                 secretKeyRef:
@@ -34,6 +41,11 @@ spec:
                 secretKeyRef:
                   name: ase-site-gated-secrets
                   key: GATE_SECRET
+            - name: LLM_GATEWAY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ase-site-gated-secrets
+                  key: LLM_GATEWAY_KEY
           resources:
             requests:
               cpu: 100m
