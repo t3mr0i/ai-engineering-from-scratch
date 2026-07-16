@@ -15,6 +15,7 @@ spec:
       labels:
         app: ase-site-gated
     spec:
+      serviceAccountName: ase-site-gated
       containers:
         - name: ase-site-gated
           image: image-registry.openshift-image-registry.svc:5000/trainingcamp-prod/ase-site-gated:latest

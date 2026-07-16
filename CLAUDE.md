@@ -133,7 +133,24 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
   `route.yaml`, `secret.example.yaml`. Dockerfile replicates the same build
   steps as `.gitlab-ci.yml`'s `deploy_azure` job (`node site/build.js` +
   rsync `phases/` → `site/phases/`) as a multi-stage build; final image is
-  `node:22-alpine` running `node server/server.js`.
+  `registry.access.redhat.com/ubi9/nodejs-22-minimal` running
+  `node server/server.js`. Base image is Red Hat's UBI Node.js image, not the
+  Docker Hub `node:*` image — this cluster's registry policy rejects
+  `docker.io` pulls (confirmed by a failed build). The build stage copies
+  files into the image as root (`USER 0`) because plain `COPY` always sets
+  `root:root` ownership regardless of the active `USER`, which otherwise
+  EACCES's `node site/build.js` writing `site/data.js` under the non-root
+  default user — the final runtime image never sets `USER 0`. The `phases/`
+  → `site/phases/` staging step is a small inline `node -e` script rather
+  than `rsync`, since the UBI Node.js image has no `rsync`/`microdnf` by
+  default. `SITE_PASSCODE`/`GATE_SECRET` were generated fresh for this
+  deployment rather than reused from Azure (the Azure passcode had been
+  pasted in plaintext into a chat, so it was rotated instead of carried
+  over) — existing Azure `ase_gate` cookies are **not** valid against this
+  deployment. A Kyverno policy (`no-pods-default-sa`) rejects Pods running
+  under the `default` ServiceAccount, so a dedicated `ase-site-gated`
+  ServiceAccount is required and referenced via `spec.template.spec.serviceAccountName`
+  in `deployment.yaml`.
 
 ### First deploy (manual, no CI wired up yet)
 
@@ -141,11 +158,11 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
 oc login <ocp03 api url> --token=... # or --web
 oc project trainingcamp-prod
 
-# 1. Secret — reuse the Azure SITE_PASSCODE/GATE_SECRET values so existing
-#    ase_gate cookies stay valid across both deployments.
+# 1. Secret + ServiceAccount
 oc create secret generic ase-site-gated-secrets \
-  --from-literal=SITE_PASSCODE='<value from Azure app settings>' \
-  --from-literal=GATE_SECRET='<value from Azure app settings>'
+  --from-literal=SITE_PASSCODE='<new passcode>' \
+  --from-literal=GATE_SECRET="$(openssl rand -hex 32)"
+oc create serviceaccount ase-site-gated   # required by the no-pods-default-sa Kyverno policy
 
 # 2. Build the image in-cluster. Build context is the repo root (the
 #    Dockerfile COPYs README.md, ROADMAP.md, glossary/, site/, phases/), but
