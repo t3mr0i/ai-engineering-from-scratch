@@ -8,7 +8,10 @@ Default-Endpoint ist der same-origin LLM-Proxy des gated Servers
 (server/server.js, POST /api/llm/chat/completions), der den Bifrost-Gateway-
 Key server-seitig injiziert — kein Key läuft mehr im Browser. Du kannst durch
 das Setzen einer anderen API_BASE jeden OpenAI-kompatiblen Provider nutzen.
-Modell-IDs sind im Format "provider/model" (z.B. "azure/gpt-4o").
+Modell-IDs sind im Format "provider/model" (z.B. "azure/gpt-5.4"). Die
+Virtual-Key-Policy des Gateways erlaubt aktuell nur die GPT-5.4-Familie
+(azure/gpt-5.4, azure/gpt-5.4-mini, azure/gpt-5.4-nano) — andere Modelle
+(z.B. gpt-4o) geben 403 model_blocked zurück.
 
 Usage in a notebook:
     response = await lrn_llm.call([{"role": "user", "content": "Sag OK"}])
@@ -16,7 +19,7 @@ Usage in a notebook:
 
     # Health-Check
     result = await lrn_llm.ping()
-    print(result)  # → {"ok": True, "model": "gpt-4o-2024-11-20", "tokens": ...}
+    print(result)  # → {"ok": True, "model": "gpt-5.4-2026-03-05", "tokens": ...}
 """
 import json
 import os
@@ -32,7 +35,7 @@ except ImportError:
 
 
 API_BASE = "/api/llm"   # same-origin proxy; server injects the gateway key
-DEFAULT_MODEL = "azure/gpt-4o"   # provider/model-Format; verfügbar u.a. azure/gpt-4.1-mini
+DEFAULT_MODEL = "azure/gpt-5.4"   # provider/model-Format; auch verfügbar: azure/gpt-5.4-mini, azure/gpt-5.4-nano
 API_KEY = ""   # only needed if API_BASE is pointed at a different provider
 
 

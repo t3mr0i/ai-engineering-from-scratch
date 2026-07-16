@@ -79,6 +79,35 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
   `SITE_PASSCODE`/`GATE_SECRET` secret is still created and wired up (harmless,
   unused) so re-enabling the gate later is a one-line env change, not a
   redeploy-from-scratch.
+- **LLM gateway proxy**: `POST /api/llm/chat/completions` in `server/server.js`
+  proxies notebook LLM calls to `https://gateway.lhind.ai/v1/chat/completions`,
+  injecting the `LLM_GATEWAY_KEY` secret server-side — no key reaches the
+  browser. Replaces the old client-side model where each learner pasted their
+  own key into a site dialog (`site/settings.js`, removed) that was
+  postMessaged into the JupyterLite iframe (`lrn-key-bridge.js`, removed) and
+  sent as `Authorization: Bearer <key>` directly from the browser to
+  `gateway.lhind.ai`. `ide/jupyterlite/lrn_llm.py`'s `API_BASE` now defaults
+  to the same-origin `/api/llm` path — propagate any change to it into every
+  `phases/**/code/lrn_llm.py` copy (`scripts/generate_notebooks.py` does this
+  automatically when specs are available; otherwise copy by hand, see git
+  history for the one-off script used here).
+  - **Allowed models**: only the GPT-5.4 family (`azure/gpt-5.4`,
+    `azure/gpt-5.4-mini`, `azure/gpt-5.4-nano`) — the gateway's virtual-key
+    policy 403s (`model_blocked`) on anything else, including `gpt-4o`, which
+    was the old default. `DEFAULT_MODEL` is now `azure/gpt-5.4` everywhere
+    (canonical `lrn_llm.py` + all propagated/inlined copies).
+  - **Rate limiting**: a simple in-memory per-IP cap (`LLM_RATE_LIMIT_PER_MIN`,
+    currently 20/min) protects the shared gateway budget (5000€ one-time,
+    25€/h cap) since there's no per-user key anymore. IP is read from
+    `X-Forwarded-For` (first hop) — verified working via `oc port-forward`
+    (21st request in a minute → `429`), but **not confirmed accurate over the
+    public route**: depends on whether the upstream reverse proxy forwards a
+    consistent client IP. If it doesn't, the limit still applies, just
+    possibly bucketed coarser than intended (e.g. shared across users behind
+    the same hop) — not a broken proxy, just an unconfirmed granularity.
+  - Budget/limits (RPM, TPM, cost-per-hour, total budget) live on the gateway
+    side, not in this repo — see whoever issued `LLM_GATEWAY_KEY` for current
+    values or to request changes.
 
 ### First deploy (manual, no CI wired up yet)
 
@@ -89,7 +118,8 @@ oc project trainingcamp-prod
 # 1. Secret + ServiceAccount
 oc create secret generic ase-site-gated-secrets \
   --from-literal=SITE_PASSCODE='<new passcode>' \
-  --from-literal=GATE_SECRET="$(openssl rand -hex 32)"
+  --from-literal=GATE_SECRET="$(openssl rand -hex 32)" \
+  --from-literal=LLM_GATEWAY_KEY='<Bifrost gateway key>'
 oc create serviceaccount ase-site-gated   # required by the no-pods-default-sa Kyverno policy
 
 # 2. Build the image in-cluster. Build context is the repo root (the
