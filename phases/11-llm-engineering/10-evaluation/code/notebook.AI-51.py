@@ -17,7 +17,7 @@ except ImportError:
     import urllib.request as _urlreq
     _IN_PYODIDE = False
 lrn_llm.API_BASE = "/api/llm"  # same-origin proxy; server injects the gateway key
-lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4"
+lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4-mini"
 lrn_llm.API_KEY = ""  # optional; set in Step 0a
 
 async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):

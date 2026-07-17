@@ -79,7 +79,6 @@
   --code-bg: var(--color-surface-sunken); /* LHG Grey 200 */
   --modal-bg: var(--color-surface);
   --overlay-bg: rgba(5, 22, 77, 0.45);
-  --header-bg: rgba(249, 248, 248, 0.9);
 
   --header-offset: 92px;
 
@@ -132,7 +131,6 @@
   --code-bg: var(--color-paper-2);
   --modal-bg: var(--color-card);
   --overlay-bg: rgba(5, 22, 77, 0.7);
-  --header-bg: rgba(10, 27, 61, 0.9);
 
   --accent-hover: var(--color-accent-2);
   /* Dark-mode shadows go black-based, not blue-tinted — tokens.css doesn't
@@ -315,67 +313,9 @@ p.dropcap::first-letter {
   color: var(--blueprint);
 }
 
-/* ── Learning Catalog-style header (nav-edge) — ported onto style.css tokens so
-   the content subpages match the root catalog without importing lrn.css. ── */
-.nav-edge {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 12px clamp(16px, 4vw, 48px);
-  border-bottom: 1px solid var(--rule-soft);
-  background: var(--header-bg);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-.nav-edge .wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-decoration: none;
-  white-space: nowrap;
-  border-bottom: none;
-}
-
-.nav-edge .wordmark__logo {
-  display: block;
-  height: 1.4rem;
-  width: auto;
-  max-width: 9rem;
-  object-fit: contain;
-}
-
-/* Flexible spacer that pushes the header controls to the right edge.
-   Most subpages set this inline (style="flex:1"); declaring it here too
-   fixes catalog.html, whose spacer has no inline style. */
-.nav-edge__spacer {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-/* "AI" badge used by catalog.html in place of the logo image. */
-.nav-edge .wordmark__mark {
-  display: inline-grid;
-  place-items: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  border-radius: 6px;
-  background: var(--blueprint);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  flex-shrink: 0;
-}
+/* .nav-edge / .wordmark (+__logo/__mark) / .nav-edge__spacer now live in
+   lrn/tokens.css — one definition shared with lrn.css instead of two
+   independently-maintained copies. */
 
 /* Section links in the catalog header (Courses · Curriculum). */
 .nav-links {

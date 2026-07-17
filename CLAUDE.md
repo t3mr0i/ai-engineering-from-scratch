@@ -91,10 +91,10 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
   `phases/**/code/lrn_llm.py` copy (`scripts/generate_notebooks.py` does this
   automatically when specs are available; otherwise copy by hand, see git
   history for the one-off script used here).
-  - **Allowed models**: only the GPT-5.4 family (`azure/gpt-5.4`,
+  - **Allowed models**: only the GPT-5.4 family (`azure/gpt-5.4-mini`,
     `azure/gpt-5.4-mini`, `azure/gpt-5.4-nano`) — the gateway's virtual-key
     policy 403s (`model_blocked`) on anything else, including `gpt-4o`, which
-    was the old default. `DEFAULT_MODEL` is now `azure/gpt-5.4` everywhere
+    was the old default. `DEFAULT_MODEL` is now `azure/gpt-5.4-mini` everywhere
     (canonical `lrn_llm.py` + all propagated/inlined copies).
   - **Rate limiting**: a simple in-memory per-IP cap (`LLM_RATE_LIMIT_PER_MIN`,
     currently 20/min) protects the shared gateway budget (5000€ one-time,

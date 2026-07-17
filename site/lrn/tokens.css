@@ -120,6 +120,9 @@
   --action-accent:          var(--lhg-blue-500);
   --action-accent-hover:    var(--lhg-blue-600);
 
+  /* Translucent header tint (sticky nav, blurred backdrop) */
+  --header-bg:              rgba(249, 248, 248, 0.9);
+
   /* ── Families — Lufthansa Head (display) + Text (body) ─────────── */
   --font-head:    "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
   --font-text:    "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
@@ -265,6 +268,14 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Mirrors the same semantic-alias fix as the [data-theme="dark"]
+       block below, for users who haven't made an explicit choice. */
+    --text-primary:      #eaf1fb;
+    --text-secondary:    #c3d5ee;
+    --text-muted:        #93a8c7;
+    --border-subtle:     #234168;
+    --border-strong:     #335279;
+
     --color-paper:       #0a1b3d;
     --color-paper-2:     #0f2348;
     --color-paper-3:     #16305c;
@@ -295,6 +306,20 @@
 /* Mirrors the prefers-color-scheme block so the global theme toggle
    (theme.js → data-theme="dark") drives the LRN cockpit too. */
 [data-theme="dark"] {
+  /* The "Semantic aliases (LHG-style)" group above (--text-primary,
+     --text-secondary, --text-muted, --border-subtle, --border-strong) was
+     never given dark-mode variants — only the LRN-legacy aliases below
+     were. Anything styled with the semantic names (e.g. nav-settings,
+     theme-toggle, the shared .nav-edge .wordmark) silently stayed
+     light-mode-colored in dark mode, well below WCAG AA contrast against
+     a dark header/page. These reuse the same values as the equivalent
+     LRN-legacy dark aliases rather than inventing new ones. */
+  --text-primary:      #eaf1fb;
+  --text-secondary:    #c3d5ee;
+  --text-muted:        #93a8c7;
+  --border-subtle:     #234168;
+  --border-strong:     #335279;
+
   --color-paper:       #0a1b3d;
   --color-paper-2:     #0f2348;
   --color-paper-3:     #16305c;
@@ -319,4 +344,73 @@
   --color-error-soft:  #3a1e1e;
   --color-focus:       #a9c7e8;
   --shadow-whisper:    0 1px 2px rgba(0, 0, 0, 0.4);
+  --header-bg:         rgba(10, 27, 61, 0.9);
+}
+
+/* =========================================================================
+   Shared header/nav components
+   ------------------------------------------------------------------------
+   Single definition for the sticky top header, used by every page whether
+   it loads style.css, lrn.css, or both. Previously duplicated
+   independently in each file with drifted z-index/padding/dark-mode
+   support; now declared once here since both files @import this one.
+   ========================================================================= */
+.nav-edge {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px clamp(16px, 4vw, 48px);
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--header-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.nav-edge .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink);
+  font-family: var(--font-text);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: none;
+}
+
+.nav-edge .wordmark__logo {
+  display: block;
+  height: 1.4rem;
+  width: auto;
+  max-width: 9rem;
+  object-fit: contain;
+}
+
+/* Flexible spacer that pushes header controls to the right edge. Most
+   pages set this inline (style="flex:1"); declaring it here too covers
+   any page whose spacer has no inline style. */
+.nav-edge__spacer {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* "AI" badge used in place of the logo image where no image is set. */
+.nav-edge .wordmark__mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  background: var(--action-primary);
+  color: var(--lhg-white);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  flex-shrink: 0;
 }

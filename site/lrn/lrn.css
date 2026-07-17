@@ -114,72 +114,10 @@ button {
   font-size: var(--fs-body-sm);
 }
 
-/* ── Thin top nav · Lufthansa quiet header ───────────────────── */
-.nav-edge {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 4rem;
-  padding: 0.75rem clamp(1rem, 4vw, 3rem);
-  border-bottom: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* Dark-mode header tint — matches style.css's --header-bg exactly so the
-   header reads the same across every page, not just the ones loading
-   style.css. Previously missing: the header stayed bright white in dark
-   mode on any page (index.html, course.html) that only loads lrn.css. */
-[data-theme="dark"] .nav-edge {
-  background: rgba(10, 27, 61, 0.9);
-}
-
-.wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius-xs);
-  color: var(--text-primary);
-  font-family: var(--font-head);
-  font-size: 0.95rem;
-  font-weight: var(--weight-light);
-  letter-spacing: var(--ls-heading);
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    border-color var(--dur-base) var(--ease-standard),
-    background-color var(--dur-base) var(--ease-standard);
-}
-
-.wordmark__logo {
-  display: block;
-  height: 1.4rem;
-  width: auto;
-}
-
-/* Flexible spacer pushing header controls to the right edge. Subpages
-   set this inline (style="flex:1"); declared here for robustness. */
-.nav-edge__spacer {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.wordmark__text {
-  /* "LHIND Learning Catalog" in Lufthansa Head Light, sentence case */
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .wordmark:hover {
-    border-color: var(--border-subtle);
-    background: rgba(255, 255, 255, 0.6);
-  }
-}
+/* .nav-edge / .wordmark (+__logo/__mark) / .nav-edge__spacer now live in
+   tokens.css — one definition shared with style.css instead of two
+   independently-maintained copies (the old copy here had no dark-mode
+   background at all). */
 
 .nav-settings {
   display: inline-flex;

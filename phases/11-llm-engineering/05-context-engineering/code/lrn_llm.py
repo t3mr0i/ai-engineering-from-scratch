@@ -8,9 +8,9 @@ Default-Endpoint ist der same-origin LLM-Proxy des gated Servers
 (server/server.js, POST /api/llm/chat/completions), der den Bifrost-Gateway-
 Key server-seitig injiziert — kein Key läuft mehr im Browser. Du kannst durch
 das Setzen einer anderen API_BASE jeden OpenAI-kompatiblen Provider nutzen.
-Modell-IDs sind im Format "provider/model" (z.B. "azure/gpt-5.4"). Die
+Modell-IDs sind im Format "provider/model" (z.B. "azure/gpt-5.4-mini"). Die
 Virtual-Key-Policy des Gateways erlaubt aktuell nur die GPT-5.4-Familie
-(azure/gpt-5.4, azure/gpt-5.4-mini, azure/gpt-5.4-nano) — andere Modelle
+(azure/gpt-5.4-mini, azure/gpt-5.4-nano) — andere Modelle
 (z.B. gpt-4o) geben 403 model_blocked zurück.
 
 Usage in a notebook:
@@ -35,7 +35,7 @@ except ImportError:
 
 
 API_BASE = "/api/llm"   # same-origin proxy; server injects the gateway key
-DEFAULT_MODEL = "azure/gpt-5.4"   # provider/model-Format; auch verfügbar: azure/gpt-5.4-mini, azure/gpt-5.4-nano
+DEFAULT_MODEL = "azure/gpt-5.4-mini"   # provider/model-Format; auch verfügbar: azure/gpt-5.4-mini, azure/gpt-5.4-nano
 API_KEY = ""   # only needed if API_BASE is pointed at a different provider
 
 
