@@ -130,6 +130,14 @@ button {
   -webkit-backdrop-filter: blur(12px);
 }
 
+/* Dark-mode header tint — matches style.css's --header-bg exactly so the
+   header reads the same across every page, not just the ones loading
+   style.css. Previously missing: the header stayed bright white in dark
+   mode on any page (index.html, course.html) that only loads lrn.css. */
+[data-theme="dark"] .nav-edge {
+  background: rgba(10, 27, 61, 0.9);
+}
+
 .wordmark {
   display: inline-flex;
   align-items: center;

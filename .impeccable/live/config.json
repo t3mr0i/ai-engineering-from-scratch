@@ -1,0 +1,7 @@
+{
+  "files": ["site/*.html", "site/lrn/*.html", "site/llm-primer/*.html"],
+  "exclude": ["site/jupyterlite/**"],
+  "insertBefore": "</body>",
+  "commentSyntax": "html",
+  "cspChecked": true
+}

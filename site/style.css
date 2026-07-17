@@ -1,3 +1,10 @@
+/* Single source of truth for every color/spacing/radius/shadow/motion
+   token (see DESIGN.md). The :root block below aliases to these instead
+   of re-declaring its own hex copies, so style.css-only pages (about,
+   catalog, glossary, assessment, prereqs) share the exact same values as
+   pages that load lrn.css directly. */
+@import url("lrn/tokens.css");
+
 /* ── Lufthansa Group webfonts (shared with the LRN cockpit) ──────────
    Fonts live in lrn/assets/fonts/; paths here are relative to this CSS
    file (site/style.css). Declaring the faces here lets catalog.html,
@@ -48,30 +55,29 @@
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, "Consolas", monospace;
   --font-heading: var(--font-display);
 
-  /* Lufthansa Group palette (from lrn/tokens.css): Core Blue primary,
-     warm-grey neutrals, slate text. Existing variable names are remapped
-     so the whole stylesheet adopts the palette without per-rule edits. */
-  --bg: #f9f8f8;                       /* LHG Grey 100 — warm page */
-  --bg-surface: #ffffff;               /* LHG White — cards */
-  --bg-surface-hover: #f1f0ef;         /* LHG Grey 200 */
-  --ink: #05164d;                      /* LHG Core Blue — primary text */
-  --ink-soft: #52617c;                 /* LHG Slate 700 */
-  --ink-mute: #7a7673;                 /* LHG Warm Grey */
-  --rule: #cfccc8;                     /* LHG Grey 400 */
-  --rule-soft: #e3e1de;                /* LHG Grey 300 — hairline */
+  /* Lufthansa Group palette — aliased directly to lrn/tokens.css so this
+     stylesheet never carries its own copy of a color value. */
+  --bg: var(--color-bg);               /* LHG Grey 100 — warm page */
+  --bg-surface: var(--color-surface);  /* LHG White — cards */
+  --bg-surface-hover: var(--color-surface-sunken); /* LHG Grey 200 */
+  --ink: var(--text-primary);          /* LHG Core Blue — primary text */
+  --ink-soft: var(--text-secondary);   /* LHG Slate 700 */
+  --ink-mute: var(--text-muted);       /* LHG Warm Grey */
+  --rule: var(--border-strong);        /* LHG Grey 400 */
+  --rule-soft: var(--border-subtle);   /* LHG Grey 300 — hairline */
   --paper-rule: rgba(5, 22, 77, 0.05);
 
-  --blueprint: #05164d;               /* LHG Core Blue — primary */
+  --blueprint: var(--action-primary);  /* LHG Core Blue — primary */
   --blueprint-tint: rgba(5, 22, 77, 0.06);
   --blueprint-tint-strong: rgba(5, 22, 77, 0.12);
 
-  --status-complete: #05164d;          /* Core Blue */
-  --status-in-progress: #52617c;       /* Slate */
-  --status-planned: #cfccc8;           /* Grey 400 */
-  --warn: #b08a4a;                     /* LHG warm warning */
+  --status-complete: var(--action-primary); /* Core Blue */
+  --status-in-progress: var(--text-secondary); /* Slate */
+  --status-planned: var(--border-strong);   /* Grey 400 */
+  --warn: var(--color-warn);           /* LHG warm warning */
 
-  --code-bg: #f1f0ef;                  /* LHG Grey 200 */
-  --modal-bg: #ffffff;
+  --code-bg: var(--color-surface-sunken); /* LHG Grey 200 */
+  --modal-bg: var(--color-surface);
   --overlay-bg: rgba(5, 22, 77, 0.45);
   --header-bg: rgba(249, 248, 248, 0.9);
 
@@ -81,59 +87,63 @@
   --text-muted: var(--ink-soft);
   --border: var(--rule-soft);
   --accent: var(--blueprint);
-  --accent-hover: #243f9b;            /* LHG Blue 600 — hover on Core Blue */
+  --accent-hover: var(--action-primary-hover); /* LHG Blue 600 — hover on Core Blue */
   --secondary: var(--blueprint);
   --complete: var(--status-complete);
   --planned: var(--status-planned);
   --shadow-color: rgba(5, 22, 77, 0.1);
   /* Lufthansa shadows are soft and blue-tinted, never hard offset blocks.
      Names kept so existing box-shadow: var(--shadow-hard) rules go soft. */
-  --shadow-hard: 0 2px 8px rgba(5, 22, 77, 0.06);
-  --shadow-hard-lg: 0 14px 40px rgba(5, 22, 77, 0.12);
+  --shadow-hard: var(--shadow-sm);
+  --shadow-hard-lg: var(--shadow-lg);
   --dot-color: transparent;
 
   /* Status hues (filled-in correct / code-output error) — LHG-tinted so they
      stay readable on Core-Blue dark surfaces without going neon. */
-  --status-ok: #1b8a5a;
+  --status-ok: var(--lhg-success);
   --status-ok-bg: rgba(27, 138, 90, 0.10);
-  --status-error: #b00020;
-  --status-error-bg: rgba(176, 0, 32, 0.06);
+  --status-error: var(--lhg-error);
+  --status-error-bg: rgba(226, 39, 67, 0.06);
 }
 
 [data-theme="dark"] {
-  /* LHG dark mode (from lrn/tokens.css): deep Core-Blue surfaces, not a
-     near-black terminal. Accent lifts to sky blue for contrast. */
-  --bg: #0a1b3d;                       /* LHG dark paper */
-  --bg-surface: #132b54;               /* LHG dark card */
-  --bg-surface-hover: #16305c;
-  --ink: #eaf1fb;
-  --ink-soft: #c3d5ee;
-  --ink-mute: #93a8c7;
-  --rule: #335279;
-  --rule-soft: #234168;
+  /* LHG dark mode — aliased to lrn/tokens.css's own [data-theme="dark"]
+     overrides, deep Core-Blue surfaces, not a near-black terminal. Accent
+     lifts to sky blue for contrast. */
+  --bg: var(--color-paper);            /* LHG dark paper */
+  --bg-surface: var(--color-card);     /* LHG dark card */
+  --bg-surface-hover: var(--color-paper-3);
+  --ink: var(--color-ink);
+  --ink-soft: var(--color-ink-2);
+  --ink-mute: var(--color-muted);
+  --rule: var(--color-rule-2);
+  --rule-soft: var(--color-rule);
   --paper-rule: rgba(255, 255, 255, 0.05);
 
-  --blueprint: #7ba6dc;               /* LHG dark accent */
+  --blueprint: var(--color-accent);    /* LHG dark accent */
   --blueprint-tint: rgba(123, 166, 220, 0.12);
   --blueprint-tint-strong: rgba(123, 166, 220, 0.22);
 
-  --status-complete: #7ba6dc;
-  --status-in-progress: #c3d5ee;
-  --status-planned: #335279;
-  --warn: #d9c5a0;
+  --status-complete: var(--color-accent);
+  --status-in-progress: var(--color-ink-2);
+  --status-planned: var(--color-rule-2);
+  --warn: var(--color-warn);
 
-  --code-bg: #0f2348;
-  --modal-bg: #132b54;
+  --code-bg: var(--color-paper-2);
+  --modal-bg: var(--color-card);
   --overlay-bg: rgba(5, 22, 77, 0.7);
   --header-bg: rgba(10, 27, 61, 0.9);
 
-  --accent-hover: #a9c7e8;
+  --accent-hover: var(--color-accent-2);
+  /* Dark-mode shadows go black-based, not blue-tinted — tokens.css doesn't
+     define a dark override for --shadow-sm/--shadow-lg, so these stay as
+     style.css-local values. */
   --shadow-hard: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-hard-lg: 0 14px 40px rgba(0, 0, 0, 0.5);
 
-  --status-ok: #6fc79c;
+  --status-ok: var(--color-ok);
   --status-ok-bg: rgba(111, 199, 156, 0.16);
-  --status-error: #e08a8a;
+  --status-error: var(--color-error);
   --status-error-bg: rgba(224, 138, 138, 0.14);
 }
 
@@ -438,22 +448,6 @@ p.dropcap::first-letter {
   line-height: 1;
 }
 
-.nav-edge .btn {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 10px 20px;
-  border: 1px solid var(--ink);
-  background: var(--bg);
-  color: var(--ink);
-  cursor: pointer;
-  display: inline-block;
-  text-align: center;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
 .btn:hover {
   background: var(--ink);
   color: var(--bg);
@@ -471,18 +465,6 @@ p.dropcap::first-letter {
   color: var(--bg);
   border-color: var(--accent-hover);
   border-bottom: 1px solid var(--accent-hover);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--ink);
-  border-color: var(--ink);
-}
-
-.btn-secondary:hover {
-  background: var(--ink);
-  color: var(--bg);
-  border-bottom: 1px solid var(--ink);
 }
 
 .section {
@@ -1167,8 +1149,8 @@ body.js-anim .toc-row.in-view {
   display: flex;
   flex-direction: column;
   background: var(--modal-bg);
-  border: 2px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--ink);
+  border: 1px solid var(--rule-soft);
+  box-shadow: var(--shadow-hard-lg);
   overflow: hidden;
   /* entry animation */
   opacity: 0;
@@ -1601,20 +1583,25 @@ a.gloss-term {
 
 /* ── Antigravity SOTA Micro-animations & Premium UI polish ──────────── */
 
-/* Smooth Transition Tokens */
+/* Smooth Transition Tokens.
+   --sota-ease was a byte-for-byte duplicate of lrn/tokens.css's --ease-out
+   (cubic-bezier(0.16, 1, 0.3, 1)) and now aliases to it directly.
+   --sota-ease-bounce and --sota-duration have no exact canonical
+   equivalent (closest is --ease-spring / --dur-base, both slightly
+   different curves/timings) so they stay local rather than risk a
+   visible timing change. */
 :root {
-  --sota-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --sota-ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --sota-duration: 250ms;
 }
 
 /* Standard Buttons & Control Items */
 .btn {
-  transition: background var(--sota-duration) var(--sota-ease),
-              color var(--sota-duration) var(--sota-ease),
-              border-color var(--sota-duration) var(--sota-ease),
-              transform 150ms var(--sota-ease),
-              box-shadow var(--sota-duration) var(--sota-ease) !important;
+  transition: background var(--sota-duration) var(--ease-out),
+              color var(--sota-duration) var(--ease-out),
+              border-color var(--sota-duration) var(--ease-out),
+              transform 150ms var(--ease-out),
+              box-shadow var(--sota-duration) var(--ease-out) !important;
 }
 .btn:hover {
   transform: translateY(-2px);
@@ -1631,7 +1618,7 @@ a.gloss-term {
 
 /* Copy to Clipboard button */
 .copy-btn {
-  transition: color 150ms var(--sota-ease), transform 150ms var(--sota-ease-bounce) !important;
+  transition: color 150ms var(--ease-out), transform 150ms var(--sota-ease-bounce) !important;
 }
 .copy-btn:hover {
   transform: scale(1.15);
@@ -1642,9 +1629,9 @@ a.gloss-term {
 
 /* Theme Toggle Button & Rotation Effect */
 .theme-toggle {
-  transition: border-color var(--sota-duration) var(--sota-ease),
-              color var(--sota-duration) var(--sota-ease),
-              background-color var(--sota-duration) var(--sota-ease),
+  transition: border-color var(--sota-duration) var(--ease-out),
+              color var(--sota-duration) var(--ease-out),
+              background-color var(--sota-duration) var(--ease-out),
               transform 150ms var(--sota-ease-bounce) !important;
 }
 .theme-toggle:hover {
@@ -1658,14 +1645,14 @@ a.gloss-term {
 }
 .theme-toggle .theme-icon {
   display: inline-block;
-  transition: transform 400ms var(--sota-ease) !important;
+  transition: transform 400ms var(--ease-out) !important;
 }
 
 /* Command Palette items sliding and arrow highlight */
 .cp-item {
-  transition: background var(--sota-duration) var(--sota-ease),
-              border-left-color var(--sota-duration) var(--sota-ease),
-              padding-left var(--sota-duration) var(--sota-ease) !important;
+  transition: background var(--sota-duration) var(--ease-out),
+              border-left-color var(--sota-duration) var(--ease-out),
+              padding-left var(--sota-duration) var(--ease-out) !important;
 }
 .cp-item:hover,
 .cp-item--active {
@@ -1673,7 +1660,7 @@ a.gloss-term {
 }
 .cp-item-arrow {
   transform: translateX(-6px);
-  transition: opacity 200ms var(--sota-ease), color 200ms var(--sota-ease), transform 200ms var(--sota-ease) !important;
+  transition: opacity 200ms var(--ease-out), color 200ms var(--ease-out), transform 200ms var(--ease-out) !important;
 }
 .cp-item:hover .cp-item-arrow,
 .cp-item--active .cp-item-arrow {
@@ -1684,9 +1671,9 @@ a.gloss-term {
 .modal-lesson {
   padding: 12px 10px !important;
   border-radius: 8px;
-  transition: background var(--sota-duration) var(--sota-ease),
-              transform 200ms var(--sota-ease),
-              padding-left 200ms var(--sota-ease) !important;
+  transition: background var(--sota-duration) var(--ease-out),
+              transform 200ms var(--ease-out),
+              padding-left 200ms var(--ease-out) !important;
 }
 .modal-lesson:hover {
   transform: translateX(4px);
@@ -1696,13 +1683,13 @@ a.gloss-term {
   transform: translateX(2px);
 }
 .modal-lesson > a {
-  transition: color 150ms var(--sota-ease), border-color 150ms var(--sota-ease) !important;
+  transition: color 150ms var(--ease-out), border-color 150ms var(--ease-out) !important;
 }
 
 /* Glossary Popover Easing */
 .gloss-popover {
-  transition: opacity var(--sota-duration) var(--sota-ease),
-              transform var(--sota-duration) var(--sota-ease),
+  transition: opacity var(--sota-duration) var(--ease-out),
+              transform var(--sota-duration) var(--ease-out),
               visibility var(--sota-duration) !important;
   box-shadow: 0 10px 30px rgba(5, 22, 77, 0.12) !important;
 }

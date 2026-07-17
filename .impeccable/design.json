@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-17T00:00:00Z",
+  "title": "Design System: LHIND AI Learning Catalog",
+  "extensions": {
+    "colorMeta": {
+      "core-blue": { "role": "primary", "displayName": "Core Blue", "canonical": "#05164d", "tonalRamp": ["#05164d", "#0e2261", "#173176", "#243f9b", "#2d5fe4", "#5a8ac9", "#a9c7e8", "#e5f1ff"] },
+      "blue-500": { "role": "primary", "displayName": "Blue 500", "canonical": "#2d5fe4", "tonalRamp": ["#0e2261", "#173176", "#243f9b", "#2d5fe4", "#5a8ac9", "#7ba6dc", "#a9c7e8", "#e5f1ff"] },
+      "blue-600": { "role": "primary", "displayName": "Blue 600", "canonical": "#243f9b" },
+      "blue-100": { "role": "primary", "displayName": "Blue 100", "canonical": "#e5f1ff" },
+      "slate-700": { "role": "neutral", "displayName": "Slate 700", "canonical": "#52617c" },
+      "slate-500": { "role": "neutral", "displayName": "Slate 500", "canonical": "#657898" },
+      "grey-100": { "role": "neutral", "displayName": "Grey 100 (page background)", "canonical": "#f9f8f8", "tonalRamp": ["#7a7673", "#95908c", "#b3afab", "#cfccc8", "#e3e1de", "#f1f0ef", "#f9f8f8", "#ffffff"] },
+      "grey-200": { "role": "neutral", "displayName": "Grey 200 (sunken surface)", "canonical": "#f1f0ef" },
+      "grey-300": { "role": "neutral", "displayName": "Grey 300 (hairline border)", "canonical": "#e3e1de" },
+      "grey-400": { "role": "neutral", "displayName": "Grey 400 (strong border)", "canonical": "#cfccc8" },
+      "warm-grey": { "role": "neutral", "displayName": "Warm Grey (muted text)", "canonical": "#7a7673" },
+      "white": { "role": "neutral", "displayName": "White (card surface)", "canonical": "#ffffff" },
+      "sand": { "role": "tertiary", "displayName": "Sand (badge tier)", "canonical": "#857461" },
+      "teal": { "role": "tertiary", "displayName": "Teal (badge tier)", "canonical": "#368089" },
+      "purple": { "role": "tertiary", "displayName": "Purple (badge tier)", "canonical": "#a82e61" },
+      "red": { "role": "tertiary", "displayName": "Red (badge tier)", "canonical": "#bc0a1d" },
+      "success": { "role": "tertiary", "displayName": "Success", "canonical": "#1b8a5a" },
+      "warning": { "role": "tertiary", "displayName": "Warning", "canonical": "#e2974b" },
+      "error": { "role": "tertiary", "displayName": "Error", "canonical": "#e22743" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Landing hero only, e.g. index.html's \"What are you shipping?\"." },
+      "headline": { "displayName": "Headline", "purpose": "Page-level H1 across catalog/lesson/cockpit." },
+      "title": { "displayName": "Title", "purpose": "Section and card headings (H3)." },
+      "body": { "displayName": "Body", "purpose": "Running prose, lesson content, capped ~65-75ch." },
+      "label": { "displayName": "Label", "purpose": "Overline labels and badge-tier pills only; short, uppercase, tracked." }
+    },
+    "shadows": [
+      { "name": "xs", "value": "0 1px 2px rgba(5, 22, 77, 0.05)", "purpose": "Hairline separation on tight inline controls." },
+      { "name": "sm", "value": "0 2px 8px rgba(5, 22, 77, 0.06)", "purpose": "Resting state for cards and buttons." },
+      { "name": "md", "value": "0 5px 15px rgba(5, 22, 77, 0.08)", "purpose": "Raised panels and popovers." },
+      { "name": "lg", "value": "0 14px 40px rgba(5, 22, 77, 0.12)", "purpose": "Modals and hover-lifted cards." },
+      { "name": "focus", "value": "0 0 0 3px rgba(45, 95, 228, 0.30)", "purpose": "Focus-visible ring, Blue 500 at 30% opacity." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Canonical default easing (lrn/tokens.css). Supersedes the parallel --sota-ease added later in style.css." },
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Entrances and reveals." },
+      { "name": "dur-fast", "value": "140ms", "purpose": "Micro-interactions (hover, focus)." },
+      { "name": "dur-base", "value": "240ms", "purpose": "Default state-change duration." },
+      { "name": "dur-slow", "value": "420ms", "purpose": "Panels, modals, larger transitions." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Pill-shaped primary action button, Core Blue fill, soft lift on hover.",
+      "html": "<button class=\"ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn-primary { font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 17px; color: #ffffff; background: #05164d; border: 1px solid #05164d; border-radius: 999px; padding: 10px 20px; cursor: pointer; box-shadow: 0 2px 8px rgba(5, 22, 77, 0.06); transition: background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 240ms cubic-bezier(0.4,0,0.2,1), transform 140ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: #243f9b; border-color: #243f9b; box-shadow: 0 14px 40px rgba(5, 22, 77, 0.12); transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: 2px solid #05164d; outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ghost pill button, Core Blue outline and text.",
+      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn-secondary { font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 17px; color: #05164d; background: transparent; border: 1px solid #05164d; border-radius: 999px; padding: 10px 20px; cursor: pointer; transition: background 240ms cubic-bezier(0.4,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-secondary:hover { background: #05164d; color: #ffffff; } .ds-btn-secondary:focus-visible { outline: 2px solid #05164d; outline-offset: 3px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Standard content card: white surface, hairline border, soft shadow.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card__title\">Prompt Engineering</h3><p class=\"ds-card__body\">Role-based course on structuring prompts for production LLM systems.</p></div>",
+      "css": ".ds-card { background: #ffffff; border: 1px solid #e3e1de; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(5, 22, 77, 0.06); } .ds-card__title { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 26px; color: #05164d; margin-bottom: 8px; } .ds-card__body { font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-size: 17px; line-height: 1.5; color: #52617c; }"
+    },
+    {
+      "name": "Badge Tier Pill",
+      "kind": "chip",
+      "refersTo": "chip-neutral",
+      "description": "Uppercase tracked label pill used for badge tiers; tone-tinted background per tier.",
+      "html": "<span class=\"ds-pill ds-pill--blue\">Level 3</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 6px; font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 0.62rem; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; } .ds-pill--neutral { background: #f1f0ef; color: #52617c; } .ds-pill--blue { background: #e5f1ff; color: #243f9b; } .ds-pill--success { background: #e2f3ea; color: #1b8a5a; }"
+    },
+    {
+      "name": "Nav Edge Header",
+      "kind": "nav",
+      "refersTo": "nav-edge",
+      "description": "Fixed top header: wordmark left, pill icon buttons right, hairline bottom border.",
+      "html": "<header class=\"ds-nav\"><span class=\"ds-nav__wordmark\">LHIND</span><nav class=\"ds-nav__actions\"><button class=\"ds-nav__icon-btn\" aria-label=\"Badges\">🎖</button></nav></header>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(249, 248, 248, 0.9); border-bottom: 1px solid #e3e1de; } .ds-nav__wordmark { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; color: #05164d; } .ds-nav__icon-btn { border: none; background: transparent; border-radius: 6px; padding: 8px; cursor: pointer; color: #05164d; } .ds-nav__icon-btn:hover { background: #f1f0ef; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Flight Deck",
+    "overview": "Calm cockpit instrumentation, not a marketing surface: deep Core Blue, thin precise display type, hairline dividers, and shadows that sit close to the surface like cabin lighting rather than dramatic drop shadows. The system already names its home screen `.cockpit` and its product the \"LRN cockpit\" — this file makes that metaphor explicit as the design language, not just a class name. This explicitly rejects generic SaaS/AI-slop (gradient text, cream/sand body backgrounds, tiny uppercase eyebrows on every section, identical card grids), playful consumer-app gamification, and dense legacy-enterprise dashboard clutter. It also rejects the site's own dead ends: an earlier uppercase-mono-terminal button style and a later \"SOTA micro-animations\" patch introduced a second, competing motion-token vocabulary — both are drift to reconcile, not features to preserve.",
+    "keyCharacteristics": [
+      "One brand palette expressed identically everywhere — never redefined per page.",
+      "Thin/light display type paired with light/regular body type; weight contrast carries hierarchy.",
+      "Soft, blue-tinted ambient shadows; never hard-offset or neon.",
+      "Pill buttons and chips, 12px-radius cards, 1px hairline borders throughout.",
+      "Calm density: technical content stays legible without decoration."
+    ],
+    "rules": [
+      { "name": "The One Blue Rule", "body": "Core Blue is the only color that reads as \"this is the brand.\" Blue 500 is reserved for interaction, not decoration. Teal, purple, and sand exist solely as badge-tier tints and must never leak into buttons, nav, or links.", "section": "colors" },
+      { "name": "The No-Terminal Rule", "body": "Buttons and nav never use the mono font, uppercase text, or wide tracking — that was the pre-rebrand terminal skin. Any rule still doing this in style.css is dead code to remove, not a variant to keep.", "section": "typography" },
+      { "name": "The Ambient-Not-Structural Rule", "body": "Shadows communicate gentle lift on hover/focus; they never simulate a hard light source. One hard-offset rule (box-shadow: 6px 6px 0 var(--ink)) survives in style.css from the pre-rebrand terminal design and should be deleted, not designed around.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do treat site/lrn/tokens.css as the single source of truth for every color, spacing, radius, shadow, and motion value.",
+      "Do keep buttons pill-shaped (999px), cards at 12px radius, and borders at 1px hairline everywhere.",
+      "Do keep shadows soft and blue-tinted, scaling from xs to lg by context.",
+      "Do load the same stylesheet composition on every page."
+    ],
+    "donts": [
+      "Don't hand-duplicate the LHG palette in style.css's own :root as a second, independently maintained copy of what lrn/tokens.css already defines.",
+      "Don't run two motion-token systems side by side (--ease-standard/--dur-base vs. --sota-ease/--sota-duration).",
+      "Don't leave superseded rules in place when a new visual direction replaces one (the dead uppercase-mono-terminal .btn rule).",
+      "Don't use gradient text, cream/sand/parchment backgrounds, tiny uppercase eyebrows on every section, identical card grids, or side-stripe borders.",
+      "Don't reintroduce hard-offset shadows."
+    ]
+  }
+}
