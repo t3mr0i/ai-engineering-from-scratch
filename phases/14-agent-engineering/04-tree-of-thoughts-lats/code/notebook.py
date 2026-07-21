@@ -82,6 +82,7 @@ print(f"✅ LLM erreichbar: {r}")
 # %%
 import itertools
 import json
+import re
 
 NUMBERS = [4, 6, 4, 1]
 TARGET = 24
@@ -147,39 +148,72 @@ print(f"Score of [6, 4]: {score_2}")
 #
 # ToT expands the frontier: at each level, keep only the top-scoring candidates. This is BFS with an LLM-based value function.
 #
-# Let's walk through a toy 2-level BFS: start with [4, 6, 4, 1], generate one candidate step, score it.
+# To actually search we need to turn the LLM's free-text suggestions ("a OP b = result")
+# into real state transitions — parse the arithmetic, check the numbers it used are
+# actually available, and apply it. No step here is assumed in advance; every child
+# state comes from parsing what the LLM proposed.
 
 # %%
+def parse_step(text):
+    """Parse one 'a OP b = result' line into (a, op, b, result). Returns None if the
+    line doesn't match — LLM output is free text and often includes commentary."""
+    m = re.search(r"(-?\d+(?:\.\d+)?)\s*([+\-*/x×])\s*(-?\d+(?:\.\d+)?)\s*=\s*(-?\d+(?:\.\d+)?)", text)
+    if not m:
+        return None
+    a, op, b, result = m.groups()
+    op = {"x": "*", "×": "*"}.get(op, op)
+    return float(a), op, float(b), float(result)
+
+def apply_step(numbers, parsed):
+    """Apply a parsed step to a numbers list. Returns None if a/b aren't both actually
+    available (the LLM hallucinated numbers we don't have) — that step is invalid."""
+    a, op, b, result = parsed
+    remaining = list(numbers)
+    try:
+        remaining.remove(a)
+        remaining.remove(b)
+    except ValueError:
+        return None
+    remaining.append(result)
+    return remaining
+
+async def expand_state(numbers):
+    """Real tree expansion: ask the LLM for candidate steps, parse each line, apply the
+    ones that check out. Returns a list of {"state": [...], "step": "..."} children —
+    zero, one, or several, depending on what the LLM actually proposed."""
+    raw = await generate_candidates(numbers)
+    children = []
+    for line in raw.splitlines():
+        parsed = parse_step(line)
+        if parsed is None:
+            continue
+        new_state = apply_step(numbers, parsed)
+        if new_state is None:
+            continue
+        children.append({"state": new_state, "step": line.strip()})
+    return children
+
 async def tot_one_step():
-    """Single BFS step: expand, score, keep top candidate."""
+    """Single BFS level: expand real children from the LLM's suggestions, score each
+    with the LLM, keep the best. The new state is whatever the LLM's parsed step
+    produces, not a fixed value."""
     numbers = [4, 6, 4, 1]
-    
-    # Generate candidates
     print("\n=== Level 0: Initial ===")
     print(f"State: {numbers}")
-    
-    # For simplicity, manually pick a promising first step
-    print("\n=== Level 1: After one operation ===")
-    
-    # Ask LLM which operation to try
-    prompt = f"""Given {numbers}, what single best operation brings you closer to {TARGET}?
-Suggest: 'a OP b = result'."""
-    
-    r = await lrn_llm.call(
-        [{"role": "user", "content": prompt}],
-        max_tokens=30
-    )
-    step = lrn_llm.text(r).strip()
-    print(f"LLM suggests: {step}")
-    
-    # Simulate the step (for demo, evaluate 6 * 4 = 24)
-    new_state = [24, 4, 1]  # After one operation, we'd update the state
-    print(f"New state: {new_state}")
-    
-    score = await score_state(new_state)
-    print(f"Score: {score}/10")
-    
-    return score
+
+    children = await expand_state(numbers)
+    print(f"\n=== Level 1: {len(children)} candidate(s) parsed from the LLM's suggestions ===")
+    if not children:
+        print("No parseable steps this round (LLM output didn't match 'a OP b = result').")
+        return None
+
+    for child in children:
+        child["score"] = await score_state(child["state"])
+        print(f"  {child['step']:20} -> state {child['state']}  score {child['score']}/10")
+
+    best = max(children, key=lambda c: c["score"])
+    print(f"\nBest candidate: {best['step']} -> {best['state']} (score {best['score']}/10)")
+    return best
 
 await tot_one_step()
 
@@ -290,44 +324,70 @@ for task in tasks:
 #
 # Now let's build a mini Game of 24 solver that uses the LLM as both policy (propose steps) and value function (score states). This mirrors the ToT BFS algorithm but with real LLM calls instead of symbolic scoring.
 #
+# This runs `expand_state` from Step 4 across multiple levels: expand every node on the
+# frontier, score every child, keep the top `beam_width`, repeat until a state reduces
+# to exactly `[24]` or the depth budget runs out. Every node is a real dict in `tree`,
+# linked to its parent — the reported answer is read off whichever node the search
+# actually reached, never assumed.
+#
 # (Note: This is a simplified version. A production version would cache LLM scores and track token counts.)
 
 # %%
+async def bfs_search(start, target=TARGET, beam_width=2, max_depth=3):
+    """Real breadth-first Tree-of-Thoughts search. Returns (best_node, all_nodes)."""
+    root = {"state": start, "step": "start", "parent": None, "score": None, "depth": 0}
+    frontier = [root]
+    tree = [root]
+
+    for depth in range(1, max_depth + 1):
+        candidates = []
+        for node in frontier:
+            for child in await expand_state(node["state"]):
+                candidates.append({**child, "parent": node, "score": None, "depth": depth})
+        if not candidates:
+            print(f"  Level {depth}: no valid expansions from the frontier — search dead-ends here.")
+            break
+        for node in candidates:
+            node["score"] = 10.0 if node["state"] == [target] else await score_state(node["state"])
+        tree.extend(candidates)
+        candidates.sort(key=lambda n: n["score"], reverse=True)
+        frontier = candidates[:beam_width]
+        print(f"  Level {depth}: kept top {len(frontier)} of {len(candidates)} candidate(s), "
+              f"best score {frontier[0]['score']}/10")
+        if any(n["state"] == [target] for n in frontier):
+            break
+
+    solved = [n for n in frontier if n["state"] == [target]]
+    best = solved[0] if solved else max(frontier, key=lambda n: n["score"] if n["score"] is not None else -1)
+    return best, tree
+
+def reconstruct_path(node):
+    """Walk parent pointers back to the root — the sequence of steps the search took."""
+    path = []
+    while node is not None and node.get("step") != "start":
+        path.append(node["step"])
+        node = node["parent"]
+    return list(reversed(path))
+
 async def solve_game_of_24():
-    """Simplified BFS: LLM proposes candidates, LLM scores them."""
+    """BFS Game-of-24 solver: the LLM proposes steps, code parses and applies them to
+    build a real search tree, the LLM scores each node, and the outcome is read off
+    the tree — nothing here is precomputed."""
     state = [4, 6, 4, 1]
-    
     print(f"\n{'='*60}")
     print(f"Solving: {state} -> {TARGET}")
     print(f"{'='*60}")
-    
-    # Level 0
-    print(f"\nLevel 0: {state}")
-    
-    # Ask LLM for best first step
-    prompt = f"""From {state}, which single operation gets closest to {TARGET}?
-Reply: 'a OP b = result'."""
-    r = await lrn_llm.call(
-        [{"role": "user", "content": prompt}],
-        max_tokens=30
-    )
-    step = lrn_llm.text(r).strip()
-    print(f"  Best step: {step}")
-    
-    # Simulate outcome (for demo: assume 6 * 4 = 24)
-    state_1 = [24, 4, 1]
-    print(f"\nLevel 1: {state_1}")
-    
-    # Check if solved
-    if 24 in state_1:
-        print(f"\n✅ SUCCESS: Found 24!")
-        return True
-    
-    # Score the state
-    score = await score_state(state_1)
-    print(f"  Score: {score}/10")
-    
-    return score > 8
+
+    best, tree = await bfs_search(state, beam_width=2, max_depth=3)
+    solved = best["state"] == [TARGET]
+
+    print(f"\nNodes explored: {len(tree)}")
+    if solved:
+        print(f"\n✅ SUCCESS: {' -> '.join(reconstruct_path(best))} = {TARGET}")
+    else:
+        print(f"\n⚠️  Did not reach {TARGET}. Best state found: {best['state']} "
+              f"(score {best['score']}/10) via {' -> '.join(reconstruct_path(best)) or '(no valid steps found)'}")
+    return solved
 
 result = await solve_game_of_24()
 
