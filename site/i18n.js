@@ -16,6 +16,7 @@ window.SITE_I18N = {
   footer_tagline: { en: "LHIND AI Learning Catalog · open source · free forever.", de: "LHIND AI Learning Catalog · Open Source · für immer kostenlos." },
   footer_home: { en: "Home", de: "Startseite" },
   footer_glossary: { en: "Glossary", de: "Glossar" },
+  footer_notes: { en: "My Merkzettel", de: "Meine Merkzettel" },
   footer_report: { en: "Report / Suggest", de: "Melden / Vorschlagen" },
   footer_about: { en: "About", de: "Über uns" },
   footer_report_short: { en: "Report", de: "Melden" },

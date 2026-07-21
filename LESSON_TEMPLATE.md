@@ -41,7 +41,16 @@ Make it concrete — show a scenario where not knowing this hurts.]
 
 [Explain with diagrams and intuition. No code yet.
 Use ASCII diagrams, tables, or link to visuals in the web app.
-Build mental models before implementation.]
+Build mental models before implementation.
+Keep paragraphs short. After a dense subsection (anything explaining a
+mechanism, not just naming a fact), add a one-to-two sentence callout:
+
+> **Kernbotschaft:** [the one thing to remember if nothing else sticks]
+
+It renders as a blockquote (same style as the lesson's opening motto), so it
+reads as a visual summary, not more running text. Don't add one to every
+subsection — only where a reader could otherwise walk away with the wrong
+one-liner in their head.]
 
 ## Build It
 

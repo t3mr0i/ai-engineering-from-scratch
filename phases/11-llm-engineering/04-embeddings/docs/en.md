@@ -138,6 +138,8 @@ Vector databases solve this with Approximate Nearest Neighbor (ANN) algorithms. 
 
 HNSW trades a small accuracy loss (typically 95-99% recall) for massive speed gains. At 10 million vectors, brute force takes seconds. HNSW takes milliseconds.
 
+> **Kernbotschaft:** Brute-force search doesn't scale past roughly a million vectors. Every production vector database is some variant of this same trade -- a small, tunable accuracy loss bought with a graph or index structure, in exchange for O(log n) instead of O(n) search time.
+
 ```mermaid
 graph TD
     subgraph "HNSW Layers"
@@ -189,6 +191,8 @@ A cross-encoder takes the query and a document as a single input and outputs a r
 
 The production pattern: bi-encoder retrieves top-100 candidates, cross-encoder reranks them to top-10. This is the retrieve-then-rerank pipeline.
 
+> **Kernbotschaft:** Don't pick one. Bi-encoders are cheap and find candidates fast; cross-encoders are expensive but rank accurately. Production retrieval runs both -- bi-encoder first, cross-encoder rerank on the shortlist.
+
 ```mermaid
 graph LR
     Q["Query"] --> BE["Bi-Encoder: embed query"]
@@ -205,6 +209,10 @@ Traditional embeddings are all-or-nothing. A 1536-dimensional vector uses 1536 f
 
 Matryoshka Representation Learning (Kusupati et al., 2022) fixes this. The model is trained so that the first N dimensions capture the most important information, like a Russian nesting doll. Truncating a 1536-d Matryoshka embedding to 256 dimensions loses some accuracy but remains functional.
 
+This is not a property of embeddings in general -- it is a property the training loss has to earn. A normally-trained embedding spreads meaning across all dimensions roughly evenly, so truncating it to the first 256 dimensions throws away information at random, no better than truncating any other 256 dimensions. Matryoshka training changes the loss function: instead of computing one loss on the full vector, it computes the same loss on several nested prefixes (say, the first 64, 128, 256, 512, and full 1536 dimensions) and sums them. Every nested term shares the earliest dimensions, so the only way to score well on all of them at once is to pack the most broadly useful signal into those early dimensions. Truncation only "just works" after a model has been trained this way -- it is the reward for the nested loss, not a free property of vectors.
+
+> **Kernbotschaft:** Truncation is not the trick -- the nested multi-length training loss is. Truncating a model that was never trained with a Matryoshka loss (plain TF-IDF, a standard Sentence-BERT checkpoint) degrades far worse than truncating one that was.
+
 OpenAI's text-embedding-3-small and text-embedding-3-large support Matryoshka truncation via the `dimensions` parameter. Requesting 256 dimensions instead of 1536 cuts storage by 6x with roughly 3-5% accuracy loss on MTEB benchmarks.
 
 ### Binary Quantization
@@ -214,6 +222,8 @@ A 1536-dimensional embedding stored as float32 uses 6,144 bytes. Multiply by 10 
 Binary quantization converts each float to a single bit: positive values become 1, negative values become 0. Storage drops from 6,144 bytes to 192 bytes -- a 32x reduction. Similarity is computed using Hamming distance (count differing bits), which CPUs can do in a single instruction.
 
 The accuracy hit is around 5-10% on retrieval recall. The common pattern: binary quantization for the first-pass search over millions of vectors, then rescore the top-1000 with full-precision vectors. This gets you 95%+ of full-precision accuracy at 32x less memory.
+
+> **Kernbotschaft:** Binary quantization alone costs 5-10% recall for 32x less memory. Pairing it with a full-precision rescore on the shortlist recovers most of that loss -- you get almost all the storage win with almost none of the accuracy cost.
 
 ## Build It
 
@@ -474,7 +484,7 @@ This lesson produces:
 
 2. **Chunk size experiment**: index the sample documents with chunk sizes of 50, 100, 200, and 500 words. For each, run 5 queries and record the top-1 similarity score. Plot the relationship between chunk size and retrieval quality. Find the point where larger chunks start hurting.
 
-3. **Matryoshka simulation**: build a SimpleEmbedder that produces 500-d vectors. Truncate to 50, 100, 200, and 500 dimensions. Measure how retrieval recall degrades at each truncation. This simulates Matryoshka behavior without needing the real training trick.
+3. **Why truncation needs training**: build a SimpleEmbedder that produces 500-d TF-IDF vectors. Compare three truncation strategies at 50, 100, 200, and 500 dimensions: (a) keep the first N dimensions as-is (alphabetically-first vocabulary words, per `fit()`), (b) keep the N dimensions with the highest average IDF weight across your corpus, (c) keep N random dimensions. Measure retrieval recall for each strategy at each size. Predict before you run it: which strategy degrades most gracefully? Strategy (b) should beat (a) and (c) -- but even (b) won't match a real Matryoshka model's degradation curve, because nothing here was trained with the nested-loss objective from "Matryoshka Embeddings" above. That gap is the point: reordering dimensions by importance *after* training helps a little; Matryoshka's actual trick is training the model to put importance there in the first place.
 
 4. **Binary quantization**: take the embeddings from the search engine, convert them to binary (1 if positive, 0 if negative), and implement Hamming distance search. Compare the top-10 results against full-precision cosine similarity. Measure the overlap percentage.
 

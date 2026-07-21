@@ -35,6 +35,8 @@ This lesson names the tradeoffs so you can pick on evidence, not on whatever was
 
 **Matryoshka Representation Learning.** Trained so the first N dimensions of the vector form a useful standalone embedding. Truncate a 1,536-dim vector to 256 dim and pay ~1% accuracy for 6× storage savings. Supported by OpenAI text-3, Cohere v4, Voyage-4, Jina v5, Gemini Embedding 2, Nomic v1.5+.
 
+> **Kernbotschaft:** "Truncatable" is a training-time property, not a truncation-time trick -- it comes from a nested loss computed at several prefix lengths during training (Phase 11 · 04 walks through why). Truncating a model that was never trained this way degrades far more sharply.
+
 ### The MTEB leaderboard tells a partial story
 
 Massive Text Embedding Benchmark — 56 tasks across 8 task types at launch (2022), expanded to 100+ tasks in MTEB v2. In early 2026, Gemini Embedding 2 tops retrieval (67.71 MTEB-R). Cohere embed-v4 leads general (65.2 MTEB). BGE-M3 leads open-weight multilingual (63.0). The leaderboard is necessary but not sufficient — always benchmark on your domain.

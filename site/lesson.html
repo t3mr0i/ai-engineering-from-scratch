@@ -901,6 +901,17 @@
       color: var(--ink-soft);
     }
 
+    .key-terms-save {
+      margin: -12px 0 32px;
+      text-align: right;
+    }
+
+    .key-terms-save-btn.is-saved {
+      background: var(--blueprint);
+      color: var(--bg);
+      border-color: var(--blueprint);
+    }
+
     .learning-objectives {
       background: transparent;
       border: 1px solid var(--blueprint);
@@ -2151,6 +2162,10 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <a href="notes.html" class="nav-settings notes-link" title="Meine Merkzettel" aria-label="Meine Merkzettel">
+      <i class="ph-light ph-bookmarks" aria-hidden="true"></i>
+      <span class="badges-link__count" id="navNotesCount" data-show="false" aria-hidden="true">0</span>
+    </a>
     <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges" data-i18n-title="badges_link_title">
       <i class="ph-light ph-medal" aria-hidden="true"></i>
       <span class="badges-link__count" id="navBadgeCount" data-show="false" aria-hidden="true">0</span>
@@ -2399,6 +2414,7 @@
       // Load the runnable-block manifest before rendering so code blocks can be
       // decorated with a Run button as they render.
       loadRunnableManifest().then(function () { fetchLesson(lessonPath); });
+      updateNotesNavCount();
 
       function extractPhaseSlug(phase, index) {
         if (phase.url) {
@@ -2899,6 +2915,7 @@
 
         initCodeCopy();
         initGlossTooltips();
+        initKeyTermsSave();
         renderMermaidBlocks();
         if (window.mountLessonFigures) window.mountLessonFigures(el);
         renderAIPanels();
@@ -3229,6 +3246,20 @@
             h += '</tr>';
           }
           h += '</tbody></table></div>';
+          if (isKeyTerms) {
+            var savedTerms = [];
+            for (var sri = 2; sri < tableRows.length; sri++) {
+              var scells = tableRows[sri];
+              savedTerms.push({
+                term: (scells[0] || '').trim(),
+                says: (scells[1] || '').trim(),
+                means: (scells[2] || '').trim()
+              });
+            }
+            h += '<div class="key-terms-save" data-key-terms="' + escapeAttr(JSON.stringify(savedTerms)) + '">' +
+              '<button type="button" class="btn key-terms-save-btn" id="keyTermsSaveBtn">Save to My Merkzettel</button>' +
+              '</div>';
+          }
           tableRows = [];
           return h;
         }
@@ -3801,6 +3832,46 @@
         initCodeVscode();
         initCodeRun();
         initFillin();
+      }
+
+      // "Save to My Merkzettel" on the Key Terms table: persists this lesson's
+      // term rows via AIFSProgress so they're browsable on notes.html without
+      // reopening the lesson. Opt-in per lesson, toggled by re-clicking.
+      function initKeyTermsSave() {
+        var wrap = document.querySelector('.key-terms-save');
+        var btn = document.getElementById('keyTermsSaveBtn');
+        if (!wrap || !btn || !lessonPath || !window.AIFSProgress) return;
+
+        var terms = [];
+        try { terms = JSON.parse(wrap.getAttribute('data-key-terms') || '[]'); } catch (e) { terms = []; }
+        if (!terms.length) return;
+
+        function refresh() {
+          var saved = window.AIFSProgress.getKeyTerms(lessonPath);
+          var isSaved = saved && saved.length > 0;
+          btn.textContent = isSaved ? 'Saved to My Merkzettel ✓' : 'Save to My Merkzettel';
+          btn.classList.toggle('is-saved', isSaved);
+        }
+
+        btn.addEventListener('click', function () {
+          if (btn.classList.contains('is-saved')) {
+            window.AIFSProgress.removeKeyTerms(lessonPath);
+          } else {
+            window.AIFSProgress.saveKeyTerms(lessonPath, terms);
+          }
+          refresh();
+          updateNotesNavCount();
+        });
+
+        refresh();
+      }
+
+      function updateNotesNavCount() {
+        var el = document.getElementById('navNotesCount');
+        if (!el || !window.AIFSProgress) return;
+        var n = window.AIFSProgress.getAllSavedKeyTerms().length;
+        if (n > 0) { el.textContent = String(n); el.setAttribute('data-show', 'true'); }
+        else { el.setAttribute('data-show', 'false'); }
       }
 
       // Touch/click devices have no real :hover — toggle the popover on tap

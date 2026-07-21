@@ -218,6 +218,48 @@
     }
   }
 
+  // "My Merkzettel": the learner explicitly saves a lesson's Key Terms table
+  // (term / says / means rows) so it's browsable later without reopening the
+  // lesson. Opt-in per lesson — nothing is captured just by visiting.
+  function saveKeyTerms(path, terms) {
+    if (!path || !Array.isArray(terms) || !terms.length) return;
+    var state = read();
+    var lesson = ensureLesson(state, path);
+    lesson.keyTerms = terms;
+    lesson.keyTermsSavedAt = Date.now();
+    touchActivity(state);
+    write(state);
+  }
+
+  function removeKeyTerms(path) {
+    if (!path) return;
+    var state = read();
+    if (state.lessons[path] && state.lessons[path].keyTerms) {
+      delete state.lessons[path].keyTerms;
+      delete state.lessons[path].keyTermsSavedAt;
+      write(state);
+    }
+  }
+
+  function getKeyTerms(path) {
+    var lp = getLessonProgress(path);
+    return (lp && lp.keyTerms) || [];
+  }
+
+  // All saved Key Terms across every lesson, newest first — feeds notes.html.
+  function getAllSavedKeyTerms() {
+    var state = read();
+    var out = [];
+    for (var path in state.lessons) {
+      var lesson = state.lessons[path];
+      if (lesson.keyTerms && lesson.keyTerms.length) {
+        out.push({ path: path, terms: lesson.keyTerms, savedAt: lesson.keyTermsSavedAt || 0 });
+      }
+    }
+    out.sort(function (a, b) { return b.savedAt - a.savedAt; });
+    return out;
+  }
+
   function getLessonProgress(path) {
     if (!path) return null;
     var state = read();
@@ -290,6 +332,10 @@
     recordAnswer: recordAnswer,
     markLessonComplete: markLessonComplete,
     unmarkLessonComplete: unmarkLessonComplete,
+    saveKeyTerms: saveKeyTerms,
+    removeKeyTerms: removeKeyTerms,
+    getKeyTerms: getKeyTerms,
+    getAllSavedKeyTerms: getAllSavedKeyTerms,
     getLessonProgress: getLessonProgress,
     isLessonComplete: isLessonComplete,
     recordReadProgress: recordReadProgress,

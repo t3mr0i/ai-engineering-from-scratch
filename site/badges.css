@@ -172,8 +172,8 @@
 [data-theme="dark"] .aifs-streak--active .aifs-streak__icon { background: var(--color-warn-soft, #322b1a); color: var(--color-warn, #d9c5a0); }
 
 /* nav counter — gold uses the LHG warning tone */
-.badges-link { position: relative; }
-.badges-link .ph-light { font-size: 1.15rem; }
+.badges-link, .notes-link { position: relative; }
+.badges-link .ph-light, .notes-link .ph-light { font-size: 1.15rem; }
 .badges-link__count {
   position: absolute; top: -5px; right: -5px;
   min-width: 17px; height: 17px; padding: 0 4px;
