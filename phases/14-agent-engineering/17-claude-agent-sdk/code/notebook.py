@@ -57,7 +57,7 @@ print("✅ notebook ready · endpoint:", lrn_llm.API_BASE)
 # %% [markdown]
 # ## Step 0a — Endpoint & Key
 #
-# Set your optional API key (the LHIND gateway works without one on the network). The default model is `azure/gpt-4o`.
+# Set your optional API key (the LHIND gateway works without one on the network). The default model is `azure/gpt-5.4-mini`.
 
 # %%
 # Optional: set an API key if required by your network
