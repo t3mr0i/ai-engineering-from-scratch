@@ -1,0 +1,4 @@
+# F3: notebook.py removed — it duplicated phases/13-tools-and-protocols/01-the-tool-interface
+# (same toy tool catalog / parse-validate-execute-feedback pattern) and covered none of this
+# lesson's own topics (Toolformer, BFCL V4, long-horizon tool chaining). code/main.py is
+# unaffected. This marker prevents scripts/generate_notebooks.py from re-adding a notebook here.

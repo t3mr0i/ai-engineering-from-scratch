@@ -101,9 +101,6 @@ window.LrnNotebookIndex = {
 "phases/14-agent-engineering/04-tree-of-thoughts-lats": [
 "*"
 ],
-"phases/14-agent-engineering/06-tool-use-and-function-calling": [
-"*"
-],
 "phases/14-agent-engineering/13-langgraph-stateful-graphs": [
 "*"
 ],
