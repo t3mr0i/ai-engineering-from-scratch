@@ -57,7 +57,7 @@ print("✅ notebook ready · endpoint:", lrn_llm.API_BASE)
 # %% [markdown]
 # ## Step 0a — Endpoint & Key
 #
-# Set your API key if needed (optional on the LHIND network). The gateway uses `azure/gpt-4o` by default.
+# Set your API key if needed (optional on the LHIND network). The gateway uses `azure/gpt-5.4-mini` by default.
 
 # %%
 # Optional: set your API key here if using outside LHIND network
@@ -89,7 +89,8 @@ from collections import defaultdict
 MODEL_PRICING = {
     "gpt-4o": {"input": 2.50, "output": 10.00},
     "gpt-4o-mini": {"input": 0.15, "output": 0.60},
-    "azure/gpt-4o": {"input": 2.50, "output": 10.00},  # LHIND gateway
+    "azure/gpt-5.4-mini": {"input": 0.30, "output": 0.90},  # LHIND gateway default
+    "azure/gpt-5.4-nano": {"input": 0.10, "output": 0.40},  # LHIND gateway fallback
 }
 
 def estimate_tokens(text):
@@ -98,7 +99,7 @@ def estimate_tokens(text):
 
 def calculate_cost(model, input_tokens, output_tokens):
     """Calculate cost in USD for a request"""
-    pricing = MODEL_PRICING.get(model, MODEL_PRICING["gpt-4o"])
+    pricing = MODEL_PRICING.get(model, MODEL_PRICING["azure/gpt-5.4-mini"])
     input_cost = input_tokens / 1_000_000 * pricing["input"]
     output_cost = output_tokens / 1_000_000 * pricing["output"]
     return round(input_cost + output_cost, 8)
@@ -108,7 +109,7 @@ test_input = "What is the capital of France?"
 test_output = "The capital of France is Paris. It is the most populous city in France and the center of the Île-de-France region."
 input_tokens = estimate_tokens(test_input)
 output_tokens = estimate_tokens(test_output)
-cost = calculate_cost("azure/gpt-4o", input_tokens, output_tokens)
+cost = calculate_cost("azure/gpt-5.4-mini", input_tokens, output_tokens)
 
 print(f"Input: {input_tokens} tokens")
 print(f"Output: {output_tokens} tokens")
@@ -474,7 +475,98 @@ class ProductionLLMPipeline:
 print("✅ Production pipeline ready")
 
 # %% [markdown]
-# ## Step 7 — General Chat: A Simple Query
+# ## Step 7 — Resilience: Streaming, Fallback, and Rate Limiting
+#
+# Three pillars from Step 2's diagram are still missing: streaming delivery, a
+# provider fallback chain, and per-user rate limiting. `lrn_llm.call` only returns a
+# complete response — the gateway doesn't expose SSE here — so the streaming demo
+# below simulates token-by-token delivery over that completed response: real
+# production code, not a genuine second network stream. Fallback and rate limiting
+# are real, runnable logic, no simulation needed.
+
+# %%
+import asyncio
+
+async def stream_response(messages, **kwargs):
+    """Simulate token-by-token delivery over lrn_llm.call's single response. Without
+    an SSE-capable gateway, this demonstrates the *pattern* — first chunk arrives,
+    then more follow — that a real streaming client consumes."""
+    response = await lrn_llm.call(messages, **kwargs)
+    words = lrn_llm.text(response).split(" ")
+    for i, word in enumerate(words):
+        await asyncio.sleep(0.02)
+        yield word + (" " if i < len(words) - 1 else "")
+
+print("Streaming demo (simulated token-by-token delivery):")
+chunks = []
+async for chunk in stream_response(
+    [{"role": "user", "content": "Name three benefits of caching."}], max_tokens=100
+):
+    chunks.append(chunk)
+    print(chunk, end="", flush=True)
+print(f"\n({len(chunks)} chunks delivered)")
+
+
+class ProviderUnavailable(Exception):
+    """Raised in this demo to simulate a provider outage."""
+    pass
+
+async def call_with_fallback(messages, model_chain, *, max_tokens=300, simulate_primary_failure=False):
+    """Try each model in model_chain in order; fall through to the next on failure.
+    simulate_primary_failure is a demo-only hook — a real outage isn't controllable
+    on demand — so the fallback path can be exercised deterministically."""
+    last_error = None
+    for i, model in enumerate(model_chain):
+        try:
+            if i == 0 and simulate_primary_failure:
+                raise ProviderUnavailable(f"{model} unavailable (simulated)")
+            response = await lrn_llm.call(messages, max_tokens=max_tokens, model=model)
+            return {"response": response, "model_used": model, "fallback_used": i > 0}
+        except Exception as e:
+            last_error = e
+            more = i < len(model_chain) - 1
+            print(f"  {'⚠️  falling back' if more else '❌ no more fallbacks'}: "
+                  f"{model} failed ({e})")
+    raise last_error
+
+fallback_result = await call_with_fallback(
+    [{"role": "user", "content": "What is 2+2?"}],
+    model_chain=[lrn_llm.DEFAULT_MODEL, "azure/gpt-5.4-nano"],
+    simulate_primary_failure=True,
+)
+print(f"\nFallback demo: used '{fallback_result['model_used']}' "
+      f"(fallback_used={fallback_result['fallback_used']})")
+print(f"Response: {lrn_llm.text(fallback_result['response'])[:80]}")
+
+
+class RateLimiter:
+    """Fixed-window per-user rate limiter: at most `limit` calls per `window_s`
+    seconds. Real logic, no external service needed."""
+    def __init__(self, limit=5, window_s=60.0):
+        self.limit = limit
+        self.window_s = window_s
+        self._hits = defaultdict(list)  # user_id -> [timestamps]
+
+    def allow(self, user_id):
+        now = time.time()
+        hits = self._hits[user_id]
+        cutoff = now - self.window_s
+        while hits and hits[0] < cutoff:
+            hits.pop(0)
+        if len(hits) >= self.limit:
+            return False
+        hits.append(now)
+        return True
+
+limiter = RateLimiter(limit=3, window_s=60.0)
+for i in range(5):
+    allowed = limiter.allow("user-42")
+    print(f"Request {i + 1} for user-42: {'✅ allowed' if allowed else '🚫 rate-limited (429)'}")
+
+print("\n✅ Streaming, fallback, and rate limiting demonstrated")
+
+# %% [markdown]
+# ## Step 8 — General Chat: A Simple Query
 #
 # Let's walk through a complete request using the general_chat template from the lesson.
 
@@ -497,7 +589,7 @@ print(f"\nResponse:")
 print(result['response'])
 
 # %% [markdown]
-# ## Step 8 — Cache Hit: Same Query From Different User
+# ## Step 9 — Cache Hit: Same Query From Different User
 #
 # Now the same question comes in from a different user. The semantic cache detects the similarity and returns the cached response instantly, at zero cost.
 
@@ -519,7 +611,7 @@ print(f"\nResponse (from cache):")
 print(result['response'])
 
 # %% [markdown]
-# ## Step 9 — RAG Template: Grounding Responses in Context
+# ## Step 10 — RAG Template: Grounding Responses in Context
 #
 # The RAG (Retrieval-Augmented Generation) template is used when you have reference material. The model answers ONLY based on that context.
 
@@ -543,7 +635,7 @@ print(f"\nResponse (grounded in provided context):")
 print(result['response'])
 
 # %% [markdown]
-# ## Step 10 — Code Review Template: A Specialized Domain
+# ## Step 11 — Code Review Template: A Specialized Domain
 #
 # Different domains require different prompts. Here's a code review where the model is prompted as a senior engineer.
 
@@ -571,7 +663,7 @@ print(f"\nCode Review:")
 print(result['response'])
 
 # %% [markdown]
-# ## Step 11 — Guardrails in Action: Blocking Unsafe Input
+# ## Step 12 — Guardrails in Action: Blocking Unsafe Input
 #
 # When a request violates guardrails, it's blocked before reaching the LLM. No cost, instant rejection.
 
@@ -589,7 +681,7 @@ print(f"Cost: ${result.get('cost_usd', 0):.8f}")
 print(f"Latency: {result['latency_ms']}ms (instant rejection, no LLM call)")
 
 # %% [markdown]
-# ## Step 12 — PII Detection: Automatically Redacting Sensitive Data
+# ## Step 13 — PII Detection: Automatically Redacting Sensitive Data
 #
 # When PII is detected in the input, it's automatically redacted before the LLM sees it. The user is informed that redaction occurred.
 
@@ -610,7 +702,7 @@ print(f"\nLatency: {result['latency_ms']}ms")
 print(f"Cost: ${result.get('cost_usd', 0):.8f}")
 
 # %% [markdown]
-# ## Step 13 — Observability: Request Logs & Cost Tracking
+# ## Step 14 — Observability: Request Logs & Cost Tracking
 #
 # Production LLM apps track every request for debugging, billing, and optimization. Here's the aggregate view.
 
@@ -636,7 +728,7 @@ for log in pipeline.request_logs[-5:]:
     print(f"[{log['request_id']}] {log['user_id']}: {cache:12} | {tokens:10} | ${log['cost_usd']:.8f} | {log['latency_ms']}ms")
 
 # %% [markdown]
-# ## Step 14 — A/B Testing: Prompt Variants in Production
+# ## Step 15 — A/B Testing: Prompt Variants in Production
 #
 # Different prompt versions can have different quality. A/B testing lets you measure which variant performs better before rolling it out to all users.
 
@@ -665,7 +757,7 @@ print("\nKey insight: Same user always gets same variant (deterministic hash)")
 print("This ensures consistent experience across multiple requests.")
 
 # %% [markdown]
-# ## Step 15 — Try It Yourself: Build Your Own Request
+# ## Step 16 — Try It Yourself: Build Your Own Request
 #
 # Now it's your turn. Design a request that demonstrates one of the production features: caching, guardrails, templating, or cost tracking.
 
