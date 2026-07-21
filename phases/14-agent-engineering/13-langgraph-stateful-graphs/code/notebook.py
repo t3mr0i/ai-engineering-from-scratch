@@ -276,32 +276,6 @@ except PausedAtNode as paused:
         print(f"  {key}: {value}")
 
 # %% [markdown]
-# Wait, we need to initialize the runner first. Let me fix that:
-
-# %%
-runner = Runner(ckpt)
-
-session_id = "s001"
-initial_state = {
-    "input": "I was charged twice for my subscription last month, please refund",
-    "step": 0,
-    "human_approved": False
-}
-
-print("=" * 70)
-print("FIRST RUN (will pause at human_gate)")
-print("=" * 70)
-
-try:
-    final = await runner.run(session_id, initial_state, llm_classify=True)
-    print(f"Completed: {final}")
-except PausedAtNode as paused:
-    print(f"\n🛑 PAUSED at node: {paused.node}")
-    print(f"\nState at pause:")
-    for key, value in paused.state.items():
-        print(f"  {key}: {value}")
-
-# %% [markdown]
 # ## Step 7 — Review the Checkpoint History
 #
 # Inspect every step the graph took before pausing. This is where **durable execution** shines: if the graph crashed at step 4, we'd resume from step 4 with exact state.
@@ -319,49 +293,19 @@ for i, (node_name, snap) in enumerate(ckpt.history(session_id), 1):
 # A human reviews the paused state and approves it. We then **resume** from the next node with the updated state.
 
 # %%
-print("\nHuman approves the refund ticket.")
-print("Resuming from 'send' with human_approved=True...\n")
+print("\nHuman approves the refund ticket. Running the final step...")
+print("=" * 70)
 
-# Get the last checkpoint
-latest_node, latest_state = ckpt.load_latest(session_id)
+# Resume must start from the *checkpointed* state, not the original initial_state —
+# runner.run(resume_from=...) alone wouldn't carry the human's approval into the next
+# node, since that approval only exists in the checkpoint we're about to load.
+latest_node, paused_state = ckpt.load_latest(session_id)
 print(f"Last checkpoint was at: {latest_node}")
 
-# Approve and resume
-approved_state = copy.deepcopy(latest_state)
-approved_state["human_approved"] = True
-
-print("\nRESUME RUN (from 'send' with approval)")
-print("=" * 70)
-
-final = await runner.run(
-    session_id=session_id,
-    initial_state=initial_state,  # provided for reference; we override it below
-    resume_from="send"
-)
-
-# Manually merge the approved state before send runs
-# (In production, you'd pass state_override or reconstruct from latest checkpoint)
-print(f"\n✅ Final output: {final.get('output')}")
-print(f"\nFinal state:")
-for key, value in final.items():
-    print(f"  {key}: {value}")
-
-# %% [markdown]
-# Wait, the resume needs to use the approved state. Let me fix this approach:
-
-# %%
-# We need to enhance the Runner to accept state_override
-# For now, let's manually construct the send step
-
-print("\nHuman approves the ticket. Running final step...")
-print("=" * 70)
-
-# Get approved state from the pause
-latest_node, paused_state = ckpt.load_latest(session_id)
 approved_state = copy.deepcopy(paused_state)
 approved_state["human_approved"] = True
 
-# Run the final send node
+# Run the final send node directly against the approved state, then checkpoint it.
 send_update = send_node(approved_state)
 approved_state.update(send_update)
 ckpt.save(session_id, "send", approved_state)
