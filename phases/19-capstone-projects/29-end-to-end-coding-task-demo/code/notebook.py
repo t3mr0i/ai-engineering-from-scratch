@@ -93,38 +93,30 @@ print(f"✅ LLM erreichbar: {r}")
 # This mirrors the lesson's architecture, but uses a real LLM instead of a deterministic policy.
 
 # %% [markdown]
-# ## The Fixture: A Buggy fizz.py
+# ## The Fixture: A Buggy words.py
 #
 # Our sample project has two files:
 #
-# **src/fizz.py** (buggy):
+# **src/words.py** (buggy):
 # ```python
-# def fizzbuzz(n):
-#     # Off-by-one bug: should return n+1 numbers, not n
-#     result = []
-#     for i in range(n):  # BUG: should be range(n+1)
-#         if i % 15 == 0:
-#             result.append("FizzBuzz")
-#         elif i % 3 == 0:
-#             result.append("Fizz")
-#         elif i % 5 == 0:
-#             result.append("Buzz")
-#         else:
-#             result.append(str(i))
-#     return result
+# def reverse_words(sentence):
+#     # Bug: splits the sentence but never reverses the word order
+#     words = sentence.split(" ")
+#     return " ".join(words)  # BUG: should be words[::-1]
 # ```
 #
-# **tests/test_fizz.py**:
+# **tests/test_words.py**:
 # ```python
-# from src.fizz import fizzbuzz
+# from src.words import reverse_words
 #
-# def test_fizzbuzz():
-#     result = fizzbuzz(5)
-#     assert len(result) == 5, f"Expected 5 items, got {len(result)}"
-#     assert result[4] == "Buzz", f"Expected result[4]='Buzz', got {result[4]}"
+# def test_reverse_words():
+#     result = reverse_words("the quick brown fox")
+#     assert result == "fox brown quick the", f"Expected reversed word order, got {result!r}"
 # ```
 #
-# The test expects 5 items (indices 0–4), but the buggy code only returns 4.
+# The test expects the words back in reverse order, but the buggy code joins them in
+# their original order — a missing-operation bug, not a boundary/off-by-one error
+# (see `27-eval-harness-fixture-tasks` for that category).
 
 # %% [markdown]
 # ## Step 2 — Harness Primitives
@@ -148,50 +140,41 @@ class Sandbox:
     """Sandbox: simulated file system and test execution."""
     def __init__(self):
         self.files = {
-            "src/fizz.py": '''def fizzbuzz(n):
-    result = []
-    for i in range(n):  # BUG: should be range(n+1)
-        if i % 15 == 0:
-            result.append("FizzBuzz")
-        elif i % 3 == 0:
-            result.append("Fizz")
-        elif i % 5 == 0:
-            result.append("Buzz")
-        else:
-            result.append(str(i))
-    return result
+            "src/words.py": '''def reverse_words(sentence):
+    words = sentence.split(" ")
+    return " ".join(words)  # BUG: should be words[::-1] to reverse the order
 ''',
-            "tests/test_fizz.py": '''from src.fizz import fizzbuzz
+            "tests/test_words.py": '''from src.words import reverse_words
 
-def test_fizzbuzz():
-    result = fizzbuzz(5)
-    assert len(result) == 5, f"Expected 5 items, got {len(result)}"
-    assert result[4] == "Buzz", f"Expected result[4]=\'Buzz\', got {result[4]}"
+def test_reverse_words():
+    result = reverse_words("the quick brown fox")
+    assert result == "fox brown quick the", f"Expected reversed word order, got {result!r}"
 '''
         }
-    
+
     def read_file(self, path: str) -> str:
         if path not in self.files:
             return f"Error: file {path} not found"
         return self.files[path]
-    
+
     def write_file(self, path: str, content: str) -> str:
         self.files[path] = content
         return f"OK: wrote {path}"
-    
+
     def run_tests(self) -> Dict[str, Any]:
         """Simulate running tests; fails on the buggy code."""
         try:
             exec_globals = {}
-            exec(self.files["src/fizz.py"], exec_globals)
-            fizzbuzz = exec_globals["fizzbuzz"]
-            result = fizzbuzz(5)
-            if len(result) == 5:
+            exec(self.files["src/words.py"], exec_globals)
+            reverse_words = exec_globals["reverse_words"]
+            result = reverse_words("the quick brown fox")
+            expected = "fox brown quick the"
+            if result == expected:
                 return {"passed": True, "message": "All tests passed!"}
             else:
                 return {
                     "passed": False,
-                    "error": f"AssertionError: Expected 5 items, got {len(result)}"
+                    "error": f"AssertionError: Expected {expected!r}, got {result!r}"
                 }
         except Exception as e:
             return {"passed": False, "error": str(e)}
@@ -327,22 +310,22 @@ async def inspect_and_fix_phase(state: AgentState, sandbox: Sandbox) -> str:
         state.add_observation(f"❌ Tool {tool} denied")
         return None
     
-    source_code = sandbox.read_file("src/fizz.py")
+    source_code = sandbox.read_file("src/words.py")
     state.add_observation(f"Source code read (length={len(source_code)})")
-    print(f"[INSPECT] Read src/fizz.py ({len(source_code)} chars)")
+    print(f"[INSPECT] Read src/words.py ({len(source_code)} chars)")
     state.transition("FIX")
-    
+
     # --- FIX: Ask LLM ---
     state.messages.append({
         "role": "user",
-        "content": f"""The test failed with: 'Expected 5 items, got 4'.
+        "content": f"""The test failed with: "Expected 'fox brown quick the', got 'the quick brown fox'".
 
 Here's the source code:
 ```python
 {source_code}
 ```
 
-Identify the off-by-one bug and provide the fixed version (Python code only, no explanation)."""
+Identify the bug and provide the fixed version (Python code only, no explanation)."""
     })
     
     resp = await lrn_llm.call(state.messages, max_tokens=300)
@@ -377,7 +360,7 @@ async def write_and_verify_phase(state: AgentState, sandbox: Sandbox, fixed_code
         state.add_observation(f"❌ Tool {tool} denied")
         return False
     
-    result = sandbox.write_file("src/fizz.py", fixed_code)
+    result = sandbox.write_file("src/words.py", fixed_code)
     state.add_observation(result)
     print(f"[WRITE] {result}")
     state.transition("VERIFY")
@@ -455,19 +438,18 @@ print(f"\nAgent run completed with success={success}")
 
 # %%
 # TODO: Experiment!
-# Try changing the bug in sandbox.files["src/fizz.py"] or the test assertion,
+# Try changing the bug in sandbox.files["src/words.py"] or the test assertion,
 # then re-run the agent. What happens if the bug is more complex?
-# For example, change the FizzBuzz logic or add a new test.
+# For example, change reverse_words to also uppercase words, or add a new test.
 
 # Example: modify the test to be stricter
 # Uncomment the line below and re-run run_agent():
-# sandbox.files["tests/test_fizz.py"] = '''from src.fizz import fizzbuzz
-# def test_fizzbuzz():
-#     result = fizzbuzz(15)
-#     assert len(result) == 15
-#     assert result[0] == "FizzBuzz"
-#     assert result[3] == "Fizz"
-#     assert result[4] == "Buzz"
+# sandbox.files["tests/test_words.py"] = '''from src.words import reverse_words
+# def test_reverse_words():
+#     result = reverse_words("one two three four")
+#     assert result == "four three two one"
+#     assert reverse_words("solo") == "solo"
+#     assert reverse_words("") == ""
 # '''
 
 print("Ready for experimentation. Modify the code above and run the agent again.")
