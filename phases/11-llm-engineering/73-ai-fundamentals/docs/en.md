@@ -73,7 +73,7 @@ Practitioners in 2026 regularly overpromise generative AI because they test it o
 - Classification and extraction when the schema is precisely defined in the prompt and validated on the way out
 
 **Unreliable without mitigations:**
-- Arithmetic and multi-step numerical reasoning (models still make calculation errors at non-trivial rates; route to code execution instead — Phase 11 · 22 covers tool routing)
+- Arithmetic and multi-step numerical reasoning (models still make calculation errors at non-trivial rates; route to code execution instead — Phase 11 · 09 covers function calling and tool use)
 - Real-time information (knowledge cutoffs; use retrieval, see Phase 11 · 06)
 - Citing specific sources accurately (models confabulate citations; always verify against retrieved text)
 - Consistent formatting under adversarial or ambiguous inputs (use structured output APIs)

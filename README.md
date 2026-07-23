@@ -542,15 +542,12 @@ folder under `phases/`.
 | 17 | [Agent Framework Tradeoffs](phases/11-llm-engineering/17-agent-framework-tradeoffs/) | Learn | Python |
 | 18 | [Responsible AI Compliance Workflow](phases/11-llm-engineering/18-responsible-ai-compliance-workflow/) | Build | Python |
 | 19 | [AI-Driven Testing and QA](phases/11-llm-engineering/19-ai-driven-testing-qa/) | Build | Python |
-| 20 | [Code Modernization with AI](phases/11-llm-engineering/20-code-modernization-with-ai/) | Build | Python |
 | 21 | [AI-Assisted Documentation](phases/11-llm-engineering/21-ai-assisted-documentation/) | Build | Python |
-| 22 | [Sustainable Software and Green Coding for AI Systems](phases/11-llm-engineering/22-sustainable-software-green-coding/) | Build | Python |
 | 23 | [AI-Enhanced User Research](phases/11-llm-engineering/23-ai-enhanced-user-research/) | Build | Python |
 | 24 | [AI Use Case Spotting and Automation Discovery](phases/11-llm-engineering/24-use-case-spotting-automation-discovery/) | Build | Python |
 | 25 | [AI Cost and Value Economics](phases/11-llm-engineering/25-ai-cost-value-economics/) | Build | Python |
 | 26 | [Consultative Prompting](phases/11-llm-engineering/26-consultative-prompting/) | Build | Python |
 | 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape/) | Build | Python |
-| 28 | [AI Workforce Strategy](phases/11-llm-engineering/28-ai-workforce-strategy/) | Build | Python |
 | 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai/) | Build | Python |
 | 30 | [Data Literacy for AI Projects](phases/11-llm-engineering/30-data-literacy-for-ai-projects/) | Build | Python |
 | 31 | [Hands-on Prompt Clinic](phases/11-llm-engineering/31-hands-on-prompt-clinic/) | Build | Python |
@@ -569,7 +566,6 @@ folder under `phases/`.
 | 44 | [AI for Sales and Product Consulting](phases/11-llm-engineering/44-ai-for-sales-product-consulting/) | Build | Python |
 | 45 | [AI for Corporate Communications and Marketing](phases/11-llm-engineering/45-ai-for-corporate-communications-marketing/) | Build | Python |
 | 46 | [AI Learning Design and Knowledge Transfer](phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer/) | Build | Python |
-| 47 | [AI Meeting Facilitation and Workshop Design](phases/11-llm-engineering/47-ai-meeting-workshop-facilitation/) | Build | Python |
 | 48 | [AI Project Reporting and Steering](phases/11-llm-engineering/48-ai-project-reporting-steering/) | Build | Python |
 | 49 | [AI Data Quality and Master Data Processes](phases/11-llm-engineering/49-ai-data-quality-master-data-processes/) | Build | Python |
 | 50 | [AI Process Analysis and Automation Design](phases/11-llm-engineering/50-ai-process-analysis-automation-design/) | Build | Python |
@@ -577,21 +573,13 @@ folder under `phases/`.
 | 52 | [AI Knowledge Management and Content Governance](phases/11-llm-engineering/52-ai-knowledge-management-content-governance/) | Build | Python |
 | 53 | [AI Customer Communication and Service Quality](phases/11-llm-engineering/53-ai-customer-communication-service-quality/) | Build | Python |
 | 54 | [AI Architecture Decision Governance](phases/11-llm-engineering/54-ai-architecture-decision-governance/) | Build | Python |
-| 55 | [AI Product Backlog and Prioritization](phases/11-llm-engineering/55-ai-product-backlog-prioritization/) | Build | Python |
 | 56 | [AI Business Analysis and Process Discovery](phases/11-llm-engineering/56-ai-business-analysis-process-discovery/) | Build | Python |
-| 57 | [AI Test Data and Synthetic Data Governance](phases/11-llm-engineering/57-ai-test-data-synthetic-data-governance/) | Build | Python |
 | 58 | [AI Change Impact and Stakeholder Analysis](phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis/) | Build | Python |
 | 59 | [AI Value Realization and Benefits Tracking](phases/11-llm-engineering/59-ai-value-realization-benefits-tracking/) | Build | Python |
-| 60 | [AI Business Applications, ERP, and CRM Consulting](phases/11-llm-engineering/60-ai-business-applications-erp-crm-consulting/) | Build | Python |
-| 61 | [AI Cloud, Data Platform, and IoT Use Case Design](phases/11-llm-engineering/61-ai-cloud-data-platform-use-case-design/) | Build | Python |
 | 62 | [AI BI Reporting and Data Storytelling](phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling/) | Build | Python |
 | 63 | [AI Human Review and Approval Workflow Design](phases/11-llm-engineering/63-ai-human-review-approval-workflows/) | Build | Python |
-| 64 | [AI Operating Model and Center of Excellence](phases/11-llm-engineering/64-ai-operating-model-center-of-excellence/) | Build | Python |
-| 65 | [AI Service Desk Runbook and Knowledge Automation](phases/11-llm-engineering/65-ai-service-desk-runbook-automation/) | Build | Python |
-| 66 | [AI Security Review and Threat Triage for Business Teams](phases/11-llm-engineering/66-ai-security-threat-triage-business-teams/) | Build | Python |
 | 67 | [AI Product Experiment Design and Feedback Analytics](phases/11-llm-engineering/67-ai-product-experiment-feedback-analytics/) | Build | Python |
 | 68 | [AI Adoption Communications and Role-Based Enablement](phases/11-llm-engineering/68-ai-adoption-communications-role-enablement/) | Build | Python |
-| 69 | [AI Prompt Library Governance and Reuse](phases/11-llm-engineering/69-ai-prompt-library-governance-reuse/) | Build | Python |
 | 70 | [GitHub Copilot for Software Engineers: The Daily Workflow](phases/11-llm-engineering/70-github-copilot-daily-workflow/) | Learn | Python |
 | 71 | [Copilot Code Review and the PR Workflow](phases/11-llm-engineering/71-copilot-code-review-pr-workflow/) | Learn | Python |
 | 72 | [Copilot vs Cursor vs Claude Code, and MCP in the IDE](phases/11-llm-engineering/72-copilot-cursor-claude-code-mcp/) | Learn | Python |

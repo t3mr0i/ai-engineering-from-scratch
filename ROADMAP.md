@@ -291,15 +291,12 @@ parsed by `site/build.js` into the lesson catalog.
 | 17 | [Agent Framework Tradeoffs](phases/11-llm-engineering/17-agent-framework-tradeoffs) | ✅ | ~45 min |
 | 18 | [Responsible AI Compliance Workflow](phases/11-llm-engineering/18-responsible-ai-compliance-workflow) | ✅ | ~45 min |
 | 19 | [AI-Driven Testing and QA](phases/11-llm-engineering/19-ai-driven-testing-qa) | ✅ | ~45 min |
-| 20 | [Code Modernization with AI](phases/11-llm-engineering/20-code-modernization-with-ai) | ✅ | ~45 min |
 | 21 | [AI-Assisted Documentation](phases/11-llm-engineering/21-ai-assisted-documentation) | ✅ | ~45 min |
-| 22 | [Sustainable Software and Green Coding for AI Systems](phases/11-llm-engineering/22-sustainable-software-green-coding) | ✅ | ~45 min |
 | 23 | [AI-Enhanced User Research](phases/11-llm-engineering/23-ai-enhanced-user-research) | ✅ | ~45 min |
 | 24 | [AI Use Case Spotting and Automation Discovery](phases/11-llm-engineering/24-use-case-spotting-automation-discovery) | ✅ | ~45 min |
 | 25 | [AI Cost and Value Economics](phases/11-llm-engineering/25-ai-cost-value-economics) | ✅ | ~45 min |
 | 26 | [Consultative Prompting](phases/11-llm-engineering/26-consultative-prompting) | ✅ | ~45 min |
 | 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape) | ✅ | ~45 min |
-| 28 | [AI Workforce Strategy](phases/11-llm-engineering/28-ai-workforce-strategy) | ✅ | ~45 min |
 | 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai) | ✅ | ~45 min |
 | 30 | [Data Literacy for AI Projects](phases/11-llm-engineering/30-data-literacy-for-ai-projects) | ✅ | ~45 min |
 | 31 | [Hands-on Prompt Clinic](phases/11-llm-engineering/31-hands-on-prompt-clinic) | ✅ | ~45 min |
@@ -318,7 +315,6 @@ parsed by `site/build.js` into the lesson catalog.
 | 44 | [AI for Sales and Product Consulting](phases/11-llm-engineering/44-ai-for-sales-product-consulting) | ✅ | ~45 min |
 | 45 | [AI for Corporate Communications and Marketing](phases/11-llm-engineering/45-ai-for-corporate-communications-marketing) | ✅ | ~45 min |
 | 46 | [AI Learning Design and Knowledge Transfer](phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer) | ✅ | ~45 min |
-| 47 | [AI Meeting Facilitation and Workshop Design](phases/11-llm-engineering/47-ai-meeting-workshop-facilitation) | ✅ | ~45 min |
 | 48 | [AI Project Reporting and Steering](phases/11-llm-engineering/48-ai-project-reporting-steering) | ✅ | ~45 min |
 | 49 | [AI Data Quality and Master Data Processes](phases/11-llm-engineering/49-ai-data-quality-master-data-processes) | ✅ | ~45 min |
 | 50 | [AI Process Analysis and Automation Design](phases/11-llm-engineering/50-ai-process-analysis-automation-design) | ✅ | ~45 min |
@@ -326,21 +322,13 @@ parsed by `site/build.js` into the lesson catalog.
 | 52 | [AI Knowledge Management and Content Governance](phases/11-llm-engineering/52-ai-knowledge-management-content-governance) | ✅ | ~45 min |
 | 53 | [AI Customer Communication and Service Quality](phases/11-llm-engineering/53-ai-customer-communication-service-quality) | ✅ | ~45 min |
 | 54 | [AI Architecture Decision Governance](phases/11-llm-engineering/54-ai-architecture-decision-governance) | ✅ | ~45 min |
-| 55 | [AI Product Backlog and Prioritization](phases/11-llm-engineering/55-ai-product-backlog-prioritization) | ✅ | ~45 min |
 | 56 | [AI Business Analysis and Process Discovery](phases/11-llm-engineering/56-ai-business-analysis-process-discovery) | ✅ | ~45 min |
-| 57 | [AI Test Data and Synthetic Data Governance](phases/11-llm-engineering/57-ai-test-data-synthetic-data-governance) | ✅ | ~45 min |
 | 58 | [AI Change Impact and Stakeholder Analysis](phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis) | ✅ | ~45 min |
 | 59 | [AI Value Realization and Benefits Tracking](phases/11-llm-engineering/59-ai-value-realization-benefits-tracking) | ✅ | ~45 min |
-| 60 | [AI Business Applications, ERP, and CRM Consulting](phases/11-llm-engineering/60-ai-business-applications-erp-crm-consulting) | ✅ | ~45 min |
-| 61 | [AI Cloud, Data Platform, and IoT Use Case Design](phases/11-llm-engineering/61-ai-cloud-data-platform-use-case-design) | ✅ | ~45 min |
 | 62 | [AI BI Reporting and Data Storytelling](phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling) | ✅ | ~45 min |
 | 63 | [AI Human Review and Approval Workflow Design](phases/11-llm-engineering/63-ai-human-review-approval-workflows) | ✅ | ~45 min |
-| 64 | [AI Operating Model and Center of Excellence](phases/11-llm-engineering/64-ai-operating-model-center-of-excellence) | ✅ | ~45 min |
-| 65 | [AI Service Desk Runbook and Knowledge Automation](phases/11-llm-engineering/65-ai-service-desk-runbook-automation) | ✅ | ~45 min |
-| 66 | [AI Security Review and Threat Triage for Business Teams](phases/11-llm-engineering/66-ai-security-threat-triage-business-teams) | ✅ | ~45 min |
 | 67 | [AI Product Experiment Design and Feedback Analytics](phases/11-llm-engineering/67-ai-product-experiment-feedback-analytics) | ✅ | ~45 min |
 | 68 | [AI Adoption Communications and Role-Based Enablement](phases/11-llm-engineering/68-ai-adoption-communications-role-enablement) | ✅ | ~45 min |
-| 69 | [AI Prompt Library Governance and Reuse](phases/11-llm-engineering/69-ai-prompt-library-governance-reuse) | ✅ | ~45 min |
 
 ## Phase 12: Multimodal AI — ✅ (~65 hours)
 
