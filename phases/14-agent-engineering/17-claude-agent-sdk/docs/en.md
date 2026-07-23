@@ -77,23 +77,6 @@ The hosted alternative (beta header `managed-agents-2026-04-01`). Long-running a
 - **Hook creep.** Every team adds hooks; startup time balloons. Review hooks quarterly.
 - **Session bloat.** Sessions accumulate; size grows. Use `list_sessions` + expiry policy.
 
-## Build It
-
-`code/main.py` implements the SDK shape in stdlib:
-
-- `Tool`, `ToolRegistry` with built-in `read_file`, `write_file`, `list_dir`.
-- `Subagent` — private context, isolated run, results returned.
-- `SessionStore` — append, load, list, delete, list_subkeys.
-- `Hooks` — `pre_tool_use`, `post_tool_use`, `session_start`, `session_end`.
-- A demo: main agent spawns 3 subagents in parallel (each isolated), aggregates results, persists session.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows subagent context isolation (orchestrator context size stays bounded), hook execution, and session persistence.
 
 ## Use It
 
@@ -106,13 +89,6 @@ The trace shows subagent context isolation (orchestrator context size stays boun
 
 `outputs/skill-claude-agent-scaffold.md` scaffolds a Claude Agent SDK app with subagents, hooks, session store, MCP server attachment, and W3C trace propagation.
 
-## Exercises
-
-1. Add a subagent spawner that batches 20 tasks into groups of 5 parallel subagents. Measure orchestrator context size vs one-per-task.
-2. Implement a `PreToolUse` hook that rate-limits `write_file` calls (5 per minute per session). Trace the behavior.
-3. Wire `list_subkeys` to render a subagent tree. What does deep nesting look like?
-4. Port the toy to the real `claude-agent-sdk` Python package. What changes about tool registration?
-5. Read the Claude Managed Agents docs. When would you switch from self-hosted to managed?
 
 ## Key Terms
 

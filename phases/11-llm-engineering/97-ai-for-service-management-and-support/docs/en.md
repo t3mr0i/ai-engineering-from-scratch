@@ -106,17 +106,6 @@ No network calls, no LLM API. The point is to make the routing policy and qualit
 
 `outputs/skill-service-ai-pipeline.md` is a one-page deployment checklist: the five pipeline stages, the verification gate for each, and a two-column table of common failure modes with their mitigations. Paste it into a kickoff deck or use it as a pre-deployment review checklist.
 
-## Exercises
-
-1. Run `code/main.py`. Two tickets escalate to L2 rather than routing to a queue. Identify both and compare their urgency signals. Which signal is explicit ("production down") and which is implicit (a single word at the end of the ticket)? What does that tell you about the P1 keyword list you would tune in production?
-
-2. Run `code/main.py` again. Find the ticket that routes with a review flag rather than full confidence. Change one field in that ticket's text so it routes with confidence instead. What field did you add and why did it change the outcome?
-
-3. Take a real (or realistic) service ticket from your work context. Apply the four-field extraction schema from the Concept section manually. Which field was hardest to extract from the raw text, and what would you add to your extraction prompt to improve it?
-
-4. The response quality scorer in `code/main.py` blocks one draft. Open the code and find the blocking rule. Write a corrected draft (two sentences) that would pass all four scoring dimensions for the same ticket.
-
-5. Design a version-and-tier filtering strategy for a product with three major versions (v1.x, v2.x, v3.x) and two access tiers (standard, enterprise). How would you tag your knowledge article corpus, and what pre-filter query would you run before semantic ranking?
 
 ## Key Terms
 

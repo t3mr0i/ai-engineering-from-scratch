@@ -105,17 +105,6 @@ This is why small dedicated Talker models exist rather than "just use the main m
 
 This lesson produces `outputs/skill-omni-streaming-budget.md`. Given a real-time voice product's target TTFAB and feature set (vision-in, bilingual, full-duplex), picks Qwen2.5-Omni, Qwen3-Omni, Moshi, or Mini-Omni and sizes the Thinker/Talker.
 
-## Exercises
-
-1. Your target TTFAB is 300ms. On a 7B Thinker and 300M Talker, write out every component's latency.
-
-2. Qwen2.5-Omni uses TMRoPE. Describe what the model sees for a prompt where the user starts speaking at t=1s and the camera catches a gesture at t=1.2s.
-
-3. Full-duplex support requires the model to emit audio while listening. Propose a training data format that teaches this.
-
-4. Read Moshi's paper Section 4. Describe the "inner monologue" separation and why it avoids the Thinker-Talker split.
-
-5. Compute the throughput budget: how fast must a Talker emit tokens to keep up with 16kHz speech at 50 base-layer tokens/sec?
 
 ## Key Terms
 

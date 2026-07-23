@@ -69,25 +69,6 @@ seed idea + domain
 - Experiment framework: PyTorch 2.5 for the physical experiments, W&B for logging
 - Observability: Langfuse for agent traces, $30 hard budget per paper
 
-## Build It
-
-1. **Seed and domain scoping.** Take a seed idea (e.g., "investigate sparsity patterns in attention maps of sub-1B transformers"). Define the search space: models, datasets, compute budget.
-
-2. **Literature pass.** Query Semantic Scholar + OpenAlex for 50 most-cited relevant papers; cache abstracts locally; generate a 1-page domain digest.
-
-3. **Tree scaffolding.** Initialize the root with the seed hypothesis. Implement `expand(node) -> children` with small-edit proposals (one config change per child). Implement `score(node)` as a weighted novelty × quality × budget term.
-
-4. **Sandbox wrapping.** Every experiment runs `docker run --network=none --memory=8g --cpus=2 --pids-limit=256 --read-only` (or the equivalent E2B policy). Seeds are written to the sandbox; outputs are mounted read-only back out.
-
-5. **Plan-execute-verify loop.** `plan` proposes children. `execute` runs the sandbox, captures logs and metrics. `verify` runs unit checks on metrics (did the loss decrease? did the ablation isolate the effect?). Failed nodes get a failure reason stored on the tree.
-
-6. **Writer.** After budget, select the best branch. Render figures with matplotlib. Generate a LaTeX draft via Claude Opus 4.7 with the branch trace in context. Compile. Feed the compiled PDF back to Opus 4.7 vision for critique. Iterate.
-
-7. **Reviewer ensemble.** Five judges score the draft on (novelty, rigor, clarity, reproducibility, impact) with NeurIPS-style rubrics. If mean < 4.0/5, return to writer with critique. Hard stop after 3 rewrites.
-
-8. **Red team.** Build or integrate a set of adversarial tasks targeting the sandbox: fork bombs, network exfiltration attempts, filesystem escapes, LLM-written shell metacharacters. Confirm all are blocked. Write up findings.
-
-9. **Reproducibility.** Every paper ships with its tree-search trace JSON, seeds, W&B run links, sandbox configs, and a README reproducing it end to end.
 
 ## Use It
 
@@ -119,17 +100,6 @@ $ ai-scientist run --seed "attention sparsity in sub-1B transformers" --budget 3
 | 15 | Reproducibility | One-command rerun with identical seeds reproduces the paper |
 | **100** | | |
 
-## Exercises
-
-1. Run the pipeline against three different seed ideas in the same domain. Compare which parts of the tree-search overlap. Identify duplicated wasted compute.
-
-2. Add a human-in-the-loop gate before experiment execution for nodes estimated above $5. Measure how much total cost drops.
-
-3. Swap the reviewer ensemble for a single judge. Measure the false-accept rate on a held-out set of known-bad papers.
-
-4. Introduce a network-exfiltration red team test: agent writes code that tries to `curl` an external address. Confirm the `--network=none` policy blocks it. Log the attempt.
-
-5. Compare your tree-search with a flat random baseline (same budget, no expansion strategy). Report the novelty × quality gain.
 
 ## Key Terms
 

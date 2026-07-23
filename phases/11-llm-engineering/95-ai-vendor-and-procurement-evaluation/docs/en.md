@@ -151,19 +151,6 @@ The drivers in each part include a vendor that *passes* the scorecard but *fails
 
 `outputs/skill-vendor-scorecard.md` is a one-page decision aid: a ready-to-paste scorecard template, weight profiles for common engagement types, a hard-gate checklist, and a per-dimension evidence-gathering prompt list. Bring it to the first vendor evaluation working session.
 
-## Exercises
-
-1. Run `code/main.py`. Which vendor leads for the regulated-enterprise profile, and which leads for the startup profile? Find the single dimension score that drives the ranking reversal between those two profiles.
-
-2. In Part 2 (hard gates), the vendor that would have led the regulated-enterprise scorecard is disqualified. Identify the gate that caught it. What document would the vendor have needed to provide for it to pass?
-
-3. In Part 3 (cost traps), the cheapest quote by list price is not the cheapest at production scale. Identify the trap (batch discount, context window, or switching cost) that drives the reversal and quantify the multiplier.
-
-4. Your client is a German public-sector agency. Add BSI C5 certification as a hard gate (any vendor without C5 is automatically eliminated) to the scorecard logic in `code/main.py`. Which vendors survive? What does this tell you about the shortlist for that engagement type?
-
-5. A vendor salesperson quotes you a price that looks 20% cheaper than AWS Bedrock. They used batch-inference pricing in their quote. Sketch the three questions you ask in the next five minutes to determine whether the comparison is apples-to-apples.
-
-6. Your client's application sends customer support tickets (which may contain names and account numbers) to a model API. List the four specific documents you need from the vendor before the first non-anonymized API call is permitted under GDPR.
 
 ## Consultant field notes
 

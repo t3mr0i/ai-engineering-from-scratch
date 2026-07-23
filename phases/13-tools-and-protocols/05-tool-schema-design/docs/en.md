@@ -136,17 +136,6 @@ Run it on the included `GOOD_REGISTRY` (passes) and `BAD_REGISTRY` (fails on eve
 
 This lesson produces `outputs/skill-tool-schema-linter.md`. Given any tool registry, the skill audits it against the design rules above and produces a fix-list with severities and suggested rewrites. Can run in CI.
 
-## Exercises
-
-1. Take the `BAD_REGISTRY` in `code/main.py` and rewrite each tool to pass the linter. Measure description length and count rule violations before and after.
-
-2. Design an MCP server for a notes application with atomic tools: list, search, create, update, delete, and a `summarize` slash prompt. Lint the registry. Target zero findings.
-
-3. Pick an existing popular MCP server from the official registry and lint its tool descriptions. Find at least two actionable improvements.
-
-4. Add the linter to your CI. On a PR that changes a tool registry, fail the build on severity `block` findings. The eval-driven CI pattern is covered in a future phase.
-
-5. Read Composio's tool-design field guide top to bottom. Identify one rule not covered in this lesson and add it to the linter.
 
 ## Key Terms
 

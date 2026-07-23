@@ -95,17 +95,6 @@ Run it to see concrete numbers that match the claims in the exercises.
 
 `outputs/skill-ai-cost-value-decision-aid.md` is a one-page paste-and-use decision aid for a consultant or engineer scoping an AI system: a cost-layer checklist, a value-denominator worksheet, and the three questions any finance partner will ask before signing off on an LLM budget.
 
-## Exercises
-
-1. Run `code/main.py`. Part 1 compares Opus (at varying cache hit rates) against Sonnet with zero caching. There is no crossover: Sonnet uncached is always cheaper per query. Explain in two sentences why this is the expected result — and what it means for the decision of when to use Opus in production at all.
-
-2. Run `code/main.py` and look at the routing simulation. What is the projected monthly saving at 1M queries/month, and what fraction of queries are routed away from Opus? Add a new query to the sample set (choose a category and confidence value) and observe which tier it routes to. Verify your prediction against the routing policy in `route()`.
-
-3. Your system prompt is 3,000 tokens and currently includes the current UTC timestamp. Describe the single change required to make it cacheable, and estimate the monthly saving at 500,000 queries/month using Sonnet 4.6 pricing ($3/M input tokens), assuming an 80% cache hit rate.
-
-4. A product manager argues that the LLM feature "saves 30 minutes per user per week." Identify the two numbers you need to collect before you can put a dollar figure on that claim, and one reason the gross 30-minute estimate overstates the net saving.
-
-5. You are asked to present a three-month LRN deployment cost forecast to a steering committee. List the five line items you must include beyond the raw token spend, and the metric you would propose as the primary production KPI.
 
 ## Key Terms
 

@@ -275,21 +275,6 @@ The JWT here uses HS256 with a shared secret (so the lesson runs on stdlib only)
 
 This lesson produces `outputs/skill-mcp-auth.md`. Given an MCP server config and an IdP capability set, the skill emits the auth surface to stand up — the protected-resource metadata, the enrollment path to use (CIMD, pre-registration, or DCR fallback), the JWKS refresh schedule, the scope mapping, and the refusal rules to apply when the IdP does not support the full RFC profile.
 
-## Exercises
-
-1. Run `code/main.py`. Trace the flow. Note how the IdP rotates a key in step 6, the scheduled `refresh_jwks` re-pulls the published set, and both the old token (overlap window) and a fresh token validate without restart.
-
-2. Add a new IdP to the protected-resource metadata's `authorization_servers` list. Issue a token signed by the new IdP and confirm the validator accepts it. Issue a token signed by an unlisted IdP and confirm the validator rejects with `WWW-Authenticate: Bearer error="invalid_token", error_description="iss not allowed"`.
-
-3. Add a rate-limit check to `register_client` that runs before the registrar accepts a request. Use a token-bucket per source IP held in a small dict keyed by IP.
-
-4. Read RFC 7591 and identify two fields the lesson's `/register` handler does not validate. Add the validation. (Hint: `software_statement` and `redirect_uris` URI scheme.)
-
-5. Add a Client ID Metadata Document path. Serve a `client.json` whose `client_id` equals its own URL, and have the authorization server fetch and verify it (reject if `client_id` ≠ URL). Confirm a CIMD client enrolls with no `register_client` call.
-
-6. Prove the DoS fix. Send the validator a token with a random `kid` and confirm `refresh_jwks` runs at most once and the authorization server's key count does not grow. Then deliberately re-wire the fall-back to a rotate-and-mint and watch the key count climb per bogus token — restore the re-fetch afterward.
-
-7. Implement the client-side RFC 9207 `iss` check from the mix-up section: record the expected issuer before the authorization request, then reject an authorization response whose `iss` does not match.
 
 ## Key Terms
 

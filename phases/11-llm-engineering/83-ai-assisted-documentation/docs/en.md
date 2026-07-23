@@ -106,17 +106,6 @@ Two rules that hold across doc types:
 
 `outputs/skill-doc-grounding-checklist.md` is a one-page, paste-and-use decision aid for a consultant or engineer who is about to generate or review AI-assisted documentation. It operationalizes the grounding thresholds, the prompt template, and the accountability rules into a scannable checklist with hard reject criteria.
 
-## Exercises
-
-1. Run `code/main.py`. Which document type in the sample set fails the grounding threshold, and why? Change one `UNRESOLVED` claim to `GROUNDED` by adding a matching artifact entry — what is the minimum information a source artifact must contain to resolve a claim?
-
-2. Run `code/main.py` again with the default inputs. The `INFERRED` claims pass the scorer but are flagged. Write one sentence for each flagged inference that a human reviewer should verify before publication. What artifact would resolve each one?
-
-3. Take a piece of documentation from your own work (a runbook, an ADR, a README section). Mark every substantive claim with `[SOURCE: ?]` or `[INFERRED]`. What percentage of claims are unresolvable without going to source? What does that number tell you about the document's reliability?
-
-4. Write a documentation prompt template for an ADR about a technology decision your team made recently. Identify three artifacts you would need to retrieve (via MCP or manually) before the model should write a single sentence. What would the prompt's "claim constraints" section say?
-
-5. The CI-integrated doc generation pattern from the Concept section fails a build when a claim cannot be grounded. Design the failure message: what information does the engineer need to resolve the failure? How would you distinguish a "missing source" failure from a "stale source" failure?
 
 ## Key Terms
 

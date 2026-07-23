@@ -56,83 +56,6 @@ This is where every attention implementation goes wrong the first time. Read slo
 
 **One Bahdanau / Luong gotcha worth naming.** Bahdanau uses `s_{t-1}` (the decoder state *before* generating the current word). Luong uses `s_t` (the state *after*). Mixing them up produces subtly wrong gradients that are extremely hard to debug. Pick one paper and stick to its convention.
 
-## Build It
-
-### Step 1: additive (Bahdanau) attention
-
-```python
-import numpy as np
-
-
-def additive_attention(decoder_state, encoder_states, W_a, U_a, v_a):
-    projected_dec = W_a @ decoder_state
-    projected_enc = encoder_states @ U_a.T
-    combined = np.tanh(projected_enc + projected_dec)
-    scores = combined @ v_a
-    weights = softmax(scores)
-    context = weights @ encoder_states
-    return context, weights
-
-
-def softmax(x):
-    x = x - np.max(x)
-    e = np.exp(x)
-    return e / e.sum()
-```
-
-Check your shapes against the table above. `encoder_states` has shape `(T_enc, d_h)`. `projected_enc` has shape `(T_enc, d_attn)`. `projected_dec` has shape `(d_attn,)` and broadcasts. `combined` has shape `(T_enc, d_attn)`. `scores` has shape `(T_enc,)`. `weights` has shape `(T_enc,)`. `context` has shape `(d_h,)`. Ship it.
-
-### Step 2: Luong dot and general
-
-```python
-def dot_attention(decoder_state, encoder_states):
-    scores = encoder_states @ decoder_state
-    weights = softmax(scores)
-    return weights @ encoder_states, weights
-
-
-def general_attention(decoder_state, encoder_states, W):
-    projected = W.T @ decoder_state
-    scores = encoder_states @ projected
-    weights = softmax(scores)
-    return weights @ encoder_states, weights
-```
-
-Three lines each. This is why Luong's paper landed. Same accuracy on most tasks, a lot less code.
-
-### Step 3: a worked numerical example
-
-Given three encoder states (roughly "cat", "sat", "mat") and a decoder state that aligns most with the first, the attention distribution concentrates on position 0. If the decoder state shifts to align with the last, attention moves to position 2. The context vector tracks.
-
-```python
-H = np.array([
-    [1.0, 0.0, 0.2],
-    [0.5, 0.5, 0.1],
-    [0.1, 0.9, 0.3],
-])
-
-s_close_to_cat = np.array([0.9, 0.1, 0.2])
-ctx, w = dot_attention(s_close_to_cat, H)
-print("weights:", w.round(3))
-```
-
-```
-weights: [0.464 0.305 0.231]
-```
-
-First row wins. Then move the decoder state closer to the third encoder state and watch the weights shift. That is it. Attention is explicit alignment.
-
-### Step 4: why this is the bridge to transformers
-
-Translate the language above into Q/K/V:
-
-- **Query** = decoder state `s_{t-1}`
-- **Key** = encoder states (what we score against)
-- **Value** = encoder states (what we weight and sum)
-
-In classical attention, keys and values are the same thing. Self-attention separates them: you can query a sequence against itself, with different learned projections for K and V. Multi-head attention runs it in parallel with different learned projections. Transformers stack the whole stage many times and drop RNNs.
-
-The math is the same. The shapes are the same. The pedagogical jump from Bahdanau attention to scaled dot-product attention is mostly notation.
 
 ## Use It
 
@@ -194,11 +117,6 @@ Refuse to recommend fixes that silently broadcast. Broadcast-hiding bugs surface
 For Bahdanau confusion, insist the decoder input is `s_{t-1}` (pre-step state). For Luong, `s_t` (post-step state). For dot-product, flag dimension mismatch between query and key as the most common first-time error.
 ```
 
-## Exercises
-
-1. **Easy.** Implement `softmax` masking so padding tokens in the encoder get attention weight zero. Test on a batch with variable-length sequences.
-2. **Medium.** Add multi-head attention to the Luong `general` form. Split `d_h` into `n_heads` groups, run attention per head, concatenate. Verify the single-head case matches your earlier implementation.
-3. **Hard.** Train a GRU encoder-decoder with Bahdanau attention on the toy copy task from lesson 09. Plot accuracy vs sequence length. Compare against the no-attention baseline. You should see the gap widen as length grows, confirming attention lifts the bottleneck.
 
 ## Key Terms
 

@@ -62,44 +62,6 @@ BM25 scores are unbounded and corpus-dependent. Cosine similarities are bounded 
 
 This is the same argument you hear about RankFusion vs RRF in Vespa and Weaviate documentation. They came to the same conclusion: stay rank-based unless you have very strong evidence to interpolate scores.
 
-## Build It
-
-`code/main.py` implements:
-
-- `tokenize(text)` - a fast regex tokenizer.
-- `BM25Index` - field-weighted, with `add` and `search` and tunable k1, b.
-- `mock_embed`, `DenseIndex` - the same deterministic embedding as lesson 64 so chunks are comparable.
-- `rrf(rankings, k, weights)` - the published fusion with multi-modality weights.
-- `HybridRetriever` - combines BM25 and dense.
-- A demo `main()` that loads a small fixture corpus, runs three queries that target each retriever's strength and weakness, and prints the rankings each modality produced plus the fused list.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Read the demo output side by side. The literal identifier query lands at BM25 rank 1, dense rank 4, RRF rank 1. The paraphrased query lands at BM25 rank 6, dense rank 1, RRF rank 1. The ambiguous query lands at BM25 rank 3, dense rank 3, RRF rank 1. The fusion is not a tie-breaker; it is the system that wins on every query class.
-
-## Tuning the knobs
-
-| Knob | Default | Move it up when | Move it down when |
-|------|---------|----------------|------------------|
-| BM25 k1 | 1.5 | Terms repeat in documents and you want frequency to matter more | Documents are short and term repetition is noise |
-| BM25 b | 0.75 | Long documents really do say less per word | Document length is uncorrelated with topic |
-| RRF k | 60 | Deep candidates should keep voting | The top-1 should dominate |
-| BM25 weight | 1.0 | Your corpus contains literal identifiers and queries match them | Your queries are user-paraphrased |
-| Dense weight | 1.0 | Queries are paraphrased | Queries are literal |
-
-Tune by re-running lesson 68's eval harness on your held-out query set, not by intuition.
-
-## Failure modes the demo will hide
-
-**Out-of-vocabulary tokens.** BM25's IDF is computed from the corpus, so terms only in the query contribute zero. Dense embeddings hallucinate a vector for the same term. On out-of-corpus identifiers the dense modality returns plausible-looking but wrong neighbors. The fusion absorbs this because BM25 returns nothing and the rank contribution drops out, but only if you de-duplicate by document, not by chunk.
-
-**Stop-token domination.** BM25 against the word "the" produces a uniform ranking over the corpus. Filter stop tokens in the indexer or accept that high-IDF terms dominate naturally.
-
-**Identical content across modalities.** If your corpus is small enough that the top-1 of BM25 is also the top-1 of dense, RRF gives you the same top-1 with the same neighbors. That is correct behavior, not a failure, but it makes the fusion look invisible. Add an adversarial query pair in your eval to verify the fusion is actually working.
 
 ## Use It
 
@@ -114,12 +76,6 @@ Production patterns:
 
 Lesson 66 takes the fused top-k from this lesson and reranks with a cross-encoder. Lesson 68 evaluates the entire pipeline with precision, recall, MRR, and nDCG. The hybrid retriever in this lesson is the first stage of the end-to-end system in lesson 69.
 
-## Exercises
-
-1. Replace `mock_embed` with a real model from your provider. Re-run the demo and report how the dense-only ranking changes on the paraphrased query.
-2. Add a third modality: chunk summaries indexed separately and fused as a third ranked list. Measure the gain.
-3. Sweep RRF k across 10, 30, 60, 100, 200. Plot the recall@k curve from lesson 68. Report the value of k where the curve peaks on your corpus.
-4. Implement BM25F properly (per-field length normalization rather than the multiplier trick) and compare on a corpus where symbol matches matter most.
 
 ## Key Terms
 

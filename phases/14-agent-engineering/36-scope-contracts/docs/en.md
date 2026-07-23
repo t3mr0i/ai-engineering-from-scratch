@@ -90,34 +90,6 @@ Two rules make the list load-bearing instead of decorative. First, the invariant
 
 The contract and the list compose by least privilege, the same merge described below: the task contract's `allowed_files` must sit inside whatever the active feature touches, never outside it.
 
-## Build It
-
-`code/main.py` implements:
-
-- `scope_contract.json` schema (subset of JSON Schema, glob arrays).
-- A diff parser that turns a list of touched files plus a list of run commands into a `RunSummary`.
-- A `scope_check` that returns `(violations, in_scope, off_scope)` against the contract.
-- Two demo runs: one that stays in scope, one that creeps. The checker flags the creep with the exact file and reason.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: the contract, the two runs, the per-run verdicts, and a saved `scope_report.json`.
-
-## Production patterns in the wild
-
-A practitioner running "specsmaxxing" (scope contracts in YAML before invoking the agent) reports rabbit-hole rate dropped from 52% to 21% in three weeks without changing the agent. The contract did the work, not the model. Three patterns make the gain stick.
-
-**Violation budgets, not binary failures.** `agent-guardrails` (the OSS merge gate used by Claude Code, Cursor, Windsurf, Codex via MCP) ships a `violationBudget` per task: minor scope slips within budget are surfaced as warnings; only when the budget is exceeded does the merge gate refuse. Pair with `violationSeverity: "error" | "warning"`. The budget is the difference between a gate that ships and a gate that gets disabled by the team that hated it.
-
-**Severity asymmetry by path family.** Off-scope writes to `docs/**` are usually `warn`; off-scope writes to `scripts/**`, `migrations/**`, `config/prod/**` are always `block`. This asymmetry has to live in the contract, not in the runtime, because it is project-specific and changes per task.
-
-**Time and network budgets next to file budgets.** A `time_budget_minutes` field bounds the wall clock; the runtime refuses to continue past it without re-approval. A `network_egress` allowlist on hostnames prevents the agent from quietly hitting an external API that was not part of the task. These are scope dimensions too; the file globs are necessary, not sufficient.
-
-**Multi-contract merge semantics (least privilege).** When two scope contracts apply (e.g., a project-wide contract plus a task-specific one), the merge is: **intersect** `allowed_files` (both contracts must permit the path), **union** `forbidden_files` (either can prohibit), `time_budget_minutes` is the most restrictive (min), `approvals_required` accumulates. `network_egress` is `None` for no enforcement, `[]` for deny-all, `[...]` as an allowlist; under merge, `None` defers to the other side, two lists intersect, and deny-all stays deny-all. State this in the contract schema so the merge is mechanical and reviewable.
 
 ## Use It
 
@@ -133,13 +105,6 @@ The contract travels with the task. When the task closes, the contract is archiv
 
 `outputs/skill-scope-contract.md` generates a scope contract for a task description and a glob-aware checker that runs in CI on every agent diff.
 
-## Exercises
-
-1. Add a `network_egress` field listing allowed external hosts. Refuse runs that touch other hosts.
-2. Extend the checker to fail soft on `docs/**` and hard on `scripts/**`. Justify the asymmetry.
-3. Make the contract derive `allowed_files` from a `goal` field using a static rule set (no LLM). What goes wrong on the first edge case?
-4. Add a `time_budget_minutes` and refuse to continue once the wall clock exceeds it.
-5. Run two contracts against the same diff. What is the right merge semantics when both apply?
 
 ## Key Terms
 

@@ -49,7 +49,6 @@ window.LrnCurriculumMap = {
     ],
     "AI-06": [
       {
-        title: "Prompting foundations",
         decision: "core",
         note: "Turns the technical prompting lessons into productivity routines.",
         lessons: [

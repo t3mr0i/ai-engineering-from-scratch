@@ -79,17 +79,6 @@ Lesson 26 is model-level documentation. Lesson 27 is dataset-level governance. T
 
 This lesson produces `outputs/skill-provenance-check.md`. Given a dataset used in training, it checks for AB 2013 12-field coverage, opt-out infrastructure compliance, DPA alignment, and irreversibility-risk assessment.
 
-## Exercises
-
-1. Run `code/main.py`. Produce a 12-field summary for a toy dataset and identify which fields are under-specified.
-
-2. The EU Copyright Directive TDM opt-out is machine-readable. Propose a standard format for the opt-out signal and compare it to robots.txt and C2PA "No AI Training."
-
-3. Read the Data Provenance Initiative's "Consent in Crisis" (July 2024). Describe the three fastest-restricting content categories and argue one economic consequence.
-
-4. The 2025 DPA alignment accepts legitimate interest for public-content training. Construct a scenario in which legitimate interest would not suffice and identify the legal basis a provider would need instead.
-
-5. Sketch a training-data-provenance manifest that composes with the AB 2013 fields and a C2PA-signed provenance chain for each dataset. Identify one technical and one legal barrier.
 
 ## Key Terms
 

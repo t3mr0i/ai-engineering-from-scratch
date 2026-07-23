@@ -66,17 +66,6 @@ Plan-and-Act scales the pattern to long-horizon web and mobile agents. The key c
 
 Anthropic's Dec 2024 guidance: start with the simplest. If the task is one tool call plus a summary, do not build ReWOO. If the task is a 40-step research assignment, do not do ReAct alone.
 
-## Build It
-
-The core toy ReWOO (Planner / Worker / Solver + dependency resolution) lives in `code/main.py` (stdlib-only scripted version). The full interactive Jupyter notebook demo with live LLM calls for the planner and workers is in `code/notebook.py`.
-
-The demo answers "What is the population of the capital of France, rounded to millions?" using a two-step plan: (1) look up the capital, (2) look up the population, then solve.
-
-**Run the notebook (JupyterLite):**
-- Open `code/notebook.py` in the lesson's JupyterLite environment (or run `python3 -m jupyter notebook code/notebook.py` after setup).
-- The notebook steps through the planner, parses the plan, resolves references, executes workers, and composes the solver output.
-
-The trace shows the full plan first, then worker results, then solver composition. Compare the token count (we print a rough character count) to a ReAct-style interleaved run — ReWOO wins on this kind of structured task.
 
 ## Use It
 
@@ -86,13 +75,6 @@ LangGraph ships Plan-and-Execute as a recipe (`create_react_agent` for ReAct, cu
 
 `outputs/skill-rewoo-planner.md` generates a ReWOO plan DAG from a user request, given a tool catalog. It validates the plan (acyclic, every reference resolved, every tool exists) before handing off to an executor.
 
-## Exercises
-
-1. Parallelize worker execution for independent plan nodes. What does it buy you on a 6-node DAG with 2 parallel groups?
-2. Add a replanner node that fires if any worker returns an error. What is the smallest change to ReWOO that makes it Plan-and-Execute?
-3. Replace `Planner` with a small model (7B class) and keep `Solver` on a frontier model. Compare end-to-end quality — where does the split fail?
-4. Read Section 4 of the ReWOO paper on planner distillation. Reproduce the 175B -> 7B result conceptually: what training data do you need, and how do you score plan quality?
-5. Port the toy to Plan-and-Act's trajectory shape: plan is a sequence, not a DAG. What tradeoffs change?
 
 ## Key Terms
 

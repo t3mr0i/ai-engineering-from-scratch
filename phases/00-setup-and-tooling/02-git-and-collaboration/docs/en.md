@@ -40,45 +40,6 @@ Three things to remember:
 2. Push to remote (`git push`)
 3. Branch for experiments (`git checkout -b experiment`)
 
-## Build It
-
-### Step 1: Configure git
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-```
-
-### Step 2: The daily workflow
-
-```bash
-git status
-git add file.py
-git commit -m "Add perceptron implementation"
-git push origin main
-```
-
-### Step 3: Branching for experiments
-
-```bash
-git checkout -b experiment/new-optimizer
-
-# ... make changes, commit ...
-
-git checkout main
-git merge experiment/new-optimizer
-```
-
-### Step 4: Working with this course repo
-
-```bash
-git clone https://github.com/rohitg00/ai-engineering-from-scratch.git
-cd ai-engineering-from-scratch
-
-git checkout -b my-progress
-# work through lessons, commit your code
-git push origin my-progress
-```
 
 ## Use It
 
@@ -94,11 +55,6 @@ For this course, you need exactly these commands:
 
 That's it. You don't need rebase, cherry-pick, or submodules for this course.
 
-## Exercises
-
-1. Clone this repo, create a branch called `my-progress`, make a file, commit it, push it
-2. Create a `.gitignore` that excludes model checkpoint files (`.pt`, `.pth`, `.safetensors`)
-3. Look at the commit history of this repo with `git log --oneline` and read how lessons were added
 
 ## Key Terms
 

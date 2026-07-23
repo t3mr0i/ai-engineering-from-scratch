@@ -142,17 +142,6 @@ No model, no network. The point is to make the wrong-doc failure shapes concrete
 
 `outputs/skill-rag-source-governance.md` is the planning checklist updated with the supersedure gate, the `provenance_source_id` / `content_hash` schema, and the faithfulness-gate threshold calibration section.
 
-## Exercises
-
-1. Run `code/main.py`. Find the query that the system answers confidently *before* the faithfulness gate but abstains on *after* the gate. What claim in the answer was unsupported? Which of the three failure shapes does this illustrate?
-
-2. The supersedure gate excludes one chunk from retrieval. Which one, and what would have happened to the user if it had not been excluded?
-
-3. The provenance gate flags one chunk as a duplicate of another. Which two chunks share a `content_hash`, and what would the user's citation have looked like if the system had not deduplicated them?
-
-4. You are extending the assistant to a new domain (legal contract review). Design the role taxonomy and the supersedure handling for that domain. What does `superseded_by` mean for a contract that was amended rather than replaced?
-
-5. A user reports that an answer cited a document they believe is outdated. Walk through the audit trail reconstruction: which log fields would confirm or refute the claim? What does a successful reconstruction look like, and what does an unsuccessful one (missing fields) imply about the index schema?
 
 ## Key Terms
 

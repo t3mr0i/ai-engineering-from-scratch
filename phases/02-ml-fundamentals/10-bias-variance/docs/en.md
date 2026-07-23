@@ -254,106 +254,6 @@ flowchart TD
     G --> H[Try more complex model]
 ```
 
-## Build It
-
-The code in `code/bias_variance.py` runs the full bias-variance decomposition experiment. Here is the approach, step by step.
-
-### Step 1: Generate Synthetic Data from a Known Function
-
-We use `f(x) = sin(1.5x) + 0.5x` with Gaussian noise. Knowing the true function lets us compute exact bias and variance.
-
-```python
-def true_function(x):
-    return np.sin(1.5 * x) + 0.5 * x
-
-def generate_data(n_samples=30, noise_std=0.5, x_range=(-3, 3), seed=None):
-    rng = np.random.RandomState(seed)
-    x = rng.uniform(x_range[0], x_range[1], n_samples)
-    y = true_function(x) + rng.normal(0, noise_std, n_samples)
-    return x, y
-```
-
-### Step 2: Bootstrap Sampling and Polynomial Fitting
-
-For each polynomial degree, we draw many bootstrap training sets, fit the polynomial, and record predictions on a fixed test grid. This gives us a distribution of predictions at each test point.
-
-```python
-def fit_polynomial(x_train, y_train, degree, lam=0.0):
-    X = np.column_stack([x_train ** d for d in range(degree + 1)])
-    if lam > 0:
-        penalty = lam * np.eye(X.shape[1])
-        penalty[0, 0] = 0
-        w = np.linalg.solve(X.T @ X + penalty, X.T @ y_train)
-    else:
-        w = np.linalg.lstsq(X, y_train, rcond=None)[0]
-    return w
-```
-
-We fit on 200 different bootstrap samples. Each bootstrap sample is drawn from the same underlying distribution but contains different points.
-
-### Step 3: Computing Bias^2, Variance Decomposition
-
-With 200 sets of predictions at each test point, we can compute the decomposition directly from the definition:
-
-```python
-mean_pred = predictions.mean(axis=0)
-bias_sq = np.mean((mean_pred - y_true) ** 2)
-variance = np.mean(predictions.var(axis=0))
-total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
-```
-
-- `mean_pred` is E[f_hat(x)] estimated from bootstrap samples
-- `bias_sq` is the squared gap between average prediction and truth
-- `variance` is the average spread of predictions across bootstrap samples
-- `total_error` should approximately equal bias^2 + variance + noise
-
-### Step 4: Learning Curves
-
-Learning curves sweep training set size while holding model complexity fixed. They show whether your model is data-limited or capacity-limited.
-
-```python
-def demo_learning_curves():
-    sizes = [10, 15, 20, 30, 50, 75, 100, 150, 200, 300]
-    degree = 5
-
-    for n in sizes:
-        train_errors = []
-        test_errors = []
-        for seed in range(50):
-            x_train, y_train = generate_data(n_samples=n, seed=seed * 100)
-            w = fit_polynomial(x_train, y_train, degree)
-            train_pred = predict_polynomial(x_train, w)
-            train_mse = np.mean((train_pred - y_train) ** 2)
-            test_pred = predict_polynomial(x_test, w)
-            test_mse = np.mean((test_pred - y_test) ** 2)
-            train_errors.append(train_mse)
-            test_errors.append(test_mse)
-        # Average over runs gives the learning curve point
-```
-
-For a high-variance model (degree 5 with small data), you see:
-- Training error starts low and increases as more data makes memorization harder
-- Test error starts high and decreases as the model gets more signal
-- The gap shrinks with more data
-
-For a high-bias model (degree 1), both errors converge quickly to the same high value and more data does not help.
-
-### Step 5: Regularization Sweep
-
-The code also includes `demo_regularization_sweep()`, which fixes a high-degree polynomial (degree 15) and sweeps Ridge regularization strength from 0.001 to 100. This shows the bias-variance tradeoff from a different angle: instead of varying model complexity, we vary the constraint strength.
-
-```python
-def demo_regularization_sweep():
-    alphas = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0]
-    for alpha in alphas:
-        results = bias_variance_decomposition([15], lam=alpha)
-        r = results[15]
-        print(f"alpha={alpha:.3f}  bias={r['bias_sq']:.4f}  var={r['variance']:.4f}")
-```
-
-At low alpha, the degree-15 polynomial is nearly unconstrained. Variance dominates because the model chases noise in each bootstrap sample. At high alpha, the penalty is so strong that the model effectively becomes a near-constant function. Bias dominates. The optimal alpha sits between these extremes.
-
-This is the same U-curve from varying polynomial degree, but controlled by a continuous knob instead of a discrete one. In practice, regularization is the preferred way to control the tradeoff because it allows fine-grained control without changing the feature set.
 
 ## Use It
 
@@ -430,17 +330,6 @@ This takes 10-15 minutes of compute for most tabular datasets and saves hours of
 
 This lesson produces: `outputs/prompt-model-diagnostics.md`
 
-## Exercises
-
-1. Run the decomposition with `noise_std=0` (no noise). What happens to the irreducible error term? Does the optimal complexity change?
-
-2. Increase the training set size from 30 to 300. How does this affect the variance component? Does the optimal polynomial degree shift?
-
-3. Add L2 regularization (Ridge regression) to the experiment. For a fixed high-degree polynomial (degree 15), sweep lambda from 0 to 100. Plot bias^2 and variance as functions of lambda.
-
-4. Modify the true function from a polynomial to `sin(x)`. How does the bias-variance decomposition change? Is there still a clear optimal degree?
-
-5. Implement a simple bootstrap aggregating (bagging) wrapper: train 10 models on bootstrap samples and average predictions. Show that this reduces variance without increasing bias much.
 
 ## Key Terms
 

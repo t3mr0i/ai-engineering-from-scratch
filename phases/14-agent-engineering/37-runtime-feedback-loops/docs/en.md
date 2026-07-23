@@ -56,31 +56,6 @@ Telemetry (Phase 14 · 23, OTel GenAI conventions) is for human operators review
 
 If the runner errors before capturing exit, the record carries `exit_code: null` and `error: <reason>`. The agent loop must refuse to claim success on a `null` exit. No exit, no progress.
 
-## Build It
-
-`code/main.py` implements:
-
-- `run_with_feedback(command, agent_note)` that wraps `subprocess.run`, captures stdout/stderr/exit/duration, truncates deterministically, appends to `feedback_record.jsonl`.
-- A small loader that streams the JSONL into a Python list.
-- A demo that runs three commands (success, failure, slow) and prints the last record per command.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: three feedback records appended to `feedback_record.jsonl`, the last one of each printed inline. Tail the file across re-runs to see the loop accumulate.
-
-## Production patterns in the wild
-
-Three patterns harden the runner enough to ship.
-
-**Redact at write, not at read.** Any record that touches stdout or stderr can leak secrets. The runner ships a redaction pass before the JSONL append: strip lines matching `^Bearer `, `password=`, `api[_-]?key=`, `AKIA[0-9A-Z]{16}` (AWS), `xox[baprs]-` (Slack). Redaction at read time is a foot-gun; the file on disk is what an attacker reaches. Audit the redaction patterns quarterly against the production runtime's observed secret formats.
-
-**Rotation policy, not a single file.** Cap `feedback_record.jsonl` at 1 MB per file; on overflow rotate to `.1`, `.2`, drop `.5`. The agent's loop only reads the current file, so the runtime cost is bounded. CI artifact storage gets the full rotated set. Without rotation the file becomes the bottleneck on every loader call.
-
-**Parent-command id for retry chains.** Every record gets `command_id`; retries carry `parent_command_id` pointing at the previous attempt. The reviewer's "failed attempts" list (Phase 14 · 40) and the verification gate's audit both follow the chain. Without this link, retries look like independent successes and the audit hides the failure history.
 
 ## Use It
 
@@ -96,13 +71,6 @@ The runner is a thin wrapper that survives every framework migration because it 
 
 `outputs/skill-feedback-runner.md` generates a project-specific `run_with_feedback.py` with the right truncation budget, a JSONL writer wired to the workbench, and a loader the agent reads at every turn.
 
-## Exercises
-
-1. Add a `cwd` field per record so the same command run from different directories is distinguishable.
-2. Add a `redaction` step that strips lines matching `^Bearer ` or `password=`. Test on a fixture record.
-3. Cap total `feedback_record.jsonl` size at 1 MB by rotating to `.1`, `.2` files. Defend the rotation policy.
-4. Add a `parent_command_id` so retry chains are visible: which command produced the input that the next command consumed.
-5. Pipe the JSONL into a tiny TUI that highlights the latest non-zero exit. Eight key features the TUI must show to be useful in a review.
 
 ## Key Terms
 

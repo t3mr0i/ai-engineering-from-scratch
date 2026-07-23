@@ -32,108 +32,6 @@ Where `TF` is term frequency in the document, `df` is document frequency (how ma
 
 Key property: both produce sparse vectors with interpretable axes. You can look at a trained classifier's weights and read which words push a document toward each class. You cannot do this with a 768-dimensional BERT embedding.
 
-## Build It
-
-### Step 1: build the vocabulary
-
-```python
-def build_vocab(docs):
-    vocab = {}
-    for doc in docs:
-        for token in doc:
-            if token not in vocab:
-                vocab[token] = len(vocab)
-    return vocab
-```
-
-Input: list of tokenized documents (any word-level tokenizer will do; the `code/main.py` in this lesson uses a simplified lowercase variant). Output: `{word: index}` dict. Stable insertion order means word index 0 is the first word seen in the first document. Convention varies; scikit-learn sorts alphabetically.
-
-### Step 2: bag of words
-
-```python
-def bag_of_words(docs, vocab):
-    matrix = [[0] * len(vocab) for _ in docs]
-    for i, doc in enumerate(docs):
-        for token in doc:
-            if token in vocab:
-                matrix[i][vocab[token]] += 1
-    return matrix
-```
-
-```python
->>> docs = [["cat", "sat", "on", "mat"], ["cat", "cat", "ran"]]
->>> vocab = build_vocab(docs)
->>> bag_of_words(docs, vocab)
-[[1, 1, 1, 1, 0], [2, 0, 0, 0, 1]]
-```
-
-Rows are documents. Columns are vocabulary indices. Entry `[i][j]` is "how many times word `j` appears in document `i`." Doc 1 has `cat` twice because it did. Doc 0 has `ran` zero times because it did not.
-
-### Step 3: term frequency and document frequency
-
-```python
-import math
-
-
-def term_frequency(doc_bow, doc_length):
-    return [c / doc_length if doc_length else 0 for c in doc_bow]
-
-
-def document_frequency(bow_matrix):
-    df = [0] * len(bow_matrix[0])
-    for row in bow_matrix:
-        for j, count in enumerate(row):
-            if count > 0:
-                df[j] += 1
-    return df
-
-
-def inverse_document_frequency(df, n_docs):
-    return [math.log((n_docs + 1) / (d + 1)) + 1 for d in df]
-```
-
-Two smoothing tricks worth naming. The `(n+1)/(d+1)` avoids `log(x/0)`. The trailing `+1` ensures a word in every document still has IDF 1 (not 0), matching scikit-learn's default. Other implementations use raw `log(N/df)`. Both work; the smoothed version is friendlier.
-
-### Step 4: TF-IDF
-
-```python
-def tfidf(bow_matrix):
-    n_docs = len(bow_matrix)
-    df = document_frequency(bow_matrix)
-    idf = inverse_document_frequency(df, n_docs)
-    out = []
-    for row in bow_matrix:
-        length = sum(row)
-        tf = term_frequency(row, length)
-        out.append([tf_j * idf_j for tf_j, idf_j in zip(tf, idf)])
-    return out
-```
-
-```python
->>> docs = [
-...     ["the", "cat", "sat"],
-...     ["the", "dog", "sat"],
-...     ["the", "cat", "ran"],
-... ]
->>> vocab = build_vocab(docs)
->>> bow = bag_of_words(docs, vocab)
->>> tfidf(bow)
-```
-
-Three documents, five vocab words (`the`, `cat`, `sat`, `dog`, `ran`). `the` appears in all three, so its IDF is low. `dog` appears in one, so its IDF is high. The vectors are sparse (most entries are small) and the discriminative words pop.
-
-### Step 5: L2-normalize rows
-
-```python
-def l2_normalize(matrix):
-    out = []
-    for row in matrix:
-        norm = math.sqrt(sum(x * x for x in row))
-        out.append([x / norm if norm else 0 for x in row])
-    return out
-```
-
-Without normalization, a longer document gets a larger vector and dominates similarity scores. L2 normalization puts every document on the unit hypersphere. Cosine similarity between rows is now just a dot product.
 
 ## Use It
 
@@ -236,11 +134,6 @@ Example output:
 - Failure to test: verify `min_df=3` does not drop rare category keywords. Run `get_feature_names_out` filtered by class and eyeball.
 ```
 
-## Exercises
-
-1. **Easy.** Implement `cosine_similarity(doc_vec_a, doc_vec_b)` on the L2-normalized TF-IDF output. Verify that identical documents score 1.0 and disjoint-vocabulary documents score 0.0.
-2. **Medium.** Add `n-gram` support to `bag_of_words`. Parameter `n` produces counts over `n`-grams. Test that `n=2` on `["the", "cat", "sat"]` produces bigram counts for `["the cat", "cat sat"]`.
-3. **Hard.** Build the TF-IDF-weighted-embedding hybrid above using GloVe 100d vectors (download once, cache). Compare classification accuracy against plain TF-IDF and plain mean-pooled embeddings on the 20 Newsgroups dataset. Report which wins where.
 
 ## Key Terms
 

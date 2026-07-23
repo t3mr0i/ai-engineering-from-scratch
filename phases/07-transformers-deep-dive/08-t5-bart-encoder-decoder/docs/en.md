@@ -91,30 +91,6 @@ Same autoregressive generation as GPT. Greedy / beam / top-p sampling apply. Bea
 
 The trend since ~2022: decoder-only takes over tasks that encoder-decoder used to own because (a) instruction-tuned decoder-only LLMs generalize to anything via prompting, (b) one architecture scales easier than two, (c) RLHF assumes a decoder. Encoder-decoder holds on where input modality differs (speech, images) or where beam search quality matters.
 
-## Build It
-
-See `code/main.py`. We implement T5-style span corruption for a toy corpus — the most useful single piece of this lesson because it shows up in every encoder-decoder pretraining recipe since.
-
-### Step 1: span corruption
-
-```python
-def corrupt_spans(tokens, mask_rate=0.15, mean_span=3.0, rng=None):
-    """Pick spans summing to ~mask_rate of tokens. Return (corrupted_input, target)."""
-    n = len(tokens)
-    n_mask = max(1, int(n * mask_rate))
-    n_spans = max(1, int(round(n_mask / mean_span)))
-    ...
-```
-
-The target format is the T5 convention: `<sent0> span0 <sent1> span1 ...`. The corrupted input interleaves unchanged tokens with the sentinel tokens at span locations.
-
-### Step 2: verify round-trip
-
-Given the corrupted input and target, reconstruct the original sentence. If your corruption is reversible, the forward pass is well-defined. This is a sanity check — real training never does this, but the test is cheap and catches off-by-one bugs in your span bookkeeping.
-
-### Step 3: BART noising
-
-Five functions: `token_mask`, `token_delete`, `text_infill`, `sentence_permute`, `document_rotate`. Compose two of them and show the result.
 
 ## Use It
 
@@ -136,11 +112,6 @@ The T5 trick: the task name goes into the input text. Same model handles dozens 
 
 See `outputs/skill-seq2seq-picker.md`. The skill picks between encoder-decoder and decoder-only for a new task given input-output structure, latency, and quality targets.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`, apply span corruption to a 30-token sentence, verify that concatenating the non-sentinel source tokens with the decoded target spans reproduces the original.
-2. **Medium.** Implement BART's `text_infill` noise: replace random spans with a single `<mask>` token, and the decoder must infer the correct span length plus contents. Show one example.
-3. **Hard.** Fine-tune `flan-t5-small` on a tiny English → pig-Latin corpus (200 pairs). Measure BLEU on a held-out 50-pair set. Compare against fine-tuning `Llama-3.2-1B` on the same data with the same compute.
 
 ## Key Terms
 

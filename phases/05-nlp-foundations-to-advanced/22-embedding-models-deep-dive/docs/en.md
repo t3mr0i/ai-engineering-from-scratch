@@ -51,95 +51,6 @@ Massive Text Embedding Benchmark — 56 tasks across 8 task types at launch (202
 
 Most production stacks use all three.
 
-## Build It
-
-### Step 1: baseline — dense embeddings with Sentence-BERT
-
-```python
-from sentence_transformers import SentenceTransformer
-import numpy as np
-
-encoder = SentenceTransformer("BAAI/bge-small-en-v1.5")
-corpus = [
-    "The first iPhone launched in 2007.",
-    "Apple released the iPod in 2001.",
-    "Android is an operating system from Google.",
-]
-emb = encoder.encode(corpus, normalize_embeddings=True)
-
-query = "When was the iPhone released?"
-q_emb = encoder.encode([query], normalize_embeddings=True)[0]
-scores = emb @ q_emb
-print(sorted(enumerate(scores), key=lambda x: -x[1]))
-```
-
-`normalize_embeddings=True` makes the dot product equal cosine similarity. Always set it.
-
-### Step 2: Matryoshka truncation
-
-```python
-def truncate(vectors, dim):
-    out = vectors[:, :dim]
-    return out / np.linalg.norm(out, axis=1, keepdims=True)
-
-emb_256 = truncate(emb, 256)
-emb_128 = truncate(emb, 128)
-```
-
-Re-normalize after truncation. Nomic v1.5, OpenAI text-3, and Voyage-4 are trained so this is lossless for the first few levels. Non-Matryoshka models (original Sentence-BERT) degrade sharply when truncated.
-
-### Step 3: BGE-M3 multi-functionality
-
-```python
-from FlagEmbedding import BGEM3FlagModel
-
-model = BGEM3FlagModel("BAAI/bge-m3", use_fp16=True)
-
-output = model.encode(
-    corpus,
-    return_dense=True,
-    return_sparse=True,
-    return_colbert_vecs=True,
-)
-# output["dense_vecs"]:    (n_docs, 1024)
-# output["lexical_weights"]: list of dict {token_id: weight}
-# output["colbert_vecs"]:  list of (n_tokens, 1024) arrays
-```
-
-Three indexes, one inference call. Score fusion:
-
-```python
-dense_score = ... # cosine over dense_vecs
-sparse_score = model.compute_lexical_matching_score(q_lex, d_lex)
-colbert_score = model.colbert_score(q_col, d_col)
-final = 0.4 * dense_score + 0.2 * sparse_score + 0.4 * colbert_score
-```
-
-Tune the weights on your domain.
-
-### Step 4: MTEB eval on a custom task
-
-```python
-from mteb import MTEB
-
-tasks = ["ArguAna", "SciFact", "NFCorpus"]
-evaluation = MTEB(tasks=tasks)
-results = evaluation.run(encoder, output_folder="./mteb-results")
-```
-
-Run your candidate models on a *representative* subset. Do not trust leaderboard rank alone — your domain matters.
-
-### Step 5: hand-rolled cosine from scratch
-
-See `code/main.py`. Averaged Hashing Trick embeddings (stdlib-only). Not competitive with transformer embeddings, but shows the shape: tokenize → vector → normalize → dot product.
-
-## Pitfalls
-
-- **Same model for query and doc.** Some models (Voyage, Jina-ColBERT) use asymmetric encoding — query and document pass through different paths. Always check the model card.
-- **Missing prefix.** `bge-*` models need `"Represent this sentence for searching relevant passages: "` prepended to queries. 3-5 point recall gap if you forget.
-- **Over-trimming Matryoshka.** 1,536 → 256 is usually safe. 1,536 → 64 is not. Validate on your eval set.
-- **Context truncation.** Most models silently truncate inputs over their max length. Long docs need chunking (see lesson 23).
-- **Ignoring latency tail.** MTEB scores hide p99 latency. A 600M model might beat a 335M model by 2 points but cost 3× more per query.
 
 ## Use It
 
@@ -182,11 +93,6 @@ Given a corpus (size, languages, domain, avg length), deployment target (cloud /
 Refuse recommendations that truncate Matryoshka to <64 dims without domain validation. Refuse ColBERTv2 for corpora under 10k passages (overhead not justified). Flag long-document corpora (>8k tokens) routed to models with 512-token windows.
 ```
 
-## Exercises
-
-1. **Easy.** Encode 100 sentences with `bge-small-en-v1.5` at full dim (384), then at Matryoshka 128. Measure MRR drop on 10 queries.
-2. **Medium.** Compare BGE-M3 dense, sparse, and colbert on 500 passages from your domain. Which wins on recall@10? Does RRF fusion beat the best single mode?
-3. **Hard.** Run MTEB on three candidate models across your top-2 domain tasks. Report MTEB score, p99 latency on a 100-query batch, and $/1M queries. Pick the Pareto-optimal one.
 
 ## Key Terms
 

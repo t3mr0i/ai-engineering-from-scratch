@@ -80,37 +80,6 @@ The index records the shard count, the sha256 of each shard, and the sha256 of t
 
 A resume that snaps to the start of the next epoch wastes anywhere from minutes to a day. The fix is `(epoch, batch_in_epoch)` plus the RNG state. After load, the training loop fast-forwards the random number generator past the batches already consumed in the current epoch and continues from `batch_in_epoch`. The lesson code does this exactly; the assertion is that the loss trajectory after resume matches the uninterrupted baseline within 1e-4.
 
-## Build It
-
-`code/main.py` provides four primitives and a demo driver.
-
-### Step 1: capture and restore RNG state
-
-`capture_rng_state` returns a dict with Python's `random.getstate`, NumPy's `np.random.get_state`, and PyTorch CPU and CUDA RNG bytes. `restore_rng_state` reverses it. The CPU tensor is a uint8 byte buffer that PyTorch's RNG knows how to consume.
-
-### Step 2: atomic save
-
-`atomic_save` writes the payload to a temp file in the target directory, then `os.replace` swaps it into the final name. `atomic_write_json` does the same for the sharded index.
-
-### Step 3: full checkpoint round trip
-
-`save_checkpoint` packages the model, optimizer, scheduler, train state, and RNG into one dict. `load_checkpoint` reverses it and returns a `TrainState`. The schema field is the upgrade hook: future format changes bump the version string and the loader dispatches.
-
-### Step 4: sharded variant
-
-`save_sharded_checkpoint` round-robins the parameter keys across N shards, writes each shard with its own atomic save, writes a meta file with optimizer and scheduler and train state, and writes the JSON index with shard sha256s. `load_sharded_checkpoint` verifies every shard before merging.
-
-### Step 5: resume demo
-
-`run_resume_demo` trains a small model for `total_steps`, saves a checkpoint at `interrupt_at`, then continues. A second process restores the checkpoint and runs the remaining steps. The function returns the max absolute difference between the two loss trajectories after the interruption point. With RNG restored, the difference is zero or floating-point noise.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The single-file and sharded demos both assert max-diff under 1e-4. The summary lands in `outputs/resume-demo.json`.
 
 ## Use It
 
@@ -126,13 +95,6 @@ Three patterns to enforce:
 
 `outputs/skill-checkpoint-save-resume.md` is the recipe for any new training script: payload shape, atomic write, RNG capture, sharded index. Drop the skill into a repo, wire `save_checkpoint` at the periodic save site, wire `load_checkpoint` at startup, and the run survives kills.
 
-## Exercises
-
-1. Replace round-robin sharding with sharding by parameter group (layers ending in `.weight` vs `.bias`). When is each layout preferable?
-2. Extend the save loop to keep the last K checkpoints and prune older ones. What is the right K when the disk is small?
-3. Add a `--ckpt-every-seconds` flag that triggers a save on a wallclock interval, not just step count.
-4. Add a checksum verification path that runs at startup, scans every checkpoint in the directory, and reports which ones are corrupt.
-5. Implement a `migrate_v1_to_v2` function that adds a new field to the payload and bumps the schema string. Make load tolerate both versions.
 
 ## Key Terms
 

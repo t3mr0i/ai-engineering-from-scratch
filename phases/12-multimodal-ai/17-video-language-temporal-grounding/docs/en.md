@@ -117,17 +117,6 @@ For video VLMs in 2026:
 
 This lesson produces `outputs/skill-video-vlm-frame-planner.md`. Given a video task (monitoring, action recognition, temporal grounding, summarization), it picks the frame sampler, pooling factor, output format, and expected accuracy tier.
 
-## Exercises
-
-1. For a 3-minute cooking demo, pick uniform vs dynamic FPS. Justify with a token count.
-
-2. TMRoPE adds what specifically that a simple temporal embedding table cannot do?
-
-3. Write a JSON schema for temporal grounding that a VLM can learn to emit. Include error cases.
-
-4. Read Video-LLaVA's Section 3 on "Alignment Before Projection." Why is this better than training separate image and video encoders?
-
-5. Given the VideoMME leaderboard, what is the gap between the top open model and the top proprietary model as of 2026? How much of that gap is attributable to temporal encoding vs base LLM scale?
 
 ## Key Terms
 

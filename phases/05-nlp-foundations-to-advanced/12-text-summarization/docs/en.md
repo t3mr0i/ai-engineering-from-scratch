@@ -27,119 +27,6 @@ This lesson builds both, with the failure mode each one owns.
 
 Evaluation with **ROUGE** (Recall-Oriented Understudy for Gisting Evaluation). ROUGE-1 and ROUGE-2 score unigram and bigram overlap. ROUGE-L scores longest common subsequence. Higher is better but 40 ROUGE-L is "good" and 50 is "exceptional." Every paper reports all three. Use the `rouge-score` package.
 
-## Build It
-
-### Step 1: TextRank (extractive)
-
-```python
-import math
-import re
-from collections import Counter
-
-
-def sentence_split(text):
-    return re.split(r"(?<=[.!?])\s+", text.strip())
-
-
-def similarity(s1, s2):
-    w1 = Counter(s1.lower().split())
-    w2 = Counter(s2.lower().split())
-    intersection = sum((w1 & w2).values())
-    denom = math.log(len(w1) + 1) + math.log(len(w2) + 1)
-    if denom == 0:
-        return 0.0
-    return intersection / denom
-
-
-def textrank(text, top_k=3, damping=0.85, iterations=50, epsilon=1e-4):
-    sentences = sentence_split(text)
-    n = len(sentences)
-    if n <= top_k:
-        return sentences
-
-    sim = [[0.0] * n for _ in range(n)]
-    for i in range(n):
-        for j in range(n):
-            if i != j:
-                sim[i][j] = similarity(sentences[i], sentences[j])
-
-    scores = [1.0] * n
-    for _ in range(iterations):
-        new_scores = [1 - damping] * n
-        for i in range(n):
-            total_out = sum(sim[i]) or 1e-9
-            for j in range(n):
-                if sim[i][j] > 0:
-                    new_scores[j] += damping * sim[i][j] / total_out * scores[i]
-        if max(abs(s - ns) for s, ns in zip(scores, new_scores)) < epsilon:
-            scores = new_scores
-            break
-        scores = new_scores
-
-    ranked = sorted(range(n), key=lambda k: scores[k], reverse=True)[:top_k]
-    ranked.sort()
-    return [sentences[i] for i in ranked]
-```
-
-Two things worth naming. The similarity function uses log-normalized word overlap, which is the original TextRank variant. Cosine of TF-IDF vectors works too. The damping factor 0.85 and iteration count are the PageRank defaults.
-
-### Step 2: abstractive with BART
-
-```python
-from transformers import pipeline
-
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-
-article = """(long news article text)"""
-
-summary = summarizer(article, max_length=120, min_length=60, do_sample=False)
-print(summary[0]["summary_text"])
-```
-
-BART-large-CNN is fine-tuned on the CNN/DailyMail corpus. It produces news-style summaries out of the box. For other domains (scientific papers, dialog, legal), use the corresponding Pegasus checkpoint or fine-tune on your target data.
-
-### Step 3: ROUGE evaluation
-
-```python
-from rouge_score import rouge_scorer
-
-scorer = rouge_scorer.RougeScorer(["rouge1", "rouge2", "rougeL"], use_stemmer=True)
-scores = scorer.score(reference_summary, generated_summary)
-print({k: round(v.fmeasure, 3) for k, v in scores.items()})
-```
-
-Always use stemming. Without it, "running" and "run" count as different words and ROUGE undercounts.
-
-### Beyond ROUGE (2026 summarization eval)
-
-ROUGE has been the dominant summarization metric for twenty years and it is insufficient on its own in 2026. A large-scale meta-analysis of NLG papers showed:
-
-- **BERTScore** (contextual embedding similarity) gained ground through 2023 and is now reported alongside ROUGE in most summarization papers.
-- **BARTScore** treats evaluation as generation: score the summary by how likely a pretrained BART assigns it given the source.
-- **MoverScore** (Earth Mover's Distance over contextual embeddings) reached the top spot in 2025 summarization benchmarks because it captures semantic overlap better than ROUGE.
-- **FactCC** and **QA-based faithfulness** were common 2021-2023, now often replaced by **G-Eval** (a GPT-4 prompt chain that scores coherence, consistency, fluency, relevance with chain-of-thought reasoning).
-- **G-Eval** and similar LLM-judge approaches match human judgment ~80% of the time when rubrics are well-designed.
-
-Production recommendation: report ROUGE-L for legacy comparison, BERTScore for semantic overlap, G-Eval for coherence and factuality. Calibrate against 50-100 human-labeled summaries.
-
-### Step 4: the factuality problem
-
-Abstractive summaries are prone to hallucination. Extractive summaries carry a much lower hallucination risk because the output is lifted verbatim from the source, though they can still mislead if source sentences are decontextualized, outdated, or quoted out of order. This is the single biggest reason production systems still prefer extractive methods for compliance-adjacent content.
-
-Hallucination types to name:
-
-- **Entity swap.** Source says "John Smith." Summary says "John Brown."
-- **Number drift.** Source says "25,000." Summary says "25 million."
-- **Polarity flip.** Source says "rejected the offer." Summary says "accepted the offer."
-- **Fact invention.** Source does not mention the CEO. Summary says the CEO approved.
-
-Evaluation approaches that work:
-
-- **FactCC.** A binary classifier trained on entailment between source sentence and summary sentence. Predicts factual/not-factual.
-- **QA-based factuality.** Ask a QA model questions whose answers are in the source. If the summary supports different answers, flag.
-- **Entity-level F1.** Compare named entities in source vs summary. Entities present only in the summary are suspect.
-
-For anything user-facing where factuality matters (news, medical, legal, financial), extractive is the safer default. Abstractive needs a factuality check in the loop.
 
 ## Use It
 
@@ -179,11 +66,6 @@ Given a task (document type, compliance requirement, length, compute budget), ou
 Refuse abstractive summarization for medical, legal, financial, or regulated content without a factuality gate. Flag input over the model's context window as needing chunked map-reduce summarization (not just truncation).
 ```
 
-## Exercises
-
-1. **Easy.** Run TextRank on 5 news articles. Compare the top-3 sentences to a reference summary. Measure ROUGE-L. You should see 30-45 ROUGE-L on CNN/DailyMail-style articles.
-2. **Medium.** Implement entity-level factuality: extract named entities from source and summary (spaCy), compute recall of source entities in summary and precision of summary entities against source. High precision and low recall mean safe but terse; low precision means hallucinated entities.
-3. **Hard.** Compare BART-large-CNN against an LLM (Claude or GPT-4) on 50 CNN/DailyMail articles. Report ROUGE-L, factuality (by entity F1), and cost per summary. Document where each wins.
 
 ## Key Terms
 

@@ -258,61 +258,6 @@ The typical progression:
 | No data validation | Silently wrong predictions on bad data | Add schema checks before prediction |
 | Training/serving skew | Model sees different features in prod | One Pipeline object for both |
 
-## Build It
-
-The code in `code/pipeline.py` builds a complete ML pipeline from scratch:
-
-### Step 1: Custom Transformer
-
-```python
-class CustomTransformer:
-    def __init__(self):
-        self.means = None
-        self.stds = None
-
-    def fit(self, X):
-        self.means = np.mean(X, axis=0)
-        self.stds = np.std(X, axis=0)
-        self.stds[self.stds == 0] = 1.0
-        return self
-
-    def transform(self, X):
-        return (X - self.means) / self.stds
-
-    def fit_transform(self, X):
-        return self.fit(X).transform(X)
-```
-
-### Step 2: Pipeline from Scratch
-
-```python
-class PipelineFromScratch:
-    def __init__(self, steps):
-        self.steps = steps
-
-    def fit(self, X, y=None):
-        X_current = X.copy()
-        for name, step in self.steps[:-1]:
-            X_current = step.fit_transform(X_current)
-        name, model = self.steps[-1]
-        model.fit(X_current, y)
-        return self
-
-    def predict(self, X):
-        X_current = X.copy()
-        for name, step in self.steps[:-1]:
-            X_current = step.transform(X_current)
-        name, model = self.steps[-1]
-        return model.predict(X_current)
-```
-
-### Step 3: Cross-Validation with Pipeline
-
-The code demonstrates how cross-validation with a pipeline prevents data leakage: the scaler is fit separately on each fold's training data.
-
-### Step 4: Full Production Pipeline with sklearn
-
-A complete pipeline with `ColumnTransformer`, multiple preprocessing paths, and a model, trained with proper cross-validation and experiment logging.
 
 ## Ship It
 
@@ -320,17 +265,6 @@ This lesson produces:
 - `outputs/prompt-ml-pipeline.md` -- a skill for building and debugging ML pipelines
 - `code/pipeline.py` -- a complete pipeline from scratch through sklearn
 
-## Exercises
-
-1. Build a pipeline that handles a dataset with 3 numeric columns and 2 categorical columns. Use `ColumnTransformer` to apply median imputation + scaling to numerics and most-frequent imputation + one-hot encoding to categoricals. Train with 5-fold cross-validation.
-
-2. Deliberately introduce data leakage: fit the scaler on the full dataset before splitting. Compare the cross-validation score (leaky) to the pipeline cross-validation score (clean). How large is the difference?
-
-3. Serialize your pipeline with `joblib.dump`. Load it in a separate script and run predictions. Verify the predictions are identical.
-
-4. Add a custom transformer to the pipeline that creates polynomial features (degree 2) for the two most important numeric columns. Where should it go in the pipeline?
-
-5. Set up MLflow tracking for the pipeline. Run 5 experiments with different hyperparameters. Use the MLflow UI (`mlflow ui`) to compare runs and pick the best model.
 
 ## Key Terms
 

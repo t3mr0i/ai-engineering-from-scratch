@@ -63,17 +63,6 @@ Lessons 20-21 cover bias and fairness formally. Lesson 22 covers privacy. Lesson
 
 This lesson produces `outputs/skill-bias-eval.md`. Given a model card or fairness claim, it audits the evaluation across the three metric categories (embedding, probability, generated-text), the intersectionality coverage, and the mechanism of any debiasing intervention.
 
-## Exercises
-
-1. Run `code/main.py`. Report WEAT-style bias scores before and after the debiasing step. Explain why the metric does not drop to zero.
-
-2. Extend the probe with an intersectional test: (gender, race) x (career, family). Report cross-axis bias scores.
-
-3. Read An et al. 2025 (PNAS Nexus). Identify the two intersectional effects they report that single-axis gender evaluation would miss.
-
-4. Yu & Ananiadou 2025 identify gender neurons. Sketch a falsification experiment that would distinguish "these neurons cause gender bias" from "these neurons correlate with gender bias."
-
-5. The meta-critique argues the field focuses too narrowly on binary gender. Pick one under-studied axis and describe a representational-harm measurement protocol for it.
 
 ## Key Terms
 

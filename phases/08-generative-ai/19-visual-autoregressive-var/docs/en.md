@@ -88,31 +88,11 @@ VAR and diffusion share the same data-compression story: both break the generati
 
 They are different axes through the problem. Both yield tractable conditional distributions. Empirically VAR is faster at inference (fewer passes, all parallel within a scale) and matches or beats DiT on class-conditional ImageNet. Text-conditional VAR (VARclip, HART) is an active research direction.
 
-## Build It
-
-In `code/main.py` you will:
-1. Build a tiny **multi-scale VQ tokenizer** on synthetic "image" data (2D Gaussian rings).
-2. Train a **VAR-style transformer** to next-scale-predict the tokens.
-3. Sample by calling the transformer 4 times (4 scales) and decoding.
-4. Verify that scale-ordered training makes generation parallel within a scale.
-
-This is a toy implementation. The point is to see the scale-structured attention mask and the parallel-within-scale generation actually working.
 
 ## Ship It
 
 This lesson produces `outputs/skill-var-tokenizer-designer.md` — a skill for designing a multi-scale tokenizer: number of scales, scale ratios, codebook size, residual sharing, decoder architecture.
 
-## Exercises
-
-1. **Scale count ablation.** Train VAR with 4, 6, 8, 10 scales. Measure reconstruction quality vs number of autoregressive passes. More scales = finer residuals = better quality but more passes.
-
-2. **Codebook size.** Train tokenizers with codebook sizes 512, 4096, 16384. Larger codebooks give better reconstruction but harder prediction. Find the knee.
-
-3. **Parallel-within-scale check.** For a trained VAR, measure the attention pattern explicitly. Within scale k, does the model attend to cross-scale positions but not intra-scale? Verify the mask implementation.
-
-4. **VAR vs DiT scaling.** For the same ImageNet class-conditional task, train VAR and DiT at matched param budgets (e.g., 33M, 130M, 458M). Plot FID vs compute. VAR should pull ahead of DiT at each size — reproduce the paper's result at small scale.
-
-5. **Text conditioning.** Extend VAR to take a text embedding (CLIP pooled) as an extra conditioning input via adaLN. This is the HART recipe. How much does FID improve on text-aligned sampling?
 
 ## Key Terms
 

@@ -75,24 +75,6 @@ Reflexion does not help when:
 
 2026 pitfall: memory rot. Reflections accumulate; some are obsolete or wrong; re-runs get slower as the episodic buffer grows. Mitigation: periodic compaction (Lesson 06), TTL on reflections, or a separate sleep-time cleanup agent (Letta).
 
-## Build It
-
-`code/main.py` implements Reflexion on a toy puzzle: produce a 3-element list that sums to a target. The Actor emits candidate lists; the Evaluator checks the sum; the Self-Reflector writes a line about what went wrong. The reflection goes into episodic memory for the next trial.
-
-Components:
-
-- `Actor` — a scripted policy that improves when it sees reflections.
-- `Evaluator.binary()` — pass/fail on the target sum.
-- `SelfReflector` — generates a one-line diagnosis of the failure.
-- `EpisodicMemory` — a bounded list with TTL semantics.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows three trials. Trial 1 fails, a reflection is stored, trial 2 sees the reflection and improves but still fails, trial 3 succeeds. Compare with a baseline run (no reflection) — it stays stuck at trial 1's answer.
 
 ## Use It
 
@@ -102,13 +84,6 @@ LangGraph ships reflection as a node pattern. Claude Code's `/memory` command an
 
 `outputs/skill-reflexion-buffer.md` creates and maintains an episodic buffer with reflection capture, TTL, and deduplication. Given a task class and a failure, it emits a reflection that actually helps the next trial (not a generic "be more careful").
 
-## Exercises
-
-1. Switch from binary to scalar evaluator that returns a distance metric (how far from target). Does it converge faster?
-2. Add a TTL of 10 trials to reflections. Do older reflections hurt or help after that point?
-3. Implement heuristic evaluator: mark the trial as stuck if the same action repeats. How does this interact with Self-Reflector?
-4. Run Reflexion with an adversarial Actor that ignores reflections. What is the minimum reflection prompt engineering that forces the Actor to notice them?
-5. Read Section 4 of the Reflexion paper on AlfWorld. Reproduce the 130% success-rate improvement conceptually: what is the key delta vs vanilla ReAct?
 
 ## Key Terms
 

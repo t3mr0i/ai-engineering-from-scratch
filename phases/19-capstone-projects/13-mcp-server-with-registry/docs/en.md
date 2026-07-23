@@ -66,25 +66,6 @@ Postgres    S3 listing  Jira       Linear     Datadog
 - Deployment: AWS ECS Fargate or Fly.io, one server per tenant or shared with tenant scoping
 - Audit: structured JSONL per-tenant bucket with per-call lineage
 
-## Build It
-
-1. **Tool surface.** Expose 10 internal tools: Postgres read-only query, S3 list objects, Jira search/fetch, Linear search/fetch, Datadog metric query, PagerDuty on-call lookup, GitHub read-only, Notion search, Slack search, Salesforce read. Each tool has a typed schema and a scope label.
-
-2. **FastMCP server.** Mount the tools. Configure StreamableHTTP transport. Add a middleware for OAuth token introspection and scope enforcement.
-
-3. **OPA policy.** Rego policy per tool: what scopes permit invocation, what PII redaction applies, what payload-size caps apply. Decision service called on every tool call.
-
-4. **Registry service.** Separate Go or TS service that polls `.well-known/mcp-capabilities` from registered servers, validates with JSON Schema, and exposes a list / search / validate / enable-disable UI.
-
-5. **Capability manifest.** Each server exposes `.well-known/mcp-capabilities` with: tool list, auth requirements, transport URL, owner team, SLO.
-
-6. **Destructive tool separation.** Tools that mutate state (Jira create, Linear create, Postgres write) live on a second MCP server with a stricter auth flow: tokens must have a `approved:by:human` scope elevated via Slack card within 15 minutes.
-
-7. **Audit log.** Append-only JSONL per tenant: `{timestamp, user, tool, args_redacted, response_redacted, outcome}`. PII redaction via Presidio before write.
-
-8. **Load test.** 100 concurrent clients on StreamableHTTP. Demonstrate horizontal scaling by adding a second replica; show the load balancer redistributing without session stickiness.
-
-9. **Conformance tests.** Run the official MCP conformance suite against both servers. Pass all mandatory sections.
 
 ## Use It
 
@@ -112,17 +93,6 @@ response:    { "result": { "rows": [[1]] } }
 | 15 | Registry UX | Discover / validate / enable-disable workflow |
 | **100** | | |
 
-## Exercises
-
-1. Add a new tool (Confluence search). Ship it through the registry validation flow without touching the core server.
-
-2. Write an OPA policy that redacts Postgres query results containing columns named `email`, `ssn`, or `phone`. Exercise with a probe query.
-
-3. Benchmark StreamableHTTP vs stdio on local latency. Report per-call p50/p95.
-
-4. Implement per-tenant quota: maximum N calls per minute per tool per tenant. Enforce via a second OPA rule.
-
-5. Run the MCP conformance suite from [mcp-conformance-tests](https://github.com/modelcontextprotocol/conformance) and fix every failure.
 
 ## Key Terms
 

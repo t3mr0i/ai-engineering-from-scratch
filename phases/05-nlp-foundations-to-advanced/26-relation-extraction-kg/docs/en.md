@@ -48,102 +48,6 @@ Hallucinations drop sharply. Requires more compute but is auditable.
 
 Production KGs usually mix: open IE for discovery, then canonicalize relations onto a closed ontology before merging into the main graph.
 
-## Build It
-
-### Step 1: pattern-based extraction
-
-```python
-PATTERNS = [
-    (r"(?P<s>[A-Z]\w+) (?:is|was) (?:a|an|the) (?P<o>[A-Z]?\w+)", "isA"),
-    (r"(?P<s>[A-Z]\w+) (?:is|was) born in (?P<o>\w+)", "bornIn"),
-    (r"(?P<s>[A-Z]\w+) works? (?:at|for) (?P<o>[A-Z]\w+)", "worksAt"),
-    (r"(?P<s>[A-Z]\w+) founded (?P<o>[A-Z]\w+)", "founded"),
-]
-```
-
-See `code/main.py` for the full toy extractor. Hearst patterns still ship in domain-specific pipelines because they are debuggable.
-
-### Step 2: supervised relation classification
-
-```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-
-tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
-
-text = "Tim Cook was born in Alabama. He later became CEO of Apple."
-encoded = tok(text, return_tensors="pt", truncation=True)
-output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
-```
-
-REBEL is a seq2seq relation extractor: text in, triples out, already in Wikidata property ids. Fine-tuned on distant-supervision data. Standard open-weights baseline.
-
-### Step 3: LLM-prompted extraction with anchoring
-
-```python
-prompt = f"""Extract (subject, relation, object) triples from the text.
-For each triple, include the exact character span in the source text.
-
-Text: {text}
-
-Output JSON:
-[{{"subject": {{"text": "...", "span": [start, end]}},
-   "relation": "...",
-   "object": {{"text": "...", "span": [start, end]}}}}, ...]
-
-Only include triples fully supported by the text. No inference beyond what is stated.
-"""
-```
-
-Verify every returned span against the source. Reject anything where `text[start:end] != triple_entity`. This is the AEVS "verify" step in its minimal form.
-
-### Step 4: canonicalize onto a closed ontology
-
-```python
-RELATION_MAP = {
-    "is the CEO of": "P169",       # "chief executive officer"
-    "was born in":   "P19",         # "place of birth"
-    "founded":        "P112",       # "founded by" (inverted subject/object)
-    "works at":       "P108",       # "employer"
-}
-
-
-def canonicalize(relation):
-    rel_low = relation.lower().strip()
-    if rel_low in RELATION_MAP:
-        return RELATION_MAP[rel_low]
-    return None   # drop unmapped open relations or route to manual review
-```
-
-Canonicalization is often 60-80% of the engineering work. Budget for it.
-
-### Step 5: build a small graph and query
-
-```python
-triples = extract(text)
-graph = {}
-for s, r, o in triples:
-    graph.setdefault(s, []).append((r, o))
-
-
-def neighbors(node, relation=None):
-    return [(r, o) for r, o in graph.get(node, []) if relation is None or r == relation]
-
-
-print(neighbors("Tim Cook", relation="P108"))    # -> [(P108, Apple)]
-```
-
-This is the atom of every RAG-over-KG system. Scale it with RDF triple stores (Blazegraph, Virtuoso), property graphs (Neo4j), or vector-augmented graph stores.
-
-## Pitfalls
-
-- **Coreference before RE.** "He founded Apple" — RE needs to know who "he" is. Run coref first (lesson 24).
-- **Entity canonicalization.** "Apple Inc" and "Apple" must resolve to the same node. Entity linking first (lesson 25).
-- **Hallucinated triples.** LLMs emit triples the text does not support. Enforce span verification.
-- **Relation canonicalization drift.** Open IE relations are inconsistent ("was born in," "came from," "is a native of"). Collapse to canonical ids or the graph is unqueryable.
-- **Temporal errors.** "Tim Cook is CEO of Apple" — true now, false in 2005. Many relations are time-bounded. Use qualifiers (`P580` start time, `P582` end time in Wikidata).
-- **Domain mismatch.** REBEL trained on Wikipedia. Legal, medical, and scientific text often need domain-fine-tuned RE models.
 
 ## Use It
 
@@ -185,11 +89,6 @@ Given a corpus (domain, language, volume) and downstream use (KG-RAG, analytics,
 Refuse any LLM-based RE pipeline without span verification (source provenance). Refuse open-IE output flowing into a production graph without canonicalization. Flag pipelines with no temporal qualifier on time-bounded relations (employer, spouse, position).
 ```
 
-## Exercises
-
-1. **Easy.** Run the pattern extractor in `code/main.py` on 5 news-article sentences. Hand-check precision.
-2. **Medium.** Use REBEL (or a small LLM) on the same sentences. Compare triples. Which extractor has higher precision? Higher recall?
-3. **Hard.** Build the AEVS pipeline: extract with LLM + verify spans against source. Measure hallucination rate before vs after the verify step on 50 Wikipedia-style sentences.
 
 ## Key Terms
 

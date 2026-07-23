@@ -83,17 +83,6 @@ The driver runs a synthetic set of champion scenarios and prints a recommendatio
 
 `outputs/skill-ai-champion-triage.md` is a one-page decision aid for a working champion: given an incoming request (brown bag, pilot, Slack question, CoP agenda), the table tells you which artifact to produce, for which audience level, and what the next compounding artifact is. Paste it into your team wiki and update the model column when a major capability shift lands.
 
-## Exercises
-
-1. Run `code/main.py`. Which (audience, knowledge-type) combination triggers the eval-harness recommendation? Which triggers a decision aid only, with no follow-on artifact?
-
-2. Run `code/main.py` again and trace the pilot-gate evaluator output. Find the scenario where the pilot is blocked at gate 2. Write one sentence explaining what the champion must produce before the pilot can proceed to the transfer gate.
-
-3. Map your team's last AI initiative against the three-gate model. Which gate did it reach? What artifact, if any, came out of it? What would gate 2 output have looked like?
-
-4. Write a two-paragraph "capability shift brief" for a real 2026 model or tool update (pick one from the Anthropic changelog). Structure it as: what changed, why it matters for a practitioner at L2, and which decision aid needs updating.
-
-5. Design a 30-minute CoP session skeleton for an L2 audience. Specify the warm-up question, the reference implementation they will run, the take-home decision aid, and the pointer for L3 colleagues. Verify that every element maps to an artifact in the four-output table above.
 
 ## Key Terms
 

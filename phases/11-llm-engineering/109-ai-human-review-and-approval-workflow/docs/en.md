@@ -108,17 +108,6 @@ Minimum audit record fields:
 
 `outputs/skill-hitl-gate-designer.md` is a one-page decision aid: a filled-in template for specifying a new HITL gate, including the risk tier assessment, reviewer decision surface, escalation path, timeout schedule, and the four quality measurement signals to instrument from day one.
 
-## Exercises
-
-1. Run `code/main.py`. Which output in the sample batch is flagged as a rubber-stamp approval? What was the approval time, and what is the configured minimum hold for that tier?
-
-2. The simulator escalates one output. Trace the escalation path it followed. Change the `conservative_default` in the code from `"hold"` to `"approve"` and observe what happens when all escalation paths time out. Why is this the most commonly violated principle?
-
-3. Take a real AI-assisted workflow in your organization (or design a plausible one). Classify each AI output it produces using the four-tier table. Where is the highest-risk gap — a Tier 3 or Tier 4 output currently flowing through without a gate?
-
-4. Design an audit record schema for the workflow above. Which fields does your current tooling (ticketing system, CRM, document management) already capture, and which are missing?
-
-5. A colleague argues that since your LLM now returns a confidence score, you can auto-approve outputs above 0.95 and only gate the rest. Using the tier framework and the reversibility principle, explain exactly where this argument fails.
 
 ## Key Terms
 

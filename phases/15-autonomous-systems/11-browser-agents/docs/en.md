@@ -70,17 +70,6 @@ This is the same reasoning pattern as Lob's theorem (Lesson 8): the agent cannot
 
 `outputs/skill-browser-agent-trust-boundary.md` scopes a proposed browser-agent deployment: which trust zones it touches, what it is authorized to write, and which defenses must be in place before the first run.
 
-## Exercises
-
-1. Run `code/main.py`. Identify which attack the sanitizer catches but the read/write boundary does not, and which attack only the read/write boundary catches.
-
-2. Extend the sanitizer to detect one class of HashJack-style URL-fragment injection. Measure the false-positive rate on benign URLs with legitimate fragments.
-
-3. Pick one real browser-agent workflow you know (e.g., "book a flight"). List every read and every write. Mark which writes need HITL and why.
-
-4. Read the WebArena-Verified ICLR 2026 paper. Identify one category of task where the original WebArena's scoring was unreliable and explain how the Verified subset resolves it.
-
-5. Design a memory canary for a browser-agent setting. What would you store, where, and what triggers the alarm?
 
 ## Key Terms
 

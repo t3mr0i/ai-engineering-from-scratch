@@ -114,17 +114,6 @@ The driver runs five sample hypotheses (mixing strong, moderate, weak, and anecd
 
 `outputs/skill-user-research-pipeline.md` is a one-page decision aid for a working consultant or researcher: a checklist for each of the four pipeline stages, the scoring rubric as a reference table, and the bias flag template to paste into a research report. It is designed to be used alongside a real synthesis session, not as a post-hoc sign-off document.
 
-## Exercises
-
-1. Run `code/main.py`. Which sample hypothesis receives the lowest confidence score? Read the rationale printed next to it. Change the evidence count so it rises to the next tier — what is the minimum change required?
-
-2. Run `code/main.py` again and find the flagged bias scenario. The flag prints the segment name and the skew ratio. Rewrite the participant pool shares in the source so the same evidence no longer triggers the flag. What does that change imply about how you would need to recruit differently in a real study?
-
-3. Take a real research document from a project you have worked on (or a publicly available case study). Apply the stage 3 hypothesis format: write one finding as a falsifiable hypothesis with a stated falsification criterion. Is the falsification criterion achievable with the team's current instrumentation?
-
-4. A PM asks you to run the clustering stage on 150 support tickets and produce a ranked list of pain points by frequency. What structured output schema (fields and types) would you define so the output is machine-readable and bias-checkable? Sketch it in JSON Schema notation (see Phase 11 · 03).
-
-5. After running the bias review, you flag a hypothesis because new users contribute 70 % of its evidence while representing 30 % of the active user base. The PM says "but new users are the growth segment, so this is fine." What is the correct response, and what additional data would help you defend or revise the flag?
 
 ## Key Terms
 

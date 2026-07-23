@@ -64,25 +64,6 @@ Coder A          Coder B          Coder C          Coder D          (4 parallel)
 - Observability: Langfuse with role-tagged spans, per-agent token accounting
 - Deployment: K8s with each role as a separate Deployment + HPA on backlog
 
-## Build It
-
-1. **Task board.** File-backed JSONL with typed messages: `plan_request`, `subtask`, `diff_ready`, `review_needed`, `test_needed`, `approved`, `rejected`, `replan_needed`. Agents subscribe to tags.
-
-2. **Architect.** Reads the GitHub issue, runs Opus 4.7 with a plan template requiring explicit subtask interfaces (files touched, public functions, test impact). Emits one `plan_request` with a DAG of subtasks.
-
-3. **Coders.** N parallel workers, each claims one subtask from the board. Each spawns a fresh `git worktree add` branch plus a Daytona sandbox. Implements the subtask. Emits `diff_ready` with the patch + test deltas.
-
-4. **Merge coordinator.** On all-coders-done, three-way merges the N branches into a staging branch. LLM-mediated conflict resolution only when file-level overlap exists.
-
-5. **Reviewer.** GPT-5.4 reads the merged diff. Cannot approve diffs it authored. Emits `approved` (no-op) or `review_feedback` with specific change requests routed back to the relevant coder.
-
-6. **Tester.** Gemini 2.5 Pro runs the test suite in a clean sandbox. Captures artifacts. Emits `test_passed` or `test_failed` with stacktraces. Failed tests loop back to the coder owning the failing subtask.
-
-7. **Handoff accounting.** Every message crossing a role boundary gets a span in Langfuse with payload size and model used. Compute per-subtask token amplification (coder_tokens + reviewer_tokens + tester_tokens + architect_share / coder_tokens).
-
-8. **Eval.** Run on 50 SWE-bench Pro issues. Compare pass@1 and $-per-solved-issue against a single-agent baseline (one Sonnet 4.7 in a single worktree).
-
-9. **Post-mortem.** For each failed issue, identify the handoff that broke (plan too vague, merge conflict, reviewer false-approve, tester flake). Produce a handoff-failure histogram.
 
 ## Use It
 
@@ -115,17 +96,6 @@ $ team run --issue https://github.com/acme/widget/issues/842
 | 15 | Coordination engineering | Merge-conflict resolution, handoff-failure histogram |
 | **100** | | |
 
-## Exercises
-
-1. Inject an obvious bug into a diff mid-run (extra `return None` before the main body). Measure the reviewer's false-approve rate. Tune the reviewer prompt until false-approval is under 5%.
-
-2. Reduce to two coders (architect + coder + reviewer + tester, coder runs two subtasks sequentially). Compare wall-clock and pass rate.
-
-3. Replace the merge coordinator with a single-writer constraint (subtasks touch disjoint file sets). Measure the planning burden on the architect.
-
-4. Swap reviewer from GPT-5.4 to Claude Opus 4.7. Measure false-approval rate and token cost delta.
-
-5. Add a fifth role: documenter (Haiku 4.5). After review, it produces a changelog entry. Measure whether documentation quality justifies the extra token spend.
 
 ## Key Terms
 

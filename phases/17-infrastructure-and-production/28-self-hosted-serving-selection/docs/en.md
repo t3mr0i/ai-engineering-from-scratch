@@ -99,13 +99,6 @@ Phase 17 · 01 (managed hyperscalers), · 02 (inference platforms) cover managed
 
 This lesson produces `outputs/skill-engine-picker.md`. Given constraints, picks an engine and writes the migration plan.
 
-## Exercises
-
-1. Run `code/main.py` with your hardware / scale / workload. Does the output match your intuition?
-2. Your infra is 12 H100s and 8 MI300X AMD. What engine? Why is TRT-LLM off the table?
-3. A team wants to use TGI in 2026 because "it's what we know." Argue the migration case.
-4. Ollama dev to vLLM prod: what changes in quantization, configuration, and observability?
-5. RAG product with P99 prefix length 8K and high reuse across tenants. Pick an engine and stack it with Phase 17 · 11 + 18.
 
 ## Key Terms
 

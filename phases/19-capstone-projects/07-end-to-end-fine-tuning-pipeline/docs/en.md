@@ -66,25 +66,6 @@ model card (2026 MOF) + safety eval (Llama Guard 4)
 - Infrastructure: Kubernetes + NVIDIA device plugin, HPA on queue-wait metric
 - Observability: W&B for training, Langfuse for inference
 
-## Build It
-
-1. **Data pipeline.** Run Datatrove dedup on raw corpus. Apply Nemotron-CC-style quality classifier. Presidio scrubs PII. Write train/val splits with explicit seed.
-
-2. **Contamination check.** For every validation split, compute MinHash against MMLU-Pro, MT-Bench-v2, RewardBench-2 test sets. Reject any overlap.
-
-3. **Axolotl SFT.** YAML with ZeRO-3, FA3, sequence packing. 2-3 epochs on 8xH100. Log to W&B.
-
-4. **TRL DPO / GRPO.** Take the SFT checkpoint, run one epoch of DPO on preference pairs (or GRPO with a verifiable reward on math/code). Sweep beta.
-
-5. **Quantize.** Produce three quants: GPTQ-INT4-Marlin, AWQ-INT4, GGUF-Q4_K_M for llama.cpp. Record size and nominal throughput.
-
-6. **Serve with speculative decoding.** vLLM 0.7 config with EAGLE-3 draft heads trained via Red Hat Speculators. Measure acceptance rate and tail latency at batch 1 / 8 / 32. Report $/1M tokens vs Anthropic / OpenAI on the same eval.
-
-7. **Eval matrix.** Run lm-eval-harness, RewardBench-2, MT-Bench-v2, MMLU-Pro on base, SFT-only, SFT+DPO, SFT+GRPO. Produce a table.
-
-8. **Safety eval.** Llama Guard 4 pass rate on the dev set. ShieldGemma-2 output filter.
-
-9. **Model card.** MOF 2026 template: data, training, eval, safety, license, reproducibility section with YAMLs and commit SHAs.
 
 ## Use It
 
@@ -112,17 +93,6 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 | 15 | Model card + safety eval | 2026 MOF completeness + Llama Guard 4 pass rate |
 | **100** | | |
 
-## Exercises
-
-1. Run SFT-only vs SFT+DPO vs SFT+GRPO on the same task-specific benchmark. Report which preference method wins and by how much.
-
-2. Swap Llama 3.3 8B for Qwen3 14B. Measure the $/1M tokens at matched quality.
-
-3. Measure EAGLE-3 acceptance rate on domain data vs generic ShareGPT. Report the delta and what it means for latency budgets.
-
-4. Inject 1% of contamination (leak MMLU-Pro answers into training data) and rerun eval. Watch MMLU-Pro accuracy jump unrealistically. Build a contamination-check CI gate that catches this.
-
-5. Add LoRA SFT as an alternative to full fine-tune. Measure the quality gap at 10x lower memory.
 
 ## Key Terms
 

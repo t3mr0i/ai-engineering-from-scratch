@@ -195,119 +195,6 @@ The connection is deeper than analogy:
 
 **Model comparison is Bayesian.** Bayesian information criterion (BIC), marginal likelihood, and Bayes factors all use Bayesian reasoning to choose between models without overfitting.
 
-## Build It
-
-### Step 1: Bayes theorem function
-
-```python
-def bayes(prior, likelihood, false_positive_rate):
-    evidence = likelihood * prior + false_positive_rate * (1 - prior)
-    posterior = likelihood * prior / evidence
-    return posterior
-
-result = bayes(prior=0.0001, likelihood=0.99, false_positive_rate=0.01)
-print(f"P(sick|positive) = {result:.4f}")
-```
-
-### Step 2: Naive Bayes classifier
-
-```python
-import math
-from collections import defaultdict
-
-class NaiveBayes:
-    def __init__(self, smoothing=1.0):
-        self.smoothing = smoothing
-        self.class_counts = defaultdict(int)
-        self.word_counts = defaultdict(lambda: defaultdict(int))
-        self.class_word_totals = defaultdict(int)
-        self.vocab = set()
-
-    def train(self, documents, labels):
-        for doc, label in zip(documents, labels):
-            self.class_counts[label] += 1
-            words = doc.lower().split()
-            for word in words:
-                self.word_counts[label][word] += 1
-                self.class_word_totals[label] += 1
-                self.vocab.add(word)
-
-    def predict(self, document):
-        words = document.lower().split()
-        total_docs = sum(self.class_counts.values())
-        vocab_size = len(self.vocab)
-        best_class = None
-        best_score = float("-inf")
-        for cls in self.class_counts:
-            score = math.log(self.class_counts[cls] / total_docs)
-            for word in words:
-                count = self.word_counts[cls].get(word, 0)
-                total = self.class_word_totals[cls]
-                score += math.log((count + self.smoothing) / (total + self.smoothing * vocab_size))
-            if score > best_score:
-                best_score = score
-                best_class = cls
-        return best_class
-```
-
-Log probabilities prevent underflow. Multiplying many small probabilities produces numbers too tiny for floating point. Summing log-probabilities is numerically stable and mathematically equivalent.
-
-### Step 3: Train on spam data
-
-```python
-train_docs = [
-    "win free money now",
-    "free lottery ticket winner",
-    "claim your prize today free",
-    "urgent offer free cash",
-    "congratulations you won free",
-    "meeting tomorrow at noon",
-    "project update attached",
-    "can we schedule a call",
-    "quarterly report review",
-    "lunch on thursday sounds good",
-    "team standup notes attached",
-    "please review the pull request",
-]
-
-train_labels = [
-    "spam", "spam", "spam", "spam", "spam",
-    "ham", "ham", "ham", "ham", "ham", "ham", "ham",
-]
-
-classifier = NaiveBayes()
-classifier.train(train_docs, train_labels)
-
-test_messages = [
-    "free money waiting for you",
-    "meeting rescheduled to friday",
-    "you won a free prize",
-    "please review the attached report",
-]
-
-for msg in test_messages:
-    print(f"  '{msg}' -> {classifier.predict(msg)}")
-```
-
-### Step 4: Inspect the learned probabilities
-
-```python
-def show_top_words(classifier, cls, n=5):
-    vocab_size = len(classifier.vocab)
-    total = classifier.class_word_totals[cls]
-    probs = {}
-    for word in classifier.vocab:
-        count = classifier.word_counts[cls].get(word, 0)
-        probs[word] = (count + classifier.smoothing) / (total + classifier.smoothing * vocab_size)
-    sorted_words = sorted(probs.items(), key=lambda x: x[1], reverse=True)
-    for word, prob in sorted_words[:n]:
-        print(f"    {word}: {prob:.4f}")
-
-print("\nTop spam words:")
-show_top_words(classifier, "spam")
-print("\nTop ham words:")
-show_top_words(classifier, "ham")
-```
 
 ## Use It
 
@@ -437,15 +324,6 @@ Advantages over frequentist A/B testing:
 | Prior knowledge | Not used | Encoded as Beta prior |
 | Decision rule | p < 0.05 | P(B > A) > threshold |
 
-## Exercises
-
-1. **Multiple tests.** A patient tests positive twice on independent tests (both 99% accurate, disease prevalence 1 in 10,000). What is P(sick) after both tests? Use the posterior from the first test as the prior for the second.
-
-2. **Smoothing impact.** Run the spam classifier with smoothing values of 0.01, 0.1, 1.0, and 10.0. How do the top word probabilities change? What happens with smoothing=0 and a word that appears only in ham?
-
-3. **Add features.** Extend the NaiveBayes class to also use message length (short/long) as a feature alongside word counts. Estimate P(short|spam) and P(short|ham) from the training data and fold it into the prediction score.
-
-4. **MAP by hand.** Given observed data (7 heads in 10 coin flips), compute the MAP estimate of the bias using a Beta(2,2) prior. Compare it to the MLE estimate (7/10).
 
 ## Key Terms
 

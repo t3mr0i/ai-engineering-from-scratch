@@ -61,23 +61,6 @@ For ViT-Base/16 at 224 resolution: 590,592 parameters in the projection, 768 in 
 
 The patch step has two spellings: a `Conv2d` projection and an explicit unfold-then-linear. They must produce the same output for the same weights. If they do not, the unfold math is wrong, and the rest of the encoder is built on sand. The tests in this lesson exercise that equivalence.
 
-## Build It
-
-`code/main.py` implements:
-
-- `PatchEmbed`, an `nn.Module` wrapping `Conv2d` for patch projection.
-- `sinusoidal_2d(grid_h, grid_w, dim)`, a stateless function that builds the 2D position table.
-- `VisionFrontEnd`, which composes patch embedding, CLS prepend, and position addition into one forward pass.
-- A `synthesize_image(seed)` helper that builds a deterministic 224x224x3 fixture from `numpy.random`.
-- A demo that runs one fixture image through the front end and prints the output shape, the CLS token norm, and one row of the position embedding.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: the 224x224 fixture is tokenized to a sequence of shape `(1, 197, 768)`. The first token is the CLS; the next 196 are patch tokens. The position embedding norms are uniform within a row, which is the sinusoidal signature.
 
 ## Use It
 
@@ -99,17 +82,6 @@ Run them:
 python3 -m unittest code/test_main.py
 ```
 
-## Exercises
-
-1. Replace the sinusoidal position with a learned `nn.Parameter` and compare the first-epoch loss on a tiny synthetic classification task. Learned positions win at fixed resolution; sinusoidal wins when you change resolution after training.
-
-2. Swap the `Conv2d` for an explicit `nn.Unfold` plus `nn.Linear` and assert the outputs match to within float tolerance. Same math, two ways to spell it.
-
-3. Add support for non-square patch sizes (e.g. 32x16 for wide-aspect inputs) and verify the position table handles non-square grids.
-
-4. Profile the patch step at batch sizes 1, 8, 64. The patch projection is rarely the bottleneck; the attention layers downstream dominate.
-
-5. Train the front end as a frozen feature extractor on a 4-class synthetic shape dataset (circles, squares, triangles, stars). The CLS token output should linearly separate.
 
 ## Key Terms
 

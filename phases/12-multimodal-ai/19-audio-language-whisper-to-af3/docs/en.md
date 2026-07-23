@@ -120,17 +120,6 @@ Open SOTA (AF3) at 0.72; proprietary frontier ~0.78 (Gemini 2.5 Pro, Claude Opus
 
 This lesson produces `outputs/skill-audio-llm-pipeline-picker.md`. Given an audio task (transcription, music tagging, emotion inference, multi-speaker diarization, environment classification), it picks cascaded, end-to-end AF3, or a hybrid.
 
-## Exercises
-
-1. Compute the log-Mel spectrogram dimension for a 30-second clip at 16kHz, 25ms window, 10ms hop, 80 Mel bins. How does this change at 48kHz?
-
-2. Why does Whisper underperform on music? What audio features does BEATs capture that Whisper does not?
-
-3. Audio Q-former with 64 queries vs 32: at what task complexity does 64 pay off? 32 save compute for what?
-
-4. Read AF3 Section 4 on on-demand thinking. Propose three audio tasks where chain-of-thought helps the most.
-
-5. Implement a minimal diarization pipeline using AF3's output. How do you signal speaker changes?
 
 ## Key Terms
 

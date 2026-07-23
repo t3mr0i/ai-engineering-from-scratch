@@ -131,19 +131,6 @@ No network calls, no pip dependencies. The purpose is to make the scoring policy
 
 `outputs/skill-vendor-selection-scorecard.md` is a one-page consultant's scorecard: paste in a client's workload constraints, eliminate non-compliant options, score the remaining ones across the five axes (including exit cost), and arrive at a defensible recommendation. Includes the four-axis scoring rubric, a routing table for model band selection by task type, and an exit-cost checklist.
 
-## Exercises
-
-1. Run `code/main.py`. Which platform options are eliminated by the EU data-residency constraint? Note the exact reason printed. Then change the `data_residency` parameter from `"EU"` to `"US"` and re-run: which eliminated options become feasible?
-
-2. The cost model in `code/main.py` computes monthly spend at two volume tiers. Find the crossover point (in monthly token volume) where the flagship-band option becomes more expensive than switching to the balanced band. Does that crossover point shift if you add a 35% semantic-cache hit rate? Calculate manually using the printed per-token prices.
-
-3. The demonstration block in `code/main.py` shows a workload where the exit-cost-blind ranking recommends a different option than the exit-cost-aware ranking. Identify the workload and explain in two sentences why the exit-cost-blind ranking is the wrong answer for a procurement decision.
-
-4. Pick a real or hypothetical project at a client. For each exit-cost dimension in the table (data egress, code re-instrumentation, eval re-tuning, compliance re-attestation), write one sentence describing the current state. Which dimension has the highest latent exit cost you have not budgeted for?
-
-5. A client's team is already running LangGraph. They ask whether to switch to the Claude Agent SDK (Phase 14 · 17). Using the framework abstraction table above and the agent SDK's documented feature set, write a two-paragraph recommendation: one paragraph for switching, one against. Which scenario tips the decision, and what is the exit cost of the choice you did *not* make?
-
-6. A workload today calls `claude-opus-4-5` for every request including simple classification steps that return one of five labels. Using the model band table and the commodity pricing row, estimate the monthly cost difference for a workload of 50 million classification tokens per month. What is the minimum accuracy drop that would justify staying on the flagship tier? What is the exit cost of staying — does your prompt library become provider-coupled?
 
 ## Key Terms
 

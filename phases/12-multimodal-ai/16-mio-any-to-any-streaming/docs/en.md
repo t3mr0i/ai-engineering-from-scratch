@@ -124,17 +124,6 @@ These are open research problems. Qwen3-Omni (Lesson 12.20) is the most advanced
 
 This lesson produces `outputs/skill-any-to-any-pipeline-auditor.md`. Given a conversational product spec (modalities in, modalities out, latency target), it audits the MIO-family design choices and computes the latency budget.
 
-## Exercises
-
-1. Your product accepts speech input and returns speech output. What's the end-to-end latency budget target? List the components that spend time.
-
-2. SpeechTokenizer residual-VQ uses 8 codebooks. Propose why parallel-decoding the residual levels is necessary (vs sequential) and what latency savings it brings.
-
-3. Your vocabulary has 32k text + 4k image + 4k speech. Add 8k music and ~10 separators. What is the embedding-matrix parameter cost at hidden dim 4096?
-
-4. Chain-of-visual-thought emits an intermediate image. What kinds of questions benefit? What kinds are hurt by the extra tokens?
-
-5. Read Moshi (arXiv:2410.00037). Describe its "inner monologue" technique and compare to MIO's chain-of-visual-thought.
 
 ## Key Terms
 

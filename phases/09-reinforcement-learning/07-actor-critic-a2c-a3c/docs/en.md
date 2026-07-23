@@ -53,76 +53,6 @@ with `λ ∈ [0, 1]`. `λ = 0` is TD (low variance, high bias). `λ = 1` is MC (
 
 Three terms: policy-gradient loss, value regression, entropy bonus. `c_v ~ 0.5`, `c_e ~ 0.01` are canonical starting points.
 
-## Build It
-
-### Step 1: a critic
-
-Linear critic `V_φ(s) = w · features(s)` updated with MSE:
-
-```python
-def critic_update(w, x, target, lr):
-    v_hat = dot(w, x)
-    err = target - v_hat
-    for j in range(len(w)):
-        w[j] += lr * err * x[j]
-    return v_hat
-```
-
-On a tabular env the critic converges in a few hundred episodes. On Atari, replace the linear critic with a shared CNN trunk + value head.
-
-### Step 2: n-step advantage
-
-Given a rollout of length `T` and a bootstrapped final `V(s_T)`:
-
-```python
-def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
-    advantages = [0.0] * len(rewards)
-    gae = 0.0
-    for t in reversed(range(len(rewards))):
-        next_v = values[t + 1] if t + 1 < len(values) else last_value
-        delta = rewards[t] + gamma * next_v - values[t]
-        gae = delta + gamma * lam * gae
-        advantages[t] = gae
-    returns = [a + v for a, v in zip(advantages, values)]
-    return advantages, returns
-```
-
-`returns` is the critic target. `advantages` is what multiplies `∇ log π`.
-
-### Step 3: combined update
-
-```python
-for step_i, (x, a, _r, probs) in enumerate(traj):
-    adv = advantages[step_i]
-    target_v = returns[step_i]
-
-    # critic
-    critic_update(w, x, target_v, lr_v)
-
-    # actor
-    for i in range(N_ACTIONS):
-        grad_logpi = (1.0 if i == a else 0.0) - probs[i]
-        for j in range(N_FEAT):
-            theta[i][j] += lr_a * adv * grad_logpi * x[j]
-```
-
-On-policy, one rollout per update, separate learning rates for actor and critic.
-
-### Step 4: parallelization (A3C vs A2C)
-
-- **A3C:** spin up `N` threads. Each runs its own env and its own forward pass. Periodically push gradient updates to a shared master. No locks on the master — races are ok, they just add noise.
-- **A2C:** run `N` env instances in a single process, stack observations into a `[N, obs_dim]` batch, batched forward pass, batched backward pass. Higher GPU utilization, deterministic, easier to reason about. The default in 2026.
-
-Our toy code is single-threaded for clarity; rewriting to batched A2C is three lines of numpy.
-
-## Pitfalls
-
-- **Critic bias before actor gradient.** If the critic is random, its baseline is uninformative and you are training on pure noise. Warm up the critic for a few hundred steps before turning on the policy gradient, or use a slow actor learning rate.
-- **Advantage normalization.** Normalize advantages to zero-mean/unit-std per batch. Stabilizes training massively at near-zero cost.
-- **Shared trunk.** Use a shared feature extractor for actor and critic on image inputs. Separate heads. The shared features free-ride on both losses.
-- **On-policy contract.** A2C reuses data for exactly one update. More and your gradient is biased (importance-sampling correction is what PPO adds).
-- **Entropy collapse.** Without `c_e > 0`, policy becomes near-deterministic in a few hundred updates and stops exploring.
-- **Reward scale.** Advantage magnitudes depend on reward scale. Normalize rewards (e.g., running-std dividing) for consistent gradient magnitudes across tasks.
 
 ## Use It
 
@@ -164,11 +94,6 @@ Given an environment and compute budget, output:
 Refuse single-worker A2C on environments with horizon > 1000 (too on-policy, too slow). Refuse to ship without advantage normalization. Flag any run with `c_e = 0` and observed entropy < 0.1 as entropy-collapsed.
 ```
 
-## Exercises
-
-1. **Easy.** Train actor-critic with MC advantage (`G_t - V(s_t)`) on 4×4 GridWorld. Compare sample efficiency to REINFORCE-with-running-mean-baseline from Lesson 06.
-2. **Medium.** Switch to TD-residual advantage (`r + γ V(s') - V(s)`). Measure variance of the advantage batches. By how much does it drop?
-3. **Hard.** Implement GAE(λ). Sweep `λ ∈ {0, 0.5, 0.9, 0.95, 1.0}`. Plot final return vs sample efficiency. Where is the bias/variance sweet spot for this task?
 
 ## Key Terms
 

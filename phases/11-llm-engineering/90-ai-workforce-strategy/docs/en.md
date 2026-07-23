@@ -98,17 +98,6 @@ The role-capability matrix is the input to two downstream artefacts covered in o
 
 `outputs/skill-ai-workforce-gap-mapper.md` is a one-page decision aid: a blank role-capability matrix template, the four competency categories with example evidence for each, the prioritisation grid with worked examples, and a checklist for the governance owner to sign off at each audit cycle.
 
-## Exercises
-
-1. Run `code/main.py`. Which role has the highest number of "Missing" ratings? Which gap is promoted to the top of the backlog by the EU AI Act override, and why?
-
-2. The backlog prioritiser in the code uses a static impact score. Extend it to accept an `eu_high_risk` flag that forces any gap in a regulated interaction point to the front of the queue regardless of effort. Run the modified code and report what changes in the output.
-
-3. Map three real interaction points from your own current role using the direction / reversibility / accountability-gap decomposition from this lesson. For each one, rate your own current competency level honestly. Which gap is highest priority for you personally?
-
-4. The lesson states that a verification checklist written for one model version may be wrong after an upgrade. Describe a concrete scenario: pick one Claude Sonnet 4.x capability that is stronger than its predecessor and explain how that change shifts the verification burden on a non-engineer reviewer.
-
-5. Produce a two-row role-capability matrix for a business analyst and a delivery lead at a client you know. Identify one gap that could be closed with a 90-minute paired practice session and one that requires role redesign. Justify each judgment.
 
 ## Key Terms
 

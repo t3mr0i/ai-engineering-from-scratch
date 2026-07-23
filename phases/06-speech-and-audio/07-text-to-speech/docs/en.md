@@ -66,68 +66,6 @@ By 2026 most "TTS" models are end-to-end from text to waveform; the mel spectrog
 | Kokoro v0.19 | 3.87 | 1.8% | 82M |
 | Parler-TTS Large | 3.76 | 2.8% | 2.3B |
 
-## Build It
-
-### Step 1: phonemize input
-
-```python
-from phonemizer import phonemize
-ph = phonemize("Hello world", language="en-us", backend="espeak")
-# 'həloʊ wɜːld'
-```
-
-Phonemes are the universal bridge. Avoid feeding raw text to anything below VITS-level quality.
-
-### Step 2: run Kokoro (2026 CPU default)
-
-```python
-from kokoro import KPipeline
-tts = KPipeline(lang_code="a")  # "a" = American English
-audio, sr = tts("Please remind me to water the plants at 6 pm.", voice="af_bella")
-# audio: float32 tensor, sr=24000
-```
-
-Runs offline, single file, 82M params.
-
-### Step 3: run F5-TTS with voice cloning
-
-```python
-from f5_tts.api import F5TTS
-tts = F5TTS()
-wav = tts.infer(
-    ref_file="my_voice_5s.wav",
-    ref_text="The quick brown fox jumps over the lazy dog.",
-    gen_text="Please remind me to water the plants.",
-)
-```
-
-Pass a 5-second reference clip + its transcript; F5 clones prosody and timbre.
-
-### Step 4: HiFi-GAN vocoder from scratch
-
-Too big to fit in a tutorial script, but the shape is:
-
-```python
-class HiFiGAN(nn.Module):
-    def __init__(self, mel_channels=80, upsample_rates=[8, 8, 2, 2]):
-        super().__init__()
-        # 4 upsample blocks, total 256x to go from mel-rate to audio-rate
-        ...
-    def forward(self, mel):
-        return self.blocks(mel)  # -> waveform
-```
-
-Training: adversarial (discriminator on short windows) + mel-spectrogram reconstruction loss + feature-matching loss. Commoditized — use pretrained checkpoints from `hifi-gan` repo or nvidia-NeMo.
-
-### Step 5: the full pipeline (pseudocode)
-
-```python
-text = "Please remind me at 6 pm."
-phones = phonemize(text)
-mel = acoustic_model(phones, speaker=alice)      # [T, 80]
-wav = vocoder(mel)                                # [T * 256]
-soundfile.write("out.wav", wav, 24000)
-```
 
 ## Use It
 
@@ -155,11 +93,6 @@ Open-source leader as of 2026: **F5-TTS for quality, Kokoro for efficiency**. Do
 
 Save as `outputs/skill-tts-designer.md`. Design a TTS pipeline for a given voice, latency, and language target.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Builds a phoneme dictionary from a toy vocab, estimates duration per phoneme, and prints a fake "mel" schedule.
-2. **Medium.** Install Kokoro, synthesize the same sentence at voice `af_bella` and `am_adam`. Compare audio durations and subjective quality.
-3. **Hard.** Record a 5-second reference clip of yourself. Use F5-TTS to clone it. Report SECS between reference and cloned output.
 
 ## Key Terms
 

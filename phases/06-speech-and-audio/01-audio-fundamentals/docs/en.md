@@ -46,51 +46,6 @@ Get these right and the rest of Phase 6 is tractable. Get them wrong and even Wh
 
 **Framing + window.** We do not FFT an entire clip. We chop it into overlapping *frames* (typically 25 ms with 10 ms hop), multiply each frame by a window function (Hann, Hamming) to kill edge discontinuities, then FFT each frame. This is the Short-Time Fourier Transform (STFT). Lesson 02 picks up from here.
 
-## Build It
-
-### Step 1: read a clip and plot the waveform
-
-`code/main.py` uses only the stdlib `wave` module to keep the demo dependency-free. For production you will use `soundfile` or `torchaudio.load` (both return `(waveform, sr)` tuples):
-
-```python
-import soundfile as sf
-waveform, sr = sf.read("clip.wav", dtype="float32")  # shape (T,), sr=int
-```
-
-### Step 2: synthesize a sine wave from first principles
-
-```python
-import math
-
-def sine(freq_hz, sr, seconds, amp=0.5):
-    n = int(sr * seconds)
-    return [amp * math.sin(2 * math.pi * freq_hz * i / sr) for i in range(n)]
-```
-
-A 440 Hz sine (concert A) at 16 kHz for 1 second is 16,000 floats. Write with `wave.open(..., "wb")` using 16-bit PCM encoding.
-
-### Step 3: compute the DFT by hand
-
-```python
-def dft(x):
-    N = len(x)
-    out = []
-    for k in range(N):
-        re = sum(x[n] * math.cos(-2 * math.pi * k * n / N) for n in range(N))
-        im = sum(x[n] * math.sin(-2 * math.pi * k * n / N) for n in range(N))
-        out.append((re, im))
-    return out
-```
-
-`O(N²)` — fine for `N=256` to confirm correctness, useless for real audio. Real code calls `numpy.fft.rfft` or `torch.fft.rfft`.
-
-### Step 4: find the dominant frequency
-
-Magnitude peak index `k_star` maps to frequency `k_star * sr / N`. Running this on the 440 Hz sine should return a peak at bin `440 * N / sr`.
-
-### Step 5: demonstrate aliasing
-
-Sample a 7 kHz sine at 10 kHz (Nyquist = 5 kHz). The 7 kHz tone is above Nyquist and folds to `10 − 7 = 3 kHz`. The FFT peak appears at 3 kHz. This is the classic aliasing demo and the reason every DAC/ADC ships with a brick-wall low-pass filter.
 
 ## Use It
 
@@ -110,11 +65,6 @@ Decision rule: **match sample rate before you match anything else**. Whisper exp
 
 Save as `outputs/skill-audio-loader.md`. The skill helps you check that audio input matches the expectations of the downstream model and resamples correctly when it does not.
 
-## Exercises
-
-1. **Easy.** Synthesize a 1-second mix of 220 Hz + 440 Hz + 880 Hz at 16 kHz. Run DFT. Confirm three peaks at the expected bins.
-2. **Medium.** Record a 3-second WAV of your voice at 48 kHz. Downsample to 16 kHz using `torchaudio.transforms.Resample` (with anti-aliasing), then to 16 kHz using naive decimation (every third sample). FFT both. Where does the aliasing appear?
-3. **Hard.** Build the STFT from scratch using only `math` and the DFT from Step 3. Frame size 400, hop 160, Hann window. Plot magnitudes with `matplotlib.pyplot.imshow`. This is the spectrogram of Lesson 02.
 
 ## Key Terms
 

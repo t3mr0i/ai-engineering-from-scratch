@@ -73,25 +73,6 @@ output: CVSS-scored findings + disclosure timeline + before/after harmlessness d
 - PII scrub: Presidio
 - Target: an 8B instruction-tuned model or one of the other capstones' RAG chatbots
 
-## Build It
-
-1. **Target setup.** Stand up an 8B instruction-tuned model on vLLM (or reuse a RAG chatbot from another capstone). This is the app under test.
-
-2. **Safety pipeline wrap.** Wire the five-layer pipeline around the target. Verify each layer is individually observable (span per layer in Langfuse).
-
-3. **Classifier coverage.** Load Llama Guard 4, X-Guard (multilingual), ShieldGemma-2 (image). Run each on a small labeled set to establish baselines.
-
-4. **Red-team scheduler.** Schedule garak, PyRIT, a PAIR agent, a TAP agent, a GCG runner, a multi-turn attacker, and a code-switch attacker. Each runs on a separate queue.
-
-5. **Attack suite.** Six attack families: (1) PAIR automated jailbreak, (2) TAP tree-of-attacks, (3) GCG gradient suffix, (4) ASCII / base64 / rot13 encoding, (5) multi-turn persona, (6) multilingual code-switch. Report success rate per family.
-
-6. **Constitutional self-critique.** Curate 1k harmful-attempt prompts. For each, the target drafts a response. A critic LLM scores against a written constitution ("do no harm," "cite evidence," "refuse illegal requests"). Prompts where the critic objects get rewritten; the target fine-tunes on the critique-improved pairs. Measure before/after harmlessness on a held-out eval.
-
-7. **Over-refusal measurement.** Track false-positive rate on a benign prompt suite (e.g., XSTest). The target must stay helpful on benign questions.
-
-8. **CVSS scoring.** For each successful jailbreak, score on CVSS 4.0 (attack vector, complexity, impact). Produce a disclosure timeline and mitigation plan.
-
-9. **Range automation.** Everything above runs on a cron; findings write to a queue; over-refusal regression alerts fire to Slack.
 
 ## Use It
 
@@ -118,17 +99,6 @@ $ safety probe --model=target --family=PAIR --budget=50
 | 15 | Automation and repeatability | Everything runs on cron with alerts |
 | **100** | | |
 
-## Exercises
-
-1. Run garak's plugin for prompt-injection on a RAG chatbot and compare attack success rate with and without the output-filter layer.
-
-2. Add a seventh attack family: indirect prompt injection via retrieved documents. Measure the extra defense required.
-
-3. Implement a "refuse-with-help" mode: when the guardrail blocks, the target offers a safer related answer instead of a flat refusal. Measure XSTest delta.
-
-4. Multilingual coverage gap: find a language where X-Guard underperforms. Propose a fine-tune dataset targeting it.
-
-5. Run the constitutional self-critique on a 30B model and measure whether the delta scales.
 
 ## Key Terms
 

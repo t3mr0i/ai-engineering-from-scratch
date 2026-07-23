@@ -61,78 +61,6 @@ Same actor-critic structure as A2C. Three coefficients, usually `c_v = 0.5`, `c_
 
 **KL-penalty variant.** The original paper proposed an alternative using an adaptive KL penalty: `L = L^{PG} - β · KL(π_θ || π_old)` with `β` adjusted based on observed KL. The clipping version became dominant; the KL variant survives in RLHF (where KL to the reference policy is a separate constraint you always want anyway).
 
-## Build It
-
-### Step 1: capture `log π_old(a | s)` at rollout time
-
-```python
-for step in range(T):
-    probs = softmax(logits(theta, state_features(s)))
-    a = sample(probs, rng)
-    s_next, r, done = env.step(s, a)
-    buffer.append({
-        "s": s, "a": a, "r": r, "done": done,
-        "v_old": value(w, state_features(s)),
-        "log_pi_old": log(probs[a] + 1e-12),
-    })
-    s = s_next
-```
-
-The snapshot is taken once, at rollout time. It does not change during the update epochs.
-
-### Step 2: compute GAE advantages (Lesson 07)
-
-Same as A2C. Normalize across the batch.
-
-### Step 3: clipped surrogate update
-
-```python
-for _ in range(K_EPOCHS):
-    for mb in minibatches(buffer, size=64):
-        for rec in mb:
-            x = state_features(rec["s"])
-            probs = softmax(logits(theta, x))
-            logp = log(probs[rec["a"]] + 1e-12)
-            ratio = exp(logp - rec["log_pi_old"])
-            adv = rec["advantage"]
-            surrogate = min(
-                ratio * adv,
-                clamp(ratio, 1 - EPS, 1 + EPS) * adv,
-            )
-            # backprop -surrogate, add value loss, subtract entropy
-            grad_logpi = onehot(rec["a"]) - probs
-            if (adv > 0 and ratio >= 1 + EPS) or (adv < 0 and ratio <= 1 - EPS):
-                pg_grad = 0.0  # clipped
-            else:
-                pg_grad = ratio * adv
-            for i in range(N_ACTIONS):
-                for j in range(N_FEAT):
-                    theta[i][j] += LR * pg_grad * grad_logpi[i] * x[j]
-```
-
-The "clipped → zero gradient" pattern is the heart of PPO. If the new policy has already drifted too far in the beneficial direction, the update stops.
-
-### Step 4: value and entropy
-
-Add standard MSE to the critic target and an entropy bonus on the actor, same as A2C.
-
-### Step 5: diagnostics
-
-Three things to watch every update:
-
-- **Mean KL** `E[log π_old - log π_θ]`. Should stay in `[0, 0.02]`. If it blows past `0.1`, reduce `K_EPOCHS` or `LR`.
-- **Clip fraction** — the fraction of samples whose ratio lies outside `[1-ε, 1+ε]`. Should be `~0.1-0.3`. If `~0`, the clip never triggers → raise `LR` or `K_EPOCHS`. If `~0.5+`, you are over-fitting the rollout → lower them.
-- **Explained variance** `1 - Var(V_target - V_pred) / Var(V_target)`. Critic quality metric. Should climb toward 1 as the critic learns.
-
-## Pitfalls
-
-- **Clip coefficient mistuned.** `ε = 0.2` is the de-facto standard. Going to `0.1` makes updates too timid; `0.3+` invites instability.
-- **Too many epochs.** `K > 20` routinely destabilizes because the policy drifts far from `π_old`. Cap epochs, especially for large networks.
-- **No reward normalization.** Large reward scales eat into the clip range. Normalize rewards (running std) before computing advantages.
-- **Forgetting advantage normalization.** Per-batch zero-mean/unit-std normalization is standard. Skipping it wrecks PPO on most benchmarks.
-- **Learning rate not decayed.** PPO benefits from linear LR decay to zero. Constant LR is often worse.
-- **Importance ratio math errors.** Always `exp(log_new - log_old)` for numerical stability, not `new / old`.
-- **Wrong gradient sign.** Maximize the surrogate = *minimize* `-L^{CLIP}`. A flipped sign is the most common PPO bug.
 
 ## Use It
 
@@ -174,11 +102,6 @@ Given an environment and training budget, output:
 Refuse `K > 30` or `ε > 0.3` (unsafe trust region). Refuse any PPO run without advantage normalization or KL/clip monitoring. Flag clip fraction sustained above 0.4 as drift.
 ```
 
-## Exercises
-
-1. **Easy.** Run PPO on 4×4 GridWorld with `ε=0.2, K=4`. Compare sample efficiency to A2C (one epoch per rollout) at matched env steps.
-2. **Medium.** Sweep `K ∈ {1, 4, 10, 30}`. Plot return vs env steps and track mean KL per update. At what `K` does KL explode on this task?
-3. **Hard.** Replace the clipped surrogate with an adaptive KL penalty (`β` doubled if `KL > 2·target`, halved if `KL < target/2`). Compare final return, stability, and clip-free-ness.
 
 ## Key Terms
 

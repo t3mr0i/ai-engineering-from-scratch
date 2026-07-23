@@ -81,23 +81,6 @@ Engineering rule: treat correlation IDs as load-bearing. Swap them and you get w
 
 Tool execution is the sandbox boundary. See Lesson 09 for detail. Short version: every tool should specify read/write surface, network access, timeout, memory cap. Generic `run_shell(cmd)` is a red flag; specific `git_status()` is safer.
 
-## Build It
-
-`code/main.py` implements a production-shape tool registry:
-
-- JSON Schema subset validator (stdlib only).
-- Tool registration with description, input schema, timeout, and executor.
-- Argument coercion and enum validation.
-- Parallel tool dispatch with correlation IDs.
-- Error observations as structured strings.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows a mini agent calling three tools in one turn, with one deliberately malformed call that is rejected with a descriptive error the model can act on.
 
 ## Use It
 
@@ -107,13 +90,6 @@ Every provider has its own tool schema — Anthropic, OpenAI, Gemini, Bedrock. U
 
 `outputs/skill-tool-registry.md` generates a tool catalog, schema, and registry for a given task domain. Includes description-quality checks (does each tool's description tell the model when to use it?).
 
-## Exercises
-
-1. Add a "no-op" tool that lets the model explicitly refuse to use any other tool. Measure on a BFCL-like hallucination test.
-2. Implement argument coercion for int-as-string and float-as-string. Where does coercion start to hide real bugs?
-3. Add a per-tool timeout and a circuit breaker (refuse the tool for 60s after 3 consecutive failures). What does this change about how the model recovers?
-4. Read BFCL V4 description. Pick one category (e.g. "multi-turn") and run 10 example prompts through your agent. Report pass rate.
-5. Port the stdlib validator to Pydantic or Zod. What did Pydantic/Zod catch that the toy missed?
 
 ## Key Terms
 

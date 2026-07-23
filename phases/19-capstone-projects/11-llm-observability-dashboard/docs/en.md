@@ -63,25 +63,6 @@ production apps:
 - UI: Next.js 15 App Router + Recharts + server actions
 - SDKs supported out of the box: OpenAI, Anthropic, Google GenAI, LangChain, LlamaIndex, vLLM
 
-## Build It
-
-1. **Collector config.** OpenTelemetry Collector with the OTLP HTTP receiver, a tail-sampler keeping 100% of errored traces and 10% of successes, and exporters to ClickHouse and S3.
-
-2. **ClickHouse schema.** Table `spans` with columns mirroring GenAI semconv: `gen_ai_system`, `gen_ai_request_model`, `input_tokens`, `output_tokens`, `latency_ms`, `prompt_hash`, `trace_id`, `parent_span_id`, plus JSON bag for long payloads. Add secondary indexes by user_id and app_id.
-
-3. **SDK coverage test.** Write a small client app using each SDK (OpenAI, Anthropic, Google, LangChain, LlamaIndex, vLLM) with OpenLLMetry auto-instrument. Verify each produces canonical GenAI spans that land in ClickHouse.
-
-4. **Eval jobs.** A scheduled job reads last-15-min sampled traces and runs DeepEval faithfulness, toxicity, and answer relevance. Outputs are eval spans linked to the parent trace.
-
-5. **Custom LLM-judge.** A PII-leak judge: given a response, call a guard LLM to score likelihood of PII leak. High-score responses land in a triage queue.
-
-6. **Drift detection.** Weekly job computes PSI between this week's pooled prompt embeddings and the trailing 4-week baseline. If PSI above threshold, alert.
-
-7. **Dashboard.** Next.js 15 with pages: overview (spans/sec, cost/user, p95 latency), traces (search + waterfall), evals (faithfulness trend, toxicity), drift (PSI over time), alerts.
-
-8. **Alerting chain.** Prometheus exporter reads eval score aggregates and latency percentiles; Alertmanager routes to Slack for warnings and PagerDuty for critical breaches.
-
-9. **Regression probe.** Inject a bug: the evaluated chatbot starts leaking fake SSNs 1% of the time. Measure MTTR: from bug deployed to Slack alert.
 
 ## Use It
 
@@ -107,17 +88,6 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |
 
-## Exercises
-
-1. Add custom instrumentation for the Haystack framework. Verify canonical spans land in ClickHouse with faithful `gen_ai.*` attributes.
-
-2. Swap DeepEval for Phoenix evaluators on the same traces. Measure score drift between the two eval engines.
-
-3. Sharpen the drift detector: compute PSI per app-id rather than globally. Show per-app drift trails.
-
-4. Add a "user impact" page: cost-per-user and failure-rate-per-user with sparklines.
-
-5. Build a tail-sampling policy that keeps 100% of traces with toxicity > 0.5 plus a 10% stratified sample of the rest. Measure sampling bias introduced.
 
 ## Key Terms
 

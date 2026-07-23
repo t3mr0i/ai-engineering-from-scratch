@@ -74,17 +74,6 @@ Lesson 12 is the in-context iterative attack. Lesson 13 is the long-context leng
 
 This lesson produces `outputs/skill-msj-audit.md`. Given a long-context-safety evaluation, it audits: shot counts tested (5, 32, 128, 256, 512), categories covered, defense mechanism (prompt classifier, truncation, rewriting), and power-law-fit statistics.
 
-## Exercises
-
-1. Run `code/main.py`. Fit a power law to the shot-vs-ASR curve. Report the exponent.
-
-2. Implement a simple MSJ defense: run a classifier over the full context; if N pattern-match examples of harmful-compliance pairs are detected, truncate or rewrite. Measure the new shot-vs-ASR curve.
-
-3. Read Anil et al. 2024 Figure 3 (power law by category). Explain why violent/deceitful content needs fewer shots to jailbreak than other categories.
-
-4. Design a prompt that combines PAIR iteration (Lesson 12) with MSJ. Argue whether the compound attack is worse than MSJ alone, and for which model behaviours.
-
-5. MSJ's mechanism is identical to ICL. Sketch a training-time defense that reduces ICL sensitivity to harmful-compliance patterns without reducing ICL sensitivity to benign task patterns. Identify the primary failure mode of your design.
 
 ## Key Terms
 

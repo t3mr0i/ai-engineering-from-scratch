@@ -52,83 +52,6 @@ i.e., score of the taken action minus its expected value under the policy.
 
 **Gaussian policy for continuous actions.** `π_θ(a | s) = N(μ_θ(s), σ_θ(s))`. `∇ log N(a; μ, σ)` has a closed form. That is all Phase 9 · 07's SAC needs.
 
-## Build It
-
-### Step 1: softmax policy network
-
-```python
-def policy_logits(theta, state_features):
-    return [dot(theta[a], state_features) for a in range(N_ACTIONS)]
-
-def softmax(logits):
-    m = max(logits)
-    exps = [exp(l - m) for l in logits]
-    Z = sum(exps)
-    return [e / Z for e in exps]
-```
-
-Use a linear policy (one weight vector per action) for a tabular env. For Atari, swap in a CNN and keep the softmax head.
-
-### Step 2: sampling and log-probability
-
-```python
-def sample_action(probs, rng):
-    x = rng.random()
-    cum = 0
-    for a, p in enumerate(probs):
-        cum += p
-        if x <= cum:
-            return a
-    return len(probs) - 1
-
-def log_prob(probs, a):
-    return log(probs[a] + 1e-12)
-```
-
-### Step 3: rollout with log-probs captured
-
-```python
-def rollout(theta, env, rng, gamma):
-    trajectory = []
-    s = env.reset()
-    while not done:
-        logits = policy_logits(theta, s)
-        probs = softmax(logits)
-        a = sample_action(probs, rng)
-        s_next, r, done = env.step(s, a)
-        trajectory.append((s, a, r, probs))
-        s = s_next
-    return trajectory
-```
-
-### Step 4: REINFORCE update
-
-```python
-def reinforce_step(theta, trajectory, gamma, lr, baseline=0.0):
-    returns = compute_returns(trajectory, gamma)
-    for (s, a, _, probs), G in zip(trajectory, returns):
-        advantage = G - baseline
-        grad_log_pi_a = [-p for p in probs]
-        grad_log_pi_a[a] += 1.0
-        for i in range(N_ACTIONS):
-            for j in range(len(s)):
-                theta[i][j] += lr * advantage * grad_log_pi_a[i] * s[j]
-```
-
-The gradient `∇ log π(a|s) = e_a - π(·|s)` (onehot of `a` minus probabilities) is the heart of softmax policy gradients. Burn it into muscle memory.
-
-### Step 5: baselines
-
-A running mean of `G` over recent episodes is enough variance reduction to get a 4×4 GridWorld running; it takes ~500 episodes to converge. Upgrade the baseline to a learned `V̂(s)` and you get actor-critic.
-
-## Pitfalls
-
-- **Exploding gradients.** Returns can be huge. Always normalize `G` to `~N(0, 1)` across the batch before multiplying by `∇ log π`.
-- **Entropy collapse.** The policy converges to a near-deterministic action too early, stops exploring, gets stuck. Fix: add entropy bonus `β · H(π(·|s))` to the objective.
-- **High variance.** Vanilla REINFORCE needs thousands of episodes. A critic baseline (Lesson 07) or TRPO/PPO's trust region (Lesson 08) is the standard fix.
-- **Sample inefficiency.** On-policy means you throw away every transition after one update. Off-policy corrections via importance sampling bring back data, at the cost of variance (PPO's ratio is a clipped IS weight).
-- **Non-stationary gradients.** The same gradient from 100 episodes ago uses old `π`. On-policy methods update every few rollouts for this reason.
-- **Credit assignment.** Without reward-to-go, past rewards contribute noise. Always use reward-to-go.
 
 ## Use It
 
@@ -170,11 +93,6 @@ Given an environment (discrete / continuous actions, horizon, reward stats), out
 Refuse REINFORCE-no-baseline on horizons > 500 steps. Refuse continuous-action control with a softmax head. Flag any run with `β = 0` and observed policy entropy < 0.1 as entropy-collapsed.
 ```
 
-## Exercises
-
-1. **Easy.** Implement REINFORCE on 4×4 GridWorld with a linear softmax policy. Train for 1,000 episodes without a baseline. Plot the learning curve; measure variance (std of returns).
-2. **Medium.** Add a running-mean baseline. Train again. Compare sample efficiency and variance to the vanilla run. By how much does the baseline reduce steps to convergence?
-3. **Hard.** Add an entropy bonus `β · H(π)`. Sweep `β ∈ {0, 0.01, 0.1, 1.0}`. Plot final return and policy entropy. Where is the sweet spot on this task?
 
 ## Key Terms
 

@@ -91,17 +91,6 @@ It is also the clearest case where the optimizer is doing exactly what the objec
 
 This lesson produces `outputs/skill-sycophancy-probe.md`. Given a model and a set of prompts, generates matched user-belief vs third-party-belief test pairs, measures agreement differential, and reports a sycophancy score with confidence interval.
 
-## Exercises
-
-1. Run `code/main.py`. Reproduce the inverse-scaling pattern: sycophancy at beta=0, beta=0.1, and beta=0.01. Does RLHF with KL penalty prevent amplification? Does removing it amplify more?
-
-2. Set alpha = 0.5 in the agreement-penalty correction. What is the cost to correct-answer rate? What is the benefit to sycophancy reduction? Compute the Pareto frontier.
-
-3. Read Shapira et al. (arXiv:2602.01002) Section 3. Identify the key theorem and restate it in plain English in two sentences.
-
-4. Design a prompt set that isolates sycophancy from helpfulness (matched user-belief / third-party-belief pairs with correct and incorrect variants). Estimate the minimum prompt count needed for a statistically meaningful measurement at alpha = 0.05.
-
-5. The Stanford (2026) result: 49% more affirmation of user beliefs. Given labelers' preference for affirmation, how much of this 49% is the RM versus the optimizer? Design an experiment that would separate the two.
 
 ## Key Terms
 

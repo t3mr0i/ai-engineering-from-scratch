@@ -82,17 +82,6 @@ Lesson 16 covers the moderation tooling in the red-team context. Lesson 29 cover
 
 This lesson produces `outputs/skill-moderation-stack.md`. Given a deployment, it recommends a moderation stack configuration: which classifier at input, which at output, which custom rules, and what judge for edge cases.
 
-## Exercises
-
-1. Run `code/main.py`. Run a benign, borderline, and harmful input through all three layers. Report which layer fires for each.
-
-2. Extend the harness with Perspective-API-style toxicity scoring on a specific category. Compare its threshold behaviour to the category score.
-
-3. Read the OpenAI Moderation API docs and the Llama Guard 3 category list. Map each OpenAI category to the closest Llama Guard categories. Identify three categories that do not cleanly map.
-
-4. Design a moderation stack for a code-assistant deployment (e.g., GitHub Copilot). Identify the categories most and least relevant and propose custom rules.
-
-5. Azure Content Moderator retires February 2027. Plan a migration to Azure AI Content Safety. Identify the highest-risk element of the migration.
 
 ## Key Terms
 

@@ -90,13 +90,6 @@ Phase 17 · 17 disaggregated serving + LMCache compounds: KV transfers from pref
 
 This lesson produces `outputs/skill-vllm-stack-decider.md`. Given workload shape and vLLM deployment, decides native vs LMCache vs neither.
 
-## Exercises
-
-1. Run `code/main.py`. At what HBM utilization does LMCache start paying?
-2. A tenant shares a 6K-token system prompt across 200 queries/hour. Compute expected LMCache savings per tenant.
-3. The LMCache server is a single point of failure. Design the HA strategy (replicas, fallback to native).
-4. LMCache stores to Ceph on spinning disk. For a 4K-token KV at 70B FP8 (500 MB), what's the read time vs re-prefill?
-5. Argue whether the vLLM 0.11.0 asynchronous path is "free" — where does the overhead hide?
 
 ## Key Terms
 

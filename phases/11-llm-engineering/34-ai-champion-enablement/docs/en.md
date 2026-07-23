@@ -54,17 +54,6 @@ flowchart LR
 - Leadership
 - Project Management
 
-## Build It
-
-In the lab you build a champion backlog planner. It scores enablement opportunities and recommends which champion activity to run next.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/34-ai-champion-enablement/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

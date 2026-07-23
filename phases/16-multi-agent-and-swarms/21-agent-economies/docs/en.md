@@ -91,24 +91,6 @@ The LaMAS proposal (AAMAS 2025) combines: DID identity, Shapley-value credit att
 
 In closed corporate systems, economics gives way to simpler allocation (managers assign work, metrics are internal). The economics literature applies mostly to open networks.
 
-## Build It
-
-`code/main.py` implements:
-
-- `shapley(value_fn, agents)` — exact Shapley computation by enumeration for small N.
-- `second_price_auction(bids)` — truthful mechanism; winner pays second-highest.
-- `Reputation` — DID-bound reputation with exponential decay and slashing.
-- Demo 1: three agents collaborate, exact Shapley attributes credit.
-- Demo 2: five agents bid for a task slot; second-price auction picks winner + payment.
-- Demo 3: 100 rounds of task assignment to agents with heterogeneous rep; rep-weighted routing beats random.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: Shapley values for each agent; auction result showing truthful-bid equilibrium; rep-weighted routing showing 10-20% quality gain over random after warmup.
 
 ## Use It
 
@@ -124,13 +106,6 @@ Running an agent economy in 2026:
 - **Cap decay factor and floor reputation.** Unbounded decay wipes legitimate contributors; too-slow decay rewards stale high-rep agents.
 - **Audit mechanisms adversarially.** Run red-team scenarios before opening the network. Every mechanism has a game theory; you want to find the holes, not the attackers.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm Shapley values sum to total value (efficiency axiom). Change the value function; do Shapley allocations change in the expected direction?
-2. Implement Shapley *sampling* (Monte Carlo over K orderings). How does K affect approximation accuracy? Compare to exact for N=4.
-3. Implement a coalition-forming step before the auction: agents can merge into teams and bid as a unit. Which coalitions form? Is the outcome Pareto-better than individual bidding?
-4. Read the Google Research mechanism-design post. Identify one assumption that, if violated, breaks truthfulness. What does that failure mode look like in an LLM setting?
-5. Read the AAMAS 2025 decentralized LaMAS paper. Implement their Shapley step over 10 agents on a synthetic task. How long does exact computation take? How close does sampling get with 100 draws?
 
 ## Key Terms
 

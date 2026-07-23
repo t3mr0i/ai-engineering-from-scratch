@@ -135,19 +135,6 @@ All three are deterministic and stdlib-only. The driver runs them against a set 
 
 `outputs/skill-ai-security-triage.md` is a one-page decision aid for working consultants: a scored checklist of deployment characteristics, a priority matrix for applying controls, and a minimum-viable audit record template. Paste it into a client engagement document or use it as the opening section of a security review.
 
-## Exercises
-
-1. Run `code/main.py`. Which deployment profile scores the highest overall risk? Which surface does it flag as the top priority, and why does the scoring model weight that surface more heavily than direct injection for that profile?
-
-2. Run `code/main.py` again and find the Quiet Document demonstration in the output. The benign document summarises cleanly. The poisoned document also summarises cleanly. What is the first signal the classifier matches in the poisoned document, and what would have happened if the agent had also had a `send_email` tool in scope?
-
-3. You are reviewing a RAG-based customer service agent before go-live. The system prompt contains the company's refund policy and no credentials. The retrieval corpus is a public knowledge base. Which surfaces does your triage mark as High severity? Which controls would you apply first, and which would you defer?
-
-4. A client's engineering agent has shell access, calls a public web search API, and writes summaries to a shared Confluence space. Construct a realistic indirect injection scenario: what text could an adversary embed in a web search result to cause the agent to delete or corrupt Confluence content? Sketch the detection controls that would catch it before the write operation.
-
-5. The EU AI Act requires audit trails for high-risk AI systems from August 2026. Using the four-element audit record described in "Where the audit trail goes," identify one element that your current team's AI deployments are missing and describe the minimum implementation change needed to add it.
-
-6. You are auditing a deployment where the system prompt contains API keys (a common Phase 17 · 25 finding). What is the lowest-cost mitigation that addresses both system prompt extraction (Shape 3) and data leakage via output (Shape 5) in one change?
 
 ## Key Terms
 

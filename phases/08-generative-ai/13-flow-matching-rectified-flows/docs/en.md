@@ -76,45 +76,6 @@ Flow matching with a Gaussian-conditional path is diffusion *with a specific noi
 
 What flow matching added: the *clarity* of the target (a plain velocity), a cleaner loss, and the license to experiment with non-Gaussian interpolants.
 
-## Build It
-
-`code/main.py` implements 1-D flow matching on a two-mode Gaussian mixture. The vector field `v_θ(x, t)` is a tiny MLP trained with the straight-line target. At inference, integrate 1, 2, 4, and 20 Euler steps and compare sample quality.
-
-### Step 1: training loss
-
-```python
-def train_step(x0, net, rng, lr):
-    x1 = rng.gauss(0, 1)
-    t = rng.random()
-    x_t = t * x1 + (1 - t) * x0
-    target = x1 - x0
-    pred = net_forward(x_t, t)
-    loss = (pred - target) ** 2
-    # backprop + update
-```
-
-### Step 2: multi-step inference
-
-```python
-def sample(net, num_steps):
-    x = rng.gauss(0, 1)
-    for i in range(num_steps):
-        t = 1.0 - i / num_steps
-        dt = 1.0 / num_steps
-        x -= dt * net_forward(x, t)
-    return x
-```
-
-### Step 3: compare step counts
-
-Expect the 4-step sampler to already match the 20-step quality — a big deal for latency.
-
-## Pitfalls
-
-- **Time parameterization.** Flow matching uses `t ∈ [0, 1]` with `t=0` at data, `t=1` at noise. DDPM uses `t ∈ [0, T]` with `t=0` at data, `t=T` at noise. Same direction, different scale. Papers get this wrong constantly.
-- **Schedule choice.** Rectified flow's straight line is "the" flow-matching schedule, but you can use cosine or logit-normal t-sampling (SD3 does this) for better scale coverage.
-- **Reflow cost.** Generating the paired dataset for reflow is a full inference pass per sample. Only do reflow when you really need 1-2 step inference.
-- **Classifier-free guidance still applies.** Just swap ε for v in the linear combination: `v_cfg = (1+w) v_cond - w v_uncond`.
 
 ## Use It
 
@@ -133,11 +94,6 @@ Whenever a paper says "faster than diffusion" in 2025-2026, it is almost always 
 
 Save `outputs/skill-fm-tuner.md`. Skill takes a diffusion-style model spec and converts it to a flow-matching training config: schedule choice, time sampling distribution (uniform / logit-normal), optimizer, reflow plan, target step count, eval protocol.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` and compare 1-step vs 20-step MSE vs the true data distribution.
-2. **Medium.** Switch from uniform `t` sampling to logit-normal (concentrates sampling at mid-t). Does the model quality improve?
-3. **Hard.** Implement one reflow iteration: generate paired (x_0, x_1) by integrating the first model, train a second model on the pairs, and compare 1-step sample quality.
 
 ## Key Terms
 

@@ -65,22 +65,6 @@ Implications:
 - **Hub failure.** In a star topology, a bad hub corrupts everyone. Rotate or use multiple hubs.
 - **Prompt homogenization.** All agents use the same prompt; they produce the same answers. Use diverse prompts and/or models.
 
-## Build It
-
-`code/main.py` implements stdlib debate:
-
-- `Debater` class (scripted LLM with per-debater opinion drift).
-- `FullMeshDebate` and `SparseDebate` runners.
-- Three questions: one factual, one rule-based, one reasoning.
-- Metrics: convergent answer, rounds to convergence, total critique ops.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: per-protocol accuracy and cost; sparse matches full mesh on 2/3 questions at lower cost.
 
 ## Use It
 
@@ -92,13 +76,6 @@ Output: per-protocol accuracy and cost; sparse matches full mesh on 2/3 question
 
 `outputs/skill-debate.md` scaffolds a multi-agent debate with configurable topology, N, R, and a convergence rule.
 
-## Exercises
-
-1. Implement a "forced disagreement" rule: in round 1, every debater must produce a distinct proposal. Measure effect on convergence speed.
-2. Add a confidence-weighted aggregation: debaters return (answer, confidence); aggregator weights by confidence. Does it help?
-3. Swap one "agent" for a different scripted LLM with different opinions. Does heterogeneity improve accuracy?
-4. Measure token cost for full mesh vs sparse on your 3 questions. Plot cost vs accuracy.
-5. Read the Society of Minds paper. Port your toy to N=5, R=3. What breaks? What gets better?
 
 ## Key Terms
 

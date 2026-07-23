@@ -72,17 +72,6 @@ No network and no real model — the point is to make the *decision policy* expl
 
 `outputs/skill-copilot-task-router.md` is a one-page decision aid: paste a task, get the recommended Copilot surface, the context you should pin (`#`-refs, instructions file, MCP servers), and the verification gate to apply before the diff lands.
 
-## Exercises
-
-1. Run `code/main.py`. Which task in the sample set routes to agent mode, and which to plain completion? Change one task's description so it moves *up* one rung — what word triggered the change?
-
-2. The acceptance simulator blocks one diff whose tests are green. Find it. Explain in one sentence why "tests pass" was the wrong signal, and which Phase 14 · 38 concept it maps to.
-
-3. Write a `.github/copilot-instructions.md` (10 lines max) for a repo you actually work in. Include one "never do X" rule and one "always do Y" rule. Predict one concrete suggestion it would change.
-
-4. Pick a real task from your backlog that you'd normally do by hand. Assign it to the server-side Copilot coding agent (or describe the issue you'd write). What three things must be in the issue body for the resulting PR to be reviewable?
-
-5. You wire a Jira MCP server into your IDE so agent mode can read tickets directly. Name one task this makes dramatically faster — and one new risk it introduces (hint: the agent now reads attacker-controllable text; see Phase 18 · 15, indirect prompt injection).
 
 ## Key Terms
 

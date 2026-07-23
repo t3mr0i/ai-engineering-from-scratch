@@ -106,17 +106,6 @@ Run it on a fake registry that contains one clean server and one rug-pulled serv
 
 This lesson produces `outputs/skill-mcp-threat-model.md`. Given an MCP deployment, the skill produces a threat model naming which of the seven attacks apply, what defenses are in place, and where the Rule of Two is violated.
 
-## Exercises
-
-1. Run `code/main.py`. Observe how the static detector flags the poisoned description and the hash-pin detector flags the rug-pulled server.
-
-2. Extend the detector with one more pattern from Invariant Labs' security notification list. Add a test registry that exercises it.
-
-3. Design a detector for cross-server shadowing. Given a merged registry, identify when a second server's tool name shadows a first server's tool. What metadata would you need?
-
-4. Apply the Rule of Two to your own agent setup. List every tool. Classify each by untrusted / sensitive / consequential. Find one call that violates the rule.
-
-5. Read the March 2026 arXiv paper on adaptive attacks. Identify the one defense the paper recommends that is NOT in this lesson. Explain why it does not collapse the adaptive-attack surface further.
 
 ## Key Terms
 

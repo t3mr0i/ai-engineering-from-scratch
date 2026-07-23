@@ -54,17 +54,6 @@ flowchart LR
 - Project Management
 - Leadership
 
-## Build It
-
-In the lab you build a use-case triage tool. It turns ambiguous ideas into ranked pilot candidates and recommends the controls needed for the next conversation.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/32-ai-use-case-identification-workshop/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

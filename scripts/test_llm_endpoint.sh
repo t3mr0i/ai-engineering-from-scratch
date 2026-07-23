@@ -8,7 +8,7 @@
 #   ./scripts/test_llm_endpoint.sh \
 #       https://gateway.lhind.ai/v1 \
 #       "sk-xf-...." \
-#       azure/gpt-4o
+#       azure/gpt-5.4-mini
 #
 # Or set via env vars:
 #   LLM_URL=... LLM_KEY=... LLM_MODEL=... ./scripts/test_llm_endpoint.sh
@@ -17,7 +17,7 @@ set -u
 
 URL="${1:-${LLM_URL:-}}"
 KEY="${2:-${LLM_KEY:-}}"
-MODEL="${3:-${LLM_MODEL:-azure/gpt-4o}}"
+MODEL="${3:-${LLM_MODEL:-azure/gpt-5.4-mini}}"
 
 if [ -z "$URL" ] || [ -z "$KEY" ]; then
   echo "usage: $0 <endpoint-url> <api-key> [model]"

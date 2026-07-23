@@ -45,81 +45,6 @@ Both steps are learnable. Both are benchmarked. The combined pipeline has been s
 
 Always report both. A system with 99% disambiguation on 80% candidate recall is an 80% pipeline.
 
-## Build It
-
-### Step 1: build an alias index from Wikipedia redirects
-
-```python
-alias_to_entities = {
-    "jordan": ["Q41421 (Michael Jordan)", "Q810 (Jordan, country)", "Q254110 (Michael B. Jordan)"],
-    "paris":  ["Q90 (Paris, France)", "Q663094 (Paris, Texas)", "Q55411 (Paris Hilton)"],
-    "apple":  ["Q312 (Apple Inc.)", "Q89 (apple, fruit)"],
-}
-```
-
-Wikipedia alias data: ~18M (alias, entity) pairs. Download from Wikidata dumps. Store as inverted index.
-
-### Step 2: context-based disambiguation
-
-```python
-def disambiguate(mention, context, alias_index, entity_desc):
-    candidates = alias_index.get(mention.lower(), [])
-    if not candidates:
-        return None, 0.0
-    context_words = set(tokenize(context))
-    best, best_score = None, -1
-    for entity_id in candidates:
-        desc_words = set(tokenize(entity_desc[entity_id]))
-        union = len(context_words | desc_words)
-        score = len(context_words & desc_words) / union if union else 0.0
-        if score > best_score:
-            best, best_score = entity_id, score
-    return best, best_score
-```
-
-The Jaccard overlap is a toy. Replace with cosine similarity on embeddings (see `code/main.py` step-2 for the transformer version).
-
-### Step 3: embedding-based (BLINK-style)
-
-```python
-from sentence_transformers import SentenceTransformer
-encoder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-
-def embed_mention(text, mention_span):
-    start, end = mention_span
-    marked = f"{text[:start]} [MENTION] {text[start:end]} [/MENTION] {text[end:]}"
-    return encoder.encode([marked], normalize_embeddings=True)[0]
-
-def embed_entity(entity_id, description):
-    return encoder.encode([f"{entity_id}: {description}"], normalize_embeddings=True)[0]
-```
-
-At index time, embed every KB entity once. At query time, embed the mention + context once, dot-product against the candidate pool, pick max.
-
-### Step 4: generative entity linking (concept)
-
-GENRE decodes the entity's Wikipedia title character-by-character. Constrained decoding (see lesson 20) ensures only valid titles can be output. Tight integration with a KB-backed trie. The modern descendant is REL-GEN and LLM-prompted EL with structured output.
-
-```python
-prompt = f"""Text: {text}
-Mention: {mention}
-List the best Wikipedia title for this mention.
-Respond with JSON: {{"title": "..."}}"""
-```
-
-Combined with a whitelist (Outlines `choice`), this is the simplest EL pipeline to ship in 2026.
-
-### Step 5: evaluate on AIDA-CoNLL
-
-AIDA-CoNLL is the standard EL benchmark: 1,393 Reuters articles, 34k mentions, Wikipedia entities. Report in-KB accuracy (`P@1`) and out-of-KB NIL-detection rate.
-
-## Pitfalls
-
-- **NIL handling.** Some mentions are not in the KB (emerging entities, obscure people). Systems must predict NIL instead of guessing the wrong entity. Measured separately.
-- **Mention boundary errors.** Upstream NER misses partial spans ("Bank of America" tagged as just "Bank"). EL recall drops.
-- **Popularity bias.** Trained systems over-predict frequent entities. A mention of "Michael I. Jordan" on an ML paper often links to basketball Jordan.
-- **Cross-lingual EL.** Mapping mentions in Chinese text to English Wikipedia entities. Requires a multilingual encoder or a translation step.
-- **KB staleness.** New companies, events, people are not in last year's Wikipedia dump. Production pipelines need a refresh loop.
 
 ## Use It
 
@@ -161,11 +86,6 @@ Given a use case (domain KB, language, volume, latency budget), output:
 Refuse any EL pipeline without a mention-recall baseline (you cannot evaluate a disambiguator without knowing candidate gen surfaced the right entity). Refuse any pipeline using LLM-prompted EL without constrained output to valid KB ids. Flag systems where popularity bias affects minority entities (e.g. name-clashes) without domain fine-tuning.
 ```
 
-## Exercises
-
-1. **Easy.** Implement the prior+context disambiguator in `code/main.py` on 10 ambiguous mentions (Paris, Jordan, Apple). Hand-label the correct entity. Measure accuracy.
-2. **Medium.** Encode 50 ambiguous mentions with a sentence transformer. Embed each candidate's description. Compare embedding-based disambiguation to Jaccard context overlap.
-3. **Hard.** Build a 1k-entity domain KB (e.g. employees + products in your company). Implement NER + EL end-to-end. Measure precision and recall on 100 held-out sentences.
 
 ## Key Terms
 

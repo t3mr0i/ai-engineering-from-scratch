@@ -137,25 +137,6 @@ Some failures are immediate; some are slow. Immediate failures (timeout, schema 
 
 The 2026 engineering move: instrument slow-failure proxies so you can catch drift before it becomes a visible error. Agreement rate, retry rate, output-length distribution, and edit-distance between consecutive agent versions are all useful proxies.
 
-## Build It
-
-`code/main.py` implements:
-
-- `FailureTaxonomy` — categorizes simulated incidents into MAST + Groupthink categories.
-- `CircuitBreaker` — classic pattern; opens when error rate exceeds threshold.
-- `RetryStormSimulator` — shows the cascading failure; toggles circuit breaker on / off.
-- `DetectionAgent` — scripted STRATUS-style symptom matcher.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output:
-- retry storm with no circuit breaker: inventory errors blow up (simulated).
-- with circuit breaker: cap at threshold; degraded-mode responses served.
-- detection agent flags the pattern and names the MAST category.
 
 ## Use It
 
@@ -171,13 +152,6 @@ Failure-mode discipline in production:
 - **STRATUS trio.** Detection + Diagnosis + Validation agents monitoring production. Start with the detection agent only; add diagnosis when symptoms are noisy.
 - **Failure budget.** Explicit SLO for failure rate by category. Exceeding budget triggers a stop-shipping conversation.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm the circuit breaker caps the retry storm. Vary the failure threshold and observe the tradeoff.
-2. Implement a **slow-failure proxy**: agreement rate across 3 parallel agents. When it drops sharply, trigger an alert. Simulate a monoculture drift by gradually correlating agent outputs.
-3. Read Cemri et al. (arXiv:2503.13657). Pick one of their 7 MAS systems and map its top 3 failure categories. How do these compare to what MAST predicts?
-4. Read the Groupthink paper (arXiv:2508.05687). Identify which of the five patterns is hardest to detect in production. Propose a proxy metric.
-5. Design a STRATUS-style detection-diagnosis-validation trio for a specific multi-agent system you know. Which symptoms does detection watch for? What mitigations does diagnosis recommend? How does validation confirm they work?
 
 ## Key Terms
 

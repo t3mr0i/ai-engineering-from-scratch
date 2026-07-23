@@ -61,22 +61,6 @@ Claude computer use, OpenAI CUA, Gemini 2.5 Computer Use (Lesson 21) all train o
 - **Ignoring trajectory length.** Scoring only success-rate misses the 1.4-2.7x step inefficiency OSWorld-Human surfaces.
 - **Stale self-hosted apps.** WebArena's apps pin specific versions; update without re-curation breaks comparability.
 
-## Build It
-
-`code/main.py` implements a toy web-agent harness:
-
-- A minimal "shopping app" state machine: list_items, add_to_cart, checkout.
-- Gold trajectories for 3 tasks.
-- A scripted agent that attempts each task.
-- Execution-based evaluator (state check) and trajectory-efficiency metric (steps vs gold).
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: per-task success rate and trajectory efficiency, mirroring OSWorld-Human's methodology.
 
 ## Use It
 
@@ -89,13 +73,6 @@ Output: per-task success rate and trajectory efficiency, mirroring OSWorld-Human
 
 `outputs/skill-web-desktop-harness.md` builds a web/desktop agent harness with execution-based eval and trajectory efficiency metric.
 
-## Exercises
-
-1. Extend the toy harness with a second app (a forum). Write 3 tasks plus gold trajectories.
-2. Add trajectory-efficiency reporting per task. On your toy, is the agent 1x, 2x, or 3x over gold?
-3. Implement a "distractor" tool — one the gold trajectory never uses. Does the scripted agent get tempted?
-4. Read OSWorld-G. How would you separate grounding failures from planning failures in your own evals?
-5. Read WebArena's apps README. What breaks when you upgrade one of the pinned app versions?
 
 ## Key Terms
 

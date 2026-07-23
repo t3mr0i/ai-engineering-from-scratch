@@ -124,17 +124,6 @@ What to look at:
 
 This lesson produces `outputs/skill-otel-genai-instrumentation.md`. Given an agent codebase, the skill produces an instrumentation plan: where to add spans, which attributes to populate, and which exporters to target.
 
-## Exercises
-
-1. Run `code/main.py`. Count the spans and identify which is CLIENT vs INTERNAL.
-
-2. Turn on content capture (env var) and confirm `gen_ai.content.prompt` and `gen_ai.content.completion` events appear. Note the implications for PII.
-
-3. Add the tool-execution metric `gen_ai.tool.execution.duration` and emit it as a histogram sample per call.
-
-4. Propagate a traceparent from a parent agent span into an MCP request's `_meta.traceparent` field. Verify the MCP server would see the same trace id.
-
-5. Read the OTel GenAI semconv spec. Identify one attribute listed in the semconv that this lesson's code does NOT emit. Add it.
 
 ## Key Terms
 

@@ -99,13 +99,6 @@ If the new model is distinctly different (different behavior, different cost cur
 
 This lesson produces `outputs/skill-rollout-runbook.md`. Given candidate model, baseline, and risk tolerance, designs shadow→canary→100% plan.
 
-## Exercises
-
-1. Run `code/main.py`. Inject a 25% cost regression. At which stage does the canary halt?
-2. Your new model has 3% accuracy gain offline but cost/request is +18%. Is it a ship? Depends on the policy — write both paths.
-3. Design a rollback that takes under 60 seconds end-to-end. List the required infrastructure.
-4. Non-determinism shows ±7% on your eval. Set canary gates so you don't false-alarm. What multipliers do you use?
-5. Shadow mode catches a 40% cost spike before canary. Write the alert rule that fires in shadow.
 
 ## Key Terms
 

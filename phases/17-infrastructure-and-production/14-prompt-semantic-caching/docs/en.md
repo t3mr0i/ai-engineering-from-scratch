@@ -103,13 +103,6 @@ Pricing points are captured 2026-04 from the linked vendor docs and drift every 
 
 This lesson produces `outputs/skill-cache-auditor.md`. Given prompt template and traffic, audits cacheability and recommends restructure.
 
-## Exercises
-
-1. Run `code/main.py`. Toggle the parallelization flag. How much does the bill change?
-2. Your system prompt has a date. Move it out. Show before/after hit rate math.
-3. Calculate break-even for 1-hour TTL (2x write) vs 5-minute TTL (1.25x write) given your request arrival rate.
-4. Semantic cache at 0.95 threshold hits 20%. At 0.85 it hits 50% but you see incorrect cached responses. Pick the right threshold and justify.
-5. You batch 10 parallel sub-queries per user question. Rewrite for cache-friendliness without adding end-to-end latency.
 
 ## Key Terms
 

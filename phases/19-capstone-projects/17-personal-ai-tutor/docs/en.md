@@ -72,25 +72,6 @@ learner device
 - Safety: Llama Guard 4 + custom age-appropriate filter
 - Eval: Bloom-level question generation, pre/post test harness, efficacy study tooling
 
-## Build It
-
-1. **Curriculum graph.** Build a Neo4j of 50-150 concept nodes (e.g., K-12 algebra from "number line" to "quadratic formula") with prerequisite edges. Attach OER content per node (Open Textbook, OpenStax).
-
-2. **Learner model.** Initialize Bayesian knowledge tracing with priors: guess, slip, learn-rate. Update per-concept mastery after each interaction. Persist per learner.
-
-3. **Tutor policy.** LangGraph with nodes: `read_signal` (was the learner's answer correct / partial / stuck?), `select_concept` (walk curriculum graph picking the highest-priority concept), `scaffold` (Socratic prompt), `update_mastery`.
-
-4. **Memory.** Every interaction writes to an episodic store. Mistakes and preferences promote to semantic memory. COPPA-aware retention policy: auto-delete after 1 year, parent-accessible.
-
-5. **Voice path.** LiveKit Agents worker attached to the tutor policy. ASR via Whisper-v3-turbo. TTS via Cartesia Sonic-2. Barge-in supported (reuse capstone 03 mechanics).
-
-6. **Photo-math path.** Upload or capture image; run dots.ocr or PaliGemma 2 to recognize the equation; feed to tutor as structured input.
-
-7. **Safety.** Every model output passes Llama Guard 4 + an age-appropriate filter (blocks self-harm, adult content, violence). Memory access scoped by learner ID; parental access surface for deletion.
-
-8. **Efficacy study.** 10 learners, pre-test (standardized 30-question baseline), two weeks of tutor interaction (3 sessions/week), post-test. Compare against a non-adaptive baseline cohort of 10 learners on the same content.
-
-9. **Weekly progress reports.** Per learner, auto-generate a PDF summary of topics explored, mastery trajectories, and recommended next steps.
 
 ## Use It
 
@@ -119,17 +100,6 @@ learner: "6"
 | 15 | Curriculum breadth and graph quality | Concept coverage + prerequisite graph consistency |
 | **100** | | |
 
-## Exercises
-
-1. Run the efficacy study with and without the adaptive learner model (random concept order). Report the delta. Expect adaptive to win, but the size is the interesting number.
-
-2. Add a multimodal probe: the same concept question delivered as text, voice, and photo. Measure whether learners converge faster with the modality they prefer.
-
-3. Build a parent dashboard: topics practiced, mastery trajectories, upcoming concepts, safety events (any guardrail hits). COPPA-aligned.
-
-4. Add a language-switch mode: the tutor accepts Spanish input and teaches in Spanish. Measure X-Guard coverage.
-
-5. Stress the memory privacy: verify that learner A cannot see learner B's data even through a voice-clip re-ingest attack. Log the attempted access and alert.
 
 ## Key Terms
 

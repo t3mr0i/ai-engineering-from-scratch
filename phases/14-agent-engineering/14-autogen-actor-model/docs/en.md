@@ -60,22 +60,6 @@ OpenTelemetry support is built in. Every message emits a span; tool calls carry 
 
 Early 2026: AutoGen v0.7.x is stable for research and prototyping. Microsoft has shifted active development to the Microsoft Agent Framework (public preview Oct 1 2025; 1.0 GA targeted end of Q1 2026). AutoGen patterns port forward cleanly — the actor model is the durable idea.
 
-## Build It
-
-`code/main.py` implements a stdlib actor runtime:
-
-- `Message` — typed payload with `sender`, `recipient`, `topic`, `body`.
-- `Actor` — abstract with `receive(message, runtime)`.
-- `Runtime` — event loop with a shared queue, delivery, failure isolation.
-- A two-actor demo: `ReviewerAgent` reviews code, `ChecklistAgent` runs a checklist; they exchange messages until consensus.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows message delivery, a simulated failure in one actor that does not crash the other, and convergence on a shared verdict.
 
 ## Use It
 
@@ -88,13 +72,6 @@ The trace shows message delivery, a simulated failure in one actor that does not
 
 `outputs/skill-actor-runtime.md` generates a minimal actor runtime plus a team template (RoundRobin or Selector) for a given multi-agent task.
 
-## Exercises
-
-1. Add a dead-letter queue: when a handler raises, park the failing message for human inspection. How often does DLQ get hit in your toy?
-2. Implement `SelectorGroupChat`: a selector actor picks who processes the next message based on conversation state.
-3. Add distributed transport: swap the in-process queue for a JSON-over-HTTP server so actors can run in separate processes.
-4. Wire an OTel span per message (or a no-op stand-in). Emit `gen_ai.agent.name`, `gen_ai.operation.name` per Lesson 23.
-5. Read AutoGen v0.4's architecture post. Port your toy to the real `autogen_core` API. What did you skip that matters in production?
 
 ## Key Terms
 

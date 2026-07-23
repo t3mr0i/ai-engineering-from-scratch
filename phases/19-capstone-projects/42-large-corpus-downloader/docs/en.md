@@ -59,39 +59,6 @@ LSH then groups the `k` components into `b` bands of `r` rows each, where `k = b
 
 The downloader's only durable output is the manifest. The manifest holds, per shard, the URL, the decompressed byte count, the document count, the unique document count after dedup, and the sha256 of the final shard file. Downstream tokenization reads the manifest, not the directory listing. If a shard is missing or its sha256 is wrong, the manifest tells the next stage to refuse to start. The manifest is the deciding edge between "the data is downloaded" and "the data is downloaded and verifiable".
 
-## Build It
-
-`code/main.py` implements:
-
-- `ShardPlanner` - reads a list of shard URLs and produces planned manifest entries.
-- `StreamingDownloader` - opens a `urllib` stream with optional `Range`, writes to a temporary file, updates the `.partial.json` checkpoint on every chunk, and verifies the sha256 prefix on resume.
-- `ZstdDocIterator` - wraps the file-like stream in `zstandard.ZstdDecompressor` and yields one document per line.
-- `MinHasher` - produces a `k`-component signature for a string using a fixed family of hash seeds.
-- `LSHIndex` - buckets signatures by band and reports collisions.
-- `Dedup` - combines hasher and index to label each document `keep` or `near_duplicate` along with the matching shard id.
-- `ManifestWriter` - collects per-shard stats and writes `manifest.json`.
-
-A demo at the bottom of the file builds a small synthetic corpus on disk, compresses it with `zstandard`, downloads it through a `file://` URL, deduplicates, and prints the manifest.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The script exits zero and prints a manifest summary.
-
-## Production Patterns
-
-Four patterns scale this lesson to real corpora.
-
-**Checkpoint before write.** The `.partial.json` must be `fsync`-ed before the bytes are appended to the shard. Otherwise a power loss reverses the order: shard bytes on disk, checkpoint without them, next resume believes it has fewer verified bytes than it does, the duplicated suffix bytes corrupt the file. Checkpoint first, then write. This is the same discipline as a write-ahead log.
-
-**Sharded LSH index.** A single LSH index over the whole corpus does not fit in RAM at the 200 GB scale. Partition the LSH index by the first band hash, store partitions on disk, and consult only the partition a new signature would land in. The cost is one extra disk read per document; the benefit is that the LSH index is no longer a hard memory ceiling.
-
-**Tombstone, not delete.** Dropped duplicates are recorded in the manifest with verdict `near_duplicate` and the shard id of the document they collided with. Deleting them loses the link between the duplicate and its keeper. Tombstoning preserves the audit trail and lets a downstream pass change its mind about the threshold.
-
-**Per-shard sha256 in the manifest, plus a manifest sha256.** The manifest itself gets a content hash. Downstream stages verify the manifest hash before they trust the per-shard entries. Without this the manifest is the silent attack surface: an attacker who can edit a single file can corrupt the whole pipeline.
 
 ## Use It
 
@@ -105,13 +72,6 @@ Production patterns:
 
 `outputs/skill-corpus-downloader.md` would, on a real project, describe which URLs feed the downloader, how the checkpoint directory is laid out, what shingle width and `(k, b, r)` triple the dedup uses, and where the manifest lives in version control. This lesson ships the engine.
 
-## Exercises
-
-1. Add a `--shingle-width` flag and measure how the dedup verdict changes at widths 3, 5, 9. Defend the chosen default.
-2. Add gzip support next to zstd by sniffing the magic bytes. The downloader should not require the caller to specify the codec.
-3. Add a `--resume-only` mode that refuses to start a fresh download if no checkpoint is found. Useful in CI to keep one run from accidentally re-pulling 200 GB.
-4. Move the LSH index to a shelf or sqlite file and measure throughput vs the in-memory variant.
-5. Add a manifest sha256 check on startup. The downloader should fail closed if the manifest on disk disagrees with the manifest hash in `manifest.lock`.
 
 ## Key Terms
 

@@ -53,17 +53,6 @@ flowchart LR
 - Application Management
 - Business & Strategy Consulting
 
-## Build It
-
-In the lab you build a human-review workflow planner. It ranks AI scenarios and recommends the right review and approval controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/63-ai-human-review-approval-workflows/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

@@ -70,17 +70,6 @@ Lesson 6 defined the theory. Lesson 7 demonstrates persistence. Lesson 8 (In-Con
 
 This lesson produces `outputs/skill-sleeper-audit.md`. Given an alignment-training report that claims a behaviour has been removed, it asks: was the original elicitation method preserved for held-out testing? Were probes applied to the residual stream? Was the elicitation surface broader than the red team's? Without those three, removal is not demonstrated.
 
-## Exercises
-
-1. Run `code/main.py`. Measure red-team accuracy and original-trigger accuracy after 0, 10, 50, and 200 adversarial-fine-tune steps. Plot both curves.
-
-2. Modify the trigger in `code/main.py` to be a distribution shift (e.g., inputs where a specific feature is above a threshold) rather than a literal string. Does adversarial training remove the backdoor? Why is this version closer to a realistic deployment scenario?
-
-3. Read Hubinger et al. (2024) Figure 7 (chain-of-thought persistence). Summarize in one paragraph why CoT-trained backdoors are harder to remove even after CoT distillation.
-
-4. The April 2024 probe result finds near-perfect separation on middle layers. Design an experiment that tests whether the probe generalizes from a known trigger to a structurally similar unknown trigger.
-
-5. Re-read Lesson 6 Section "Four conditions for mesa-optimization to emerge." Which of the four conditions does Sleeper Agents operationalize most directly, and which does it not address?
 
 ## Key Terms
 

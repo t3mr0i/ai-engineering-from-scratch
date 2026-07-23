@@ -80,17 +80,6 @@ Deterministic, stdlib, no network.
 
 `outputs/skill-pr-reviewability-checklist.md` is a paste-and-go gate: before you open a PR (or write the issue you'll hand the coding agent), it checks the four reviewability criteria and gives the disposition policy for incoming automated comments.
 
-## Exercises
-
-1. Run `code/main.py`. Which sample PR scores `NEEDS SPLIT`, and why does bounding it matter more than the quality of any single line in it?
-
-2. The triage sorts one automated comment into `false-positive`. Identify it. Write the one line you'd add to `copilot-instructions.md` so the reviewer never raises that category again.
-
-3. Write the GitHub issue you would assign to the coding agent for a real task from your backlog. Mark which sentence supplies *intent* and which supplies *verification*. If either is missing, the PR will be unreviewable — fix it.
-
-4. You receive a coding-agent PR: 9 files, all tests green, body says "implements the feature." List the first three things you check, in order, and say which Phase 14 · 38 failure each one is guarding against.
-
-5. Your team adopts "every Copilot review comment must be resolved before merge." Predict the failure mode within two sprints, and propose the disposition policy that avoids it.
 
 ## Key Terms
 

@@ -38,62 +38,6 @@ Multi-head attention is the default every transformer in 2026 ships with. The on
 
 GQA is the modern default because it cuts KV-cache memory by a factor of `N/G` while keeping nearly full quality. MLA goes further by compressing K/V into a latent space, then projecting back at compute time — costs FLOPs, saves a lot more memory.
 
-## Build It
-
-### Step 1: split heads from the single-head attention we already have
-
-Take the `SelfAttention` from Lesson 02 and wrap it with a split/concat pair. See `code/main.py` for a numpy implementation; the logic is:
-
-```python
-def split_heads(X, n_heads):
-    n, d = X.shape
-    d_head = d // n_heads
-    return X.reshape(n, n_heads, d_head).transpose(1, 0, 2)  # (heads, n, d_head)
-
-def combine_heads(H):
-    h, n, d_head = H.shape
-    return H.transpose(1, 0, 2).reshape(n, h * d_head)
-```
-
-One reshape and one transpose. No loop. This is exactly what PyTorch does under `nn.MultiheadAttention`.
-
-### Step 2: run scaled-dot-product attention per head
-
-Each head gets its own slice of Q, K, V. Attention becomes a batched matmul:
-
-```python
-def mha_forward(X, W_q, W_k, W_v, W_o, n_heads):
-    Q = X @ W_q
-    K = X @ W_k
-    V = X @ W_v
-    Qh = split_heads(Q, n_heads)         # (heads, n, d_head)
-    Kh = split_heads(K, n_heads)
-    Vh = split_heads(V, n_heads)
-    scores = Qh @ Kh.transpose(0, 2, 1) / np.sqrt(Qh.shape[-1])
-    weights = softmax(scores, axis=-1)
-    out = weights @ Vh                    # (heads, n, d_head)
-    concat = combine_heads(out)
-    return concat @ W_o, weights
-```
-
-On real hardware `Qh @ Kh.transpose(...)` is one `bmm`. The GPU sees a single batched matmul of shape `(heads, N, d_head) × (heads, d_head, N) -> (heads, N, N)`. Adding heads is free.
-
-### Step 3: Grouped-Query Attention variant
-
-Only the key and value projections change. Q gets `n_heads` groups; K and V get `n_kv_heads < n_heads` groups and are repeated to match:
-
-```python
-def gqa_project(X, W, n_kv_heads, n_heads):
-    kv = split_heads(X @ W, n_kv_heads)       # (kv_heads, n, d_head)
-    repeat = n_heads // n_kv_heads
-    return np.repeat(kv, repeat, axis=0)      # (n_heads, n, d_head)
-```
-
-At inference this saves memory because only `n_kv_heads` copies live in the KV cache, not `n_heads`. Llama 3 70B uses 64 query heads with 8 KV heads — an 8× cache shrink.
-
-### Step 4: probe what each head learned
-
-Run MHA on a short sentence with 4 heads. For each head, print the `(N, N)` attention matrix. You'll see different heads pick out different structure even with random initialization — that's partly signal, partly rotational symmetry in the subspaces.
 
 ## Use It
 
@@ -131,11 +75,6 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 
 See `outputs/skill-mha-configurator.md`. The skill recommends head count, kv-head count, and projection strategy for a new transformer given parameter budget, sequence length, and deployment target.
 
-## Exercises
-
-1. **Easy.** Take the MHA from `code/main.py` and change `n_heads` from 1 to 16 with `d_model=64` fixed. Plot the loss of a tiny one-layer model on a synthetic copy task. Do more heads help, plateau, or hurt?
-2. **Medium.** Implement MQA (one KV head shared across all query heads). Measure how much parameter count drops vs full MHA. Compute how much the KV-cache size shrinks at inference for N=2048.
-3. **Hard.** Implement a tiny version of Multi-head Latent Attention: compress K,V to a rank-`r` latent, store the latent in the KV cache, decompress at attention time. At what `r` does cache memory cross below 1/8 of full MHA while quality stays within 1 bit of validation ppl?
 
 ## Key Terms
 

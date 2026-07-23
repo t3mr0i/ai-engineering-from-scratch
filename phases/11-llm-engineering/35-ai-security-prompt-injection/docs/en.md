@@ -57,17 +57,6 @@ flowchart LR
 - Products & Value Streams
 - Corporate Functions
 
-## Build It
-
-In the lab you build a threat-triage planner. It scores AI workflow scenarios and recommends the controls needed before the workflow moves toward production.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/35-ai-security-prompt-injection/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

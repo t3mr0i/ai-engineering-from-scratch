@@ -89,43 +89,6 @@ Large-v3-turbo (2024) cut the decoder from 32 layers to 4. 8× faster decoding w
 | TTS | Piper, XTTS-v2, Kokoro | Encoder-decoder pattern, but Whisper-shaped |
 | Audio + language | AudioLM, SeamlessM4T | Text tokens + audio tokens in one transformer |
 
-## Build It
-
-See `code/main.py`. We don't train Whisper — we build the log-mel spectrogram pipeline + task-token prompt formatter. Those are the parts you actually touch in production.
-
-### Step 1: synthesize audio
-
-Generate a 1-second sine wave at 440 Hz sampled at 16 kHz. 16,000 samples.
-
-### Step 2: log-mel spectrogram (simplified)
-
-Full mel spectrogram needs FFT. We do a simplified framing + per-frame energy version that shows the pipeline without requiring `librosa`:
-
-```python
-def frame_signal(x, frame_size=400, hop=160):
-    frames = []
-    for start in range(0, len(x) - frame_size + 1, hop):
-        frames.append(x[start:start + frame_size])
-    return frames
-```
-
-Frame = 25 ms, hop = 10 ms. Matches Whisper's windowing. Per-frame energy stands in for mel bins for pedagogy.
-
-### Step 3: pad to 30 s
-
-Whisper always processes 30-second chunks. Pad (or clip) the spectrogram to 3,000 frames.
-
-### Step 4: build the prompt tokens
-
-```python
-def whisper_prompt(lang="en", task="transcribe", timestamps=True):
-    tokens = ["<|startoftranscript|>", f"<|{lang}|>", f"<|{task}|>"]
-    if not timestamps:
-        tokens.append("<|notimestamps|>")
-    return tokens
-```
-
-That is the whole task-control surface. A 4-token prefix.
 
 ## Use It
 
@@ -163,11 +126,6 @@ for s in segments:
 
 See `outputs/skill-asr-configurator.md`. The skill picks an ASR model, decoding parameters, and preprocessing pipeline for a new speech application.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Confirm the frame count for a 1-second signal at 16 kHz with 10 ms hop is ~100 frames. For 30 seconds: ~3,000 frames.
-2. **Medium.** Build the full log-mel spectrogram using `numpy.fft`. Verify 80 mel bins match `librosa.feature.melspectrogram(n_mels=80)` within numerical error.
-3. **Hard.** Implement streaming inference: chunk audio into 10 s windows with 2 s overlap, run Whisper on each chunk, merge transcripts. Measure word-error rate vs single-pass on a 5-minute podcast sample.
 
 ## Key Terms
 

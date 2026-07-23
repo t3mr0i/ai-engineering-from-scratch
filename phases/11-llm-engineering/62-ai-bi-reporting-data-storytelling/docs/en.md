@@ -53,17 +53,6 @@ flowchart LR
 - Business & Strategy Consulting
 - Project Management & Agility
 
-## Build It
-
-In the lab you build an AI reporting narrative planner. It ranks reporting scenarios and recommends review controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

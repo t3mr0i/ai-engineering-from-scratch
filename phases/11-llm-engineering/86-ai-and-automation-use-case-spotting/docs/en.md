@@ -115,17 +115,6 @@ The driver runs a synthetic portfolio of eight candidates — including cases th
 
 `outputs/skill-use-case-intake.md` is a one-page, paste-and-use decision aid for a working consultant or technology manager. It contains the four discovery questions, the two scoring rubrics in table form, the risk overlay, and a structured output template for the pilot backlog. It is designed to be handed to a stakeholder as a standalone artifact without the lesson context.
 
-## Exercises
-
-1. Run `code/main.py`. How many candidates land in `PILOT_NOW`? Which one does the ranker recommend as first pilot, and what is its combined score? Explain in one sentence why the second-ranked candidate was not recommended first.
-
-2. One candidate in the driver scores 5 on value and 2 on readiness, is marked with both the regulatory and data-not-ready flags, and lands in `DEFER` rather than `PILOT_NOW`. Find it in the output. If you removed the `data_not_ready` flag in the source code and re-ran, which classification would it move to — and why does the regulatory penalty still matter even after that change?
-
-3. Apply the discovery questions from the "where to look" section to a real process in your organisation or a client engagement you know. Score it on both axes. Where does it land on the 5×5 grid? If it is in the pilot zone, what is the single biggest risk factor?
-
-4. Run `code/main.py` and locate the candidate that is classified as `IMPROVE_FIRST`. Change its readiness score by one point in the source code and re-run. Which classification does it move to? What does this tell you about the sensitivity of the boundary?
-
-5. The intake explicitly defers regulatory-heavy use cases until data readiness is confirmed. Name one real AI use case in financial services or healthcare that would have benefited from this gate, based on a public case you are aware of. What readiness gap did the project encounter?
 
 ## Key Terms
 

@@ -77,21 +77,6 @@ Most production agents do not run LATS. They run ReAct with tool-grounded verifi
 
 AlphaEvolve (Lesson 11) is the 2025 extreme: evolutionary search over code, machine-checkable fitness, frontier gains (first 4x4 matmul improvement in 56 years).
 
-## Build It
-
-`code/main.py` implements:
-
-- A tiny ToT BFS on a stylized "pick arithmetic ops" task.
-- A toy LATS MCTS loop on the same task (Select / Expand / Simulate / Backpropagate) with UCT selection.
-- A value function that composes a symbolic score plus a self-eval score.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows ToT expanding three candidates per node with BFS, compared to LATS converging on the best rollout via MCTS. Token counts printed for both.
 
 ## Use It
 
@@ -101,13 +86,6 @@ LangGraph ships ToT-style exploration as subgraph patterns; the LangChain team's
 
 `outputs/skill-search-policy.md` selects between linear ReAct, ToT, LATS, and evolutionary search given task shape, budget, and evaluator fidelity.
 
-## Exercises
-
-1. Run the toy LATS with UCT c=0.1 vs c=2.0. What changes in the trace?
-2. Swap the value function for a noisier scorer (add random jitter). Does MCTS still find the best leaf? What is the minimum signal-to-noise it tolerates?
-3. Implement beam-search ToT (keep top-k at each level) and compare to BFS. Which is better on a tight token budget?
-4. Read LATS Section 5.1. Reproduce the HumanEval trajectory count: how many rollouts does it take to hit the reported pass@1?
-5. Read the LATS paper's discussion on "when LATS helps less." Write a one-paragraph decision rule mapping task shape to search strategy.
 
 ## Key Terms
 

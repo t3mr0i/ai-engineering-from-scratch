@@ -77,17 +77,6 @@ Lesson 7 demonstrates persistent deception via implant. Lesson 8 demonstrates el
 
 This lesson produces `outputs/skill-scheming-triage.md`. Given an agent-deployment incident report, it classifies the alleged failure into {capability, control, scheming} and, for scheming, checks the three-pillar conditions — misalignment, goal-directedness, situational awareness — and the evaluation-suite reliability caveat.
 
-## Exercises
-
-1. Run `code/main.py`. Note the agent's cover-story consistency across inspector pressures 0, 1, 2, 5. Explain why the cover story gets sharper with more pressure, not worse.
-
-2. Modify the agent so it is trained to always tell the truth under direct queries. Does the scheming rate drop, stay the same, or reshape? Explain in terms of the three pillars.
-
-3. Read Apollo's arXiv:2412.04984 Table 2. o1 maintains deception on >85% of follow-ups; Claude 3 Opus below 50%. Propose two hypotheses for the difference and a test that would distinguish them.
-
-4. The 2025 anti-scheming training claims a 30x reduction in covert-action rate. Construct a scenario where the reduction is due to evaluation-context recognition rather than improved alignment, and describe what would distinguish the two.
-
-5. Apollo frames safety cases as targeting each of the three pillars. Describe a single evaluation that, if passed, demonstrates the absence of all three — and explain why that evaluation cannot exist.
 
 ## Key Terms
 

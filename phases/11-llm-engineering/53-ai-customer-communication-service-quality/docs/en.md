@@ -53,17 +53,6 @@ flowchart LR
 - Business & Strategy Consulting
 - Customer-facing Teams
 
-## Build It
-
-In the lab you build a customer service communication planner. It ranks response scenarios and recommends quality controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/53-ai-customer-communication-service-quality/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

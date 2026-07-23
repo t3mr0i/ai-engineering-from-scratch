@@ -95,13 +95,6 @@ EU customer PHI cannot leave EU. If your cache-aware router sends a Paris-origin
 
 This lesson produces `outputs/skill-multi-region-router.md`. Given regions, residency constraints, and SLA, designs a routing plan.
 
-## Exercises
-
-1. Run `code/main.py`. At what prompt length does cross-region routing beat local-only routing, given 75 ms RTT?
-2. Your cache hit rate drops from 70% to 12%. Diagnose three possible causes and the observables that would confirm each.
-3. Design a DR manifest for a 70B AWQ-quantized model served in vLLM with 5 LoRA adapters. List every file and config.
-4. Argue whether Bedrock cross-region inference is "enough" for a fintech with strict TTFT SLOs. Cite specific behaviors.
-5. A Paris-origin request matches a prefix in us-east-1. Do you route it? Write the policy.
 
 ## Key Terms
 

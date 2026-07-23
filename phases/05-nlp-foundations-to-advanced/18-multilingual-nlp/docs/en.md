@@ -49,97 +49,6 @@ Language similarity predicts transfer quality better than raw corpus size. For S
 
 Practical rule: if your target language has a typologically close high-resource relative, try fine-tuning on that one first, then compare to English fine-tune.
 
-## Build It
-
-### Step 1: zero-shot cross-lingual classification
-
-```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
-
-tok = AutoTokenizer.from_pretrained("joeddav/xlm-roberta-large-xnli")
-model = AutoModelForSequenceClassification.from_pretrained("joeddav/xlm-roberta-large-xnli")
-
-
-def classify(text, candidate_labels, hypothesis_template="This text is about {}."):
-    scores = {}
-    for label in candidate_labels:
-        hypothesis = hypothesis_template.format(label)
-        inputs = tok(text, hypothesis, return_tensors="pt", truncation=True)
-        with torch.no_grad():
-            logits = model(**inputs).logits[0]
-        entail_score = torch.softmax(logits, dim=-1)[2].item()
-        scores[label] = entail_score
-    return dict(sorted(scores.items(), key=lambda x: -x[1]))
-
-
-print(classify("I love this product!", ["positive", "negative", "neutral"]))
-print(classify("मुझे यह उत्पाद पसंद है!", ["positive", "negative", "neutral"]))
-print(classify("J'adore ce produit !", ["positive", "negative", "neutral"]))
-```
-
-One model, three languages, same API. XLM-R trained on NLI data transfers well to classification via the entailment trick.
-
-### Step 2: multilingual embedding space
-
-```python
-from sentence_transformers import SentenceTransformer
-import numpy as np
-
-model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
-
-pairs = [
-    ("The cat is sleeping.", "Le chat dort."),
-    ("The cat is sleeping.", "El gato está durmiendo."),
-    ("The cat is sleeping.", "Die Katze schläft."),
-    ("The cat is sleeping.", "The dog is barking."),
-]
-
-for eng, other in pairs:
-    emb_eng = model.encode([eng], normalize_embeddings=True)[0]
-    emb_other = model.encode([other], normalize_embeddings=True)[0]
-    sim = float(np.dot(emb_eng, emb_other))
-    print(f"  {eng!r} <-> {other!r}: cos={sim:.3f}")
-```
-
-Translations land close in embedding space. A different English sentence lands further. This is what makes cross-lingual retrieval, clustering, and similarity work.
-
-### Step 3: few-shot fine-tuning strategy
-
-```python
-from transformers import TrainingArguments, Trainer
-from datasets import Dataset
-
-
-def few_shot_finetune(base_model, base_tokenizer, examples):
-    ds = Dataset.from_list(examples)
-
-    def tokenize_fn(ex):
-        out = base_tokenizer(ex["text"], truncation=True, max_length=128)
-        out["labels"] = ex["label"]
-        return out
-
-    ds = ds.map(tokenize_fn)
-    args = TrainingArguments(
-        output_dir="out",
-        per_device_train_batch_size=8,
-        num_train_epochs=5,
-        learning_rate=2e-5,
-        save_strategy="no",
-    )
-    trainer = Trainer(model=base_model, args=args, train_dataset=ds)
-    trainer.train()
-    return base_model
-```
-
-For 100-500 target-language examples, `num_train_epochs=5` and `learning_rate=2e-5` are the safe defaults. Higher learning rates cause the multilingual alignment to collapse and you get an English-only model.
-
-## Evaluation that actually works
-
-- **Per-language accuracy on held-out sets.** Not aggregated. The aggregate hides the long tail.
-- **Benchmark against monolingual baseline.** For languages with enough data, a monolingual model trained from scratch sometimes beats the multilingual one. Test.
-- **Entity-level tests.** Named entities in the target language. Multilingual models often have weak tokenization for scripts far from Latin.
-- **Cross-lingual consistency.** Same meaning in two languages should produce the same prediction. Measure the gap.
 
 ## Use It
 
@@ -192,11 +101,6 @@ Given requirements (target languages, task type, available labeled data per lang
 Refuse to ship a multilingual model without per-language evaluation — aggregate metrics hide long-tail failures. Flag scripts with low tokenization coverage (Amharic, Tigrinya, many African languages) as needing a model with byte-fallback (SentencePiece with byte_fallback=True, or byte-level tokenizer like GPT-2).
 ```
 
-## Exercises
-
-1. **Easy.** Run the zero-shot classification pipeline on 10 sentences per language across English, French, Hindi, and Arabic. Report accuracy on each. You should see strong French, decent Hindi, variable Arabic.
-2. **Medium.** Use `paraphrase-multilingual-MiniLM-L12-v2` to build a cross-lingual retriever over a small mixed-language corpus. Query in English, retrieve documents in any language. Measure recall@5.
-3. **Hard.** Compare English-source and Hindi-source fine-tuning for a Hindi classification task. Use 500 target-language examples for few-shot fine-tuning under both regimes. Report which source produces better Hindi accuracy and by how much. This is the LANGRANK thesis in miniature.
 
 ## Key Terms
 

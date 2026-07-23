@@ -82,38 +82,6 @@ The demo runs everything end to end. It prints a per-stage breakdown of one quer
 
 This is the shape a CI smoke test takes. The pipeline runs offline, fast, deterministic. The thresholds are deliberately tight on the fixture so a regression in any of the six lessons fails the demo.
 
-## Build It
-
-`code/main.py` implements:
-
-- `Chunk` - the record carried through all stages (extends lesson 64's shape with a chunk_index and source doc_id).
-- `Chunker` - selects a strategy from lesson 64 (default recursive split).
-- `HybridIndex` - bundles BM25 + dense + RRF from lesson 65.
-- `Rewriter` (optional) - picks one of HyDE, multi-query, decomposition from lesson 67 by query length and presence of conjunctions.
-- `Reranker` - the trained cross-encoder from lesson 66, with a smaller fixture training set so it converges in seconds.
-- `Generator` - the deterministic mock generator with citations and refuse-on-low-confidence.
-- `Pipeline` - composes the five stages with a `query(question)` method that returns `Result(answer, top_k, latency_ms_per_stage)`.
-- `run_demo()` - ingests the corpus, runs three fixture queries, runs the eval, prints results, sets exit code by threshold.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The output is one printed query trace, the full eval table, and a final pass/fail status. Returns exit code 0 on the fixture.
-
-## Failure modes the demo will hide
-
-**Chunker boundary drift.** If you swap the chunker strategy between the eval qrels labeling pass and the demo, the gold doc ids no longer line up. Lock the chunker strategy in the qrels file. The demo includes a header that names the chunker.
-
-**Reranker training set leaks into the eval.** The 14 training triples in lesson 66 include queries that resemble the eval queries. In production, hold out the eval queries strictly. The demo's eval queries are deliberately disjoint from the rerank training set.
-
-**Mock generator hides hallucination risk.** The mock cannot hallucinate because it only emits text from the retrieved chunks. The lesson notes this and points the production swap-in path to a real model.
-
-**No streaming.** The pipeline returns the full answer at the end of every stage. A production system would stream the generator's output. Streaming is out of scope; the answer-grade metrics work on the final string either way.
-
-**Latency is offline.** The mock LLM calls are constant time. Real LLM calls dominate. Plan a latency budget in the request scope; the lesson's per-stage timing only measures CPU work.
 
 ## Use It
 
@@ -128,13 +96,6 @@ Production patterns:
 
 The pipeline file in this lesson is the shape the rest of Phase 19's Track F lessons assume. Subsequent lessons would add ingestion automation, incremental re-index, telemetry, and a serving layer on top. The retrieval, rerank, rewrite, and eval halves are complete here.
 
-## Exercises
-
-1. Add a per-query strategy selector inside the rewriter: heuristics from lesson 67 (length, conjunctions, jargon ratio) pick HyDE, multi-query, or decomposition.
-2. Add a real LLM call for the generator behind an env flag. Default to the mock. Measure the latency delta.
-3. Extend the demo to take a `--corpus path` flag that loads a real corpus. Re-run the eval and the threshold check.
-4. Add a `--strategy` flag to the chunker. Measure each strategy's contribution to end-to-end recall.
-5. Add a streaming generator interface and feed it into the eval. Confirm that faithfulness is computed on the final string and not on the streamed prefix.
 
 ## Key Terms
 

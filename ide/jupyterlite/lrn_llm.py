@@ -13,6 +13,9 @@ Virtual-Key-Policy des Gateways erlaubt aktuell nur die GPT-5.4-Familie
 (azure/gpt-5.4-mini, azure/gpt-5.4-nano) — andere Modelle
 (z.B. gpt-4o) geben 403 model_blocked zurück.
 
+When running a notebook, you will see one-time log:
+🔑 Proxy mode: using server-injected gateway key (no learner key needed or visible)
+
 Usage in a notebook:
     response = await lrn_llm.call([{"role": "user", "content": "Sag OK"}])
     print(lrn_llm.text(response))  # → "OK"
@@ -42,7 +45,10 @@ API_KEY = ""   # only needed if API_BASE is pointed at a different provider
 def _key():
     # Default path (API_BASE unchanged) needs no key — the server-side proxy
     # injects it. Only relevant if a notebook overrides API_BASE directly.
-    return (API_KEY or os.environ.get("LRN_LLM_API_KEY", "")).strip()
+    key = (API_KEY or os.environ.get("LRN_LLM_API_KEY", "")).strip()
+    if not key and API_BASE == "/api/llm":
+        print("🔑 Proxy mode: using server-injected gateway key (no learner key needed or visible)")
+    return key
 
 
 def _headers():

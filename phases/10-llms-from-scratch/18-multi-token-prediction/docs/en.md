@@ -105,41 +105,6 @@ EAGLE trains a small draft model SEPARATELY after pre-training. MTP bakes the dr
 | Acceptance rate | 0.88-0.92 | 0.80+ at depth 1 |
 | Benefit beyond speedup | Speculative decoding only | Denser training signal + speedup |
 
-## Build It
-
-`code/main.py` builds a single MTP module end to end: shared embedding, projection, transformer block, shared output head. It then computes the per-depth cross-entropy loss on a short synthetic sequence and prints the parameter count by component. A toy vocabulary of 32 tokens keeps the numbers readable.
-
-### Step 1: shared embedding table
-
-A single `vocab_size x hidden` table is used by the main model AND by every MTP module at every depth. Not a second copy — literally the same tensor.
-
-### Step 2: the per-depth combination
-
-```python
-def combine(prev_hidden, next_token_embed, M_k):
-    # concat along feature dim, then project down to hidden
-    concat = rms_norm(prev_hidden) + rms_norm(next_token_embed)  # vector addition stand-in
-    projected = matvec(M_k, concat)
-    return projected
-```
-
-Real DeepSeek-V3 concatenates the two RMSNormed vectors to `[2h]` and projects with an `h x 2h` matrix. The toy uses vector addition for stdlib brevity.
-
-### Step 3: the transformer block at depth k
-
-Self-attention plus MLP. In the toy, a one-layer linear attention block and a SwiGLU MLP keep the structure visible without numpy.
-
-### Step 4: the shared output head
-
-Reuse the main model's output projection. Logits over the vocabulary.
-
-### Step 5: per-depth loss
-
-Cross-entropy of softmax(logits) against the ground-truth token at offset `k`. Aggregate across depths with the `lambda / D` scaling factor.
-
-### Step 6: parameter accounting
-
-Print the total parameter count, the shared (embedding, head) count, and the per-module extra count. Show the ratio of MTP extra to main-model size.
 
 ## Use It
 
@@ -164,17 +129,6 @@ When not to:
 
 This lesson produces `outputs/skill-mtp-planner.md`. Given a pre-training run specification (model size, data, compute), it returns a plan for integrating MTP: number of depths D, `lambda` schedule, memory overhead, and the inference-time speculative-decoding wiring.
 
-## Exercises
-
-1. Run `code/main.py`. Show the per-depth loss decreases monotonically as the synthetic signal strengthens. Modify the synthetic to use a fixed pattern and verify both depth-1 and depth-2 losses converge.
-
-2. Compute the parameter overhead for a dense 70B model (hidden 8192, 80 layers) with D=1 MTP module. Compare to the DeepSeek-V3 reported 14B overhead. Explain why DeepSeek's number is higher: the MTP transformer block inherits the same MoE structure, inflating the per-module parameter count.
-
-3. Implement D=2 in the toy: add a second MTP module that takes h^(1) and predicts `t_{i+2}`. Verify the joint loss and the parameter accounting match the DeepSeek paper's equations 19-21.
-
-4. Switch the toy to parallel MTP (Gloeckle-style): add D output heads on top of the main hidden state, each predicting a different offset. Measure how the losses per depth compare to the sequential version on the same synthetic signal. The sequential version should produce lower depth-k loss for k > 1 because it conditions on the intermediate predictions.
-
-5. Use the trained MTP module as an EAGLE-style draft: call module k to propose `t_{i+k}` at inference. Measure the acceptance rate of these draft tokens against the main model's predictions on a held-out sequence. If you hit 50%+ on the toy, you have reproduced the empirical MTP-as-draft property.
 
 ## Key Terms
 

@@ -63,22 +63,6 @@ Per Maxim (2026 field analysis): 89% of organizations have agent observability i
 - **Self-rolled LLM-judge without grounding.** CRITIC pattern (Lesson 05) applies — judges need external tools for factual verification.
 - **Prompt versions not tied to traces.** When prod regresses, you cannot bisect to the prompt that caused it.
 
-## Build It
-
-`code/main.py` implements a stdlib trace collector + LLM-judge evaluator:
-
-- Ingest GenAI-shaped spans.
-- Group by session, tag failed runs (guardrail trips, low-confidence evals).
-- A scripted LLM-judge that scores agent responses on a rubric.
-- A dashboard-like summary: failure rate, top failure reasons, eval score distribution.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: per-session eval scores and failure categorization matching what Langfuse/Phoenix/Opik would show.
 
 ## Use It
 
@@ -91,13 +75,6 @@ Output: per-session eval scores and failure categorization matching what Langfus
 
 `outputs/skill-obs-platform-wiring.md` picks a platform and wires traces + evals + prompt versions into an existing agent.
 
-## Exercises
-
-1. Export a week of OTel traces to Langfuse cloud (free tier). Which sessions failed? Why?
-2. Write an LLM-judge rubric for your domain (factual correctness, tone, scope adherence). Test on 50 traces.
-3. Compare Langfuse prompt versioning against Phoenix's trace clustering. Which tells you what broke faster?
-4. Read Opik's guardrail docs. Wire a PII redaction guardrail to one of your agent runs.
-5. Benchmark the three on your corpus. Ignore vendor-published numbers; measure your own.
 
 ## Key Terms
 

@@ -55,33 +55,6 @@ The MLP from lesson 77 was sufficient to verify gradient sync. A tiny GPT adds t
 
 The loop runs a fixed 20 steps and exits. No `while True`, no human intervention, no resume from external state. A capstone you can leave running unattended and find a complete log when it finishes is a capstone that proves the system is wired correctly. If any piece deadlocks the demo never returns and the test rig catches it.
 
-## Build It
-
-`code/main.py` implements:
-
-- `MiniGPT`: 2-layer transformer with masked self-attention and a separate LM head.
-- `make_corpus(seed, total_tokens)`: deterministic next-token-prediction data.
-- `_train_worker`: spawned per rank; broadcasts init params, runs the loop, calls ZeRO step, writes the sharded checkpoint at step 10.
-- `verify_resume`: after the main run, reloads the step-10 checkpoint in-process and asserts the saved master shards match the in-memory snapshot byte-for-byte.
-- `main`: orchestrates the whole demo, prints the loss table, the memory profile, and the verification result.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: a 20-row loss table, a 4-row per-rank memory profile, a checkpoint manifest, and a "RESUME VERIFIED" line on success.
-
-## Production patterns in the wild
-
-Three patterns finish the composition for real runs.
-
-**Checkpoint every K minutes, not every K steps.** Step time varies with seq length and microbatch count. A 10-minute checkpoint cadence catches the same compute regardless of model size. The lesson uses step-based for simplicity; production uses wall-clock-based.
-
-**Detect divergence early.** Production runs add a NaN guard after backward and a loss-spike detector; if loss jumps by more than 2x in one step, roll back to the previous checkpoint instead of letting the optimiser march into a degenerate state. The lesson's loss curve is smooth so the guard is unused but the hook stays.
-
-**Aggregate the memory profile across ranks.** Per-rank memory differs by rank in real runs (rank with the largest pipeline stage holds more activations). Production logs the max across ranks plus the mean; the lesson prints per-rank to show the formula matches.
 
 ## Use It
 
@@ -95,13 +68,6 @@ Production patterns:
 
 The full track ends here. The 6 lessons together are the distributed-training subsystem a real team would build before adopting DeepSpeed; the abstraction has been proven against gloo and the failure modes have been exercised. Phase 17 (infrastructure and production) is the place to take this to a real cluster.
 
-## Exercises
-
-1. Add a tensor-parallel split of the attention head and verify the loss matches the single-rank baseline. Two ranks: half the heads per rank, allreduce of the attention output.
-2. Add gradient accumulation across 4 microbatches and prove the gradient equals the gradient of one big batch.
-3. Add a resume-from-step-10 path that actually continues training to step 20 and produces the same final loss as the original run.
-4. Add a metrics export (loss, grad norm, step time) to JSONL so the run can be visualised after the fact.
-5. Add a NaN guard that rolls back to the previous checkpoint on a loss spike, and force a spike with a one-step LR multiplier to exercise the rollback.
 
 ## Key Terms
 

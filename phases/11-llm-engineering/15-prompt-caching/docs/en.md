@@ -48,124 +48,6 @@ Violate the order — put the user message above the system prompt, interleave d
 
 Anthropic's 25% write premium means a cached block has to be read at least twice to net-save money. 1 write + 1 read averages 0.675x cost per request (saves 32%); 1 write + 10 reads averages 0.205x (saves 80%). Rule of thumb: cache anything you expect to reuse at least 3 times within the TTL.
 
-## Build It
-
-### Step 1: Anthropic prompt caching with explicit markers
-
-```python
-import anthropic
-
-client = anthropic.Anthropic()
-
-SYSTEM = [
-    {
-        "type": "text",
-        "text": "You are a senior Python reviewer. Follow the rubric exactly.\n\n" + RUBRIC_15K_TOKENS,
-        "cache_control": {"type": "ephemeral"},
-    }
-]
-
-def review(code: str):
-    return client.messages.create(
-        model="claude-opus-4-7",
-        max_tokens=1024,
-        system=SYSTEM,
-        messages=[{"role": "user", "content": code}],
-    )
-```
-
-The `cache_control` marker tells Anthropic to store the block for 5 minutes. Reuse within that window hits; reuse after expires and writes again.
-
-**Response usage fields:**
-
-```python
-response = review(code_a)
-response.usage
-# InputTokensUsage(
-#     input_tokens=120,
-#     cache_creation_input_tokens=15023,   # paid at 1.25x
-#     cache_read_input_tokens=0,
-#     output_tokens=340,
-# )
-
-response_b = review(code_b)
-response_b.usage
-# cache_creation_input_tokens=0
-# cache_read_input_tokens=15023           # paid at 0.1x
-```
-
-Check both fields in CI — if `cache_read_input_tokens` stays at zero across requests, your cache keys are drifting.
-
-### Step 2: one-hour extended TTL
-
-For long-running batch jobs, the 5-minute default expires between jobs. Set `ttl`:
-
-```python
-{"type": "text", "text": RUBRIC, "cache_control": {"type": "ephemeral", "ttl": "1h"}}
-```
-
-1-hour TTL costs 2x the write premium (50% over baseline instead of 25%) but pays back fast on any batch reusing the prefix more than 5 times.
-
-### Step 3: OpenAI automatic caching
-
-OpenAI gives you nothing to configure. Any prefix over 1,024 tokens that matches a recent request gets a 50% discount automatically.
-
-```python
-from openai import OpenAI
-client = OpenAI()
-
-resp = client.chat.completions.create(
-    model="gpt-5",
-    messages=[
-        {"role": "system", "content": SYSTEM_PROMPT},   # long and stable
-        {"role": "user", "content": user_msg},
-    ],
-)
-resp.usage.prompt_tokens_details.cached_tokens  # the discounted portion
-```
-
-Same cache-friendly layout rule applies. Two things kill OpenAI's cache that don't kill Anthropic's: changing the `user` field (used as a cache key component) and reordering tools.
-
-### Step 4: Gemini explicit context caching
-
-Gemini treats the cache as a first-class object you create and name:
-
-```python
-from google import genai
-from google.genai import types
-
-client = genai.Client()
-
-cache = client.caches.create(
-    model="gemini-3-pro",
-    config=types.CreateCachedContentConfig(
-        display_name="rubric-v3",
-        system_instruction=RUBRIC,
-        contents=[FEW_SHOT_EXAMPLES],
-        ttl="3600s",
-    ),
-)
-
-resp = client.models.generate_content(
-    model="gemini-3-pro",
-    contents=["Review this code:\n" + code],
-    config=types.GenerateContentConfig(cached_content=cache.name),
-)
-```
-
-Gemini charges storage per token·hour for as long as the cache lives, and reads at ~25% of normal input rate. This is the right shape when you reuse the same giant prompt across many sessions over days.
-
-### Step 5: measuring hit rate in production
-
-See `code/main.py` for a simulated three-provider accountant that tracks write/read/miss counts and computes blended cost per 1K requests. Gate deploys on a target hit rate — most production Anthropic setups should see >80% read fraction after warmup.
-
-## Pitfalls that still ship in 2026
-
-- **Dynamic timestamps at the top.** `"Current time: 2026-04-22 15:30:02"` at the top of the system prompt. Every request misses. Move timestamps below the cache breakpoint.
-- **Tool reordering.** Serialize tools in a stable order — a dict reshuffle between deploys breaks every hit.
-- **Free-text near-duplicates.** "You are helpful." vs "You are a helpful assistant." — one byte difference = full miss.
-- **Too-small blocks.** Anthropic enforces a 1,024-token floor (2,048 for Haiku). Smaller blocks silently do not cache.
-- **Blind cost dashboards.** Split "input tokens" into cached vs uncached. Otherwise a traffic drop looks like a cache win.
 
 ## Use It
 
@@ -206,11 +88,6 @@ Given a prompt (system + tools + few-shot + retrieval + history + user) and a us
 Refuse to ship a cache plan that places a dynamic field above the breakpoint. Refuse to enable 1h TTL without a reuse count that makes the 2x write premium pay back.
 ```
 
-## Exercises
-
-1. **Easy.** Take a 10-turn conversation with a 5,000-token system prompt against Claude. Run it without `cache_control` and then with. Report the input-token bill for each.
-2. **Medium.** Write a test harness that, given a prompt template and a request log, computes the expected hit rate and dollar savings per provider (Anthropic 5m, Anthropic 1h, OpenAI automatic, Gemini explicit).
-3. **Hard.** Build a layout optimizer: given a prompt and a list of fields marked `stable=True/False`, rewrite the prompt to put a single cache breakpoint at the maximum cache-friendly position without losing information. Verify on a real Anthropic endpoint.
 
 ## Key Terms
 

@@ -136,19 +136,6 @@ No LLM calls, no network — the point is to make the governance policy runnable
 
 `outputs/skill-ai-risk-controls-checklist.md` is a one-page, paste-and-use decision aid for a working consultant or engineer: classify an output type, identify the required control, check that the four elements exist, and produce the minimum viable evidence package. Bring it to a client kickoff or a pre-deployment review.
 
-## Exercises
-
-1. Run `code/main.py`. Which output type in the sample set classifies at L3? What single attribute triggered the upgrade from L2? Change that attribute in the code and verify the output drops to L2.
-
-2. The control gap analyzer flags one use-case record as having a policy exception with no expiry date, and one as having an expired exception. Find both. Write a corrected exception record (in plain text) for each that would pass the analyzer.
-
-3. Your team is deploying a claude-sonnet-4-6 feature that extracts action items from meeting transcripts and adds them to a project tracker. Classify the output type using the L0-L3 table. What is the minimum review gate? Who in your organization would be the named risk owner? What is the cost-per-1K-tokens arithmetic for this workload at projected volume?
-
-4. A client operating under ISO 42001:2023 asks for your AI feature's "risk treatment record." Using the four required control elements from this lesson, draft the record for one output type you work with. What evidence artifact would you point the auditor to, and what is the query that retrieves it?
-
-5. Run `code/main.py` and read the HEADLINE output. Add a fifth sample use case to the `SAMPLE_CASES` list in the code — one that has all four elements correct and an exception that is still within its expiry window. Verify the analyzer reports zero gaps for it.
-
-6. Pick a real AI feature in your organization (or a plausible one). List three events in the next 12 months that *should* force a re-classification review under the "reclassification trigger" rule. For each, name the new L-level you would expect to land at, and the new control you would need to operate.
 
 ## Consultant field notes
 

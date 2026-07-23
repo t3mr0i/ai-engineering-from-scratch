@@ -116,17 +116,6 @@ What to look at:
 
 This lesson produces `outputs/skill-tool-interface-reviewer.md`. Given a draft tool definition (name + description + schema + executor outline), the skill audits it for loop fitness: is the name machine-stable, is the description a complete usage brief, does the schema use JSON Schema 2020-12 correctly, and is the pure-vs-consequential classification explicit.
 
-## Exercises
-
-1. Add a fourth tool to `code/main.py` called `get_stock_price(ticker)`. Write its description as "Use when the user asks for a current stock price by ticker. Do not use for historical prices or market summaries." Run the harness and confirm the fake decider routes queries mentioning tickers to the new tool.
-
-2. Break the schema validator. Pass a call whose `arguments` object is missing a required field, and confirm the host rejects it before execution. Then pass a call with an extra unknown field. Decide: should the host reject or ignore? Justify your choice with a safety argument.
-
-3. Classify each tool in the harness as pure or consequential. Add a `consequential: true` flag to the registry entries that need it, and change the loop to print a "would confirm with user" line whenever a consequential tool is chosen. This is the shape of the confirmation gate every production host needs.
-
-4. Draw the four-step loop on paper with the provider-column table above filled in for your favorite client (Claude Desktop, Cursor, ChatGPT, or a custom stack). Cross-reference with the MCP-specific variant in Phase 13 · 06.
-
-5. Read OpenAI's function-calling guide top to bottom. Identify the one field that sits in the request but not in the four-step loop as presented here. Explain what it adds and why it is convenient rather than essential.
 
 ## Key Terms
 

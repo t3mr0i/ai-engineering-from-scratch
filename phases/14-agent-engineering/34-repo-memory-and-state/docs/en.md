@@ -64,36 +64,6 @@ State writes need to survive partial failures: write to a tempfile, fsync, renam
 
 When the schema changes, ship a migration script next to the schema bump. The state file carries a `schema_version` field; the manager refuses to load a file from a version it cannot migrate.
 
-## Build It
-
-`code/main.py` implements:
-
-- `agent_state.schema.json` and `task_board.schema.json`.
-- A stdlib-only validator (subset of JSON Schema: required, type, enum, pattern, items).
-- `StateManager.load`, `StateManager.update`, `StateManager.commit` with atomic temp-and-rename writes.
-- A demo that mutates state, persists, reloads, and proves the round-trip.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The script writes `workdir/agent_state.json` and `workdir/task_board.json`, mutates them across two turns, and prints the validated state at each step.
-
-## Production patterns in the wild
-
-Four patterns turn the lesson's minimum into something a multi-agent monorepo can survive.
-
-**Atomic temp-and-rename is not optional.** A March 2026 Hive project bug report documents the failure mode cleanly: `state.json` was written via `write_text()` and exceptions were caught and silenced. Partial writes left sessions resuming against corrupt state with no signal. The fix is always: `tempfile.mkstemp` in the same directory as the target, write, `fsync`, `os.replace` (atomic rename on POSIX and Windows). This lesson's `atomic_write` does exactly that.
-
-**Idempotency keys on every non-idempotent tool call.** If an agent crashes after calling a tool but before checkpointing the result, recovery retries the tool call. Safe for reads; dangerous for emails, DB inserts, file uploads. The pattern: log every tool call ID before execution into a `pending_calls.jsonl`. On retry, check for the ID; if present, skip the call and use the cached result. Anthropic and LangChain both call this out in 2026 guidance; LangGraph's checkpointer persists pending writes for the same reason.
-
-**Separate large artifacts from state.** Don't store CSVs, long transcripts, or generated files in `agent_state.json`. Save the artifact as a separate file (or upload to object storage) and keep only the path in state. Checkpoints stay small and fast; the artifacts grow independently.
-
-**Event sourcing for audit, snapshots for resume.** Append to an event log (`state.events.jsonl`) on every mutation; periodically snapshot to `state.json`. Resume reads the snapshot, then replays any events after the snapshot's timestamp. This costs more disk but lets you replay agent decisions verbatim — essential when debugging long-horizon runs. The same shape Postgres uses internally for WAL.
-
-**Schema migrations or refuse to load.** The `schema_version` integer is the contract. When the manager loads a file at an unknown version, it refuses to read. Ship a migration script next to the schema bump; `tools/migrate_state.py` runs idempotently on every startup.
 
 ## Use It
 
@@ -107,13 +77,6 @@ In production:
 
 `outputs/skill-state-schema.md` generates a project-specific JSON Schema pair (state + board), a Python `StateManager` wired to atomic writes, and a migration scaffold so the next schema bump does not break the workbench.
 
-## Exercises
-
-1. Add a `last_human_touch` timestamp. Refuse any agent write within five seconds of a human edit.
-2. Extend the validator to support `oneOf` so a task can be either a build task or a review task with different required fields.
-3. Add a `schema_version` field and write the migration from v1 to v2 (rename `blockers` to `risks`).
-4. Move the storage backend from a local file to SQLite. Keep the `StateManager` API identical.
-5. Run two agents against the same state file with a 50 ms write race. What goes wrong and how does the atomic rename save you?
 
 ## Key Terms
 

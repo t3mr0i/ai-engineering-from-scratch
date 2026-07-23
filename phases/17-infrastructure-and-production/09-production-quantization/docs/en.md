@@ -104,13 +104,6 @@ Chain-of-thought, math, code-gen with long context — these suffer visibly from
 
 This lesson produces `outputs/skill-quantization-picker.md`. Given hardware, model size, workload type, and quality tolerance, picks a format and produces a calibration/validation plan.
 
-## Exercises
-
-1. Run `code/main.py`. For a 70B model at 128 concurrent with 2k context, compute the total HBM for each format. Which format lets you fit on one H100 80GB?
-2. You have a 7B coding model. Pick a format and justify. If you were wrong about quality tolerance, what is the recovery path?
-3. Compute the calibration-dataset size needed to calibrate AWQ for a medical domain model. Why is more data not always better?
-4. Read the Marlin-AWQ kernel paper or release notes. Explain in three sentences why AWQ hits 741 tok/s on 7B while raw GPTQ hits ~712.
-5. When does it make sense to combine AWQ weights with FP8 KV cache vs keeping KV at BF16?
 
 ## Key Terms
 

@@ -53,17 +53,6 @@ flowchart LR
 - Project Management & Agility
 - Technology Consulting
 
-## Build It
-
-In the lab you build a support AI triage planner. It ranks service scenarios and recommends controls before AI support is introduced.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/43-ai-for-service-management-support/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

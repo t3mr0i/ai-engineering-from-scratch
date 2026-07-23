@@ -82,50 +82,6 @@ With `N = 128k, l = 64, k = 16, b = 64, w = 512`: per-query cost is `2000 + 1024
 
 MoBA (Moonshot, arXiv:2502.13189) was concurrently published and takes a similar three-is-better-than-one approach, applying the MoE principle to attention blocks. NSA and MoBA are the two architectures to know for 2026 long-context pre-training.
 
-## Build It
-
-`code/main.py` implements the three branches on a short synthetic sequence and shows:
-
-- The compression MLP (a simple mean-pool baseline is used for pedagogical clarity; the real NSA uses a learned MLP).
-- The top-k block selection driven by compressed-branch scores.
-- The sliding-window attention on the last `w` tokens.
-- The gated combination.
-- A compute-count printout comparing to full attention.
-
-### Step 1: compress tokens into blocks
-
-```python
-def compress(K, l):
-    n = len(K)
-    n_blocks = (n + l - 1) // l
-    out = []
-    for b in range(n_blocks):
-        start, end = b * l, min((b + 1) * l, n)
-        block = K[start:end]
-        summary = [sum(row[d] for row in block) / len(block) for d in range(len(K[0]))]
-        out.append(summary)
-    return out
-```
-
-### Step 2: compressed-branch attention
-
-Run softmax attention of the query against the compressed keys. The compressed-branch scores double as the signal for top-k selection.
-
-### Step 3: top-k block selection
-
-Pick the indices of the `k` highest-scoring compressed blocks. Load the original uncompressed tokens from those blocks and run attention on them.
-
-### Step 4: sliding-window attention
-
-Take the last `w` tokens and run standard attention against them.
-
-### Step 5: gate + combine
-
-A small MLP on the query produces three gate weights. The final output is a weighted sum of the three branch outputs.
-
-### Step 6: compute counting
-
-Print the number of keys attended per query for each branch and the total. Compare to `N` (full attention). On a 1024-token synthetic with `l = 32, k = 4, w = 128`, NSA sees `32 + 128 + 128 = 288` keys per query versus 1024 for full attention — 3.5x fewer.
 
 ## Use It
 
@@ -151,17 +107,6 @@ When not to:
 
 This lesson produces `outputs/skill-nsa-integrator.md`. Given a long-context pre-training run specification, it produces an NSA integration plan: compression block size, top-k, sliding window, gate MLP width, kernel choice, and the specific long-context evals that would justify the architecture change.
 
-## Exercises
-
-1. Run `code/main.py` on a 1024-token synthetic. Sweep `(l, k, w)` across three presets and print compute counts. Identify the preset that achieves the lowest key-count per query while keeping 95% recall against full attention on a needle-in-haystack test.
-
-2. Replace the mean-pool compressor with a tiny learned MLP (2-layer, hidden 32). Train it on a synthetic task where the signal is the average of a block. Measure the perplexity gap against the mean-pool baseline on held-out data.
-
-3. Implement the gate MLP. It takes the query as input and outputs three scalars. Show that the gate behaves sensibly: near-uniform weighting on random queries, heavy weight on the selected branch when the query hits a far-back block.
-
-4. Compute the KV cache memory budget for an NSA-enabled 70B model at 128k context. KV heads are 8, head dim 128, BF16. Compare to full attention and to MLA (Phase 10 · 14 showed MLA's numbers). Identify the sequence length where NSA's fine-grained branch KV cache equals full attention.
-
-5. Read Section 4 of the NSA paper (arXiv:2502.11089) and explain in three sentences why the compressed branch's attention scores are reused for top-k selection rather than computing a separate routing score. Tie the answer to gradient flow.
 
 ## Key Terms
 

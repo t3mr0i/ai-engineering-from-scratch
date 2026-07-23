@@ -84,17 +84,6 @@ Lessons 6-9 describe the threat (deception is possible). Lesson 10 describes the
 
 This lesson produces `outputs/skill-control-protocol-audit.md`. Given a deployment protocol description, it identifies the U / T / H roles, names the collusion vectors, and estimates the protocol's position on the usefulness-safety frontier under red-team pressure.
 
-## Exercises
-
-1. Run `code/main.py`. Reproduce the usefulness-safety frontier for Trusted Editing vs Untrusted Monitoring. Identify the budget regime in which Untrusted Monitoring's collusion assumption becomes pivotal.
-
-2. Add a new protocol: "T resamples with low temperature, then U edits T's output." Measure its position on the frontier. Why does this fail more catastrophically than Trusted Editing?
-
-3. The 2024 paper assumes U can see the protocol. Design a protocol that hides from U which outputs are being audited. What does this protocol require from the deployment infrastructure?
-
-4. Read Greenblatt et al. 2024 Section 7 (collusion). Propose a collusion-resistance measure and explain its expected usefulness cost.
-
-5. Articulate a control safety case for a deployment that uses U = GPT-4-class, T = GPT-3.5-class, H = 1% of outputs audited. Identify the single strongest assumption the case depends on.
 
 ## Key Terms
 

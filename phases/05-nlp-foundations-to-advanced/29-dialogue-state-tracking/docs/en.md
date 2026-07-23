@@ -50,104 +50,6 @@ The modern pipeline: classical DST concepts + LLM extractors + structured-output
 - **Correction.** "Actually make it 7 pm." Must update time without clearing other slots.
 - **Coreference to previous system utterance.** "Yes, that one." Which "that"?
 
-## Build It
-
-### Step 1: rule-based slot extractor
-
-See `code/main.py`. Regex + synonym dictionaries cover 70% of canonical utterances in narrow domains:
-
-```python
-CUISINE_SYNONYMS = {
-    "italian": ["italian", "pasta", "pizza", "italy"],
-    "chinese": ["chinese", "chow mein", "noodles"],
-}
-
-
-def extract_cuisine(utterance):
-    for canonical, synonyms in CUISINE_SYNONYMS.items():
-        if any(syn in utterance.lower() for syn in synonyms):
-            return canonical
-    return None
-```
-
-Brittle outside the canonical vocabulary. Works for deterministic slot confirmations.
-
-### Step 2: state update loop
-
-```python
-def update_state(state, utterance):
-    new_state = dict(state)
-    for slot, extractor in SLOT_EXTRACTORS.items():
-        value = extractor(utterance)
-        if value is not None:
-            new_state[slot] = value
-    for slot in NEGATION_CLEARS:
-        if is_negated(utterance, slot):
-            new_state[slot] = None
-    return new_state
-```
-
-Three invariants:
-
-- Never reset a slot the user did not touch.
-- Explicit negation ("never mind the cuisine") must clear.
-- User correction ("actually...") must overwrite, not append.
-
-### Step 3: LLM-driven DST with structured output
-
-```python
-from pydantic import BaseModel
-from typing import Literal, Optional
-import instructor
-
-class RestaurantState(BaseModel):
-    cuisine: Optional[Literal["italian", "chinese", "indian", "thai", "any"]] = None
-    area: Optional[Literal["north", "south", "east", "west", "center"]] = None
-    price: Optional[Literal["cheap", "moderate", "expensive"]] = None
-    people: Optional[int] = None
-    day: Optional[str] = None
-
-
-def llm_dst(history, llm):
-    prompt = f"""You track the slot values of a restaurant booking across turns.
-Dialogue so far:
-{render(history)}
-
-Update the state based on the latest user turn. Output only the JSON state."""
-    return llm(prompt, response_model=RestaurantState)
-```
-
-Instructor + Pydantic guarantees a valid state object. No regex, no schema mismatches, no hallucinated slots.
-
-### Step 4: JGA evaluation
-
-```python
-def joint_goal_accuracy(predicted_states, gold_states):
-    correct = sum(1 for p, g in zip(predicted_states, gold_states) if p == g)
-    return correct / len(predicted_states)
-```
-
-Calibrate: what fraction of turns does the system get ALL slots right? For MultiWOZ 2.4, top 2026 systems: 80-83%. Your in-domain system should exceed that on your narrow vocabulary or the LLM baseline beats you.
-
-### Step 5: handling correction
-
-```python
-CORRECTION_CUES = {"actually", "no wait", "on second thought", "change that to"}
-
-
-def is_correction(utterance):
-    return any(cue in utterance.lower() for cue in CORRECTION_CUES)
-```
-
-On a detected correction, overwrite the last-updated slot rather than appending. Hard to get right without LLM help. The modern pattern: always let the LLM regenerate the whole state from history rather than incrementally updating — this naturally handles corrections.
-
-## Pitfalls
-
-- **Full-history regeneration cost.** Letting the LLM regenerate state each turn costs O(n²) total tokens. Cap history or summarize older turns.
-- **Schema drift.** Adding new slots post-hoc breaks old training data. Version your schema.
-- **Case sensitivity.** "Italian" vs "italian" vs "ITALIAN" — normalize everywhere.
-- **Implicit inheritance.** If the user has previously specified "for 4 people," a new request for a different time should not clear people. Always pass the full history.
-- **Free-form vs closed-set.** Names, times, and addresses need free-form slots; cuisines and areas are closed. Mix both in the schema.
 
 ## Use It
 
@@ -187,11 +89,6 @@ Given a use case (domain, languages, vocab openness, compliance needs), output:
 Refuse LLM-only DST for compliance-sensitive slots without a rule-based secondary check. Refuse any DST that cannot roll back a slot on user correction. Flag schemas without version tags.
 ```
 
-## Exercises
-
-1. **Easy.** Build the rule-based state tracker in `code/main.py` for 3 slots (cuisine, area, price). Test on 10 hand-crafted dialogues. Measure JGA.
-2. **Medium.** Same dataset with Instructor + Pydantic + a small LLM. Compare JGA. Inspect the hardest turns.
-3. **Hard.** Implement both and route: rule-based primary, LLM fallback when rule-based emits <2 slots with confidence. Measure the combined JGA and inference cost per turn.
 
 ## Key Terms
 

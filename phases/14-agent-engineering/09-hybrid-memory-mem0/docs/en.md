@@ -88,23 +88,6 @@ Every write picks one scope. Retrieval can query across scopes with per-scope we
 - **KV schema creep.** `(user_id, type, entity)` looks simple until every team adds their own `type`. Audit the type set quarterly.
 - **Graph explosion.** One noisy extractor adds 50 edges per message. Cap graph writes per `add` call; drop low-confidence edges.
 
-## Build It
-
-`code/main.py` implements the three-store pattern in stdlib:
-
-- `VectorStore` — naive token-overlap similarity as an embedding stand-in.
-- `KVStore` — dict keyed on `(user_id, fact_type, entity)`.
-- `GraphStore` — typed edges (subject, relation, object, valid).
-- `Mem0` — top-level facade with `add()`, `search()`, fusion scoring, and scope-aware retrieval.
-- A worked trace on a multi-user, multi-session conversation.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The output shows three separate recall paths plus the fused top-k. Flip the scoring weights at the top of `main()` and watch the ranking change.
 
 ## Use It
 
@@ -117,13 +100,6 @@ The output shows three separate recall paths plus the fused top-k. Flip the scor
 
 `outputs/skill-hybrid-memory.md` generates a three-store memory scaffold with a fusion scorer, scope taxonomy, and temporal invalidation wired in.
 
-## Exercises
-
-1. Replace the toy vector similarity with a real embedding model (sentence-transformers, Ollama, OpenAI embeddings). Measure recall@10 on a synthetic long conversation. Does the ranking drift over 1000 writes?
-2. Add a temporal query: `search(query, as_of=timestamp)`. Return only records valid at or before that time. Which store needs the most work?
-3. Implement a conflict detector: if an incoming fact contradicts a graph edge, invalidate the old edge and log both. Test on "user lives in Berlin" -> "user lives in Lisbon."
-4. Port the fusion scorer to include a `user_feedback` dimension (thumbs-up on retrieved records). How do you prevent gaming (the agent only returns records it already liked)?
-5. Read the Mem0 docs (`docs.mem0.ai`). Port the toy to `mem0` client calls. Compare retrieval quality on the same 20 test queries.
 
 ## Key Terms
 

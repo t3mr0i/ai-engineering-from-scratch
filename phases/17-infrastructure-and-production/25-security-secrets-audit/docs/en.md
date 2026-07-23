@@ -111,13 +111,6 @@ Supply-chain attack: compromised CI/CD credentials exfiltrated env vars across t
 
 This lesson produces `outputs/skill-llm-security-plan.md`. Given regulatory scope and current state, plans the vault migration, scrubber, egress, audit log.
 
-## Exercises
-
-1. Run `code/main.py`. Send two prompts referencing the same SSN. Confirm both get the same placeholder.
-2. Design the network egress policy for a vLLM-on-EKS deployment calling OpenAI + Anthropic + Weaviate.
-3. You discover a key in git history (2 years old). What's the correct response — rotate the key, scrub history, or both? Justify.
-4. Your audit log grows 10 GB/day. Design retention tiers (hot 30d, warm 12mo, cold 6yr).
-5. Argue whether reverse-tokenization (substituting real values back into LLM response) is worth the complexity versus keeping placeholders visible.
 
 ## Key Terms
 

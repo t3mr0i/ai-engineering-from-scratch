@@ -86,17 +86,6 @@ Open-weight models (Llama 4, Mistral Large 2) deployed on company-owned infrastr
 
 `outputs/skill-ai-use-case-intake.md` is a one-page paste-and-use intake worksheet for a working consultant: a structured description template, the risk classification table, a GDPR trigger checklist, the three internal gates, and a routing matrix. Print it before the first project meeting where AI is mentioned.
 
-## Exercises
-
-1. Run `code/main.py`. Which sample use case is classified as high-risk and why? Change one attribute of that case so it drops to minimal-risk. What changed, and is the change realistic for that domain?
-
-2. The approval gate checker returns `CONDITIONAL` for two sample cases. Pick the CV screening case. Read the justification it prints. What single gap must the project team close before the gate changes to `APPROVED`?
-
-3. A colleague proposes using a public-cloud LLM to summarise internal meeting notes. The notes sometimes mention individual employees' performance. Walk through the four GDPR triggers. How many apply? What is the minimum set of controls that would make this use case compliant?
-
-4. Your client wants to use an AI system to screen job applications and rank candidates. Place this use case in the AI Act pyramid. List every high-risk obligation that would apply before the system can go live.
-
-5. An open-weight model (Llama 4, self-hosted) is proposed to avoid DPA complexity. Does self-hosting eliminate all regulatory obligations? List the compliance requirements that remain and the new risks it introduces.
 
 ## Key Terms
 

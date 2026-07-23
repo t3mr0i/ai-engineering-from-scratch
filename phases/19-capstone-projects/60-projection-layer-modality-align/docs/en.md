@@ -59,23 +59,6 @@ Align does not mean `image_emb == text_emb`. Align means `image_emb` points in t
 
 The vision encoder has 86M parameters. The text table has another few million. Training all of them from a mock corpus is a non-starter. Freezing both means the projection's 1.3M parameters are the only thing changing, and a few hundred steps on synthetic pairs is enough to drive the loss down. This is exactly the operational shape of every adapter-based VLM: the heavy parts stay frozen, the light bridge trains.
 
-## Build It
-
-`code/main.py` implements:
-
-- `MLPProjector(in_dim, hidden_dim, out_dim)`, two-layer linear MLP with GELU activation.
-- `MockTextEmbedding(vocab_size, dim)`, a frozen embedding table with deterministic init from a seed.
-- `make_pair(seed, vocab_size)`, which synthesizes one paired (image, caption) sample. Captions are short id sequences; the caption embedding is mean-pooled over token embeddings.
-- `cosine_alignment_loss(image_emb, text_emb)`, the per-pair `1 - cos_sim` objective.
-- A training loop that runs the projection for 200 steps over 32 synthetic pairs (cycled), with the vision encoder and text table frozen, and prints the loss every 25 steps.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: training reports drop from initial loss around 1.07 down to about 0.80 within 200 steps, demonstrating that the projection alone can pull image tokens toward the text space. The final cosine similarity per pair is also printed.
 
 ## Use It
 
@@ -104,17 +87,6 @@ Run them:
 python3 -m unittest code/test_main.py
 ```
 
-## Exercises
-
-1. Replace CLS pooling with mean pooling over the 196 patch tokens and compare final loss after 200 steps. Mean pooling usually trains faster on synthetic data; CLS is more sample-efficient on natural images.
-
-2. Add a learned scalar temperature to the cosine loss (`cos / tau`) and observe what happens when `tau` is too small (gradient noise) or too large (loss plateaus high).
-
-3. Swap the two-layer MLP for a single linear layer and quantify the loss gap. The non-linearity matters more on natural image features and less on synthetic ones.
-
-4. Add a small L2 penalty on the projector weights and watch how it interacts with cosine alignment (cosine is scale-invariant, so the penalty mostly shrinks unused directions).
-
-5. Persist projector weights, then reload and run inference without the vision encoder backward pass to verify that only the projector is needed at deploy time.
 
 ## Key Terms
 

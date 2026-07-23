@@ -53,17 +53,6 @@ flowchart LR
 - Products & Value Streams
 - Leadership
 
-## Build It
-
-In the lab you build a business-analysis discovery planner. It ranks analysis scenarios and recommends discovery controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/56-ai-business-analysis-process-discovery/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

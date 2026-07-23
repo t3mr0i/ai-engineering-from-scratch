@@ -108,13 +108,6 @@ Enterprise SLOs tighten TTFT (200-400 ms) and loosen E2E. The point is to write 
 
 This lesson produces `outputs/skill-slo-goodput-gate.md`. Given a workload and SLO, it produces a CI/CD-ready benchmark recipe that gates deploys on goodput rather than throughput.
 
-## Exercises
-
-1. Run `code/main.py`. Generate a distribution with 1% tail spike. How does goodput change when you tighten P99 TPOT from 30 ms to 15 ms?
-2. A vendor quotes "15,000 tok/s on Llama 3.3 70B H100". Name three questions to ask before trusting it.
-3. Why does chunked prefill protect P99 TPOT but not mean TPOT?
-4. Construct a consumer SLO for a voice assistant (first token is heard, not read). Which metric is most user-visible?
-5. Read the LLMPerf README and the GenAI-Perf docs. Identify three other metrics where the tools disagree.
 
 ## Key Terms
 

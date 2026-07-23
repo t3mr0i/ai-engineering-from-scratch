@@ -73,35 +73,6 @@ Workbench-guided:
 | `handoff_quality` | The next session pays for or benefits from this |
 | `reviewer_total` | Qualitative judgment on top of the gate |
 
-## Build It
-
-`code/main.py` orchestrates the two pipelines against the same sample app fixture. Both pipelines are scripted (no LLM in the loop) so the measurement is reproducible. The script writes the comparison into `before-after-report.md` and `comparison.json`.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: a console table of outcomes per pipeline, the markdown report saved next to the script, and the JSON for whoever wants to chart it.
-
-## Production patterns in the wild
-
-The skeptic's question is "how much does the workbench actually help?" The 2026 numbers say a lot more than the explanation.
-
-**Terminal Bench Top-30 to Top-5 on the same model.** LangChain's *Anatomy of an Agent Harness* (April 2026): a coding agent jumped from outside the top 30 to rank five on Terminal Bench 2.0 by changing only the harness. Same model. Different surfaces. Twenty-five-rank delta.
-
-**Vercel 80% to 100% by deleting tools.** Vercel reported deleting 80% of its agent's tools moved the success rate from 80% to 100%. Smaller tool surface, sharper scope, fewer ways to fail. Negative space wins.
-
-**Harvey 2x accuracy via harness alone.** Legal agents more than doubled their accuracy through harness optimization, no model change.
-
-**88% of enterprise AI agent projects fail to reach production.** The preprints.org *Harness Engineering for Language Agents* paper (March 2026) traces the failures to runtime, not reasoning: stale state, brittle retries, overgrown context, poor recovery from intermediate mistakes.
-
-**Long-context collapse.** WebAgent baseline 40-50% success drops to under 10% in long-context conditions, mostly from infinite loops and goal loss. The Ralph Loop and the handoff packet exist to absorb that.
-
-**False negatives still exist.** Single-step factual tasks, one-line lints, formatter runs, anything the model has memorized verbatim — these run faster prompt-only. The benchmark should enumerate them honestly so the workbench is not framed as overkill.
-
-The takeaway is not "harness wins forever." Models do absorb harness tricks over time. The takeaway is that today, the engineering load sits in the seven surfaces, and the numbers prove it.
 
 ## Use It
 
@@ -117,13 +88,6 @@ The numbers travel further than the explanation.
 
 `outputs/skill-workbench-benchmark.md` is a portable evaluation harness that runs any agent product through both pipelines against a project's own sample app and reports the five outcomes.
 
-## Exercises
-
-1. Add a sixth outcome: time-to-first-meaningful-edit. How do you measure it cleanly?
-2. Run the comparison on a real second-day task in your codebase. Where do the workbench numbers slip?
-3. Add a "false negative" pass: tasks where prompt-only would have been faster and the workbench overhead is real cost. Defend keeping the workbench anyway.
-4. Replace the scripted "agent" with a real LLM call. Which outcomes get noisier?
-5. Author a one-page summary aimed at a non-engineer. What survives the cut?
 
 ## Key Terms
 

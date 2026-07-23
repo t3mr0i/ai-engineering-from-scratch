@@ -88,21 +88,6 @@ For production agents this translates to a "what's missing" operator: given the 
 - **Composed-skill drift.** Parent skill depends on a child that was refined. Version skills; a parent pinned to v1 doesn't magically pick up v3.
 - **Retrieval quality.** Vector retrieval over skill descriptions degrades as the library grows past a few hundred. Supplement with tag filters and hard constraints ("only skills with `category=tooling`").
 
-## Build It
-
-`code/main.py` implements a stdlib skill library:
-
-- `Skill` — name, description, code (as string), version, tags, dependencies.
-- `SkillLibrary` — register, search (token overlap), compose (topological sort of deps), and refine (version bump on update).
-- A scripted agent that registers three primitive skills, composes a fourth, hits a failure, and refines.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows library writes, retrieval, composition, a failed execution, and a v2 refinement — Voyager's loop end to end.
 
 ## Use It
 
@@ -115,13 +100,6 @@ The trace shows library writes, retrieval, composition, a failed execution, and 
 
 `outputs/skill-skill-library.md` generates a Voyager-shaped skill library with registration, retrieval, versioning, and refinement wired in for any target runtime.
 
-## Exercises
-
-1. Add a dependency-cycle detector to `compose()`. What happens when skill A depends on B which depends on A? Error vs warning?
-2. Implement per-skill version pinning. When a parent skill composes child `crafting@1`, a refinement to `crafting@2` must not silently upgrade the parent.
-3. Replace token-overlap retrieval with sentence-transformers embeddings (or a BM25 stdlib impl). Measure retrieval@5 on a 50-skill toy library.
-4. Add a "curriculum" agent: given the current library and a domain description, propose 5 missing skills. Call it weekly.
-5. Read Anthropic's Claude Agent SDK skill docs. Port the toy library to the SDK's skill schema. What changes about discoverability?
 
 ## Key Terms
 

@@ -234,97 +234,6 @@ For most practical problems, start with recursive for short horizons (1-5 steps)
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
 | Not differencing | "The model will figure it out" | Tree models handle trends; linear models need stationarity |
 
-## Build It
-
-The code in `code/time_series.py` implements the core building blocks from scratch.
-
-### Lag Feature Creator
-
-```python
-def make_lag_features(series, n_lags):
-    n = len(series)
-    X = np.full((n, n_lags), np.nan)
-    for lag in range(1, n_lags + 1):
-        X[lag:, lag - 1] = series[:-lag]
-    valid = ~np.isnan(X).any(axis=1)
-    return X[valid], series[valid]
-```
-
-This converts a 1D series into a feature matrix where each row has the last `n_lags` values as features, and the current value as the target.
-
-### Walk-Forward Cross-Validation
-
-```python
-def walk_forward_split(n_samples, n_splits=5, min_train=50):
-    assert min_train < n_samples, "min_train must be less than n_samples"
-    step = max(1, (n_samples - min_train) // n_splits)
-    for i in range(n_splits):
-        train_end = min_train + i * step
-        test_end = min(train_end + step, n_samples)
-        if train_end >= n_samples:
-            break
-        yield slice(0, train_end), slice(train_end, test_end)
-```
-
-Each split ensures training data comes strictly before test data. The training window expands with each fold.
-
-### Simple Autoregressive Model
-
-A pure AR model is just linear regression on lag features:
-
-```python
-class SimpleAR:
-    def __init__(self, n_lags=5):
-        self.n_lags = n_lags
-        self.weights = None
-        self.bias = None
-
-    def fit(self, series):
-        X, y = make_lag_features(series, self.n_lags)
-        # Solve via normal equations
-        X_b = np.column_stack([np.ones(len(X)), X])
-        theta = np.linalg.lstsq(X_b, y, rcond=None)[0]
-        self.bias = theta[0]
-        self.weights = theta[1:]
-        return self
-```
-
-This is conceptually identical to linear regression from Lesson 02, but applied to time-lagged versions of the same variable.
-
-### Stationarity Check
-
-The code computes rolling statistics to visually and numerically assess stationarity:
-
-```python
-def check_stationarity(series, window=50):
-    rolling_mean = np.array([
-        series[max(0, i - window):i].mean()
-        for i in range(1, len(series) + 1)
-    ])
-    rolling_std = np.array([
-        series[max(0, i - window):i].std()
-        for i in range(1, len(series) + 1)
-    ])
-    return rolling_mean, rolling_std
-```
-
-If the rolling mean drifts or the rolling std changes, the series is non-stationary. Apply differencing and check again.
-
-The code also checks stationarity by comparing the first half and second half of the series. If the means differ by more than half a standard deviation or the variance ratio exceeds 2x, the series is flagged as non-stationary.
-
-### Autocorrelation
-
-```python
-def autocorrelation(series, max_lag=20):
-    n = len(series)
-    mean = series.mean()
-    var = series.var()
-    acf = np.zeros(max_lag + 1)
-    for k in range(max_lag + 1):
-        cov = np.mean((series[:n-k] - mean) * (series[k:] - mean))
-        acf[k] = cov / var if var > 0 else 0
-    return acf
-```
 
 ## Use It
 
@@ -423,17 +332,6 @@ If your fancy ML model loses to the seasonal naive baseline, you have a bug. Mos
 
 6. **Log-transform skewed series.** Revenue, prices, and counts are often right-skewed. Taking the log stabilizes variance and makes multiplicative patterns additive, which linear models can handle. Forecast in log space, then exponentiate to get back to original units.
 
-## Exercises
-
-1. **Stationarity experiment.** Generate a series with a linear trend. Check stationarity with rolling statistics. Apply first differencing. Check again. How many rounds of differencing does it take for a quadratic trend?
-
-2. **Lag selection.** Compute ACF on a seasonal series (period=7). Which lags have the highest autocorrelation? Create lag features using only those lags (not consecutive lags). Does accuracy improve compared to using lags 1 through 7?
-
-3. **Walk-forward vs random split.** Train a Ridge regression on lag features. Evaluate with random 80/20 split and with walk-forward validation. How much does the random split overestimate performance?
-
-4. **Feature engineering.** Add rolling mean (window=7), rolling std (window=7), and day-of-week features to the lag features. Compare accuracy with and without these extras using walk-forward validation.
-
-5. **Multi-step forecasting.** Modify the AR model to predict 5 steps ahead instead of 1. Compare two strategies: (a) predict one step, use the prediction as input for the next step (recursive), and (b) train separate models for each horizon (direct). Which is more accurate?
 
 ## Key Terms
 

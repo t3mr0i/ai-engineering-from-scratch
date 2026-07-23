@@ -74,52 +74,6 @@ The memory win is exact: per-rank memory for parameters drops to 1/N. The cost i
 
 CUDA is the production target, but the same code paths exist on CPU. `gloo` is the CPU collective backend. It is slower than `nccl` on GPUs by orders of magnitude, but the API surface is identical. The lesson's process group is initialized with `backend="gloo"` and ranks are spawned with `torch.multiprocessing` rather than `torchrun`; both end up at the same `torch.distributed` calls. On a multi-GPU node, the only changes are `backend="nccl"`, device tensors, and `torchrun` to launch.
 
-## Build It
-
-`code/main.py` is the runnable artifact.
-
-### Step 1: bring up the process group
-
-```python
-os.environ["MASTER_ADDR"] = "127.0.0.1"
-os.environ["MASTER_PORT"] = str(port)
-dist.init_process_group(backend="gloo", rank=rank, world_size=world_size)
-```
-
-`MASTER_ADDR` and `MASTER_PORT` are the rendezvous: every rank dials the same port on the same host. The lesson picks a free port via a bind-and-close trick to avoid collisions when several runs share a machine.
-
-### Step 2: broadcast at construction
-
-`MinimalDDP.__init__` walks every parameter and buffer and calls `dist.broadcast(tensor, src=0)`. Rank 0's values become the canonical init. Without this, each rank initializes with its own seed and the ranks diverge from step one.
-
-### Step 3: all-reduce gradients after backward
-
-```python
-def all_reduce_grads_(module, world_size):
-    for p in module.parameters():
-        if p.grad is None:
-            p.grad = torch.zeros_like(p.data)
-        dist.all_reduce(p.grad.data, op=dist.ReduceOp.SUM)
-        p.grad.data.div_(world_size)
-```
-
-Every rank ends up with the same averaged gradient. The optimizer step is now a function of the same input on every rank, which is why the parameters stay in sync across the run.
-
-### Step 4: prove the equivalence
-
-`manual_all_reduce_matches_single_process` builds the same model on rank 0 and compares the post-all-reduce gradient against the gradient a single process would compute on the concatenated input. The max-abs-diff is around 1e-8.
-
-### Step 5: FSDP round trip
-
-`fsdp_round_trip_sketch` flattens each parameter, pads to a multiple of `world_size`, slices, all-gathers, and unpads. Every rank's reconstruction equals the original. This is the unshard step; the inverse (re-shard after the forward) is one slice off the gathered tensor.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Default world size is 2. Two CPU processes spawn, talk to each other through `gloo`, and exit zero. The output `outputs/ddp-demo.json` captures parameter sums per rank, the gradient norm after all-reduce, the FSDP round-trip result, and the manual-vs-reference gradient diff.
 
 ## Use It
 
@@ -133,13 +87,6 @@ The shape stays the same: broadcast at startup, reduce after backward, shard par
 
 `outputs/skill-distributed-fsdp-ddp.md` carries the recipe for a new training script: spin up the process group with `gloo` for CPU and `nccl` for GPU, wrap the model in a DDP shell that broadcasts at construction and reduces after backward, optionally shard parameters with the all_gather pattern from the FSDP sketch.
 
-## Exercises
-
-1. Run with `--world-size 4` and confirm the param spread stays under 1e-3 across the run.
-2. Replace the manual averaging with `dist.all_reduce(op=dist.ReduceOp.AVG)` and time the difference.
-3. Add a post-backward hook to the DDP wrapper so the all-reduce overlaps with the rest of the backward; measure the wallclock improvement.
-4. Implement the FSDP re-shard step: after the forward pass, replace the full tensor with the local shard again. Confirm per-rank memory drops.
-5. Switch the backend to `nccl` on a CUDA box. Note which environment variables change and which stay the same.
 
 ## Key Terms
 

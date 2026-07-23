@@ -73,21 +73,6 @@ Automated verification gates at every step of a reasoning chain, checking factua
 - **No baseline.** Drift detection needs a last-known-good; without it you cannot say "this is getting worse."
 - **Over-alerting.** Every failure produces a page. Cluster and rate-limit.
 
-## Build It
-
-`code/main.py` implements a stdlib failure-mode tagger:
-
-- A synthetic trace dataset covering the five modes.
-- Detector functions per mode (signature patterns on tool calls, outputs, repeat actions).
-- A tagger that labels each trace and reports mode distribution.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: per-trace labels + aggregate distribution, a cheap reproduction of what Phoenix's trace clustering surfaces.
 
 ## Use It
 
@@ -99,13 +84,6 @@ Output: per-trace labels + aggregate distribution, a cheap reproduction of what 
 
 `outputs/skill-failure-detector.md` generates failure-mode detectors tailored to your domain, wired to a trace store.
 
-## Exercises
-
-1. Add a detector for "success hallucination": agent returns success but the target state is unchanged.
-2. Tag 100 real traces from a product you've built. Which mode dominates? What's the cost of fixing it?
-3. Implement a "cascade radius" metric: given a failure at step N, how many downstream steps did it affect?
-4. Read MASFT's 14 failure modes. Pick three that apply to your product. Write detectors.
-5. Wire one detector into a CI job: fail the build if >=5% of traces tag a mode.
 
 ## Key Terms
 

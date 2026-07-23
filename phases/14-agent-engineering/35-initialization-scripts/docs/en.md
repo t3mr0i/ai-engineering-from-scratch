@@ -56,31 +56,6 @@ Run it twice in a row. The second run should be a no-op except for a fresh times
 
 Rules (Phase 14 · 33) describe what must be true to act. Init is the script that establishes that those rules can be checked. Rules without init become "be careful." Init without rules becomes a polished failure.
 
-## Build It
-
-`code/main.py` implements `init_agent.py`:
-
-- Five probes: Python version, listed dependencies via `importlib.util.find_spec`, test command resolvability, required env vars, state file freshness.
-- Each probe returns `(name, status, detail)`.
-- The script writes `init_report.json` with the full probe set and exits non-zero if any block-severity probe fails.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The script prints the table of probes, writes `init_report.json`, and exits zero on the happy path or non-zero with a list of failed probes.
-
-## Production patterns in the wild
-
-Three patterns separate a useful init script from a ceremony.
-
-**Last-known-good commit anchoring.** Probe the current commit against a `LKG` file written on the last successful merge. If the diff exceeds a budget (default 50 files), refuse to start and require a human to ratify the new baseline. This is what Cloudflare's AI Code Review uses to scope reviewer agents: every review session anchors against the same last-known-good and never compounds drift across sessions.
-
-**Lock files with TTL.** Write a `prereqs.lock` after the first successful probe pass. Subsequent runs trust the lock for N hours (24h default) and skip the expensive probes. The init script reads the lock first; if it is fresh and the dependency manifest hash matches, it short-circuits. This is the same pattern Docker uses for layer caches: idempotent probe + content hash = skip.
-
-**No network, no LLM, no surprises in the hot path.** Init probes are deterministic plumbing. A probe that calls an LLM to classify a failure or that hits an external service to check a license is not a probe; it is a workflow. If a probe takes longer than three seconds in a dry run, treat that as a workbench smell and either move it out of init or cache its result.
 
 ## Use It
 
@@ -96,13 +71,6 @@ The init script is portable because it makes no calls to a specific framework. B
 
 `outputs/skill-init-script.md` interviews the project, classifies its setup work into probes, and emits a project-specific `init_agent.py` plus a CI workflow that runs it before any agent step.
 
-## Exercises
-
-1. Add a probe that diffs the current commit against the last-known-good commit and refuses to start if more than 50 files changed.
-2. Wire the script to write a `prereqs.lock` file and refuse to start if the lock is older than seven days.
-3. Add a `--fix` flag that auto-installs missing dev dependencies but never modifies runtime dependencies without approval.
-4. Move probes from hardcoded functions to a YAML registry. Defend the trade-off.
-5. Add a timing budget per probe. A probe that runs longer than three seconds is a workbench smell.
 
 ## Key Terms
 

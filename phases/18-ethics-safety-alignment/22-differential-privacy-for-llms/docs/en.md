@@ -78,17 +78,6 @@ Lessons 20-21 are bias/fairness. Lesson 22 is privacy. Lesson 23 is provenance v
 
 This lesson produces `outputs/skill-dp-audit.md`. Given a DP claim on a language model deployment, it audits: the (ε, δ) values, the accountant used, the MIA evaluation protocol, and whether confidence-exposure vectors have been assessed.
 
-## Exercises
-
-1. Run `code/main.py`. Sweep σ in {0.5, 1.0, 2.0} and report the (ε, δ)-accuracy trade-off. Identify the point at which utility collapses.
-
-2. Implement a canary insertion and a log-loss test. Measure detection rate before and after DP-SGD at σ = 1.0.
-
-3. Read Nasr et al. 2025 on training-data extraction. Why does extraction success not collapse under moderate ε? What does this imply about MIA-as-evaluation?
-
-4. Design a deployment using PMixED (arXiv:2403.15638) that operates entirely at inference time. What is the threat model that PMixED addresses that DP-SGD does not?
-
-5. Sketch the DP Reversal via LLM Feedback attack. Design a countermeasure that limits confidence-score leakage and estimate its deployment cost.
 
 ## Key Terms
 

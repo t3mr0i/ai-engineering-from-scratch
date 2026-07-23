@@ -118,59 +118,6 @@ Continuous batching (first shipped in Orca, now in vLLM, TensorRT-LLM, SGLang): 
 
 vLLM's headline feature. KV cache is allocated in 16-token blocks; a page table maps logical positions to physical blocks. Lets you share KV across parallel samples (beam search, parallel sampling), hot-swap prefixes for prompt caching, and defragment memory. 4× throughput improvement over naive contiguous allocation.
 
-## Build It
-
-See `code/main.py`. We implement:
-
-1. A naive `O(N²)` incremental decoder.
-2. A `O(N)` KV-cached decoder.
-3. A tiled softmax that simulates Flash Attention's running-max algorithm.
-
-### Step 1: KV cache
-
-```python
-class KVCache:
-    def __init__(self, n_layers, n_heads, d_head):
-        self.K = [[[] for _ in range(n_heads)] for _ in range(n_layers)]
-        self.V = [[[] for _ in range(n_heads)] for _ in range(n_layers)]
-
-    def append(self, layer, head, k, v):
-        self.K[layer][head].append(k)
-        self.V[layer][head].append(v)
-
-    def read(self, layer, head):
-        return self.K[layer][head], self.V[layer][head]
-```
-
-Simple: keep growing per-token K, V vectors in per-layer, per-head lists.
-
-### Step 2: tiled softmax
-
-```python
-def tiled_softmax_dot(q, K, V, tile=4):
-    """Flash-attention-style softmax(qK^T)V with running max/sum."""
-    m = float("-inf")
-    s = 0.0
-    out = [0.0] * len(V[0])
-    for start in range(0, len(K), tile):
-        k_block = K[start:start + tile]
-        v_block = V[start:start + tile]
-        scores = [sum(qi * ki for qi, ki in zip(q, k)) for k in k_block]
-        new_m = max(m, *scores)
-        exp_old = math.exp(m - new_m) if m != float("-inf") else 0.0
-        exp_new = [math.exp(sc - new_m) for sc in scores]
-        s = s * exp_old + sum(exp_new)
-        for j in range(len(out)):
-            out[j] = out[j] * exp_old + sum(e * v[j] for e, v in zip(exp_new, v_block))
-        m = new_m
-    return [o / s for o in out]
-```
-
-Bit-identical output to `softmax(qK) V` in one shot, but at any time the working set is a `tile × d_head` block, not the full `N × d_head`.
-
-### Step 3: compare naive vs cached decoding on 100-token generation
-
-Count attention operations. Naive: `O(N²)` = 5050. Cached: `O(N)` = 100. The code prints both.
 
 ## Use It
 
@@ -202,11 +149,6 @@ Prefix caching across requests is a big 2026 win — the same system prompt, few
 
 See `outputs/skill-inference-optimizer.md`. The skill picks attention implementation, KV cache strategy, quantization, and speculative decoding for a new inference deployment.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Confirm the naive and cached decoders produce the same output; note the op-count difference.
-2. **Medium.** Implement prefix caching: given a prompt P and several completions, run one forward pass over P to fill the KV cache, then branch per-completion. Measure speedup vs re-encoding P for each.
-3. **Hard.** Implement a toy PagedAttention: KV cache in fixed 16-token blocks with a free-list. When a sequence finishes, return its blocks to the pool. Simulate 1,000 chat completions with varying lengths. Compare memory fragmentation vs contiguous allocation.
 
 ## Key Terms
 

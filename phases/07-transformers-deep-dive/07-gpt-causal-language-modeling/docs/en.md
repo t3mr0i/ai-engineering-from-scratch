@@ -76,30 +76,6 @@ In 2026, min-p + temperature 0.7 is a reasonable default for open-weights models
 
 The core architecture hasn't changed much since GPT-2. Everything interesting has happened in data, scale, and post-training.
 
-## Build It
-
-### Step 1: the causal mask
-
-See `code/main.py`. A one-liner:
-
-```python
-def causal_mask(n):
-    return [[0.0 if j <= i else float("-inf") for j in range(n)] for i in range(n)]
-```
-
-Add it to attention scores before softmax. That's the entire mechanism.
-
-### Step 2: a 2-layer GPT-ish model
-
-Stack two decoder blocks (masked self-attention + FFN, no cross-attention). Add a token embedding, a positional encoding, and an unembedding (tied to the token embedding matrix — a standard trick since GPT-2).
-
-### Step 3: next-token prediction, end-to-end
-
-On a 20-token toy vocab, produce logits at every position. Compute cross-entropy loss against the shift-by-one target. No gradient — this is a forward-pass sanity check.
-
-### Step 4: sampling
-
-Implement greedy, temperature, top-k, top-p, min-p. Run each on a fixed prompt and compare outputs. A sampling function is 10 lines.
 
 ## Use It
 
@@ -130,11 +106,6 @@ Under the hood, `generate()` runs the forward pass, pulls the final-position log
 
 See `outputs/skill-sampling-tuner.md`. The skill picks sampling parameters for a new generation task and flags when deterministic decoding is required.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` and verify the causal attention matrix is lower-triangular after softmax. Spot-check: row 3 should have weights only in columns 0–3.
-2. **Medium.** Implement beam search for width 4. Compare perplexity of beam-4 vs greedy on 10 short prompts. Does beam always win? (Hint: usually for translation, not for open-ended chat.)
-3. **Hard.** Implement speculative decoding: use a tiny 2-layer model as the draft and a 6-layer model as the verifier. Measure wall-clock speedup on 100 completions of length 64. Confirm outputs match greedy of the verifier.
 
 ## Key Terms
 

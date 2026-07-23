@@ -76,17 +76,6 @@ Lesson 15 is the attack class in the abstract. Lesson 25 is the concrete CVE lay
 
 This lesson produces `outputs/skill-cve-review.md`. Given a production AI deployment, it enumerates the Scope Violation surfaces, checks whether each violates the three-independent-boundaries rule, and recommends controls.
 
-## Exercises
-
-1. Run `code/main.py`. Report the exfiltrated data with and without the scope-separation defense.
-
-2. The EchoLeak attack bypasses CSP because it exfiltrates via a Microsoft-signed URL. Design a deployment that narrows the set of allowed exfiltration destinations and measure the legitimate-use false-positive rate.
-
-3. Aim Labs' Scope Violation framework has three boundaries: retrieval, scope, output. Construct a fourth CVE-class attack that exploits a different boundary combination.
-
-4. Microsoft's CamoLeak fix disabled image rendering entirely. Propose a partial fix that preserves image rendering for trusted sources only. Identify the authentication assumption it requires.
-
-5. Responsible disclosure for AI vulnerabilities is evolving. Sketch a disclosure protocol that includes AI-specific evidence (reproducibility, model-version scoping, prompt-injection resistance).
 
 ## Key Terms
 

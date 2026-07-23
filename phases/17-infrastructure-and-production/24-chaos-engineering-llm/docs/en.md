@@ -99,13 +99,6 @@ First LLM-specific experiment: inject one provider 429 for 5 minutes. Observe fa
 
 This lesson produces `outputs/skill-chaos-plan.md`. Given stack and maturity, picks first three experiments and the tooling.
 
-## Exercises
-
-1. Run `code/main.py`. Which experiment trips the burn-rate gate and why?
-2. Design the first five chaos experiments for a vLLM-based RAG service. Include success criteria.
-3. Your burn-rate alert paused an experiment. How do you determine root cause — chaos or natural?
-4. Argue whether chaos should run in production or only staging. When is production the right answer?
-5. Name three LLM-specific failure modes that generic network-chaos cannot reproduce.
 
 ## Key Terms
 

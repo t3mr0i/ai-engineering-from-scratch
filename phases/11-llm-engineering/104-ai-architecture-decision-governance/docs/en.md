@@ -104,17 +104,6 @@ No network, no model calls. The goal is to make the *governance policy* explicit
 
 `outputs/skill-ai-adr-governance.md` is a one-page decision aid: a fill-in-the-blank AI ADR template, a trigger-condition checklist, and a cost-projection formula. Paste it into a new Confluence page or a `/docs/adr/` directory and start the first decision record.
 
-## Exercises
-
-1. Run `code/main.py`. Which sample ADR fails validation, and which field is missing? Add that field to the dict literal in the source and re-run to confirm it passes.
-
-2. The portfolio summary prints a total projected monthly cost. Change the daily request volume for one ADR to 50,000 and re-run. What does the new total cost tell you about which tier decision is the highest-leverage review target?
-
-3. Write a one-paragraph AI ADR for a model choice you have made or seen made in your current project. Include at least one trigger condition. Compare it to the template in `outputs/skill-ai-adr-governance.md` — what field did you omit first?
-
-4. The concept section lists four trigger categories. Identify a real model or vendor change from the past 12 months (a price change, deprecation announcement, or residency update) and describe which ADR trigger it would have fired, and what the documented response would have been.
-
-5. Phase 11 · 14 (MCP) introduces tool-call boundaries between systems. An MCP server at your company routes to an external AI vendor. Sketch the AI ADR for that server: what fields differ from a direct model-API ADR, and what new compliance question appears?
 
 ## Key Terms
 

@@ -99,36 +99,6 @@ The lesson runs offline. The mock LLM is a small lookup table keyed on the user'
 
 The shape of the mock is what matters, not the data. In production you swap the mock for a real model call. The retriever does not change.
 
-## Build It
-
-`code/main.py` implements:
-
-- `MockLLM` - the deterministic stand-in described above.
-- `HyDERewriter` - calls the LLM to write the hypothetical document, returns the rewriter output as `RewriteResult` with the hypothetical text and the query the retriever should use.
-- `MultiQueryRewriter` - calls the LLM for N paraphrases, returns a list of queries.
-- `DecomposeRewriter` - calls the LLM to decompose, returns sub-questions.
-- `retrieve_with_rewriter` - takes a rewriter and a retriever, runs the rewrites, fuses the results.
-- A demo that runs the three rewriters on a fixture and prints which strategy returned the gold answer document first.
-
-The retriever shape is reused from lesson 65 (hybrid BM25 + dense). The fusion is the same RRF. The only new shape is the rewriter interface, which is small.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The output is a per-strategy ranking and a final summary. HyDE wins on the phrasing-mismatched query. Multi-query wins on the paraphrase-variance query. Decomposition wins on the multi-topic query. The fallback (no rewriter) loses on at least one of the three.
-
-## Failure modes the demo will hide
-
-**HyDE hallucinates corpus-specific identifiers wrong.** The model invents a function name. The hypothetical's BM25 score on the right doc collapses because the invented name is now a high-weight token that does not appear in the index. Cap the hypothetical's length and weight BM25 lower in the fusion.
-
-**Multi-query rewrites all converge.** A weak model produces three near-identical paraphrases. The N retrievals return the same top-k. The RRF merge is no better than a single retrieval. Add an explicit diversity instruction to the rewrite prompt and detect duplicates by Jaccard.
-
-**Decomposition over-splits.** The decomposer turns an atomic question into a list. The retrievals all return the same document but with reduced rank. The merge is worse than the original. Detect this with a "are these sub-questions distinct enough" pass before fan-out.
-
-**Latency multiplies.** HyDE costs one LLM call. Multi-query costs one LLM call to generate N rewrites, then N retrievals. Decomposition costs one LLM call to decompose, then M retrievals. The retrievals run in parallel; the LLM call is the floor.
 
 ## Use It
 
@@ -142,13 +112,6 @@ Production patterns:
 
 Lesson 69 wires this rewriter stage before the retriever from lesson 65 and the reranker from lesson 66. Lesson 68 evaluates the lift the rewriter adds to retrieval recall.
 
-## Exercises
-
-1. Implement RAG-Fusion (a 2024 variant of multi-query) where the rewriter's paraphrases are intentionally diverse, then the rerank step (lesson 66) picks the final list.
-2. Add a fourth strategy: step-back prompting (ask the LLM for the more general question, retrieve on that, then narrow). Compare on the fixture.
-3. Train the decomposer to recognize atomic queries by adding a "is the question atomic" head. Measure the over-split rate before and after.
-4. Replace the mock LLM with a real model call. Measure the latency-per-strategy on your stack.
-5. Add a confidence score per rewrite. Drop rewrites below the threshold. Measure the impact on recall.
 
 ## Key Terms
 

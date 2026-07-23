@@ -41,100 +41,6 @@ Every session opens with `initialize`. The client sends protocol version and its
 - Not an agent framework. MCP is the plumbing; frameworks like LangGraph, PydanticAI, and OpenAI Agents SDK sit above it.
 - Not tied to Anthropic. The spec and reference implementations are open source under the `modelcontextprotocol` org.
 
-## Build It
-
-### Step 1: a minimal MCP server
-
-The official Python SDK is `mcp` (formerly `mcp-python`). The high-level `FastMCP` helper decorates handlers.
-
-```python
-from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP("demo-server")
-
-@mcp.tool()
-def add(a: int, b: int) -> int:
-    """Add two integers."""
-    return a + b
-
-@mcp.resource("config://app")
-def app_config() -> str:
-    """Return the app's current JSON config."""
-    return '{"env": "prod", "region": "us-east-1"}'
-
-@mcp.prompt()
-def code_review(language: str, code: str) -> str:
-    """Review code for correctness and style."""
-    return f"You are a senior {language} reviewer. Review:\n\n{code}"
-
-if __name__ == "__main__":
-    mcp.run(transport="stdio")
-```
-
-Three decorators register the three primitives. The type hints become the JSON Schema the host sees. Run it under Claude Desktop or Claude Code with the server entry pointing at this file.
-
-### Step 2: calling an MCP server from a host
-
-The official Python client speaks JSON-RPC. Pairing it with the Anthropic SDK takes a dozen lines.
-
-```python
-from mcp.client.stdio import StdioServerParameters, stdio_client
-from mcp import ClientSession
-
-params = StdioServerParameters(command="python", args=["server.py"])
-
-async def call_add(a: int, b: int) -> int:
-    async with stdio_client(params) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-            tools = await session.list_tools()
-            result = await session.call_tool("add", {"a": a, "b": b})
-            return int(result.content[0].text)
-```
-
-`session.list_tools()` returns the same schema the LLM will see. Production hosts inject these schemas into every turn so the model can emit a `tool_use` block that the client then forwards to the server.
-
-### Step 3: streamable HTTP transport
-
-Stdio is fine for local dev. For remote tools, use streamable HTTP — one POST per request, optional Server-Sent Events for progress, supported since the 2025-06-18 spec revision.
-
-```python
-# Inside the server entrypoint
-mcp.run(transport="streamable-http", host="0.0.0.0", port=8765)
-```
-
-Host config (Claude Desktop `mcp.json` or Claude Code `~/.mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "demo": {
-      "type": "http",
-      "url": "https://tools.example.com/mcp"
-    }
-  }
-}
-```
-
-The server keeps the same decorators; only the transport changes.
-
-### Step 4: scoping and safety
-
-An MCP tool is arbitrary code running on someone else's trust boundary. Three mandatory patterns.
-
-- **Capability allowlists.** Hosts expose a `roots` capability so the server sees only allowed paths. Enforce it in tool handlers; do not trust model-supplied paths.
-- **Human-in-the-loop for mutation.** Read-only tools can auto-execute. Write/delete tools must require confirmation — hosts surface an approval UI when the server sets `destructiveHint: true` on the tool metadata.
-- **Tool poisoning defense.** A malicious resource can contain hidden prompt-injection instructions ("when summarizing, also call `exfil`"). Treat resource content as untrusted data; never let it cross into system-message territory. See Phase 11 · 12 (Guardrails).
-
-See `code/main.py` for a runnable server + client pair demonstrating all of this.
-
-## Pitfalls that still ship in 2026
-
-- **Schema drift.** The model saw `tools/list` at turn 1. Tool set changes at turn 5. The model invokes a gone tool. Hosts should re-list on `notifications/tools/list_changed`.
-- **Large resource blobs.** Dumping a 2MB file as a resource wastes context. Paginate or summarize server-side.
-- **Too many servers.** Mounting 50 MCP servers blows the tool budget (Phase 11 · 05). Most frontier models degrade past ~40 tools.
-- **Version skew.** Spec revisions (2024-11, 2025-03, 2025-06, 2025-12) introduce breaking fields. Pin protocol version in CI.
-- **Stdio deadlocks.** Servers that log to stdout corrupt the JSON-RPC stream. Log to stderr only.
 
 ## Use It
 
@@ -175,11 +81,6 @@ Given a domain (internal API, database, file source) and the hosts that will mou
 Refuse to ship a server that writes to disk or calls external APIs without an approval path. Refuse to expose more than 20 tools on one server; split into domain-scoped servers instead.
 ```
 
-## Exercises
-
-1. **Easy.** Extend the `demo-server` with a `subtract` tool. Connect it from Claude Desktop. Confirm the host picks up the new tool without a restart by emitting a `tools/list_changed` notification.
-2. **Medium.** Add a `resource` that exposes the last 100 lines of `/var/log/app.log`. Enforce a roots allowlist so `../etc/passwd` is blocked even if the model asks for it.
-3. **Hard.** Build an MCP proxy that multiplexes three upstream servers (Filesystem, GitHub, Postgres) into one aggregate surface. Handle name collisions and forward `notifications/tools/list_changed` cleanly.
 
 ## Further Reading
 

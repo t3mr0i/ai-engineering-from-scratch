@@ -84,17 +84,6 @@ Deterministic, stdlib, no network.
 
 `outputs/skill-mcp-ide-wiring.md` is a wiring guide: the four-question tool/MCP/permission/verify decision, plus an MCP server trust checklist you run before adding any server to your IDE.
 
-## Exercises
-
-1. Run `code/main.py`. For the "overnight migration in CI" task, which tool is selected and why? Change the task to "big multi-file feature, lots of cross-file edits" — what flips the recommendation?
-
-2. The MCP trust model downgrades one proposed server to read-only / gated. Identify it and state the one-sentence rule it violated.
-
-3. List three MCP servers you would wire into your own IDE today. For each, mark read-only vs write-capable and name the attacker-controllable data (if any) it exposes the agent to.
-
-4. You want agent mode to read Jira tickets *and* close them automatically. Decompose this into the minimum capability split (which part is read, which is write) and the permission posture you'd require for the write half. Justify against Phase 18 · 15.
-
-5. A teammate argues "we should standardize the whole org on one AI coding tool." Give the strongest argument for, the strongest against, and the position you'd actually take — grounded in the convergence and the MCP-portability points from this lesson.
 
 ## Key Terms
 

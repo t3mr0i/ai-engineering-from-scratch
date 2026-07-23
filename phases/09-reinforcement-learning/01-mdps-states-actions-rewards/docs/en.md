@@ -38,88 +38,6 @@ You cannot learn from this stream until you formalize it. "What I saw," "what I 
 
 These split expected return into "this step's reward" plus "discounted value of where you land." Recursive. Every algorithm in Phase 9 either iterates this equation to convergence (dynamic programming), samples from it (Monte Carlo), or bootstraps it one step (temporal difference).
 
-## Build It
-
-### Step 1: a tiny deterministic MDP
-
-A 4×4 GridWorld. Agent starts top-left, terminal at bottom-right, reward of -1 per step, actions `{up, down, left, right}`. See `code/main.py`.
-
-```python
-GRID = 4
-TERMINAL = (3, 3)
-ACTIONS = {"up": (-1, 0), "down": (1, 0), "left": (0, -1), "right": (0, 1)}
-
-def step(state, action):
-    if state == TERMINAL:
-        return state, 0.0, True
-    dr, dc = ACTIONS[action]
-    r, c = state
-    nr = min(max(r + dr, 0), GRID - 1)
-    nc = min(max(c + dc, 0), GRID - 1)
-    return (nr, nc), -1.0, (nr, nc) == TERMINAL
-```
-
-Five lines. That is the entire environment. Deterministic transitions, constant step penalty, absorbing terminal state.
-
-### Step 2: roll out a policy
-
-A policy is a function from state to action distribution. The simplest: uniform random.
-
-```python
-def uniform_policy(state):
-    return {a: 0.25 for a in ACTIONS}
-
-def rollout(policy, max_steps=200):
-    s, total, steps = (0, 0), 0.0, 0
-    for _ in range(max_steps):
-        a = sample(policy(s))
-        s, r, done = step(s, a)
-        total += r
-        steps += 1
-        if done:
-            break
-    return total, steps
-```
-
-Run the random policy 1000 times. Average return is around -60 to -80 for this 4×4 board. The optimal return is -6 (straight-line path down-right). Closing that gap is everything in Phase 9.
-
-### Step 3: compute `V^π` exactly via the Bellman equation
-
-For small MDPs the Bellman equation is a linear system. Enumerate states, apply the expectation, iterate until the values stop changing.
-
-```python
-def policy_evaluation(policy, gamma=0.99, tol=1e-6):
-    V = {s: 0.0 for s in all_states()}
-    while True:
-        delta = 0.0
-        for s in all_states():
-            if s == TERMINAL:
-                continue
-            v = 0.0
-            for a, pi_a in policy(s).items():
-                s_next, r, _ = step(s, a)
-                v += pi_a * (r + gamma * V[s_next])
-            delta = max(delta, abs(v - V[s]))
-            V[s] = v
-        if delta < tol:
-            return V
-```
-
-This is iterative policy evaluation. It is the first algorithm in Sutton & Barto and the theoretical foundation of every RL method that follows.
-
-### Step 4: `γ` is a hyperparameter with physical meaning
-
-Effective horizon is roughly `1 / (1 - γ)`. `γ = 0.9` → 10 steps. `γ = 0.99` → 100 steps. `γ = 0.999` → 1000 steps.
-
-Too low and the agent acts myopically. Too high and credit assignment becomes noisy, because many early steps share responsibility for far-future reward. LLM RLHF typically uses `γ = 1` because episodes are short and bounded. Control tasks use `0.95–0.99`. Long-horizon strategy games use `0.999`.
-
-## Pitfalls
-
-- **Non-Markovian state.** If you need the last three observations to decide, the "state" is not just the current observation. Fix: stack frames (DQN on Atari stacks 4) or use a recurrent state (LSTM/GRU over observations).
-- **Sparse rewards.** Win-only rewards make learning nearly impossible in large state spaces. Shape rewards (intermediate signal) or bootstrap with imitation (Phase 9 · 09).
-- **Reward hacking.** Optimizing a proxy reward often produces pathological behavior. OpenAI's boat-racing agent spun in circles collecting powerups forever instead of finishing the race. Always define reward from the target outcome, not the proxy.
-- **Discount mis-spec.** `γ = 1` on an infinite-horizon task makes every value infinite. Always cap with either a finite horizon or `γ < 1`.
-- **Reward scale.** Rewards of {+100, -100} vs {+1, -1} give identical optimal policies but vastly different gradient magnitudes. Normalize to `[-1, 1]`-ish before plugging into PPO/DQN.
 
 ## Use It
 
@@ -160,11 +78,6 @@ Given a task (control / game / recommendation / LLM fine-tuning), output:
 Refuse to ship any MDP where the state is non-Markovian without explicit mention of frame-stacking or recurrent state. Refuse any reward that was not defined in terms of the target outcome. Flag any `γ ≥ 1.0` on an infinite-horizon task. Flag any reward range >100x the typical step reward as a likely gradient-explosion source.
 ```
 
-## Exercises
-
-1. **Easy.** Implement the 4×4 GridWorld and random-policy rollout in `code/main.py`. Run 10,000 episodes. Report mean and std of return. Compare to the optimal return (-6).
-2. **Medium.** Run `policy_evaluation` with `γ ∈ {0.5, 0.9, 0.99}` for the uniform-random policy. Print `V` as a 4×4 grid for each. Explain why the state values near the terminal grow faster with larger `γ`.
-3. **Hard.** Turn the GridWorld stochastic: each action slips to an adjacent direction with probability `p = 0.1`. Re-evaluate the uniform policy. Does `V[start]` get better or worse? Why?
 
 ## Key Terms
 

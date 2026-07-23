@@ -24,6 +24,7 @@ window.SITE_I18N = {
   // index.html
   hero_title: { en: "What are you learning?", de: "Was lernst du gerade?" },
   hero_sub: { en: "Last opened lesson — click to jump in", de: "Zuletzt geöffnete Lektion — hier klicken zum direkten Einstieg" },
+  resume_button: { en: "Continue with this lesson", de: "Diesen Kurs fortsetzen" },
 
   // catalog.html
   catalog_title: { en: "Lesson Catalog", de: "Lektionskatalog" },

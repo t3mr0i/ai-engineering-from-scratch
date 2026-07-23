@@ -98,48 +98,6 @@ Each query carries:
 
 In production you label these. This lesson ships a hand-built fixture so the eval runs out of the box.
 
-## Build It
-
-`code/main.py` implements:
-
-- `precision_at_k(retrieved, gold, k)` - the literal definition.
-- `recall_at_k(retrieved, gold, k)` - the literal definition.
-- `mean_reciprocal_rank(retrieved_list_of_lists, gold_list)` - the mean over queries.
-- `ndcg_at_k(retrieved, graded_relevance, k)` - DCG / IDCG with binary or graded gains.
-- `extract_claims(answer)` - splits an answer into sentence-shaped claims.
-- `faithfulness(claims, context_texts, judge)` - fraction of claims judged supported.
-- `answer_relevance(question, answer, judge)` - judge on whether the answer addresses the question.
-- `MockJudge` - deterministic token-overlap judge so the eval runs offline.
-- `evaluate_pipeline(pipeline_fn, qrels, ks)` - the orchestrator that runs every metric.
-- A demo that runs three pipeline variants (chunker baseline, hybrid retrieval, hybrid + rerank) against the qrels and prints a metrics table.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The output shows precision@k, recall@k, MRR, nDCG@k, faithfulness, and answer relevance for each variant in a single metrics table. The hybrid retrieval row beats the chunker baseline on recall; the rerank row beats hybrid on MRR.
-
-## Reading the metrics to diagnose failures
-
-| Symptom | Likely cause | What to fix |
-|---------|-------------|-------------|
-| Low recall@k, low precision@k | Chunker cut the answer or retriever cannot find it | Chunker boundaries (lesson 64) or retriever modality (lesson 65) |
-| Decent recall@k, low MRR | Right chunk is in top-k but not at position 1 | Reranker (lesson 66) |
-| High MRR, low faithfulness | Generator invents content despite right context | Generation prompt; force-cite-or-refuse |
-| High faithfulness, low relevance | Answer is grounded but off-topic | Query rewriter (lesson 67) or generation prompt |
-| All four high, users still complain | Eval set is unrepresentative | Expand qrels with real user queries |
-
-## Failure modes the demo will hide
-
-**LLM-as-judge bias.** A model judges its own outputs as more faithful than they are. Use a different model family for the judge than the generator, or hand-grade a sample.
-
-**Qrels rot.** The gold answers drift as the corpus changes. A doc that was gold for q1 in January 2024 is no longer the right answer in October 2024 because the team renamed the function. Schedule a quarterly qrels review.
-
-**Faithfulness micro-checks miss macro-claims.** Per-sentence faithfulness can pass while the overall answer's structure misleads. Add a sample-level qualitative review on top of the automated metric.
-
-**Recall@k masks per-query failures.** A 90% average recall can hide that one query class always misses. Slice the qrels by query class (literal, paraphrased, multi-topic) and report per-slice.
 
 ## Use It
 
@@ -153,13 +111,6 @@ Production patterns:
 
 Lesson 69 wires the entire pipeline (chunker, retriever, reranker, generator) and runs this eval against the end-to-end system.
 
-## Exercises
-
-1. Add a fifth retrieval metric: hit-rate@k. Compare it against recall@k. Explain when they differ.
-2. Implement a graded faithfulness: 0 (unsupported), 1 (partially supported), 2 (fully supported). Update the metric accordingly.
-3. Replace the mock judge with a real model call. Measure the disagreement between the mock and the real judge on the fixture.
-4. Add a query-class slice ("literal", "paraphrased", "multi-topic"). Report per-slice metrics.
-5. Add an "answer length" metric and correlate it with faithfulness. Plot the curve.
 
 ## Key Terms
 

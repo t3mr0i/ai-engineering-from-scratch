@@ -38,62 +38,6 @@ Reconstruction pushes `x̂` toward `x`. KL pushes `q(z|x)` toward the prior. The
 
 **Sampling.** At inference: draw `z ~ N(0, I)`, forward through decoder. One forward pass — no iterative sampling like diffusion.
 
-## Build It
-
-`code/main.py` implements a tiny VAE without numpy or torch. Input is 8-dimensional synthetic data drawn from a 2-component Gaussian mixture in 8-D. Encoder and decoder are single hidden-layer MLPs. We implement tanh activation, forward pass, loss, and a hand-written backward pass. Not production — pedagogy.
-
-### Step 1: encoder forward
-
-```python
-def encode(x, enc):
-    h = tanh(add(matmul(enc["W1"], x), enc["b1"]))
-    mu = add(matmul(enc["W_mu"], h), enc["b_mu"])
-    log_sigma2 = add(matmul(enc["W_sig"], h), enc["b_sig"])
-    return mu, log_sigma2
-```
-
-`log σ²` instead of `σ` so the network output is unconstrained (softplus of σ is a trap — gradients die at σ ≈ 0).
-
-### Step 2: reparameterize and decode
-
-```python
-def reparameterize(mu, log_sigma2, rng):
-    eps = [rng.gauss(0, 1) for _ in mu]
-    sigma = [math.exp(0.5 * lv) for lv in log_sigma2]
-    return [m + s * e for m, s, e in zip(mu, sigma, eps)]
-
-def decode(z, dec):
-    h = tanh(add(matmul(dec["W1"], z), dec["b1"]))
-    return add(matmul(dec["W_out"], h), dec["b_out"])
-```
-
-### Step 3: the ELBO
-
-```python
-def elbo(x, x_hat, mu, log_sigma2, beta=1.0):
-    recon = sum((a - b) ** 2 for a, b in zip(x, x_hat))
-    kl = 0.5 * sum(math.exp(lv) + m * m - lv - 1 for m, lv in zip(mu, log_sigma2))
-    return recon + beta * kl, recon, kl
-```
-
-Exact closed-form KL because both distributions are Gaussian. Do not integrate numerically. People still ship code with monte-carlo KL estimates in 2026 — it is 3x slower for no reason.
-
-### Step 4: generate
-
-```python
-def sample(dec, z_dim, rng):
-    z = [rng.gauss(0, 1) for _ in range(z_dim)]
-    return decode(z, dec)
-```
-
-That is the generative model. Five lines.
-
-## Pitfalls
-
-- **Posterior collapse.** KL term drives `q(z|x) → N(0, I)` so aggressively that `z` carries no info about `x`. Fix: β-annealing (start β=0, ramp to 1), free bits, or skip the KL on inactive dimensions.
-- **Blurry samples.** The Gaussian decoder likelihood implies MSE reconstruction, which is Bayes-optimal for L2 (the mean) — the mean of a set of plausible digits is a fuzzy digit. Fix: discrete decoder (VQ-VAE, NVAE), or use the VAE only as an encoder and stack diffusion on the latents (this is what Stable Diffusion does).
-- **β too large, too early.** See posterior collapse. Start at β≈0.01 and ramp.
-- **Latent dim too small.** 16-D works for MNIST, 256-D for ImageNet 256², 2048-D for ImageNet 1024². Stable Diffusion's VAE compresses 512×512×3 → 64×64×4 (32x downsample factor in spatial area, 32x in channels).
 
 ## Use It
 
@@ -116,11 +60,6 @@ Save `outputs/skill-vae-trainer.md`.
 
 Skill takes: dataset profile + latent-dim target + downstream use (reconstruction, sampling, or latent-diffusion input) and outputs: architecture choice (plain/β/VQ/RVQ), β schedule, latent dim, decoder likelihood (Gaussian vs categorical), and evaluation plan (recon MSE, KL per dim, Fréchet distance between `q(z|x)` and `N(0, I)`).
 
-## Exercises
-
-1. **Easy.** Change `β` in `code/main.py` to `0.01`, `0.1`, `1.0`, `5.0`. Record the final reconstruction MSE and KL. Which β is Pareto-best for your synthetic data?
-2. **Medium.** Replace the Gaussian decoder likelihood with a Bernoulli likelihood (cross-entropy loss). Compare sample quality on a binarized version of the same synthetic data.
-3. **Hard.** Extend `code/main.py` into a mini VQ-VAE: replace the continuous `z` with a nearest-neighbour lookup in a codebook of K=32 entries. Compare reconstruction MSE and report how many codebook entries get used (codebook collapse is real).
 
 ## Key Terms
 

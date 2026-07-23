@@ -98,29 +98,6 @@ Several related specs emerged in 2024-2026:
 
 A2A is the most-adopted peer protocol as of April 2026. See arXiv:2505.02279 (Liu et al., "A Survey of Agent Interoperability Protocols") for the comparison.
 
-## Build It
-
-`code/main.py` implements an A2A-minimal server and client using `http.server` and JSON. The server:
-
-- exposes `/.well-known/agent.json`,
-- accepts `POST /tasks`,
-- manages task state,
-- returns artifacts on `GET /tasks/{id}`.
-
-The client:
-
-- fetches the Agent Card,
-- submits a task,
-- polls until completion,
-- reads the artifact.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-The script starts the server in a background thread, then runs the client against it. You see the complete flow: discovery, submit, poll, artifact.
 
 ## Use It
 
@@ -136,13 +113,6 @@ Checklist:
 - **Rate limits + auth.** A2A is public-facing; apply standard web security.
 - **Dead-letter for failed tasks.** Inspect patterns over time for recurring failure types.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm the client discovers the server and receives the correct artifact.
-2. Add a second skill to the server (e.g., "summarize"). Update the Agent Card. Write a client that picks the skill based on task type.
-3. Implement an SSE streaming endpoint: `/tasks/{id}/events` that emits state changes. What does the client need to do differently?
-4. Read the A2A spec (https://a2a-protocol.org/latest/specification/). Identify three things the spec mandates that this demo does not implement.
-5. Compare A2A (Agent Card discovery) to MCP (server-side capability listing via `listTools`). What is the tradeoff between self-describing agents and capability-probing?
 
 ## Key Terms
 

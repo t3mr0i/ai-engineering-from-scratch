@@ -116,17 +116,6 @@ The model in `code/main.py` implements the internal registry pattern because it 
 
 `outputs/skill-prompt-library-governance.md` is a one-page decision aid: a checklist for onboarding a new prompt into a governed registry, a promotion gate table, and a retirement trigger reference. Paste it into your team's confluence, notion, or internal wiki as the standing operating procedure for your prompt library.
 
-## Exercises
-
-1. Run `code/main.py`. One promotion attempt is blocked because the reviewer is the same person as the owner. Which prompt is it, and what is the minimal change to the registry record that would unblock it?
-
-2. Run `code/main.py` again. The retirement check marks one prompt as `RETIRED` due to `accuracy_floor`. Change the accuracy threshold in the driver from 0.80 to 0.65 and re-run. Which prompt survives retirement now, and why does this threshold choice matter in practice?
-
-3. Your team has 30 prompts in a shared Notion page. Apply the four governance primitives to two of them: assign an owner, propose a version string, write one evaluation anchor (input + expected output), and state a retirement rule. What breaks immediately when you try?
-
-4. A model upgrade from `claude-sonnet-4-5` to `claude-sonnet-4-6` is announced. Describe the exact sequence of steps a governed registry should take: which prompts to re-evaluate, who is notified, and what happens if an anchor fails on the new model.
-
-5. A colleague argues that LLM-as-judge anchors are circular ("you're using a model to test a model"). Write a two-paragraph response that concedes the legitimate concern and defends the approach as a practical engineering trade-off. Reference Phase 11 · 01 for the deeper evaluation treatment.
 
 ## Key Terms
 

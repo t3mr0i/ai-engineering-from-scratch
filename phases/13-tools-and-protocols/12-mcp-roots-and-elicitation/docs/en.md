@@ -137,17 +137,6 @@ The demo runs three scenarios: happy path (one match), disambiguation (three mat
 
 This lesson produces `outputs/skill-elicitation-form-designer.md`. Given a tool that might need user confirmation or disambiguation, the skill designs the elicitation form schema and the message template.
 
-## Exercises
-
-1. Run `code/main.py`. Trigger the disambiguation path; confirm the simulated user answer gets routed back to the tool.
-
-2. Add a new tool `notes_archive` that requires elicitation confirmation every time (destructive hint). Check the UX: how does this compare to the model re-asking in text?
-
-3. Implement URL-mode elicitation for a first-run OAuth flow. Note the drift risk and add an SDK-version guard.
-
-4. Extend `roots/list` handling: when a notification arrives, the server should atomically re-read and rescan open file handles that might now be out of scope.
-
-5. Read the SEP-1036 issue discussion thread on GitHub. Identify one open question that affects how servers should handle URL-mode callbacks.
 
 ## Key Terms
 

@@ -39,86 +39,6 @@ Key LDA output:
 
 Output is one topic per document (plus a -1 outlier label). Optionally, a soft membership via HDBSCAN's probability vector.
 
-## Build It
-
-### Step 1: LDA via scikit-learn
-
-```python
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.decomposition import LatentDirichletAllocation
-import numpy as np
-
-
-def fit_lda(documents, n_topics=5, max_features=1000):
-    cv = CountVectorizer(
-        max_features=max_features,
-        stop_words="english",
-        min_df=2,
-        max_df=0.9,
-    )
-    X = cv.fit_transform(documents)
-    lda = LatentDirichletAllocation(
-        n_components=n_topics,
-        random_state=42,
-        max_iter=50,
-        learning_method="online",
-    )
-    doc_topic = lda.fit_transform(X)
-    feature_names = cv.get_feature_names_out()
-    return lda, cv, doc_topic, feature_names
-
-
-def print_top_words(lda, feature_names, n_top=10):
-    for idx, topic in enumerate(lda.components_):
-        top_idx = np.argsort(-topic)[:n_top]
-        words = [feature_names[i] for i in top_idx]
-        print(f"topic {idx}: {' '.join(words)}")
-```
-
-Notice: stopwords removed, min_df and max_df filter rare and ubiquitous terms, CountVectorizer (not TfidfVectorizer) because LDA expects raw counts.
-
-### Step 2: BERTopic (production)
-
-```python
-from bertopic import BERTopic
-
-topic_model = BERTopic(
-    embedding_model="sentence-transformers/all-MiniLM-L6-v2",
-    min_topic_size=15,
-    verbose=True,
-)
-
-topics, probs = topic_model.fit_transform(documents)
-info = topic_model.get_topic_info()
-print(info.head(20))
-valid_topics = info[info["Topic"] != -1]["Topic"].tolist()
-for topic_id in valid_topics[:5]:
-    print(f"topic {topic_id}: {topic_model.get_topic(topic_id)[:10]}")
-```
-
-The filter on `Topic != -1` drops BERTopic's outlier bucket (documents HDBSCAN could not cluster). `min_topic_size` controls HDBSCAN's minimum cluster size; BERTopic's library default is 10. This example sets it to 15 explicitly for the lesson's scale. For corpora over 10,000 documents, increase to 50 or 100.
-
-### Step 3: evaluation
-
-Both methods output topic words. The question is whether those words cohere.
-
-- **Topic coherence (c_v).** Combines NPMI (normalized pointwise mutual information) of top-word pairs over sliding-window contexts, aggregates the scores into topic vectors, and compares those vectors via cosine similarity. Higher is better. Use `gensim.models.CoherenceModel` with `coherence="c_v"`.
-- **Topic diversity.** Fraction of unique words across all topics' top words. Higher is better (topics do not overlap).
-- **Qualitative inspection.** Read the top words of each topic. Do they name a real thing? Human judgment is still the last line of defense.
-
-## When to pick which
-
-| Situation | Pick |
-|-----------|------|
-| Short text (tweets, reviews, headlines) | BERTopic |
-| Long documents with topic mixtures | LDA |
-| No GPU / limited compute | LDA or NMF |
-| Need document-level multi-topic distributions | LDA |
-| LLM integration for topic labeling | BERTopic (direct support) |
-| Resource-constrained edge deployment | LDA |
-| Max semantic coherence | BERTopic |
-
-The biggest practical consideration is document length. BERT embeddings truncate; LDA counts work on whatever length. For documents longer than the embedding model's context, either chunk + aggregate or use LDA.
 
 ## Use It
 
@@ -156,11 +76,6 @@ Given a corpus description (document count, avg length, domain, language, comput
 Refuse BERTopic on documents longer than the embedding model's context window without a chunking strategy. Refuse LDA on very short text (tweets, reviews under 10 tokens) as coherence collapses. Flag any n_topics choice below 5 as likely wrong; flag >200 on corpora under 40k docs as likely over-splitting.
 ```
 
-## Exercises
-
-1. **Easy.** Fit LDA with 5 topics on the 20 Newsgroups dataset. Print top 10 words per topic. Label each topic by hand. Did the algorithm find the real categories?
-2. **Medium.** Fit BERTopic on the same 20 Newsgroups subset. Compare the number of topics found, top words, and qualitative coherence against LDA. Which surfaces the real categories more cleanly?
-3. **Hard.** Compute c_v coherence for both LDA and BERTopic on your corpus. Run each with 5, 10, 20, 50 topics. Plot coherence vs topic count. Report which method is more stable across topic counts.
 
 ## Key Terms
 

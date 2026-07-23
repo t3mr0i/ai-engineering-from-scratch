@@ -140,17 +140,6 @@ No model, no network. The point is to make the three gates composable and runnab
 
 `outputs/skill-responsible-ai-compliance-checklist.md` is the one-page decision aid: paste the three gates (data tier, use-case tier, proxy-bias audit) into a project kickoff document or a sprint zero workshop. Same engine the code runs, in checklist form.
 
-## Exercises
-
-1. Run `code/main.py`. Which of the three retrieval contexts is RED? Which GDPR article is violated, and what would a DPO ask for before production?
-
-2. The guardrail evaluator ESCALATEs the CV-shortlisting spec even though its data tier is GREEN. Identify the AI Act article and the use-case category in Annex III that triggered it. What is the minimum engineering change that would flip the verdict to ALLOW?
-
-3. Run the proxy-bias audit on the simulated postcode data. The disparity ratio is printed. If your client's regulatory threshold is 0.85 instead of 0.80, does the verdict change? What is the engineering cost to bring the ratio above 0.85 — and which lever (prompt change, retrieval change, model change, training data change) is the cheapest?
-
-4. Take a real system from your backlog. Fill in the three gates for it. Which gate is the weakest? If you can only fix one before a demo to a client's legal team, which gate and why?
-
-5. The contract-reviewer failure story turned on a six-week gap between deployment and discovery. Design the production telemetry (logs, dashboards, alerts) that would have caught the missing FRIA within 48 hours of go-live.
 
 ## Key Terms
 

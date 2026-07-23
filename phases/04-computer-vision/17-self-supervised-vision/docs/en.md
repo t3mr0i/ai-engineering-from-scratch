@@ -105,95 +105,6 @@ After self-supervised pretraining, the standard evaluation is a **linear probe**
 
 Linear probe is a pure measure of feature quality; fine-tuning typically adds 2-5 points but also mixes in the effect of head retraining.
 
-## Build It
-
-### Step 1: Two-view augmentation pipeline
-
-```python
-import torch
-import torchvision.transforms as T
-
-two_view_train = lambda: T.Compose([
-    T.RandomResizedCrop(96, scale=(0.2, 1.0)),
-    T.RandomHorizontalFlip(),
-    T.ColorJitter(0.4, 0.4, 0.4, 0.1),
-    T.RandomGrayscale(p=0.2),
-    T.ToTensor(),
-])
-
-
-class TwoViewDataset(torch.utils.data.Dataset):
-    def __init__(self, base):
-        self.base = base
-        self.aug = two_view_train()
-
-    def __len__(self):
-        return len(self.base)
-
-    def __getitem__(self, i):
-        img, _ = self.base[i]
-        v1 = self.aug(img)
-        v2 = self.aug(img)
-        return v1, v2
-```
-
-Each __getitem__ returns two augmented views of the same image; labels are not needed.
-
-### Step 2: InfoNCE loss
-
-```python
-import torch.nn.functional as F
-
-def info_nce(z1, z2, tau=0.1):
-    """
-    z1, z2: (N, D) L2-normalised embeddings of paired views
-    """
-    N, D = z1.shape
-    z = torch.cat([z1, z2], dim=0)  # (2N, D)
-    sim = z @ z.T / tau              # (2N, 2N)
-
-    mask = torch.eye(2 * N, dtype=torch.bool, device=z.device)
-    sim = sim.masked_fill(mask, float("-inf"))
-
-    targets = torch.cat([torch.arange(N, 2 * N), torch.arange(0, N)]).to(z.device)
-    return F.cross_entropy(sim, targets)
-```
-
-L2-normalise embeddings before calling. `tau=0.1` is the SimCLR default; lower makes the loss sharper and requires more negatives.
-
-### Step 3: Sanity check InfoNCE
-
-```python
-z1 = F.normalize(torch.randn(16, 32), dim=-1)
-z2 = z1.clone()
-loss_same = info_nce(z1, z2, tau=0.1).item()
-z2_random = F.normalize(torch.randn(16, 32), dim=-1)
-loss_random = info_nce(z1, z2_random, tau=0.1).item()
-print(f"InfoNCE with identical pairs:  {loss_same:.3f}")
-print(f"InfoNCE with random pairs:     {loss_random:.3f}")
-```
-
-Identical pairs should give a low loss (close to 0 for a large batch and cold temperature). Random pairs should give log(2N-1) = ~log(31) = ~3.4 with a 16-pair batch.
-
-### Step 4: MAE-style masking
-
-```python
-def random_mask_indices(num_patches, mask_ratio=0.75, seed=0):
-    g = torch.Generator().manual_seed(seed)
-    n_keep = int(num_patches * (1 - mask_ratio))
-    perm = torch.randperm(num_patches, generator=g)
-    visible = perm[:n_keep]
-    masked = perm[n_keep:]
-    return visible.sort().values, masked.sort().values
-
-
-num_patches = 196
-visible, masked = random_mask_indices(num_patches, mask_ratio=0.75)
-print(f"visible: {len(visible)} / {num_patches}")
-print(f"masked:  {len(masked)} / {num_patches}")
-```
-
-Simple, fast, and deterministic for a given seed. Real MAE implementations batch this and keep per-sample masks.
 
 ## Use It
 
@@ -225,11 +136,6 @@ This lesson produces:
 - `outputs/prompt-ssl-pretraining-picker.md` — a prompt that picks SimCLR / MAE / DINOv2 given dataset size, compute, and downstream task.
 - `outputs/skill-linear-probe-runner.md` — a skill that writes the linear-probe evaluation for any frozen encoder + labelled dataset.
 
-## Exercises
-
-1. **(Easy)** Verify that InfoNCE loss drops when you decrease temperature for well-aligned embeddings and rises when you decrease temperature for random embeddings. Produce a plot `tau in [0.05, 0.1, 0.2, 0.5]` vs loss.
-2. **(Medium)** Implement a DINO-style centre buffer. Show that without the centring, the student collapses to a constant vector within a few epochs.
-3. **(Hard)** Train MAE on CIFAR-100 using the TinyUNet from Lesson 10 as the backbone. Report linear-probe accuracy at 10, 50, and 200 epochs. Show that a MAE-pretrained linear probe beats a from-scratch supervised linear probe on the same 1,000-image subset.
 
 ## Key Terms
 

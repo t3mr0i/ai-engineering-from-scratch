@@ -104,17 +104,6 @@ The driver runs a synthetic three-domain assessment (customer, product, supplier
 
 `outputs/skill-data-quality-assessment-checklist.md` is a one-page consultant's checklist: the five assessment steps, the per-dimension threshold table, the go/no-go decision criteria, and the tooling shortlist. Paste it into the project kickoff to align data and AI engineering teams before any model work begins.
 
-## Exercises
-
-1. Run `code/main.py`. Which master data domain is CONDITIONAL at both criticality levels, and why? Change the `duplicate_rate` for that domain from `0.38` to `0.05` and re-run — what verdict does it now get at STANDARD criticality, and what does that imply about the minimum upstream data fix required?
-
-2. Run `code/main.py` again and look at the `CONDITIONAL` verdict for the Supplier domain. The output names a specific mitigation for the weakest dimension. Write that mitigation as a one-sentence data pipeline requirement that an engineer could implement as a retrieval filter.
-
-3. Pick a real AI project you are involved in or have studied. List every master data domain it touches. For each, estimate (without profiling tools) whether null rate, uniqueness, or timeliness is most likely to be the highest-risk dimension. What single query would you run to validate that estimate?
-
-4. A client's RAG system returns plausible but wrong product information. The model is Claude Sonnet 4.x and the retrieval layer is a standard vector store. Using the concept section's framework, name the two most likely data quality root causes and describe how you would confirm each within a one-day investigation.
-
-5. Great Expectations and Soda Core both support "data contracts" — expectations defined as code, run in CI. Sketch a five-expectation suite for a customer master data domain that would catch the defect types this lesson covers. Which expectation type in each tool corresponds to uniqueness checking?
 
 ## Key Terms
 

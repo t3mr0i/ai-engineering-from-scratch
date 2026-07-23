@@ -73,17 +73,6 @@ The simulator uses stdlib only. The intent is pedagogical: hold the numbers in y
 
 `outputs/skill-horizon-reality-check.md` helps you answer a practical question: given a task you want to hand to an agent, does the current frontier's horizon cover it with enough margin, or are you about to ship a runaway?
 
-## Exercises
-
-1. Run the simulator. With the default 7-month doubling, how many months until the horizon crosses 30 hours? 168 hours? Plot the two crossings.
-
-2. Set per-step reliability to 0.995. What trajectory length still clears 50% end-to-end reliability? Compare to 0.99 and 0.999. Per-step reliability has exponential consequences at scale.
-
-3. Read METR's Time Horizon 1.1 blog post. Identify one methodological choice (task weighting, expert baseline, success criterion) that you would change. Write one paragraph explaining why.
-
-4. Pick one production agent workflow you know. Estimate the median trajectory length in tool calls. Multiply by your best guess of per-step reliability. Is the resulting end-to-end number honest with your users?
-
-5. Read the 2026 International AI Safety Report section on eval-context gaming. Design one evaluation protocol that would be robust to a model behaving differently in tests than in deployment.
 
 ## Key Terms
 

@@ -70,69 +70,6 @@ Canonical workflow in 2026:
 
 Community results: fine-tuning Medium on 20 hours of medical dictation drops WER from 12% to 4.5% on medical vocabulary. Fine-tuning Turbo on 4 hours of Icelandic drops WER from 18% to 6%.
 
-## Build It
-
-### Step 1: run Whisper out of the box
-
-```python
-import whisper
-model = whisper.load_model("large-v3-turbo")
-result = model.transcribe(
-    "clip.wav",
-    language="en",
-    task="transcribe",
-    temperature=0.0,
-    condition_on_previous_text=False,  # prevents runaway repetition
-)
-print(result["text"])
-for seg in result["segments"]:
-    print(f"[{seg['start']:.2f}–{seg['end']:.2f}] {seg['text']}")
-```
-
-Key defaults you should always override: `temperature=0.0` (sampling defaults to 0.0 → 0.2 → 0.4 … fallback chain), `condition_on_previous_text=False` (prevents the cascading hallucination problem), and `no_speech_threshold=0.6` (silence detection).
-
-### Step 2: chunked long-form
-
-```python
-# whisperx is the 2026 reference for long-form with word-level timestamps
-import whisperx
-model = whisperx.load_model("large-v3-turbo", device="cuda", compute_type="float16")
-segments = model.transcribe("1hour.mp3", batch_size=16, chunk_size=30)
-```
-
-WhisperX adds (1) Silero VAD gating, (2) word-level alignment via wav2vec 2.0, (3) diarization via `pyannote.audio`. The 2026 workhorse for production transcription.
-
-### Step 3: fine-tune with LoRA
-
-```python
-from transformers import WhisperForConditionalGeneration, WhisperProcessor
-from peft import LoraConfig, get_peft_model
-
-model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3-turbo")
-lora = LoraConfig(
-    r=16, lora_alpha=32, target_modules=["q_proj", "v_proj"],
-    lora_dropout=0.1, bias="none", task_type="SEQ_2_SEQ_LM",
-)
-model = get_peft_model(model, lora)
-# model.print_trainable_parameters()  -> ~3M trainable / 809M total
-```
-
-Then standard Trainer loop. Checkpoint every 1000 steps. Evaluate with WER on held-out.
-
-### Step 4: inspect what each layer learns
-
-```python
-# Grab cross-attention weights during decode to see what the decoder attends to.
-with torch.inference_mode():
-    out = model.generate(
-        input_features=features,
-        return_dict_in_generate=True,
-        output_attentions=True,
-    )
-# out.cross_attentions: layer × head × step × src_len
-```
-
-Visualize with a heatmap — you will see diagonal alignment as decoder steps scan through encoder frames. That diagonal is Whisper's notion of word timestamps.
 
 ## Use It
 
@@ -160,11 +97,6 @@ The 2026 stack:
 
 Save as `outputs/skill-whisper-tuner.md`. Design a Whisper fine-tune or inference pipeline for a given domain.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. It tokenizes a Whisper-style prompt, computes decoded shape budgets, and prints the chunk schedule for a 10-minute clip.
-2. **Medium.** Install `faster-whisper`, transcribe a 10-minute podcast, compare WER against a human transcript. Try `language="auto"` vs forced `language="en"`.
-3. **Hard.** Using HF `datasets`, pick a language Whisper struggles with (e.g., Urdu), fine-tune Medium with LoRA for 2 epochs on 2 hours, and report WER delta.
 
 ## Key Terms
 

@@ -223,92 +223,6 @@ where w_i = 1 / distance_i
 
 KNN regression produces piecewise-constant (or piecewise-smooth with weighting) predictions. It cannot extrapolate beyond the range of the training data. If the training targets are all between 0 and 100, KNN will never predict 200.
 
-## Build It
-
-### Step 1: Distance functions
-
-Implement L1, L2, cosine, and Minkowski distances. These connect directly to Phase 1 Lesson 14.
-
-```python
-import math
-
-def l2_distance(a, b):
-    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))
-
-def l1_distance(a, b):
-    return sum(abs(ai - bi) for ai, bi in zip(a, b))
-
-def cosine_distance(a, b):
-    dot_val = sum(ai * bi for ai, bi in zip(a, b))
-    norm_a = math.sqrt(sum(ai ** 2 for ai in a))
-    norm_b = math.sqrt(sum(bi ** 2 for bi in b))
-    if norm_a == 0 or norm_b == 0:
-        return 1.0
-    return 1.0 - dot_val / (norm_a * norm_b)
-
-def minkowski_distance(a, b, p=2):
-    if p == float('inf'):
-        return max(abs(ai - bi) for ai, bi in zip(a, b))
-    return sum(abs(ai - bi) ** p for ai, bi in zip(a, b)) ** (1 / p)
-```
-
-### Step 2: KNN classifier and regressor
-
-Build the full KNN with configurable K, distance metric, and optional distance weighting.
-
-```python
-class KNN:
-    def __init__(self, k=5, distance_fn=l2_distance, weighted=False,
-                 task="classification"):
-        self.k = k
-        self.distance_fn = distance_fn
-        self.weighted = weighted
-        self.task = task
-        self.X_train = None
-        self.y_train = None
-
-    def fit(self, X, y):
-        self.X_train = X
-        self.y_train = y
-
-    def predict(self, X):
-        return [self._predict_one(x) for x in X]
-```
-
-### Step 3: KD-tree for efficient search
-
-Build a KD-tree from scratch that recursively splits on the median of each dimension.
-
-```python
-class KDTree:
-    def __init__(self, X, indices=None, depth=0):
-        # Recursively partition the data
-        self.axis = depth % len(X[0])
-        # Split on median of the current axis
-        ...
-
-    def query(self, point, k=1):
-        # Traverse to leaf, then backtrack
-        ...
-```
-
-See `code/knn.py` for the complete implementation with all helper methods and demos.
-
-### Step 4: Feature scaling
-
-KNN requires feature scaling because distances are sensitive to feature magnitudes. A feature ranging from 0 to 1000 will dominate a feature ranging from 0 to 1.
-
-```python
-def standardize(X):
-    n = len(X)
-    d = len(X[0])
-    means = [sum(X[i][j] for i in range(n)) / n for j in range(d)]
-    stds = [
-        max(1e-10, (sum((X[i][j] - means[j]) ** 2 for i in range(n)) / n) ** 0.5)
-        for j in range(d)
-    ]
-    return [[((X[i][j] - means[j]) / stds[j]) for j in range(d)] for i in range(n)], means, stds
-```
 
 ## Use It
 
@@ -339,17 +253,6 @@ index.add(embeddings)
 distances, indices = index.search(query_vectors, k=5)
 ```
 
-## Exercises
-
-1. Implement KNN classification on a 2D dataset with 3 classes. Plot the decision boundary for K=1, K=5, K=15, and K=N. Observe the transition from overfitting to underfitting.
-
-2. Generate 1000 random points in 2, 5, 10, 50, 100, and 500 dimensions. For each dimensionality, compute the ratio of the maximum pairwise distance to the minimum pairwise distance. Plot the ratio vs dimensionality to visualize the curse of dimensionality.
-
-3. Compare L1, L2, and cosine distance for KNN on a text classification problem (use TF-IDF vectors). Which metric gives the best accuracy? Why does cosine tend to win for text?
-
-4. Implement a KD-tree and measure query time vs brute force for datasets of 1k, 10k, and 100k points in 2D, 10D, and 50D. At what dimensionality does the KD-tree stop being faster than brute force?
-
-5. Build a weighted KNN regressor for y = sin(x) + noise. Compare it with unweighted KNN for K=3, 10, 30. Show that weighting produces smoother predictions, especially for large K.
 
 ## Key Terms
 

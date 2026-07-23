@@ -50,58 +50,6 @@ Why it matters in 2026:
 - Zero anaphora in languages like Chinese and Japanese.
 - Cataphora (pronoun before referent): "When **she** walked in, Mary smiled."
 
-## Build It
-
-### Step 1: pretrained neural coreference (AllenNLP / spaCy-experimental)
-
-```python
-import spacy
-nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
-for cluster in doc._.coref_clusters:
-    print(cluster, "->", [m.text for m in cluster])
-```
-
-On a longer document, you get something like:
-- Cluster 1: [Apple, The company, they]
-- Cluster 2: [new products]
-
-### Step 2: rule-based pronoun resolver (teaching)
-
-See `code/main.py` for a stdlib-only implementation:
-
-1. Extract mentions: named entities (capitalized spans), pronouns (dict lookup), definite descriptions ("the X").
-2. For each pronoun, look at the previous K mentions and score them by:
-   - gender/number agreement (heuristic)
-   - recency (closer wins)
-   - syntactic role (subjects preferred)
-3. Link the highest-scoring antecedent.
-
-Not competitive with neural models. But it shows the search space and the decisions an end-to-end model must make.
-
-### Step 3: using LLMs for coreference
-
-```python
-prompt = f"""Text: {text}
-
-List every pronoun and noun phrase that refers to a person or company.
-Cluster them by what they refer to. Output JSON:
-[{{"entity": "Apple", "mentions": ["Apple", "the company", "it"]}}, ...]
-"""
-```
-
-Two failure modes to watch. First, LLMs over-merge ("him" and "her" referring to two distinct people). Second, LLMs silently drop mentions in long documents. Always verify with span-offset checks.
-
-### Step 4: evaluation
-
-The standard conll-2012 script computes MUC, B³, CEAF-φ4 and reports the average. For an in-house eval, start with span-level precision and recall on your annotated test set, then add mention-linking F1.
-
-## Pitfalls
-
-- **Singleton explosion.** Some systems report every mention as its own cluster. B³ is lenient. MUC punishes this. Always check all three metrics.
-- **Pronouns in long context.** Performance drops ~15 F1 on documents over 2,000 tokens. Chunk carefully.
-- **Gender assumptions.** Hard-coded gender rules break on non-binary referents, organizations, animals. Use learned models or neutral scoring.
-- **LLM drift on long docs.** A single API call cannot reliably cluster mentions across 50+ paragraphs. Use sliding-window + merge.
 
 ## Use It
 
@@ -141,11 +89,6 @@ Given a use case (single-doc / multi-doc, domain, language), output:
 Refuse LLM-only coref for documents over 2,000 tokens without sliding-window merge. Refuse any pipeline that runs coref without a mention-level precision-recall report. Flag gender-heuristic systems deployed in demographically diverse text.
 ```
 
-## Exercises
-
-1. **Easy.** Run the rule-based resolver in `code/main.py` on 5 hand-crafted paragraphs. Measure mention-link accuracy against ground truth.
-2. **Medium.** Use a pretrained neural coref model on a news article. Compare clusters against your own manual annotation. Where did it fail?
-3. **Hard.** Build a coref-enhanced NER pipeline: NER first, then merge via coref clusters. Measure entity-coverage improvement vs NER-only on 100 articles.
 
 ## Key Terms
 

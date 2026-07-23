@@ -74,22 +74,6 @@ Letta V1 (`letta_v1_agent`, 2026) deprecates `send_message`/heartbeat and inline
 - **Silent drift.** Sleep-time agent rewrites a block and the primary agent never notices. Version blocks and surface diffs in the trace.
 - **Poisoned consolidation.** Sleep-time agent processes attacker-reachable content into core. Lesson 27 applies to the sleep-time surface too.
 
-## Build It
-
-`code/main.py` implements:
-
-- `Block` — id, label, value, limit, description.
-- `BlockStore` — CRUD + `near_limit(label)` helper.
-- Two scripted agents — `PrimaryAgent` serves a turn, `SleepTimeAgent` consolidates between turns.
-- A trace that shows a three-turn conversation with block writes, plus a sleep-time pass that summarizes a block and invalidates a stale fact.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The transcript shows the split: primary turns are fast and produce raw writes; the sleep pass compacts and cleans up.
 
 ## Use It
 
@@ -101,13 +85,6 @@ The transcript shows the split: primary turns are fast and produce raw writes; t
 
 `outputs/skill-memory-blocks.md` generates a Letta-shaped block system with sleep-time hooks for any runtime, including safety rules and citation wiring.
 
-## Exercises
-
-1. Add a `block_summarize` tool that replaces the block value with a model-generated summary when `near_limit` returns true. Which trigger threshold minimizes both summarization calls and block overflow?
-2. Implement sleep-time dedup over archival: two records whose text has >90% token overlap collapse to one. Do it only in the sleep pass, never on the critical path.
-3. Version blocks. On every write record the old value and a diff. Expose `block_history(label)` so operators can debug "why did the agent forget X."
-4. Treat sleep-time agents as untrusted writers. When they touch the Persona or Safety block, require a second-agent review before committing.
-5. Port the example to use the Letta API (`letta_v1_agent`). What changes in the block schema, and how does native reasoning alter the trace shape?
 
 ## Key Terms
 

@@ -53,56 +53,6 @@ In 2026 GANs are no longer the SOTA generator (diffusion and flow matching ate t
 | 2022 | StyleGAN-XL | Conditional, class-aware, larger scale. |
 | 2024 | R3GAN | Rebrands with stronger regularization; works on 1024² without tricks. |
 
-## Build It
-
-`code/main.py` trains a tiny GAN on 1-D data: a mixture of two Gaussians. Generator and discriminator are single-hidden-layer MLPs. We implement forward, backward, and the minimax loop by hand. The goal is to see the two key failure modes (mode collapse + vanishing gradient) as they happen.
-
-### Step 1: non-saturating loss
-
-The vanilla Goodfellow loss `log(1 - D(G(z)))` goes to 0 when D classifies G's fake as fake with high confidence. At that point the gradient for G is basically zero — G cannot improve. The non-saturating form `-log D(G(z))` has the opposite asymptote: it blows up when D is confident, giving G a strong signal.
-
-```python
-def g_loss(d_fake):
-    # maximize log D(G(z))  <=>  minimize -log D(G(z))
-    return -sum(math.log(max(p, 1e-8)) for p in d_fake) / len(d_fake)
-```
-
-### Step 2: one discriminator step per generator step
-
-```python
-for step in range(steps):
-    # train D
-    real_batch = sample_real(batch_size)
-    fake_batch = [G(z) for z in sample_noise(batch_size)]
-    update_D(real_batch, fake_batch)
-
-    # train G
-    fake_batch = [G(z) for z in sample_noise(batch_size)]  # fresh fakes
-    update_G(fake_batch)
-```
-
-Fresh fakes for G, otherwise gradients are stale.
-
-### Step 3: watch for mode collapse
-
-```python
-if step % 200 == 0:
-    samples = [G(z) for z in sample_noise(500)]
-    mode_a = sum(1 for s in samples if s < 0)
-    mode_b = 500 - mode_a
-    if min(mode_a, mode_b) < 50:
-        print("  [!] mode collapse: one mode is starved")
-```
-
-The canonical symptom: one of the two real modes stops being generated. The discriminator stops correcting it because it's never seen as a fake.
-
-## Pitfalls
-
-- **Discriminator too strong.** Cut D's learning rate by 2-5x, or add instance/layer noise. If D reaches >95% accuracy, G is dead.
-- **Generator memorizes a mode.** Add noise to D inputs, use a minibatch-discriminator layer, or switch to WGAN-GP.
-- **Batch norm leaking statistics.** Real batch + fake batch flowing through the same BN layer mixes their statistics. Use instance norm or spectral norm instead.
-- **Inception-score gaming.** FID and IS are noisy at low sample counts. Use ≥10k samples at eval.
-- **One-shot sampling is a lie for conditional tasks.** You still need CFG scales, truncation tricks, and re-sampling to get usable outputs.
 
 ## Use It
 
@@ -123,11 +73,6 @@ GANs are sharp but narrow. Once your domain opens up — photos, arbitrary text 
 
 Save `outputs/skill-gan-debugger.md`. Skill takes a failing GAN run (loss curves, sample grid, dataset size) and outputs a ranked list of likely causes, one-line fixes, and a rerun protocol.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` with the stock settings. Then set `D_LR = 5 * G_LR` and rerun. How fast does G's loss collapse to a constant?
-2. **Medium.** Replace the Goodfellow BCE loss with the WGAN loss: `loss_D = E[D(fake)] - E[D(real)]`, `loss_G = -E[D(fake)]`, and clip D's weights to `[-0.01, 0.01]`. Is training more stable? Compare wall-clock convergence.
-3. **Hard.** Extend the 1-D example to 2-D data (mixture of 8 Gaussians on a ring). Track how many of the 8 modes the generator captures at steps 1k, 5k, 10k. Implement minibatch discrimination and re-measure.
 
 ## Key Terms
 

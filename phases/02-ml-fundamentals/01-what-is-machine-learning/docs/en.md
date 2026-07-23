@@ -288,74 +288,6 @@ flowchart TD
     J -->|"No labels"| M["Unsupervised or self-supervised"]
 ```
 
-## Build It
-
-The code in `code/ml_intro.py` implements a nearest centroid classifier from scratch, the simplest possible ML algorithm. It demonstrates the core idea: learn from data, then predict on new data.
-
-### Step 1: Nearest Centroid Classifier from Scratch
-
-The nearest centroid classifier computes the center (mean) of each class in the training data. To predict, it assigns each new point to the class whose center is closest.
-
-```python
-class NearestCentroid:
-    def fit(self, X, y):
-        self.classes = np.unique(y)
-        self.centroids = np.array([
-            X[y == c].mean(axis=0) for c in self.classes
-        ])
-
-    def predict(self, X):
-        distances = np.array([
-            np.sqrt(((X - c) ** 2).sum(axis=1))
-            for c in self.centroids
-        ])
-        return self.classes[distances.argmin(axis=0)]
-```
-
-That is the entire algorithm. Fit computes two means. Predict computes distances. No gradient descent, no iteration, no hyperparameters.
-
-### Step 2: Train on Synthetic Data
-
-We generate a 2D classification dataset with two classes that overlap slightly. The centroid classifier draws a linear decision boundary between the class centers.
-
-```python
-rng = np.random.RandomState(42)
-X_class0 = rng.randn(100, 2) + np.array([1.0, 1.0])
-X_class1 = rng.randn(100, 2) + np.array([-1.0, -1.0])
-X = np.vstack([X_class0, X_class1])
-y = np.array([0] * 100 + [1] * 100)
-```
-
-### Step 3: Compare Against a Baseline
-
-Every ML model should be compared against a trivial baseline. Here, the baseline predicts a random class. If your ML model does not beat random guessing, something is wrong.
-
-```python
-baseline_preds = rng.choice([0, 1], size=len(y_test))
-baseline_acc = np.mean(baseline_preds == y_test)
-```
-
-The centroid classifier should get around 90%+ accuracy on this clean dataset. Random baseline gets around 50%.
-
-### Why This Matters
-
-The nearest centroid classifier is trivially simple. It has no hyperparameters, no iteration, no gradient descent. Yet it captures the fundamental ML pattern:
-
-1. **Learn** a representation from training data (the centroids)
-2. **Predict** on new data using that representation (nearest distance)
-3. **Evaluate** against a baseline (random guessing)
-
-Every ML algorithm, from logistic regression to transformers, follows this same three-step pattern. The representation gets more complex, but the workflow stays the same.
-
-### Step 4: What the Centroid Classifier Cannot Do
-
-The nearest centroid classifier assumes each class forms a single blob. It draws linear decision boundaries. It fails when:
-
-- Classes have multiple clusters (e.g., the digit "1" can be written in several different ways)
-- The decision boundary is nonlinear (e.g., one class wraps around another)
-- Features have very different scales (distance is dominated by the largest-scale feature)
-
-These limitations motivate every other algorithm you will learn. K-nearest neighbors handles multiple clusters. Decision trees handle nonlinear boundaries. Feature scaling fixes the scale problem. Each lesson builds on the limitations of the previous one.
 
 ## Use It
 
@@ -398,11 +330,6 @@ This lesson produces `outputs/prompt-ml-problem-framer.md` -- a prompt that turn
 | Regularization | "Keeping weights small" | Adding a penalty term to the loss function that discourages overly complex models |
 | Data drift | "The world changed" | The statistical distribution of incoming data shifts over time, degrading model performance |
 
-## Exercises
-
-1. Take any dataset (e.g., Iris, Titanic). Split it 70/15/15 into train/validation/test. Explain why you should not tune hyperparameters on the test set.
-2. List three real-world problems. For each one, identify whether it is classification, regression, or clustering, and whether it is supervised or unsupervised.
-3. A model gets 99% accuracy on training data but 60% on test data. Diagnose the problem and list three things you would try to fix it.
 
 ## Further Reading
 

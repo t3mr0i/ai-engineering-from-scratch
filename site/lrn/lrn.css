@@ -226,6 +226,40 @@ i[class^="ph "] {
   margin-inline: auto;
 }
 
+/* ── Resume CTA button — Lufthansa colors, high contrast on blue hero ───────── */
+.resume-button {
+  margin-top: var(--space-6);
+  background: var(--lhg-core-blue);
+  color: var(--lhg-white);
+  border: 2px solid var(--lhg-white);
+  border-radius: 9999px;
+  padding: 0.75rem 2.25rem;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 1.125rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  box-shadow: 0 10px 30px -10px rgba(5, 22, 77, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.resume-button:hover {
+  background: rgba(90, 138, 201, 0.95); /* lighter blue variant */
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px -10px rgba(5, 22, 77, 0.45);
+}
+
+.resume-button:active {
+  transform: translateY(0);
+}
+
+/* optional: make button text slightly smaller or adjust spacing if needed */
+.resume-button .button-text {
+  /* if you want to target inner span, uncomment */
+}
+
 .hero h1 {
   margin: 0;
   color: var(--lhg-white);

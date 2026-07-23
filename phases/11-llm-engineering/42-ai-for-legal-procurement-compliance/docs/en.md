@@ -52,17 +52,6 @@ flowchart LR
 - Business & Strategy Consulting
 - Leadership
 
-## Build It
-
-In the lab you build a legal and procurement AI triage planner. It ranks scenarios and recommends controls before outputs are used in negotiations or compliance decisions.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/42-ai-for-legal-procurement-compliance/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

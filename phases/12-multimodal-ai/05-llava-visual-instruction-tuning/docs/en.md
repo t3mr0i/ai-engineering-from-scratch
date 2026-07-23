@@ -138,17 +138,6 @@ Training cost for stage 2: ~20 hours on 8xA100. This is the key number — one d
 
 This lesson produces `outputs/skill-llava-vibes-eval.md`. Given a LLaVA-family checkpoint, it runs a 10-prompt vibes-eval suite (3 captioning, 3 VQA, 2 reasoning, 2 refusal) and reports a human-readable scorecard. Not a benchmark; a smoke test to confirm the projector and LLM are connecting well.
 
-## Exercises
-
-1. Compute the trainable-parameter count for the 2-layer MLP projector at `1024 → 4096 → 4096`. With GELU and bias, what fraction of LLaVA-13B does it represent?
-
-2. Construct a LLaVA prompt for a "refusal" case — the image contains a private individual. Write the expected assistant response. Why should LLaVA refuse this zero-shot and what training data would be needed to reinforce the refusal?
-
-3. Read the AnyRes section of the LLaVA-NeXT blog. Compute the visual token count for a 1344x672 image at AnyRes. Compare to base 576 tokens at 336x336.
-
-4. The LLaVA stage-1 projector is trained with LM loss on captions. What happens if you skip stage 1 and go straight to stage 2 (visual instruction tuning)? Cite the Prismatic VLMs ablation (arXiv:2402.07865) for the answer.
-
-5. LLaVA-Instruct-150k uses GPT-4 with COCO captions to generate instructions. For a new domain (medical X-rays, satellite imagery), describe the four-step data pipeline to generate domain instructions. What could go wrong at each step?
 
 ## Key Terms
 

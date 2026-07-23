@@ -76,22 +76,6 @@ GAIA is what you run to measure "generalist capability." Do not confuse with cod
 - **Contaminated claims.** Reporting SWE-bench without mentioning Verified or SWE-bench+ is misleading.
 - **Benchmark-as-development-target.** Optimizing for the benchmark diverges from production usefulness.
 
-## Build It
-
-`code/main.py` implements a toy SWE-bench-like harness:
-
-- Synthetic bug-fix tasks (3 tasks).
-- A scripted "agent" that proposes patches.
-- A test runner that checks FAIL_TO_PASS (bug now fixed) and PASS_TO_PASS (nothing broken).
-- A GAIA-style difficulty classifier based on question decomposition depth.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The output shows resolution rate per task + per difficulty and makes the evaluator rules concrete.
 
 ## Use It
 
@@ -104,13 +88,6 @@ The output shows resolution rate per task + per difficulty and makes the evaluat
 
 `outputs/skill-benchmark-harness.md` builds a SWE-bench-style harness for any codebase-task pair with FAIL_TO_PASS / PASS_TO_PASS gating.
 
-## Exercises
-
-1. Port the toy harness to run on a real repo (pick one of yours). Write 3 FAIL_TO_PASS tests for known bugs.
-2. Add a step-count metric. On your 3 tasks, how many agent steps per resolution?
-3. Read the SWE-bench+ paper. Implement a solution-leakage check (pattern-match the issue text against the diff).
-4. Download a GAIA question from the public split. Trace what a GPT-4-class agent would do. What tools does it need?
-5. Read AgentBench's per-environment breakdown. Which environment mirrors your product surface? What does "SOTA" look like there?
 
 ## Key Terms
 

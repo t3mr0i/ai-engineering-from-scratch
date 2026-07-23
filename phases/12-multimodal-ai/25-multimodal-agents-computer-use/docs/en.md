@@ -134,17 +134,6 @@ The lesson provides scaffold code that is easy to extend into a real browser.
 
 This lesson produces `outputs/skill-multimodal-agent-designer.md`. Given a computer-use product (domain, action set, evaluation target), designs the full agent loop, memory strategy, grounding mode, and expected benchmark score.
 
-## Exercises
-
-1. Extend the action schema with a `screenshot_region` tool (crop + zoom). What tasks benefit?
-
-2. Read AgentVista (arXiv:2602.23166). Describe the hardest task category and why frontier models still fail.
-
-3. Long-horizon memory compression: design a summary-chain with ≤4 screenshots kept live, any number logged.
-
-4. Build an error-recovery hook: on action failure (button not found), what does the agent do next?
-
-5. Compare screenshot-only Claude 4.7 to hybrid screenshot + accessibility-tree Qwen2.5-VL on 10 web tasks. Which wins on which tasks?
 
 ## Key Terms
 

@@ -102,44 +102,6 @@ As of April 2026, Hogwild! is a research method with an open-source PyTorch impl
 
 Worth knowing. Worth experimenting with. Not yet worth betting a product on.
 
-## Build It
-
-`code/main.py` implements a toy Hogwild! simulator:
-
-- Two worker processes, each a deterministic "LLM" that produces one of several token categories (work-token, observe-token, coordinate-token) with known probabilities.
-- A shared cache (just a list of tokens) that both workers read and write.
-- A simple coordination logic: when a worker sees that the other has already produced enough work tokens in a category, it picks a different category.
-
-The simulator runs for a fixed step budget and reports:
-
-- Total work-tokens produced.
-- Total wall time (number of worker steps).
-- Effective speedup over a single worker.
-- A trace of which worker wrote which token.
-
-### Step 1: the shared cache
-
-A list that both workers append to. Simple locking (Python `threading.Lock`) in a real implementation; we simulate with a counter.
-
-### Step 2: the worker loop
-
-Each worker, on each step:
-
-- Reads the current shared cache.
-- Decides what category of token to write based on what is already there.
-- Writes one token.
-
-### Step 3: the coordination heuristic
-
-If category X already has K tokens in the cache and worker's intended category is X, worker switches to category Y. This is a toy stand-in for the reasoning-model behavior of "notice this is already covered, do something else instead."
-
-### Step 4: measured speedup
-
-Run the simulator with N=1 worker and with N=2 workers, same total step budget. Count work-tokens produced. N=2 should produce roughly 1.5-1.8x more work-tokens because of the coordination-driven task division.
-
-### Step 5: stress the coordination
-
-Reduce the coordination heuristic's sensitivity. Run again. Observe that without good coordination, N=2 redundantly produces the same tokens and the speedup drops below 1. This matches the paper's observation: the trick only works if the workers have the reasoning capacity to self-coordinate.
 
 ## Use It
 
@@ -158,17 +120,6 @@ Combine with speculative decoding: each Hogwild! worker can independently use sp
 
 This lesson produces `outputs/skill-parallel-inference-router.md`. Given a reasoning workload profile (token budget, task parallelism profile, model family, deployment target), it routes between voting, tree-of-thought, multi-agent, Hogwild!, and speculative decoding strategies.
 
-## Exercises
-
-1. Run `code/main.py` with the default settings. Confirm the N=2 Hogwild! configuration produces more work-tokens than the N=1 baseline in the same wall time.
-
-2. Reduce the coordination heuristic's strength (set `coordination_weight=0.1`). Re-run. Show that speedup collapses. Explain why: the workers duplicate effort when they cannot coordinate.
-
-3. Compute the expected Hogwild! speedup for a 50k-token reasoning task with `p=0.8, c=500` and N=4 workers. Do the same for a 1k-token chat task with `p=0.3, c=200` and N=4. Why is one a win and the other a loss?
-
-4. Read the Hogwild! paper's Section 4 (preliminary evaluation). Identify the two failure modes the authors report. Describe how a better coordination prompt might mitigate each.
-
-5. Combine Hogwild! with speculative decoding in the toy: each worker uses a 2-token spec-decode internally. Report the multiplicative speedup. What bookkeeping problem arises when two workers both want to extend the same shared-cache prefix?
 
 ## Key Terms
 

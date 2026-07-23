@@ -67,22 +67,6 @@ On by default. Every LLM generation, tool call, handoff, and guardrail emits a s
 - **Guardrail bypass.** Tool guardrails only fire on function tools; built-in tools (file reader, web fetch) need separate policy.
 - **Over-tracing.** Sensitive content in spans. Pair with OTel GenAI content-capture rules (Lesson 23) — store externally, reference by ID.
 
-## Build It
-
-`code/main.py` implements the SDK shape in stdlib:
-
-- `Agent`, `FunctionTool`, `Handoff` (as a function tool with transfer semantics).
-- `Runner` with input/output/tool guardrails, handoff dispatch, and hop counter.
-- A simple span emitter to show the trace shape.
-- A triage agent that hands off to billing or support based on the user's query; guardrail trips on one input.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows two successful handoffs, one input guardrail trip, and a span tree mirroring what the real SDK emits.
 
 ## Use It
 
@@ -95,13 +79,6 @@ The trace shows two successful handoffs, one input guardrail trip, and a span tr
 
 `outputs/skill-agents-sdk-scaffold.md` scaffolds an Agents SDK app with a triage agent, handoffs, input/output/tool guardrails, session store, and a trace processor.
 
-## Exercises
-
-1. Add a handoff hop counter: refuse after N transfers. Trace the behavior.
-2. Implement `nest_handoff_history` as an option — collapse prior messages into one summary before transferring.
-3. Write a blocking output guardrail. Compare latency on prompts that would trip it vs ones that pass.
-4. Wire `add_trace_processor` to a JSON logger. What shape does it emit per span?
-5. Read the SDK docs. Port your stdlib toy to `openai-agents-python`. What did you model wrong?
 
 ## Key Terms
 

@@ -53,17 +53,6 @@ flowchart LR
 - Corporate Functions
 - Leadership
 
-## Build It
-
-In the lab you build a data-quality AI planner. It ranks master-data scenarios and recommends controls before data is used in AI workflows.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/49-ai-data-quality-master-data-processes/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

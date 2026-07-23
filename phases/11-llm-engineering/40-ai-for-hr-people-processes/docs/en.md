@@ -52,17 +52,6 @@ flowchart LR
 - Leadership
 - Project Management & Agility
 
-## Build It
-
-In the lab you build an HR AI triage planner. It ranks people-process scenarios and recommends the controls needed before a pilot or rollout.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/40-ai-for-hr-people-processes/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

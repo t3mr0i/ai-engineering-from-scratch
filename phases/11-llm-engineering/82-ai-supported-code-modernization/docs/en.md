@@ -83,17 +83,6 @@ No network, no real model — the point is to make the scoring and prioritizatio
 
 `outputs/skill-legacy-refactor-slice-planner.md` is a one-page decision aid: the four-pass prompt templates, the readiness scoring rubric in table form, slice sizing rules of thumb, and the verification gate checklist that links each slice to Phase 14 · 38's gate format.
 
-## Exercises
-
-1. Run `code/main.py`. Which candidate slice is ranked first, and which dimension prevented a higher-scoring module from taking that slot? Change one dimension of the lower-scoring module to Green — does it move up in the ranking?
-
-2. The prioritizer in `code/main.py` outputs a recommended sequence. Find the slice it ranks last. Write one sentence explaining why low ranking does not mean "skip it" — and when that slice should actually be cut first.
-
-3. Apply Pass 1 of the four-pass audit protocol to a real module in a codebase you work with. Ask a model to map its public API, internal dependencies, and call sites. Compare its dependency graph to your mental model. Where did the model surface a coupling you had not noticed?
-
-4. The readiness scoring table has five dimensions. Name one dimension that matters for your specific domain but is not on the list. Write the Red / Amber / Green criteria for it. How would you weight it relative to the existing five?
-
-5. Design the handoff between the Pass 4 slice output from this lesson and the reviewer agent in Phase 14 · 39. What fields must the Pass 4 JSON contain so the reviewer can run its verification gates without additional context from you?
 
 ## Key Terms
 

@@ -147,17 +147,6 @@ No network, no models — the point is to make the classification and risk polic
 
 `outputs/skill-ai-system-type-classifier.md` is a one-page decision aid: a table mapping use case characteristics to system type, the four agentic risk gates in checklist form, the EU AI Act risk tier quick-reference, and the three consultant questions. Paste it into a project kickoff or client workshop.
 
-## Exercises
-
-1. Run `code/main.py`. Find the use case the classifier routes to AGENTIC. Find the one where a single input flag flip — from `plans_multi_step=False` to `plans_multi_step=True` — moves the system type from GENERATIVE to AGENTIC. What does that flag represent in a real project, and what governance change should accompany the flip?
-
-2. The risk evaluator blocks one sample deployment and requests review on three. Find the blocked one. Name the specific gate it fails, and describe the minimum mitigation that would move it from BLOCK to REVIEW (not to PROCEED — irreversible blast radius should never proceed without HITL).
-
-3. A client asks you to build an AI that reads incoming customer emails, looks up their account in a CRM, drafts a reply, and sends it. Map this to the four AI layers. Which layer is it primarily? What is its blast radius category in the classifier's terms? What oversight gate would you require before the send action? Which failure story in this lesson is it closest to?
-
-4. A colleague says: "the model is Sonnet 4.x and benchmarks at 92 percent on our eval set, so we do not need a human review step." Using the capability map in this lesson, construct a one-paragraph counter-argument that does not require technical depth — it should work in a client room with non-technical stakeholders. The counter-argument should distinguish accuracy from verification.
-
-5. Look up your client organisation's or LHIND's internal AI governance policy. Find where it addresses system-type classification and responsible AI checkpoints. Does it distinguish between limited-risk and high-risk systems as defined by the EU AI Act? Note any gaps, and identify which of the three consultant questions the policy does not yet require to be answered in writing.
 
 ## Consultant field notes
 

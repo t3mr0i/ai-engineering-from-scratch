@@ -51,18 +51,6 @@ The fixer is a list of declarative operations: `append_if_missing`, `prepend_if_
 
 The diff is computed against the original and the revised. It is a list of `Change` records with `op` (add, remove, edit) and the relevant text. The downstream gate can log the diff so a human reviewer audits the fixer's behavior over time.
 
-## Build It
-
-`code/rules.yml` holds the constitution. The loader in `code/main.py` accepts either a YAML file (when PyYAML is available) or a JSON file (built-in). The lesson ships a `rules.yml` that the lesson tests parse by both code paths. `code/main.py` defines the `Engine` and `Fixer` classes and a `diff` function. Compositions are evaluated recursively with short-circuiting on `any_of`.
-
-The constitution as shipped:
-
-- `no-empty-refusal` (medium) - a refusal must include either a suggestion or a redirect
-- `end-with-runnable-or-assumption` (medium) - code responses must close cleanly
-- `no-pii-in-examples` (high) - example data must not contain emails or phone shapes
-- `cite-when-asserting-fact` (low) - lines beginning with "According to" must contain a parenthetical citation
-- `no-internal-library-leak` (high) - the words `internal-only` and `policybot-internal` must not appear in the output
-- `bounded-length` (low) - responses must not exceed 800 words
 
 ## Use It
 
@@ -72,11 +60,6 @@ The constitution as shipped:
 
 `outputs/skill-constitutional-rules-engine.md` documents the rule grammar and the fixer operations.
 
-## Exercises
-
-1. Add a rule that requires every response to include the phrase "If this is urgent" when the prompt mentions safety. Use composition.
-2. Replace the regex fixer with a templating fixer that takes named slots. Demonstrate one rule rewritten under the new design.
-3. Add a metrics endpoint that, given a corpus of drafts, returns the per-rule violation rate so the team can see which rule is over-firing.
 
 ## Key Terms
 

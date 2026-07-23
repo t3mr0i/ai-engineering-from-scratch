@@ -54,17 +54,6 @@ flowchart LR
 - Corporate Functions
 - Business Consulting
 
-## Build It
-
-In the lab you build an adoption communication planner. It ranks rollout scenarios and recommends whether to clarify the role message, prepare a manager brief, or launch a full enablement plan.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/68-ai-adoption-communications-role-enablement/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

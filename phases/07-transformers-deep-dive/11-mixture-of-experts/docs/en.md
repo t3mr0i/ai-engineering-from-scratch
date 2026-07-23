@@ -78,40 +78,6 @@ DeepSeek-V3 beats Llama 3 70B (dense) on almost every benchmark while doing **fe
 
 All experts live on GPU regardless of which ones fire. A 671B model needs ~1.3 TB of VRAM for fp16 weights. Frontier MoE deployment requires expert parallelism — shard experts across GPUs, route tokens across the network. Latency is dominated by the all-to-all communication, not the matmul.
 
-## Build It
-
-See `code/main.py`. A compact MoE layer in pure stdlib with:
-
-- `n_experts=8` SwiGLU-ish experts (one linear each, for illustration)
-- top-k=2 routing
-- softmax-normalized gating weights
-- auxiliary-loss-free balancing via per-expert bias
-
-### Step 1: the router
-
-```python
-def route(hidden, W_router, top_k, bias):
-    scores = [sum(h * w for h, w in zip(hidden, W_router[e])) for e in range(len(W_router))]
-    biased = [s + b for s, b in zip(scores, bias)]
-    top_idx = sorted(range(len(biased)), key=lambda i: -biased[i])[:top_k]
-    # softmax over ORIGINAL scores of the chosen experts
-    chosen = [scores[i] for i in top_idx]
-    m = max(chosen)
-    exps = [math.exp(c - m) for c in chosen]
-    s = sum(exps)
-    gates = [e / s for e in exps]
-    return top_idx, gates
-```
-
-Bias affects selection, not gate weight. That is the DeepSeek-V3 trick — bias corrects load imbalance without steering the model's predictions.
-
-### Step 2: run 100 tokens through the router
-
-Track which experts fire how often. Without the bias, usage is skewed. With a bias update loop (`-γ` for over-used experts, `+γ` for under-used), usage converges to a uniform distribution over a few iterations.
-
-### Step 3: param count comparison
-
-Print the "dense equivalent" of an MoE config. DeepSeek-V3-shaped: 256 routed + 1 shared, 8 active, d_model=7168. The total parameter count is eye-watering. The active count is a seventh of a dense Llama 3 70B.
 
 ## Use It
 
@@ -138,11 +104,6 @@ model = AutoModelForCausalLM.from_pretrained("mistralai/Mixtral-8x22B-v0.1")
 
 See `outputs/skill-moe-configurator.md`. The skill picks E, k, and shared-expert layout for a new MoE given parameter budget, training tokens, and deployment target.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Watch how the auxiliary-loss-free bias update evens out expert usage over 50 iterations.
-2. **Medium.** Replace the learned router with a hash-based router (deterministic, no learning). Compare quality and balance. Why is the learned router better?
-3. **Hard.** Implement GRPO-style "rollout-matched routing" (DeepSeek-V3.2 trick): log which experts fire during inference, force the same routing during gradient computation. Measure the effect on a toy policy-gradient setup.
 
 ## Key Terms
 

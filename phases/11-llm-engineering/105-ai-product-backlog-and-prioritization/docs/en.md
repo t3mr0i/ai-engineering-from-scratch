@@ -103,17 +103,6 @@ The deterministic scoring layer is intentional. You do not want the ranking to c
 
 `outputs/skill-backlog-scoring-decision-record.md` is a one-page paste-and-use template for a prioritization session. It includes the weight-setting checklist, the scoring table structure, the dependency snapshot format, and the override log. Paste it into a Confluence page or a repo wiki before the session, fill it in during, and commit the result as the session's decision record.
 
-## Exercises
-
-1. Run `code/main.py`. Identify the item with the highest fan-in score. What happens to the overall ranking if you increase the dependency multiplier from 1.3 to 2.0 for items with two or more blockers? Edit the script to test your prediction.
-
-2. Run `code/main.py` again and find the item that scores highest on value but lowest on composite score. Explain in one sentence why composite scoring produces a different ranking than value-only ranking, and which business situation would justify using value-only.
-
-3. A stakeholder insists that compliance items should always be ranked first regardless of effort. Model this as a weight change in `ScoringWeights` rather than a manual override. What weight ratio between `risk_weight` and `value_weight` produces consistent top-3 placement for items marked `compliance=True`?
-
-4. Write a 10-line decision record entry for a real item from your current backlog. Use the four-dimension breakdown from the lesson. Identify one risk the LLM-assisted scoring surface would catch that your normal refinement process would not.
-
-5. The lesson says LLMs should not set weights. Describe a failure scenario where a team allows the model to propose weights as well as scores. What organizational knowledge disappears, and how would you detect the problem three months later?
 
 ## Consultant field notes
 

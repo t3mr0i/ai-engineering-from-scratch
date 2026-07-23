@@ -84,17 +84,6 @@ All four must pass for the edit to land. Any single failure pauses the loop.
 
 `outputs/skill-bounded-loop-review.md` audits a proposed bounded loop and scores which of the four primitives it actually implements versus claims to.
 
-## Exercises
-
-1. Run `code/main.py` with all primitives enabled. Confirm the loop still improves on the primary metric without letting the hack win.
-
-2. Disable regression detection. Construct an input where this leads to silent capability loss being accepted.
-
-3. Disable the multi-objective constraint. Show the loop converges on the performance axis while a safety axis drops.
-
-4. Design an alignment anchor for a coding agent. What text, stored where, checked how?
-
-5. Read the ICLR 2026 RSI Workshop summary. Pick one of the four primitives and propose a concrete improvement to the current state of the art.
 
 ## Key Terms
 

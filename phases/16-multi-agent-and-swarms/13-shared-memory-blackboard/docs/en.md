@@ -101,25 +101,6 @@ The most load-bearing mitigation is the read-only verifier. Implementation rules
 
 Without this separation, the verifier's outputs become new entries in the pool, which means a poisoned pool poisons the verifier, which poisons its verifications.
 
-## Build It
-
-`code/main.py` implements both topologies in stdlib Python plus a toy poisoning attack and the three mitigations.
-
-- `MessagePool` — thread-safe append-only log with full read-out.
-- `Blackboard` — topic-keyed pub/sub with per-agent subscriptions.
-- `ProvenanceEntry` — every write records (writer, timestamp, prompt_hash, source_uri).
-- `PoisoningScenario` — runs a three-agent research task where agent A hallucinates a decimal. Prints final report.
-- `Verifier` — a read-only agent that re-fetches sources and flags inconsistencies. Runs the same scenario with the verifier present.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output:
-- Run 1 (no verifier): the hallucinated 42% propagates to the final report.
-- Run 2 (with verifier): the verifier flags the inconsistency, the pool is labeled "flagged", the final report includes a retraction.
 
 ## Use It
 
@@ -135,13 +116,6 @@ For any shared-memory design:
 - Route verifier output to a separate channel, not back into the shared pool.
 - Log the ratio of writes that are supersessions — a rising ratio is early evidence of hallucination patterns.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm run 1 propagates the hallucination and run 2 catches it.
-2. Add a second hallucination: agent B invents a dataset size. The verifier should catch both without being hand-tuned for either.
-3. Switch the full pool to a blackboard with topic partitions (`prices`, `summaries`, `analyses`). Which poisoning scenarios does topic partitioning make harder to pull off, and which does it not help with?
-4. Read Hayes-Roth (1985, "A Blackboard Architecture for Control"). Identify two control patterns from the paper not discussed in this lesson that 2026 systems would benefit from.
-5. Read CA-MCP (arXiv:2601.11595). Map its Shared Context Store to either the MessagePool or Blackboard class in `code/main.py`. Which primitives does CA-MCP add on top?
 
 ## Key Terms
 

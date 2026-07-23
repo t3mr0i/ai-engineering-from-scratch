@@ -381,98 +381,6 @@ Pure Newton's method is impractical for large models. Several approximations mak
 | Adam | O(n) | O(n) | Deep learning default |
 | K-FAC | O(n) | O(n) per layer | Research, large-batch training |
 
-## Build It
-
-### Step 1: Convexity checker
-
-Build a function that tests convexity empirically by sampling points and checking the definition.
-
-```python
-import random
-import math
-
-def check_convexity(f, dim, bounds=(-5, 5), samples=1000):
-    violations = 0
-    for _ in range(samples):
-        x = [random.uniform(*bounds) for _ in range(dim)]
-        y = [random.uniform(*bounds) for _ in range(dim)]
-        t = random.uniform(0, 1)
-        mid = [t * xi + (1 - t) * yi for xi, yi in zip(x, y)]
-        lhs = f(mid)
-        rhs = t * f(x) + (1 - t) * f(y)
-        if lhs > rhs + 1e-10:
-            violations += 1
-    return violations == 0, violations
-```
-
-### Step 2: Newton's method for 2D
-
-Implement Newton's method using an explicit Hessian. Compare convergence speed against gradient descent.
-
-```python
-def newtons_method(f, grad_f, hessian_f, x0, steps=50, tol=1e-12):
-    x = list(x0)
-    history = [x[:]]
-    for _ in range(steps):
-        g = grad_f(x)
-        H = hessian_f(x)
-        det = H[0][0] * H[1][1] - H[0][1] * H[1][0]
-        if abs(det) < 1e-15:
-            break
-        H_inv = [
-            [H[1][1] / det, -H[0][1] / det],
-            [-H[1][0] / det, H[0][0] / det],
-        ]
-        dx = [
-            H_inv[0][0] * g[0] + H_inv[0][1] * g[1],
-            H_inv[1][0] * g[0] + H_inv[1][1] * g[1],
-        ]
-        x = [x[0] - dx[0], x[1] - dx[1]]
-        history.append(x[:])
-        if sum(gi ** 2 for gi in g) < tol:
-            break
-    return history
-```
-
-### Step 3: Lagrange multiplier solver
-
-Solve constrained optimization using gradient descent on the Lagrangian.
-
-```python
-def lagrange_solve(f_grad, g_val, g_grad, x0, lr=0.01,
-                   lr_lambda=0.01, steps=5000):
-    x = list(x0)
-    lam = 0.0
-    history = []
-    for _ in range(steps):
-        fg = f_grad(x)
-        gv = g_val(x)
-        gg = g_grad(x)
-        x = [
-            xi - lr * (fgi + lam * ggi)
-            for xi, fgi, ggi in zip(x, fg, gg)
-        ]
-        lam = lam + lr_lambda * gv
-        history.append((x[:], lam, gv))
-    return history
-```
-
-### Step 4: Compare first-order vs second-order
-
-Run gradient descent and Newton's method on the same quadratic function. Count the steps to convergence.
-
-```python
-def quadratic(x):
-    return 5 * x[0] ** 2 + x[1] ** 2
-
-def quadratic_grad(x):
-    return [10 * x[0], 2 * x[1]]
-
-def quadratic_hessian(x):
-    return [[10, 0], [0, 2]]
-```
-
-Newton's method will converge in 1 step (it is exact for quadratics). Gradient descent will take hundreds of steps because the eigenvalues of the Hessian differ by a factor of 5, creating an elongated valley.
 
 ## Use It
 
@@ -510,17 +418,6 @@ svm.fit(X_train, y_train)
 print(f"Support vectors: {svm.n_support_}")
 ```
 
-## Exercises
-
-1. **Convexity gallery.** Test these functions for convexity using the checker: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0). Explain why each result makes sense.
-
-2. **Newton vs gradient descent race.** Run both methods on f(x,y) = 50*x^2 + y^2 from the starting point (10, 10). How many steps does each need to reach loss < 1e-10? What happens to gradient descent when the condition number (ratio of largest to smallest Hessian eigenvalue) increases?
-
-3. **Lagrange multiplier geometry.** Minimize f(x,y) = (x-3)^2 + (y-3)^2 subject to x + 2y = 4. Verify the solution by checking that the gradient of f is parallel to the gradient of g at the solution.
-
-4. **Regularization constraint.** Implement L1-constrained optimization: minimize (x-3)^2 + (y-2)^2 subject to |x| + |y| <= 1. Show that the solution has one coordinate equal to zero (sparsity from the diamond constraint).
-
-5. **Hessian eigenvalue analysis.** Compute the Hessian of the Rosenbrock function at (1,1) and at (-1,1). Compute eigenvalues at both points. What do the eigenvalues tell you about the curvature at the minimum versus far from it?
 
 ## Key Terms
 

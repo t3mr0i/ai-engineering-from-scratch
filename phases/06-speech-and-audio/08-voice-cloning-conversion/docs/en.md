@@ -57,66 +57,6 @@ Used by: F5-TTS (2024), YourTTS (2022), XTTS v2 (2024), OpenVoice v2 (2024).
 
 SECS > 0.70 is generally indistinguishable from the target for most listeners.
 
-## Build It
-
-### Step 1: decompose with recognition-synthesis (code-only demo in main.py)
-
-```python
-def clone_pipeline(ref_audio, text, target_embedder, tts_model):
-    speaker_emb = target_embedder.encode(ref_audio)
-    mel = tts_model(text, speaker=speaker_emb)
-    return vocoder(mel)
-```
-
-Conceptually simple; implementation mass is in `tts_model` and speaker encoder.
-
-### Step 2: zero-shot clone with F5-TTS
-
-```python
-from f5_tts.api import F5TTS
-tts = F5TTS()
-wav = tts.infer(
-    ref_file="rohit_5s.wav",
-    ref_text="The quick brown fox jumps over the lazy dog.",
-    gen_text="Please add milk and bread to my list.",
-)
-```
-
-Reference transcript must exactly match the audio; mismatch breaks alignment.
-
-### Step 3: voice conversion with KNN-VC
-
-```python
-import torch
-from knnvc import KNNVC  # 2023 model, https://github.com/bshall/knn-vc
-vc = KNNVC.load("wavlm-base-plus")
-out_wav = vc.convert(source="my_voice.wav", target_pool=["alice_1.wav", "alice_2.wav"])
-```
-
-KNN-VC runs WavLM to extract per-frame embeddings for source and target pool, then replaces each source frame with its nearest neighbor in the pool. Non-parametric, works with a minute of target speech.
-
-### Step 4: embed a watermark
-
-```python
-from silentcipher import SilentCipher
-sc = SilentCipher(model="2024-06-01")
-payload = b"consent_id:abc123;ts:1745353200"
-watermarked = sc.embed(wav, sr=24000, message=payload)
-detected = sc.detect(watermarked, sr=24000)   # returns payload bytes
-```
-
-~32 bits of payload, detectable after MP3 re-encode and light noise.
-
-### Step 5: consent gate
-
-```python
-def cloned_inference(text, ref_audio, consent_record):
-    assert verify_signature(consent_record), "Signed consent required"
-    assert consent_record["speaker_id"] == hash_speaker(ref_audio)
-    wav = tts.infer(ref_file=ref_audio, gen_text=text)
-    wav = watermark(wav, payload=consent_record["id"])
-    return wav
-```
 
 ## Use It
 
@@ -143,11 +83,6 @@ The 2026 stack:
 
 Save as `outputs/skill-voice-cloner.md`. Design a cloning or conversion pipeline with consent gate + watermark + quality target.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Demonstrates the speaker-embedding swap by computing the cosine between two "speakers" pre and post swap.
-2. **Medium.** Use OpenVoice v2 to clone your own voice. Measure SECS between reference and clone. Measure CER via Whisper.
-3. **Hard.** Apply SilentCipher watermark to 20 clones, run them through 128 kbps MP3 encode+decode, detect the payload. Report bit-accuracy.
 
 ## Key Terms
 

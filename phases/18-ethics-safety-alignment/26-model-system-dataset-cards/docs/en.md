@@ -88,17 +88,6 @@ Lessons 24-25 are regulatory and CVE layers. Lesson 26 is the documentation laye
 
 This lesson produces `outputs/skill-card-audit.md`. Given a model card, datasheet, or system card, it audits section coverage, numerical disaggregation, and whether verifiable attestations are present.
 
-## Exercises
-
-1. Run `code/main.py`. Inspect the generated cards. Identify sections that are weak (placeholder-only) and specify what evidence would strengthen them.
-
-2. Extend the model card with a quantitative disaggregated analysis across two demographic groups (Lesson 20).
-
-3. Read Oreamuno et al. 2023 on the 0.3% adoption rate. Propose one structural change to the model card specification that would increase ethical-considerations adoption.
-
-4. Laminator (Duddu et al. 2024) uses TEEs for verifiable attestations. Design a model-card field that carries a cryptographic attestation of an evaluation result and describe the verifier's role.
-
-5. Write a System Card (System Card, not Model Card) for one of your past projects or a hypothetical deployment. Identify the highest-value section for third-party auditors.
 
 ## Key Terms
 

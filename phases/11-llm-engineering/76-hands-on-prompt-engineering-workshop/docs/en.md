@@ -106,17 +106,6 @@ No network, no model calls — the point is to make the classification and valid
 
 `outputs/skill-prompt-pattern-picker.md` is a one-page decision aid: given a task type, it maps to the right pattern, the minimum prompt layers needed, the output contract format to use, and the probe set size. Paste it into your team wiki or keep it open alongside whatever LLM tool you use.
 
-## Exercises
-
-1. Run `code/main.py`. How many of the sample prompts in the classifier output are identified as "unstructured"? Pick one and rewrite it as a few-shot-with-contract prompt. Re-run to confirm the classifier now labels it correctly.
-
-2. The output contract validator in `code/main.py` flags at least one response as having a missing required field. Find it. Write the one sentence you would add to the original prompt to prevent that field from being omitted.
-
-3. Take a prompt you currently use at work. Map it to the five-layer anatomy table. Which layers are missing? Add the missing layers and note whether the output changes on your next run.
-
-4. Write a critic-then-revise prompt pair for a consulting deliverable you produce regularly (e.g., a project status summary or a requirements gap analysis). The critic prompt must check against at least three named criteria. Write both prompts out in full.
-
-5. Run `code/main.py` and look at the pattern classifier's confidence scores. Four prompts score below 0.5. Pick the chain-of-thought sample — it scores 0.42 despite containing "think step by step." Open the source and trace why: what feature is present but what features are absent that would push the score above 0.5? Describe one rule you would add to the classifier to resolve the ambiguity for CoT prompts.
 
 ## Key Terms
 

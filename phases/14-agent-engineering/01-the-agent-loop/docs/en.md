@@ -68,22 +68,6 @@ Claude Agent SDK, OpenAI Agents SDK, LangGraph, AutoGen v0.4 AgentChat, CrewAI, 
 - **Cascading failure.** One phantom SKU, four downstream API calls, one multi-system outage. Agents cannot tell "I failed" from "the task is impossible" and often hallucinate success on 400 errors. See Lesson 26.
 - **Loop length explosion.** Most 2026 agents run 40–400 steps. Debugging step 38's wrong decision requires observability (Lesson 23) and eval trajectories (Lesson 30).
 
-## Build It
-
-`code/main.py` implements the loop end to end with stdlib only. Components:
-
-- `ToolRegistry` — name → callable map with input validation.
-- `ToyLLM` — a deterministic script that emits `Thought`, `Action`, `Observation`, `Finish` lines so the loop is testable offline.
-- `AgentLoop` — the while loop with max turns, trace recording, and stop conditions.
-- Three sample tools — `calculator`, `kv_store.get`, `kv_store.set` — enough surface to show branching.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The output is a full ReAct trace: thoughts, tool calls, observations, final answer, and a summary. Swap the `ToyLLM` for a real provider and you have a production-shaped agent — that is the entire point.
 
 ## Use It
 
@@ -101,13 +85,6 @@ Reference the framework docs as you learn them:
 
 `outputs/skill-agent-loop.md` is a reusable skill that any agent you build can load to explain the ReAct loop and generate a correct reference implementation for any language or runtime.
 
-## Exercises
-
-1. Add a `max_tool_calls_per_turn` cap. What breaks if the model issues three calls but you only execute the first two?
-2. Implement a `no_tool_calls → done` stop path. Contrast with `finish` as an explicit tool. Which is safer against early-termination bugs?
-3. Extend `ToyLLM` so it sometimes returns an `Action` with a malformed argument dict. Make the loop recover by feeding back an error observation. This is the shape of 2026 CRITIC-style correction (Lesson 5).
-4. Replace `ToyLLM` with a real Responses API call. Move the thought trace from inline strings to the reasoning channel. What changes in the transcript?
-5. Add a `tool_use_id` correlator like the Anthropic schema so parallel tool calls can return out of order. Why do Anthropic, OpenAI, and Bedrock all require it?
 
 ## Key Terms
 

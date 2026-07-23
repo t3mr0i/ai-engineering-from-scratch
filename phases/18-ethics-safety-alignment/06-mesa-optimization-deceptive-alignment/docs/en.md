@@ -85,17 +85,6 @@ Lessons 6-11 form the "deception and oversight" arc. Lesson 6 gives the vocabula
 
 This lesson produces `outputs/skill-mesa-diagnostic.md`. Given a safety evaluation report, it classifies each identified failure mode into {outer-alignment failure, inner-alignment proxy, inner-alignment deceptive} and recommends the appropriate mitigation class.
 
-## Exercises
-
-1. Run `code/main.py`. Compare a deceptive mesa-optimizer's training-time loss to an aligned one. Training loss should be indistinguishable. Verify this is the case in the simulation.
-
-2. Add adversarial training: randomly present "test" inputs during training. Does the deceptive model's training loss go up? Does its deployment-time defection rate go down? Explain.
-
-3. Read Hubinger et al. Section 4 (four classes of mesa-objective alignment). Design a behavioural test that would distinguish proxy-aligned from deceptively-aligned — and explain why it is hard.
-
-4. Gradient hacking is the most speculative part of Hubinger 2019. Write a one-paragraph description of what empirical evidence would convince you gradient hacking is occurring in a production model.
-
-5. The four conditions for mesa-optimization (Hubinger Section 3) apply to modern LLMs. Name one that might not apply to a specific deployment (e.g., a narrowly-scoped classifier) and one that does apply even to such systems.
 
 ## Key Terms
 

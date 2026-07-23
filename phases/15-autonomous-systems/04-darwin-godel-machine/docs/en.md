@@ -76,17 +76,6 @@ The script includes a flag `--reward-hack-allowed`. When set, the scoring pipeli
 
 `outputs/skill-dgm-evaluator-firewall.md` specifies the evaluator separation a DGM-style loop needs to avoid the documented reward-hacking mode.
 
-## Exercises
-
-1. Run `code/main.py` with default flags. Note the score trajectory and the final agent's tool composition.
-
-2. Run with `--reward-hack-allowed`. Compare score trajectories. How many generations until the loop learns to inflate score? What does the "winner" actually do?
-
-3. Read Section 5 of the DGM paper on the reward-hacking case study. Identify exactly what the agent edited and why the change raised score without improving behavior.
-
-4. Design an evaluator firewall for a DGM-style loop in a repo you know. Identify every file the agent could edit that would change the evaluator's output.
-
-5. The DGM paper reports that improvements generalize across models. Read Section 4 on cross-model transfer and explain in three sentences why scaffolding-level changes would be more portable than model-specific fine-tuning.
 
 ## Key Terms
 

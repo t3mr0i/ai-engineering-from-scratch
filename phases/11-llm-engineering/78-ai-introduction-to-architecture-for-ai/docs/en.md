@@ -120,17 +120,6 @@ No network, no API keys — the point is to run the decision logic yourself and 
 
 `outputs/skill-ai-system-architecture-picker.md` is a one-page consulting decision aid: a requirement intake checklist, the five-layer activation table, the orchestration pattern selector, and a cost order-of-magnitude reference. Paste it into a client kickoff to anchor the architecture conversation.
 
-## Exercises
-
-1. Run `code/main.py`. Which requirement flag most often activates the full five-layer stack? Which flag, when removed, simplifies the architecture the most? Change one flag in the sample profiles and observe what changes in the output.
-
-2. The cost estimator shows a price difference between a single-call architecture and a RAG + agent architecture at 10,000 requests per day. Compute the break-even: at what request volume does the added retrieval quality justify the cost if each correct answer is worth 0.05 EUR to the client?
-
-3. A client's legal department says no user data may leave the EU. Map which architecture layers this constraint affects and which managed API options remain available for a German-law firm use case.
-
-4. Draw a five-layer stack diagram for a use case in your current or recent project. For each layer, write one sentence describing the technology you would use and one sentence describing the failure mode you would monitor.
-
-5. A RAG pipeline returns a retrieved chunk that is factually correct but outdated — the model uses it to generate a confidently wrong answer. Which observability metric would have caught this before it reached the user, and what is the mitigation at the ingest stage?
 
 ## Key Terms
 

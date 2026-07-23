@@ -80,62 +80,6 @@ The **multi-audio column is damning for everyone.** Random chance on 4-option mu
 - Multi-audio comparison (22-26% is barely above random).
 - Real-time streaming reasoning (most are offline batch inference).
 
-## Build It
-
-### Step 1: query Qwen2.5-Omni
-
-```python
-from transformers import AutoModelForCausalLM, AutoProcessor
-
-processor = AutoProcessor.from_pretrained("Qwen/Qwen2.5-Omni-7B")
-model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-Omni-7B", torch_dtype="auto")
-
-audio, sr = load_wav("clip.wav", sr=16000)
-messages = [{
-    "role": "user",
-    "content": [
-        {"type": "audio", "audio": audio},
-        {"type": "text", "text": "What sounds do you hear, and what's happening?"},
-    ],
-}]
-inputs = processor.apply_chat_template(messages, tokenize=True, return_tensors="pt")
-output = model.generate(**inputs, max_new_tokens=200)
-print(processor.decode(output[0], skip_special_tokens=True))
-```
-
-### Step 2: the projector pattern
-
-```python
-import torch.nn as nn
-
-class AudioProjector(nn.Module):
-    def __init__(self, audio_dim=1280, llm_dim=4096):
-        super().__init__()
-        self.down = nn.Linear(audio_dim, llm_dim)
-        self.act = nn.GELU()
-        self.up = nn.Linear(llm_dim, llm_dim)
-
-    def forward(self, audio_features):
-        return self.up(self.act(self.down(audio_features)))
-```
-
-That's it. The projector is usually 1-3 linear layers. Training it on ASR pairs (audio → transcript) is the Stage-1 pretext task.
-
-### Step 3: benchmarking MMAU / LongAudioBench
-
-```python
-from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
-
-correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
-        correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
-```
-
-Report per-category (speech / sound / music / multi-audio) separately. Aggregate numbers hide where the model fails.
 
 ## Use It
 
@@ -159,11 +103,6 @@ Report per-category (speech / sound / music / multi-audio) separately. Aggregate
 
 Save as `outputs/skill-alm-picker.md`. Pick LALM + benchmark subset + output-modality (text vs speech) for a given audio-understanding task.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` to see a toy projector pattern + fake LALM routing of (audio-embedding, text-tokens) → output tokens.
-2. **Medium.** Score Qwen2.5-Omni-7B on 100 MMAU-Pro speech items. Compare to the paper's reported number.
-3. **Hard.** Build a minimal audio-captioning baseline: BEATs encoder + 2-layer projector + frozen Llama-3.2-1B. Fine-tune only the projector on AudioCaps. Compare to SALMONN on Clotho-AQA.
 
 ## Key Terms
 

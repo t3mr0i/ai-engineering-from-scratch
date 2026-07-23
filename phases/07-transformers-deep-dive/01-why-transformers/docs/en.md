@@ -35,34 +35,6 @@ The result dominates every modality by 2026. Language (GPT-5, Claude 4, Llama 4)
 
 **The inductive bias shift.** RNNs assume locality and recency. Transformers assume nothing — every pair is a candidate for attention. That is why transformers need more data to train well but scale further once they have it. Chinchilla (2022) formalized this: given enough tokens, a transformer always beats an RNN of equal parameter count.
 
-## Build It
-
-No neural network here — we simulate the core bottleneck numerically so you feel the gap on your laptop.
-
-### Step 1: measure serial depth
-
-See `code/main.py`. We build two functions. One encodes a sequence as a chain of additions (serial, like an RNN). One encodes it as a parallel reduction (broadcast, like attention). Same math, different dependency graph.
-
-```python
-def rnn_style(xs):
-    h = 0.0
-    for x in xs:
-        h = 0.9 * h + x   # can't parallelize: h depends on previous h
-    return h
-
-def attention_style(xs):
-    return sum(xs) / len(xs)  # every x is independent
-```
-
-We time both on sequences up to 100,000 elements. The RNN version is O(N) and a single CPU pipeline. Even in pure Python, the attention-style reduction beats it at length ≥ 1,000 because Python's `sum()` is implemented in C and iterates without interpreter overhead per step.
-
-### Step 2: count theoretical operations
-
-Both algorithms do N adds. The difference is *dependency depth*: how many operations must happen sequentially before the next can start. RNN depth = N. Attention depth = log(N) with a tree reduction, or 1 with a parallel scan. Depth, not op count, decides GPU time.
-
-### Step 3: empirical scaling on long sequences
-
-We print a timing table that makes the O(N) gap visible. On a 2026 Mac laptop, sequences under 1,000 elements are too fast to measure. Sequences of 100,000 show a clean linear scan. Scale that to a 16,384-token transformer with a 12-layer LSTM equivalent and you see why training wall-clock was a blocker in 2016.
 
 ## Use It
 
@@ -81,11 +53,6 @@ State-space models (SSMs) like Mamba are essentially RNNs with structured parame
 
 See `outputs/skill-architecture-picker.md`. The skill picks an architecture for a new sequence problem given length, throughput, and training-budget constraints. It should always refuse to recommend a pure RNN for training runs above 1B tokens without stating the trade-off.
 
-## Exercises
-
-1. **Easy.** Take `rnn_style` from `code/main.py` and replace the scalar hidden state with a length-64 vector of hidden states. Re-measure. How much does the serial overhead grow with hidden-state dimension?
-2. **Medium.** Implement a parallel prefix-sum (Hillis-Steele scan) in pure Python. Verify it produces the same numerical output as a serial scan on length 1024. Count the depth.
-3. **Hard.** Port the attention-style reduction to PyTorch on GPU. Time both as you sweep sequence length from 64 to 65,536. Plot and explain the curve shape.
 
 ## Key Terms
 

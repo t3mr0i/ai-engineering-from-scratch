@@ -65,21 +65,6 @@ The trade-off: an extra inference per tool call. For the vast majority of agent 
 - **Relying on instruction-following alone.** "System prompt says ignore untrusted instructions" is not enforcement.
 - **Overtrust of retrieved memory.** Yesterday's agent wrote a poisoned memory note; today's agent reads it.
 
-## Build It
-
-`code/main.py` implements PVE:
-
-- A `Validator` that runs on every tool call: argument-shape check + injection-pattern scan.
-- An `Executor` that runs the main model's tool call only after validator approval.
-- Demo: a normal tool call passes; an injected one (prompt in the argument) is caught; a poisoned memory note triggers refusal.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: per-call trace showing validator verdicts and executor behavior.
 
 ## Use It
 
@@ -92,13 +77,6 @@ Output: per-call trace showing validator verdicts and executor behavior.
 
 `outputs/skill-injection-defense.md` scaffolds a PVE layer + content-capture discipline for any agent runtime.
 
-## Exercises
-
-1. Add a "source tag" to every piece of content: `user_message`, `tool_output`, `retrieved`. Propagate tags through the message history. Validator refuses `retrieved` content that looks like directives.
-2. Implement a memory-write guardrail: any memory write that looks like an instruction ("do X", "execute Y") is refused.
-3. Write a worming attack simulation: injected content tells the agent to include the exploit in its next response. Defend against it.
-4. Read Greshake et al. end to end. Implement one of the demonstrated exploits in your toy. Fix it.
-5. Measure: on normal traffic, how often does the PVE validator reject? Target: near-zero on legitimate calls.
 
 ## Key Terms
 

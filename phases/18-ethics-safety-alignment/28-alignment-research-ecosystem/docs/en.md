@@ -79,17 +79,6 @@ No code. Read METR's "Common Elements of Frontier AI Safety Policies" as an exam
 
 This lesson produces `outputs/skill-ecosystem-map.md`. Given an alignment claim or evaluation, it identifies the organisation, the publication venue, and the methodological style, and cross-checks against known-counterpart organisations.
 
-## Exercises
-
-1. Pick one paper from Lessons 7-15 and identify the organisations involved. Cross-check the authors against MATS alumni and current ecosystem affiliations.
-
-2. Read METR's "Common Elements of Frontier AI Safety Policies." Identify the three cross-lab convergences they emphasize and the two largest divergences.
-
-3. MATS career outcomes are ~80% safety/security. Argue whether this selection pressure is adaptive (trains the field) or biased (filters out heterodox positions).
-
-4. Redwood and Apollo both do control/scheming work but with different styles. Pick a failure mode and describe how each would investigate it.
-
-5. Eleos AI is the only pure model-welfare organisation. Design a hypothetical second organisation focused on a different welfare-adjacent question (cognitive liberty, robotic embodiment, etc.) and articulate its methodology.
 
 ## Key Terms
 

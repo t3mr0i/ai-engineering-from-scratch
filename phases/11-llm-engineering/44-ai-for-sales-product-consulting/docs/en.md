@@ -52,17 +52,6 @@ flowchart LR
 - Business & Strategy Consulting
 - Leadership
 
-## Build It
-
-In the lab you build a sales and product consulting AI planner. It ranks customer-facing scenarios and recommends controls before material is used.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/44-ai-for-sales-product-consulting/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

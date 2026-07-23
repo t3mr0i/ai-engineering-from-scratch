@@ -108,13 +108,6 @@ At >1M requests/day, full-trace retention costs more than the LLM calls. Sample 
 
 This lesson produces `outputs/skill-observability-stack.md`. Given stack, scale, budget, license posture, picks the tool(s).
 
-## Exercises
-
-1. Your team on LangChain wants OSS self-hosted observability. Pick Langfuse or Opik and justify.
-2. At 5M traces/day with Datadog quotes $150K/month, compute break-even for Arize AX.
-3. Design an OpenTelemetry GenAI attribute set your org's guideline should mandate on every LLM call.
-4. Argue whether Phoenix alone is sufficient for production. When does it not suffice?
-5. Helicone is 20ms proxy overhead. At P99 TTFT 300 ms, is that acceptable? What if SLA is 100 ms?
 
 ## Key Terms
 

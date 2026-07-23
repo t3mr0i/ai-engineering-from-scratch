@@ -86,22 +86,6 @@ The architecture is the reference. Extensions swap components (vector store for 
 
 Smallville is the proof of concept that multi-agent emergence is cheap when the components are right. The architecture has now been replicated on open-source models (smaller LLMs lose believability gracefully, not sharply). Any production system that needs **emergent social behavior** uses this shape. Any system that needs **tight task execution** uses the supervisor / roles / primitives patterns from earlier in this phase.
 
-## Build It
-
-`code/main.py` implements the three components in stdlib Python with scripted agent policies (no real LLM). The demo reproduces the Valentine's-party emergence in miniature:
-
-- `MemoryStream` — append-only log with recency/importance/relevance retrieval.
-- `reflect(stream)` — scripted reflection over recent high-importance memories.
-- `plan(agent_state)` — day-level and hour-level plans based on current beliefs.
-- Scenario: 5 agents. Agent 1 starts with "throw party at 5pm." Over simulated ticks, the invitation spreads and agents converge.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: tick-by-tick trace. By the final tick, at least 3 of the 5 agents show the party in their plan, and they converge at the party location. The single seed produced the coordinated arrival without any orchestrator.
 
 ## Use It
 
@@ -117,13 +101,6 @@ Rules for production simulations:
 - **Compact memory periodically.** Summarize-and-prune low-importance entries. Retention policy is a design decision, not a detail.
 - **Detect spatial / social norm violations** explicitly. The architecture does not learn them.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm 3+ agents converge at the party. Increase agents to 10 — does the emergence still happen?
-2. Remove the reflection step. What does behavior look like? Map to the ablation finding in Park 2023.
-3. Introduce a competing seeded goal ("Klaus wants to give a research talk at 5pm"). Do agents split, or does one goal dominate? What determines it?
-4. Add spatial constraints: Hobbs Cafe holds at most 4 agents. Does the simulation handle overflow gracefully, or does it hit the "single-person bathroom" failure pattern?
-5. Read Park et al. (arXiv:2304.03442) Section 6 (emergent behavior experiments). Identify one behavior not reproducible in your miniature. What component of the architecture would you need to enhance?
 
 ## Key Terms
 

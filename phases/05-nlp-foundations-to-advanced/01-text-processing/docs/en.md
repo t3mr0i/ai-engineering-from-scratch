@@ -29,106 +29,6 @@ Three operations. Each has a job and a failure mode.
 
 Rule of thumb. Stem when speed matters and you can tolerate noise (search indexing, rough classification). Lemmatize when meaning matters (question answering, semantic search, anything the user will read).
 
-## Build It
-
-### Step 1: a regex word tokenizer
-
-The simplest useful tokenizer splits on non-alphanumeric characters while keeping punctuation as its own tokens. Not perfect, not final, but it runs in one line.
-
-```python
-import re
-
-def tokenize(text):
-    return re.findall(r"[A-Za-z]+(?:'[A-Za-z]+)?|[0-9]+|[^\sA-Za-z0-9]", text)
-```
-
-Three patterns in order of precedence. Words with optional inner apostrophe (`don't`, `it's`). Pure numbers. Any single non-whitespace non-alphanumeric character as a standalone token (punctuation).
-
-```python
->>> tokenize("The cats weren't running at 3pm.")
-['The', 'cats', "weren't", 'running', 'at', '3', 'pm', '.']
-```
-
-Failure modes to notice. `3pm` splits to `['3', 'pm']` because we alternated between letter runs and digit runs. Good enough for most tasks. URLs, emails, hashtags all break. For production, add patterns before the general ones.
-
-### Step 2: a Porter stemmer (step 1a only)
-
-The full Porter algorithm has five phases of rules. Step 1a alone covers the most frequent English suffixes and teaches the pattern.
-
-```python
-def stem_step_1a(word):
-    if word.endswith("sses"):
-        return word[:-2]
-    if word.endswith("ies"):
-        return word[:-2]
-    if word.endswith("ss"):
-        return word
-    if word.endswith("s") and len(word) > 1:
-        return word[:-1]
-    return word
-```
-
-```python
->>> [stem_step_1a(w) for w in ["caresses", "ponies", "caress", "cats"]]
-['caress', 'poni', 'caress', 'cat']
-```
-
-Read the rules top-down. The `ies -> i` rule is why `ponies -> poni`, not `pony`. Real Porter has step 1b that would fix it. Rules compete. Earlier rules win. The order matters more than any single rule.
-
-### Step 3: a lookup-based lemmatizer
-
-Lemmatization proper needs morphology. A tractable teaching version uses a small lemma table and a fallback.
-
-```python
-LEMMA_TABLE = {
-    ("running", "VERB"): "run",
-    ("ran", "VERB"): "run",
-    ("runs", "VERB"): "run",
-    ("better", "ADJ"): "good",
-    ("best", "ADJ"): "good",
-    ("cats", "NOUN"): "cat",
-    ("cat", "NOUN"): "cat",
-    ("were", "VERB"): "be",
-    ("was", "VERB"): "be",
-    ("is", "VERB"): "be",
-}
-
-def lemmatize(word, pos):
-    key = (word.lower(), pos)
-    if key in LEMMA_TABLE:
-        return LEMMA_TABLE[key]
-    if pos == "VERB" and word.endswith("ing"):
-        return word[:-3]
-    if pos == "NOUN" and word.endswith("s"):
-        return word[:-1]
-    return word.lower()
-```
-
-```python
->>> lemmatize("running", "VERB")
-'run'
->>> lemmatize("cats", "NOUN")
-'cat'
->>> lemmatize("better", "ADJ")
-'good'
->>> lemmatize("watched", "VERB")
-'watched'
-```
-
-The last case is the key teaching moment. `watched` is not in our table and our fallback only handles `ing`. Real lemmatization covers `ed`, irregular verbs, comparative adjectives, plurals with sound changes (`children -> child`). This is why production systems use WordNet, spaCy's morphologizer, or a full morphological analyzer.
-
-### Step 4: pipe them together
-
-```python
-def preprocess(text, pos_tagger=None):
-    tokens = tokenize(text)
-    stems = [stem_step_1a(t.lower()) for t in tokens]
-    tags = pos_tagger(tokens) if pos_tagger else [(t, "NOUN") for t in tokens]
-    lemmas = [lemmatize(word, pos) for word, pos in tags]
-    return {"tokens": tokens, "stems": stems, "lemmas": lemmas}
-```
-
-The missing piece is a POS tagger. Phase 5 · 07 (POS Tagging) builds one. For now, default everything to `NOUN` and acknowledge the limitation.
 
 ## Use It
 
@@ -230,11 +130,6 @@ You advise on classical NLP preprocessing. Given a task description, you output:
 Refuse to recommend stemming for user-visible text. Refuse to recommend lemmatization without POS tags. Flag non-English input as needing a different pipeline.
 ```
 
-## Exercises
-
-1. **Easy.** Extend `tokenize` to keep URLs as single tokens. Test: `tokenize("Visit https://example.com today.")` should produce one URL token.
-2. **Medium.** Implement Porter step 1b. If a word contains a vowel and ends in `ed` or `ing`, remove it. Handle the double-consonant rule (`hopping -> hop`, not `hopp`).
-3. **Hard.** Build a lemmatizer that uses WordNet as a lookup table but falls back to your Porter stemmer when WordNet has no entry. Measure accuracy on a tagged corpus against plain WordNet and plain Porter.
 
 ## Key Terms
 

@@ -59,51 +59,6 @@ Fine-tune a pretrained image diffusion model to generate multiple consistent vie
 
 Neural Radiance Field (Mildenhall et al., 2020). A tiny MLP takes `(x, y, z, view direction)` and outputs `(color, density)`. Render by integrating along rays. Beats mesh-based novel-view synthesis in quality but is 100-1000x slower to render. Superseded by Gaussian splatting for most real-time use but still dominant in research.
 
-## Build It
-
-`code/main.py` implements a toy 2D "Gaussian splatting" fit: represent a synthetic target image (a smooth gradient) as a sum of 2D Gaussian splats. Optimize positions, colors, and covariances by gradient descent to match the target. You see the two core operations: forward render (splat + alpha-composite) and fit by gradient descent.
-
-### Step 1: 2D Gaussian splat
-
-```python
-def gaussian_at(x, y, gaussian):
-    px, py = gaussian["pos"]
-    sigma = gaussian["sigma"]
-    d2 = (x - px) ** 2 + (y - py) ** 2
-    return math.exp(-d2 / (2 * sigma * sigma))
-```
-
-### Step 2: render by summing splats
-
-```python
-def render(image_size, gaussians):
-    img = [[0.0] * image_size for _ in range(image_size)]
-    for g in gaussians:
-        for y in range(image_size):
-            for x in range(image_size):
-                img[y][x] += g["color"] * gaussian_at(x, y, g)
-    return img
-```
-
-Real 3D Gaussian splatting sorts Gaussians by depth and alpha-composites in order. Our 2D toy just sums.
-
-### Step 3: fit by gradient descent
-
-```python
-for step in range(steps):
-    pred = render(size, gaussians)
-    loss = mse(pred, target)
-    gradients = compute_grads(pred, target, gaussians)
-    update(gaussians, gradients, lr)
-```
-
-## Pitfalls
-
-- **View inconsistency.** If you generate 4 views independently and they disagree about object structure, the 3D fit is blurry. Fix: multi-view diffusion with shared attention.
-- **Back-side hallucination.** Single-image → 3D has to invent the unseen side. Quality varies wildly.
-- **Gaussian splat explosion.** Unconstrained training grows to 10M splats and overfits. Densification + pruning heuristics (from 3D-GS original paper) are essential.
-- **Topology issues.** Meshes from implicit fields (SDFs) often have holes or self-intersections. Run a remesher (e.g. blender's voxel remesh) before shipping.
-- **License of training data.** Objaverse has mixed licenses; commercial use varies per model.
 
 ## Use It
 
@@ -123,11 +78,6 @@ For shipping production 3D in a game or e-commerce pipeline: Meshy 4 or Rodin Ge
 
 Save `outputs/skill-3d-pipeline.md`. Skill takes a 3D brief (input: text / one image / few images; output: mesh / splat / NeRF; usage: render / game / VR) and outputs: pipeline (multi-view diffusion + fit, or direct mesh model), base model, iteration budget, topology post-processing, material channels needed.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` with 4, 16, 64 Gaussians. Report final MSE vs target.
-2. **Medium.** Extend to color Gaussians (RGB). Confirm reconstruction matches the target color pattern.
-3. **Hard.** Using gsplat or Nerfstudio, reconstruct a real object from a 50-photo capture. Report fit time and final SSIM on held-out views.
 
 ## Key Terms
 

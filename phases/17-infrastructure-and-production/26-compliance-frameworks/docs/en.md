@@ -106,13 +106,6 @@ OpenAI maintains SOC 2 Type 2, ISO/IEC 27001:2022, ISO/IEC 27701:2019, GDPR/CCPA
 
 This lesson produces `outputs/skill-compliance-matrix.md`. Given customer segment and geography, specifies required frameworks and controls.
 
-## Exercises
-
-1. Your first enterprise customer requires SOC 2 Type II, HIPAA BAA, EU AI Act statement. What is the minimum viable compliance posture to win the deal?
-2. Classify three hypothetical LLM products under EU AI Act risk tiers. What changes at high-risk?
-3. You accidentally sent PHI to a provider without BAA. Walk through the incident response.
-4. Argue whether ISO 42001 is "necessary in 2026" for a mid-market AI vendor.
-5. Map your LLM audit log fields (Phase 17 · 25) to at least three framework controls.
 
 ## Key Terms
 

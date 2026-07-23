@@ -59,25 +59,6 @@ HPA on queue-wait metric
 - Eval: ShareGPT, MT-Bench-v2, GSM8K, HumanEval for domain-spread acceptance measurement
 - Reference: TensorRT-LLM speculative decoding for a vendor baseline
 
-## Build It
-
-1. **Target model prep.** Pick Llama 3.3 70B. Quantize to FP8 via Marlin. Deploy under vLLM 0.7 on 1xH100 (or 2x tensor-parallel).
-
-2. **Draft source.** Pull an aligned EAGLE-3 draft head from Red Hat Speculators (or train one via SpecForge). Load into vLLM's speculative-decoding config.
-
-3. **Baseline numbers.** Before speculation: tokens/s at batch 1/8/32, p50/p99 latency, GPU utilization. Publish.
-
-4. **Enable EAGLE-3.** Flip config; rerun the same benchmark. Report speedup, acceptance rate, p99 tail-latency delta.
-
-5. **P-EAGLE.** Enable parallel speculation; measure deeper draft tree vs serial EAGLE-3. Report the inflection where P-EAGLE helps vs hurts.
-
-6. **Domain traffic.** Run ShareGPT vs HumanEval vs domain-specific traffic through the same server. Measure acceptance rate per distribution. Identify when drafts drift.
-
-7. **Second target model.** Run the same pipeline on Qwen3-Coder-30B MoE. Draft is trickier (MoE routing noise). Report.
-
-8. **K8s HPA.** Deploy under K8s with HPA tracking `queue_wait_ms`. Demonstrate scale-out when load triples.
-
-9. **Cost comparison.** Compute $/1M tokens vs Anthropic Claude Sonnet 4.7 and OpenAI GPT-5.4 on the same eval. Publish.
 
 ## Use It
 
@@ -102,17 +83,6 @@ $ curl https://infer.example.com/v1/chat/completions -d '{"messages":[...]}'
 | 15 | Write-up and methodology | Clear explanation of what changed and why |
 | **100** | | |
 
-## Exercises
-
-1. Measure acceptance-rate degradation when the draft is one version behind the target (e.g., Llama 3.3 -> 3.4 drift). Build a monitoring alert.
-
-2. Implement ngram-fallback: if EAGLE-3 acceptance drops below a threshold, switch to ngram drafts. Report reliability improvement.
-
-3. Run a controlled MoE experiment: same Qwen3-Coder-30B with routing noise injected vs without. Measure draft acceptance sensitivity.
-
-4. Extend to H200 (141 GB). Report the model-size-per-replica headroom gained and whether you can serve an unquantized Llama 3.3 70B.
-
-5. Benchmark TensorRT-LLM speculative decoding on the same H100 hardware. Report where it wins vs vLLM.
 
 ## Key Terms
 

@@ -40,50 +40,6 @@ Pix2Pix needs paired `(x, y)` data. CycleGAN (Zhu et al., 2017) drops this requi
 
 In 2026, unpaired image-to-image is mostly done via diffusion (ControlNet, IP-Adapter) rather than CycleGAN, but the cycle-consistency idea survives in almost every unpaired domain adaptation paper.
 
-## Build It
-
-`code/main.py` implements a tiny conditional GAN on 1-D data. The condition `c` is a class label (0 or 1). The task: produce a sample from the conditional distribution for the given class.
-
-### Step 1: append condition to both G and D inputs
-
-```python
-def G(z, c, params):
-    return mlp(concat([z, one_hot(c)]), params)
-
-def D(x, c, params):
-    return mlp(concat([x, one_hot(c)]), params)
-```
-
-One-hot encoding is the simplest way. Larger models use learned embeddings, FiLM modulation, or cross-attention.
-
-### Step 2: train conditional
-
-```python
-for step in range(steps):
-    x, c = sample_real_conditional()
-    noise = sample_noise()
-    update_D(x_real=x, x_fake=G(noise, c), c=c)
-    update_G(noise, c)
-```
-
-The generator must match the real distribution *for the given condition*, not the marginal.
-
-### Step 3: verify per-class output
-
-```python
-for c in [0, 1]:
-    samples = [G(noise, c) for noise in batch]
-    mean_c = mean(samples)
-    assert_near(mean_c, real_mean_for_class_c)
-```
-
-## Pitfalls
-
-- **Condition ignored.** G learns to marginalize, D never penalizes because condition signal is weak. Fix: condition D more aggressively (early layer, not just late), use projection discriminator (Miyato & Koyama 2018).
-- **L1 weight too low.** G drifts to arbitrary real-looking outputs, not faithful ones. Start λ≈100 for Pix2Pix-style tasks.
-- **L1 weight too high.** G produces blurry outputs because L1 is still an L_p norm. Anneal down once training stabilizes.
-- **Ground-truth leakage in D.** Concatenate `(x, y)` as D input, not just `y`. Without this D cannot check consistency.
-- **Mode collapse per class.** Each class can collapse independently. Run class-conditional diversity checks.
 
 ## Use It
 
@@ -106,11 +62,6 @@ Pix2Pix remains the right tool when (a) you have thousands of paired examples, (
 
 Save `outputs/skill-img2img-chooser.md`. Skill takes a task description, data availability (paired vs unpaired, N samples), and latency/quality budget, then outputs: approach (Pix2Pix, CycleGAN, ControlNet variant, SDXL + IP-Adapter), training data requirements, inference cost, and eval protocol (LPIPS, FID, task-specific).
 
-## Exercises
-
-1. **Easy.** Modify `code/main.py` to add a third class. Confirm G still maps each class's noise to the correct mode.
-2. **Medium.** Replace L1 with a perceptual-style loss in the 1-D setting (e.g. a small frozen D acting as feature extractor). Does it change sharpness of the conditional distribution?
-3. **Hard.** Sketch a CycleGAN in the 1-D setting: two distributions, two generators, cycle loss. Show that it learns to map between them with no paired data.
 
 ## Key Terms
 

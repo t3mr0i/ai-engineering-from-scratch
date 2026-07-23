@@ -53,75 +53,6 @@ Three intuitions:
 
 3. **The ELBO reduces to simple MSE.** The full variational lower bound has a KL term per timestep. With DDPM's parameterization those KL terms simplify to MSE on noise prediction with specific coefficients; Ho dropped the coefficients (calling it "simple" loss) and quality *improved*.
 
-## Build It
-
-`code/main.py` implements a 1-D DDPM. Data is a two-mode mixture. The "net" is a tiny MLP that takes `(x_t, t)` and outputs predicted noise. Training is the one-line loss. Sampling iterates the reverse chain.
-
-### Step 1: the forward schedule (closed form)
-
-```python
-betas = [1e-4 + (0.02 - 1e-4) * t / (T - 1) for t in range(T)]
-alphas = [1 - b for b in betas]
-alpha_bars = []
-cum = 1.0
-for a in alphas:
-    cum *= a
-    alpha_bars.append(cum)
-```
-
-### Step 2: sample `x_t` in one shot
-
-```python
-def forward_sample(x0, t, alpha_bars, rng):
-    a_bar = alpha_bars[t]
-    eps = rng.gauss(0, 1)
-    x_t = math.sqrt(a_bar) * x0 + math.sqrt(1 - a_bar) * eps
-    return x_t, eps
-```
-
-### Step 3: one training step
-
-```python
-def train_step(x0, model, alpha_bars, rng):
-    t = rng.randrange(T)
-    x_t, eps = forward_sample(x0, t, alpha_bars, rng)
-    eps_hat = model_forward(model, x_t, t)
-    loss = (eps - eps_hat) ** 2
-    return loss, gradient_step(model, ...)
-```
-
-### Step 4: reverse sampling
-
-```python
-def sample(model, alpha_bars, T, rng):
-    x = rng.gauss(0, 1)
-    for t in range(T - 1, -1, -1):
-        eps_hat = model_forward(model, x, t)
-        beta_t = 1 - alphas[t]
-        x = (x - beta_t / math.sqrt(1 - alpha_bars[t]) * eps_hat) / math.sqrt(alphas[t])
-        if t > 0:
-            x += math.sqrt(beta_t) * rng.gauss(0, 1)
-    return x
-```
-
-For a 1-D problem with 40 timesteps and a 24-unit MLP, this learns the two-mode mixture in ~200 epochs.
-
-## Time conditioning
-
-The net needs to know which timestep it is denoising. Two standard options:
-
-- **Sinusoidal embedding.** Like Transformer positional encoding. `embed(t) = [sin(t/ω_0), cos(t/ω_0), sin(t/ω_1), ...]`. Pass through an MLP, broadcast into the net.
-- **Film / group-norm conditioning.** Project embedding to per-channel scale/bias (FiLM) at each block.
-
-Our toy code uses sinusoidal → concat. Production U-Nets use FiLM.
-
-## Pitfalls
-
-- **Schedule matters a lot.** Linear `β` is the DDPM default but cosine schedule (Nichol & Dhariwal, 2021) gives better FID for the same compute. Switch schedules if quality plateaus.
-- **Timestep embedding is fragile.** Passing raw `t` as a float works for toy 1-D but fails for images; always use a proper embedding.
-- **V-prediction vs ε-prediction.** For narrow regimes (very small or very large t), `ε` has poor signal-to-noise. V-prediction (`v = α·ε - σ·x`) is more stable; SDXL, SD3, and Flux use it.
-- **Classifier-free guidance.** At inference, compute both conditional and unconditional `ε`, then `ε_cfg = (1 + w) · ε_cond - w · ε_uncond` with `w ≈ 3-7`. Covered in Lesson 08.
-- **1000 steps is a lot.** Production uses DDIM (20-50 steps), DPM-Solver (10-20 steps), or distillation (1-4 steps). See Lesson 12.
 
 ## Use It
 
@@ -139,11 +70,6 @@ Diffusion is the universal generative backbone. Flow matching (Lesson 13) is the
 
 Save `outputs/skill-diffusion-trainer.md`. Skill takes a dataset + compute budget and outputs: schedule (linear/cosine/sigmoid), prediction target (ε/v/x), number of steps, guidance scale, sampler family, and an eval protocol.
 
-## Exercises
-
-1. **Easy.** Change T from 40 to 10 in `code/main.py`. How does sample quality (visual histogram of outputs) degrade? At what T does the two-mode structure collapse?
-2. **Medium.** Switch from ε-prediction to v-prediction. Re-derive the reverse step. Compare final sample quality.
-3. **Hard.** Add classifier-free guidance. Condition on a class label `c ∈ {0, 1}`, drop it 10% of the time during training, and at sampling time use `ε = (1+w)·ε_cond - w·ε_uncond`. Measure the conditional-mode-hit rate at `w = 0, 1, 3, 7`.
 
 ## Key Terms
 

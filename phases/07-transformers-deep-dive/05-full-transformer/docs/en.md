@@ -82,45 +82,6 @@ For one block with `d_model = d` and FFN expansion `r`:
 
 At `d = 4096, r = 2.6, layers = 32` (roughly Llama 3 8B), total: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (16 + 32) M = ~1.5B parameters per layer × 32 ≈ 7B` (plus embeddings and head). Matches published counts.
 
-## Build It
-
-### Step 1: the building blocks
-
-Using the tiny `Matrix` class from Lesson 03 (copied to this file for independence):
-
-- `layer_norm(x, eps=1e-5)` — subtract mean, divide by std.
-- `rms_norm(x, eps=1e-6)` — divide by RMS. No mean subtraction.
-- `gelu(x)` and `silu(x) * W3 x` (SwiGLU).
-- `ffn_swiglu(x, W1, W2, W3)`.
-- `encoder_block(x, params)` and `decoder_block(x, enc_out, params)`.
-
-See `code/main.py` for the full wiring.
-
-### Step 2: wire a 2-layer encoder and a 2-layer decoder
-
-Stack them. Pass the encoder output into every decoder cross-attention. Add a final LN before the output projection.
-
-```python
-def encode(tokens, params):
-    x = embed(tokens, params.emb) + sinusoidal(len(tokens), params.d)
-    for block in params.encoder_blocks:
-        x = encoder_block(x, block)
-    return x
-
-def decode(target_tokens, encoder_out, params):
-    x = embed(target_tokens, params.emb) + sinusoidal(len(target_tokens), params.d)
-    for block in params.decoder_blocks:
-        x = decoder_block(x, encoder_out, block)
-    return x
-```
-
-### Step 3: run forward on a toy example
-
-Feed a 6-token source and a 5-token target through. Verify the output shape is `(5, vocab)`. No training — this lesson is about the architecture, not the loss.
-
-### Step 4: swap in RMSNorm + SwiGLU
-
-Replace LayerNorm and ReLU-FFN with RMSNorm and SwiGLU. Confirm shapes still match. This is the 2026 modernization with one function substitution.
 
 ## Use It
 
@@ -146,11 +107,6 @@ Decoder-only won language because it scales cleanest and handles both comprehens
 
 See `outputs/skill-transformer-block-reviewer.md`. The skill reviews a new transformer block implementation against the 2026 defaults and flags missing pieces (pre-norm, RoPE, RMSNorm, GQA, FFN expansion ratio).
 
-## Exercises
-
-1. **Easy.** Count the parameters in your encoder_block at `d_model=512, n_heads=8, ffn_expansion=4, swiglu=True`. Validate by implementing the block and using `sum(p.numel() for p in block.parameters())`.
-2. **Medium.** Switch from post-norm to pre-norm. Initialize both and measure the activation norm after 12 stacked layers on random input. Post-norm's activations should explode; pre-norm's should stay bounded.
-3. **Hard.** Implement a 4-layer encoder-decoder on a toy copy task (copy `x` reversed). Train 100 steps. Report loss. Swap in RMSNorm + SwiGLU + RoPE — does loss drop?
 
 ## Key Terms
 

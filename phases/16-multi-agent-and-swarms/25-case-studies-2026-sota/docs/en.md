@@ -134,13 +134,6 @@ Starter rules for production multi-agent in 2026:
 - **Rainbow deploy long-running agents.** Expect multi-hour agent runs to be routine.
 - **Read WMAC 2026 and the MAST follow-ups.** The discipline is moving fast.
 
-## Exercises
-
-1. Read the Anthropic Research system post end-to-end. Identify three design decisions that would change if you replaced Opus 4 with a smaller model (e.g., Haiku 4).
-2. Read MetaGPT Sections 3-4 (arXiv:2308.00352). Encode one SOP from your own domain (not software) as role prompts. How many roles does the SOP imply?
-3. Read ChatDev (arXiv:2307.07924). Identify the mechanism of "communicative dehallucination." Implement it in one of your existing multi-agent systems.
-4. Read about OpenClaw and Moltbook. Pick one specific failure mode that emerged at population scale that would not appear in a 5-agent system. How would you engineer against it?
-5. Pick your current multi-agent project. Which of the three case studies is the closest reference? Which design decisions from that case study have you NOT yet adopted? Write down one you will adopt this quarter.
 
 ## Key Terms
 

@@ -49,71 +49,6 @@ Lower variance than SARSA (no sample of `a'`), same on-policy target. Often the 
 
 **n-step TD and TD(λ).** Interpolate between TD(0) and MC by waiting `n` steps before bootstrapping. `n=1` is TD, `n=∞` is MC. TD(λ) averages over all `n` with geometric weights `(1-λ)λ^{n-1}`. Most deep-RL uses `n` between 3 and 20.
 
-## Build It
-
-### Step 1: SARSA on ε-greedy policy
-
-```python
-def sarsa(env, episodes, alpha=0.1, gamma=0.99, epsilon=0.1):
-    Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
-
-    def choose(s):
-        if random() < epsilon:
-            return choice(ACTIONS)
-        return max(Q[s], key=Q[s].get)
-
-    for _ in range(episodes):
-        s = env.reset()
-        a = choose(s)
-        while True:
-            s_next, r, done = env.step(s, a)
-            a_next = choose(s_next) if not done else None
-            target = r + (gamma * Q[s_next][a_next] if not done else 0.0)
-            Q[s][a] += alpha * (target - Q[s][a])
-            if done:
-                break
-            s, a = s_next, a_next
-    return Q
-```
-
-Eight lines. The *only* difference from Q-learning is the target line.
-
-### Step 2: Q-learning
-
-```python
-def q_learning(env, episodes, alpha=0.1, gamma=0.99, epsilon=0.1):
-    Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
-    for _ in range(episodes):
-        s = env.reset()
-        while True:
-            a = choose(s, Q, epsilon)
-            s_next, r, done = env.step(s, a)
-            target = r + (gamma * max(Q[s_next].values()) if not done else 0.0)
-            Q[s][a] += alpha * (target - Q[s][a])
-            if done:
-                break
-            s = s_next
-    return Q
-```
-
-The `max` decouples target from behavior. That one symbol is the difference between on-policy and off-policy.
-
-### Step 3: learning curves
-
-Track mean return per 100 episodes. Q-learning converges faster on simple deterministic GridWorld; SARSA is more conservative on cliff-walking. On the 4×4 GridWorld in `code/main.py`, both are near-optimal after ~2,000 episodes with `α=0.1, ε=0.1`.
-
-### Step 4: compare to DP truth
-
-Run value iteration (Lesson 02) to get `Q*`. Check `max_{s,a} |Q_learned(s,a) - Q*(s,a)|`. A healthy tabular TD agent lands within `~0.5` on the 4×4 GridWorld after 10,000 episodes.
-
-## Pitfalls
-
-- **Initial Q values matter.** Optimistic init (`Q = 0` for a negative-reward task) encourages exploration. Pessimistic init can trap a greedy policy forever.
-- **α schedule.** Constant `α` is fine for non-stationary problems. Decaying `α_n = 1/n` gives convergence in theory but is too slow in practice — pin `α` in `[0.05, 0.3]` and monitor the learning curve.
-- **ε schedule.** Start high (`ε=1.0`), decay to `ε=0.05`. "GLIE" (greedy in the limit with infinite exploration) is the convergence condition.
-- **Max bias in Q-learning.** The `max` operator is biased upward when `Q` is noisy. Leads to overestimation — Hasselt's Double Q-learning (used by DDQN in Lesson 05) fixes this with two Q tables.
-- **Non-terminating episodes.** TD can learn without terminals, but you need to either cap steps or handle bootstrap correctly at the cap. Standard: treat cap as non-terminal, keep bootstrapping.
-- **State hashing.** If states are tuples/tensors, use a hashable key (tuple, not list; tuple of floats rounded, not raw).
 
 ## Use It
 
@@ -155,11 +90,6 @@ Given a tabular or small-feature environment, output:
 Refuse to apply tabular TD to state spaces > 10⁶. Refuse to ship a Q-learning agent without a max-bias caveat. Flag any agent trained with ε held at 1.0 throughout (no exploitation phase).
 ```
 
-## Exercises
-
-1. **Easy.** Implement Q-learning and SARSA on the 4×4 GridWorld. Plot learning curves (mean return per 100 episodes) for 2,000 episodes. Who converges faster?
-2. **Medium.** Build a cliff-walking environment (4×12, last row is the cliff with reward -100 and reset to start). Compare Q-learning and SARSA final policies. Screenshot the paths each takes. Which is closer to the cliff?
-3. **Hard.** Implement Double Q-learning. On a noisy-reward GridWorld (Gaussian noise σ=5 added to per-step reward), show Q-learning overestimates `V*(0,0)` by a meaningful amount while Double Q-learning does not.
 
 ## Key Terms
 

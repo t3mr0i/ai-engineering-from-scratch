@@ -228,106 +228,6 @@ The chain is guaranteed to converge to p(x) under mild conditions. But convergen
 | Markov decision process | Reinforcement learning |
 | Metropolis-Hastings | Bayesian inference, posterior sampling |
 
-## Build It
-
-### Step 1: Random walk simulator
-
-```python
-import numpy as np
-
-def random_walk_1d(n_steps, seed=None):
-    rng = np.random.RandomState(seed)
-    steps = rng.choice([-1, 1], size=n_steps)
-    positions = np.concatenate([[0], np.cumsum(steps)])
-    return positions
-
-
-def random_walk_2d(n_steps, seed=None):
-    rng = np.random.RandomState(seed)
-    directions = rng.choice(4, size=n_steps)
-    dx = np.zeros(n_steps)
-    dy = np.zeros(n_steps)
-    dx[directions == 0] = 1   # right
-    dx[directions == 1] = -1  # left
-    dy[directions == 2] = 1   # up
-    dy[directions == 3] = -1  # down
-    x = np.concatenate([[0], np.cumsum(dx)])
-    y = np.concatenate([[0], np.cumsum(dy)])
-    return x, y
-```
-
-The 1D walk stores cumulative sums. Each step is +1 or -1. After n steps, the position is the sum. The variance grows linearly with n, so the standard deviation grows as sqrt(n).
-
-### Step 2: Markov chain
-
-```python
-class MarkovChain:
-    def __init__(self, transition_matrix, state_names=None):
-        self.P = np.array(transition_matrix, dtype=float)
-        self.n_states = len(self.P)
-        self.state_names = state_names or [str(i) for i in range(self.n_states)]
-
-    def step(self, current_state, rng=None):
-        if rng is None:
-            rng = np.random.RandomState()
-        probs = self.P[current_state]
-        return rng.choice(self.n_states, p=probs)
-
-    def simulate(self, start_state, n_steps, seed=None):
-        rng = np.random.RandomState(seed)
-        states = [start_state]
-        current = start_state
-        for _ in range(n_steps):
-            current = self.step(current, rng)
-            states.append(current)
-        return states
-
-    def stationary_distribution(self):
-        eigenvalues, eigenvectors = np.linalg.eig(self.P.T)
-        idx = np.argmin(np.abs(eigenvalues - 1.0))
-        stationary = np.real(eigenvectors[:, idx])
-        stationary = stationary / stationary.sum()
-        return np.abs(stationary)
-```
-
-The stationary distribution is the left eigenvector of P with eigenvalue 1. We find it by computing eigenvectors of P^T (transposing turns left eigenvectors into right eigenvectors).
-
-### Step 3: Langevin dynamics
-
-```python
-def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
-    rng = np.random.RandomState(seed)
-    x = np.array(x0, dtype=float)
-    trajectory = [x.copy()]
-    for _ in range(n_steps):
-        noise = rng.randn(*x.shape)
-        x = x - dt * grad_U(x) + np.sqrt(2 * temperature * dt) * noise
-        trajectory.append(x.copy())
-    return np.array(trajectory)
-```
-
-The gradient pushes x toward low energy. The noise prevents it from getting stuck. At equilibrium, the distribution of samples is proportional to exp(-U(x)/temperature).
-
-### Step 4: Metropolis-Hastings
-
-```python
-def metropolis_hastings(target_log_prob, proposal_std, x0, n_samples, seed=None):
-    rng = np.random.RandomState(seed)
-    x = np.array(x0, dtype=float)
-    samples = [x.copy()]
-    accepted = 0
-    for _ in range(n_samples - 1):
-        x_proposed = x + rng.randn(*x.shape) * proposal_std
-        log_ratio = target_log_prob(x_proposed) - target_log_prob(x)
-        if np.log(rng.rand()) < log_ratio:
-            x = x_proposed
-            accepted += 1
-        samples.append(x.copy())
-    acceptance_rate = accepted / (n_samples - 1)
-    return np.array(samples), acceptance_rate
-```
-
-The algorithm proposes a new point, checks if it has higher probability (or accepts with probability proportional to the ratio), and repeats. The acceptance rate should be around 23-50% for good mixing.
 
 ## Use It
 
@@ -421,17 +321,6 @@ SGLD (Stochastic Gradient Langevin Dynamics) combines mini-batch gradient descen
 
 The key insight across all these connections: stochastic processes are not just theoretical tools. They are the computational mechanisms inside modern AI systems. When you tune the temperature of an LLM, you are adjusting a Markov chain. When you train a diffusion model, you are learning to reverse a Brownian-motion-like process. When you run Bayesian inference, you are constructing a chain that converges to the posterior.
 
-## Exercises
-
-1. **Simulate 1000 random walks of 10000 steps.** Plot the distribution of final positions. Verify it is approximately Gaussian with mean 0 and standard deviation sqrt(10000) = 100.
-
-2. **Build a text generator using a Markov chain.** Train on a small corpus: for each word, count transitions to the next word. Build the transition matrix. Generate new sentences by sampling from the chain.
-
-3. **Implement simulated annealing** using Metropolis-Hastings. Start at high temperature (accept almost everything) and gradually cool down (accept only improvements). Use it to find the minimum of a function with many local minima.
-
-4. **Compare Langevin dynamics at different temperatures.** Sample from a double-well potential U(x) = (x^2 - 1)^2. At low temperature, samples cluster in one well. At high temperature, they spread across both. Find the critical temperature where the chain mixes between wells.
-
-5. **Implement the forward diffusion process.** Start with a 1D signal (e.g., a sine wave). Add noise progressively over 100 steps with a linear noise schedule. Show how the signal degrades to pure noise. Then implement a simple denoiser that reverses the process (even a naive one that just subtracts the estimated noise).
 
 ## Key Terms
 

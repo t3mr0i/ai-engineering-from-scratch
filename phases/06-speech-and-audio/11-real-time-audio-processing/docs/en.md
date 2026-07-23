@@ -48,74 +48,6 @@ Moshi (Kyutai, 2024) clocked 200 ms full-duplex. GPT-4o-realtime (2024) clocks ~
 - **TTS priming.** Even fast TTS like Kokoro has a 100–200 ms warm-up on first request. Cache model + warm it with a dummy run before the first real turn.
 - **Echo cancellation.** Without AEC, TTS output re-enters the mic and triggers ASR on the bot's own voice. WebRTC AEC3 is the open-source default.
 
-## Build It
-
-### Step 1: ring buffer
-
-```python
-import collections
-
-class RingBuffer:
-    def __init__(self, capacity):
-        self.buf = collections.deque(maxlen=capacity)
-    def write(self, frame):
-        self.buf.extend(frame)
-    def read(self, n):
-        return [self.buf.popleft() for _ in range(min(n, len(self.buf)))]
-    def level(self):
-        return len(self.buf)
-```
-
-Capacity determines max buffering latency. 32,000 samples at 16 kHz = 2 s.
-
-### Step 2: VAD gate
-
-```python
-def simple_energy_vad(frame, threshold=0.01):
-    return sum(x * x for x in frame) / len(frame) > threshold ** 2
-```
-
-Replace with Silero VAD in production:
-
-```python
-import torch
-vad, _ = torch.hub.load("snakers4/silero-vad", "silero_vad")
-is_speech = vad(torch.tensor(frame), 16000).item() > 0.5
-```
-
-### Step 3: streaming ASR
-
-```python
-# Parakeet-CTC-0.6B streaming via NeMo
-from nemo.collections.asr.models import EncDecCTCModelBPE
-asr = EncDecCTCModelBPE.from_pretrained("nvidia/parakeet-ctc-0.6b")
-# chunk_ms=320 ms, look_ahead_ms=80 ms
-for chunk in audio_stream():
-    partial_text = asr.transcribe_streaming(chunk)
-    print(partial_text, end="\r")
-```
-
-### Step 4: interruption handler
-
-```python
-class Dialog:
-    def __init__(self):
-        self.tts_task = None
-
-    def on_user_speech(self, frame):
-        if self.tts_task and not self.tts_task.done():
-            self.tts_task.cancel()   # barge-in
-        # then feed to streaming ASR
-
-    def on_final_user_utterance(self, text):
-        self.tts_task = asyncio.create_task(self.reply(text))
-
-    async def reply(self, text):
-        async for tts_chunk in llm_then_tts(text):
-            speaker.write(tts_chunk)
-```
-
-Hinges on async I/O and cancellable TTS streaming. WebRTC peerconnection.stop() on the audio track is the canonical way.
 
 ## Use It
 
@@ -143,11 +75,6 @@ The 2026 stack:
 
 Save as `outputs/skill-realtime-designer.md`. Design a real-time audio pipeline with concrete latency budgets per stage.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Simulates a ring buffer + energy VAD; prints stage latencies for a fake 10-second stream.
-2. **Medium.** Using `sounddevice`, build a passthrough loop that processes your mic in 20 ms frames and prints VAD state at each frame.
-3. **Hard.** Build a full duplex echo test with `aiortc`: browser → WebRTC → Python → WebRTC → browser. Measure glass-to-glass latency with a 1 kHz pulse.
 
 ## Key Terms
 

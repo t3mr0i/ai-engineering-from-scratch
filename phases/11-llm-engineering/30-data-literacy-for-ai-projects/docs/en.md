@@ -56,17 +56,6 @@ flowchart LR
 - Corporate Functions
 - Leadership
 
-## Build It
-
-In the lab you build a data-readiness triage tool. It accepts short scenarios, detects data signals, scores readiness risk, and recommends the minimum control level for the next step.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/30-data-literacy-for-ai-projects/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

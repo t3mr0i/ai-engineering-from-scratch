@@ -43,13 +43,6 @@ The metrics runner takes the taxonomy artifact from lesson 82, runs the detector
 
 The detector is not the safety gate. It is one signal among many that the gate will compose. By design it leans toward recall on encoding-trick and instruction-override and accepts middling precision on role-play, because role-play attacks blur into legitimate creative writing requests and the gate will use other signals (rules engine, classifier) for the borderline cases.
 
-## Build It
-
-The corpus loader reads `outputs/taxonomy.json` from lesson 82. The rules live in `code/rules.py` as data, not code. Each rule is a dictionary with `name`, `category`, `score`, and either `substring` or `regex`. The detector class compiles them once.
-
-The normalize pass uses `re.sub` and `codecs` from the standard library. Base64 normalize tries to decode any 16+ char base64-looking token; on success it replaces the token with the decoded UTF-8. Rot13 normalize creates a candidate by `codecs.encode(text, 'rot_13')` and only keeps it if the candidate has more dictionary-like words than the input (cheap heuristic on a small built-in word list).
-
-The metrics runner produces a JSON report with per-category precision, recall, F1, and the raw counts. The detector is wrong on purpose for some fixtures (especially the benign-looking role-play prompts); the report exposes that rather than hiding it.
 
 ## Use It
 
@@ -59,11 +52,6 @@ Run `python3 main.py`. The demo loads the taxonomy, runs the detector on every f
 
 `outputs/skill-prompt-injection-detector.md` documents the rule format and how to add a rule.
 
-## Exercises
-
-1. Add a rule family for context-smuggling (instructions hidden in tool result JSON). Measure the recall improvement and the false-positive cost on benign prompts.
-2. Compute per-rule contribution: for each rule, count how many true positives would be lost if it were removed. Sort rules by marginal contribution.
-3. Add a `confidence_threshold` knob. Sweep it from 0 to 1 and plot precision-recall per category.
 
 ## Key Terms
 

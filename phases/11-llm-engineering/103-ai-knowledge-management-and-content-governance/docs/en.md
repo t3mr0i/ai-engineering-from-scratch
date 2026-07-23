@@ -110,17 +110,6 @@ The program makes the AND-gate rule explicit: a source that scores well on three
 
 `outputs/skill-source-quality-gate.md` is a one-page decision aid for a consultant or engineer setting up or auditing a RAG corpus. It includes the four-dimension scoring rubric, the tier classification table, domain recency windows, and a governance log checklist — paste it into a project kickoff or a corpus review session.
 
-## Exercises
-
-1. Run `code/main.py`. Which source in the sample corpus is rejected on currency alone, despite being T1 authority? What domain recency window caused the rejection? Change the `last_modified_months_ago` value in that source record until it is admitted — what is the boundary?
-
-2. One source in the sample corpus is marked T3 and is `DEFER`red rather than outright rejected. Explain what `DEFER` means in the governance policy and what the human reviewer must document before the source can be admitted.
-
-3. You are setting up a RAG corpus for a consulting assistant that answers questions about LHIND's internal methodology. A teammate proposes indexing all slides exported from past project delivery sessions. Using the four quality dimensions, classify this proposal and name the specific disqualifying concerns.
-
-4. Design a supersession registry entry format (use a plain dict or JSON sketch). What fields are required? How does a pipeline use it to remove a superseded document from the index automatically?
-
-5. Run `code/main.py` and locate the governance log summary at the end. Extend `code/main.py` to add a fifth sample source that passes all four dimensions. Verify its disposition changes to `ADMIT` and the admitted count in the headline increases by one.
 
 ## Key Terms
 

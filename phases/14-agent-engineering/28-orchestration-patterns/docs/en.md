@@ -79,24 +79,6 @@ Decision order:
 - **Bouncing handoffs in swarm.** A -> B -> A -> B. Use hop counters.
 - **Fake hierarchy.** Three layers because "enterprise"; two actual teams. Collapse.
 
-## Build It
-
-`code/main.py` implements all four patterns in stdlib against a scripted LLM:
-
-- `Supervisor` — central router.
-- `Swarm` — peer-to-peer with direct handoffs.
-- `Hierarchical` — supervisors of supervisors.
-- `Debate` — parallel proposers + critique.
-
-Each pattern handles the same three-intent task (refund / bug / sales). Trace shapes differ.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: per-pattern trace + op count. Supervisor is cleanest; swarm is shortest; hierarchical is deepest; debate is most expensive.
 
 ## Use It
 
@@ -109,13 +91,6 @@ Output: per-pattern trace + op count. Supervisor is cleanest; swarm is shortest;
 
 `outputs/skill-orchestration-picker.md` picks a topology and implements it.
 
-## Exercises
-
-1. Convert a supervisor-worker to a swarm by removing the router. What breaks? What improves?
-2. Add a hop counter to the swarm: refuse after 3 handoffs. Does it catch A->B->A bouncing?
-3. Build a two-level hierarchical system for a 12-specialist domain. Where does the context budget fail without nesting?
-4. Profile the four patterns on a production-shaped workload. Which wins on which metric (latency, cost, accuracy, debuggability)?
-5. Read Anthropic's "Building Effective Agents" post. Map each of your production flows to one of the four. Any that don't map cleanly?
 
 ## Key Terms
 

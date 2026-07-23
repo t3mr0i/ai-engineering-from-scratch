@@ -294,10 +294,4 @@ Network:        curl, wget, scp, rsync
 Sessions:       tmux new/attach/detach
 ```
 
-## Exercises
 
-1. SSH into any Linux machine (or open WSL2) and navigate to your home directory. Create a project folder, create three empty files inside it with `touch`, then list them with `ls -la`.
-2. Install `htop` with apt, run it, and identify which process is using the most memory.
-3. Start a tmux session, run `sleep 300` inside it, detach, list sessions, and reattach.
-4. Use `df -h` to check available disk space, then use `du -sh ~/.cache/*` to find what's taking up space in your cache.
-5. Transfer a file from your local machine to a remote one using `scp`, then do the same transfer with `rsync` and compare the experience.

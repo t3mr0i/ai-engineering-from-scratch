@@ -103,22 +103,6 @@ Three practical signals a team's coordination is real rather than prompt-dressed
 
 These are measurable in a logged multi-agent system. They are the substantive version of the "coordination" narrative.
 
-## Build It
-
-`code/main.py` implements:
-
-- `ToMAgent` — tracks own beliefs and per-other-agent belief models.
-- A cooperative task: three agents must collect three tokens from three boxes; each box can hold one token. Agents cannot communicate; they infer intent from each other's actions.
-- Two configurations: `zeroth_order` (no ToM) and `first_order` (ToM with one-level belief model).
-- Measurement over 200 randomized trials: completion rate, duplication rate (two agents targeting the same box), average turns to completion.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: zeroth-order agents duplicate effort at ~35% rate and complete ~60% of trials in 10 turns. First-order ToM agents duplicate at ~5% and complete ~95%. The delta is the measurable coordination effect.
 
 ## Use It
 
@@ -134,13 +118,6 @@ Coordination claims checklist:
 - **Failure-case log.** When agents miscoordinate, what does the ToM state look like?
 - **Model-capacity disclosure.** If the effect vanishes on smaller models, say so.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm first-order ToM reduces duplication rate by ~7x. Does the gap persist when you scale to 5 agents and 5 boxes?
-2. Implement second-order ToM (agent A models what B thinks about C). Does it improve over first-order? On what tasks?
-3. Inject a **hallucination** into the ToM state: randomly flip one belief per turn. How much does this degrade first-order performance?
-4. Read Li et al. (arXiv:2310.10701). Reproduce the "long-horizon degradation" finding: as turns grow from 10 to 30, how does your first-order ToM performance change?
-5. Read Riedl 2025 (arXiv:2510.05174). Implement the higher-order synergy statistic on your simulation logs. Is the effect present without the ToM prompt condition?
 
 ## Key Terms
 

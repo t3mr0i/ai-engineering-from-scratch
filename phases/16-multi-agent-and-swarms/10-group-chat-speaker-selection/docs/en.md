@@ -90,17 +90,6 @@ Same primitives, different defaults:
 
 Both use the four primitives from Lesson 04. Group chat defaults to LLM-selected orchestration and full-pool shared state.
 
-## Build It
-
-`code/main.py` implements a GroupChat from scratch in stdlib. Three agents (coder, reviewer, manager), round-robin and LLM-selected variants, and a termination on a `TERMINATE` token.
-
-The demo prints the conversation transcript plus the selector's decision trace for both variants.
-
-Run:
-
-```
-python3 code/main.py
-```
 
 ## Use It
 
@@ -116,13 +105,6 @@ Checklist:
 - **Projection or scoped memory.** After ~10 messages, consider giving each agent only a scoped view to prevent context bloat.
 - **Selector logging.** For LLM-selected variants, log both the selector's input and its choice. Otherwise debugging is impossible.
 
-## Exercises
-
-1. Run `code/main.py`. Compare the conversation under round-robin vs LLM-selected. Which agent dominates under each?
-2. Add a "max-speaks-per-agent" rule in the selector. How does it affect the transcript?
-3. Implement a goal-reached termination: stop when the reviewer returns "approved." How often does it trigger before the round cap?
-4. Read the AutoGen stable docs on GroupChat (https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/design-patterns/group-chat.html). Identify the default selector used by `GroupChatManager`.
-5. Read the AG2 repo (https://github.com/ag2ai/ag2) and compare its v0.2 GroupChat to the v0.4 event-driven version. What concrete property (throughput, fault-tolerance, composability) does v0.4 add?
 
 ## Key Terms
 

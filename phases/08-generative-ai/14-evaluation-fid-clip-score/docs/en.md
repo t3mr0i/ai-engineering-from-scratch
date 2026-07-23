@@ -79,53 +79,6 @@ A production eval report should include:
 
 Any single metric is a lie. Three corroborating metrics + qualitative review are a claim.
 
-## Build It
-
-`code/main.py` implements FID, CLIP-score-like, and Elo aggregation on synthetic "feature vectors" (we use 4-D vectors as stand-ins for Inception features). You see:
-
-- FID computation on a small N and on a large N — the bias.
-- "CLIP score" as cosine similarity between feature pools.
-- Elo update rule from a synthetic preference stream.
-
-### Step 1: FID in four lines
-
-```python
-def fid(real_features, gen_features):
-    mu_r, cov_r = mean_and_cov(real_features)
-    mu_g, cov_g = mean_and_cov(gen_features)
-    mean_diff = sum((a - b) ** 2 for a, b in zip(mu_r, mu_g))
-    trace_term = trace(cov_r) + trace(cov_g) - 2 * sqrt_cov_product(cov_r, cov_g)
-    return mean_diff + trace_term
-```
-
-### Step 2: CLIP-style cosine-similarity
-
-```python
-def clip_like(image_feat, text_feat):
-    dot = sum(a * b for a, b in zip(image_feat, text_feat))
-    norm = math.sqrt(dot_self(image_feat) * dot_self(text_feat))
-    return dot / max(norm, 1e-8)
-```
-
-### Step 3: Elo aggregation
-
-```python
-def elo_update(r_a, r_b, winner, k=32):
-    expected_a = 1 / (1 + 10 ** ((r_b - r_a) / 400))
-    actual_a = 1.0 if winner == "a" else 0.0
-    r_a_new = r_a + k * (actual_a - expected_a)
-    r_b_new = r_b - k * (actual_a - expected_a)
-    return r_a_new, r_b_new
-```
-
-## Pitfalls
-
-- **FID at N=1000.** Heuristic is unreliable under N=10k. Papers reporting low-N FID are gaming.
-- **Comparing FID across resolutions.** Inception's 299×299 resize changes the feature distribution. Compare at matched resolution only.
-- **Reporting one seed.** Run 3 seeds minimum. Report std.
-- **CLIP score inflation via negative prompts.** Some pipelines boost CLIP by over-fitting the prompt. Check for visual saturation.
-- **Elo bias from prompt overlap.** If both models saw a benchmark prompt during training, Elo is meaningless. Use held-out prompt sets.
-- **Human eval paid-crowd skew.** Prolific, MTurk annotators skew younger / tech-friendly. Mix with recruited art/design experts.
 
 ## Use It
 
@@ -144,11 +97,6 @@ All four pillars in one report = claim. Any one alone = marketing.
 
 Save `outputs/skill-eval-report.md`. Skill takes a new model checkpoint + baseline and outputs a full eval plan: sample sizes, metrics, failure-mode probes, sign-off criteria.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Compare FID at N=100 vs N=1000 on the same synthetic distributions. Report bias magnitude.
-2. **Medium.** Implement CMMD from synthetic CLIP-style features (see Jayasumana et al., 2024 for the formula). Compare sensitivity to quality differences vs FID.
-3. **Hard.** Replicate the HPSv2 setup: take 1000 image-prompt pairs from a subset of Pick-a-Pic, fine-tune a small CLIP-based scorer on the preferences, and measure its agreement with a held-out set.
 
 ## Key Terms
 

@@ -79,17 +79,6 @@ The axis is "where does the preference signal come from." CAI's 2022 paper was t
 
 This lesson produces `outputs/skill-constitution-writer.md`. Given a domain (customer support, medical advice, coding assistant, research tool), drafts a 4-tier constitution following the 2026 Claude structure: catastrophic avoidance, platform rules, domain ethics, helpfulness.
 
-## Exercises
-
-1. Run `code/main.py`. Compare the base model's harmful-token rate to the CAI-trained version. How many revision steps are needed to approach zero?
-
-2. Read Anthropic's 2026 constitution (anthropic.com/news/claudes-constitution). List one principle that would rank Tier 1 and one that would rank Tier 4. Why does the priority structure matter for conflicts?
-
-3. Design a constitution for an AI coding assistant. Specify Tier 1 (catastrophic: destructive commands without approval), Tier 2, Tier 3, Tier 4. Keep each tier to 3-5 principles.
-
-4. CAI replaces human labelers with AI labelers. Name a sycophancy-like failure mode that can still occur in RLAIF, and design a detection for it.
-
-5. Read Constitutional Classifiers v2 methodology (if available). Explain why ~1% compute overhead is a qualitatively different safety story than 23.7%.
 
 ## Key Terms
 

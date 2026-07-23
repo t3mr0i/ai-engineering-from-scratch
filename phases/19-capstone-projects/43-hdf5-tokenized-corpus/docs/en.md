@@ -56,37 +56,6 @@ At training time each worker opens its share of HDF5 files in `swmr=True` mode a
 
 The dataloader is the only stage that knows about training-sequence length. It picks a random start index in the global token stream, reads `window_size + 1` tokens, and returns `(input, target) = (tokens[:-1], tokens[1:])`. Document boundaries are not enforced: a window may straddle two documents, with an explicit `boundary_token_id` between them so the model learns to use the separator. This is the standard packing rule; it is also the rule a beginner forgets, ending up with a corpus that is 8 percent training boundary tokens and 92 percent natural text.
 
-## Build It
-
-`code/main.py` implements:
-
-- `Tokenizer` - a byte-level deterministic tokenizer good enough for the demo. The interface is `encode(text) -> list[int]` and `vocab_size`.
-- `HDF5ShardWriter` - opens a resizable integer dataset, buffers tokens to chunk size, resizes and writes in fixed-size strides, records `token_count` and `sha256` as HDF5 attributes on close.
-- `ShardedTokenizationPipeline` - iterates input documents, routes them to a writer, and emits a `shards.json` index.
-- `MmapTokenStore` - opens shard files for memory-mapped reads, computes global offsets, exposes a single `get_slice(start, stop)` API.
-- `SlidingWindowDataloader` - picks random windows from the global stream and yields `(input_ids, target_ids)` NumPy arrays.
-
-A demo at the bottom of the file builds a tiny in-memory corpus, tokenizes into two shards, opens them via memory map, runs the dataloader for 10 batches, and prints the per-batch shape and a checksum.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The script exits zero and prints batch checksums.
-
-## Production Patterns
-
-Four patterns scale this lesson to a real training run.
-
-**Chunk size equals the typical read.** The trainer reads `window_size + 1` tokens per sample. Set the HDF5 chunk to a multiple of `window_size` and reads are page-cache aligned. Mismatched chunks halve the throughput because every sample touches two chunks.
-
-**Token count in attributes, not in the dataset.** The trailing slice of the dataset may be partially full because the chunk size does not divide the document boundary. Store the real `token_count` as an HDF5 attribute on the dataset and have the reader truncate at that value. Without this the reader walks off the end into zero-padded tokens and the model learns to predict zero.
-
-**Sharded sha256 with parallel verification.** Each shard has its own sha256 over the token bytes. The trainer can verify all shards in parallel before training starts. A wrong sha256 fails the run early, not on epoch three after sixteen hours.
-
-**`swmr=True` on both sides, with `libver="latest"` on the writer.** Single-Writer-Multiple-Reader mode requires the writer to open with `libver="latest"`, create every dataset up front, then set `file.swmr_mode = True`. After that the writer must call `dataset.flush()` after each resize so reader workers (opened with `swmr=True`) see consistent data. Skipping `libver="latest"` or enabling SWMR after structural changes is a common source of "file is locked" failures.
 
 ## Use It
 
@@ -100,13 +69,6 @@ Production patterns:
 
 `outputs/skill-hdf5-tokenized-corpus.md` would, on a real project, describe which tokenizer feeds the pipeline, what chunk size matches the trainer's window, where `shards.json` lives in version control, and how dataloader workers are sharded across files. This lesson ships the engine.
 
-## Exercises
-
-1. Add a `--compression gzip` flag to the HDF5 writer and measure the throughput cost on the demo corpus. Defend the chosen default.
-2. Add a deterministic seed to the sliding-window dataloader and verify two runs with the same seed produce identical batches.
-3. Add a `--validate` mode that reads every shard, recomputes the sha256 over its tokens, and compares against `shards.json`. CI should run this before training starts.
-4. Compare the dataloader throughput at chunk sizes equal to, half of, and twice the window size. Report the page-cache effect.
-5. Add a `--max-document-tokens` flag that truncates very long documents at write time. Defend the trade-off against deciding at read time.
 
 ## Key Terms
 

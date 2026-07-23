@@ -53,17 +53,6 @@ flowchart LR
 - Corporate Functions
 - AI Champions
 
-## Build It
-
-In the lab you build a change-impact planner. It ranks adoption scenarios and recommends stakeholder controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

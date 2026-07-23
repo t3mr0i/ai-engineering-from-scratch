@@ -63,23 +63,6 @@ Short-term (within a run — conversation history in state) and long-term (acros
 - **Non-deterministic nodes.** Resume assumes node inputs produce the same state update. Random seeds, wall-clock, external APIs must be captured.
 - **Over-use of conditional edges.** A graph with every edge conditional is a state machine that cannot be reasoned about. Prefer linear chains with occasional branches.
 
-## Build It
-
-`code/main.py` implements a stdlib stateful graph:
-
-- `State` — a typed dict with `messages`, `step`, `route`, `output`, `human_approval`.
-- `Node` — callable taking state and returning an update dict.
-- `StateGraph` — nodes + edges + conditional edges + run + resume.
-- `SQLiteCheckpointer` (in-memory fake) — serializes state after every node; `load(session_id)` restores.
-- A demo graph: classify -> branch(refund / bug / sales) -> human gate -> send.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows the first run failing at the human gate, persistence, then resume producing the final output.
 
 ## Use It
 
@@ -92,13 +75,6 @@ The trace shows the first run failing at the human gate, persistence, then resum
 
 `outputs/skill-state-graph.md` generates a LangGraph-shaped state graph in any target runtime with checkpointing and resume wired in.
 
-## Exercises
-
-1. Add a conditional edge from `classify` to `end` when classification confidence is below a threshold. Resume the run after a human sets `route` manually.
-2. Swap the SQLite-like fake for a real SQLite checkpointer. Measure per-step serialization overhead.
-3. Implement parallel edges: two nodes run concurrently, merge by a custom reducer. What does immutable state buy here?
-4. Read `langgraph-supervisor` reference. Port the toy to `create_supervisor`. Compare the trace shapes.
-5. Add streaming: each node yields partial state while it runs. Print the deltas as they arrive.
 
 ## Key Terms
 

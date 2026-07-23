@@ -124,17 +124,6 @@ What to look at:
 
 This lesson produces `outputs/skill-task-store-designer.md`. Given a long-running tool (research, build, export), the skill designs the task store (state shape, ttl, durability), picks the right taskSupport flag, and sketches progress notifications.
 
-## Exercises
-
-1. Run `code/main.py`. Kick off a `generate_report` task, poll status, then fetch the result.
-
-2. Add a `tasks/cancel` call mid-run. Verify the worker honors it and the state becomes `cancelled`.
-
-3. Simulate crash recovery: kill the worker thread, restart the loader, and observe the `CRASH_RECOVERY` failure mode.
-
-4. Extend the store to SQLite. Durability wins are the same; query options open up (list all tasks from session X).
-
-5. Read the MCP roadmap post for 2026. Identify the one Tasks-related open issue most likely to affect SDK API design in the next year.
 
 ## Key Terms
 

@@ -69,22 +69,6 @@ Every role in your system is an LLM and every role's output is "looks good to me
 - **AutoGen** — role-specific ConversableAgents with one-word names in a GroupChat.
 - **OpenAI Agents SDK** — handoff tools between role-specialized Agents.
 
-## Build It
-
-`code/main.py` implements a 4-role pipeline building a simple Python function:
-
-- **Planner** produces a spec.
-- **Executor** generates a code string.
-- **Critic** (LLM-simulated) flags obvious issues.
-- **Verifier** runs the generated code in a sandbox (`exec`) against a test case.
-
-Demo runs twice: once where the executor produces correct code (critic + verifier both pass), once where the executor produces off-spec code (critic misses the bug because it looks plausible, verifier catches it because the test fails).
-
-Run:
-
-```
-python3 code/main.py
-```
 
 ## Use It
 
@@ -100,13 +84,6 @@ Checklist:
 - **Critic/verifier ordering.** Run critic first (cheap, catches design issues), verifier second (slow, catches bugs).
 - **Loop budget.** Max 2 critic-executor revision rounds before escalating to human.
 
-## Exercises
-
-1. Run `code/main.py` and observe how the verifier catches the bug the critic missed. Add a static-analysis check (count occurrences of `return`) as an additional verifier. What does it catch that the runtime test misses?
-2. Add a 5th role: "requirements analyst" that translates user wish into planner-ready spec. What communicative dehallucination requests should flow up to it?
-3. Read MetaGPT Section 3 ("Agents"). List the input/output schema of each of MetaGPT's 5 roles.
-4. Read ChatDev's chat-chain diagram (arXiv:2307.07924 Figure 3). Identify where communicative dehallucination breaks a loop that would otherwise be infinite.
-5. PwC's 7× accuracy gain came from verification loops. Hypothesize three tasks where adding a verifier would not help — where deterministic checking of correctness is impossible or prohibitively expensive.
 
 ## Key Terms
 

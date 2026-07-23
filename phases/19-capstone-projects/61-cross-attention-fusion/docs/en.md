@@ -78,24 +78,6 @@ class DecoderBlock:
       return text_tokens
 ```
 
-## Build It
-
-`code/main.py` implements:
-
-- `CrossAttention(hidden, heads)`, multi-head cross-attention with separate `q` and `kv` projections.
-- `CausalSelfAttention(hidden, heads)`, the masked self-attention from a standard decoder.
-- `DecoderBlock`, composing the three sub-layers with pre-LN residuals.
-- `VisionLanguageDecoder`, four-layer decoder fed by a mock vision encoder output and a small text embedding table.
-- `causal_mask(length)` returning a `(length, length)` lower-triangular boolean tensor.
-- A demo that feeds a batch of two text sequences of length 10 with image memory of length 197 and prints output shape, the self-attention mask shape, and the cross-attention output norm per position.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: decoder produces a `(2, 10, text_vocab)` logits tensor. Mask shape is `(10, 10)`. The KV-cache reuse check confirms identical logits between the cached and uncached paths.
 
 ## Use It
 
@@ -122,17 +104,6 @@ Run them:
 python3 -m unittest code/test_main.py
 ```
 
-## Exercises
-
-1. Add a learned tanh gate to the cross-attention residual (the Flamingo trick) and verify training converges from a near-zero initial gate. The gate starts at 0; the model recovers text-only behavior before mixing the image stream in.
-
-2. Implement interleaved attention where the same decoder consumes multiple images plus multiple text segments. Build the per-sample cross-attention mask that prevents text segment 2 from attending to image 1.
-
-3. Profile the cross-attention vs the self-attention layer at `Nt=64, Nv=576` (a 24x24 grid at higher resolution). The cross-attention cost is `Nt * Nv` and dominates at high image resolution.
-
-4. Add a query-side dropout on the cross-attention map and measure caption diversity on the demo (caption sample variance increases with dropout in the cross map).
-
-5. Swap the cross-attention layer for a Q-Former-style attention block where a fixed 32-token query pool attends to image features once per layer.
 
 ## Key Terms
 

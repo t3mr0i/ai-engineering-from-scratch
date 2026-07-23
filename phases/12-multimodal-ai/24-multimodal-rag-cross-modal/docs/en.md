@@ -124,17 +124,6 @@ No standard benchmark spans all modalities. Most papers evaluate on domain-speci
 
 This lesson produces `outputs/skill-multimodal-rag-designer.md`. Given a product spec with a multimodal query flow, designs retrievers, fusion, generator, and evaluation.
 
-## Exercises
-
-1. Propose a medical-triage multimodal RAG: query = photo of injury + text symptoms. What modalities retrieve from what KB?
-
-2. Score fusion is a simple weighted sum. What failure mode does it have that MoE fusion avoids?
-
-3. Read Abootorabi et al.'s taxonomy (Section 3). What are the three canonical sub-problems and how do they map to your chosen product?
-
-4. Design an eval spec for a trip-planner multimodal RAG. What metrics cover image recall, audio recall, and composite correctness?
-
-5. Agentic multi-hop RAG has a latency tax per round-trip. At what query difficulty does the accuracy gain justify the latency?
 
 ## Key Terms
 

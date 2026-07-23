@@ -56,20 +56,6 @@ Zhuge et al. ("Mindstorms in Natural Language-Based Societies of Mind," arXiv:23
 - **Topic drift.** Debates over many rounds drift from the original question. Mitigation: re-inject the question every round.
 - **Compute blowup.** N agents × R rounds = N·R LLM calls, each with a context that grows. A 5-agent, 5-round debate is 25 calls at growing context. Cost per question can exceed 10× a single CoT call.
 
-## Build It
-
-`code/main.py` runs a 3-agent × 3-round debate on a math question where each agent starts with a different (possibly wrong) answer. Agents are scripted — each "updates" by averaging the neighbors' answers weighted by a scripted confidence. Convergence is visible in the round-by-round log.
-
-The demo shows two key effects:
-
-- A single round of exchange moves agents closer to the correct answer.
-- Extra rounds past round 2 show diminishing returns (matches Du et al.'s plateau).
-
-Run:
-
-```
-python3 code/main.py
-```
 
 ## Use It
 
@@ -85,13 +71,6 @@ If you ship debate:
 - **Adversarial slot.** One agent prompted to disagree regardless. Breaks sycophancy.
 - **Log every round.** Debate systems that hide intermediate rounds cannot be debugged or audited.
 
-## Exercises
-
-1. Run `code/main.py`, then set the round count to 5 and watch diminishing returns. At which round does additional convergence stop?
-2. Add a fourth agent with an adversarial role: always disagree with the current majority. Does this break or improve convergence?
-3. Plot (print) the agreement score per round (fraction of agents on the majority answer). When does it hit 1.0 and is that equivalent to "correct"?
-4. Read Du et al. Section 4 ablations. Replicate the "agents-only" vs "rounds-only" vs "both" result using this code.
-5. Read "Should we be going MAD?" (arXiv:2311.17371) and list two debate variants beyond round-robin — e.g., judge-led, chain-of-debate, adversarial.
 
 ## Key Terms
 

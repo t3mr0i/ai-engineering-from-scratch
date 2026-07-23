@@ -98,13 +98,6 @@ Runbooks evolve from Confluence pages to versioned markdown with structured sect
 
 This lesson produces `outputs/skill-ai-sre-plan.md`. Given current on-call, incident volume, team maturity, designs an AI SRE rollout.
 
-## Exercises
-
-1. Run `code/main.py`. What if the log and metric agents disagree? How does the supervisor resolve?
-2. Define three "safe" auto-remediation actions for your service. Justify each.
-3. Write a structured runbook template: sections, required fields, verification commands.
-4. Predictive detection fires at 12 min lead. What's your policy — pager, pre-drain, or both?
-5. Argue whether a 3-person team should adopt AI SRE in 2026 or wait. Consider maturity, volume, risk.
 
 ## Key Terms
 

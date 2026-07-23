@@ -80,17 +80,6 @@ Both use LLM-driven routing, but they differ on **who picks next**:
 
 Swarm is "agent decides what's next"; GroupChat is "manager decides what's next." Swarm's decision lives in the active agent's tool call; GroupChat's lives in the `GroupChatManager`.
 
-## Build It
-
-`code/main.py` implements Swarm from scratch: an Agent dataclass, a handoff mechanism (tool returns Agent), and a run loop that detects agent switches.
-
-Demo: a triage agent routes to refund, sales, or support specialists. Each specialist has its own tools. The run loop prints each handoff.
-
-Run:
-
-```
-python3 code/main.py
-```
 
 ## Use It
 
@@ -106,13 +95,6 @@ Checklist:
 - **Loop detection.** Two agents handing back and forth is a common failure; detect with a simple last-K ring check.
 - **Fallback agent.** If a handoff target does not exist, fall back to a safe default.
 
-## Exercises
-
-1. Run `code/main.py`, triage to the refund agent. Confirm the second turn's active agent is refund.
-2. Add a loop-detection rule: if the same two agents have handed off 3 times in a row, force an exit. Design the fallback.
-3. Read the OpenAI Agents SDK docs on handoff filters. Implement a "summarize-on-handoff" version: the outgoing agent compresses context to a bullet summary before the incoming agent takes over.
-4. Compare the Swarm handoff to a GroupChatManager selector. Which pattern makes prompt injection worse, and why?
-5. Read the Swarm cookbook (https://developers.openai.com/cookbook/examples/orchestrating_agents). Identify one explicit design decision Swarm makes that OpenAI Agents SDK changed or kept.
 
 ## Key Terms
 

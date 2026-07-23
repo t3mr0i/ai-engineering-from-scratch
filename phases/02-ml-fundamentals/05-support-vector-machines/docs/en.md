@@ -221,86 +221,6 @@ SVMs still win in these situations:
 - Binary classification with clear margin structure
 - Anomaly detection (one-class SVM)
 
-## Build It
-
-### Step 1: Hinge loss and gradient
-
-The foundation. Compute hinge loss for a batch and its gradient.
-
-```python
-def hinge_loss(X, y, w, b):
-    n = len(X)
-    total_loss = 0.0
-    for i in range(n):
-        margin = y[i] * (dot(w, X[i]) + b)
-        total_loss += max(0.0, 1.0 - margin)
-    return total_loss / n
-```
-
-### Step 2: Linear SVM via gradient descent
-
-Train by minimizing regularized hinge loss. No QP solver needed.
-
-```python
-class LinearSVM:
-    def __init__(self, lr=0.001, lambda_param=0.01, n_epochs=1000):
-        self.lr = lr
-        self.lambda_param = lambda_param
-        self.n_epochs = n_epochs
-        self.w = None
-        self.b = 0.0
-
-    def fit(self, X, y):
-        n_features = len(X[0])
-        self.w = [0.0] * n_features
-        self.b = 0.0
-
-        for epoch in range(self.n_epochs):
-            for i in range(len(X)):
-                margin = y[i] * (dot(self.w, X[i]) + self.b)
-                if margin >= 1:
-                    self.w = [wj - self.lr * self.lambda_param * wj
-                              for wj in self.w]
-                else:
-                    self.w = [wj - self.lr * (self.lambda_param * wj - y[i] * X[i][j])
-                              for j, wj in enumerate(self.w)]
-                    self.b -= self.lr * (-y[i])
-
-    def predict(self, X):
-        return [1 if dot(self.w, x) + self.b >= 0 else -1 for x in X]
-```
-
-### Step 3: Kernel functions
-
-Implement linear, polynomial, and RBF kernels.
-
-```python
-def linear_kernel(x, z):
-    return dot(x, z)
-
-def polynomial_kernel(x, z, degree=3, c=1.0):
-    return (dot(x, z) + c) ** degree
-
-def rbf_kernel(x, z, gamma=0.5):
-    diff = [xi - zi for xi, zi in zip(x, z)]
-    return math.exp(-gamma * dot(diff, diff))
-```
-
-### Step 4: Margin and support vector identification
-
-After training, identify which points are support vectors and compute the margin width.
-
-```python
-def find_support_vectors(X, y, w, b, tol=1e-3):
-    support_vectors = []
-    for i in range(len(X)):
-        margin = y[i] * (dot(w, X[i]) + b)
-        if abs(margin - 1.0) < tol:
-            support_vectors.append(i)
-    return support_vectors
-```
-
-See `code/svm.py` for the complete implementation with all demos.
 
 ## Use It
 
@@ -333,17 +253,6 @@ clf = Pipeline([
 ])
 ```
 
-## Exercises
-
-1. Generate a 2D linearly separable dataset. Train your LinearSVM and identify the support vectors. Verify that the support vectors are the points closest to the decision boundary.
-
-2. Vary C from 0.001 to 1000 on a noisy dataset. Plot the decision boundary for each C value. Observe the transition from wide margin (underfitting) to narrow margin (overfitting).
-
-3. Create a dataset where class boundaries are circular (not linear). Show that a linear SVM fails. Compute the RBF kernel matrix and show that the classes become separable in the kernel-induced feature space.
-
-4. Compare hinge loss vs logistic loss on the same dataset. Train a linear SVM and logistic regression. Count how many training points contribute to each model's decision boundary (support vectors vs all points).
-
-5. Implement SVR (epsilon-insensitive loss). Fit it to y = sin(x) + noise. Plot the epsilon tube around the predictions and highlight the support vectors (points outside the tube).
 
 ## Key Terms
 

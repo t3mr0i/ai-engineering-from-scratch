@@ -134,21 +134,6 @@ You do not need to disagree with any of these pieces to notice the gap. They are
 
 So when you hear "harness engineering" elsewhere, translate to primitives. Prompts and rules are policy and functions. Scaffolding is the runtime. Guardrails are authorization + verification. Hooks are triggers. Memory is session persistence. The Ralph Loop is requeue. Subagents are workers. Sandboxes are compute planes. The vocabulary changes; the engineering does not. The workbench is the agent-facing UX; the harness, in the sense that survives the next vendor reframe, is functions, workers, triggers, runtimes, queues, persistence, and policy wired together correctly.
 
-## Build It
-
-`code/main.py` runs a tiny repo task twice. First as prompt only, then with the seven surfaces wired in. Same model, same task. The script counts which surfaces were missing on the failed run and prints a failure-mode report.
-
-The repo task is small on purpose: add input validation to a one-file FastAPI-style handler and write a passing test.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: a side-by-side log of the two runs, a `failure_modes.json` summarizing the prompt-only run, and a one-line verdict for the workbench run.
-
-The agent is a tiny rule-based stub; the point is the surfaces, not the model. Across the rest of this mini-track you will rebuild each surface as a real, reusable artifact.
 
 ## Use It
 
@@ -164,13 +149,6 @@ Workbench engineering is the discipline of making those surfaces explicit and re
 
 `outputs/skill-workbench-audit.md` is a portable skill that audits an existing repo for the seven workbench surfaces and reports which are missing, which are partial, and which are healthy. Drop it next to any agent setup; it tells you what to fix first.
 
-## Exercises
-
-1. Pick a repo where you already run an agent. Score the seven surfaces from 0 (missing) to 2 (healthy). What is your weakest surface?
-2. Extend `main.py` so the prompt-only run also produces a fake "success" claim. Verify the verification gate would have caught it.
-3. Add an eighth surface for your own product. Justify why it does not collapse into one of the existing seven.
-4. Re-run the script with a different stub agent that hallucinates an extra file write. Which surface catches it first?
-5. Map the five industry-recurring failure modes from Phase 14 · 26 onto the seven surfaces. Which mode is each surface designed to absorb?
 
 ## Key Terms
 

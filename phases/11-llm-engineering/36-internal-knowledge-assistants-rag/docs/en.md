@@ -54,17 +54,6 @@ flowchart LR
 - Application Management
 - Business & Strategy Consulting
 
-## Build It
-
-In the lab you build a source-readiness planner for internal assistants. It ranks scenarios and recommends the controls needed before documents are indexed.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/36-internal-knowledge-assistants-rag/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

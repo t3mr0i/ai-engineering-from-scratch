@@ -54,17 +54,6 @@ flowchart LR
 - Technology Consulting
 - AI Champions
 
-## Build It
-
-In the lab you build a content-governance planner. It ranks source risks and recommends readiness controls for AI assistants.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/52-ai-knowledge-management-content-governance/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

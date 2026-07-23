@@ -67,23 +67,6 @@ LangGraph uses nested `create_supervisor` calls. The inner supervisor has its ow
 
 Reference: https://reference.langchain.com/python/langgraph-supervisor.
 
-## Build It
-
-`code/main.py` runs a 3-level hierarchy:
-
-- top manager: splits a task into "engineering" and "legal" branches,
-- engineering sub-manager: splits into "frontend" and "backend" workers,
-- legal sub-manager: one worker.
-
-Demo contrasts happy path (everyone agrees) against a **perturbed path** where the top manager's decomposition mislabels "legal" as "finance" and watches the error cascade — the sub-manager obediently does finance work, the top synthesizer reports finance findings, the original legal question goes unanswered.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Output shows both paths with a clear side-by-side of "what was asked" vs "what was delivered."
 
 ## Use It
 
@@ -98,13 +81,6 @@ If you ship hierarchical:
 - **Provenance on every synthesis.** Each node's summary must cite which leaf outputs produced it.
 - **Alert on decomposition drift.** Log the manager's decomposition per step; diff against the user query. If the decomposition no longer covers the query, fire an alert.
 
-## Exercises
-
-1. Run `code/main.py` and compare happy vs perturbed. How many levels of manager hand-off does it take before the top output fully diverges from the user's question?
-2. Add a third level (top → sub → sub-sub → worker). Measure how often the perturbed path corrects itself vs fully diverges as depth grows.
-3. Implement a "canary" worker at each sub-manager that is always asked the original user question unchanged. Use the canary answer to detect decomposition drift. How should the manager react when the canary disagrees with the synthesized answer?
-4. Read CrewAI's `Process.hierarchical` docs. Identify one concrete guardrail CrewAI applies (step limit, manager_llm constraint) and describe what failure mode it targets.
-5. Compare nested LangGraph supervisors to CrewAI hierarchical. Which makes reconciliation loops cheaper to detect?
 
 ## Key Terms
 

@@ -102,17 +102,6 @@ The 2026 trap to avoid: using a model to analyze whether a process is ready to a
 
 `outputs/skill-process-automation-readiness.md` is a one-page decision aid: a checklist of the four readiness inputs, a scoring table, a set of "not ready" response templates, and a decision tree for whether to proceed to a pilot, run more analysis, or escalate to a process redesign.
 
-## Exercises
-
-1. Run `code/main.py`. Which of the five process profiles is closest to the gate boundary — passing some checks but not others? What single change to that profile would flip its verdict?
-
-2. The output shows a "HEADLINE:" line summarizing pass/fail rates across profiles. How many profiles pass the gate? Is that rate consistent with the survey statistic in the opening blockquote, or does it suggest the gate criteria are too strict or too loose?
-
-3. Pick a process you currently handle manually or semi-manually. Without running any AI, write the three-column exception map: exception type, frequency estimate, current handling. How many categories did you find? Which ones would be hardest for a model to handle correctly?
-
-4. A stakeholder pushes back: "We don't have six months of historical data — can we just run the pilot and learn from it?" Using the sensitivity scoring framework in this lesson, construct the argument for why that position is acceptable for low-sensitivity processes and unacceptable for high-sensitivity ones.
-
-5. Read Phase 17 · 20 (shadow and canary deployments) with this lesson's exception map concept in mind. What does the shadow deployment's success metric look like if the exception map was never built? What does it look like if it was?
 
 ## Key Terms
 

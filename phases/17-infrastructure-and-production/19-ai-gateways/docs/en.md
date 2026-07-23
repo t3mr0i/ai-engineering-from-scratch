@@ -101,13 +101,6 @@ Phase 17 · 13 (observability) + 16 (model routing) + 19 (gateways) are the same
 
 This lesson produces `outputs/skill-gateway-picker.md`. Given scale, ops posture, compliance, latency budget, picks a gateway.
 
-## Exercises
-
-1. Run `code/main.py`. Configure fallback from OpenAI→Anthropic→self-hosted. What's the expected hit rate at 5% provider error rate?
-2. Your SLA is TTFT P99 < 200 ms on a 300 ms baseline. Which gateways stay within budget?
-3. A healthcare customer requires self-hosted + PII redaction + audit. Pick Portkey OSS or Kong.
-4. Compare LiteLLM vs Kong: at what RPS ceiling should a team migrate?
-5. Design a rate-limit policy for a multi-tenant SaaS: free tier, trial tier, paid tier. Token-bucket or sliding-window?
 
 ## Key Terms
 

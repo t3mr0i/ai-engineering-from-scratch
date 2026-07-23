@@ -52,17 +52,6 @@ flowchart LR
 - Leadership
 - Business & Strategy Consulting
 
-## Build It
-
-In the lab you build a communications AI review planner. It ranks draft scenarios and recommends controls before publication.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/45-ai-for-corporate-communications-marketing/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

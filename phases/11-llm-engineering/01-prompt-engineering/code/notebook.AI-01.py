@@ -57,15 +57,12 @@ print("✅ notebook ready · endpoint:", lrn_llm.API_BASE)
 # %% [markdown]
 # ## Step 0a — Endpoint & Key
 #
-# Set your API key if you have one (optional on the LHIND network). The default model is GPT-4o via Azure.
-
-# %%
-# Optional: set your API key here if needed
-lrn_llm.API_KEY = ""
+# The API key is handled transparently by the server-side proxy (no manual key needed for LHIND network).
+# Default model is GPT-4o via Azure gateway.
 
 print("Endpoint:", lrn_llm.API_BASE)
 print("Model:", lrn_llm.DEFAULT_MODEL)
-print("Authentication:", "API key set" if lrn_llm.API_KEY else "using gateway default")
+print("Authentication:", "proxy mode (server-injected key)")
 
 # %% [markdown]
 # ## Step 1 — Reachability

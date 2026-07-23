@@ -150,17 +150,6 @@ The driver ends with a synthetic *silent drift* incident where a team *should* h
 
 `outputs/skill-ai-incident-triage.md` is a one-page decision aid: signal-to-category mapping, runbook checklist per category, severity table — formatted for pasting into a team runbook wiki or printing for a war-room wall.
 
-## Exercises
-
-1. Run `code/main.py`. The silent-drift incident is modelled there. What single metric delta distinguishes it from a run-of-the-mill quality incident, and at what severity does the classifier assign it?
-
-2. The runbook router for the cost incident prints a mitigation. Trace the path: which condition triggers the mitigation branch, and what is the cheapest action before finance is alerted?
-
-3. Your team's AI feature has L1 and L4 metrics but no L3 layer. Write a one-paragraph brief for your tech lead explaining why L3 is the missing rung, using the signal hierarchy table as supporting evidence.
-
-4. A provider silently rolls out a new model version on a Friday evening. Your LLM-as-judge score drops 12 percent over 20 minutes. Walk through the quality runbook steps in order. At which step do you confirm the provider is the cause, and what is the fastest mitigation?
-
-5. You are setting up AI incident response inside an existing SRE org for the first time. Using the five-step integration path, identify the one step your organisation would likely skip and explain what incident scenario would expose that gap.
 
 ## Key Terms
 

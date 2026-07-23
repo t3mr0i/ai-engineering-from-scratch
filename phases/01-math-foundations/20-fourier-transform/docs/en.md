@@ -275,98 +275,6 @@ A common misconception: zero-padding a signal before FFT improves frequency reso
 
 True frequency resolution depends only on the observation time T = N / fs. To resolve two frequencies separated by delta_f, you need at least T = 1 / delta_f seconds of data. No amount of zero-padding changes this fundamental limit.
 
-## Build It
-
-### Step 1: DFT from scratch
-
-The O(N^2) DFT follows directly from the definition.
-
-```python
-import math
-
-class Complex:
-    ...
-
-def dft(x):
-    N = len(x)
-    result = []
-    for k in range(N):
-        total = Complex(0, 0)
-        for n in range(N):
-            angle = -2 * math.pi * k * n / N
-            w = Complex(math.cos(angle), math.sin(angle))
-            xn = x[n] if isinstance(x[n], Complex) else Complex(x[n])
-            total = total + xn * w
-        result.append(total)
-    return result
-```
-
-### Step 2: Inverse DFT
-
-Same structure, positive exponent, divide by N.
-
-```python
-def idft(X):
-    N = len(X)
-    result = []
-    for n in range(N):
-        total = Complex(0, 0)
-        for k in range(N):
-            angle = 2 * math.pi * k * n / N
-            w = Complex(math.cos(angle), math.sin(angle))
-            total = total + X[k] * w
-        result.append(Complex(total.real / N, total.imag / N))
-    return result
-```
-
-### Step 3: FFT (Cooley-Tukey)
-
-The recursive FFT requires power-of-2 length. Split into even and odd, recurse, combine with twiddle factors.
-
-```python
-def fft(x):
-    N = len(x)
-    if N <= 1:
-        return [x[0] if isinstance(x[0], Complex) else Complex(x[0])]
-    if N % 2 != 0:
-        return dft(x)
-
-    even = fft([x[i] for i in range(0, N, 2)])
-    odd = fft([x[i] for i in range(1, N, 2)])
-
-    result = [Complex(0)] * N
-    for k in range(N // 2):
-        angle = -2 * math.pi * k / N
-        twiddle = Complex(math.cos(angle), math.sin(angle))
-        t = twiddle * odd[k]
-        result[k] = even[k] + t
-        result[k + N // 2] = even[k] - t
-    return result
-```
-
-### Step 4: Spectral analysis helpers
-
-```python
-def power_spectrum(X):
-    return [xk.real ** 2 + xk.imag ** 2 for xk in X]
-
-def convolve_fft(x, h):
-    N = len(x) + len(h) - 1
-    padded_N = 1
-    while padded_N < N:
-        padded_N *= 2
-
-    x_padded = x + [0.0] * (padded_N - len(x))
-    h_padded = h + [0.0] * (padded_N - len(h))
-
-    X = fft(x_padded)
-    H = fft(h_padded)
-
-    Y = [xk * hk for xk, hk in zip(X, H)]
-
-    y = idft(Y)
-    return [y[n].real for n in range(N)]
-```
 
 ## Use It
 
@@ -418,17 +326,6 @@ The spectrogram matrix has shape (n_frequencies, n_time_frames). Each column is 
 
 Run `code/fourier.py` to generate `outputs/prompt-spectral-analyzer.md`.
 
-## Exercises
-
-1. **Pure tone identification.** Create a signal with a single sine wave at an unknown frequency (between 1 and 50 Hz), sampled at 128 Hz for 1 second. Use your DFT to identify the frequency. Verify the answer matches. Now add Gaussian noise with standard deviation 0.5 and repeat. How does noise affect the spectrum?
-
-2. **FFT vs DFT verification.** Generate a random signal of length 64. Compute both DFT (O(N^2)) and FFT. Verify that all coefficients match to within 1e-10. Time both functions on signals of length 256, 512, 1024, and 2048. Plot the ratio of DFT time to FFT time.
-
-3. **Convolution theorem proof by example.** Create signal x = [1, 2, 3, 4, 0, 0, 0, 0] and filter h = [1, 1, 1, 0, 0, 0, 0, 0]. Compute their circular convolution directly (nested loop). Then compute it via FFT (transform, multiply, inverse transform). Verify the results match. Now do linear convolution by zero-padding appropriately.
-
-4. **Windowing effects.** Create a signal that is the sum of two sine waves at 10 Hz and 12 Hz (very close). Sample at 128 Hz for 1 second. Compute the power spectrum with no window, Hann window, and Hamming window. Which window makes it easiest to distinguish the two peaks? Why?
-
-5. **Positional encoding analysis.** Generate the sinusoidal positional encodings for d_model = 128 and max_pos = 512. For each pair of positions (p1, p2), compute the dot product of their encodings. Show that the dot product depends only on |p1 - p2|, not on the absolute positions. What happens to the dot product as the distance increases?
 
 ## Key Terms
 

@@ -91,17 +91,6 @@ The full OWASP LLM Top 10 2025 document is the authoritative reference for the t
 
 `outputs/skill-ai-threat-triage.md` is a one-page triage card template for working consultants and product engineers. It contains the four-category table, the severity rating guide, the composite verdict logic, and a blank triage card ready to fill in for any proposed use case. It is designed to be the first document produced in any AI feature discussion that involves real data or external systems.
 
-## Exercises
-
-1. Run `code/main.py`. Two of the three sample use cases trigger a `HARD STOP`. For each, identify the specific category and matched signal that caused the stop. Use case 1 produces `PROCEED WITH CONDITIONS` — which signal drove that verdict, and what condition does the triage card require before scoping continues?
-
-2. The triage scorer flags "upload" and "user provides" as signals for untrusted input injection. Run the code and change the description of the document summariser so it removes those signals. Does the verdict change? What does this tell you about the limits of keyword-based triage?
-
-3. Take an AI feature your team has discussed or is currently scoping. Write a one-paragraph use-case description and run it through the four-category scoring by hand (without the code). Which categories does it touch? Is the verdict `PROCEED`, `PROCEED WITH CONDITIONS`, or `HARD STOP`?
-
-4. The OWASP LLM Top 10 item "Excessive Agency" maps to both external tool access and identity ambiguity in this triage model. Read the OWASP description at owasp.org/www-project-top-10-for-large-language-model-applications. Name one mitigation OWASP recommends that the triage card's conditions list should require for any `HIGH`-severity external tool access finding.
-
-5. You present a triage card with a `HARD STOP` verdict to a product manager who responds: "We'll add input sanitisation and that fixes it." Using the language from the "Untrusted input injection" subsection above, explain in two sentences why that response does not clear the stop condition.
 
 ## Key Terms
 

@@ -111,26 +111,6 @@ Once the primitives are fixed, the remaining design decisions are:
 
 All implementable on top of the primitives. None of them are new primitives.
 
-## Build It
-
-`code/main.py` implements the four primitives in ~150 lines of stdlib Python. No real LLM — each agent is a scripted policy so the focus stays on the coordination structure.
-
-The file exports:
-
-- `Agent` — a dataclass of name, system prompt, tools, policy function.
-- `Handoff` — a function that returns a new agent.
-- `SharedState` — a thread-safe message pool.
-- `Orchestrator` — three variants: `StaticOrchestrator`, `HandoffOrchestrator`, `LLMSelectorOrchestrator` (simulated).
-
-The demo runs the same three-agent pipeline (research → write → review) through all three orchestrator types and prints the message pool at the end. You can see that the outputs differ only in *who picks next*; the agents and shared state are identical across runs.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Expected output: three orchestrator runs, one per pattern. Each prints the final message pool. The handoff-driven run reaches fewer agents if the researcher decides it is done early — that is the LLM-routing tradeoff in miniature.
 
 ## Use It
 
@@ -142,13 +122,6 @@ Before adopting a new framework, write the primitive mapping for it. If you cann
 
 Pin the mapping in your architecture doc. When a new team member joins, send them the mapping before the API docs. When framework versions change, diff the mapping, not the changelog.
 
-## Exercises
-
-1. Run `code/main.py` three times with different agent policies. Observe how the orchestrator choice changes which agents run.
-2. Implement a fourth orchestrator type: a queue-driven one where agents poll shared state for work. What deadlock can happen, and how do you detect it?
-3. Take the LangGraph quickstart (https://docs.langchain.com/oss/python/langgraph/workflows-agents) and rewrite it as the four primitives. Which of LangGraph's abstractions map 1:1 and which are convenience wrappers?
-4. Read the OpenAI Swarm cookbook (https://developers.openai.com/cookbook/examples/orchestrating_agents). Identify which of the four primitives Swarm makes most ergonomic, and which one it pushes to the caller.
-5. Find one framework in this table that hides shared state entirely. Explain what breaks when agents need to coordinate across handoffs without re-reading history.
 
 ## Key Terms
 

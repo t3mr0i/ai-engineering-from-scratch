@@ -71,22 +71,6 @@ Datadog v1.37+ maps GenAI attributes natively into its LLM Observability schema.
 - **Spans without parent links.** Orphaned tool spans. Always propagate context.
 - **Not setting stability opt-in.** Your attributes may get renamed on backend upgrade.
 
-## Build It
-
-`code/main.py` implements a stdlib span emitter matching GenAI conventions:
-
-- `Span` with GenAI attribute schema.
-- `Tracer` with `start_span`, nested contexts.
-- A scripted agent run that emits: `create_agent`, `invoke_agent` (INTERNAL), per-tool spans, `chat` spans for LLM calls.
-- A content-capture mode that stores prompts externally and records IDs on spans.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: a span tree with all required GenAI attributes, and an "external store" showing the opt-in content references.
 
 ## Use It
 
@@ -99,13 +83,6 @@ Output: a span tree with all required GenAI attributes, and an "external store" 
 
 `outputs/skill-otel-genai.md` wires OTel GenAI spans into an existing agent with content-capture defaults and external-reference storage.
 
-## Exercises
-
-1. Instrument your Lesson 01 ReAct loop with `invoke_agent` (INTERNAL) + per-tool spans. Send to a Jaeger instance.
-2. Add content capture in "references only" mode: prompts to SQLite, span attributes carry only row IDs.
-3. Read the spec for `gen_ai.data_source.id`. Wire it into your Lesson 09 Mem0 search.
-4. Set `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental` and verify your attributes don't get renamed by the collector.
-5. Build a dashboard: "which tool errors correlate with which models" from GenAI attributes alone.
 
 ## Key Terms
 

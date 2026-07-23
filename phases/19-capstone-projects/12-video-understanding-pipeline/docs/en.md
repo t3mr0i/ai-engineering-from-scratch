@@ -62,25 +62,6 @@ answer + (start, end) timestamps + frame thumbs + citations
 - Eval: ActivityNet-QA, NeXT-GQA, custom 100-question hand-labeled set
 - Hallucination benchmark: counting and action-type subsets with hand labels
 
-## Build It
-
-1. **Ingest walker.** Accept YouTube URLs or local MP4s. Downscale to 720p if needed. Persist `{video_id, file_path}`.
-
-2. **Scene segmentation.** Run TransNetV2 or PySceneDetect to produce `[{scene_id, start_ms, end_ms, keyframe_path}]`. Target 100 hours: ~6k-8k scenes.
-
-3. **ASR pass.** Run Whisper-v3-turbo on audio; export word-level timestamps; split into per-scene transcript slices.
-
-4. **VLM captioning.** Per scene, call Gemini 2.5 Pro (or Qwen3-VL-Max) with the keyframe and a short caption template. Produce caption + frame embedding.
-
-5. **Multi-vector index.** Qdrant collection with three named vectors. Payload: `{video_id, scene_id, start_ms, end_ms, keyframe_url}`.
-
-6. **Query.** Natural-language question fires three dense queries; merge with reciprocal rank fusion; top-k=5 scenes.
-
-7. **Temporal grounding.** Run TimeLens-style adapter on the top scene to refine the (start, end) window within the scene.
-
-8. **VLM synth.** Call Gemini 2.5 Pro with query + top-3 scene clips (as images or short clips) + transcripts. Require `(video_id, start_ms, end_ms)` citations.
-
-9. **Eval.** Run ActivityNet-QA and NeXT-GQA. Build a 100-query custom set. Report overall accuracy + per-class breakdown (counting, action, descriptive).
 
 ## Use It
 
@@ -110,17 +91,6 @@ citations: [scene 3: 00:12-00:58]
 | 15 | Hallucination rate | Counting and action-type accuracy separately |
 | **100** | | |
 
-## Exercises
-
-1. Swap Gemini 2.5 Pro for Qwen3-VL-Max on the captioning pass. Report caption quality delta on a human-rated 50-scene sample.
-
-2. Reduce per-scene frame embedding to one pooled vector instead of multi-vector. Measure the retrieval regression.
-
-3. Build a "counting strict" mode: the synthesizer extracts each counted instance with a timestamp and the user clicks to verify. Measure whether user-verification reduces hallucination.
-
-4. Benchmark ingest cost: hours-of-video-per-dollar across three VLM choices. Pick the sweet spot.
-
-5. Add speaker-diarized transcript: run pyannote speaker diarization on the audio and embed per-speaker transcripts. Demonstrate "what did Alice say about X?" queries.
 
 ## Key Terms
 

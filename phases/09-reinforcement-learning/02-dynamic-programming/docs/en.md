@@ -38,105 +38,6 @@ Repeat until `max_s |V_{new}(s) - V(s)| < ε`. Extract the policy at the end by 
 
 **Why `γ < 1` matters.** The Bellman operator is a `γ`-contraction in the sup-norm: `||T V - T V'||_∞ ≤ γ ||V - V'||_∞`. Contraction implies unique fixed point and geometric convergence. Drop `γ < 1` and you lose the guarantee — you need a finite horizon or an absorbing terminal state.
 
-## Build It
-
-### Step 1: build the GridWorld MDP model
-
-Use the same 4×4 GridWorld from Lesson 01. We add a stochastic variant: with probability `0.1` the agent slips to a random perpendicular direction.
-
-```python
-SLIP = 0.1
-
-def transitions(state, action):
-    if state == TERMINAL:
-        return [(state, 0.0, 1.0)]
-    outcomes = []
-    for direction, prob in action_probs(action):
-        outcomes.append((apply_move(state, direction), -1.0, prob))
-    return outcomes
-```
-
-`transitions(s, a)` returns a list of `(s', r, p)`. This is the entire model.
-
-### Step 2: policy evaluation
-
-Given a policy `π(s) = {action: prob}`, iterate the Bellman equation until `V` stops moving:
-
-```python
-def policy_evaluation(policy, gamma=0.99, tol=1e-6):
-    V = {s: 0.0 for s in states()}
-    while True:
-        delta = 0.0
-        for s in states():
-            v = sum(pi_a * sum(p * (r + gamma * V[s_prime])
-                              for s_prime, r, p in transitions(s, a))
-                   for a, pi_a in policy(s).items())
-            delta = max(delta, abs(v - V[s]))
-            V[s] = v
-        if delta < tol:
-            return V
-```
-
-### Step 3: policy improvement
-
-Replace `π` with the greedy policy w.r.t. `V`. If `π` did not change, return — we are at the optimum.
-
-```python
-def policy_improvement(V, gamma=0.99):
-    new_policy = {}
-    for s in states():
-        best_a = max(
-            ACTIONS,
-            key=lambda a: sum(p * (r + gamma * V[s_prime])
-                              for s_prime, r, p in transitions(s, a)),
-        )
-        new_policy[s] = best_a
-    return new_policy
-```
-
-### Step 4: stitch them together
-
-```python
-def policy_iteration(gamma=0.99):
-    policy = {s: "up" for s in states()}   # arbitrary start
-    for _ in range(100):
-        V = policy_evaluation(lambda s: {policy[s]: 1.0}, gamma)
-        new_policy = policy_improvement(V, gamma)
-        if new_policy == policy:
-            return V, policy
-        policy = new_policy
-```
-
-Typical convergence on 4×4: 4–6 outer iterations. Outputs `V*(0,0) ≈ -6` and a policy that strictly decreases the step count.
-
-### Step 5: value iteration (the one-loop version)
-
-```python
-def value_iteration(gamma=0.99, tol=1e-6):
-    V = {s: 0.0 for s in states()}
-    while True:
-        delta = 0.0
-        for s in states():
-            v = max(sum(p * (r + gamma * V[s_prime])
-                       for s_prime, r, p in transitions(s, a))
-                   for a in ACTIONS)
-            delta = max(delta, abs(v - V[s]))
-            V[s] = v
-        if delta < tol:
-            break
-    policy = policy_improvement(V, gamma)
-    return V, policy
-```
-
-Same fixed point, fewer lines of code.
-
-## Pitfalls
-
-- **Forgetting to handle terminals.** If you apply Bellman to an absorbing state, it still picks up a "best action" that changes nothing. Guard with `if s == terminal: V[s] = 0`.
-- **Sup-norm vs L2 convergence.** Use `max |V_new - V|`, not average. The theoretical guarantee is on the sup-norm.
-- **In-place vs synchronous updates.** Updating `V[s]` in-place (Gauss-Seidel) converges faster than a separate `V_new` dict (Jacobi). Production code uses in-place.
-- **Policy ties.** If two actions have equal Q-value, `argmax` may break ties differently each iteration, causing the "policy stable" check to oscillate. Use a stable tie-break (first action in fixed order).
-- **State-space explosion.** DP is `O(|S| · |A|)` per sweep. Works up to ~10⁷ states. Beyond that, you need function approximation (Phase 9 · 05 onwards).
 
 ## Use It
 
@@ -177,11 +78,6 @@ Given an MDP with a known model, output:
 Refuse to run DP on state spaces > 10⁷. Refuse to claim convergence without a sup-norm check. Flag any γ ≥ 1 on an infinite-horizon task as a guarantee violation.
 ```
 
-## Exercises
-
-1. **Easy.** Run value iteration on the 4×4 GridWorld with `γ ∈ {0.9, 0.99}`. How many sweeps until `max |ΔV| < 1e-6`? Print `V*` as a 4×4 grid.
-2. **Medium.** Compare policy iteration vs value iteration on the *stochastic* GridWorld (slip probability `0.1`). Count: sweeps, wall-clock time, final `V*(0,0)`. Which converges faster in iterations? In wall-clock?
-3. **Hard.** Build modified policy iteration: in the evaluation step, run only `k` sweeps instead of to convergence. Plot `V*(0,0)` error vs `k` for `k ∈ {1, 2, 5, 10, 50}`. What does the curve tell you about the evaluation/improvement tradeoff?
 
 ## Key Terms
 

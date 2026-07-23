@@ -53,17 +53,6 @@ flowchart LR
 - Products & Value Streams
 - Business & Strategy Consulting
 
-## Build It
-
-In the lab you build an AI steering-report planner. It ranks reporting scenarios and recommends controls before sharing status.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/48-ai-project-reporting-steering/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

@@ -31,87 +31,6 @@ Plain RNNs suffer vanishing gradients. The **LSTM** adds gates that decide what 
 
 **Bidirectional RNNs** run one RNN forward and another backward, concatenating hidden states. Every token's representation sees both left and right context. Essential for tagging tasks.
 
-## Build It
-
-### Step 1: TextCNN in PyTorch
-
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-
-class TextCNN(nn.Module):
-    def __init__(self, vocab_size, embed_dim, n_classes, filter_widths=(2, 3, 4), n_filters=64, dropout=0.3):
-        super().__init__()
-        self.embed = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
-        self.convs = nn.ModuleList([
-            nn.Conv1d(embed_dim, n_filters, kernel_size=k)
-            for k in filter_widths
-        ])
-        self.dropout = nn.Dropout(dropout)
-        self.fc = nn.Linear(n_filters * len(filter_widths), n_classes)
-
-    def forward(self, token_ids):
-        x = self.embed(token_ids).transpose(1, 2)
-        pooled = []
-        for conv in self.convs:
-            c = F.relu(conv(x))
-            p = F.max_pool1d(c, c.size(2)).squeeze(2)
-            pooled.append(p)
-        h = torch.cat(pooled, dim=1)
-        return self.fc(self.dropout(h))
-```
-
-The `transpose(1, 2)` reshapes `[batch, seq_len, embed_dim]` to `[batch, embed_dim, seq_len]` because `nn.Conv1d` treats the middle axis as channels. The pooled output is fixed-size regardless of input length.
-
-### Step 2: LSTM classifier
-
-```python
-class LSTMClassifier(nn.Module):
-    def __init__(self, vocab_size, embed_dim, hidden_dim, n_classes, bidirectional=True, dropout=0.3):
-        super().__init__()
-        self.embed = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
-        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True, bidirectional=bidirectional)
-        factor = 2 if bidirectional else 1
-        self.dropout = nn.Dropout(dropout)
-        self.fc = nn.Linear(hidden_dim * factor, n_classes)
-
-    def forward(self, token_ids):
-        x = self.embed(token_ids)
-        out, _ = self.lstm(x)
-        pooled = out.max(dim=1).values
-        return self.fc(self.dropout(pooled))
-```
-
-Max-pool over the sequence, not last-state pool. For classification, max-pooling usually beats taking the last hidden state because information at the end of a long sequence tends to dominate the last state.
-
-### Step 3: the vanishing gradient demo (intuition)
-
-A plain RNN without gating cannot learn long-range dependencies. Consider a toy task: predict whether token `A` appeared anywhere in a sequence. If `A` is at position 1 and the sequence is 100 tokens long, the gradient from the loss has to flow back through 99 multiplications of the recurrent weight. If the weight is less than 1, the gradient vanishes. If more than 1, it explodes.
-
-```python
-def vanishing_gradient_sim(seq_len, recurrent_weight=0.9):
-    import math
-    return math.pow(recurrent_weight, seq_len)
-
-
-# At weight=0.9 over 100 steps:
-#   0.9 ^ 100 ≈ 2.7e-5
-# The gradient from step 100 to step 1 is effectively zero.
-```
-
-LSTMs fix this with a **cell state** that runs through the network with only additive interactions (the forget gate scales it multiplicatively, but gradients still flow along the "highway"). GRUs do something similar with fewer parameters. Both give you stable training through 100+ step sequences.
-
-### Step 4: why this still was not enough
-
-Three problems persisted even with LSTMs.
-
-1. **Sequential bottleneck.** Training an RNN on a sequence of length 1000 requires 1000 serial forward/backward steps. Cannot parallelize across time.
-2. **Fixed-size context vector in encoder-decoder setups.** The decoder sees only the final hidden state of the encoder, compressed over the entire input. Long inputs lose detail. Lesson 09 covers this directly.
-3. **Distant-dependency accuracy ceiling.** LSTMs outperform plain RNNs but still struggle to propagate specific information across 200+ steps.
-
-Attention solved all three. Transformers dropped recurrence entirely. Lesson 10 is the pivot.
 
 ## Use It
 
@@ -173,11 +92,6 @@ Given constraints (task, data volume, latency budget, deploy target, compute bud
 Refuse to recommend fine-tuning a transformer when data is under ~500 labeled examples without showing that a TextCNN / BiLSTM baseline has plateaued. Flag edge deployment as needing architecture-before-everything.
 ```
 
-## Exercises
-
-1. **Easy.** Train a TextCNN on a 3-class toy dataset (you invent the data). Verify that filter widths (2, 3, 4) outperform a single width (3) on average F1.
-2. **Medium.** Implement max-pool, mean-pool, and last-state pooling for the LSTM classifier. Compare on a small dataset; document which pooling wins and hypothesize why.
-3. **Hard.** Build a BiLSTM-CRF NER tagger (combine lesson 06 and this one). Train on CoNLL-2003. Compare to the CRF-alone baseline from lesson 06 and to a BERT fine-tune. Report training time, memory, and F1.
 
 ## Key Terms
 

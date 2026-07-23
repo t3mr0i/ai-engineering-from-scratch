@@ -95,50 +95,6 @@ The value grows with context length. At 4k tokens the noise floor is small enoug
 | FlashAttention | Yes in V2 (was no in V1) |
 | Speculative decoding | Yes (attention change is invisible to the spec-decode loop) |
 
-## Build It
-
-`code/main.py` implements differential attention in pure Python. A toy query with known signal-plus-noise structure lets you measure the noise-cancellation ratio directly.
-
-### Step 1: standard softmax attention
-
-Stdlib matrix ops: lists of lists, manual matmul, softmax with numerical-stability subtraction of the max.
-
-```python
-def softmax(row):
-    m = max(row)
-    exps = [math.exp(x - m) for x in row]
-    s = sum(exps)
-    return [e / s for e in exps]
-```
-
-### Step 2: split Q, K into two halves
-
-V1 style: halve the head dimension. V2 style: keep the head dimension and double the number of heads. The toy implementation uses V1 for pedagogical clarity — the math is identical, only the bookkeeping differs.
-
-### Step 3: two softmax branches + subtraction
-
-```python
-A1 = [softmax([dot(q1, k) / scale for k in K1]) for q1 in Q1]
-A2 = [softmax([dot(q2, k) / scale for k in K2]) for q2 in Q2]
-diff_weights = [[a1 - lam * a2 for a1, a2 in zip(r1, r2)] for r1, r2 in zip(A1, A2)]
-out = [[sum(w * v[j] for w, v in zip(row, V)) for j in range(d_v)] for row in diff_weights]
-```
-
-Note: the output weights can be negative. That is fine — the value cache still handles signed contributions. The subsequent V projection absorbs the sign.
-
-### Step 4: noise cancellation measurement
-
-Build a synthetic sequence of length 1024. Place the signal token at a known position, fill the rest with noise. Compute (a) standard softmax attention weight on the signal position and (b) differential attention weight. Measure the ratio of signal-to-noise in each. DIFF attention reliably produces a higher signal-to-noise ratio by a factor of 3x-10x depending on how much the two branches have been trained to differ.
-
-### Step 5: V1 vs V2 parameter accounting
-
-Given a config (hidden=4096, heads=32, d_head=128), print:
-
-- Baseline Transformer: Q, K, V each size `hidden * hidden`, MLP at 4 * hidden.
-- DIFF V1: Q, K each size `hidden * hidden`, V size `hidden * hidden` (unchanged), head dim halved internally. Adds per-head `lambda` parameters (O(heads * d_head)).
-- DIFF V2: Q size `2 * hidden * hidden`, K size `hidden * hidden`, V size `hidden * hidden`. Extra dim projected back down before O_W. Adds same `lambda` parameters.
-
-The toy measures the extra parameter cost for V2 (roughly `hidden * hidden` extra per attention block) and prints it.
 
 ## Use It
 
@@ -162,17 +118,6 @@ When you would not:
 
 This lesson produces `outputs/skill-diff-attention-integrator.md`. Given a model architecture, target context length, hallucination profile, and training budget, it produces an integration plan for adding differential attention to a new pre-training run or LoRA fine-tune.
 
-## Exercises
-
-1. Run `code/main.py`. Verify the signal-to-noise ratio reported for differential attention is higher than standard softmax attention on the synthetic query. Vary the noise amplitude and show the crossover point where standard attention becomes unusable.
-
-2. Compute the parameter-count delta from baseline to DIFF V1 and from baseline to DIFF V2 for a 7B-class model (hidden=4096, heads=32, d_head=128, 32 layers). Show which components gained parameters and which stayed the same.
-
-3. Read Section 3 of the DIFF V1 paper (arXiv:2410.05258) and Section 2 of the DIFF V2 Hugging Face blog. In two sentences, explain why the V1 per-head RMSNorm was necessary and why V2 could remove it without causing training divergence.
-
-4. Implement an ablation: compute differential attention with `lambda = 0` (pure first softmax) and `lambda = 1` (full subtraction). On the synthetic query, measure how signal-to-noise changes across the sweep. Identify the `lambda` that maximizes signal-to-noise.
-
-5. Extend the toy to GQA + DIFF V2. Pick 8 KV heads and 32 Q heads. Show that the KV cache size matches a baseline GQA model with the same (8, 32) configuration.
 
 ## Key Terms
 

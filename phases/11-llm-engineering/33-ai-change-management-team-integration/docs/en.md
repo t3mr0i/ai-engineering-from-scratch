@@ -54,17 +54,6 @@ flowchart LR
 - Corporate Functions
 - Business & Strategy Consulting
 
-## Build It
-
-In the lab you build a change-readiness planner. It scores rollout scenarios and recommends the minimum controls needed before broader team adoption.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/33-ai-change-management-team-integration/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

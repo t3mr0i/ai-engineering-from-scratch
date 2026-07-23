@@ -45,92 +45,6 @@ Drop-in replacement, consistently better. Use it by default.
 
 **Other improvements (Rainbow, 2017):** prioritized replay (sample high-TD-error transitions more), dueling architecture (separate `V(s)` and advantage heads), noisy networks (learned exploration), n-step returns, distributional Q (C51/QR-DQN), multi-step bootstrapping. Each adds a few percent; the gains are roughly additive.
 
-## Build It
-
-The code here is stdlib-only numpy-free — we use a hand-rolled single-hidden-layer MLP on a tiny continuous GridWorld, so every training step runs in microseconds. The algorithm is identical to Atari DQN at scale.
-
-### Step 1: replay buffer
-
-```python
-class ReplayBuffer:
-    def __init__(self, capacity):
-        self.buf = []
-        self.capacity = capacity
-    def push(self, s, a, r, s_next, done):
-        if len(self.buf) == self.capacity:
-            self.buf.pop(0)
-        self.buf.append((s, a, r, s_next, done))
-    def sample(self, batch, rng):
-        return rng.sample(self.buf, batch)
-```
-
-~50,000 capacity for Atari; 5,000 suffices for our toy env.
-
-### Step 2: a tiny Q-network (manual MLP)
-
-```python
-class QNet:
-    def __init__(self, n_in, n_hidden, n_actions, rng):
-        self.W1 = [[rng.gauss(0, 0.3) for _ in range(n_in)] for _ in range(n_hidden)]
-        self.b1 = [0.0] * n_hidden
-        self.W2 = [[rng.gauss(0, 0.3) for _ in range(n_hidden)] for _ in range(n_actions)]
-        self.b2 = [0.0] * n_actions
-    def forward(self, x):
-        h = [max(0.0, sum(w * xi for w, xi in zip(row, x)) + b) for row, b in zip(self.W1, self.b1)]
-        q = [sum(w * hi for w, hi in zip(row, h)) + b for row, b in zip(self.W2, self.b2)]
-        return q, h
-```
-
-Forward pass: linear → ReLU → linear. That is the entire net.
-
-### Step 3: the DQN update
-
-```python
-def train_step(online, target, batch, gamma, lr):
-    grads = zeros_like(online)
-    for s, a, r, s_next, done in batch:
-        q, h = online.forward(s)
-        if done:
-            y = r
-        else:
-            q_next, _ = target.forward(s_next)
-            y = r + gamma * max(q_next)
-        td_error = q[a] - y
-        accumulate_grads(grads, online, s, h, a, td_error)
-    apply_sgd(online, grads, lr / len(batch))
-```
-
-The shape is Q-learning from Lesson 04 with two differences: (a) we backprop through a differentiable `Q(·; θ)` instead of indexing a table, (b) the target uses `Q(·; θ^-)`.
-
-### Step 4: the outer loop
-
-For each episode, act ε-greedy on `Q(·; θ)`, push transitions into the buffer, sample a minibatch, take a gradient step, periodically sync `θ^- ← θ`. The pattern:
-
-```python
-for episode in range(N):
-    s = env.reset()
-    while not done:
-        a = epsilon_greedy(online, s, epsilon)
-        s_next, r, done = env.step(s, a)
-        buffer.push(s, a, r, s_next, done)
-        if len(buffer) >= batch:
-            train_step(online, target, buffer.sample(batch), gamma, lr)
-        if steps % sync_every == 0:
-            target = copy(online)
-        s = s_next
-```
-
-On our tiny GridWorld with a 16-dim one-hot state, the agent learns a near-optimal policy in ~500 episodes. On Atari, scale this to 200M frames and add a CNN feature extractor.
-
-## Pitfalls
-
-- **Deadly triad.** Function approximation + off-policy + bootstrapping can diverge. DQN mitigates with target net + replay; do not remove either.
-- **Exploration.** ε must decay, typically from 1.0 to 0.01 over the first ~10% of training. Without enough early exploration the Q-net converges to a local basin.
-- **Overestimation.** `max` over noisy Q is upward-biased. Always use Double DQN in production.
-- **Reward scale.** Clip or normalize rewards; the gradient magnitude is proportional to reward magnitude.
-- **Replay buffer coldstart.** Don't train until the buffer has a few thousand transitions. Early gradients on ~20 samples overfit.
-- **Target sync frequency.** Too frequent ≈ no target net; too infrequent ≈ stale targets. Atari DQN uses 10,000 env steps. Rule of thumb: sync every ~1/100 of training horizon.
-- **Observation preprocessing.** Atari DQN stacks 4 frames to make state Markov. Any env with velocity info needs frame-stacking or recurrent state.
 
 ## Use It
 
@@ -173,11 +87,6 @@ Given a discrete-action environment (observation shape, action count, horizon, r
 Refuse to ship a DQN with no target network, no replay buffer, or ε held at 1. Refuse continuous-action tasks (route to SAC / TD3). Flag any reward range > 10× per-step mean as needing clipping or scale normalization.
 ```
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Plot the per-episode return curve. How many episodes until the running mean exceeds -10?
-2. **Medium.** Disable the target network (use the online net for both sides of the Bellman target). Measure training instability — does return oscillate or diverge?
-3. **Hard.** Add Double DQN: use the online net to pick `argmax a'`, target net to evaluate. Compare bias of `Q(s_0, best_a)` vs true `V*(s_0)` after 1,000 episodes with vs without Double DQN on a noisy-reward GridWorld.
 
 ## Key Terms
 

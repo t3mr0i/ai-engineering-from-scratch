@@ -80,23 +80,6 @@ Without OpenTelemetry GenAI spans (Lesson 23) plus a Langfuse/Phoenix/Opik backe
 - **Opaque background work.** Background agent runs without trace export. Failures are invisible until the user reports them.
 - **Skipping durable state.** Any run > 30 seconds where you can't afford to restart needs durable execution.
 
-## Build It
-
-`code/main.py` is a stdlib multi-shape demo:
-
-- Request-response endpoint (plain function).
-- Streaming handler (generator).
-- Queue-based worker with DLQ.
-- Event trigger registry.
-- Cron-shaped scheduler.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: five traces showing each shape's behavior on the same task. Same agent logic, different outer shells. Durable execution (the sixth shape) is intentionally covered in Lesson 13 with LangGraph checkpointing.
 
 ## Use It
 
@@ -111,13 +94,6 @@ Output: five traces showing each shape's behavior on the same task. Same agent l
 
 `outputs/skill-runtime-shape.md` picks a runtime shape for a task and wires the observability requirements.
 
-## Exercises
-
-1. Port your Lesson 01 ReAct loop to all six shapes in your stack. Which shape fits which product surface?
-2. Add a DLQ to the queue-based demo. Simulate 10% job failure; surface DLQ size.
-3. Write a cron-triggered eval agent that runs nightly against your top 20 traces from the day.
-4. Implement streaming with backpressure: if the client is slow, pause the agent. How does this interact with a turn budget?
-5. Read Claude Managed Agents docs. When would you move a self-hosted long-horizon agent to managed?
 
 ## Key Terms
 

@@ -64,17 +64,6 @@ Lessons 12-14 are model-centric jailbreaks. Lesson 15 is the system-centric atta
 
 This lesson produces `outputs/skill-ipi-audit.md`. Given an agentic deployment description, it enumerates the untrusted content sources, checks whether the deployment applies IFC, and flags sources that reach the model without a trust label.
 
-## Exercises
-
-1. Run `code/main.py`. Measure the success rate of the attack against each of the three agents.
-
-2. Implement a paraphrase-based defense on retrieved content. Measure the benign false-positive rate on legitimate retrieved text.
-
-3. Read the NDSS 2026 IPI-defense paper. Describe the "benign instruction" challenge and why it prevents keyword-based filtering.
-
-4. Design a deployment where the agent receives a tool output from a third-party API. Label each prompt fragment with a trust level and write the IFC policy that governs the agent's actions.
-
-5. Reproduce the Nasr et al. 2025 adaptive-attack methodology on your filter-defended agent from Exercise 2. Report the ASR before and after adaptive attack.
 
 ## Key Terms
 

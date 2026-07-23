@@ -60,41 +60,6 @@ Standard diffusion loss (ε or v prediction) over spatiotemporal latents. Data: 
 
 Open weights are closing the gap faster than in the image space: HunyuanVideo + WAN 2.2 LoRAs already power most open-source workflows by mid-2026.
 
-## Build It
-
-`code/main.py` simulates the core spatiotemporal DiT idea: patchify a small synthetic video, add a per-patch position embedding, and denoise the whole sequence with a transformer-style attention over patches. No numpy; pure Python. We show that temporal coherence emerges even in 1-D when adjacent-frame patches share a denoiser and position embeddings.
-
-### Step 1: patchify a synthetic 1-D "video"
-
-```python
-def make_video(T_frames=8, rng=None):
-    # a "video" is a sequence of 1-D values following a smooth trajectory
-    base = rng.gauss(0, 1)
-    return [base + 0.3 * t + rng.gauss(0, 0.1) for t in range(T_frames)]
-```
-
-### Step 2: position embedding per frame
-
-```python
-def pos_embed(t, dim):
-    return sinusoidal(t, dim)
-```
-
-### Step 3: denoiser sees the whole sequence
-
-Instead of denoising each frame independently, our tiny net concatenates all frame values + their position embeddings and predicts the noise for all frames jointly.
-
-### Step 4: temporal coherence test
-
-After training, sample a video. Measure the frame-to-frame delta. If the model has learned temporal structure, the deltas stay smaller than sampling each frame independently.
-
-## Pitfalls
-
-- **Independent per-frame sampling = flicker.** If you run image diffusion on each frame separately, the output flickers because each frame's noise is independent. Video diffusion fixes this by coupling the frames through attention or shared noise.
-- **Naive 3D attention = OOM.** Full 3D attention on a 10-second 1080p latent is hundreds of billions of operations. Factorize into spatial + temporal.
-- **Data captioning matters more than size.** Sora's main upgrade over prior work was training on ~10x more detailed captions (GPT-4 re-labelled clips). OpenAI's technical report is explicit on this.
-- **First-frame conditioning.** Most production models also accept an image as the first frame. This is "image-to-video" mode; training includes this variant.
-- **Physics drift.** Long clips (>10s) accumulate subtle inconsistencies. Sliding-window generation + keyframe anchoring helps.
 
 ## Use It
 
@@ -114,11 +79,6 @@ Cost per second of video at quality parity has dropped 20x between 2024 and 2026
 
 Save `outputs/skill-video-brief.md`. Skill takes a video brief (duration, aspect ratio, style, camera plan, subject consistency, audio) and outputs: model + hosting, prompt scaffolding (camera language, subject description, motion descriptors), seed + reproducibility protocol, and a frame-level QA checklist.
 
-## Exercises
-
-1. **Easy.** In `code/main.py`, compare frame-to-frame delta for (a) independent per-frame sampling, (b) joint sequence sampling. Report the mean and variance of the deltas.
-2. **Medium.** Add a first-frame condition: pin frame 0 to a given value and sample the rest. Measure how the pinned value propagates.
-3. **Hard.** Use HuggingFace diffusers to run CogVideoX-2B on a local GPU. Time 20 inference steps at 720p for a 6-second clip. Profile the spatiotemporal attention to identify the bottleneck.
 
 ## Key Terms
 

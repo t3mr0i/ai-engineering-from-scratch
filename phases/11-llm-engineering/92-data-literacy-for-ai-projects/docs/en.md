@@ -96,17 +96,6 @@ The scoring function in `code/main.py` makes this gate explicit and runnable.
 
 `outputs/skill-data-readiness-assessment.md` is a one-page, paste-and-use checklist for a data readiness assessment workshop. It contains the five-dimension scoring table, a per-dimension audit checklist, and the decision gate — formatted for use as a shared document in a client scoping session.
 
-## Exercises
-
-1. Run `code/main.py`. Which of the three sample data sources gets a STOP verdict, and which dimension is the blocking one? Modify the PII field of that source to `"none detected"` and re-run — does the verdict change, and if not, why not?
-
-2. Run `code/main.py` again and find the source that receives a CONDITIONAL verdict. Add a fourth source to the `SOURCES` list in `main()` representing a real dataset from a project you work on. Assign values for each dimension as honestly as you can, and record the verdict.
-
-3. A client provides a knowledge base of 50,000 internal PDF documents for a RAG-based assistant. The documents were last bulk-updated 18 months ago. Write the three-line freshness check you would run in a scoping call: what is the TTL, what is the ingestion lag, and what is the max-lag budget for the client's stated SLA?
-
-4. Using the provenance checklist from Phase 18 · 27, identify one data source in your current or recent project that you could not yet issue a clean provenance record for. What single step would resolve it?
-
-5. An evaluation set for a document Q&A system was built by having five employees write questions against the same documents that form the retrieval index. Identify two specific ways this produces an inflated offline metric, and describe how to reconstruct the eval set to remove each bias.
 
 ## Key Terms
 

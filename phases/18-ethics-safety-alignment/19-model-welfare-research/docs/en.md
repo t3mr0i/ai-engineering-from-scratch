@@ -86,17 +86,6 @@ No code. Read the Anthropic "Exploring Model Welfare" announcement (April 2025) 
 
 This lesson produces `outputs/skill-welfare-assessment.md`. Given a deployment decision, it applies the four-step welfare precautionary assessment: moral-patienthood probability, intervention cost, behavioural evidence, self-report reliability.
 
-## Exercises
-
-1. Read Anthropic's "Exploring Model Welfare" (April 2025) and Chalmers et al. 2024. Write a one-paragraph summary of each and identify one point of disagreement.
-
-2. The end-conversation intervention in Claude Opus 4 and 4.1 is "low-cost" by Anthropic's framing. Identify two costs that would make it not-low-cost in a different deployment.
-
-3. The spiritual-bliss attractor is documented without commitment to interpretation. Propose three candidate explanations and, for each, name one experiment that would distinguish it from the others.
-
-4. The Eleos AI caveat is that self-reports are user-expectation sensitive. Design a behavioural measurement of model distress that does not rely on self-report. Identify its primary confound.
-
-5. Argue either for or against the claim that "model welfare diverts attention from other safety work." Identify the assumption each position depends on.
 
 ## Key Terms
 

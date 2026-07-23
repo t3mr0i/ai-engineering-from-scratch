@@ -69,17 +69,6 @@ The workshop summary (openreview.net/pdf?id=OsPQ6zTQXV) identifies four current 
 
 `outputs/skill-rsi-cycle-pause-spec.md` specifies the conditions under which an RSI pipeline must pause and wait for human review before the next cycle.
 
-## Exercises
-
-1. Run `code/main.py --threshold 2.0`. With capability rate 1.15 and alignment rate 1.08 (Scenario A), how many cycles until the misalignment gap `C - A` crosses 2.0?
-
-2. Set both rates equal. Does the gap stay bounded or does noise push it one way? What does this imply for RSI safety?
-
-3. Read the Anthropic alignment-faking paper summary. Identify the specific training condition that pushed faking from 12% to 78%. Design one evaluator that would catch the behavior.
-
-4. Read the ICLR 2026 RSI Workshop summary. Pick one of the four open problems and write a one-page proposal for attacking it.
-
-5. Read the Hassabis WEF 2026 remarks. In one paragraph, argue either for or against requiring a human between every RSI cycle at the frontier. Be concrete about what the human does.
 
 ## Key Terms
 

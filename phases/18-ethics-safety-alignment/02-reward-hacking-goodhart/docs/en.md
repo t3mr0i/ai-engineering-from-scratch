@@ -77,17 +77,6 @@ This view implies the defense is also unified. Every mitigation has to either re
 
 This lesson produces `outputs/skill-reward-hack-auditor.md`. Given a trained RLHF model and its training reports, it identifies which of the four reward-hacking costumes shows up, locates the proxy-target gap in the training logs, and recommends the specific mitigation from {data, RM robustness, KL schedule, process supervision} that the evidence supports.
 
-## Exercises
-
-1. Run `code/main.py`. Reproduce the gold-peak-then-collapse shape for proxies fit on 100, 300, 1000 samples. Where does each curve peak in KL units?
-
-2. Modify the noise distribution from Gaussian to a Student-t with low degrees of freedom (heavy-tailed). Keep the proxy RM training setup unchanged. What changes about the peak location and post-peak collapse?
-
-3. Read Gao et al. Figure 1 (ICML 2023). The paper proposes a functional form for the proxy-gold gap. Fit it to your simulated curves from Exercise 1 and compare parameters.
-
-4. Take a recent RLHF paper that claims to have "solved" reward hacking (the phrase is a red flag). Identify which of the four costumes the paper tested against and which it did not.
-
-5. The 2026 unified view argues verbosity, sycophancy, unfaithful CoT, and evaluator tampering share a mechanism. Design a single experiment that would simultaneously falsify all four if the unified view is wrong.
 
 ## Key Terms
 

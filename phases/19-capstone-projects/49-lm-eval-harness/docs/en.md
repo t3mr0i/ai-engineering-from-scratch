@@ -103,37 +103,6 @@ flowchart LR
   avg --> over[overall = mean of task scores]
 ```
 
-## Build It
-
-`code/main.py` is the runnable artifact.
-
-### Step 1: seed fixture tasks
-
-`seed_fixture_tasks(target_dir)` writes the five `.jsonl` files. The first run of `main.py` seeds them when the directory is empty.
-
-### Step 2: load tasks
-
-`load_all_tasks(task_dir)` reads every `.jsonl` and returns a dict from task name to a list of `Example` records. Comment lines starting with `#` and blank lines are skipped so contributors can annotate the files.
-
-### Step 3: implement metrics
-
-Each metric is a small function with a unit test. The lesson's test suite includes 13 cases covering normalization, partial overlap, code execution, and unsafe code rejection.
-
-### Step 4: write the runner
-
-`run_task` iterates batches and produces a `TaskResult` with score, correct count, total count, and latency. `run_leaderboard` walks all tasks and produces a `Leaderboard` with the overall average.
-
-### Step 5: emit JSON
-
-`write_leaderboard` serializes the board. The `--include-per-example` flag dumps the per-example records so you can diff predictions against the previous run when scores move.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The script seeds the fixtures on first run, scores them with the toy adapter (which gets every fixture right), and writes `outputs/leaderboard.json`. Overall score is 1.0 with the toy adapter; the stub adapter test in `test_main.py` shows the same harness produces 0.0 when the adapter cannot answer.
 
 ## Use It
 
@@ -167,13 +136,6 @@ Three patterns to enforce when shipping the harness in a real project:
 
 `outputs/skill-lm-eval-harness.md` carries the recipe: JSONL task spec, five metrics, swappable adapter, batched runner, leaderboard JSON with schema string. The task files in `outputs/tasks/` are the fixtures; copy them into a real project as starters.
 
-## Exercises
-
-1. Add a sixth task with a custom metric you write from scratch (BLEU-like overlap, BLEURT-like reference scoring, anything with a clear contract).
-2. Extend `code_exec` to capture stdout and accept a list of expected stdouts as targets.
-3. Add a leaderboard diff command: given two `leaderboard.json` files, print which tasks moved and by how much.
-4. Cap latency per example. Wrap the adapter call in a timeout; surface a separate `timeouts` column in the leaderboard.
-5. Pin task content with a sha256 in the leaderboard so a future reader can verify they scored the same tasks.
 
 ## Key Terms
 

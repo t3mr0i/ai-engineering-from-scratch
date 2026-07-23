@@ -66,39 +66,6 @@ A tiny adapter that accepts an *image* as conditioning (alongside text). Uses th
 
 ControlNet ≈ spatial. LoRA ≈ semantic. Use both.
 
-## Build It
-
-`code/main.py` simulates the two mechanisms on 1-D:
-
-1. **LoRA.** A pretrained linear layer `W`. Freeze it. Train a low-rank `B @ A` such that `W + BA` matches a target linear layer. Show that `r = 1` is enough to learn a rank-1 correction perfectly.
-
-2. **ControlNet-lite.** A "frozen base" predictor and a "side network" that reads an extra signal. The side network's output is gated by a learnable scalar initialized to zero (our version of zero-conv). Train and watch the gate ramp up.
-
-### Step 1: LoRA math
-
-```python
-def lora(W, A, B, x, alpha=1.0):
-    # W is frozen; A, B are the trainable low-rank factors.
-    return [W[i][j] * x[j] for i, j in ...] + alpha * (B @ (A @ x))
-```
-
-### Step 2: zero-init side network
-
-```python
-side_out = control_net(x, condition)
-gated = gate * side_out  # gate initialized to 0
-h = base(x) + gated
-```
-
-At step 0 the output is identical to base. Early training updates `gate` slowly — no catastrophic drift.
-
-## Pitfalls
-
-- **Over-scaling LoRAs.** `α = 2` or `α = 3` is a common "make it stronger" hack that produces over-stylized / broken outputs. Keep `α ≤ 1.5`.
-- **ControlNet weight conflict.** Using a Pose ControlNet at weight 1.0 and a Depth ControlNet at weight 1.0 usually overshoots. Sum of weights ≈ 1.0 is a safe default.
-- **LoRA on the wrong base.** SDXL LoRAs silently no-op on SD 1.5 because the attention dimensions do not match. Diffusers will warn in 0.30+.
-- **Textual Inversion drift.** Tokens trained on one checkpoint drift badly on another. LoRA is more portable.
-- **LoRA weight-merging and storage.** You can bake a LoRA into the base model weights for faster inference (no runtime addition), but you lose the ability to scale `α` at runtime. Keep both versions.
 
 ## Use It
 
@@ -117,11 +84,6 @@ At step 0 the output is identical to base. Early training updates `gate` slowly 
 
 Save `outputs/skill-sd-toolkit-composer.md`. Skill takes a task (input assets: prompt, optional reference image, optional pose, optional depth, optional scribble) and outputs the tool stack, weights, and a reproducible seed protocol.
 
-## Exercises
-
-1. **Easy.** In `code/main.py`, vary the LoRA rank `r` from 1 to 4. At what rank does the LoRA exactly match a rank-2 target delta?
-2. **Medium.** Train two separate LoRAs on two target transforms. Load them together and show their additive interaction. When does the interaction break linearity?
-3. **Hard.** Use diffusers to stack: SDXL-base + Canny-ControlNet (weight 0.8) + a style LoRA (α 0.8) + IP-Adapter (weight 0.6). Measure FID-vs-prompt-adherence trade-off as the stack weights vary.
 
 ## Key Terms
 

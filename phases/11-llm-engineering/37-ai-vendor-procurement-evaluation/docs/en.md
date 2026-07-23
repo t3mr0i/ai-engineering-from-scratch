@@ -53,17 +53,6 @@ flowchart LR
 - Business & Strategy Consulting
 - Technology Consulting
 
-## Build It
-
-In the lab you build a vendor-fit planner. It scores procurement scenarios and recommends which controls are needed before a trial or purchase.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/37-ai-vendor-procurement-evaluation/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

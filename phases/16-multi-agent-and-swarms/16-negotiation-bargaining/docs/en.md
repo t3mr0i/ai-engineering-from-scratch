@@ -102,23 +102,6 @@ Across all 2024-2026 negotiation benchmarks, the consistent engineering rule is:
 
 If the offer needs to be a number (price, ETA, quantity), generate it deterministically from the negotiation state and have the LLM produce the framing. If the offer needs to be a proposal structure (task decomposition, role assignment), let the LLM draft it, but validate it against a schema and constraint-check before sending.
 
-## Build It
-
-`code/main.py` implements:
-
-- `ContractNetManager`, `ContractNetTask`, `Bid` — manager + bidders, broadcast cfp, collect proposals, award.
-- `og_narrator_bargain(state, rng)` — OG-Narrator buyer: deterministic Zeuthen-style concession toward the midpoint.
-- `seller_response(state, rng)` — deterministic seller counter-offer policy (the structural ground truth for both styles).
-- `naive_llm_bargain(state, rng)` — simulates an all-LLM bargainer: picks prices with high variance, often outside the ZOPA.
-- Measurement: deal rate over 1000 trials with fresh reservation prices sampled per trial.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: naive-LLM deal rate ~65-75%; OG-Narrator deal rate ~85-95%; the 15-25 point gap is the structural advantage of decomposing offer-generation from narration. Plus a Contract Net task-market allocation example with three bidders and one task.
 
 ## Use It
 
@@ -135,13 +118,6 @@ Production bargaining checklist:
 - **Measure deal rate and payoff variance** continuously. A falling deal rate is a symptom — often a prompt drift or a counterpart-side attack.
 - **Log all rejected proposals** with the deterministic rationale. For Contract Net managers, losing bidders need to understand why.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm OG-Narrator beats naive-LLM on deal rate. By how much?
-2. Implement **persona-based payoff improvement** (arXiv:2402.05863) — the buyer adopts a "desperate to buy this week" persona in the narration only, offer generator unchanged. Does the deal rate or payoff change?
-3. Implement chain-of-thought **concealment**: maintain a private scratchpad string that is not passed to the counterpart. What happens if you accidentally leak it (simulate by swapping the channels)?
-4. Extend Contract Net to N-bidder auction with reserve price. When bids all exceed reserve, how does the manager decide between lowest-price and highest-quality? Which award rule do you pick and why?
-5. Read Bhattacharya et al. 2025 on Harvard Negotiation Project metrics. Implement two bargainers with different styles (aggressive vs fair). Measure payoff variance under symmetric and asymmetric pairings.
 
 ## Key Terms
 

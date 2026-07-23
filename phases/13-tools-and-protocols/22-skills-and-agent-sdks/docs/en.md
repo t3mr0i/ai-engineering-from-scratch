@@ -146,17 +146,6 @@ What to look at:
 
 This lesson produces `outputs/skill-agent-bundle.md`. Given a workflow, the skill produces the combined SKILL.md + AGENTS.md + MCP-server-blueprint bundle, portable across agents.
 
-## Exercises
-
-1. Run `code/main.py`. Add a second skill under `skills/` and confirm the loader picks it up.
-
-2. Write an AGENTS.md for this course repo. Include testing commands, style conventions, and the Phase 13 mental model.
-
-3. Port a multi-step workflow from your team's internal docs into a SKILL.md. Verify it loads in Claude Code.
-
-4. Translate the skill into Cursor's and Codex's native rule formats by hand. Count the diff between formats — this is the translation surface SkillKit automates.
-
-5. Read the Anthropic Agent Skills blog post. Identify one feature in the Claude Agent SDK that this lesson's loader does not cover. (Hint: agent sub-invocation.)
 
 ## Key Terms
 

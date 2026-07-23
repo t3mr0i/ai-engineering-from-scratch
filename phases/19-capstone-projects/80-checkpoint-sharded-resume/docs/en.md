@@ -68,32 +68,6 @@ Each defence rejects the bad load early; the alternative is silent corruption th
 
 Concurrent write to one file via `O_APPEND` works on POSIX for byte-aligned writes, but in practice the offsets within one shard span MB-sized regions and the locking dominates. Per-rank files have no contention and benefit from striping when the underlying filesystem is parallel (Lustre, GPFS). Production stacks (DeepSpeed, FSDP, NeMo) all use per-rank files for that reason.
 
-## Build It
-
-`code/main.py` implements:
-
-- `ShardManifest` dataclass with the schema above plus `to_json`/`from_json`.
-- `save_sharded(state_dict_per_rank, dir, step)` that writes every rank's binary state to its own file using the atomic temp-then-rename pattern, then writes the manifest.
-- `load_sharded(dir, expected_world_size)` that reads the manifest, verifies each shard's sha256, and returns per-rank state dicts.
-- A round-trip test: build per-rank state, save, load, assert byte-equal.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: 4 shard files plus manifest written, then reloaded with byte-equal verification.
-
-## Production patterns in the wild
-
-Three patterns harden the checkpoint enough to ship.
-
-**Async write.** Production stacks issue the checkpoint write on a separate thread or process so training continues. The barrier is at next checkpoint: do not start the next save until the previous one is complete. DeepSpeed's `async_io` flag does exactly this. The lesson keeps the write synchronous so the steps are visible.
-
-**Local fast disk first, then async upload.** Write to local NVMe (fast) then async-upload to S3 or GCS. The two-tier pattern keeps the in-cluster checkpoint fast for resume while shipping a durable copy off-cluster for archive. The manifest carries the local path; an upload manifest carries the remote path.
-
-**Rotation matters.** Production runs keep the last K checkpoints (typically 3-5) and rotate the oldest. Without rotation the disk fills mid-run and the next checkpoint fails. With rotation the next save deletes the oldest first, freeing the budget.
 
 ## Use It
 
@@ -107,13 +81,6 @@ Production patterns:
 
 Lesson 81 saves a sharded checkpoint of the end-to-end DDP+ZeRO run and reloads it on the same world size to prove the resume contract holds.
 
-## Exercises
-
-1. Add async write: kick off the save in a thread and let training continue. Block the next save until the previous one completes.
-2. Add a `last_5_steps` rotation: keep the 5 most recent checkpoints, delete the oldest before saving a new one.
-3. Add a CRC-only fast verification path for the inner-loop reload (rotation rolls a checkpoint into being the new active one without full sha256).
-4. Add a cross-world-size load: shard rebalance from N=4 to N=8 by reading the manifest, concatenating, and re-sharding.
-5. Add an upload to a fake S3 (a second directory) and write the upload manifest. Defend the two-tier storage policy.
 
 ## Key Terms
 

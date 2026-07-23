@@ -44,97 +44,6 @@ Reorganize: `V_new = V_old + α · (target - V_old)` with `α = 1/n`. Swap `1/n`
 
 Converges to `Q*` and `π*` with probability 1 under mild conditions (every pair visited infinitely often, `α` satisfies Robbins-Monro).
 
-## Build It
-
-### Step 1: rollout → list of (s, a, r)
-
-```python
-def rollout(env, policy, max_steps=200):
-    trajectory = []
-    s = env.reset()
-    for _ in range(max_steps):
-        a = policy(s)
-        s_next, r, done = env.step(s, a)
-        trajectory.append((s, a, r))
-        s = s_next
-        if done:
-            break
-    return trajectory
-```
-
-No model, only `env.reset()` and `env.step(s, a)`. Same interface as a gym environment but stripped down.
-
-### Step 2: compute returns (reverse sweep)
-
-```python
-def returns_from(trajectory, gamma):
-    returns = []
-    G = 0.0
-    for _, _, r in reversed(trajectory):
-        G = r + gamma * G
-        returns.append(G)
-    return list(reversed(returns))
-```
-
-One pass, `O(T)`. The backward recurrence `G_t = r_{t+1} + γ G_{t+1}` avoids re-summing.
-
-### Step 3: first-visit MC evaluation
-
-```python
-def mc_policy_evaluation(env, policy, episodes, gamma=0.99):
-    V = defaultdict(float)
-    counts = defaultdict(int)
-    for _ in range(episodes):
-        trajectory = rollout(env, policy)
-        returns = returns_from(trajectory, gamma)
-        seen = set()
-        for t, ((s, _, _), G) in enumerate(zip(trajectory, returns)):
-            if s in seen:
-                continue
-            seen.add(s)
-            counts[s] += 1
-            V[s] += (G - V[s]) / counts[s]
-    return V
-```
-
-Three lines do the work: mark state as seen on first visit, increment count, update running mean.
-
-### Step 4: ε-greedy MC control (on-policy)
-
-```python
-def mc_control(env, episodes, gamma=0.99, epsilon=0.1):
-    Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
-    counts = defaultdict(lambda: {a: 0 for a in ACTIONS})
-
-    def policy(s):
-        if random() < epsilon:
-            return choice(ACTIONS)
-        return max(Q[s], key=Q[s].get)
-
-    for _ in range(episodes):
-        trajectory = rollout(env, policy)
-        returns = returns_from(trajectory, gamma)
-        seen = set()
-        for (s, a, _), G in zip(trajectory, returns):
-            if (s, a) in seen:
-                continue
-            seen.add((s, a))
-            counts[s][a] += 1
-            Q[s][a] += (G - Q[s][a]) / counts[s][a]
-    return Q, policy
-```
-
-### Step 5: compare to DP gold standard
-
-Your MC estimate of `V^π` should agree with the DP result from Lesson 02 as episodes → ∞. In practice: 50,000 episodes on 4×4 GridWorld gets you within `~0.1` of the DP answer.
-
-## Pitfalls
-
-- **Infinite episodes.** MC requires episodes to *terminate*. If your policy can loop forever, cap `max_steps` and treat the cap as implicit failure. GridWorld with a random policy routinely times out — that is normal, just make sure you count it correctly.
-- **Variance.** MC uses full returns. On long episodes, variance is huge — one unlucky reward at the end shifts `V(s_0)` by the same amount. TD methods (Lesson 04) cut this by bootstrapping.
-- **State coverage.** Greedy MC on a fresh Q with ties will only ever try one action. You *must* explore (ε-greedy, exploring starts, UCB).
-- **Non-stationary policies.** If `π` changes (as in MC control), old returns are from a different policy. Constant-α MC handles this; sample-average MC does not.
-- **Off-policy importance sampling.** The weights `π(a|s)/μ(a|s)` multiply across a trajectory. Variance explodes with horizon. Cap with per-decision weighted IS or switch to TD.
 
 ## Use It
 
@@ -176,11 +85,6 @@ Given an environment (episodic, with reset+step API) and a policy, output:
 Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to report V^π estimates from fewer than 100 episodes per state for tabular tasks. Flag any policy with zero-variance actions as an exploration risk.
 ```
 
-## Exercises
-
-1. **Easy.** Implement first-visit MC evaluation of the uniform-random policy on 4×4 GridWorld. Run 10,000 episodes. Plot `V(0,0)` as a function of episode count against the DP answer.
-2. **Medium.** Implement ε-greedy MC control with `ε ∈ {0.01, 0.1, 0.3}`. Compare mean return after 20,000 episodes. What does the curve look like? Where does the bias-variance tradeoff live?
-3. **Hard.** Implement *off-policy* MC with importance sampling: collect data under uniform-random policy `μ`, estimate `V^π` for the deterministic optimal policy `π`. Compare plain IS vs per-decision IS vs weighted IS. Which has lowest variance?
 
 ## Key Terms
 

@@ -91,17 +91,6 @@ Running the program against five synthetic use cases shows the range: a single-p
 
 `outputs/skill-erp-crm-use-case-evaluator.md` is a one-page evaluation grid a consultant can fill in during or immediately after a scoping workshop. It covers all four axes, includes the platform-specific flags for SAP, Salesforce, and Dynamics 365, and produces an unambiguous readiness call. Paste it into a Confluence page or project tracker as the formal use-case intake artifact.
 
-## Exercises
-
-1. Run `code/main.py`. Two use cases are Blocked. The Agentforce autonomous case hits three Red axes simultaneously. Change its integration pattern from `autonomous_open` to `autonomous_bounded` in the source and re-run — which axes turn Amber, and does the overall readiness change? What does this tell you about integration pattern scope in discovery workshops?
-
-2. Run `code/main.py` and find the use case "Dynamics 365 + S4HANA cross-vendor spend summarizer," rated Conditional. It has two Amber axes. Write the one-sentence mitigation statement for the compliance axis that you would put into the project risk register, and name the named approver role required before the use case proceeds.
-
-3. A Salesforce Agentforce agent is proposed to autonomously route and close low-complexity service cases, reading Account and Case objects and writing Case Status and Resolution fields. Map it through the four evaluation axes. What is the minimum set of approvers required before this use case enters design?
-
-4. A client's SAP S/4HANA landscape runs in BTP on the Germany West Central region. The proposed use case sends summarized purchase order data to an LLM for spend-category classification. The client contract predates BTP AI Core and references only "Azure West Europe" for data residency. Which axis is Red? Draft the two-sentence finding you would include in the engagement risk log.
-
-5. Review the integration pattern tier table in this lesson. Identify a use case in your current or most recent engagement that was scoped as "Read + Summarize" during discovery but reached design as "Write-back (user-confirmed)" or higher. What changed, and what evaluation steps were skipped?
 
 ## Key Terms
 

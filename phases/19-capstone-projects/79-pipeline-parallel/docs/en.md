@@ -48,32 +48,6 @@ If stage 0 takes 50 ms and stage 1 takes 100 ms, every cycle is gated on stage 1
 
 A pipeline runs M microbatches of size B each. The effective batch size is M*B. The gradient at the end of a pipeline step is the gradient on the combined M*B examples. Bubble fraction depends on M; the optimiser sees M*B. Tuning M means trading bubble (lower with high M) against per-microbatch memory (higher activation memory with high M for GPipe).
 
-## Build It
-
-`code/main.py` implements:
-
-- `PipelineStage`: a small `nn.Module` that holds one stage's parameters and exposes `forward(activation)`.
-- `Pipeline(stages, num_microbatches)`: orchestrates the GPipe schedule on simulated stages using simulated wall-clock per stage.
-- `bubble_fraction(num_stages, num_microbatches)`: closed-form (N-1)/(M+N-1).
-- A 4-stage demo that prints the per-microbatch trace and the measured bubble fraction.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: a stage-by-microbatch Gantt chart and the bubble percentage against the closed-form prediction.
-
-## Production patterns in the wild
-
-Three patterns harden pipeline parallel enough to ship.
-
-**Activation checkpointing pairs with pipeline.** With M microbatches in flight on GPipe, activation memory is M times one microbatch. Activation checkpointing recomputes the forward at backward time, trading compute for memory; the combination is what makes pipeline tractable for long sequences.
-
-**Stage balance is measured, not assumed.** Production teams run a profiling pass that measures actual per-layer compute (FLOPs and wall-clock) on the target hardware, then partition by that measurement. The Megatron-LM `--num-layers-per-stage` flag accepts a list to allow uneven layer counts when stages have different per-layer cost.
-
-**Send-recv schedule must avoid deadlock.** A pipeline that has every stage send before receive deadlocks on the wire. The standard fix is to interleave: even-rank stages send first then recv, odd-rank stages recv first then send. The lesson schedules ranks explicitly so the pattern is visible.
 
 ## Use It
 
@@ -87,13 +61,6 @@ Production patterns:
 
 Lesson 80 stores the per-stage parameter shards in the sharded checkpoint. Lesson 81 composes DDP + ZeRO + pipeline on the end-to-end demo (in spirit; the demo keeps the pipeline simulated for runtime).
 
-## Exercises
-
-1. Implement 1F1B and verify the bubble fraction matches GPipe but activation memory is bounded.
-2. Profile real per-stage time on a deeper model and rebalance stages by measured wall-clock.
-3. Add gradient accumulation across pipeline microbatches and check the gradient equals the gradient of the equivalent full-batch forward.
-4. Pair the pipeline with activation checkpointing and measure the memory drop versus compute cost.
-5. Combine pipeline with DDP (each pipeline rank is replicated across a data-parallel group) and reason through the 2D schedule.
 
 ## Key Terms
 

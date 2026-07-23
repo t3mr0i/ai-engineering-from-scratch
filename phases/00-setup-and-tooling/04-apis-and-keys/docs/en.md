@@ -34,82 +34,6 @@ Every API call has:
 3. A request body (what you want)
 4. A response body (what you get back)
 
-## Build It
-
-### Step 1: Store API keys safely
-
-Never put API keys in code. Use environment variables.
-
-```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
-export OPENAI_API_KEY="sk-..."
-```
-
-Or use a `.env` file (add it to `.gitignore`):
-
-```
-ANTHROPIC_API_KEY=sk-ant-...
-OPENAI_API_KEY=sk-...
-```
-
-### Step 2: First API call (Python)
-
-```python
-import anthropic
-
-client = anthropic.Anthropic()
-
-response = client.messages.create(
-    model="claude-sonnet-4-20250514",
-    max_tokens=256,
-    messages=[{"role": "user", "content": "What is a neural network in one sentence?"}]
-)
-
-print(response.content[0].text)
-```
-
-### Step 3: First API call (TypeScript)
-
-```typescript
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic();
-
-const response = await client.messages.create({
-  model: "claude-sonnet-4-20250514",
-  max_tokens: 256,
-  messages: [{ role: "user", content: "What is a neural network in one sentence?" }],
-});
-
-console.log(response.content[0].text);
-```
-
-### Step 4: Raw HTTP (no SDK)
-
-```python
-import os
-import urllib.request
-import json
-
-url = "https://api.anthropic.com/v1/messages"
-headers = {
-    "Content-Type": "application/json",
-    "x-api-key": os.environ["ANTHROPIC_API_KEY"],
-    "anthropic-version": "2023-06-01",
-}
-body = json.dumps({
-    "model": "claude-sonnet-4-20250514",
-    "max_tokens": 256,
-    "messages": [{"role": "user", "content": "What is a neural network in one sentence?"}],
-}).encode()
-
-req = urllib.request.Request(url, data=body, headers=headers, method="POST")
-with urllib.request.urlopen(req) as resp:
-    result = json.loads(resp.read())
-    print(result["content"][0]["text"])
-```
-
-This is what the SDKs do under the hood. Understanding the raw HTTP call helps when debugging.
 
 ## Use It
 
@@ -128,11 +52,6 @@ You don't need all of them right now. Set them up when the lesson requires it.
 This lesson produces:
 - `outputs/prompt-api-troubleshooter.md` - diagnose common API errors
 
-## Exercises
-
-1. Get an Anthropic API key and make your first API call
-2. Try the raw HTTP version and compare the response format to the SDK version
-3. Intentionally use a wrong API key and read the error message
 
 ## Key Terms
 

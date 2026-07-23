@@ -69,10 +69,22 @@
   --jp-ui-font-color2: #52617c !important; /* --lhg-slate-700 */
   --jp-ui-font-color3: #7a7673 !important; /* --lhg-warm-grey */
 
-  /* Code cells */
+  /* Fonts for casual learners — LHG body sans-serif everywhere except code which stays monospace for clarity */
+  --jp-ui-font-family: var(--font-body), sans-serif !important;
+  --jp-cell-editor-font-family: var(--font-mono), monospace !important;
+  --jp-cell-output-font-family: var(--font-body), sans-serif !important;
+  --jp-markdown-font-family: var(--font-body), sans-serif !important;
+
+  /* Card-like notebook UI bundling for casual users — soft borders, card shadows, rounded cells */
   --jp-cell-editor-background: #f9f8f8 !important; /* --lhg-grey-100 */
   --jp-cell-editor-border-color: #e3e1de !important;
   --jp-cell-editor-active-border-color: var(--jp-brand-color2) !important;
+  --jp-cell-background: var(--lhg-grey-100) !important;
+  --jp-cell-border-color: var(--lhg-grey-300) !important;
+  --jp-cell-radius: var(--radius-md) !important;
+  --jp-cell-shadow: 0 2px 8px rgba(5, 22, 77, 0.06) !important; /* --shadow-sm */
+
+  /* Code cells */
   --jp-cell-inprompt-font-color: #2d5fe4 !important; /* --lhg-blue-500 */
   --jp-cell-outprompt-font-color: #368089 !important; /* --lhg-teal */
 

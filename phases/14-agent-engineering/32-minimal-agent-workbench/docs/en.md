@@ -60,22 +60,6 @@ A task on the board has an id, a goal, an owner (`builder`, `reviewer`, or `huma
 
 Later lessons add scope contracts, feedback runners, verification gates, reviewer checklists, and handoff packets. The three files here are what they all assume.
 
-## Build It
-
-`code/main.py` writes the minimal workbench into an empty repo and demonstrates a single agent turn that:
-
-1. Reads `agent_state.json`.
-2. Pulls the next task from `task_board.json` if state is empty.
-3. Touches a single file inside scope.
-4. Writes back updated state.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The script creates `workdir/` next to itself, lays down the three files, runs one turn, and prints the diff. Re-run it to see how the second turn picks up where the first left off.
 
 ## Use It
 
@@ -101,13 +85,6 @@ The minimum workbench survives contact with real monorepos when three patterns a
 
 `outputs/skill-minimal-workbench.md` generates the three-file workbench for any new repo: an `AGENTS.md` router tuned to the project, an `agent_state.json` with the right keys, and a `task_board.json` seeded with the current backlog.
 
-## Exercises
-
-1. Add a `last_run` timestamp to `agent_state.json`. Refuse to run if the file is older than 24 hours unless an operator confirms.
-2. Add a `priority` field to the task board and change the puller to always pick the highest priority `todo`.
-3. Migrate `task_board.json` to JSON Lines so each task is a line and diffs are clean in version control.
-4. Write a `lint_workbench.py` that fails if `AGENTS.md` is over 80 lines or references a file that does not exist.
-5. Decide which one of the three files would hurt the most to lose. Defend it.
 
 ## Key Terms
 

@@ -91,17 +91,6 @@ No single layer is sufficient. The layers cover different attack classes.
 
 `outputs/skill-classifier-stack-audit.md` audits a deployment's classifier layer (model, taxonomy, input/output rails, dialog rails) and flags gaps.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm the classifier catches the raw malicious input but misses the emoji-smuggled version. Add a normalization step and measure the new hit rate.
-
-2. Read the MLCommons 13-hazard taxonomy and the Llama Guard 4 S1–S14 list. Identify the category in S1–S14 that has no direct mapping in the original 13-hazard set; explain why S14 Code Interpreter Abuse is specifically relevant to Phase 15.
-
-3. Design a NeMo Guardrails dialog rail for a customer-support bot that must never discuss diagnosis. Write it in plain English (Colang is similar). Test it against three phrasings of a diagnosis-seeking question.
-
-4. Read Huang et al. (arXiv:2504.11168). Pick one attack category (emoji smuggling, homoglyph, paraphrase) and propose a mitigation. Name the mitigation's own failure mode.
-
-5. The 72.54% ASR for NeMo Guard Detect on jailbreak benchmarks is measured under adversarial craft. Design an evaluation protocol that measures classifier ASR under casual (non-adversarial) user distribution. What number would you expect, and why does that number matter separately?
 
 ## Key Terms
 

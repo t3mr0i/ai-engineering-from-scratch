@@ -54,34 +54,6 @@ NCCL runs over PCIe and NVLink with hardware-offloaded reductions. On CPU you do
 
 Every primitive lands with a unit test that compares its output against `torch.distributed` initialised with the gloo backend on the same tensor across the same world size. If your ring allreduce diverges from gloo by more than float32 epsilon, the test fails. Verification against a reference implementation is non-negotiable; without it the primitive looks correct until step 10000 of a real training run.
 
-## Build It
-
-`code/main.py` implements:
-
-- `Mesh` class that wires N `multiprocessing.Queue` instances into a ring and exposes `send(dst, tensor)` and `recv(src)` per rank.
-- `ring_allreduce(mesh, rank, world_size, tensor)` running the two-pass algorithm.
-- `broadcast(mesh, rank, world_size, tensor, src)` over a logarithmic tree.
-- `allgather(mesh, rank, world_size, tensor)` using N-1 rotations.
-- `reduce_scatter(mesh, rank, world_size, tensor)` as the first half of allreduce.
-- `_gloo_reference(op, world_size, tensor)` that runs the same input through `torch.distributed` with gloo for byte-equal comparison.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: per-primitive verification table comparing queue-mesh and gloo outputs, followed by a per-rank byte counter that proves the 2T(N-1)/N scaling.
-
-## Production patterns in the wild
-
-Three patterns harden the primitives enough to ship.
-
-**Bucket gradients before allreduce.** A 1B-parameter model has tens of thousands of gradient tensors. One allreduce per tensor pays the latency floor N times. DDP buckets gradients into ~25 MB chunks and issues one allreduce per bucket; the small tensors ride on the back of the big ones. Without bucketing the latency overhead dominates the step.
-
-**Overlap communication with computation.** Backward computes gradients layer by layer in reverse order. The moment the last layer's gradient is ready, kick off its allreduce while the next layer keeps computing. PyTorch DDP wires this with bucket-ready hooks. The overlap halves visible communication time when the network has slack.
-
-**Pick ring or tree by message size, not religion.** NCCL ships a topology detector that picks ring for messages above ~1 MB and tree below. The crossover is bandwidth-versus-latency: above 1 MB, the bandwidth term 2T(N-1)/N dominates and ring wins; below 1 MB, the log2(N) hop count wins. Hard-coding one topology costs throughput on the wrong message size.
 
 ## Use It
 
@@ -95,13 +67,6 @@ Production patterns:
 
 Use the queue-mesh primitives in lessons 77-81. Lesson 77 wires allreduce into DDP. Lesson 78 wires reduce_scatter into ZeRO. Lesson 79 wires broadcast into pipeline activations. Lesson 81 composes all four into the end-to-end demo.
 
-## Exercises
-
-1. Add a tree allreduce variant and switch between ring and tree by message size. Measure the crossover.
-2. Add a `recv_timeout_ms` so a stalled rank surfaces a deadline error instead of hanging forever.
-3. Replace `multiprocessing.Queue` with TCP sockets for the four primitives. Same tests, real wire.
-4. Add a bandwidth instrumentation hook so the per-rank byte counter logs to JSONL.
-5. Compare wall-clock time of ring versus tree on 4 ranks for tensors of size 1KB, 1MB, 16MB. Defend the crossover empirically.
 
 ## Key Terms
 

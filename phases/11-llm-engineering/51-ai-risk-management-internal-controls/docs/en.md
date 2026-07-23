@@ -53,17 +53,6 @@ flowchart LR
 - Business & Strategy Consulting
 - Technology Consulting
 
-## Build It
-
-In the lab you build an AI risk and internal controls planner. It ranks risk scenarios and recommends the next governance step.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/51-ai-risk-management-internal-controls/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

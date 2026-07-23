@@ -97,17 +97,6 @@ No network, no pip, no real user data — the point is to make the decision poli
 
 `outputs/skill-synthetic-test-data-governance.md` is a one-page decision aid: given a test dataset you need to build, it walks through origin control, anonymisation technique selection, leakage check choice, and coverage gate thresholds. Paste it into a project wiki or data-governance review.
 
-## Exercises
-
-1. Run `code/main.py`. What contamination score does the leakage classifier report for the highest-overlap record? What is the verdict threshold at which it would be quarantined?
-
-2. The generator produces a k-anonymity report. Change the `K` constant from 3 to 2 and re-run. Which quasi-identifier combination breaks anonymity most easily at k=2, and why does it matter for GDPR compliance?
-
-3. Look at the coverage report printed by `code/main.py`. The adversarial-example fraction is below the 5% threshold. Add two more adversarial examples to the `SYNTHETIC_RECORDS` list in the script (negation or code-switching), re-run, and confirm the fraction now passes.
-
-4. A colleague generates a 500-record evaluation set using Claude Sonnet 4.6 (the current default) by prompting it with examples from the MMLU benchmark. Name the specific leakage risk, the detection strategy that would catch it, and why exact-match alone is insufficient.
-
-5. Your project uses a public benchmark whose training-corpus overlap is unknown. Describe the three-step check you would run before reporting results on it, and identify which step a model without log-probability access requires a workaround for.
 
 ## Key Terms
 

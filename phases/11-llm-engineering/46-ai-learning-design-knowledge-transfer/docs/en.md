@@ -53,17 +53,6 @@ flowchart LR
 - Leadership
 - Project Management & Agility
 
-## Build It
-
-In the lab you build a learning-design AI planner. It ranks enablement scenarios and recommends the right training form.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/46-ai-learning-design-knowledge-transfer/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

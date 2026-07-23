@@ -69,38 +69,6 @@ The position wise MLP applies the same two layer network to every token independ
 
 They make the gradient path additive across depth, which keeps the gradient norm in scale through twelve layers. They also let each block learn an additive update to the running representation rather than a full replacement. Both effects are why the block scales.
 
-## Build It
-
-`code/main.py` implements:
-
-- `class LayerNorm` with learnable scale and shift, biased eps, applied per token vector.
-- `class MultiHeadAttention` with `num_heads`, `head_dim = d_model // num_heads`, fused QKV projection, registered causal mask, attention and residual dropout.
-- `class FeedForward` with two linear layers, GELU activation, dropout.
-- `class TransformerBlock` with a `pre_ln` flag that toggles between the two variants.
-- A demo that builds a 6 layer pre-LN stack and a 6 layer post-LN stack with identical inputs and prints (a) output shape, (b) gradient norm at the embedding after one backward pass.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: shape check on both stacks, gradient norms side by side. The pre-LN stack's embedding gradient is order of magnitude larger than the post-LN stack at the same learning rate, which is the empirical signal pre-LN trains without warmup.
-
-## Stack
-
-- `torch` for the tensor math, autograd, and `nn.Module` plumbing.
-- No `transformers`, no pretrained weights. The block is implemented from primitives.
-
-## Production patterns in the wild
-
-Three patterns turn the textbook block into something you can ship.
-
-**Fused QKV projection.** Three separate linear layers cost three kernel launches and three matmuls. One linear layer of width `3 * d_model` does the same work in one launch, then splits the output along the last axis. The fused path is faster on every accelerator and matches what reference implementations of GPT-2, LLaMA, and Mistral all ship.
-
-**Registered causal mask buffer.** The mask depends only on the maximum context length. Allocate it once at construction with `register_buffer`, slice the active window per forward pass, and skip the per-call allocation. Forgetting this turns the mask into an allocator hot spot at long context.
-
-**Dropout in two places, not three.** Dropout belongs after the attention softmax (attention dropout) and after the second linear of the MLP (residual dropout). A dropout on the residual itself breaks the additive identity that lets the gradient flow at depth. Some early implementations got this wrong and paid for it with brittle training.
 
 ## Use It
 
@@ -108,12 +76,6 @@ Three patterns turn the textbook block into something you can ship.
 - The pre-LN variant is what every modern open weights LLM uses. The post-LN variant is what the original 2017 attention paper used. Knowing both is enough to read any decoder architecture you will encounter.
 - Swap the GELU for SiLU and you have the LLaMA family activation. Swap the LayerNorm for RMSNorm and you have the LLaMA family normalization. Same skeleton.
 
-## Exercises
-
-1. Add a `bias=False` flag to every linear in the block. Modern open weights LLMs ship without biases on the linear layers. Measure how many parameters you save in a 12 layer 768 dim model.
-2. Replace `nn.LayerNorm` with a hand rolled RMSNorm and verify the output shape is unchanged.
-3. Add a flag that returns the attention weights for the first head as a `(B, T, T)` tensor. Plot the upper triangle to confirm it is zero after softmax.
-4. Build a sanity check that feeds a `(2, 16, 384)` tensor with `H=6` through both variants and asserts the forward outputs are different (for example, `not torch.allclose`) when weights are initialized identically and dropout is set to zero.
 
 ## Key Terms
 

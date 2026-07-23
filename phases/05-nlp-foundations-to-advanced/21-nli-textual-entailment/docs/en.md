@@ -46,67 +46,6 @@ One task, three production uses. This is why every RAG evaluation framework ship
 
 **Zero-shot via NLI.** Given a document and candidate labels, turn each label into a hypothesis ("This text is about sports"). Compute entailment probability for each. Pick the max. This is the mechanism behind Hugging Face's `zero-shot-classification` pipeline.
 
-## Build It
-
-### Step 1: run a pretrained NLI model
-
-```python
-from transformers import pipeline
-
-nli = pipeline("text-classification",
-               model="facebook/bart-large-mnli",
-               top_k=None)  # return all labels; replaces deprecated return_all_scores=True
-
-premise = "The cat is sleeping on the couch."
-hypothesis = "There is a cat in the room."
-
-result = nli({"text": premise, "text_pair": hypothesis})[0]
-print(result)
-# [{'label': 'entailment', 'score': 0.97},
-#  {'label': 'neutral', 'score': 0.02},
-#  {'label': 'contradiction', 'score': 0.01}]
-```
-
-For production NLI, `facebook/bart-large-mnli` and `microsoft/deberta-v3-large-mnli` are the open defaults. DeBERTa-v3 tops leaderboards.
-
-### Step 2: zero-shot classification
-
-```python
-zs = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
-
-text = "The stock market rallied after the central bank cut interest rates."
-labels = ["finance", "sports", "politics", "technology"]
-
-result = zs(text, candidate_labels=labels)
-print(result)
-# {'labels': ['finance', 'politics', 'technology', 'sports'],
-#  'scores': [0.92, 0.05, 0.02, 0.01]}
-```
-
-The template is "This example is about {label}." by default. Customize with `hypothesis_template`. No training data required. No fine-tuning. Works out of the box.
-
-### Step 3: faithfulness check for RAG
-
-```python
-def is_faithful(answer, context, threshold=0.5):
-    result = nli({"text": context, "text_pair": answer})[0]
-    entail = next(s for s in result if s["label"] == "entailment")
-    return entail["score"] > threshold
-```
-
-This is the core of RAGAS faithfulness. Split the generated answer into atomic claims. Check each claim against the retrieved context. Report the fraction that entail.
-
-### Step 4: hand-rolled NLI classifier (conceptual)
-
-See `code/main.py` for a stdlib-only toy: premise and hypothesis are compared via lexical overlap + negation detection. Not competitive with transformer models — but it shows the shape of the task: two texts in, 3-way label out, loss = cross-entropy over `{entail, contradict, neutral}`.
-
-## Pitfalls
-
-- **Hypothesis-only shortcuts.** Models can predict the label from the hypothesis alone at ~60% on SNLI because "not", "nobody", "never" correlate with contradiction. Strong baseline for detecting label leakage.
-- **Lexical overlap heuristic.** The subsequence heuristic ("every subsequence is entailed") passes SNLI but fails HANS/ANLI. Use adversarial benchmarks.
-- **Document-length degradation.** Single-sentence NLI models drop 20+ F1 on document-length premises. Use DocNLI-trained models for long context.
-- **Zero-shot template sensitivity.** "This example is about {label}" vs "{label}" vs "The topic is {label}" can swing accuracy by 10+ points. Tune the template.
-- **Domain mismatch.** MNLI trains on general English. Legal, medical, and scientific text need domain-specific NLI models (e.g., SciNLI, MedNLI).
 
 ## Use It
 
@@ -147,11 +86,6 @@ Given a use case (faithfulness check, zero-shot classification, document-level i
 Refuse to ship zero-shot classification without a 100-example labeled sanity check. Refuse to use a sentence-level NLI model on document-length premises. Flag any claim that NLI solves hallucination — it reduces it; it does not eliminate it.
 ```
 
-## Exercises
-
-1. **Easy.** Run `facebook/bart-large-mnli` on 20 hand-crafted (premise, hypothesis, label) triples covering all three classes. Measure accuracy. Add adversarial "subsequence heuristic" traps ("I did not eat the cake" vs "I ate the cake") and see if it breaks.
-2. **Medium.** Compare the zero-shot template `"This text is about {label}"` against `"The topic is {label}"` and `"{label}"` on 100 AG News headlines. Report accuracy swing.
-3. **Hard.** Build a RAG faithfulness checker: atomic-claim decomposition + NLI per claim. Evaluate on 50 RAG-generated answers with gold context. Measure false-positive and false-negative rates vs hand labels.
 
 ## Key Terms
 

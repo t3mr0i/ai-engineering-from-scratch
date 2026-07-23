@@ -117,19 +117,6 @@ The final demonstration block reproduces the **contract reviewer failure shape**
 
 `outputs/skill-ai-tool-selection-guide.md` is a one-page decision aid: a task classification checklist, tool selection table, verification tier guide, and a data-handling quick reference — formatted to paste into a team wiki or share before an AI tool onboarding session.
 
-## Exercises
-
-1. Run `code/main.py`. Which task in the sample set is routed to internal RAG, and why does it not escalate to a chat assistant? Change one field in that task so it routes differently — what changed?
-
-2. The verification classifier blocks one combination in the sample set. Find it. What data classification made the tool choice incompatible, and what is the correct mitigation?
-
-3. Take one real document from your current project (anonymize if needed). Use a chat assistant to summarize it. Then ask three targeted retrieval questions about specific details. Find one case where the targeted question returns a different or more precise answer than the summary. What does this tell you about how to use summarization for Tier 3 tasks?
-
-4. Write the five-line "AI tool use" section of your team's operating agreement: which tools are approved for which data tiers, who is accountable for the output, and what the minimum verification step is for client-facing use. Post it where your team would actually see it.
-
-5. You receive a 40-page supplier contract in PDF. Walk through the four task-classification questions from the Concept section. Which tool do you use, which verification tier applies, and what is the one follow-up question you must ask the tool after you read its summary?
-
-6. A teammate says "Copilot can summarize contracts for us, let's standardize on it." Write three sentences explaining the failure shape they are most likely to hit, citing the position-bias mechanism, and propose the minimum verification step that prevents it.
 
 ## Consultant field notes
 

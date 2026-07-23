@@ -53,17 +53,6 @@ flowchart LR
 - Corporate Functions
 - Business & Strategy Consulting
 
-## Build It
-
-In the lab you build a value-realization planner. It ranks initiatives and recommends benefits tracking controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/59-ai-value-realization-benefits-tracking/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

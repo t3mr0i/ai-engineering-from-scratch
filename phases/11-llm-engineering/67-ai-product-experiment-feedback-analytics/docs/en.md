@@ -54,17 +54,6 @@ flowchart LR
 - Project Management & Agility
 - Business Consulting
 
-## Build It
-
-In the lab you build a product experiment planner. It ranks AI product ideas and recommends whether to define a hypothesis, prepare a feedback study, or run a controlled experiment.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/67-ai-product-experiment-feedback-analytics/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

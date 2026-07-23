@@ -52,17 +52,6 @@ flowchart LR
 - Leadership
 - Business & Strategy Consulting
 
-## Build It
-
-In the lab you build a finance AI triage planner. It ranks finance scenarios and recommends controls before analysis leaves the team.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/41-ai-for-finance-controlling/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

@@ -82,63 +82,6 @@ Reported results (Microsoft 2024): 5–10% lower perplexity, 1.5–2× longer ef
 | Native Sparse (DeepSeek-V3.2) | O(N · active fraction) | O(N) | within 0.05 ppl | DeepSeek-V3.2, 2025 |
 | Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
-## Build It
-
-See `code/main.py`. We implement a causal mask comparator that shows full, SWA, local+strided, and differential attention side by side on a toy sequence.
-
-### Step 1: full causal mask (baseline)
-
-```python
-def causal_mask(n):
-    return [[0.0 if j <= i else float("-inf") for j in range(n)] for i in range(n)]
-```
-
-Baseline from Lesson 07. Lower triangular; zero weight above the diagonal.
-
-### Step 2: sliding window causal mask
-
-```python
-def swa_mask(n, window):
-    M = [[float("-inf")] * n for _ in range(n)]
-    for i in range(n):
-        lo = max(0, i - window + 1)
-        for j in range(lo, i + 1):
-            M[i][j] = 0.0
-    return M
-```
-
-One parameter — `window`. For `window >= n`, you recover full causal attention. For `window = 1`, each token attends only to itself.
-
-### Step 3: local + strided sparse mask
-
-```python
-def strided_mask(n, window, stride):
-    M = [[float("-inf")] * n for _ in range(n)]
-    for i in range(n):
-        lo = max(0, i - window + 1)
-        for j in range(lo, i + 1):
-            M[i][j] = 0.0
-        for j in range(0, i + 1, stride):
-            M[i][j] = 0.0
-    return M
-```
-
-Dense local window plus every `stride`-th token back to the start of the sequence. Receptive field grows in log steps with additional layers.
-
-### Step 4: differential attention
-
-```python
-def diff_attention(Q1, K1, Q2, K2, V, lam):
-    A1 = softmax_causal(Q1 @ K1.T / sqrt_d)
-    A2 = softmax_causal(Q2 @ K2.T / sqrt_d)
-    return (A1 - lam * A2) @ V
-```
-
-Two attention passes, subtract with a learned mixing coefficient. In the code we compare the attention-sink heatmap of single vs differential and watch the sink collapse.
-
-### Step 5: KV cache sizes
-
-Print the cache size per layer at `N = 131072` for each variant. SWA and sparse variants drop by 10–100×. Differential doubles. Pay your memory bill consciously.
 
 ## Use It
 
@@ -176,12 +119,6 @@ This compiles to a custom Triton kernel. Within 10% of FlashAttention-3 speed fo
 
 See `outputs/skill-attention-variant-picker.md`. The skill picks an attention topology for a new model given target context length, retrieval demands, and training/inference compute profile.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Verify SWA at `window=4` zeroes everything outside the last 4 tokens per row. Verify `window=n` reproduces full causal attention bit-identically.
-2. **Medium.** Implement causal SWA with `window=1024` on top of the Lesson 07 capstone. Train for 1,000 steps on tinyshakespeare. How much does val loss regress vs full attention? How much does peak memory drop?
-3. **Hard.** Implement a Gemma-3-style 5:1 layer mix (5 SWA, 1 global) in the capstone model. Compare loss, memory, and generation quality against pure-SWA and pure-global baselines at matched parameters.
-4. **Hard.** Implement differential attention with a learned `λ` per head. Train on a synthetic retrieval task (one needle, 2,000 distractors). Measure retrieval accuracy vs a single-attention baseline at matched parameters.
 
 ## Key Terms
 

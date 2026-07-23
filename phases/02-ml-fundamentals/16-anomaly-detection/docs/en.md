@@ -227,103 +227,6 @@ In practice, anomaly detection follows this workflow:
 
 The pipeline is never "done." Data distributions shift, new anomaly types emerge, and thresholds need adjustment. Treat anomaly detection as a living system, not a one-time model.
 
-## Build It
-
-The code in `code/anomaly_detection.py` implements Z-score, IQR, and Isolation Forest from scratch.
-
-### Z-Score Detector
-
-```python
-def zscore_detect(X, threshold=3.0):
-    mean = X.mean(axis=0)
-    std = X.std(axis=0)
-    std[std == 0] = 1.0
-    z = np.abs((X - mean) / std)
-    return z.max(axis=1) > threshold
-```
-
-Simple and vectorized. Flags a point if any feature exceeds the threshold.
-
-### IQR Detector
-
-```python
-def iqr_detect(X, factor=1.5):
-    q1 = np.percentile(X, 25, axis=0)
-    q3 = np.percentile(X, 75, axis=0)
-    iqr = q3 - q1
-    iqr[iqr == 0] = 1.0
-    lower = q1 - factor * iqr
-    upper = q3 + factor * iqr
-    outside = (X < lower) | (X > upper)
-    return outside.any(axis=1)
-```
-
-### Isolation Forest from Scratch
-
-The from-scratch implementation builds isolation trees that randomly partition the feature space:
-
-```python
-class IsolationTree:
-    def __init__(self, max_depth):
-        self.max_depth = max_depth
-
-    def fit(self, X, depth=0):
-        n, p = X.shape
-        if depth >= self.max_depth or n <= 1:
-            self.is_leaf = True
-            self.size = n
-            return self
-        self.is_leaf = False
-        self.feature = np.random.randint(p)
-        x_min = X[:, self.feature].min()
-        x_max = X[:, self.feature].max()
-        if x_min == x_max:
-            self.is_leaf = True
-            self.size = n
-            return self
-        self.threshold = np.random.uniform(x_min, x_max)
-        left_mask = X[:, self.feature] < self.threshold
-        self.left = IsolationTree(self.max_depth).fit(X[left_mask], depth + 1)
-        self.right = IsolationTree(self.max_depth).fit(X[~left_mask], depth + 1)
-        return self
-```
-
-The path length to isolate a point determines its anomaly score. Shorter paths mean more anomalous.
-
-The `IsolationForest` class wraps multiple trees:
-
-```python
-class IsolationForest:
-    def __init__(self, n_estimators=100, max_samples=256, seed=42):
-        self.n_estimators = n_estimators
-        self.max_samples = max_samples
-
-    def fit(self, X):
-        sample_size = min(self.max_samples, X.shape[0])
-        max_depth = int(np.ceil(np.log2(sample_size)))
-        for _ in range(self.n_estimators):
-            idx = rng.choice(X.shape[0], size=sample_size, replace=False)
-            tree = IsolationTree(max_depth=max_depth)
-            tree.fit(X[idx])
-            self.trees.append(tree)
-
-    def anomaly_score(self, X):
-        avg_path = average path length across all trees
-        scores = 2.0 ** (-avg_path / c(max_samples))
-        return scores
-```
-
-The normalization factor `c(n)` is the expected path length of an unsuccessful search in a binary search tree with n elements. It equals `2 * H(n-1) - 2*(n-1)/n` where `H` is the harmonic number. This normalization ensures scores are comparable across datasets of different sizes.
-
-### Demo Scenarios
-
-The code generates multiple test scenarios:
-
-1. **Single cluster with outliers.** A 2D Gaussian cluster with anomalies injected far from the center. All methods should work here.
-2. **Multimodal data.** Three clusters of different sizes and densities. Points between clusters are anomalous. Z-score struggles because the per-feature ranges are wide.
-3. **High-dimensional data.** 50 features, but anomalies differ in only 5 of them. Tests whether methods can find anomalies in a subset of features.
-
-Each demo compares all methods using precision, recall, F1, and Precision@k.
 
 ## Use It
 
@@ -423,17 +326,6 @@ For real-time anomaly detection in production:
 3. **Score distribution monitoring.** Track the distribution of anomaly scores over time. If the median score drifts upward, either the data is changing or the model is stale.
 4. **Explainability.** When you flag an anomaly, say why. Z-score: "Feature X is 4.2 standard deviations above normal." Isolation Forest: "This point was isolated in 3.1 splits on average (normal points take 8.5)."
 
-## Exercises
-
-1. **Threshold tuning.** Run the Z-score detector with thresholds from 1.0 to 5.0 in steps of 0.5. Plot precision and recall at each threshold. Where is the sweet spot for your data?
-
-2. **Multivariate anomalies.** Create 2D data where each feature individually looks normal, but the combination is anomalous (e.g., points far from the main cluster diagonal). Show that Z-score per feature misses these but Isolation Forest catches them.
-
-3. **LOF from scratch.** Implement Local Outlier Factor using k-nearest neighbors. Compare against sklearn's LocalOutlierFactor on the same data. Use k=10 and k=50 -- how does the choice of k affect results?
-
-4. **Streaming anomaly detection.** Modify the Z-score detector to work in a streaming setting: update the running mean and variance as new points arrive (Welford's online algorithm). Compare to batch Z-score on the same data.
-
-5. **Real-world evaluation.** Take a dataset with known anomalies (credit card fraud from Kaggle, for example). Evaluate all four methods using precision@100, precision@500, and AUPRC. Which method works best? Why?
 
 ## Key Terms
 

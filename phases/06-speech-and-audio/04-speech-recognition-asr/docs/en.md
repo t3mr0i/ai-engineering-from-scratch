@@ -48,87 +48,6 @@ Advantages: highest quality on offline ASR, easy to train with standard seq2seq 
 
 All these are encoder-decoder or RNN-T based. Pure CTC systems (wav2vec 2.0) sit around 1.8–2.1% on test-clean.
 
-## Build It
-
-### Step 1: greedy CTC decode
-
-```python
-def ctc_greedy(frame_logits, blank=0, vocab=None):
-    # frame_logits: list of per-frame probability vectors
-    preds = [max(range(len(p)), key=lambda i: p[i]) for p in frame_logits]
-    out = []
-    prev = -1
-    for p in preds:
-        if p != prev and p != blank:
-            out.append(p)
-        prev = p
-    return "".join(vocab[i] for i in out) if vocab else out
-```
-
-Two rules: collapse consecutive repeats, drop blanks. Example: `a a _ _ a b b _ c` → `a a b c`.
-
-### Step 2: beam-search CTC
-
-```python
-def ctc_beam(frame_logits, beam=8, blank=0):
-    import math
-    beams = [([], 0.0)]  # (tokens, log_prob)
-    for p in frame_logits:
-        log_p = [math.log(max(pi, 1e-10)) for pi in p]
-        candidates = []
-        for seq, lp in beams:
-            for t, lpt in enumerate(log_p):
-                new = seq[:] if t == blank else (seq + [t] if not seq or seq[-1] != t else seq)
-                candidates.append((new, lp + lpt))
-        candidates.sort(key=lambda x: -x[1])
-        beams = candidates[:beam]
-    return beams[0][0]
-```
-
-Production uses prefix tree beam search with LM fusion; this is the conceptual skeleton.
-
-### Step 3: WER
-
-```python
-def wer(ref, hyp):
-    r, h = ref.split(), hyp.split()
-    dp = [[0] * (len(h) + 1) for _ in range(len(r) + 1)]
-    for i in range(len(r) + 1):
-        dp[i][0] = i
-    for j in range(len(h) + 1):
-        dp[0][j] = j
-    for i in range(1, len(r) + 1):
-        for j in range(1, len(h) + 1):
-            cost = 0 if r[i - 1] == h[j - 1] else 1
-            dp[i][j] = min(
-                dp[i - 1][j] + 1,
-                dp[i][j - 1] + 1,
-                dp[i - 1][j - 1] + cost,
-            )
-    return dp[len(r)][len(h)] / max(1, len(r))
-```
-
-### Step 4: inference against Whisper
-
-```python
-import whisper
-model = whisper.load_model("large-v3-turbo")
-result = model.transcribe("clip.wav")
-print(result["text"])
-```
-
-One-liner for the strongest general ASR in 2026. Runs on a 24 GB GPU at ~20× realtime.
-
-### Step 5: streaming with Parakeet or wav2vec 2.0
-
-```python
-from transformers import pipeline
-asr = pipeline("automatic-speech-recognition", model="nvidia/parakeet-tdt-1.1b")
-for chunk in streaming_audio():
-    print(asr(chunk, return_timestamps=True))
-```
-
-Streaming ASR needs chunked encoder attention and carryover state; use a library that supports it (NeMo for Parakeet, `transformers` pipeline with `chunk_length_s`).
 
 ## Use It
 
@@ -154,11 +73,6 @@ The 2026 stack:
 
 Save as `outputs/skill-asr-picker.md`. Pick model, decoding strategy, chunking, and LM fusion for a given deployment target.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. It greedily decodes a hand-crafted CTC output and computes WER against a reference.
-2. **Medium.** Implement the prefix-tree beam search in Step 2 properly (account for the blank merge rule). Compare with greedy on a 10-example synthetic dataset.
-3. **Hard.** Use `whisper-large-v3-turbo` on [LibriSpeech test-clean](https://www.openslr.org/12). Compute WER on the first 100 utterances. Compare with published numbers.
 
 ## Key Terms
 

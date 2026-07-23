@@ -91,17 +91,6 @@ No code. Read the EU AI Act primary sources: the regulation text, the GPAI Code 
 
 This lesson produces `outputs/skill-regulatory-map.md`. Given a deployment description, it maps the applicable jurisdictions, the tier classifications in each, the per-jurisdiction obligations, and the deadline structure.
 
-## Exercises
-
-1. Read the EU AI Act (regulation 2024/1689) and the GPAI Code of Practice (10 July 2025). Identify three obligations that apply to every GPAI provider and three that apply only to systemic-risk GPAI.
-
-2. A deployment is made by a US company, runs on EU infrastructure, and serves Korean users. Which three jurisdictions' rules apply, and which rule binds on each substantive question?
-
-3. The UK AI Security Institute's rename narrows scope. Argue for and against the narrower framing. Identify the policy assumption each position depends on.
-
-4. CAISI's "pro-growth" framing is a departure from the 2022-2024 AI safety institute model. Identify two measurable policy shifts that would follow from this framing.
-
-5. Korea's AI Framework Act requires local representatives for foreign providers. Describe the operational implications for a Bay Area company serving Korean users.
 
 ## Key Terms
 

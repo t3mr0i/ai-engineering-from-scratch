@@ -193,20 +193,6 @@ Most frontier teams converged on the same skeleton.
 
 The numbers change every six months. The skeleton does not.
 
-## Build It
-
-The lesson's code is an orchestrator and a manifest checker, not twelve training scripts. Each stage is simulated with a placeholder that produces an output artifact with the correct shape and hash. Running the orchestrator end-to-end proves the pipeline's plumbing works before you burn GPU money on the real stages.
-
-See `code/main.py` for the full implementation. The key pieces:
-
-- `Manifest` dataclass: pipeline version, seed, git commit, stages, gates.
-- `Stage` dataclass: name, type, inputs (hashes), output (hash), wall clock, cost.
-- `Orchestrator.run()`: resolves DAG, dispatches stages, verifies hashes, updates manifest.
-- `EvalGate.check()`: reads thresholds, compares against latest eval report, returns pass/fail.
-- `ArtifactStore` (in-memory stub): put/get by hash, simulates S3.
-- `CostTracker`: per-stage and cumulative, halts when cap exceeded.
-
-The pipeline in `main.py` runs twelve placeholder stages, produces a manifest, and exercises a failing eval gate to show what a held run looks like. Swap each placeholder for the real training script from the corresponding lesson and you have the skeleton a real frontier pipeline uses.
 
 ## Use It
 
@@ -226,17 +212,6 @@ The output of `gate` is either `SHIP` or `HOLD: <reason>`. A held run is not a f
 
 This lesson produces `outputs/skill-llm-pipeline-reviewer.md`. Feed it a proposed pipeline manifest and it checks all the contracts: stage typing, hash chain, gates, rollback plan, cost estimate. It refuses to approve a manifest with a missing eval gate, an unbounded KL budget, or a run that mixes eval and training data.
 
-## Exercises
-
-1. Extend the orchestrator to support parallel execution of stages 07 and 08. Use the stdlib `concurrent.futures` module. Confirm the final manifest records both stages' outputs and that stage 09's input hash is a deterministic combination of both.
-
-2. Add a "contamination check" gate. Given the eval dataset hash and the training dataset shards, compute the overlap (exact string match or 13-gram match). The gate fails if overlap exceeds 0.1%. Feed it a contaminated training set and confirm the gate holds the run.
-
-3. Implement a cost estimator from first principles. For stage 04 (pre-training), estimate FLOPs as 6 x params x tokens, assume 40% MFU (model FLOPs utilization) on H100 at 989 TFLOPs BF16, at $2.50/GPU-hour. Report the estimate for a 7B model trained on 2T tokens. Compare to published Llama 2 numbers.
-
-4. Build a partial rollback. Simulate a failure at stage 09 (CAI), then re-run stages 09 through 12 while leaving 01-08 cached. The orchestrator should detect the cached artifacts by hash and skip them. Measure wall-clock saved versus full re-run.
-
-5. Add observability. Emit OpenTelemetry spans for each stage, with attributes for params, tokens seen, loss, and cost. Pipe the spans to a local collector. The point is not dashboards; the point is that every stage's health is traceable from a single trace ID.
 
 ## Key Terms
 

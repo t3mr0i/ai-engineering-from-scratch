@@ -97,24 +97,6 @@ The Sibyl framework (cited in Minsky-LLM literature) formalizes a "jury" — a s
 - Rounds are unbounded. Conformity wins every time.
 - The task is simple. A single agent with self-consistency at N=5 is cheaper and as accurate.
 
-## Build It
-
-`code/main.py` implements:
-
-- `run_star(agents, hub, question)` — hub polls each worker, aggregates.
-- `run_chain(agents, question)` — sequential refinement.
-- `run_tree(root, children, question)` — hierarchical with depth-2 aggregation.
-- `run_graph(agents, question, rounds)` — all-to-all debate, bounded rounds.
-- A scripted heterogeneity dial: each agent has an `error_bias` indicating its systematic wrongness.
-- A measurement harness that runs each topology at N=3, 5, 7 and reports (accuracy, total_tokens, wallclock_simulated).
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: a table of topology × N → (accuracy, tokens, latency). Graph wins at N=3-5 on the research-style tasks; star wins on the fast-factual tasks; graph at N=7 shows the coordination tax (latency inflates faster than accuracy).
 
 ## Use It
 
@@ -130,13 +112,6 @@ For any ensemble:
 - Always log the minority cluster. When a minority is persistently right, you have a diversity signal.
 - Benchmark wall-clock and tokens alongside accuracy. "Better accuracy at 10x cost" is a business decision.
 
-## Exercises
-
-1. Run `code/main.py`. Plot the coordination-tax curve for graph topology: accuracy vs N, tokens vs N. At what N does the curve inflect?
-2. Implement A-HMAD: three agents with deliberately different biases. How does the all-same-bias baseline compare to A-HMAD on the monoculture attack from Lesson 14?
-3. Add a "judge" role to the graph topology that does not vote, only scores the final consensus. Does this change the emergent conformity behavior?
-4. Read the AgentVerse paper (ICLR 2024). Identify which emergent behavior your implementation exhibits most strongly. Can you elicit the opposite behavior by a prompt change?
-5. Read MultiAgentBench (arXiv:2503.01935) Section 4 (topology experiments). Reproduce the "graph-wins-research" result on one task from the paper using your harness.
 
 ## Key Terms
 

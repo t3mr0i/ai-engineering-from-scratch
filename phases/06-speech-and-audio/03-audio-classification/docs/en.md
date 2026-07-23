@@ -49,89 +49,6 @@ ESC-50: 50 classes, 40 clips each — balanced, easy. UrbanSound8K: 10 classes, 
 | AudioSet mAP | 0.485 (AST) | 0.548 (BEATs-iter3) | HEAR leaderboard 2026 |
 | Speech Commands v2 | 98% (CNN) | 99.0% (Audio-MAE) | HEAR v2 results |
 
-## Build It
-
-### Step 1: featurize
-
-```python
-def featurize_mfcc(signal, sr, n_mfcc=13, n_mels=40, frame_len=400, hop=160):
-    mag = stft_magnitude(signal, frame_len, hop)
-    fb = mel_filterbank(n_mels, frame_len, sr)
-    mels = apply_filterbank(mag, fb)
-    log = log_transform(mels)
-    return [dct_ii(frame, n_mfcc) for frame in log]
-```
-
-### Step 2: fixed-length summary
-
-```python
-def summarize(mfcc_frames):
-    n = len(mfcc_frames[0])
-    mean = [sum(f[i] for f in mfcc_frames) / len(mfcc_frames) for i in range(n)]
-    var = [
-        sum((f[i] - mean[i]) ** 2 for f in mfcc_frames) / len(mfcc_frames) for i in range(n)
-    ]
-    return mean + var
-```
-
-Simple but strong: mean + variance across time gives a 26-dim fixed embedding for a 13-coef MFCC. Runs instantly. Beat state-of-the-art NN baselines on ESC-50 as recently as 2017.
-
-### Step 3: k-NN
-
-```python
-def cosine(a, b):
-    dot = sum(x * y for x, y in zip(a, b))
-    na = math.sqrt(sum(x * x for x in a)) or 1e-12
-    nb = math.sqrt(sum(x * x for x in b)) or 1e-12
-    return dot / (na * nb)
-
-def knn_classify(q, bank, labels, k=5):
-    sims = sorted(range(len(bank)), key=lambda i: -cosine(q, bank[i]))[:k]
-    votes = Counter(labels[i] for i in sims)
-    return votes.most_common(1)[0][0]
-```
-
-### Step 4: upgrade to CNN on log-mels
-
-In PyTorch:
-
-```python
-import torch.nn as nn
-
-class AudioCNN(nn.Module):
-    def __init__(self, n_mels=80, n_classes=50):
-        super().__init__()
-        self.body = nn.Sequential(
-            nn.Conv2d(1, 32, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
-            nn.Conv2d(32, 64, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
-            nn.Conv2d(64, 128, 3, padding=1), nn.ReLU(),
-            nn.AdaptiveAvgPool2d(1),
-        )
-        self.head = nn.Linear(128, n_classes)
-
-    def forward(self, x):  # x: (B, 1, T, n_mels)
-        return self.head(self.body(x).flatten(1))
-```
-
-3M parameters. Trains in ~10 min on ESC-50 with a single RTX 4090. 80%+ accuracy.
-
-### Step 5: the 2026 default — fine-tune BEATs
-
-```python
-from transformers import ASTFeatureExtractor, ASTForAudioClassification
-
-ext = ASTFeatureExtractor.from_pretrained("MIT/ast-finetuned-audioset-10-10-0.4593")
-model = ASTForAudioClassification.from_pretrained(
-    "MIT/ast-finetuned-audioset-10-10-0.4593",
-    num_labels=50,
-    ignore_mismatched_sizes=True,
-)
-
-inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
-logits = model(**inputs).logits
-```
-
-For BEATs, use `microsoft/BEATs-base` via the `beats` library; the transformers API is the same shape.
 
 ## Use It
 
@@ -152,11 +69,6 @@ Decision rule: **start with a frozen backbone, not a fresh model**. Fine-tuning 
 
 Save as `outputs/skill-classifier-designer.md`. Pick architecture, augmentations, class-balance strategy, and eval metric for a given audio classification task.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. It trains the k-NN MFCC baseline on a 4-class synthetic dataset (pure tones at different pitches). Report confusion matrix.
-2. **Medium.** Replace `summarize` with [mean, var, skew, kurtosis]. Does 4-moment pooling beat mean+var on the same synthetic dataset?
-3. **Hard.** Using `torchaudio`, train a 2D CNN on ESC-50 fold 1. Report 5-fold cross-validation accuracy. Add SpecAugment (time mask = 20, freq mask = 10) and report the delta.
 
 ## Key Terms
 

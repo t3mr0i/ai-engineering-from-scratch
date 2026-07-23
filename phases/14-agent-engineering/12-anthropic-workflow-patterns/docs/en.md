@@ -59,23 +59,6 @@ Foundation for all five patterns: one LLM with three capabilities wired in — s
 
 "Effective context engineering for AI agents" (Anthropic 2025) formalizes the adjacent discipline: the 200k window is a budget, not a container. What to include, when to compact, when to let context grow. Covered in detail in Phase 14 lesson on context compression (Phase 14 earlier lesson 06 in this curriculum before the renumber).
 
-## Build It
-
-`code/main.py` implements all five workflow patterns against a `ScriptedLLM`:
-
-- `prompt_chain(input, steps)` — sequential.
-- `route(input, classifier, handlers)` — classification + dispatch.
-- `parallel_vote(prompt, n, aggregator)` — N runs, aggregate.
-- `orchestrator_workers(task, workers)` — orchestrator picks workers.
-- `evaluator_optimizer(task, proposer, evaluator, max_iter)` — loop until pass.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Each pattern prints its trace. Total lines of code per pattern is ~10-15; the cost of a framework is measured in thousands.
 
 ## Use It
 
@@ -87,13 +70,6 @@ Each pattern prints its trace. Total lines of code per pattern is ~10-15; the co
 
 `outputs/skill-workflow-picker.md` picks the right pattern for a given task description, including the decision rationale and the refactor path to an agent if workflows fall short.
 
-## Exercises
-
-1. Implement routing with a confidence threshold. Below threshold -> escalate to human. Where does the threshold land for a tier-1 support use case?
-2. Add a timeout to `parallel_vote`. What happens when one call hangs? How do you aggregate with missing votes?
-3. Turn `evaluator_optimizer` into a bandit: keep the top-2 outputs across iterations so a late good result doesn't get overwritten by a late bad one.
-4. Combine prompt chaining with routing: a router picks one of three chains. Measure token cost vs a single big-prompt alternative.
-5. Pick one of your production features. Draw the workflow graph. Count steps. Would an agent actually be better here?
 
 ## Key Terms
 

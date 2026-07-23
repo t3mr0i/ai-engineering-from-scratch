@@ -70,77 +70,6 @@ From AudioMarkBench: "under pitch shift, all watermarks show Bit Recovery Accura
 
 Not an ML technique — a manifest format. Audio files carry cryptographically signed metadata about creation tool, author, date. Audobox / Seamless use it. Good for provenance; does nothing if a bad actor re-encodes and strips metadata.
 
-## Build It
-
-### Step 1: a simple spectral-feature detector (toy)
-
-```python
-def spectral_rolloff(spec, percentile=0.85):
-    cum = 0
-    total = sum(spec)
-    if total == 0:
-        return 0
-    threshold = total * percentile
-    for k, v in enumerate(spec):
-        cum += v
-        if cum >= threshold:
-            return k
-    return len(spec) - 1
-
-def is_suspicious(audio):
-    spec = magnitude_spectrum(audio)
-    rolloff = spectral_rolloff(spec)
-    return rolloff / len(spec) > 0.92
-```
-
-Synthetic speech often has unusually flat high-frequency energy. Production detectors use AASIST, not this. But the intuition holds.
-
-### Step 2: AudioSeal embed + detect
-
-```python
-from audioseal import AudioSeal
-import torch
-
-generator = AudioSeal.load_generator("audioseal_wm_16bits")
-detector = AudioSeal.load_detector("audioseal_detector_16bits")
-
-audio = load_wav("generated.wav", sr=16000)[None, None, :]
-payload = torch.tensor([[1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0]])
-watermark = generator.get_watermark(audio, sample_rate=16000, message=payload)
-watermarked = audio + watermark
-
-result, decoded_payload = detector.detect_watermark(watermarked, sample_rate=16000)
-# result: float in [0, 1] — probability of watermark presence
-# decoded_payload: 16 bits; match against embedded payload
-```
-
-### Step 3: evaluation — EER
-
-```python
-def eer(real_scores, fake_scores):
-    thresholds = sorted(set(real_scores + fake_scores))
-    best = (1.0, 0.0)
-    for t in thresholds:
-        far = sum(1 for s in fake_scores if s >= t) / len(fake_scores)
-        frr = sum(1 for s in real_scores if s < t) / len(real_scores)
-        if abs(far - frr) < best[0]:
-            best = (abs(far - frr), (far + frr) / 2)
-    return best[1]
-```
-
-### Step 4: the production integration
-
-```python
-def safe_tts(text, voice, clone_reference=None):
-    if clone_reference is not None:
-        verify_consent(user_id, clone_reference)
-    audio = tts_model.synthesize(text, voice)
-    audio_with_wm = audioseal_embed(audio, payload=build_payload(user_id, model_id))
-    manifest = c2pa_sign(audio_with_wm, user_id, timestamp=now())
-    return audio_with_wm, manifest
-```
-
-Every generation ships: (1) watermark, (2) signed manifest, (3) retention-policy-compliant audit log.
 
 ## Use It
 
@@ -164,11 +93,6 @@ Every generation ships: (1) watermark, (2) signed manifest, (3) retention-policy
 
 Save as `outputs/skill-spoof-defender.md`. Pick detection model, watermark, provenance manifest, and operational playbook for a voice-gen deployment.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Toy detector + toy watermark embed/detect on synthetic audio.
-2. **Medium.** Install `audioseal`, embed a 16-bit payload in a TTS output, re-decode. Corrupt the audio with noise and measure Bit Recovery Accuracy.
-3. **Hard.** Fine-tune a RawNet2 or AASIST on ASVspoof 2019 LA. Measure EER. Test on a held-out set of F5-TTS-generated clips — see how OOD detection degrades.
 
 ## Key Terms
 

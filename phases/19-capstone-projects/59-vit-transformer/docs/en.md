@@ -75,24 +75,6 @@ Vision Transformers are encoder-only and bidirectional: token `i` may attend to 
 
 The CLS token starts as a learned parameter, has no patch content of its own, and accumulates information through attention across every block. By the final layer, the CLS row is a vector summary of the whole image; downstream heads project this single vector into class logits, contrastive embeddings, or cross-attention keys for a text decoder.
 
-## Build It
-
-`code/main.py` implements:
-
-- `MultiHeadSelfAttention`, with `qkv` and output projections, the scaled-dot-product attention math, and shape assertions.
-- `FeedForward`, the 4x-expansion GELU MLP.
-- `Block`, a pre-LN block composing attention and feed-forward sub-layers with residuals.
-- `ViT`, a stack of 12 blocks with a final LayerNorm.
-- `VisionEncoder`, which wires `VisionFrontEnd` from lesson 58 to the `ViT` stack and exposes a `forward()` returning the contextual sequence and the pooled CLS vector.
-- A demo that runs a synthesized 224x224 fixture image through the full encoder and prints input shape, output shape, parameter count, and the CLS norm at every other layer.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: the fixture is encoded to a `(1, 197, 768)` tensor. The CLS norm drifts upward as the layers compose, then stabilizes at the final LayerNorm. Total parameters report at about 86M.
 
 ## Use It
 
@@ -121,17 +103,6 @@ Run them:
 python3 -m unittest code/test_main.py
 ```
 
-## Exercises
-
-1. Add register tokens (4 learned vectors prepended after CLS) and rerun. Compare attention map smoothness via the entropy of the softmax distribution on the last layer.
-
-2. Swap pre-LN for post-LN and train for one epoch on a synthetic shape classifier. Observe which one trains stably without LR warm-up.
-
-3. Implement causal masking as an `attn_mask` argument so the same block can be reused as a decoder block. The mask shape is `(seq, seq)`, lower-triangular.
-
-4. Profile a forward pass at batch sizes 1, 8, 64 with `torch.profiler`. The MLP layer dominates wall time, not attention.
-
-5. Replace one attention head's q-k-v projections with a low-rank LoRA adapter, freeze the rest, and verify the gradient only flows where you expect.
 
 ## Key Terms
 

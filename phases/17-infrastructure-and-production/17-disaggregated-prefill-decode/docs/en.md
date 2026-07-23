@@ -113,13 +113,6 @@ Benchmark numbers drift — NVIDIA and the inference stack post updated results 
 
 This lesson produces `outputs/skill-disaggregation-decider.md`. Given workload and cluster, decides whether to disaggregate.
 
-## Exercises
-
-1. Run `code/main.py`. At what prompt length does disaggregation beat colocation?
-2. Design the prefill pool and decode pool for a RAG service with P99 prefix length 8K, output 300.
-3. Dynamo vs llm-d: pick one for a pure-Kubernetes shop with no Python runtime preference.
-4. Compute KV transfer cost: 4K prefill on 70B FP8 = ~500 MB KV. At RDMA 100 GB/s, transfer = 5 ms. At TCP 10 GB/s = 50 ms. Which matters for your SLA?
-5. MoE expert routing changes KV access patterns. How does disaggregation behave with MoE that activates different experts per token?
 
 ## Key Terms
 

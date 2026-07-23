@@ -114,47 +114,6 @@ If `a, b` are competing first-token candidates and `c, d, e, f` are second-token
 
 Production shops typically report 2-3× wall-clock speedup on chat, 3-5× on code generation, and near-zero on creative writing.
 
-## Build It
-
-`code/main.py`:
-
-- A reference `speculative_decode(target, draft, prompt, K, temperature)` that implements the exact rejection rule and verifies it preserves the target's distribution (empirical KL < 0.01 vs plain target sampling).
-- An EAGLE-style tree drafter that builds a depth-K tree with top-p branching.
-- A tree attention mask builder that produces the right causal pattern for a verifier.
-- An acceptance-rate harness that runs both on a tiny LM (distill one GPT-2-small from a GPT-2-medium target).
-
-```python
-def speculative_step(p_target, q_draft, K, temperature=1.0):
-    """One round of speculative decoding. Returns list of accepted tokens."""
-    # 1. Draft K tokens
-    draft_tokens = []
-    q_probs = []
-    state = draft_state_init()
-    for _ in range(K):
-        probs = softmax(q_draft(state) / temperature)
-        t = np.random.choice(len(probs), p=probs)
-        draft_tokens.append(t)
-        q_probs.append(probs[t])
-        state = draft_step(state, t)
-
-    # 2. Target computes p at every drafted position + 1 extra
-    p_probs_all = target_forward_batched(p_target, draft_tokens, temperature)
-
-    # 3. Accept/reject left-to-right
-    accepted = []
-    for k, tok in enumerate(draft_tokens):
-        r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
-            accepted.append(tok)
-        else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
-            residual /= residual.sum()
-            accepted.append(np.random.choice(len(residual), p=residual))
-            return accepted
-    # 4. All K accepted → sample bonus token from target
-    accepted.append(np.random.choice(len(p_probs_all[-1]), p=p_probs_all[-1]))
-    return accepted
-```
 
 ## Use It
 
@@ -167,17 +126,6 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 This lesson produces `outputs/skill-speculative-tuning.md` — a skill that profiles a target model's workload and chooses: draft model, K (draft length), tree width, temperature, and when to fall back to plain decode.
 
-## Exercises
-
-1. Implement the exact rejection rule and empirically verify it. Run 10K samples via `speculative_decode` and via plain target sampling; compute TV distance between the two output distributions. Should be < 0.01.
-
-2. Compute the speedup formula. Given fixed `α` and `K`, plot expected tokens per target-forward. Find the optimal K for α ∈ {0.5, 0.7, 0.9}.
-
-3. Train a tiny draft. Take a 124M GPT-2 target and distill a 30M GPT-2 draft on 100M tokens with KL loss. Measure `α` on held-out text. Expected: 0.6-0.7.
-
-4. Implement EAGLE-style tree drafting. Instead of a chain, have the draft output top-3 branches at each depth. Build the tree attention mask. Verify the target accepts the longest correct branch.
-
-5. Measure failure modes. Run speculative decode at temperature=1.5 (high stochasticity). Show α collapses and the algorithm is slower than plain decode due to draft overhead.
 
 ## Key Terms
 

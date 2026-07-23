@@ -107,17 +107,6 @@ The gap between a demo and a production system is five engineering disciplines:
 
 `outputs/skill-agentic-task-design.md` is a one-page decision aid for designing or reviewing an agentic task: a decomposition-pattern selector, a blast-radius table with recommended gates, a tool-design checklist, and a pre-deployment verification checklist. Paste it into a design review or an agent-task specification.
 
-## Exercises
-
-1. Run `code/main.py`. Which task in the sample set is routed to the reflection loop pattern? What two signals drove that routing decision?
-
-2. Run `code/main.py` and find the step where the state machine triggers a HITL gate. Change the blast radius of that action in the sample data so it routes to auto-approve instead. What is the one-line engineering justification for that change, and when would it be irresponsible?
-
-3. A colleague hands you an agent that "works in demo" but fails in production. The symptom: it occasionally writes an empty string to a config file it was asked to update. Using the concepts from this lesson, name the most probable root cause (one sentence) and the grounding pattern that would prevent it.
-
-4. Design the tool list for a "PR review assistant" agent that reads a pull request diff, checks for common security smells, and posts a summary comment. Apply the three tool-design rules from this lesson. Write the tool list as a table: name, inputs, output shape, idempotent (yes/no), blast radius.
-
-5. You are deploying the PR review assistant from exercise 4 to run unattended on every new PR in your company's monorepo (500 engineers, ~80 PRs/day). Specify the turn budget, cost budget, verification gate, and one observability requirement. Justify each number with reference to the blast-radius table in this lesson.
 
 ## Key Terms
 

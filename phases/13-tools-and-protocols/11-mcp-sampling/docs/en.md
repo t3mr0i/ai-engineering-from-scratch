@@ -142,17 +142,6 @@ What to look at:
 
 This lesson produces `outputs/skill-sampling-loop-designer.md`. Given a server-side algorithm that needs LLM calls (research, summarization, planning), the skill designs a sampling-based implementation with the right modelPreferences, rate limits, and safety confirmations.
 
-## Exercises
-
-1. Run `code/main.py`. Change `max_samples_per_tool` to 2 and observe the rate-limit cut-off.
-
-2. Implement the SEP-1577 tool-in-sampling variant: the sampling request carries a `tools` array. Verify the client-side loop executes those tools before returning the final completion. Note drift risk: SDK signatures may still change through H1 2026.
-
-3. Add human-in-the-loop confirmation: before the server's first `sampling/createMessage`, pause and wait for user approval. Denied calls return a typed refusal.
-
-4. Add a per-user rate limiter keyed by client session. Same-server loops by the same user should share a budget.
-
-5. Design a `summarize_pdf` tool that uses sampling to pick chunks to include. Sketch the messages sent. How does `modelPreferences.intelligencePriority` change the behavior at 0.1 vs 0.9?
 
 ## Key Terms
 

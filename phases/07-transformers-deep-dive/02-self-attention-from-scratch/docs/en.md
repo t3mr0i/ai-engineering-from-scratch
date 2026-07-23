@@ -163,115 +163,6 @@ Formula in one line:
 Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
 ```
 
-## Build It
-
-### Step 1: Softmax from scratch
-
-Softmax converts raw logits into probabilities. Subtract the max for numerical stability.
-
-```python
-import numpy as np
-
-def softmax(x):
-    shifted = x - np.max(x, axis=-1, keepdims=True)
-    exp_x = np.exp(shifted)
-    return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
-
-logits = np.array([2.0, 1.0, 0.1])
-print(f"logits:  {logits}")
-print(f"softmax: {softmax(logits)}")
-print(f"sum:     {softmax(logits).sum():.4f}")
-```
-
-### Step 2: Scaled dot-product attention
-
-The core function. Takes Q, K, V matrices and returns the attention output plus the weight matrix.
-
-```python
-def scaled_dot_product_attention(Q, K, V):
-    dk = Q.shape[-1]
-    scores = Q @ K.T / np.sqrt(dk)
-    weights = softmax(scores)
-    output = weights @ V
-    return output, weights
-```
-
-### Step 3: Self-attention class with learned projections
-
-A full self-attention module with Wq, Wk, Wv weight matrices initialized with Xavier-like scaling.
-
-```python
-class SelfAttention:
-    def __init__(self, d_model, dk, dv, seed=42):
-        rng = np.random.default_rng(seed)
-        scale = np.sqrt(2.0 / (d_model + dk))
-        self.Wq = rng.normal(0, scale, (d_model, dk))
-        self.Wk = rng.normal(0, scale, (d_model, dk))
-        scale_v = np.sqrt(2.0 / (d_model + dv))
-        self.Wv = rng.normal(0, scale_v, (d_model, dv))
-        self.dk = dk
-
-    def forward(self, X):
-        Q = X @ self.Wq
-        K = X @ self.Wk
-        V = X @ self.Wv
-        output, weights = scaled_dot_product_attention(Q, K, V)
-        return output, weights
-```
-
-### Step 4: Run it on a sentence
-
-Create fake embeddings for a sentence and watch the attention weights.
-
-```python
-sentence = ["The", "cat", "sat", "on", "the", "mat"]
-n_tokens = len(sentence)
-d_model = 8
-dk = 4
-dv = 4
-
-rng = np.random.default_rng(42)
-X = rng.normal(0, 1, (n_tokens, d_model))
-
-attn = SelfAttention(d_model, dk, dv, seed=42)
-output, weights = attn.forward(X)
-
-print("Attention weights (each row: where that token looks):\n")
-print(f"{'':>6}", end="")
-for token in sentence:
-    print(f"{token:>6}", end="")
-print()
-
-for i, token in enumerate(sentence):
-    print(f"{token:>6}", end="")
-    for j in range(n_tokens):
-        w = weights[i][j]
-        print(f"{w:6.3f}", end="")
-    print()
-```
-
-### Step 5: Visualize attention with ASCII heatmap
-
-Map attention weights to characters for a quick visual.
-
-```python
-def ascii_heatmap(weights, tokens, chars=" ░▒▓█"):
-    n = len(tokens)
-    print(f"\n{'':>6}", end="")
-    for t in tokens:
-        print(f"{t:>6}", end="")
-    print()
-
-    for i in range(n):
-        print(f"{tokens[i]:>6}", end="")
-        for j in range(n):
-            level = int(weights[i][j] * (len(chars) - 1) / weights.max())
-            level = min(level, len(chars) - 1)
-            print(f"{'  ' + chars[level] + '   '}", end="")
-        print()
-
-ascii_heatmap(weights, sentence)
-```
 
 ## Use It
 
@@ -305,11 +196,6 @@ The key difference: multi-head attention runs multiple attention functions in pa
 This lesson produces:
 - `outputs/prompt-attention-explainer.md` - a prompt for explaining attention through the database lookup analogy
 
-## Exercises
-
-1. Modify `scaled_dot_product_attention` to accept an optional mask matrix that sets certain positions to negative infinity before softmax (this is how causal/decoder masking works)
-2. Implement multi-head attention from scratch: split Q, K, V into `n_heads` chunks, run attention on each, concatenate, and project through a final weight matrix Wo
-3. Take two different sentences of the same length, feed them through the same SelfAttention instance, and compare their attention patterns. What changes? What stays the same?
 
 ## Key Terms
 

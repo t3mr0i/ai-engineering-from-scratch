@@ -54,17 +54,6 @@ flowchart LR
 - Project Management
 - Consulting
 
-## Build It
-
-In the lab you build a prompt-clinic planner. It scores prompt scenarios and recommends which controls to add before the prompt becomes a reusable team asset.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/31-hands-on-prompt-clinic/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

@@ -83,29 +83,6 @@ The `threshold` parameter decides when to accept and when to retry. Too low: you
 - **Compound questions.** "Write code and explain it" — two answers. Vote on each independently.
 - **Adversarial multi-round.** If agents can observe prior rounds and mimic (Du 2023 debate), they start agreeing with each other regardless of truth. Bound the rounds (2-3 typically).
 
-## Build It
-
-`code/main.py` implements:
-
-- `AgentVoter` — a scripted policy with (answer, confidence).
-- `MajorityVote` — classical plurality.
-- `CPWBFT` — confidence-weighted voting with semantic clustering.
-- `DecentLLMs` — geometric-median aggregation on scored proposals.
-- `Scenario` — runs each aggregator under three attack patterns.
-
-Attack patterns implemented:
-
-1. `byzantine`: one agent lies with high confidence.
-2. `sycophancy`: one agent copies the first answer it sees, with matching confidence.
-3. `monoculture`: three agents share a wrong answer (correlated error) with moderate confidence.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: a table of (attack, aggregator) -> final answer, with the correct answer highlighted. Plurality fails the monoculture case. CPWBFT's confidence weighting mitigates sycophancy. DecentLLMs' geometric-median pulls toward the honest cluster when monoculture is less than half the population.
 
 ## Use It
 
@@ -121,13 +98,6 @@ Before shipping any consensus mechanism:
 - **Separate agreement from correctness.** Consensus output goes to a verifier; verifier is independent of the ensemble.
 - **Monitor the agreement rate.** A sharp rise means conformity bias; a sharp fall means model drift.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm plurality fails the monoculture attack but CPWBFT partially mitigates it when the monoculture confidence is below 0.7.
-2. Add a fourth attack pattern: **silent abstention** — one agent refuses to answer ("I don't know"). How should each aggregator treat abstentions? Implement your choice.
-3. Swap the semantic clustering from string canonicalization to embedding-similarity (use any open-source embedding model). What happens to the sycophancy attack?
-4. Read CP-WBFT (arXiv:2511.10400). Implement the confidence-probe calibration step (a separate calibration model checks each agent's self-reported confidence). Measure the accuracy gain on the monoculture scenario.
-5. Read "Can AI Agents Agree?" (arXiv:2603.01213). Reproduce a simplified scalar-agreement experiment: three agents, one scalar question, the deceptive-persona prompt. Does CPWBFT or DecentLLMs catch it?
 
 ## Key Terms
 

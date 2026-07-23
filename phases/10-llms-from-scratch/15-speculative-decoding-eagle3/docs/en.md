@@ -73,45 +73,6 @@ For EAGLE-2 tree search, the verifier runs attention with a non-causal mask that
 
 In 2026 production: vLLM and SGLang default to EAGLE-3 when available, EAGLE-2 otherwise. TensorRT-LLM has the fastest Medusa path for Meta and NVIDIA public models. llama.cpp ships vanilla draft for CPU deployments.
 
-## Build It
-
-See `code/main.py`. This is the full Leviathan speculative loop with all the pieces: draft-of-N, verifier parallel pass, per-position rejection, residual sampling, bonus token, KV rollback, and empirical verification that the output distribution matches direct sampling from `q`.
-
-### Step 1: the rejection rule
-
-```python
-def accept(q_prob, p_prob, u):
-    if p_prob <= 0:
-        return True
-    return u < min(1.0, q_prob / p_prob)
-```
-
-### Step 2: residual distribution
-
-```python
-def residual(q, p):
-    raw = [max(0.0, qi - pi) for qi, pi in zip(q, p)]
-    s = sum(raw)
-    if s == 0:
-        return list(q)
-    return [r / s for r in raw]
-```
-
-### Step 3: a full speculative step
-
-The `spec_step` function drafts `N` tokens from `p`, then verifies all of them in one parallel `q` evaluation. For each drafted token it applies the rejection rule, and on the first rejection it samples the correction from the residual. If everything accepts, it emits a bonus token from `q_{N+1}`.
-
-### Step 4: KV rollback bookkeeping
-
-The simulator tracks a logical `kv_length` per worker. On acceptance of `k` drafts, `kv_length += k`. On a rejection at position `j`, the cache is already written past `j`, but the logical length is set to `prefix_length + j + 1` — one past the correction token. Subsequent reads truncate to the logical length.
-
-### Step 5: the Leviathan check
-
-Run 50,000 speculative steps. Count the empirical distribution of accepted tokens. Compare to 50,000 direct samples from `q`. The chi-square statistic should be well under the critical value. The theorem passes in practice.
-
-### Step 6: speedup vs. α
-
-Sweep the draft quality by perturbing `p` away from `q` at different amplitudes. Measure `α`, then plot expected tokens per verifier call as a function of `α` and `N`. The code prints a table showing how EAGLE-3-class draft quality (`α ≈ 0.9`) unlocks 4–5 tokens per verifier call.
 
 ## Use It
 
@@ -144,17 +105,6 @@ When not to:
 
 This lesson produces `outputs/skill-eagle3-tuner.md`. Given an inference workload (model, batch size, target latency, task profile), it recommends a speculative-decoding strategy and tuning parameters (draft family, `N`, tree depth, temperature-aware switching).
 
-## Exercises
-
-1. Run `code/main.py`. Confirm the chi-square statistic on the Leviathan distribution check stays below the 95% critical value on 50,000 samples.
-
-2. Sweep `N` from 1 to 10 with `α` held at 0.9 and `c` held at 0.04. Plot expected tokens per verifier call and actual wall time per token. Find the `N` that minimizes wall time. Explain the shape of the curve.
-
-3. Modify the code to simulate EAGLE-2 tree search: at each step, the draft proposes a tree of shape `[2, 2, 2]` (eight candidate paths). The verifier runs once, and the highest-probability accepted path wins. Compute `α` per leaf and total tokens per verifier call. Compare to linear-chain spec-decoding at equivalent compute.
-
-4. Implement a batched KV rollback simulator for two concurrent sequences. Sequence A has all drafts accepted; sequence B rejects at position 2. Show that the correct `kv_length` is updated per sequence and that no work is wasted.
-
-5. Read the EAGLE-3 paper's Section 4 (Training-Time Test). Explain in two sentences why naive draft training without TTT suffers from exposure bias, and why feeding the draft its own predictions during training fixes it. Connect this to the scheduled-sampling literature in seq2seq.
 
 ## Key Terms
 

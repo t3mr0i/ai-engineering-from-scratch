@@ -68,23 +68,6 @@ Mitigations:
 
 Swarm pairs naturally with content-based routing (Lesson 22). Instead of a generic queue, have one queue per message type. Specialist workers subscribe only to their type. This is the basis for message-bus architectures that scale to thousands of agents.
 
-## Build It
-
-`code/main.py` implements a swarm of 4 worker threads pulling from a shared `queue.Queue`. Tasks have variable durations (some fast, some slow). The demo contrasts:
-
-- **Sequential baseline:** one worker processes all tasks serially.
-- **Fixed assignment:** each task pre-assigned to a specific worker (supervisor-style).
-- **Swarm:** workers pull from a shared queue.
-
-Swarm balances load automatically; fixed assignment leaves fast workers idle when their assigned task is slow.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Output shows per-worker task counts (swarm distributes unevenly but optimally) and wall-clock times.
 
 ## Use It
 
@@ -100,13 +83,6 @@ Checklist:
 - **Observability per task.** Every task has a trace ID; every worker logs start/end with it.
 - **Back-pressure.** If the queue grows faster than workers drain it, slow the producer.
 
-## Exercises
-
-1. Run `code/main.py`. How much faster is swarm than sequential on the variable-duration workload? How much faster than fixed assignment?
-2. Add a priority queue variant (use `queue.PriorityQueue`). Assign priority by task "importance" field. Observe whether low-priority tasks ever starve under continuous load.
-3. Implement a hot-spot detector: log when any worker processes 3× more tasks than the slowest worker. What does that indicate about task-duration distribution?
-4. Read the Matrix paper (arXiv:2511.21686) abstract and Section 3. Identify one specific tradeoff Matrix accepts (scalability gain) and one it gives up (traceability, determinism).
-5. Convert the swarm demo to use a `queue.Queue` of (task_type, payload) tuples, with workers subscribing only to specific types. What routing rules make sense when tasks are heterogeneous?
 
 ## Key Terms
 

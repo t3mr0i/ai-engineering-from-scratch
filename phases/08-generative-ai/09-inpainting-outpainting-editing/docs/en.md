@@ -55,48 +55,6 @@ Fine-tune a diffusion model on `(input_image, instruction, output_image)` triple
 
 Keep a standard unconditional diffusion model. At each reverse step, resample — jump back to a noisier state occasionally and regenerate. Avoids boundary artifacts. Used when you don't have a trained inpainting model.
 
-## Build It
-
-`code/main.py` implements a toy 1-D inpainting scheme on 5-dimensional data. We train a DDPM on 5-D mixture data where each sample is 5 floats from one of two clusters. At inference, we "mask" 2 of the 5 dimensions, inject the noisy-forward version of the unmasked three at each step, and regenerate only the masked dimensions.
-
-### Step 1: 5-D DDPM data
-
-```python
-def sample_data(rng):
-    cluster = rng.choice([0, 1])
-    center = [-1.0] * 5 if cluster == 0 else [1.0] * 5
-    return [c + rng.gauss(0, 0.2) for c in center], cluster
-```
-
-### Step 2: train denoiser over all 5 dims
-
-Standard DDPM. Net outputs 5-D noise prediction for 5-D noisy input.
-
-### Step 3: at inference, mask-aware reverse
-
-```python
-def inpaint_step(x_t, mask, clean_image, alpha_bars, t, rng):
-    # replace unmasked dims with a freshly noised version of the clean source
-    a_bar = alpha_bars[t]
-    for i in range(len(x_t)):
-        if not mask[i]:
-            x_t[i] = math.sqrt(a_bar) * clean_image[i] + math.sqrt(1 - a_bar) * rng.gauss(0, 1)
-    # ...then run the normal reverse step on x_t
-```
-
-This is the naive approach and it works on toy 1-D data. Real image inpainting uses the 9-channel input because texture coherence matters more.
-
-### Step 4: outpainting
-
-Outpainting is inpainting with the mask inverted: mask the new (previously non-existent) canvas, fill the rest with the original. Identical training objective.
-
-## Pitfalls
-
-- **Seams.** The naive approach leaves visible boundaries because gradient info doesn't flow across the mask. Fix: dilate the mask by 8-16 pixels, or use a proper inpainting model.
-- **Mask leakage.** If the conditioning image's unmasked region is low-quality or noisy, it pollutes the generation inside the mask. Denoise or blur slightly.
-- **CFG interacts with mask size.** High CFG on a small mask = saturated patch. Reduce CFG for small edits.
-- **SDEdit fidelity cliff.** Going from `t/T = 0.5` to `t/T = 0.6` can lose the subject's identity. Sweep and checkpoint.
-- **Prompt mismatch.** The prompt should describe the *whole* image, not just the new content. "A cat sitting on a chair" not "a cat".
 
 ## Use It
 
@@ -117,11 +75,6 @@ SAM (Meta's Segment Anything, 2023) + diffusion inpaint is the 2026 background-r
 
 Save `outputs/skill-editing-pipeline.md`. Skill takes an original image + edit description + optional mask (or SAM prompt) and outputs: mask-generation approach, base model, CFG scales (image + text), SDEdit-t or inpainting mode, and QA checklist.
 
-## Exercises
-
-1. **Easy.** In `code/main.py`, vary the fraction of dimensions masked from 0.2 to 0.8. At what fraction does the inpaint quality (residual in masked dims) equal unconditional generation?
-2. **Medium.** Implement RePaint: at every 10th reverse step, jump back 5 steps (add noise) and re-denoise. Measure whether it reduces boundary residual at the mask edge.
-3. **Hard.** Use Hugging Face diffusers to compare: SD 1.5 Inpaint + ControlNet-Openpose vs Flux.1-Fill on 20 face-regeneration tasks. Score pose adherence and identity preservation separately.
 
 ## Key Terms
 

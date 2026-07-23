@@ -74,62 +74,6 @@ An AR LM predicts the semantic token first (conditioned on text), then predicts 
 
 Traditional codecs like Opus still win per bit on perceptual quality. Neural codecs win on **discrete tokens** (which Opus does not produce) and **generative-model quality** (what the LM can do with those tokens).
 
-## Build It
-
-### Step 1: encode with EnCodec
-
-```python
-from encodec import EncodecModel
-import torch
-
-model = EncodecModel.encodec_model_24khz()
-model.set_target_bandwidth(6.0)  # kbps
-
-wav = torch.randn(1, 1, 24000)
-with torch.no_grad():
-    encoded = model.encode(wav)
-codes, scale = encoded[0]
-# codes: (1, n_codebooks, n_frames), dtype=int64
-```
-
-`n_codebooks=8` at 6 kbps. Each code is 0-1023 (10-bit).
-
-### Step 2: decode and measure reconstruction
-
-```python
-with torch.no_grad():
-    wav_recon = model.decode([(codes, scale)])
-
-from torchaudio.functional import compute_deltas
-import torch.nn.functional as F
-
-mse = F.mse_loss(wav_recon[:, :, :wav.shape[-1]], wav).item()
-```
-
-### Step 3: the semantic-acoustic split (Mimi-style)
-
-```python
-from moshi.models import loaders
-mimi = loaders.get_mimi()
-
-with torch.no_grad():
-    codes = mimi.encode(wav)  # shape (1, 8, frames@12.5Hz)
-
-semantic = codes[:, 0]
-acoustic = codes[:, 1:]
-```
-
-Semantic codebook 0 is WavLM-aligned. You can train a text-to-semantic transformer — much smaller vocabulary than going direct-to-audio. Then a separate acoustic-to-waveform decoder conditions on a speaker reference.
-
-### Step 4: why AR LM over codec tokens works
-
-For a 10 s speech clip at Mimi's 12.5 Hz × 8 codebooks:
-
-```
-N_tokens = 10 * 12.5 * 8 = 1000 tokens
-```
-
-1000 tokens is a trivial context for a transformer. A 256M-parameter transformer can generate 10 seconds of speech in milliseconds on a modern GPU.
 
 ## Use It
 
@@ -157,11 +101,6 @@ Rule of thumb: **if you're building a generative model, start with Mimi or SNAC.
 
 Save as `outputs/skill-codec-picker.md`. Pick a codec for a given generative or compression task.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. It implements a toy scalar + residual quantizer and measures reconstruction error as you add codebooks.
-2. **Medium.** Install `encodec` and compare 1, 4, 8, 32 codebooks on a held-out speech clip. Plot PESQ or MSE vs bitrate.
-3. **Hard.** Load Mimi. Encode a clip. Replace codebook 0 with random integers; decode. Then replace codebook 7 similarly. Compare the two corruptions — codebook 0 corruption should destroy intelligibility; codebook 7 corruption should barely change anything.
 
 ## Key Terms
 

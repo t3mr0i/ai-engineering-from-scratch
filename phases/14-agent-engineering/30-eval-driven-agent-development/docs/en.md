@@ -59,22 +59,6 @@ This is Self-Refine (Lesson 05) generalized. Any agent flow you care about can w
 - **Over-fitting to evals.** Optimizing for the eval diverges from production usefulness. Rotate cases.
 - **Flaky evals.** Non-deterministic cases cause false alarms. Pin seeds, snapshot state.
 
-## Build It
-
-`code/main.py` is a stdlib eval harness:
-
-- Case registry with categories (benchmark, custom, online).
-- A scripted agent under test.
-- Evaluator-optimizer loop: propose, judge, refine until pass or max rounds.
-- CI gate: aggregate pass rate + regression against baseline.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: per-case pass/fail, regression flag, CI gate verdict.
 
 ## Use It
 
@@ -88,13 +72,6 @@ Output: per-case pass/fail, regression flag, CI gate verdict.
 
 `outputs/skill-eval-suite.md` builds a three-layer eval suite for an agent product with CI gates and regression tracking.
 
-## Exercises
-
-1. Take one of your production failures. Write an eval case that reproduces it. Does your agent pass it now?
-2. Build an LLM-judge rubric for your domain with three dimensions (factual, tone, scope). Score 50 sessions.
-3. Wire the eval suite into CI. Fail the build on >=5% regression.
-4. Add a trajectory-efficiency metric: how many steps did the agent take vs a gold trajectory?
-5. Map every Phase 14 lesson to an eval case in your suite. Any missing? That's a gap to close.
 
 ## Key Terms
 

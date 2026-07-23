@@ -82,24 +82,6 @@ The suite is deterministic from the seed and held out from the training corpus, 
 
 For a 50-step training run on synthetic data, the metrics are not expected to be high; they are expected to be above the random baseline, which is what the demo checks.
 
-## Build It
-
-`code/main.py` implements:
-
-- `recall_at_k(sim_matrix, k)`, returning a float in `[0, 1]` for both directions.
-- `vqa_exact_match(predictions, references)`, returning the mean over `int` equality.
-- `bleu4(generated, references, smoothing=True)`, with multi-reference support.
-- `build_eval_suite(seed, n_samples, vocab_size, max_len)`, returning three deterministic eval lists.
-- `evaluate(model, suite)`, which runs all three metrics and returns a `dict` of numbers.
-- A demo that loads a freshly-initialized multimodal model from lesson 62, evaluates it, then trains it for 50 steps and evaluates again, printing the before/after metrics.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: the before/after metric table shows retrieval improving from near-random toward the model's learned signal, VQA improving above random, and BLEU-4 improving (the synthetic structure is enough for a 4-gram precision lift).
 
 ## Use It
 
@@ -128,17 +110,6 @@ Run them:
 python3 -m unittest code/test_main.py
 ```
 
-## Exercises
-
-1. Add CIDEr to the captioning metrics. CIDEr uses TF-IDF weighting on n-grams, which rewards informative tokens.
-
-2. Implement soft-accuracy VQA: multiple human answers per question, accuracy is `min(human_count / 3, 1)` if any matches. Replicates VQA v2.
-
-3. Add a NaN-safe variant of `bleu4` that handles empty generated sequences without crashing.
-
-4. Compute mean reciprocal rank (MRR) alongside R@K. MRR is sensitive to where the correct item lands beyond the top K; R@K is sensitive to whether it lands in the top K.
-
-5. Run the eval on the model at five checkpoints during training (step 0, 10, 20, 30, 40, 50) and plot the learning curve. Confirm the metric trajectories track the loss trajectory.
 
 ## Key Terms
 

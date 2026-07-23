@@ -220,22 +220,6 @@ The 8B weights are 16 GB in BF16. The KV cache for a single 128k sequence is lar
 - **Long-context needs**: Llama 3 (128k with RoPE scaling), DeepSeek (MLA advantage).
 - **Low-latency serving**: Gemma 2 9B (sliding window cuts long-context compute).
 
-## Build It
-
-The lesson's code is a calculator. Given any config.json, it prints parameter count by component, KV cache at max context, SwiGLU MLP ratio, and a short verdict on the architecture (dense / GQA / MLA / MoE).
-
-```python
-config = {
-    "hidden_size": 4096, "intermediate_size": 14336,
-    "num_hidden_layers": 32, "num_attention_heads": 32,
-    "num_key_value_heads": 8, "vocab_size": 128256,
-    "max_position_embeddings": 131072,
-}
-```
-
-The script walks the architecture field by field, computes param counts for embedding, attention (with GQA reduction), MLP (with SwiGLU expansion), layernorms, and the head. It then computes the KV cache at the stated context length and prints a summary.
-
-See `code/main.py` for the implementation.
 
 ## Use It
 
@@ -247,17 +231,6 @@ Then plug in a config for any model you have locally, read the summary, and deci
 
 This lesson produces `outputs/skill-open-model-picker.md`. Given a deployment target (GPU type, VRAM, context length, latency budget) and a task profile (chat, code, reasoning, long-context), it recommends an open model, a quantization scheme from Lesson 11, and an inference stack from Lesson 12, with explicit reasoning about the six architectural knobs.
 
-## Exercises
-
-1. Read the Qwen 2.5 72B config from HuggingFace. Compute total parameters from scratch. Compare to the HF-reported value and identify where any delta comes from (head dim rounding, KV sharing factor, etc.).
-
-2. DeepSeek V3 uses 256 experts with top-8 routing. Compute the ratio of activated experts to total experts and compare to Mixtral 8x7B's top-2 of 8. What does the shift from sparse (25%) to denser sparse (3%) imply about capacity per FLOP?
-
-3. Compute the KV cache for Llama 3 405B at 128k context in FP8 and BF16. At FP8 it is half the BF16 number. How many parallel sequences can you serve on a single 8xH100 node (80GB each = 640GB total, minus weight memory)?
-
-4. Gemma 2 alternates full-attention and sliding-window-attention layers. Write the math for the KV cache when half the layers use a 4096-token sliding window instead of full context. How much memory does that save at 8k total context?
-
-5. Find a recent frontier open model that was released after this lesson was written. Identify which of the six knobs it picked and whether it introduced a seventh knob. The curriculum will feel out of date the moment a new architecture ships -- the goal is to update your table without rebuilding your mental model.
 
 ## Key Terms
 

@@ -60,19 +60,6 @@ When a new generative model paper drops, answer these five questions before read
 
 You will re-answer these five for every lesson in this phase. By the end, they will be reflex.
 
-## Build It
-
-The code for this lesson is a lightweight visualization: fit a 1-D mixture-of-Gaussians from samples using three toy approaches (kernel density, discrete histogram, and a nearest-sample "GAN-ish" generator) so you can see the difference between explicit vs implicit density on a problem you can print on one screen.
-
-Run `code/main.py`. It draws 2000 samples from a two-mode Gaussian mixture, then prints:
-
-```
-explicit density (histogram): p(x in [-0.5, 0.5]) ≈ 0.38
-approximate density (KDE):     p(x in [-0.5, 0.5]) ≈ 0.41
-implicit (nearest-sample gen): 20 new samples printed, no p(x)
-```
-
-Notice: the first two let you ask "how likely is this point?" The third cannot. This is the *explicit vs implicit* distinction that will matter for every future lesson.
 
 ## Use It
 
@@ -95,11 +82,6 @@ Save as `outputs/skill-model-chooser.md`.
 
 The skill takes a task description and outputs: (1) which family to use, (2) a ranked list of three open and three hosted options, (3) the likely failure mode you should watch for, and (4) a compute/time budget.
 
-## Exercises
-
-1. **Easy.** For each of these five products, identify the family and backbone: ChatGPT image, Midjourney v7, Sora, Runway Gen-3, ElevenLabs. Evidence should be from public technical reports.
-2. **Medium.** The paper you are about to read tomorrow claims 100x faster sampling than diffusion. Write down three questions to check whether the speedup survives conditioning and high resolution.
-3. **Hard.** Take one domain you care about (e.g. protein structure, CAD, molecules, trajectories). Answer the five-question triage for the current SOTA model in that domain and sketch what a better model would change.
 
 ## Key Terms
 

@@ -68,25 +68,6 @@ eval:
 - Guardrails: Llama Guard 4 input/output classifier, NeMo Guardrails v0.12 policy, Presidio PII scrub
 - Compliance: role-based access labels on chunks; jurisdiction tags for GDPR/HIPAA
 
-## Build It
-
-1. **Ingestion.** Parse your corpus (1000-10000 documents for a serious build) with Unstructured or docling. For scanned / visual-heavy pages, route through ColPali. Produce chunks with summaries, role-labels, jurisdiction tags.
-
-2. **Index.** Dense embeddings (Voyage-3 or Nomic-embed-v2) into pgvector + pgvectorscale. BM25 side-index via Tantivy. Role and jurisdiction filters as payload.
-
-3. **Hybrid retrieve.** Filter by role+jurisdiction first; then parallel dense + BM25; merge with reciprocal rank fusion; top-20 to reranker; top-5 to synth.
-
-4. **Synthesize with prompt caching.** System prompt + static policies in cache header; reranked context as cache extension; user question as uncached suffix. Target 60-80% cache hit rate in steady state.
-
-5. **Guardrails.** Llama Guard 4 on input; NeMo Guardrails rails block off-domain questions or policy-forbidden topics; Presidio scrubs accidental PII in the output; citation enforcement post-filter.
-
-6. **Golden set.** 200 Q/A pairs labeled by a domain expert with (answer, citations). Score agent on exact-citation match, answer correctness, faithfulness (RAGAS).
-
-7. **Red team.** 50 adversarial prompts: jailbreaks (PAIR, TAP), PII exfiltration attempts, off-domain, cross-jurisdiction leaks. Score with pass/fail and severity.
-
-8. **Drift dashboard.** Arize Phoenix tracks retrieval quality (nDCG, citation faithfulness) weekly. Alert on 5% drop.
-
-9. **Cost report.** Langfuse: prompt-caching hit rate, tokens per query, $/query breakdown by stage.
 
 ## Use It
 
@@ -117,17 +98,6 @@ answer:
 | 15 | Drift monitoring dashboard | Phoenix live dashboard with weekly retrieval-quality trend |
 | **100** | | |
 
-## Exercises
-
-1. Build a second corpus slice under a different jurisdiction (e.g., HIPAA alongside GDPR). Demonstrate role+jurisdiction filtering preventing cross-leak on a 20-question cross-jurisdiction probe.
-
-2. Measure prompt-cache hit rate over a week of production traffic. Identify which queries break the cache prefix. Restructure.
-
-3. Add multi-turn memory with a 10k-token summary buffer. Measure whether faithfulness drops as the conversation grows.
-
-4. Swap Claude Sonnet 4.7 for Llama 3.3 70B self-hosted. Measure $/query and faithfulness delta.
-
-5. Add an "unsure" mode: if top reranked scores are below a threshold, the agent says "I do not have confident citations" instead of answering. Measure false-confidence reduction.
 
 ## Key Terms
 

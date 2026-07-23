@@ -35,86 +35,6 @@ Rule of thumb:
 - **Fast inference against GPT vocab:** tiktoken (cl100k_base, o200k_base).
 - **Both:** HF Tokenizers — one library, training + serving.
 
-## Build It
-
-### Step 1: BPE from scratch
-
-See `code/main.py`. The loop:
-
-```python
-def train_bpe(corpus, num_merges):
-    vocab = {tuple(word) + ("</w>",): count for word, count in corpus.items()}
-    merges = []
-    for _ in range(num_merges):
-        pairs = Counter()
-        for symbols, freq in vocab.items():
-            for a, b in zip(symbols, symbols[1:]):
-                pairs[(a, b)] += freq
-        if not pairs:
-            break
-        best = pairs.most_common(1)[0][0]
-        merges.append(best)
-        vocab = apply_merge(vocab, best)
-    return merges
-```
-
-Three facts the algorithm encodes. `</w>` marks word end so "low" (suffix) and "lower" (prefix) stay distinct. Frequency weighting makes high-frequency pairs win early. The merge list is ordered — inference applies merges in training order.
-
-### Step 2: encode with the learned merges
-
-```python
-def encode_bpe(word, merges):
-    symbols = list(word) + ["</w>"]
-    for a, b in merges:
-        i = 0
-        while i < len(symbols) - 1:
-            if symbols[i] == a and symbols[i + 1] == b:
-                symbols = symbols[:i] + [a + b] + symbols[i + 2:]
-            else:
-                i += 1
-    return symbols
-```
-
-Naive O(n·|merges|). Production implementations (tiktoken, HF Tokenizers) use merge-rank lookup with priority queues and run in near-linear time.
-
-### Step 3: SentencePiece in practice
-
-```python
-import sentencepiece as spm
-
-spm.SentencePieceTrainer.train(
-    input="corpus.txt",
-    model_prefix="my_tokenizer",
-    vocab_size=8000,
-    model_type="bpe",          # or "unigram"
-    character_coverage=0.9995, # lower for CJK (e.g. 0.9995 for English, 0.995 for Japanese)
-    normalization_rule_name="nmt_nfkc",
-)
-
-sp = spm.SentencePieceProcessor(model_file="my_tokenizer.model")
-print(sp.encode("untokenizable", out_type=str))
-# ['▁un', 'token', 'izable']
-```
-
-Notice: no pre-tokenization required, space encoded as `▁`, `character_coverage` controls how aggressively rare characters are preserved vs mapped to `<unk>`.
-
-### Step 4: tiktoken for OpenAI-compatible vocabs
-
-```python
-import tiktoken
-enc = tiktoken.get_encoding("o200k_base")
-print(enc.encode("untokenizable"))        # [127340, 101028]
-print(len(enc.encode("Hello, world!")))   # 4
-```
-
-Encoding-only. Fast (Rust backend). Exact match with GPT-4/5 tokenization for byte-counting, cost estimation, context-window budgeting.
-
-## Pitfalls that still ship in 2026
-
-- **Tokenizer drift.** Training on vocab A, deploying against vocab B. Token IDs differ; model outputs garbage. Check `tokenizer.json` hash in CI.
-- **Whitespace ambiguity.** BPE "hello" vs " hello" produce different tokens. Always specify `add_special_tokens` and `add_prefix_space` explicitly.
-- **Multilingual undertraining.** English-heavy corpora produce vocabularies that split non-Latin scripts into 5-10x more tokens. Same prompt costs 5-10x more in Japanese/Arabic on GPT-3.5. o200k_base partially fixed this.
-- **Emoji splits.** A single emoji can take 5 tokens. Checkpoint emoji handling when budgeting context.
 
 ## Use It
 
@@ -155,11 +75,6 @@ Given a corpus (size, languages, domain) and deployment target (training from sc
 Refuse to train a character-coverage <0.995 tokenizer on corpora with rare-script content. Refuse to ship a vocab without a frozen `tokenizer.json` hash check in CI. Flag any monolingual tokenizer under 16k vocab as likely under-spec.
 ```
 
-## Exercises
-
-1. **Easy.** Train a 500-merge BPE on `code/main.py`'s tiny corpus. Encode three held-out words. How many produced exactly 1 token vs >1 token?
-2. **Medium.** Compare token counts on 100 English Wikipedia sentences between `cl100k_base`, `o200k_base`, and a SentencePiece BPE you train with vocab=32k. Report the compression ratio of each.
-3. **Hard.** Train the same corpus with BPE, Unigram, and WordPiece. Measure downstream accuracy when using each on a small sentiment classifier. Does the choice move the needle by more than 1 point F1?
 
 ## Key Terms
 

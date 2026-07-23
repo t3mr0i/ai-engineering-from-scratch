@@ -43,50 +43,6 @@ This is the Stable Diffusion recipe. SD 1.x / 2.x used an 860M U-Net over `64×6
 
 The trend: replace U-Net with DiT (transformer over latent patches), scale the text encoder (T5 beats CLIP for prompt adherence), increase latent channels (4 → 16 gives more detail headroom).
 
-## Build It
-
-`code/main.py` stacks a toy 1-D "VAE" (identity encoder + decoder, for demonstration; a real VAE would be a conv net) on top of the DDPM from Lesson 06 and adds class conditioning with classifier-free guidance. It shows that the same diffusion loss works whether you run on raw 1-D values or on encoded values — the key insight.
-
-### Step 1: encoder/decoder
-
-```python
-def encode(x):    return x * 0.5          # toy "compression" to smaller scale
-def decode(z):    return z * 2.0
-```
-
-A real VAE has trained weights. For pedagogy, this linear map is enough to show that diffusion operates on `z` without caring about the original data space.
-
-### Step 2: diffusion in `z`-space
-
-Same DDPM as Lesson 06. The data the net sees is `z = E(x)`. After sampling `z_0`, decode with `D(z_0)`.
-
-### Step 3: classifier-free guidance
-
-During training, drop the class label 10% of the time (replace with a null token). At inference, compute both `ε_cond` and `ε_uncond`, then:
-
-```python
-eps_cfg = (1 + w) * eps_cond - w * eps_uncond
-```
-
-`w = 0` = no guidance (full diversity), `w = 3` = default, `w = 7+` = saturated / over-sharp.
-
-### Step 4: text conditioning (concept, not code)
-
-Replace the class label with a frozen text encoder output. Feed the text embedding to the U-Net via cross-attention:
-
-```python
-h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
-```
-
-This is the only substantive difference between a class-conditional diffusion model and Stable Diffusion.
-
-## Pitfalls
-
-- **VAE-scale mismatch.** SD 1.x VAEs have a scaling constant (`scaling_factor ≈ 0.18215`) applied after encoding. Forgetting this makes the U-Net train on latents with wildly wrong variance. Every checkpoint ships one.
-- **Text encoder silently wrong.** SD3 needs T5-XXL with >=128 tokens, and the fallback to CLIP-only is lossy. Always check `use_t5=True` or prompt fidelity craters.
-- **Mixing latent spaces.** SDXL, SD3, Flux all use different VAEs. A LoRA trained on SDXL latents will not work on SD3. Hugging Face diffusers 0.30+ refuses to load mismatched checkpoints.
-- **CFG too high.** `w > 10` produces saturated, oily images and over-fits the prompt at the cost of diversity. The sweet spot is `w = 3-7`.
-- **Negative prompts leaking.** Empty negative prompt becomes the null token; a filled negative prompt becomes the `ε_uncond`. These are not the same; some pipelines silently default to the null.
 
 ## Use It
 
@@ -105,11 +61,6 @@ Production stacks in 2026:
 
 Save `outputs/skill-sd-prompter.md`. Skill takes a text prompt + target style and outputs: model + checkpoint, CFG scale, sampler, negative prompt, resolution, optional ControlNet/IP-Adapter combo, and a per-step QA checklist.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` with guidance `w ∈ {0, 1, 3, 7, 15}`. Record mean sample by class. At what `w` do the class means diverge past the real data means?
-2. **Medium.** Swap the toy linear encoder for a tanh-MLP encoder/decoder pair with a reconstruction loss. Retrain diffusion on the new latents. Does sample quality change?
-3. **Hard.** Set up a real Stable Diffusion inference with diffusers: load `sdxl-base`, run 30 Euler steps with CFG=7, time it. Now switch to `sdxl-turbo` with 4 steps and CFG=0. Same subject, different quality — describe what changed and why.
 
 ## Key Terms
 

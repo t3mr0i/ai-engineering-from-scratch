@@ -267,118 +267,6 @@ graph LR
     U1 --> A3
 ```
 
-## Build It
-
-### Step 1: Complex class
-
-Build a Complex number class that supports arithmetic, magnitude, phase, and conversion between rectangular and polar forms.
-
-```python
-import math
-
-class Complex:
-    def __init__(self, real, imag=0.0):
-        self.real = real
-        self.imag = imag
-
-    def __add__(self, other):
-        return Complex(self.real + other.real, self.imag + other.imag)
-
-    def __mul__(self, other):
-        r = self.real * other.real - self.imag * other.imag
-        i = self.real * other.imag + self.imag * other.real
-        return Complex(r, i)
-
-    def __truediv__(self, other):
-        denom = other.real ** 2 + other.imag ** 2
-        r = (self.real * other.real + self.imag * other.imag) / denom
-        i = (self.imag * other.real - self.real * other.imag) / denom
-        return Complex(r, i)
-
-    def magnitude(self):
-        return math.sqrt(self.real ** 2 + self.imag ** 2)
-
-    def phase(self):
-        return math.atan2(self.imag, self.real)
-
-    def conjugate(self):
-        return Complex(self.real, -self.imag)
-```
-
-### Step 2: Polar conversion and Euler's formula
-
-```python
-def to_polar(z):
-    return z.magnitude(), z.phase()
-
-def from_polar(r, theta):
-    return Complex(r * math.cos(theta), r * math.sin(theta))
-
-def euler(theta):
-    return Complex(math.cos(theta), math.sin(theta))
-```
-
-Verify: `euler(theta).magnitude()` should always be 1.0. `euler(0)` should give (1, 0). `euler(pi)` should give (-1, 0).
-
-### Step 3: Rotation
-
-Rotating a point (x, y) by angle theta is one complex multiplication:
-
-```python
-point = Complex(3, 4)
-rotated = point * euler(math.pi / 4)
-```
-
-The magnitude stays the same. Only the angle changes.
-
-### Step 4: DFT from complex arithmetic
-
-```python
-def dft(signal):
-    N = len(signal)
-    result = []
-    for k in range(N):
-        total = Complex(0, 0)
-        for n in range(N):
-            angle = -2 * math.pi * k * n / N
-            total = total + Complex(signal[n], 0) * euler(angle)
-        result.append(total)
-    return result
-```
-
-This is the O(N^2) DFT. Each output X[k] is the sum of the signal samples multiplied by roots of unity.
-
-### Step 5: Inverse DFT
-
-The inverse DFT reconstructs the original signal from its spectrum. The only changes from the forward DFT: flip the sign in the exponent and divide by N.
-
-```python
-def idft(spectrum):
-    N = len(spectrum)
-    result = []
-    for n in range(N):
-        total = Complex(0, 0)
-        for k in range(N):
-            angle = 2 * math.pi * k * n / N
-            total = total + spectrum[k] * euler(angle)
-        result.append(Complex(total.real / N, total.imag / N))
-    return result
-```
-
-This gives you perfect reconstruction. Apply DFT, then IDFT, and you get back the original signal to machine precision. No information is lost.
-
-### Step 6: Roots of unity
-
-```python
-def roots_of_unity(N):
-    return [euler(2 * math.pi * k / N) for k in range(N)]
-```
-
-Verify two properties:
-- Every root has magnitude exactly 1.
-- The sum of all N roots is zero (they cancel out by symmetry).
-
-These properties are what make the DFT invertible. The roots of unity form an orthogonal basis for the frequency domain.
 
 ## Use It
 
@@ -418,17 +306,6 @@ freqs = np.fft.fftfreq(128, d=1/128)
 
 Run `code/complex_numbers.py` to generate `outputs/skill-complex-arithmetic.md`.
 
-## Exercises
-
-1. **Complex arithmetic by hand.** Compute (2 + 3i) * (4 - i) and verify with the code. Then compute (5 + 2i) / (1 - 3i). Draw both results on the complex plane and check that multiplication rotated and scaled the first number.
-
-2. **Rotation sequence.** Start with the point (1, 0). Multiply by e^(i*pi/6) twelve times. Verify that you return to (1, 0) after 12 multiplications. Print the coordinates at each step and confirm they trace a regular 12-gon.
-
-3. **DFT of a known signal.** Create a signal that is the sum of sin(2*pi*3*t) and 0.5*sin(2*pi*7*t) sampled at 32 points. Run your DFT. Verify that the magnitude spectrum has peaks at frequencies 3 and 7, with the peak at 7 being half the height of the peak at 3.
-
-4. **Roots of unity visualization.** Compute the 8th roots of unity. Verify that they sum to zero. Verify that multiplying any root by the primitive root e^(2*pi*i/8) gives the next root.
-
-5. **Rotation matrix equivalence.** For 10 random angles and 10 random points, verify that complex multiplication gives the same result as matrix-vector multiplication with the 2x2 rotation matrix. Print the maximum numerical difference.
 
 ## Key Terms
 

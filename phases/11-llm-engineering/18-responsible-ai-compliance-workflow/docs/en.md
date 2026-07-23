@@ -56,26 +56,6 @@ flowchart LR
 - Leadership
 - Corporate Functions
 
-## Build It
-
-In the lab you build a small risk triage engine. It classifies use cases by data sensitivity, autonomy, external impact, and explanation need. The artifact produces a control plan: allowed mode, required reviewers, logging level, and launch gate.
-
-The Python implementation is intentionally small. It is not a production platform. It is a classroom artifact: participants can read it, run it, change the example scenarios, and see how the recommendation changes.
-
-The artifact has four parts:
-
-1. A `Scenario` object that describes the workflow or decision.
-2. A signal matcher that identifies relevant risk or value indicators.
-3. A scoring function that combines impact, uncertainty, and matched signals.
-4. A recommendation that selects a category, priority, and controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/18-responsible-ai-compliance-workflow/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

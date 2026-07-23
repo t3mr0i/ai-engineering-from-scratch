@@ -80,72 +80,6 @@ The result matches o1 on AIME and MATH-500 at open weights, and is small enough 
 - *Perfect-information games with long horizons* (Go, chess): still search-based. AlphaZero / MuZero dominate.
 - *LLM reasoning*: no MCTS yet in production; GRPO on full rollouts, best-of-N for inference compute. Process reward models (PRMs) hint at step-level search being added back.
 
-## Build It
-
-The code in `code/main.py` implements **GRPO in miniature** — a bandit with multiple groups of samples. The algorithm is the same as on an LLM; only the policy and environment are simpler. It teaches the *loss* and the *group-relative advantage*, which is the 2025 innovation.
-
-### Step 1: a tiny verifier environment
-
-```python
-QUESTIONS = [
-    {"prompt": "q1", "correct": 3},
-    {"prompt": "q2", "correct": 1},
-]
-
-def verify(prompt_idx, answer_token):
-    return 1.0 if answer_token == QUESTIONS[prompt_idx]["correct"] else 0.0
-```
-
-In real GRPO the verifier runs unit tests or checks math equality.
-
-### Step 2: policy: softmax over K answer tokens per prompt
-
-```python
-def policy_probs(theta, p_idx):
-    return softmax(theta[p_idx])
-```
-
-Equivalent to the final-layer output of an LLM conditioned on a prompt.
-
-### Step 3: group sampling and group-relative advantage
-
-```python
-def grpo_step(theta, p_idx, G=8, beta=0.01, lr=0.1, rng=None):
-    probs = policy_probs(theta, p_idx)
-    samples = [sample(probs, rng) for _ in range(G)]
-    rewards = [verify(p_idx, s) for s in samples]
-    mean_r = sum(rewards) / G
-    std_r = stddev(rewards) + 1e-8
-    advs = [(r - mean_r) / std_r for r in rewards]
-
-    for a, A in zip(samples, advs):
-        grad = onehot(a) - probs
-        for i in range(len(probs)):
-            theta[p_idx][i] += lr * A * grad[i]
-    # KL penalty: pull theta toward reference
-    for i in range(len(probs)):
-        theta[p_idx][i] -= beta * (theta[p_idx][i] - reference[p_idx][i])
-```
-
-The group-relative advantage is the 2024 DeepSeek trick. No critic needed. The "baseline" is the group mean, and normalization uses group std.
-
-### Step 4: compare to REINFORCE baseline (value-free)
-
-Same setup, same compute, plain REINFORCE. GRPO converges faster and more stably.
-
-### Step 5: observe entropy and KL
-
-Same diagnostics as RLHF: mean KL to reference, policy entropy, reward-over-time. Once these stabilize, training is done.
-
-## Pitfalls
-
-- **Reward hacking via verifier gaming.** GRPO inherits RLHF's risk: if the verifier is wrong or exploitable, the LLM will find the exploit. Robust verifiers (multiple test cases, formal proofs) matter.
-- **Group size too small.** Variance of the group baseline goes like `1/√G`. Below `G = 4`, the advantage signal is noisy; standard choice is `G = 8` to `64`.
-- **Length bias.** LLM completions of different lengths have different log-probabilities. Normalize by token count, or use sequence-level log-prob, or truncate to max length.
-- **Pure self-play cycles.** AlphaZero-style training can get stuck in dominance loops on general-sum games. Mitigated by diverse opponent pools (league play, Lesson 10).
-- **Search-policy mismatch.** AlphaZero trains the policy to mimic search output. If the policy net is too small to represent the search's distribution, training stalls.
-- **Compute floor.** MuZero / AlphaZero need massive compute. A single ablation is often hundreds of GPU-hours. Miniature demos exist (e.g., AlphaZero on Connect Four) for learning.
-- **Verifier coverage.** Unit tests that pass for a buggy solution reinforce the bug. Design verifiers that catch edge cases.
 
 ## Use It
 
@@ -189,11 +123,6 @@ Given a target (perfect-info game / imperfect-info / Atari / LLM reasoning / com
 Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a trusted verifier. Refuse any game-RL pipeline without a fixed baseline opponent set (self-play ELO is uncalibrated otherwise).
 ```
 
-## Exercises
-
-1. **Easy.** Implement the GRPO bandit in `code/main.py`. Train on 2 prompts × 4 answer tokens each. Converge in < 1,000 updates with `G=8`.
-2. **Medium.** Plug in PPO (clipped) and vanilla REINFORCE. Compare sample efficiency and reward variance to GRPO on the same bandit.
-3. **Hard.** Extend to a length-2 "reasoning chain": the agent emits two tokens and the verifier rewards the pair. Measure how GRPO handles the credit assignment across two-step sequences. (Hint: compute group advantage per *full sequence*, propagate to both token positions.)
 
 ## Key Terms
 

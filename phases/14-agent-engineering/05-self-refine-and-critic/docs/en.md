@@ -83,25 +83,6 @@ OpenAI Agents SDK ships this pattern as "output guardrails." A guardrail is a va
 - **Over-refinement.** Each refine pass adds latency and tokens. Budget 1-3 passes; after that, escalate to human review.
 - **CRITIC on trivial tasks.** If there is no external verifier, CRITIC degenerates to Self-Refine; do not pay the latency for a stub verifier.
 
-## Build It
-
-`code/main.py` implements Self-Refine and CRITIC on a toy task: produce a short bullet list given a topic. The verifier checks format (3 bullets, each under 60 chars). CRITIC adds an external "fact verifier" that penalizes known hallucinations.
-
-Components:
-
-- `generate` — scripted producer.
-- `feedback` — LLM-style self-critique.
-- `verify_external` — CRITIC-style grounded verifier.
-- `refine` — rewrites output given history.
-- Stop condition — verifier passes or max 4 iterations.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Compare the Self-Refine vs CRITIC runs. CRITIC catches a factual error Self-Refine missed because the external verifier has grounding the self-critic does not.
 
 ## Use It
 
@@ -111,13 +92,6 @@ Anthropic's evaluator-optimizer is this pattern in Claude-friendly language. Ope
 
 `outputs/skill-refine-loop.md` configures an evaluator-optimizer loop given task shape, verifier availability, and iteration budget. Emits prompts for generator, evaluator/verifier, and optimizer, plus a stop policy.
 
-## Exercises
-
-1. Run the toy with max_iterations=1. Does CRITIC still help?
-2. Replace the external verifier with a noisy one (random 30% false positives). What does the loop do? This is the 2026 reality of most guardrail stacks.
-3. Implement a "generator-critic on different models" variant: big model generates, small model critiques. Does it beat same-model?
-4. Read CRITIC Section 3 (arXiv:2305.11738 v4). Name the three verification-tool categories and give an example for each.
-5. Map OpenAI Agents SDK's `output_guardrails` to CRITIC's verifier role. What does the SDK get wrong, and what does it get right?
 
 ## Key Terms
 

@@ -92,17 +92,6 @@ The silent killer of automated resolution systems is runbook drift: the system c
 
 `outputs/skill-service-desk-ai-triage.md` is a one-page decision aid: a quick reference for the four-zone model, the runbook scoring rubric, and the shadow-mode validation checklist. Paste it into a project kick-off or a client discovery session to frame the automation readiness assessment.
 
-## Exercises
-
-1. Run `code/main.py`. Three of the six sample tickets land in Zone A. Find the one ticket in Zone C. What single change to its `knowledge_context` field — without changing the underlying facts about the ticket — would move it from Zone C to Zone A? Make the edit in `main.py` and re-run to confirm.
-
-2. The runbook scorer flags one of the three sample runbooks as below the automation threshold. Identify which dimension scores lowest. Write one concrete sentence a knowledge-base author would add to the runbook to raise that dimension by 1 point.
-
-3. Take a real recurring ticket type from your current work (or a plausible one from your domain). Apply the four-zone model manually. Write down which zone it lands in and the single biggest obstacle to moving it to Zone A.
-
-4. Design a shadow-mode evaluation protocol for a Zone A ticket class. Specify: the sample size, the comparison metric, the acceptable accuracy threshold, and who reviews the results. Justify each number.
-
-5. A runbook covers a password reset procedure that was accurate six months ago. The identity provider was migrated to a new system last month. Apply the drift-detection checklist from the lesson: which signals would have caught this, which would have missed it, and what one process change would prevent the gap?
 
 ## Key Terms
 

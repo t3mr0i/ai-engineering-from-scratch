@@ -53,17 +53,6 @@ flowchart LR
 - Application Management
 - Leadership
 
-## Build It
-
-In the lab you build an AI architecture decision planner. It ranks design scenarios and recommends the right governance level.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/54-ai-architecture-decision-governance/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

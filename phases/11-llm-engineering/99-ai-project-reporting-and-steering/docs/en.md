@@ -97,17 +97,6 @@ No network, no LLM calls. The point is to make the decision logic executable and
 
 `outputs/skill-steering-pack-quality-gates.md` is a one-page decision aid for use in a real project. Paste the current week's signals into the left column, run the gate checklist, and the output tells you which sections are ready to present, which need rework, and what decision question each section is responsible for surfacing.
 
-## Exercises
-
-1. Run `code/main.py`. The sample signal set includes one T4 signal that is being used as the sole evidence for a status-confirmation section. Which signal is it, and what does the router output? Add a T1 signal (e.g., a production error rate reading) and run again — how does the routing change?
-
-2. Run `code/main.py` with the "stale signal" scenario (the second sample in the driver). Which signals fail the staleness gate, and what section type does the router fall back to when admissible evidence is below threshold?
-
-3. Apply the quality-gate checklist from `outputs/skill-steering-pack-quality-gates.md` to a status section from a real project you are currently working on. How many gates does it pass? Which failure mode (unsourced claim, missing decision question, stale signal) appears most often?
-
-4. Write the two prompts for the signal-extraction and synthesis-and-framing steps for a project where the primary source is a weekly Jira export. What fields does the extraction JSON schema need? What must the synthesis prompt explicitly require to prevent decision-question elision?
-
-5. A stakeholder reads an AI-generated pack section and asks: "Where does the amber come from?" Design an output format for the synthesis step that makes the answer to that question answerable in under 30 seconds, without reading the raw source data.
 
 ## Key Terms
 

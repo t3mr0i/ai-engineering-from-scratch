@@ -54,17 +54,6 @@ flowchart LR
 - Products & Value Streams
 - Application Management
 
-## Build It
-
-In the lab you build a process automation triage planner. It ranks workflows and recommends controls before teams pilot AI automation.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/50-ai-process-analysis-automation-design/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

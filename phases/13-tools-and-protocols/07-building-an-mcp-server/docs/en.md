@@ -138,17 +138,6 @@ What to look at:
 
 This lesson produces `outputs/skill-mcp-server-scaffolder.md`. Given a domain (notes, tickets, files, database), the skill scaffolds an MCP server with the right tools / resources / prompts split and SDK graduation path.
 
-## Exercises
-
-1. Run `code/main.py` and drive it with hand-built JSON-RPC messages. Exercise `notes_create`, then `resources/read` to retrieve the new note.
-
-2. Add a `notes_delete` tool with `annotations: {destructiveHint: true}`. Verify the client would surface a confirmation dialog (this requires a real host; Claude Desktop works).
-
-3. Implement `resources/subscribe` so the server pushes `notifications/resources/updated` whenever a note is modified. Add a keepalive task.
-
-4. Port the server to FastMCP. The Python file should shrink to under 80 lines. The wire behavior must be identical; verify with the same JSON-RPC test harness.
-
-5. Read the spec's `server/tools` section and identify one field of a tool definition not implemented in this lesson's server. (Hint: there are several; pick one and add it.)
 
 ## Key Terms
 

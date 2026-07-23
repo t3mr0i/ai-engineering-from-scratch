@@ -111,17 +111,6 @@ No network, no real model — the point is to make the *framing policy* explicit
 
 `outputs/skill-consultative-prompt-designer.md` is a one-page, paste-and-use decision aid: given a consulting situation, it walks through the four-layer prompt structure, the hypothesis template, the output contract checklist, and the most common failure modes. Paste it into a system prompt or into a prompt review step.
 
-## Exercises
-
-1. Run `code/main.py`. Hypotheses 1 and 2 both score 1/5. Identify which specific criteria each is missing. Pick one and rewrite it to pass all five criteria. Confirm your rewrite would satisfy each criterion by tracing the scorer's rules.
-
-2. Run `code/main.py` again and find the sample prompt that routes to the "board-level" template. Change the audience level to "operational team" and trace which template it now routes to and what framing changes.
-
-3. Take a real prompt you have sent to an LLM in the last week. Score it against the five criteria in the hypothesis scorer. Which criterion was missing? Rewrite the prompt with that criterion added and compare the output in a live session.
-
-4. Write a complete four-layer prompt (role, stakeholder context, hypothesis, output contract) for this situation: a client's steering committee is skeptical that an AI program will deliver ROI in 18 months; you need a memo that challenges or confirms that skepticism. Run it against any available model and note whether the output addresses the stated decision.
-
-5. The reviewer agent in Phase 14 · 39 evaluates agent outputs against a rubric. Define a 3-criterion rubric — drawn from this lesson's output contract concept — that a reviewer agent could apply automatically to every consulting memo an LLM produces. Write the rubric as a Python dict that could feed directly into that reviewer's evaluation function.
 
 ## Key Terms
 

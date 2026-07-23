@@ -107,17 +107,6 @@ No network, no model calls — the point is to make the decision logic transpare
 
 `outputs/skill-qa-gate-designer.md` is a one-page decision aid: paste a feature description and a model/prompt change, get the recommended eval layer, fixture minimum, gate thresholds, and CI placement. Paste it into a Confluence page or a PR description the next time your team ships an LLM feature.
 
-## Exercises
-
-1. Run `code/main.py`. Which feature type triggers the adversarial layer as mandatory, and which is marked optional? Change one feature attribute so the gate decision moves from `PASS` to `WARN` — which metric rule fired?
-
-2. The regression simulator blocks one scenario even though the aggregate score improved. Find it. Explain in one sentence why an improving aggregate can hide a regression, and which metric in the portfolio caught it.
-
-3. Design an eval set for a real LLM feature you work on or know well. List: the three most important coverage axes, the golden-reference vs. rubric decision and why, and the minimum case count per axis. Estimate how long a full eval run would take at 5 seconds per LLM-as-judge call.
-
-4. Write a five-anchor rubric (scale 1–5) for one quality dimension of a generative feature (e.g. "conciseness" for a summariser). Ask a colleague to rate three sample outputs using your rubric. If your ratings differ by more than 1 point on any case, identify which anchor wording caused the ambiguity.
-
-5. Read the RAGAS docs on faithfulness scoring. Map its faithfulness metric to the three-layer table in this lesson: which layer does it sit in, which pipeline stage would you run it at, and what absolute floor would you set before blocking a deploy?
 
 ## Key Terms
 

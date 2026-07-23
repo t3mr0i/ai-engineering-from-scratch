@@ -64,36 +64,6 @@ The gate emits one `verification_report.json` per task close-out, written under 
 
 Block-severity findings cannot be overridden by the agent. They can only be overridden by a human, with a recorded `override_reason` and an `overridden_by` user id. The override is a signed change, not an agent decision.
 
-## Build It
-
-`code/main.py` implements:
-
-- A loader for each input artifact, all stubbed locally so the lesson is self-contained.
-- A `verify(task_id, artifacts) -> VerdictReport` pure function.
-- A printer that shows the per-check results and the final pass/fail.
-- A demo with three task scenarios: clean pass, scope creep, missing acceptance.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: three verdict reports, each saved next to the script.
-
-## Production patterns in the wild
-
-Four patterns elevate the gate from "another lint job" to "the deciding edge."
-
-**Defense-in-depth, not single gate.** Pre-commit hook → CI status check → pre-tool authz hook → pre-merge gate. Each layer is deterministic so a failure in one layer is caught by the next. microservices.io's March 2026 playbook is explicit: the pre-commit hook is non-bypassable because, unlike a model-side skill, it does not depend on the agent following instructions. The verification gate sits at the CI / pre-merge layer.
-
-**Defense by deterministic check, model-judge only for nuance.** Anthropic's 2026 Hybrid Norm pairing: verifiable rewards (unit tests, schema checks, exit codes) answer "did the code solve the problem?" — LLM rubrics answer "is the code readable, secure, on-style?" The gate runs the first class; the reviewer (Phase 14 · 39) runs the second. Mixing them collapses the signal.
-
-**Signed override log, not Slack threads.** Every override emits a row in `outputs/verification/overrides.jsonl` with: timestamp, finding code, reason, signing user, current HEAD commit. The runtime refuses any override that lacks the signature; the audit trail is git-tracked. This is the line between an override policy and an override theater.
-
-**Coverage floor as a first-class check.** A `coverage_report.json` feeds a `coverage_floor` (default 80%) check. The gate fails if measured coverage drops below the floor or below the previous merge's floor by more than 1 percentage point. Without this check, agents quietly delete tests that fail and the verification reports stay green.
-
-**`--strict` mode promotes warns to blocks.** For release branches, ship-blocking PRs, or post-incident triage, `--strict` makes every warning a hard fail. The flag is opt-in by branch; not the global default, because strict-on-everything corrodes day-to-day flow.
 
 ## Use It
 
@@ -109,13 +79,6 @@ The gate is the deciding edge in the workbench flow. Every other surface is upst
 
 `outputs/skill-verification-gate.md` wires the gate into a specific project: which acceptance commands feed it, which rules are block-severity, which off-scope writes are tolerated, how the override audit log is stored.
 
-## Exercises
-
-1. Add a `coverage_floor` check: the test command must produce a coverage report with at least 80%. Decide which artifact carries the floor.
-2. Support a `--strict` mode that promotes every `warn` to `block`. Document the cases where strict mode is the right default.
-3. Make the gate produce a Markdown summary in addition to JSON. Defend which fields belong in the summary.
-4. Add a `time_since_last_human_touch` check: any file edited within 60 seconds of a human keystroke is exempt from off-scope flags.
-5. Run the gate on a real agent diff from your product. How many findings are real and how many are noise? Where does the gate need to grow?
 
 ## Key Terms
 

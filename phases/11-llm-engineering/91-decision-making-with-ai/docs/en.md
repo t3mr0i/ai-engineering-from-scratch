@@ -139,17 +139,6 @@ Both parts are deterministic and stdlib-only. The driver runs a batch of synthet
 
 `outputs/skill-decision-quality-checklist.md` is a one-page paste-and-use checklist for a consultant or engineer approaching a new AI-assisted decision use case. It covers: decision-type classification, required metric signals, gate thresholds to set, HITL interface requirements, and audit log fields. Bring it to a project kickoff or a governance review.
 
-## Exercises
-
-1. Run `code/main.py`. How many of the synthetic decisions clear all four gates? Which gate blocks the most decisions, and what does that tell you about the most common failure mode in the sample?
-
-2. Read the audit log output. Find the decision where the approver accepted despite a failed gate. What field in the log records this, and why does logging the gate state — even on accepted decisions — matter for post-hoc audits?
-
-3. A colleague proposes showing users the model's raw confidence score (0.0–1.0) next to each recommendation. Using the calibration concepts from Phase 11 · 10 and gate 1 in this lesson, explain when this is safe to do and when it is actively misleading. What would you show instead when the model is not calibrated?
-
-4. Map a decision your team currently makes (or a project you are aware of) to the decision-type table in "The Concept." Which row does it fall in? Walk through gates 1–4: do you currently have the metric signals required by each gate? What is the first one missing?
-
-5. You are asked to review an AI deployment that routes loan applications: 94% aggregate accuracy, no subgroup breakdown, HITL implemented as a daily batch approval queue. Using the decision gateway pattern, list every process gap and the specific EU AI Act or NIST AI RMF reference that corresponds to each gap.
 
 ## Key Terms
 

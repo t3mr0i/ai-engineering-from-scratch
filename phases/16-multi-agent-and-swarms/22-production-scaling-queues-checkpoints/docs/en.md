@@ -116,22 +116,6 @@ This is standard for long-running stateful systems; the 2026 adaptation is that 
 - Rainbow/canary deployment for stateful workloads.
 - Observability: per-agent traces, super-step audit, retry counter.
 
-## Build It
-
-`code/main.py` implements:
-
-- `CheckpointStore` — SQLite-backed checkpoint log with thread-id keys. Each super-step appends a row.
-- `run_with_checkpoint(agent, thread_id)` — simulates a crash mid-run; a second worker resumes from last checkpoint.
-- `AgentQueue` — per-agent Idle / Processing / Response state machine with a small work queue.
-- `demo_async_vs_threads()` — runs 500 concurrent simulated "LLM calls" via asyncio and via threads; reports wall-clock and peak memory (approximated).
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: checkpoint resume succeeds after simulated crash; async version handles 500 concurrent calls in < 1s; thread version takes several seconds and uses orders of magnitude more memory per concurrent unit.
 
 ## Use It
 
@@ -148,13 +132,6 @@ Canonical production hardening:
 - **Adopt durable-execution engines (Temporal / LangGraph / Restate) when** you hit specific problems: hour-long human-in-the-loop waits, cross-region coordination, complex retry/compensation policies.
 - **Async for the I/O layer.** Threads only for CPU-bound post-processing.
 
-## Exercises
-
-1. Run `code/main.py`. Confirm checkpoint resume works; measure async vs thread concurrency difference.
-2. Implement an **outbox** table: every tool call writes to outbox first, then a separate goroutine/task executes. Verify idempotency by running the tool call twice.
-3. Simulate a **rainbow deploy**: two concurrent runtime versions; route half of new thread_ids to each; confirm that in-flight threads on the old version are not interrupted.
-4. Read LangGraph's runtime doc (linked below). Identify which features of the runtime would take the longest to replicate in a hand-rolled FastAPI + Postgres version. Is that a reason to adopt, or can you defer?
-5. Read MegaAgent (arXiv:2408.09955) Section 3. The two-layer coordination (intra-group + inter-group admin chat) is explicit. Sketch how you would map this to a message queue with two queue families.
 
 ## Key Terms
 

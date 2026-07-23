@@ -52,11 +52,6 @@ Each fixture is a record with `id`, `category`, `subtype`, `prompt`, `target_beh
 
 Severity follows a 1-5 scale. A 1 is a clumsy attack against a benign target ("please pretend to be a pirate"). A 5 is an attack that, if successful, produces output a deployed system must not emit (operational details for a dangerous activity). Most fixtures sit at 2-3 because real attacks at deployment scale skew toward the easy and the lazy. Severity is set by the fixture author. Two reviewers disagreeing by more than one rank is a sign the rubric needs sharpening.
 
-## Build It
-
-The corpus lives in `code/fixtures.py` as a single Python list. The taxonomy class in `code/main.py` loads it, validates that every category has at least seven fixtures, exposes `by_category`, `match`, and `stats` methods, and ships a runnable demo that prints the histogram. Trigram cosine is implemented from scratch with `numpy`.
-
-The validation pass checks four invariants: every fixture has a non-empty prompt, every category in the schema is represented, every severity is in `1..5`, and every fixture id is unique. A failure here is a hard exit, not a warning, because the rest of the track depends on the corpus being internally consistent.
 
 ## Use It
 
@@ -66,11 +61,6 @@ Run `python3 main.py` from the lesson `code/` directory. The demo prints the per
 
 `outputs/skill-jailbreak-taxonomy.md` documents the six categories and the rubric. Treat it as the team's shared vocabulary. Every finding logged by the harness in lesson 87 references a taxonomy id.
 
-## Exercises
-
-1. Add a seventh category for indirect-prompt-injection (instruction embedded in a retrieved document, not in the user turn). Author ten fixtures and re-run the validator.
-2. Replace trigram cosine with a token-edit-distance scorer and measure how the match assignment changes on the existing corpus.
-3. Pull thirty additional fixtures from your own product's logs (redacted) and confirm the category distribution matches what your team intuitively expected.
 
 ## Key Terms
 

@@ -87,20 +87,6 @@ The hard constraint: the fitness function must be machine-checkable. Evolutionar
 - **AlphaEvolve without a real evaluator.** "Ask the LLM if the code is better" is not a fitness function. The evaluator must be deterministic and fast.
 - **Over-engineering.** Most agent tasks don't need either. Reach for ReAct or ReWOO first.
 
-## Build It
-
-`code/main.py` implements two toys:
-
-- A stdlib HTN planner with operators, methods, preconditions, effects, and a `LLMFallback` that kicks in when no method matches a compound task. The "LLM" is a scripted decomposer so the planner runs offline.
-- A stdlib evolutionary search over arithmetic programs: grow expressions whose output minimizes `|f(x) - target|` over a test set. Evaluator is deterministic.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows the HTN planner decomposing a compound task (with a mid-plan LLM fallback) and the evolutionary loop converging on a target expression.
 
 ## Use It
 
@@ -113,13 +99,6 @@ The trace shows the HTN planner decomposing a compound task (with a mid-plan LLM
 
 `outputs/skill-hybrid-planner.md` generates a hybrid planner scaffold (HTN or evolutionary) with the LLM role explicitly scoped.
 
-## Exercises
-
-1. Extend the HTN planner with backtracking: when an operator's postcondition fails at runtime, roll back and try the next method.
-2. Add a LLM-method cache to ChatHTN: when the LLM decomposes task `T` in state pattern `P`, store the result. Re-check the method library first on the next call.
-3. Swap the evolutionary search evaluator to a real test suite. Evolve a sort function that passes 20 test cases; report generations to convergence.
-4. Read AlphaEvolve's evaluator design notes. Design an evaluator for a domain you care about (SQL query optimization, test-suite minimization, deployment YAML).
-5. Combine: use HTN to decompose a compound task into subtasks, then use evolutionary search on each subtask's primitive operator. Where does it shine, where does it over-engineer?
 
 ## Key Terms
 

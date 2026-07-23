@@ -101,17 +101,6 @@ The driver runs a sample set of seven raw items and prints their classifications
 
 `outputs/skill-meeting-artifact-extractor.md` is a one-page decision aid: a checklist for running the three-pass elicitation chain, a copy-paste prompt template for each pass, the quality rubrics as compact tables, and a privacy checklist to run before routing a transcript anywhere.
 
-## Exercises
-
-1. Run `code/main.py`. How many of the seven sample items pass the action quality gate on the first score? Which specific fields trigger the most failures?
-
-2. The classifier assigns one item as `ParkingLot` that a human might argue is a `Decision`. Find it in the output. Adjust the sample data so the classifier routes it correctly, and explain which field change drove the reclassification.
-
-3. Take the action quality rubric from this lesson and apply it to the action items from your last real meeting. How many pass all four fields? Draft the enrichment prompts you would have needed during the call to fill the gaps.
-
-4. Design a pre-workshop decision brief for a choice your team faces in the next month (technology, process, or vendor). Use the decision frame from Phase 11 · 29: choice, constraints, criteria, reversibility. Write it in under 200 words. Predict the top two risks of skipping this frame.
-
-5. A colleague proposes routing all meeting transcripts through the public Claude API for extraction. Identify the data classification issues, name the LHIND-specific constraint (see CLAUDE.md), and propose an architecture that achieves the same outcome inside the corporate boundary.
 
 ## Key Terms
 

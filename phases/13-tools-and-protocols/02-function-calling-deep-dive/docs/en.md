@@ -128,17 +128,6 @@ What to look at:
 
 This lesson produces `outputs/skill-provider-portability-audit.md`. Given a function-calling integration against one provider, the skill produces a portability audit: which provider limits it relies on, which fields need renaming, and what breaks when ported to each other provider.
 
-## Exercises
-
-1. Run `code/main.py` and verify that the three provider declaration JSONs all serialize the same underlying `Tool` object. Modify the canonical tool to add an enum parameter and confirm only the Gemini translator needs to handle the OpenAPI quirk.
-
-2. Add a `ListToolsResponse` parser for each provider that extracts the tool list a model returns after a `list_tools` or discovery call. OpenAI does not have one natively; note this asymmetry.
-
-3. Implement `tool_choice` conversion: map a canonical `ToolChoice(mode="force", tool_name="x")` into all three provider shapes. Then map `mode="any"` and `mode="none"`. Check the lesson's diff table.
-
-4. Pick one of the three providers and read its function-calling guide end to end. Find one field in its schema spec that the other two do not support. Candidates: OpenAI `strict`, Anthropic `disable_parallel_tool_use`, Gemini `function_calling_config.allowed_function_names`.
-
-5. Write a test vector: a tool call whose arguments violate the declared schema. Run it through each provider's validator (the stdlib one in Lesson 01 will do as a proxy) and record which errors fire. Document which provider you would use in production for strictness.
 
 ## Key Terms
 

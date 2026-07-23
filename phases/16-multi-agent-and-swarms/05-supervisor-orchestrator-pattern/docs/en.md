@@ -70,23 +70,6 @@ LangGraph originally shipped a `langgraph-supervisor` library with a high-level 
 - **Simple queries.** Single-agent handles them faster and cheaper. Use the lead's "scale effort" check before spawning workers.
 - **Strict determinism.** Supervisor uses LLM-selected delegation. Static graphs are better when audit/replay matter more than adaptability.
 
-## Build It
-
-`code/main.py` implements a supervisor of three parallel workers using `threading`. The lead decomposes a query into sub-questions, workers run concurrently on each sub-question, and the lead synthesizes. No real LLMs — the workers are scripted to simulate fetch-and-summarize.
-
-Key structure:
-
-- `Lead.plan(query)` splits a query into 3 sub-questions.
-- `Worker.run(sub_q)` returns a fake summary (could be any tool-using agent in production).
-- `Lead.run(query)` kicks off workers in threads, joins, and synthesizes.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Output shows the plan, the parallel worker traces with start/end timestamps, and the final synthesis. You can see the wall-clock wins: three 0.3-second workers run in ~0.35 seconds, not 0.9.
 
 ## Use It
 
@@ -102,13 +85,6 @@ Checklist before deploying a supervisor pattern:
 - **Observability.** Trace the lead's plan, each worker's tool calls, and the synthesis. This is the basis for any post-hoc debugging.
 - **Rainbow rollout.** Stateful long-running agents need gradual version transition, not hot swap.
 
-## Exercises
-
-1. Run `code/main.py`, then modify the lead to spawn 5 workers instead of 3. Observe the wall-clock effect. At what worker count does spawn overhead exceed parallel savings in this demo?
-2. Implement a worker timeout: kill any worker that runs longer than 0.5 seconds and have the lead synthesize the remaining results. What observability do you need to know a worker was cut?
-3. Add a conflict-detection step to the lead's synthesis: if two workers return contradictory answers, the lead notes the disagreement rather than picking one. How do you detect contradiction without calling an LLM?
-4. Read Anthropic's Research-system engineering post. List three practices that this toy demo would need to adopt to run in production.
-5. Compare LangGraph's `create_supervisor` (legacy) vs the new tool-calling recommendation. Which gives you better control over what the supervisor sees? Why does Anthropic explicitly pass only sub-answers and not raw worker context into synthesis?
 
 ## Key Terms
 

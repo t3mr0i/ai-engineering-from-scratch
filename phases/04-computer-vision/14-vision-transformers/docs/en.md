@@ -125,103 +125,6 @@ Masked Autoencoder (He et al., 2022): mask 75% of patches at random, train the e
 
 MAE makes ViT trainable on ImageNet-1k alone, hits SOTA, and is the current default self-supervised recipe.
 
-## Build It
-
-### Step 1: Patch embedding
-
-```python
-import torch
-import torch.nn as nn
-
-class PatchEmbedding(nn.Module):
-    def __init__(self, in_channels=3, patch_size=16, dim=192, image_size=64):
-        super().__init__()
-        assert image_size % patch_size == 0
-        self.proj = nn.Conv2d(in_channels, dim, kernel_size=patch_size, stride=patch_size)
-        num_patches = (image_size // patch_size) ** 2
-        self.num_patches = num_patches
-
-    def forward(self, x):
-        x = self.proj(x)
-        return x.flatten(2).transpose(1, 2)
-```
-
-One conv, one flatten, one transpose. That is the entire image-to-tokens step.
-
-### Step 2: Transformer block
-
-Pre-LN, multi-head self-attention, MLP with GELU, residual connections.
-
-```python
-class Block(nn.Module):
-    def __init__(self, dim, num_heads, mlp_ratio=4, dropout=0.0):
-        super().__init__()
-        self.ln1 = nn.LayerNorm(dim)
-        self.attn = nn.MultiheadAttention(dim, num_heads, dropout=dropout, batch_first=True)
-        self.ln2 = nn.LayerNorm(dim)
-        self.mlp = nn.Sequential(
-            nn.Linear(dim, dim * mlp_ratio),
-            nn.GELU(),
-            nn.Dropout(dropout),
-            nn.Linear(dim * mlp_ratio, dim),
-            nn.Dropout(dropout),
-        )
-
-    def forward(self, x):
-        a, _ = self.attn(self.ln1(x), self.ln1(x), self.ln1(x), need_weights=False)
-        x = x + a
-        x = x + self.mlp(self.ln2(x))
-        return x
-```
-
-`nn.MultiheadAttention` handles the splitting into heads, the scaled dot-product, and the output projection. `batch_first=True` so shapes are `(N, seq, dim)`.
-
-### Step 3: The ViT
-
-```python
-class ViT(nn.Module):
-    def __init__(self, image_size=64, patch_size=16, in_channels=3,
-                 num_classes=10, dim=192, depth=6, num_heads=3, mlp_ratio=4):
-        super().__init__()
-        self.patch = PatchEmbedding(in_channels, patch_size, dim, image_size)
-        num_patches = self.patch.num_patches
-        self.cls_token = nn.Parameter(torch.zeros(1, 1, dim))
-        self.pos_embed = nn.Parameter(torch.zeros(1, num_patches + 1, dim))
-        self.blocks = nn.ModuleList([
-            Block(dim, num_heads, mlp_ratio) for _ in range(depth)
-        ])
-        self.ln = nn.LayerNorm(dim)
-        self.head = nn.Linear(dim, num_classes)
-        nn.init.trunc_normal_(self.pos_embed, std=0.02)
-        nn.init.trunc_normal_(self.cls_token, std=0.02)
-
-    def forward(self, x):
-        x = self.patch(x)
-        cls = self.cls_token.expand(x.size(0), -1, -1)
-        x = torch.cat([cls, x], dim=1)
-        x = x + self.pos_embed
-        for blk in self.blocks:
-            x = blk(x)
-        x = self.ln(x[:, 0])
-        return self.head(x)
-
-vit = ViT(image_size=64, patch_size=16, num_classes=10, dim=192, depth=6, num_heads=3)
-x = torch.randn(2, 3, 64, 64)
-print(f"output: {vit(x).shape}")
-print(f"params: {sum(p.numel() for p in vit.parameters()):,}")
-```
-
-About 2.8M parameters — a tiny ViT tractable on CPU. Real ViT-B is 86M; same class definition with `dim=768, depth=12, num_heads=12`.
-
-### Step 4: Sanity check — single image inference
-
-```python
-logits = vit(torch.randn(1, 3, 64, 64))
-print(f"logits: {logits}")
-print(f"probs:  {logits.softmax(-1)}")
-```
-
-Should run without error. Probabilities sum to 1.
 
 ## Use It
 
@@ -244,11 +147,6 @@ This lesson produces:
 - `outputs/prompt-vit-vs-cnn-picker.md` — a prompt that picks between a ViT, a ConvNeXt, or a Swin based on dataset size, compute, and inference stack.
 - `outputs/skill-vit-patch-and-pos-embed-inspector.md` — a skill that verifies a ViT's patch embedding and positional embedding shapes match the model's expected sequence length, catching the most common porting bugs.
 
-## Exercises
-
-1. **(Easy)** Print the shapes of every intermediate tensor for a forward pass through the tiny ViT above. Confirm: input `(N, 3, 64, 64)` -> patches `(N, 16, 192)` -> with CLS `(N, 17, 192)` -> classifier input `(N, 192)` -> output `(N, num_classes)`.
-2. **(Medium)** Fine-tune a pretrained `timm` ViT-S/16 on the synthetic-CIFAR dataset from Lesson 4. Compare against ResNet-18 fine-tuning on the same data. Report training time and final accuracy.
-3. **(Hard)** Implement MAE pretraining for the tiny ViT: mask 75% of patches, train the encoder + a small decoder to reconstruct the masked patches. Evaluate linear-probe accuracy on the synthetic data before and after pretraining.
 
 ## Key Terms
 

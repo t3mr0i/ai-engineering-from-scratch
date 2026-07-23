@@ -73,39 +73,6 @@ And unlike the 2018 stack, it is Flash-Attention-native. Inference is 2–3× fa
 | Zero-shot entailment (NLI) | Classifier head on top of encoder |
 | Reranker for RAG | Cross-encoder scoring, 10x faster than LLM rerankers |
 
-## Build It
-
-### Step 1: masking logic
-
-See `code/main.py`. The function `create_mlm_batch` takes a list of token IDs, a vocab size, and a mask probability. Returns input IDs (with masks applied) and labels (only at masked positions, -100 elsewhere — PyTorch's ignore index convention).
-
-```python
-def create_mlm_batch(tokens, vocab_size, mask_prob=0.15, rng=None):
-    input_ids = list(tokens)
-    labels = [-100] * len(tokens)
-    for i, t in enumerate(tokens):
-        if rng.random() < mask_prob:
-            labels[i] = t
-            r = rng.random()
-            if r < 0.8:
-                input_ids[i] = MASK_ID
-            elif r < 0.9:
-                input_ids[i] = rng.randrange(vocab_size)
-            # else: keep original
-    return input_ids, labels
-```
-
-### Step 2: run MLM prediction on a tiny corpus
-
-Train a 2-layer encoder + MLM head on a vocabulary of 20 words, 200 sentences. No gradient — we do forward-pass sanity checks. Full training needs PyTorch.
-
-### Step 3: compare mask types
-
-Show how the three-way rule keeps the model usable without `[MASK]`. Predict on an unmasked sentence and on a masked sentence. Both should produce reasonable token distributions because the model saw both patterns in training.
-
-### Step 4: fine-tune head
-
-Replace the MLM head with a classification head on a toy sentiment dataset. Only the head trains; the encoder is frozen. This is the pattern every BERT application follows.
 
 ## Use It
 
@@ -130,11 +97,6 @@ out = model(**inputs).last_hidden_state   # (1, N, 768)
 
 See `outputs/skill-bert-finetuner.md`. The skill scopes a BERT fine-tune (backbone choice, head spec, data, eval, stopping) for a new classification or extraction task.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` and print the mask distribution across 10,000 tokens. Confirm ~15% are selected, and of those ~80% become `[MASK]`.
-2. **Medium.** Implement whole-word masking: if a word is tokenized into subwords, mask all subwords together or none. Measure whether this improves MLM accuracy on a 500-sentence corpus.
-3. **Hard.** Train a tiny (2-layer, d=64) BERT on 10,000 sentences from a public dataset. Fine-tune the `[CLS]` token for SST-2 sentiment. Compare against a decoder-only baseline at matched params — which wins?
 
 ## Key Terms
 

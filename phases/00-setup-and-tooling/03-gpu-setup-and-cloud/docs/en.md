@@ -120,11 +120,6 @@ if torch.cuda.is_available():
     print(f"Speedup: {cpu_time / gpu_time:.0f}x")
 ```
 
-## Exercises
-
-1. Run the benchmark above and compare CPU vs GPU times
-2. If you don't have a GPU, run it on Google Colab and compare
-3. Check how much GPU memory you have and estimate the largest model you can fit (rule of thumb: 2 bytes per parameter for fp16)
 
 ## Key Terms
 

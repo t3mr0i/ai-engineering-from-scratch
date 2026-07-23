@@ -65,25 +65,6 @@ GitHub issue labeled `@agent fix` or PR comment
 - Observability: Langfuse with per-PR trace archive linked from the PR body
 - Budget: per-repo daily dollar ceiling; max PRs per repo per day
 
-## Build It
-
-1. **GitHub App.** Fine-grained installation token: issues read+write, pull_requests write, contents read+write, workflows read. Branch protection (the only surface that can do this) enforces "no direct push to `main`" and "no force-push"; the app is not in the bypass list. The worker enforces "no writes under `.github/workflows`" as an allow-list check on the proposed diff, since GitHub App permissions are not path-scoped.
-
-2. **Webhook receiver.** Lambda function accepts issue label / PR comment webhooks. Filters by label `@agent fix this`. Enqueues to SQS.
-
-3. **Dispatcher.** Pops tasks from SQS. Enforces per-repo per-day budget. Spins up an ECS Fargate task with the repo URL, issue body, and a fresh Daytona sandbox.
-
-4. **Environment inference.** Detect language (Python, Node, Go, Rust) and package manager (uv, pnpm, go mod, cargo). Generate a Dockerfile on the fly if one does not exist.
-
-5. **Agent loop.** mini-swe-agent or SWE-agent v2 with Claude Opus 4.7. Tools: ripgrep, tree-sitter repo-map, read_file, edit_file, run_tests, git. Hard limits: $20 cost, 30 min wall-clock, 30 agent turns.
-
-6. **Verification.** After the loop concludes, run the full test suite in-sandbox. Compute coverage delta via jacoco / coverage.py. If CI red: halt, do not open PR. If coverage drops more than 2%: open PR with `needs-review` label.
-
-7. **PR posting.** Push the agent branch. Open PR via GitHub API with: title, rationale, diff summary, trace URL, cost, turns.
-
-8. **Credential hygiene.** Worker runs with a short-lived GitHub App installation token. Logs are scrubbed for secrets before archival.
-
-9. **Eval.** 30 seeded internal issues of varying difficulty. Measure pass rate, PR quality (diff size, style, coverage), cost, latency. Compare with Cursor Background Agents and AWS Remote SWE Agents on the same issues.
 
 ## Use It
 
@@ -112,17 +93,6 @@ GitHub issue labeled `@agent fix` or PR comment
 | 15 | Operator UX | Rationale comments, retry affordance, @-mention follow-up |
 | **100** | | |
 
-## Exercises
-
-1. Add a "fix flaky test" mode: the label `@agent stabilize-flake TestX` runs the test 50 times in-sandbox and proposes a minimal change that stabilizes it.
-
-2. Compare cost vs Cursor Background Agents on three shared issues. Report which tools win where.
-
-3. Implement a budget dashboard: per-repo per-day cost, per-user cost. Alert on anomaly.
-
-4. Build a "dry-run" mode that opens a draft PR without running CI, so reviewers can examine the plan cheap.
-
-5. Add a retention policy: PR branches older than 7 days without merge get deleted automatically.
 
 ## Key Terms
 

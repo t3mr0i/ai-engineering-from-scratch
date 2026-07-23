@@ -65,40 +65,6 @@ For classification: take `[CLS]` hidden state → linear → softmax. For DINOv2
 
 ViT needs *a lot* of data to match CNNs because it has none of the CNN inductive biases (translation invariance, locality). Without >100M labeled images or strong self-supervised pretraining, CNNs still win at matched compute. DeiT fixed this in 2021 with distillation tricks; DINOv2 fixed it permanently in 2023 with self-supervision.
 
-## Build It
-
-See `code/main.py`. Pure-stdlib patchify + linear embedding + sanity checks. No training — ViT at any realistic scale needs PyTorch and hours of GPU time.
-
-### Step 1: fake image
-
-A 24 × 24 RGB image as a list of rows of `(R, G, B)` tuples. We use 6×6 patches → 16 patches, 108-d embedding vector each.
-
-### Step 2: patchify
-
-```python
-def patchify(image, P):
-    H = len(image)
-    W = len(image[0])
-    patches = []
-    for i in range(0, H, P):
-        for j in range(0, W, P):
-            patch = []
-            for di in range(P):
-                for dj in range(P):
-                    patch.extend(image[i + di][j + dj])
-            patches.append(patch)
-    return patches
-```
-
-Raster order: row-major across the grid. Every ViT uses this ordering.
-
-### Step 3: linear embed
-
-Multiply each flat patch by a random `(patch_flat_size, d_model)` matrix. Verify output shape is `(N_patches + 1, d_model)` after prepending `[CLS]`.
-
-### Step 4: count parameters for a realistic ViT
-
-Print the param count for ViT-Base: 12 layers, 12 heads, d=768, patch=16. Compare to ResNet-50 (~25M). ViT-Base lands at ~86M. ViT-Large ~307M. ViT-Huge ~632M.
 
 ## Use It
 
@@ -124,11 +90,6 @@ cls_emb = out[:, 0]                       # image representation
 
 See `outputs/skill-vit-configurator.md`. The skill picks a ViT variant and patch size for a new vision task given dataset size, resolution, and compute budget.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Verify the number of patches equals `(H/P) * (W/P)` and the flat patch dimension equals `P*P*C`.
-2. **Medium.** Implement 2D sinusoidal positional embeddings — two independent sinusoidal codes for `row` and `col` of each patch, concatenated. Feed them into a tiny PyTorch ViT and compare accuracy vs learnable positional embeddings on CIFAR-10.
-3. **Hard.** Build a 3-layer ViT (PyTorch), train on 1,000 MNIST images with 4×4 patches. Measure test accuracy. Now add DINOv2 pretraining on the same 1,000 images (simplified: just train the encoder to predict patch embeddings from masked patches). Does accuracy improve?
 
 ## Key Terms
 

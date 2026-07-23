@@ -29,106 +29,6 @@ The trend in 2026 is hybrid: retrieve the best few passages, then prompt a gener
 
 **Generative.** A decoder-only LLM (GPT, Claude, Llama) answers from learned weights. No retrieval step. Excellent on common knowledge, catastrophic on rare or recent facts. The hallucination rate is inversely correlated with fact frequency in the pretraining data.
 
-## Build It
-
-### Step 1: extractive QA with a pretrained model
-
-```python
-from transformers import pipeline
-
-qa = pipeline("question-answering", model="deepset/roberta-base-squad2")
-
-passage = (
-    "Apple Inc. released the first iPhone on June 29, 2007. "
-    "The device was announced by Steve Jobs at Macworld in January 2007."
-)
-question = "When was the first iPhone released?"
-
-answer = qa(question=question, context=passage)
-print(answer)
-```
-
-```python
-{'score': 0.98, 'start': 57, 'end': 70, 'answer': 'June 29, 2007'}
-```
-
-`deepset/roberta-base-squad2` is trained on SQuAD 2.0, which includes unanswerable questions. By default, the `question-answering` pipeline returns the highest-scoring span even when the model's null score wins — it does *not* automatically return an empty answer. To get explicit "no answer" behavior, pass `handle_impossible_answer=True` to the pipeline call: the pipeline then returns an empty answer only when the null score exceeds every span score. Always check the `score` field either way.
-
-### Step 2: a retrieval-augmented pipeline (sketch)
-
-```python
-from sentence_transformers import SentenceTransformer
-import numpy as np
-
-encoder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-
-corpus = [
-    "Apple Inc. released the first iPhone on June 29, 2007.",
-    "Macworld 2007 featured the iPhone announcement by Steve Jobs.",
-    "Android launched in 2008 as Google's mobile operating system.",
-    "The first iPod was released in 2001.",
-]
-corpus_embeddings = encoder.encode(corpus, normalize_embeddings=True)
-
-
-def retrieve(question, top_k=2):
-    q_emb = encoder.encode([question], normalize_embeddings=True)
-    sims = (corpus_embeddings @ q_emb.T).squeeze()
-    order = np.argsort(-sims)[:top_k]
-    return [corpus[i] for i in order]
-
-
-def answer(question):
-    passages = retrieve(question, top_k=2)
-    combined = " ".join(passages)
-    return qa(question=question, context=combined)
-
-
-print(answer("When was the first iPhone released?"))
-```
-
-Two-stage pipeline. Dense retriever (Sentence-BERT) finds relevant passages by semantic similarity. Extractive reader (RoBERTa-SQuAD) pulls the answer span from the combined top passages. Works on small corpora. For a million-document corpus, use FAISS or a vector database.
-
-### Step 3: generative with RAG
-
-```python
-def rag_generate(question, llm):
-    passages = retrieve(question, top_k=3)
-    prompt = f"""Context:
-{chr(10).join('- ' + p for p in passages)}
-
-Question: {question}
-
-Answer using only the context above. If the context does not contain the answer, say "I don't know."
-"""
-    return llm(prompt)
-```
-
-The prompt pattern matters. Explicitly telling the model to ground in the context and return "I don't know" when the context is insufficient cuts hallucination rates by 40-60% compared to naive prompting. More elaborate patterns add citations, confidence scores, and structured extraction.
-
-### Step 4: evaluation that reflects the real world
-
-SQuAD uses **Exact Match (EM)** and **token-level F1**. EM is a strict match after normalization (lowercase, strip punctuation, remove articles) — either the prediction matches exactly or it scores 0. F1 is computed over token overlap between prediction and reference and gives partial credit. Both under-credit paraphrases: "June 29, 2007" vs "June 29th, 2007" typically gets 0 EM (the ordinal breaks normalization) but still earns substantial F1 from overlapping tokens.
-
-For production QA:
-
-- **Answer accuracy** (LLM-judged or human-judged, since metrics do not capture semantic equivalence).
-- **Citation accuracy.** Does the cited passage actually support the answer? Trivial to check automatically with string match between generated citations and retrieved passages.
-- **Refusal calibration.** When the answer is not in the retrieved passages, does the system correctly say "I don't know"? Measure false confidence rate.
-- **Retrieval recall.** Before evaluating the reader, measure whether the retriever gets the right passage into the top-`k`. A reader cannot fix a missing passage.
-
-### RAGAS: the 2026 production eval framework
-
-`RAGAS` is purpose-built for RAG systems and is the shipping default in 2026. It scores four dimensions without requiring gold references:
-
-- **Faithfulness.** Does each claim in the answer come from the retrieved context? Measured by NLI-based entailment. Your primary hallucination metric.
-- **Answer relevance.** Does the answer address the question? Measured by generating hypothetical questions from the answer and comparing to the real question.
-- **Context precision.** Of the retrieved chunks, what fraction were actually relevant? Low precision = noise in prompt.
-- **Context recall.** Did the retrieved set contain all needed information? Low recall = reader cannot succeed.
-
-Reference-free scoring lets you evaluate on live production traffic without curated gold answers. Layer LLM-as-judge on top for open-ended questions where exact-match metrics are useless.
-
-`pip install ragas`. Plug your retriever + reader. Get four scalars per query. Alert on regressions.
 
 ## Use It
 
@@ -168,11 +68,6 @@ Given requirements (corpus size, question type, factuality constraint, latency b
 Refuse closed-book LLM answers for regulatory or compliance-sensitive questions. Refuse any QA system without a retrieval-recall baseline (you cannot evaluate the reader without knowing the retriever surfaced the right passage). Flag questions that require multi-hop reasoning as needing specialized multi-hop retrievers like HotpotQA-trained systems.
 ```
 
-## Exercises
-
-1. **Easy.** Set up the SQuAD extractive pipeline above on 10 Wikipedia passages. Hand-craft 10 questions. Measure how often the answer is correct. You should see 7-9 correct if passages and questions are clean.
-2. **Medium.** Add a refusal classifier. When the top retrieval score is below a threshold (say 0.3 cosine), return "I don't know" instead of calling the reader. Tune the threshold on a held-out set.
-3. **Hard.** Build a RAG pipeline over a 10,000-document corpus of your choice. Implement hybrid retrieval (BM25 + dense) with RRF fusion (see lesson 14). Measure answer accuracy with and without the hybrid step. Document which question types benefit most.
 
 ## Key Terms
 

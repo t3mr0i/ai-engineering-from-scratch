@@ -97,25 +97,6 @@ In LLM-agent systems, non-stationarity manifests as "my agent worked last month,
 
 Training actual networks is a Phase 09 topic. This lesson builds scripted-policy versions that demonstrate the CTDE, value-decomposition, and centralized-value patterns without gradient updates. The goal is to internalize the patterns before you pick up a full MARL library (PyMARL, MARLlib, RLlib multi-agent).
 
-## Build It
-
-`code/main.py` implements three pattern demonstrations, all on a tiny 2-agent cooperative grid-world:
-
-- Environment: 2 agents on a 4x4 grid, one reward pellet. Reward = 1 if any agent reaches pellet; task finishes.
-- `IndependentAgents` — each agent treats others as environment. Baseline.
-- `MADDPGStyle` — centralized critic computes a joint value; actor policies update from it. Scripted policy improvement.
-- `QMIXStyle` — value decomposition with a monotone mixer.
-- `MAPPOStyle` — centralized value function; policies update against the shared baseline.
-
-All four run the same episodes and report average steps-to-goal. The CTDE variants converge to shorter paths than the independent baseline.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output: independent agents take ~6 steps on average; CTDE variants converge toward ~3.5 steps (optimal for the 4x4 grid is 3). The pattern difference shows up despite scripted policies.
 
 ## Use It
 
@@ -131,13 +112,6 @@ MARL in production is rare. When you do use it:
 - **Reward shaping warning.** MARL is exquisitely sensitive to reward design. One coordination bug in the shaping and agents learn to exploit it. Run adversarial tests.
 - **For LLM agents**, consider prompt-level policies first. Only invest in MARL training when interaction data + reward signal + infrastructure are all present.
 
-## Exercises
-
-1. Run `code/main.py`. Measure the steps-to-goal gap between independent and MAPPO-style agents. Does the gap grow or shrink on a 6x6 grid?
-2. Implement a competitive variant: two agents, one pellet, only the first to reach gets reward. Which pattern handles competition cleanly? MADDPG historically.
-3. Read MADDPG (arXiv:1706.02275) Section 3. Implement the exact critic update rule symbolically in pseudocode in your own words.
-4. Read MAPPO (arXiv:2103.01955). Why do the authors argue centralized value + PPO beats off-policy MARL on their benchmarks? List the three strongest claims.
-5. Apply CTDE as a design pattern to a hypothetical LLM-agent system (e.g., research agent + summarizer + coder). What is the joint information available at design time that is not available at runtime?
 
 ## Key Terms
 

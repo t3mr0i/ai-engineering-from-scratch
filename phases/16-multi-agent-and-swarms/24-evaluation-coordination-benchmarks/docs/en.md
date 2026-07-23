@@ -86,23 +86,6 @@ When someone claims a multi-agent result:
 
 Building your own internal benchmark for the axis you actually care about is often the right move.
 
-## Build It
-
-`code/main.py` is a non-interactive walk-through:
-
-- Simulates 3 multi-agent systems on a toy task.
-- Computes MARBLE-style milestone metrics for each.
-- Runs a contamination check by withholding tasks from a "training" set.
-- Compares to a random baseline explicitly.
-- Prints a benchmark-claims scorecard.
-
-Run:
-
-```bash
-python3 code/main.py
-```
-
-Expected output: system scorecard with raw accuracy, milestone achievement, cost-per-task, vs-random baseline delta, and a contamination-check note.
 
 ## Use It
 
@@ -118,13 +101,6 @@ Production evaluation discipline:
 - **Rebuild the benchmark quarterly.** Production distribution shifts; stale benchmarks mislead.
 - **Avoid published-benchmark overfitting.** If your team is optimizing specifically for SWE-bench Pro numbers, you will regress on production.
 
-## Exercises
-
-1. Run `code/main.py`. Identify which of the three simulated systems has the best cost-per-milestone. Does it match the highest raw-accuracy system?
-2. Read MultiAgentBench (arXiv:2503.01935). For your own task domain, decide which of the four topologies MARBLE would recommend. Justify from the paper's results.
-3. Read the SWE-bench Pro paper. What specifically makes it contamination-resistant? Could the same technique be applied to other benchmarks you care about?
-4. Read COMMA's finding on multimodal coordination. Design a simple multimodal coordination task you could add to your internal benchmark. What would count as a useful signal?
-5. Apply the benchmark-claims checklist to one recent multi-agent paper's headline result. What grade would you give the claim?
 
 ## Key Terms
 

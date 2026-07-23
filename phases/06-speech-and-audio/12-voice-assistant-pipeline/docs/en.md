@@ -51,81 +51,6 @@ Latency target: first TTS audio byte within 800 ms of the user finishing their u
 | Vapi / Retell (managed) | 300-500 ms | commercial | Fastest to launch; limited customization |
 | Whisper.cpp + llama.cpp + Kokoro-ONNX | offline | open | Privacy / edge |
 
-## Build It
-
-### Step 1: mic capture with chunking (pseudocode)
-
-```python
-import sounddevice as sd
-
-def mic_stream(chunk_ms=20, sr=16000):
-    q = queue.Queue()
-    def cb(indata, frames, time, status):
-        q.put(indata.copy().flatten())
-    with sd.InputStream(channels=1, samplerate=sr, blocksize=int(sr * chunk_ms/1000), callback=cb):
-        while True:
-            yield q.get()
-```
-
-### Step 2: VAD-gated turn capture
-
-```python
-def capture_turn(stream, vad, pre_roll_ms=300, silence_ms=500):
-    buf, pre, triggered = [], collections.deque(maxlen=pre_roll_ms // 20), False
-    silent = 0
-    for chunk in stream:
-        pre.append(chunk)
-        if vad(chunk):
-            if not triggered:
-                buf = list(pre)
-                triggered = True
-            buf.append(chunk)
-            silent = 0
-        elif triggered:
-            silent += 20
-            buf.append(chunk)
-            if silent >= silence_ms:
-                return b"".join(buf)
-```
-
-### Step 3: streaming STT → LLM → TTS
-
-```python
-async def turn(audio_bytes):
-    transcript = await stt.transcribe(audio_bytes)
-    async for token in llm.stream(transcript):
-        async for audio in tts.stream(token):
-            await speaker.play(audio)
-```
-
-### Step 4: tool calling inside the LLM loop
-
-```python
-tools = [
-    {"name": "get_weather", "parameters": {"location": "string"}},
-    {"name": "set_timer", "parameters": {"seconds": "int"}},
-]
-
-async for chunk in llm.stream(user_text, tools=tools):
-    if chunk.type == "tool_call":
-        result = dispatch(chunk.name, chunk.args)
-        continue_streaming(result)
-    if chunk.type == "text":
-        await tts.stream(chunk.text)
-```
-
-### Step 5: interruption handling
-
-```python
-tts_task = asyncio.create_task(tts_loop())
-while True:
-    chunk = await mic.get()
-    if vad(chunk):
-        tts_task.cancel()
-        await speaker.stop()
-        await new_turn()
-        break
-```
 
 ## Use It
 
@@ -150,11 +75,6 @@ See `code/main.py` for a runnable simulation that wires all seven components wit
 
 Save as `outputs/skill-voice-assistant-architect.md`. Given budget + scale + language + compliance constraints, produce a full stack spec.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. It simulates one full turn end-to-end with stub modules and prints per-stage latency.
-2. **Medium.** Replace the STT stub with a real Whisper model on a pre-recorded `.wav`. Measure WER and end-to-end latency.
-3. **Hard.** Add tool calling: implement `get_weather` (any API) and `set_timer`. Route the LLM through the tools and verify that when the user says "set a 5 minute timer" the right function fires and the spoken reply confirms it.
 
 ## Key Terms
 

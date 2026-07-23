@@ -73,17 +73,6 @@ Lessons 12-15 are the attack families. Lesson 16 is the production tooling. Less
 
 This lesson produces `outputs/skill-red-team-stack.md`. Given a deployment description, it names which of the three tools are appropriate, what to configure in each, and what regression cadence to run.
 
-## Exercises
-
-1. Run `code/main.py`. Compare the Llama-Guard-style classifier's detection rate on single-turn vs multi-turn attacks.
-
-2. Implement a new Garak probe: a base64-encoded harmful request. Measure its detection by the Llama-Guard-style classifier.
-
-3. Extend the PyRIT-style converter chain with a "translate to French, then paraphrase" converter. Re-measure attack success.
-
-4. Read Llama Guard 3's hazard-category list. Identify two categories where the training data would realistically produce high false-positive rates on legitimate developer content.
-
-5. Compare Garak and PyRIT's design principles. Argue for a deployment where each is the right tool.
 
 ## Key Terms
 

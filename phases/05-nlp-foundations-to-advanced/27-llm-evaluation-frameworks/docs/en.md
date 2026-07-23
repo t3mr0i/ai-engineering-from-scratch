@@ -50,127 +50,6 @@ Why it fails silently:
 
 **Calibration.** Never trust the raw judge score until you have a correlation against human labels. Run 100 hand-labeled examples. Plot judge vs human. Compute Spearman rho. If rho < 0.7, your judge rubric needs work.
 
-## Build It
-
-### Step 1: faithfulness with NLI (RAGAS-style)
-
-```python
-from typing import Callable
-from transformers import pipeline
-
-nli = pipeline("text-classification",
-               model="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
-               top_k=None)
-
-# `llm` is any callable: prompt str -> generated str.
-# Example: llm = lambda p: client.messages.create(model="claude-haiku-4-5", ...).content[0].text
-LLM = Callable[[str], str]
-
-
-def atomic_claims(answer: str, llm: LLM) -> list[str]:
-    prompt = f"""Break this answer into simple factual claims (one per line):
-{answer}
-"""
-    return llm(prompt).splitlines()
-
-
-def faithfulness(answer: str, context: str, llm: LLM) -> float:
-    claims = atomic_claims(answer, llm)
-    if not claims:
-        return 0.0
-    supported = 0
-    for claim in claims:
-        result = nli({"text": context, "text_pair": claim})[0]
-        entail = next((s for s in result if s["label"] == "entailment"), None)
-        if entail and entail["score"] > 0.5:
-            supported += 1
-    return supported / len(claims)
-```
-
-Decompose the answer into atomic claims. NLI-check each claim against the retrieved context. Faithfulness = fraction supported.
-
-### Step 2: answer relevance
-
-```python
-import numpy as np
-from sentence_transformers import SentenceTransformer
-
-# encoder: any model implementing .encode(texts, normalize_embeddings=True) -> ndarray
-# e.g., encoder = SentenceTransformer("BAAI/bge-small-en-v1.5")
-
-def answer_relevance(question: str, answer: str, encoder, llm: LLM, n: int = 3) -> float:
-    prompt = f"Write {n} questions this answer could be the answer to:\n{answer}"
-    generated = [line for line in llm(prompt).splitlines() if line.strip()][:n]
-    if not generated:
-        return 0.0
-    q_emb = np.asarray(encoder.encode([question], normalize_embeddings=True)[0])
-    g_embs = np.asarray(encoder.encode(generated, normalize_embeddings=True))
-    sims = [float(q_emb @ g_emb) for g_emb in g_embs]
-    return sum(sims) / len(sims)
-```
-
-If the answer implies different questions than the one asked, relevance drops.
-
-### Step 3: G-Eval custom metric
-
-```python
-from deepeval.metrics import GEval
-from deepeval.test_case import LLMTestCaseParams, LLMTestCase
-
-metric = GEval(
-    name="Correctness",
-    criteria="The answer should be factually accurate and match the expected output.",
-    evaluation_steps=[
-        "Read the expected output.",
-        "Read the actual output.",
-        "List factual claims in the actual output.",
-        "For each claim, mark supported or unsupported by the expected output.",
-        "Return score = fraction supported.",
-    ],
-    evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT, LLMTestCaseParams.EXPECTED_OUTPUT],
-)
-
-test = LLMTestCase(input="When was the first iPhone released?",
-                   actual_output="June 29th, 2007.",
-                   expected_output="June 29, 2007.")
-metric.measure(test)
-print(metric.score, metric.reason)
-```
-
-The evaluation steps are the rubric. Explicit steps are more stable than implicit "score 0-1" prompts.
-
-### Step 4: CI gate
-
-```python
-import deepeval
-from deepeval.metrics import FaithfulnessMetric, ContextualRelevancyMetric
-
-
-def test_rag_system():
-    cases = load_regression_cases()
-    faith = FaithfulnessMetric(threshold=0.85)
-    rel = ContextualRelevancyMetric(threshold=0.7)
-    for case in cases:
-        faith.measure(case)
-        assert faith.score >= 0.85, f"faithfulness regression on {case.id}"
-        rel.measure(case)
-        assert rel.score >= 0.7, f"relevancy regression on {case.id}"
-```
-
-Ship as a pytest file. Run on every PR. Block merges on regressions.
-
-### Step 5: toy eval from scratch
-
-See `code/main.py`. Stdlib-only approximations of faithfulness (overlap of answer claims with context) and relevance (overlap of answer tokens with question tokens). Not production. Shows the shape.
-
-## Pitfalls
-
-- **No calibration.** A judge with 0.3 correlation to human labels is noise. Require a calibration run before shipping.
-- **Self-evaluation.** Using the same LLM to generate and judge inflates scores by 10-20%. Use a different model family for the judge.
-- **Positional bias in pairwise judging.** Judges prefer the first option presented. Always randomize order and run both.
-- **Raw aggregate hides failures.** Mean score 0.85 often hides 5% catastrophic failures. Always inspect the bottom quantile.
-- **Golden dataset rot.** Unversioned eval sets that drift over time break longitudinal comparison. Tag the dataset with every change.
-- **LLM cost.** At scale, judge calls dominate cost. Use the cheapest model that meets calibration threshold. GPT-4o-mini, Claude Haiku, Mistral-small.
 
 ## Use It
 
@@ -212,11 +91,6 @@ Given a use case (RAG / agent / generative task), output:
 Refuse to rely on a judge untested against ≥50 human-labeled examples. Refuse self-evaluation (same model generates + judges). Refuse aggregate-only reporting without bottom-10% surfacing. Flag any pipeline where judge upgrade lands without parallel baseline eval.
 ```
 
-## Exercises
-
-1. **Easy.** Use RAGAS on 10 RAG examples with known hallucinations. Verify the faithfulness metric catches each one.
-2. **Medium.** Hand-label 50 QA answers 0-1 for correctness. Score with G-Eval. Measure Spearman rho between judge and human.
-3. **Hard.** Build a pytest CI gate with DeepEval. Intentionally regress the retriever. Verify the gate fails. Add bottom-quantile alerting via threshold check on the lowest 10%.
 
 ## Key Terms
 

@@ -64,41 +64,6 @@ Warmup ramps the learning rate from zero to the target over a few hundred steps 
 
 A model whose training loss drops nicely but whose generated samples are all the same token is broken. A model whose loss curve looks flat but whose generated samples sharpen into coherent words is learning. The qualitative probe runs faster than reading the full curve and catches modes the scalar misses.
 
-## Build It
-
-`code/main.py` implements:
-
-- `make_batches(token_ids, batch_size, context_length)` which slices a long token tensor into input and target pairs.
-- `calc_loss_batch(model, inputs, targets)` which forwards, flattens, and returns the scalar cross entropy.
-- `evaluate_model(model, val_loader, max_batches)` which iterates a fixed number of validation batches with no grad and returns the mean loss.
-- `generate_and_print_sample(model, prompt, max_new_tokens)` which runs the lesson 35 generation function on a fixed prompt and prints the result.
-- `build_param_groups(model, weight_decay)` which produces the two-group AdamW parameter list.
-- `cosine_with_warmup(step, warmup_steps, total_steps, max_lr, min_lr)` which returns the LR at a given step.
-- `train(...)` which runs the loop, persists `outputs/losses.jsonl`, and prints the eval loss and a sample every `eval_every` steps.
-- A demo that trains a tiny model on synthetic data for a small number of steps, writes a JSONL log, and prints the eval loss and a sample at the probe points. The demo runs in well under a minute on CPU.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Output: per step loss line, eval loss every probe step, a generated sample every probe step, and a final `outputs/losses.jsonl` you can load with `json.loads` per line.
-
-## Stack
-
-- `torch` for autograd, optimizer, and modules.
-- `main.py` reimplements the lesson 35 `GPTModel` and supporting modules locally.
-
-## Production patterns in the wild
-
-Three patterns turn the textbook loop into something you can leave running overnight.
-
-**Gradient norm clipping is non negotiable.** A bad batch (anomalous data, an LR spike, a numerical edge case) produces a huge gradient that wipes out hours of training. `torch.nn.utils.clip_grad_norm_(params, max_norm=1.0)` after `backward` and before `step` keeps the optimizer in a safe range. The clipping value is a free parameter; one is the default that survives most setups.
-
-**Resumable JSONL logging, not pickled state.** Per step loss records as `{"step": int, "train_loss": float, "lr": float}` lines in JSONL are durable: any crash leaves a readable artifact, you can grep, you can plot with thirty lines of Python, and you can resume training by reading the last step. Pickled state ties you to the exact module layout that produced the file, which is brittle across refactors.
-
-**Eval batches drawn from a fixed slice.** The validation tokens get sliced into batches at script start, not on the fly. Reproducibility depends on the eval batches being identical from run to run; otherwise comparing eval loss between two runs measures the batch shuffle as much as the model.
 
 ## Use It
 
@@ -106,13 +71,6 @@ Three patterns turn the textbook loop into something you can leave running overn
 - The JSONL log is the deliverable that turns a training run into evidence. The next lesson uses one to compare a freshly trained checkpoint with a pretrained one.
 - The qualitative sample probe is the catch-all that scalar loss cannot replace.
 
-## Exercises
-
-1. Add `weight_decay_groups()` unit tests that confirm scale and bias parameters land in the no decay group and linear and embedding weights land in the decay group.
-2. Replace synthetic random tokens with bytes from a small text file so the demo trains on something legible. Verify the generated sample uses characters present in the file.
-3. Add a `min_lr` floor of 10 percent of `max_lr` to the cosine schedule and re-plot.
-4. Save a checkpoint every `eval_every` steps in addition to the JSONL log. Add a `resume_from` flag that reloads model state and optimizer state.
-5. Log per step throughput (tokens per second) next to the loss and confirm it stays in a steady band.
 
 ## Key Terms
 

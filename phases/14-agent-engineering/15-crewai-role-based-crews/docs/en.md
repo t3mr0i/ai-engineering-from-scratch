@@ -133,31 +133,6 @@ Independent of LangChain. Python 3.10 to 3.13. Uses `uv`. Star count: see [crewA
 - **Brittle handoffs.** Task N's `expected_output` is "an outline". Task N+1 reads it as `context` and tries to parse three sections. The LLM produced four. The downstream Agent ad-libs. Fix with `output_pydantic` on Task N so Task N+1 reads a typed object, not free text.
 - **Crew-as-prod.** Free-form Crew shipped to production without a Flow wrapper. Output variability is high; replay is impossible; on-call cannot diff a bad run against a good one. Wrap with a Flow.
 
-## Build It
-
-`code/main.py` implements stdlib versions of both shapes plus a three-agent crew.
-
-Shape:
-
-- `Agent`, `Task` dataclasses matching CrewAI's surface.
-- `SequentialCrew.kickoff(inputs)` runs tasks in declaration order, threading outputs as `context`.
-- `HierarchicalCrew.kickoff(topic)` adds a manager Agent picking the next specialist each round, stops at "done".
-- `Flow` with `@start` and `@listen(topic)` decorators, a tiny event loop, and a trace.
-- `tool(name)` decorator mirroring CrewAI's `@tool` shape.
-- `Memory` with `short_term`, `long_term`, `entity` stores; mocked similarity uses numpy.
-- Mock LLM responses are hardcoded strings keyed off role plus input prefix. No network. Deterministic.
-
-Concrete demo: researcher, writer, editor crew producing a brief on "agent engineering 2026". Researcher pulls (mocked) sources. Writer drafts. Editor tightens. Same crew runs through a Flow to show the deterministic shape.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-Trace covers: sequential crew threading outputs through `context`, hierarchical crew with manager picks (researcher, writer, editor, then "done"), flow running the same three steps with explicit topics (`researched`, `drafted`, `edited`), tool calls routed through `@tool`, and long-term memory surviving across two kickoffs.
-
-The Crew trace is fluid; the manager could in principle re-order. The Flow trace is fixed. That choice is the lesson.
 
 ## Use It
 
@@ -181,15 +156,6 @@ The Crew trace is fluid; the manager could in principle re-order. The Flow trace
 - **Manager prompt drift.** Hierarchical's manager prompt is implicit. If routing gets weird, dump it in verbose mode and read.
 - **Tool side effects in Crews.** A Crew can call a tool more times than expected. POST, DELETE, payment belong in a Flow step, never a Crew tool.
 
-## Exercises
-
-1. Convert the Sequential crew to a Flow. Count the touchpoints where variability drops. Note where readability dropped.
-2. Add entity memory to the crew: facts about a customer persist across kickoffs. Verify retrieval pulls the right entity.
-3. Implement a Hierarchical process where the manager refuses to route to the editor until the writer's output has at least three paragraphs. Trace the retry.
-4. Wire a `BaseTool` subclass for a (mocked) web search. Compare the trace shape vs the `@tool` decorator version.
-5. Add `output_pydantic=Brief` to the editor task, where `Brief` has `title`, `summary`, `sections`. Make the writer task output malformed JSON once; verify CrewAI's retry behavior in the trace.
-6. Read CrewAI's docs intro. Port the toy to the real `crewai` API. Which guarantees did the stdlib version skip?
-7. Wire AgentOps or Langfuse (Lesson 24) to a real run. Which traces did you miss in the stdlib version?
 
 ## Key Terms
 

@@ -110,17 +110,6 @@ The driver walks through three representative use cases (factory-floor fault det
 
 `outputs/skill-cloud-data-iot-boundary-mapper.md` is a one-page decision aid: a boundary-classification checklist and a latency-budget worksheet that a consulting team can fill in during a use-case scoping session to determine feasibility and the correct base architecture before the engagement begins.
 
-## Exercises
-
-1. Run `code/main.py`. Which of the three sample use cases hits a latency budget overrun? What is the binding constraint stage, and what architectural change would resolve it?
-
-2. The boundary classifier assigns a pattern to each use case. Find the one that maps to "hybrid federated." Explain in two sentences why neither cloud-first RAG nor on-premises inference alone handles its compound boundary.
-
-3. Take a real AI use case from your current project or engagement. Fill in the boundary classification table from the lesson (four columns: jurisdiction, perimeter, steward, freshness SLA) for each data source. Which pattern does the table point to?
-
-4. The lesson states that raw-zone data should not be used as a RAG source. Describe a specific failure scenario where a team violates this rule — what does the user see, and what audit finding does a data governance team raise?
-
-5. Run `code/main.py` and locate the latency budget decomposition output. Modify one stage budget (in the source) so the use case becomes infeasible. Which architectural change (edge preprocessing, async delivery, or regional endpoint) would restore feasibility, and why?
 
 ## Key Terms
 

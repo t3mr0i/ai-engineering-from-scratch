@@ -81,13 +81,6 @@ Gate routes by online quality metrics:
 
 This lesson produces `outputs/skill-router-plan.md`. Given workload and quality budget, picks a routing pattern and signals.
 
-## Exercises
-
-1. Run `code/main.py`. At what accuracy floor does cascade beat pre-route?
-2. Your user base is 30% enterprise (complex queries), 70% free tier (simple). Design the routing split. What online metric gates it?
-3. A route drops quality by 2% but saves 40%. Is that a ship? Depends on product — argue both.
-4. Implement a confidence check using logprobs from OpenAI / Anthropic APIs. What's the threshold you start with?
-5. Over six months, escalation rate climbs from 8% to 22%. Diagnose three causes and the fix for each.
 
 ## Key Terms
 

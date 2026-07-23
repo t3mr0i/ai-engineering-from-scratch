@@ -121,13 +121,6 @@ Best-case stacked: ~5-10% of naive baseline. Most teams have 2-3 levers engaged;
 
 This lesson produces `outputs/skill-finops-plan.md`. Given product and scale, designs the attribution schema and enforcement ladder.
 
-## Exercises
-
-1. Run `code/main.py`. At what z-score does the kill switch fire? How do you pick the threshold?
-2. Design a per-tenant, per-task cost dashboard. What are the 5 views you build first?
-3. Your largest tenant is unit-economics-negative. Propose three interventions ordered by customer impact.
-4. Compute cost per resolved ticket for a support product: 3M tokens/ticket, ~800 tickets/day, GPT-5 cached rate.
-5. Argue whether retroactive tagging can ever work. When is it acceptable?
 
 ## Key Terms
 

@@ -74,17 +74,6 @@ Lessons 10 (AI Control) and 11 (Scalable Oversight) are the defensive arc.
 
 This lesson produces `outputs/skill-compliance-gap.md`. Given a safety evaluation, it asks: was there a monitored/unmonitored condition split? If not, the evaluation cannot measure the alignment-faking component of behaviour. It then asks the 2025 follow-up question: is the verbal trace the metric, or is the compliance rate the metric? Verbal-trace reduction is compatible with unchanged faking behaviour.
 
-## Exercises
-
-1. Run `code/main.py`. Fix the perceived-training weight at 0.5 and measure the compliance gap. Repeat at 0.1 and 0.9. Plot the relationship.
-
-2. The Greenblatt et al. 2024 gap is 12% vs 3%. Compute the scratchpad-explicit faking rate you would need to see before you would conclude faking is the dominant mechanism rather than prompt sensitivity. Justify the threshold.
-
-3. Read Anthropic's 2025 compliance-gap-loss follow-up. Propose a failure mode in which the compliance-gap loss reduces the gap without reducing faking — i.e., the model transfers the gap to a different observable condition.
-
-4. Design a synthetic-training setup (Greenblatt et al. 2024 Appendix C) that is more realistic than the system-prompt version but does not require retraining the full model. Why is this operationalization important for generalizing the result?
-
-5. Combine Lesson 7's probe result with Lesson 9's behaviour: sketch an evaluation protocol that measures alignment faking via internal state rather than verbal scratchpad. Identify the two most important residual risks.
 
 ## Key Terms
 

@@ -73,62 +73,6 @@ Where `m_h` is a head-specific slope (e.g. `1 / 2^(8·h/H)`). Closer tokens get 
 
 RoPE won because it slots into attention without changing the architecture, encodes relative position, and its `base` hyperparameter gives a clean knob for long-context fine-tuning.
 
-## Build It
-
-### Step 1: sinusoidal encoding
-
-See `code/main.py`. A 4-line computation:
-
-```python
-def sinusoidal(N, d):
-    pe = [[0.0] * d for _ in range(N)]
-    for pos in range(N):
-        for i in range(d // 2):
-            theta = pos / (10000 ** (2 * i / d))
-            pe[pos][2 * i]     = math.sin(theta)
-            pe[pos][2 * i + 1] = math.cos(theta)
-    return pe
-```
-
-Add this to the embedding matrix before the first attention layer.
-
-### Step 2: RoPE applied to Q, K
-
-RoPE operates in-place on Q and K. For each pair of dims:
-
-```python
-def apply_rope(x, pos, base=10000):
-    d = len(x)
-    out = list(x)
-    for i in range(d // 2):
-        theta = pos / (base ** (2 * i / d))
-        c, s = math.cos(theta), math.sin(theta)
-        a, b = x[2 * i], x[2 * i + 1]
-        out[2 * i]     = a * c - b * s
-        out[2 * i + 1] = a * s + b * c
-    return out
-```
-
-Crucial: apply the same function to Q at position `m` and K at position `n`. Their dot product picks up a `cos((m-n)·θ_i)` factor on every coordinate pair. Attention learns relative position for free.
-
-### Step 3: ALiBi slopes and bias
-
-```python
-def alibi_bias(n_heads, seq_len):
-    # slope_h = 2 ** (-8 * h / n_heads) for h = 1..n_heads
-    slopes = [2 ** (-8 * (h + 1) / n_heads) for h in range(n_heads)]
-    bias = []
-    for m in slopes:
-        row = [[-m * abs(i - j) for j in range(seq_len)] for i in range(seq_len)]
-        bias.append(row)
-    return bias  # add to attention scores before softmax
-```
-
-Add `bias[h]` to the `(seq_len, seq_len)` attention score matrix of head `h`, then softmax.
-
-### Step 4: verify relative-distance property of RoPE
-
-Pick two random vectors `a, b`. Rotate by `(pos_a, pos_b)`. Then by `(pos_a + k, pos_b + k)`. Both dot products must match within floating-point error. That property is the whole point of RoPE — it is invariant to the absolute offset, only the relative gap matters.
 
 ## Use It
 
@@ -151,11 +95,6 @@ model = AutoModel.from_pretrained("meta-llama/Llama-3.2-3B")
 
 See `outputs/skill-positional-encoding-picker.md`. The skill picks an encoding strategy for a new model given target context length, extrapolation needs, and training budget.
 
-## Exercises
-
-1. **Easy.** Plot the sinusoidal `PE` matrix as a heatmap for `max_len=512, d=128`. Confirm the "stripes get wider as dimension index grows" pattern.
-2. **Medium.** Implement NTK-aware RoPE scaling. Train a tiny LM on sequences of length 256, then test on length 1024 with and without scaling. Measure perplexity.
-3. **Hard.** Implement ALiBi and RoPE in the same attention module. Train a 4-layer transformer on a copy task with sequences of length 512. Extrapolate to 2048 at test time. Compare degradation.
 
 ## Key Terms
 

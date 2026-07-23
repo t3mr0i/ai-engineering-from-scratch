@@ -98,17 +98,6 @@ Both functions run on synthetic inputs; no API key or network call is needed. Th
 
 `outputs/skill-green-ai-checklist.md` is a one-page decision aid and checklist for use in architecture reviews or consulting engagements. It covers the four levers with concrete go/no-go criteria, a quick SCI calculation walkthrough, and a set of review questions for each decision point.
 
-## Exercises
-
-1. Run `code/main.py`. Which prompt variant scores worst on token efficiency? What single edit would move it to the top of the ranking? Check your edit by modifying the `PROMPT_VARIANTS` list and re-running.
-
-2. The region comparator outputs an SCI delta. Find the region in the sample set with the highest carbon intensity and the one with the lowest. What is the ratio? What would that ratio mean for a system making 10 million API calls per month?
-
-3. A client's LLM pipeline runs Claude Opus 4.x for every request, including high-volume document classification at 500 calls per minute. Using the model-tier table in this lesson, estimate the emissions reduction (as a percentage) of switching classification calls to Claude Haiku 4.x. What validation step must precede the switch?
-
-4. Look at a real prompt you use regularly (in a project, a tool, or a daily workflow). Identify one instance of each of the three prompt efficiency failure patterns (context stuffing, verbose instruction padding, unnecessary output length). Rewrite the prompt to eliminate them. Estimate the token savings.
-
-5. You are preparing a sustainability slide for a client AI review. Using the SCI formula from this lesson, list the four inputs you would need to collect for their system, and identify which of the four is most likely to be missing from their current observability stack. What would you recommend they instrument first?
 
 ## Key Terms
 

@@ -74,34 +74,6 @@ So the session does not end when the feature works. It ends when the workbench i
 
 The cleanup phase emits a `clean_state.json` of blocking issues; an empty list is the precondition the handoff generator asserts before it writes a packet. A handoff built on a dirty tree is not a handoff, it is a forwarded mess. The two artifacts pair: cleanup proves the workbench is safe to leave, the handoff proves the next session knows where to start.
 
-## Build It
-
-`code/main.py` implements:
-
-- A loader that gathers state, verdict, review, and feedback into a single `WorkbenchSnapshot`.
-- A `generate_handoff(snapshot) -> (markdown, payload)` function.
-- A filter that picks the last K feedback entries plus all non-zero exits.
-- A demo run that writes `handoff.md` and `handoff.json` next to the script.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Output: a printed handoff body, plus both files on disk.
-
-## Production patterns in the wild
-
-Codex CLI, Claude Code, and OpenCode each ship a different compaction story; the structured handoff packet sits on top of all three.
-
-**Compaction strategies vary; the packet schema does not.** Codex CLI's POST /v1/responses/compact is a server-side opaque AES blob (fast path for OpenAI models); the fallback is a local "handoff summary" appended as a `_summary` user-role message. Claude Code runs five-stage progressive compaction at 95% of context. OpenCode does timestamp-based message hiding plus a 5-heading LLM summary. Three different mechanisms, same need: serialize what survives compression into a portable artifact. The packet is that artifact.
-
-**Fresh-session handoff is not compaction.** Compaction extends a session; handoff closes one cleanly and starts the next. The Hermes Issue #20372 framing (April 2026) is right: when in-place compression starts degrading, the agent should write a compact handoff, end the session, and resume in fresh context. The packet is what makes that transition cheap. The mistake is to keep compressing until quality collapses; the fix is to budget for an early, clean handoff.
-
-**One active handoff per branch and topic.** Multi-agent coordination breaks down on stale handoffs more than on bad model output. Always include `branch`, `last_known_good_commit`, and a `status` of `active | superseded | archived`. Stale handoffs are archived; only the active one drives the next session. This is the difference between handoff-as-notes and handoff-as-state.
-
-**Wrap up before 50-75% context, not at the wall.** The hand-written-pattern playbook (CLAUDE.md + HANDOVER.md) reports best results when the session ends at 50-75% context budget instead of 95%. The packet generator runs cleanly before compression artifacts pollute the source state. Cheap to write while context is intact; expensive when the model is already losing its place.
 
 ## Use It
 
@@ -117,13 +89,6 @@ The packet is small, regular, and cheap to produce. The cost saving compounds wi
 
 `outputs/skill-handoff-generator.md` produces a generator tuned to a project's artifact paths, an end-of-session hook that runs it, and a `handoff.json` schema the next agent reads on startup.
 
-## Exercises
-
-1. Add an `assumptions_to_validate` field that surfaces every assumption the builder logged but the reviewer did not score above 1.
-2. Trim the feedback summary differently for failing runs versus passing ones. Defend the asymmetry.
-3. Include a "questions for the human" list. What is the threshold for a question to make it into the packet versus into a chat message?
-4. Make the generator idempotent: running it twice produces the same packet. What needs to be stable for that to hold?
-5. Add a "next session prereqs" section listing exactly the artifacts the next session must load before acting.
 
 ## Key Terms
 

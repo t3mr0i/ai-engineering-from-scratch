@@ -75,64 +75,6 @@ On a Mac M2 laptop, a 4-layer, 4-head, d_model=128 GPT trained for 2,000 steps o
 - Sampled output looks Shakespeare-shaped: archaic words, line breaks, proper names like "ROMEO:" emerge.
 - Val loss (held-out final 10% of text) tracks training loss closely; no overfitting at this size/budget.
 
-## Build It
-
-This lesson uses PyTorch. Install `torch` (CPU build is fine). See `code/main.py`. The script handles:
-
-- Downloading `tinyshakespeare.txt` if missing (or reading a local copy).
-- Byte-level char tokenizer.
-- Train/val split at 90/10.
-- Training loop with bf16 autocast on supported hardware.
-- Sampling after training completes.
-
-### Step 1: data
-
-```python
-text = open("tinyshakespeare.txt").read()
-chars = sorted(set(text))
-stoi = {c: i for i, c in enumerate(chars)}
-itos = {i: c for c, i in stoi.items()}
-encode = lambda s: [stoi[c] for c in s]
-decode = lambda xs: "".join(itos[x] for x in xs)
-```
-
-65 unique characters. Tiny vocabulary. Fits a 4-byte vocab_size. No BPE, no tokenizer drama.
-
-### Step 2: model
-
-See `code/main.py`. The block is textbook from Lesson 05 — pre-norm, RMSNorm, SwiGLU, causal MHA. Parameter count for 4/4/128: ~800K.
-
-### Step 3: training loop
-
-Get a random batch of length-256 token windows. Forward. Shift-by-one cross-entropy. Backward. AdamW step. Log. Repeat.
-
-```python
-for step in range(max_steps):
-    x, y = get_batch("train")
-    logits = model(x)
-    loss = F.cross_entropy(logits.view(-1, vocab_size), y.view(-1))
-    loss.backward()
-    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-    opt.step()
-    opt.zero_grad()
-```
-
-### Step 4: sample
-
-Given a prompt, repeatedly forward, sample from top-p logits, append, and continue. Stop after 500 tokens.
-
-### Step 5: read the output
-
-After 2,000 steps:
-
-```
-ROMEO:
-Away and mild will not thy friend, that thou shalt wit:
-The chief that well shame and hath been his friends,
-...
-```
-
-Not Shakespeare. But Shakespeare-shaped. A clear win for ~800K parameters and 6 minutes on a laptop.
 
 ## Use It
 
@@ -148,13 +90,6 @@ This ends up as a 125M-parameter GPT that generates fluent English. Not a fronti
 
 See `outputs/skill-transformer-review.md`. The skill reviews a transformer-from-scratch implementation for correctness across all 13 prior lessons.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Verify your trained model's final-step validation loss is under 2.0. Change `max_steps` from 2,000 to 5,000 — does val loss keep improving?
-2. **Medium.** Replace learned positional embeddings with RoPE. Apply the rotation to Q and K inside `MultiHeadAttention`. Train and verify val loss is at least as low.
-3. **Medium.** Implement a KV cache in the sampling loop. Generate 500 tokens with and without cache. Wall-clock should improve by 5–20× on a laptop.
-4. **Hard.** Add a second head to the model that predicts the next-plus-one token (MTP — Multi-Token Prediction from DeepSeek-V3). Train jointly. Does it help?
-5. **Hard.** Replace the single FFN per block with a 4-expert MoE. Router + top-2 routing. See how val loss changes at matched active parameters.
 
 ## Key Terms
 

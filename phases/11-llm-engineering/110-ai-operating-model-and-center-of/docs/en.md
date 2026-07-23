@@ -121,17 +121,6 @@ Phase 13 · 22 covered the technical layer: how skills, tool definitions, and ag
 
 `outputs/skill-coe-operating-model.md` is a one-page paste-and-use decision aid: a readiness checklist, the ownership boundary table, the champion program minimum requirements, and the governance cadence template — enough to run a CoE kickoff workshop with a client team.
 
-## Exercises
-
-1. Run `code/main.py`. What maturity level does the sample organization score, and what is the recommended next step? Change exactly one signal from `False` to `True` — which signal produces the largest jump in maturity score, and why does the scorer weight it that way?
-
-2. The operating model router in `code/main.py` handles four decision types. Find the decision that routes to "joint" ownership. Explain in one sentence what makes joint decisions risky (hint: joint decisions are where things fall through the seams) and how you would force a single accountable owner in practice.
-
-3. You are advising a client who has a 2-person central AI team and 12 active pilots across 6 business units. Using the maturity level definitions, diagnose their level and write a 90-day plan (3 bullets) to move them to the next level.
-
-4. A champion in a business unit tells you the CoE's prompt injection standard is too restrictive and is blocking a legitimate customer service bot. Map the correct escalation path using the governance cadence from this lesson, and name the forum where this conflict gets resolved and by whom.
-
-5. An asset in the prompt library has not been reviewed in 8 months. Three teams are using it. The underlying model was updated by the provider and the eval scores have drifted 4 percentage points below the CoE threshold. Run through the governance response: who is notified, which cadence forum handles it, and what is the minimum deliverable before the asset is restored to green?
 
 ## Key Terms
 

@@ -62,17 +62,6 @@ Neither is trying to be LangGraph. They compete on:
 - **Ecosystem lock-in.** Mastra's Vercel-flavored integration is a plus on Vercel, a minus elsewhere.
 - **Enterprise license confusion.** Mastra's `ee/` directories are source-available, not Apache 2.0. Read the licenses if you're planning to fork.
 
-## Build It
-
-This lesson is primarily comparative — no single code artifact would do both frameworks justice. See `code/main.py` for a side-by-side toy: a minimal "run an agent, stream the output, persist session" flow implemented twice (once Agno-shaped, once Mastra-shaped).
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-Two structurally different but functionally equivalent traces.
 
 ## Use It
 
@@ -84,13 +73,6 @@ Two structurally different but functionally equivalent traces.
 
 `outputs/skill-runtime-picker.md` picks Agno, Mastra, LangGraph, or a provider SDK based on stack, latency budget, and operational shape.
 
-## Exercises
-
-1. Read Agno's docs. Port the stdlib ReAct loop (Lesson 01) to Agno. What disappeared? What stayed?
-2. Read Mastra's docs. Port the same loop to Mastra. What changed in tool typing (Zod vs nothing)?
-3. Benchmark: measure agent instantiation latency on your stack. Does Agno's 2μs matter to your workload?
-4. Design a migration: if you've been running CrewAI in Python, what breaks if you move to Agno?
-5. Read Mastra's `ee/` license terms. What restrictions would affect an open-source fork?
 
 ## Key Terms
 

@@ -56,36 +56,6 @@ The 2024-2026 trend: flow matching is winning for music (faster inference, clean
 | AudioCraft 2 | Music + SFX | Flow matching | ~5s for 5s clip |
 | Riffusion v2 | Music | Spectrogram diffusion | ~10s |
 
-## Build It
-
-`code/main.py` simulates the core idea: train a tiny next-token transformer on synthetic "audio token" sequences generated from two distinct "styles" (alternating low and high tokens for style A, monotonic ramp for style B). Condition on style and sample.
-
-### Step 1: synthetic audio tokens
-
-```python
-def make_tokens(style, length, vocab_size, rng):
-    if style == 0:  # "speech-like": alternating
-        return [i % vocab_size for i in range(length)]
-    # "music-like": ramp
-    return [(i * 3) % vocab_size for i in range(length)]
-```
-
-### Step 2: train a tiny token predictor
-
-A bigram-style predictor conditioned on style. The point is the pattern: codec tokens → cross-entropy training → autoregressive sampling.
-
-### Step 3: sample conditionally
-
-Given the style token and a starting token, sample the next token from the predicted distribution. Continue for 20-40 tokens.
-
-## Pitfalls
-
-- **Codec quality caps output quality.** If the codec can't represent a sound faithfully, no amount of generator quality helps. DAC is the current open best.
-- **RVQ error accumulation.** Each RVQ layer models the residual of the previous. Errors on layer 1 propagate. Sampling with temperature 0 on higher layers helps.
-- **Musical structure.** 30 seconds of tokens is 20k+ tokens at 75 Hz. Hard for transformers. MusicGen uses sliding window + prompt continuation; Stable Audio uses shorter clips + crossfading.
-- **Artifacts at boundaries.** Crossfading between generated clips needs careful overlap-add.
-- **Clean-data appetite.** Music generators need tens of thousands of hours of licensed music. The Suno / Udio RIAA lawsuit (2024) brought this to the surface.
-- **Voice cloning ethics.** A 3-second sample plus a text prompt is enough for VALL-E / XTTS / ElevenLabs to clone a voice. Every production model needs abuse detection + opt-out lists.
 
 ## Use It
 
@@ -104,11 +74,6 @@ Given the style token and a starting token, sample the next token from the predi
 
 Save `outputs/skill-audio-brief.md`. Skill takes an audio brief (task, duration, style, voice, license) and outputs: model + hosting, prompt format (genre tags, style descriptors, structural markers), codec + generator + vocoder chain, seed protocol, and eval plan (MOS / CLAP score / CER for TTS / user A/B).
 
-## Exercises
-
-1. **Easy.** Run `code/main.py` and set style explicitly. Verify the generated sequences match the style's pattern.
-2. **Medium.** Add delayed parallel decoding: simulate 2 streams of tokens that must stay offset by 1 step. Train a joint predictor.
-3. **Hard.** Use HuggingFace transformers to run MusicGen-small locally. Generate a 10-second clip with three different prompts; A/B for style adherence.
 
 ## Key Terms
 

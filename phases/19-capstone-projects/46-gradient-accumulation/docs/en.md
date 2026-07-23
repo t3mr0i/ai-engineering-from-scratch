@@ -75,36 +75,6 @@ flowchart TD
 
 There is no free lunch. Doubling `accum_steps` doubles the wall time per optimizer step. What changes is the variance of the gradient estimate: at the same wall budget you have made fewer optimizer steps but each one was averaged over more samples. The literature treats large batch and small batch as different optimization problems; the lesson here is mechanical, not statistical.
 
-## Build It
-
-`code/main.py` is the runnable artifact. It does three things.
-
-### Step 1: equivalence check
-
-`equivalence_check()` builds two copies of the same network with the same seed. One sees a 16-sample batch in one forward pass. The other sees four 4-sample chunks with the loss divided by four. The function compares the gradient buffers before the optimizer step and the parameters after. The assertion is `max_abs_diff < 1e-4`.
-
-### Step 2: sync-on-last-step pattern
-
-`train_one_optimizer_step` walks micro-batches. For every micro-batch except the last it enters `no_sync_context(model)`. On a single process the context is a no-op; on DDP this is where the gradient all-reduce is skipped. The bookkeeping is the same regardless. A `sync_counter` records how many times we left the no_sync scope; for N micro-batches the count is one per effective step, not N.
-
-### Step 3: the throughput curve
-
-`sweep_effective_batches` runs the same model with a fixed micro-batch and a list of accumulation steps. For each setting it logs:
-
-- `samples_per_sec`: total samples seen divided by wall time
-- `median_step_ms`: 50th percentile per effective step
-- `sync_calls`: collective points exercised
-- `avg_loss`: average across the sweep's optimizer steps
-
-The output lands in `outputs/accum-curve.json` and is reusable from a notebook.
-
-Run it:
-
-```bash
-python3 code/main.py
-```
-
-The script prints the equivalence diff, then the sweep table, then the JSON path. Exit code zero.
 
 ## Use It
 
@@ -120,13 +90,6 @@ Three patterns in the wild:
 
 `outputs/skill-gradient-accumulation.md` captures the recipe so a peer can drop it into a new repo: scale loss by `accum_steps`, skip optimizer sync on non-final micros, step the optimizer once per effective batch, log throughput against effective batch as JSON so the trade is visible.
 
-## Exercises
-
-1. Re-run the sweep with `--num-steps 100` and plot samples per second against effective batch. Where does the curve flatten?
-2. Add a wrong scaling variant (no division) and show the parameter diff at step 1 against the reference.
-3. Swap SGD for AdamW and confirm the optimizer state advances once per effective step, not once per micro-batch.
-4. Introduce a real `DistributedDataParallel` wrapper and route the `no_sync_context` to its method. Confirm sync_calls drops by N-1 per effective batch.
-5. Modify the equivalence check to compare two different micro splits (2 by 8 vs 4 by 4) and explain any tolerance you need to relax.
 
 ## Key Terms
 

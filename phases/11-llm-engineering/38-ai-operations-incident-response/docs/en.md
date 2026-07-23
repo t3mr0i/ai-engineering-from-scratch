@@ -54,17 +54,6 @@ flowchart LR
 - Products & Value Streams
 - Project Management
 
-## Build It
-
-In the lab you build an AI incident triage planner. It ranks operational scenarios and recommends incident controls.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/38-ai-operations-incident-response/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

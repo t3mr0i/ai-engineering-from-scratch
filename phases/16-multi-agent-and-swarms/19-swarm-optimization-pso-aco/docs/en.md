@@ -91,23 +91,6 @@ PSO and ACO need only an *evaluator* function. If you can score a candidate outp
 - **Exploration vs exploitation.** Pheromone decay rate and PSO inertia trade off; too fast decay → forget solutions; too slow → stuck on early local optima.
 - **Catastrophic drift.** Both algorithms can converge and then diverge if fitness landscape shifts (new data distribution). Monitor best-fitness stability.
 
-## Build It
-
-`code/main.py` implements:
-
-- `LMPSO` — PSO over numeric prompt parameters (temperature, top_k weights). Each particle's "LLM generation" is simulated as a scripted fitness function. Runs the algorithm for 30 iterations and shows g_best convergence.
-- `AMRO_S` — ACO-style routing. 3 agents, 4 task types, pheromone matrix, 100 routed tasks. Prints (task_type → agent choices) distribution over time to show trail formation.
-- Comparison: random routing vs ACO routing on the same task stream. Measures quality and latency.
-
-Run:
-
-```
-python3 code/main.py
-```
-
-Expected output:
-- LMPSO: g_best fitness improves from random to near-optimal over 30 iterations.
-- AMRO-S: pheromone table stabilizes on the right agent per task-type; ACO routing beats random by ~30-40% on quality and also reduces latency (fewer retries).
 
 ## Use It
 
@@ -121,13 +104,6 @@ Expected output:
 - **Reset decay on distribution shift.** When your eval distribution changes, aged pheromones are stale; reset or double the decay rate temporarily.
 - **Cap the per-iteration cost.** Emit a cost-per-iteration metric. PSO that costs $500 / iteration and gains 0.5% is not shippable.
 
-## Exercises
-
-1. Run `code/main.py`. Observe LMPSO convergence. Vary population size 5, 10, 20, 50. At what size does time-to-converge saturate?
-2. Implement a "catastrophic drift" experiment: after iteration 30, change the fitness function. How fast does PSO adapt? Does resetting `p_best` help?
-3. Add a quality gate to AMRO-S: pheromone deposit only on runs with eval score > 0.7. How does this change convergence vs the un-gated version?
-4. Read LMPSO (arXiv:2504.09247). Map the paper's "velocity as a prompt" back to your numeric velocity. What is lost in the simulation and what is preserved?
-5. Read AMRO-S (arXiv:2603.12933). Implement the decoupled "inference fast-path" with asynchronous pheromone update. How does this change system latency under sustained load?
 
 ## Key Terms
 

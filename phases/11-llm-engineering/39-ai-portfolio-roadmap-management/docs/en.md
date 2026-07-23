@@ -54,17 +54,6 @@ flowchart LR
 - Business & Strategy Consulting
 - Products & Value Streams
 
-## Build It
-
-In the lab you build a portfolio triage planner. It scores AI initiatives and recommends portfolio controls for the next steering cycle.
-
-Run it locally:
-
-```bash
-cd phases/11-llm-engineering/39-ai-portfolio-roadmap-management/code
-python3 main.py
-python3 -m unittest discover tests -v
-```
 
 ## Use It
 

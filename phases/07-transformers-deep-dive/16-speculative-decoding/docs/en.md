@@ -80,74 +80,6 @@ Verification feeds `N` draft tokens into the verifier in one forward pass. This 
 
 Production implementations (vLLM's `--speculative-model`, TensorRT-LLM's LookaheadDecoder) handle this with scratch KV buffers. Write first, commit on acceptance. It's not conceptually hard, but it is fiddly.
 
-## Build It
-
-See `code/main.py`. We implement the core speculative-sampling algorithm (rejection step + residual distribution) with:
-
-- A "big model" that is a deterministic-softmax over a hand-coded distribution (so we can verify acceptance math analytically).
-- A "draft model" that is a perturbation of the big model.
-- An acceptance / rejection loop that produces the same marginal distribution as direct sampling.
-
-### Step 1: the rejection step
-
-```python
-def accept_or_reject(q_prob, p_prob, draft_token, u):
-    ratio = q_prob / p_prob if p_prob > 0 else float("inf")
-    return u < min(1.0, ratio)
-```
-
-`u` is a uniform random number. `q_prob` is the verifier's probability for the drafted token. `p_prob` is the draft model's probability. The Leviathan theorem is that this Bernoulli decision, followed by sampling from the residual on rejection, preserves the verifier's distribution exactly.
-
-### Step 2: residual distribution
-
-```python
-def residual_dist(q, p):
-    raw = [max(0.0, qi - pi) for qi, pi in zip(q, p)]
-    s = sum(raw)
-    return [r / s for r in raw]
-```
-
-Subtract `p` from `q` element-wise, clamp negative values to zero, renormalize. Sample from this on any rejection.
-
-### Step 3: one speculative step
-
-```python
-def spec_step(prefix, q_model, p_model, N, rng):
-    drafts = []
-    p_probs = []
-    ctx = list(prefix)
-    for _ in range(N):
-        p_dist = p_model(ctx)
-        d = sample(p_dist, rng)
-        drafts.append(d)
-        p_probs.append(p_dist[d])
-        ctx.append(d)
-
-    q_dists = [q_model(prefix + drafts[:i]) for i in range(N + 1)]
-
-    for i, d in enumerate(drafts):
-        u = rng.random()
-        q_prob = q_dists[i][d]
-        p_prob = p_probs[i]
-        if u < min(1.0, q_prob / p_prob if p_prob > 0 else float("inf")):
-            prefix = prefix + [d]
-        else:
-            res = residual_dist(q_dists[i], p_model(prefix))
-            prefix = prefix + [sample(res, rng)]
-            return prefix
-    prefix = prefix + [sample(q_dists[N], rng)]
-    return prefix
-```
-
-Five accepted → one bonus → six tokens produced in one verifier pass.
-
-### Step 4: measure acceptance rate
-
-Run 10,000 speculative steps at varying draft-quality levels. Plot acceptance rate vs. KL divergence between draft and verifier distributions. You should see a clean monotone relationship.
-
-### Step 5: verify distribution equivalence
-
-Empirically: the histogram of tokens produced by the speculative loop should match the histogram produced by sampling directly from the verifier. This is the Leviathan theorem in practice. A chi-square test confirms within sampling error.
 
 ## Use It
 
@@ -187,12 +119,6 @@ TensorRT-LLM has the fastest Medusa path as of mid-2026. `faster-whisper` wraps 
 
 See `outputs/skill-spec-decode-picker.md`. The skill picks a speculative decoding strategy (vanilla / Medusa / EAGLE / lookahead) and tuning parameters (N, draft temperature) for a new inference workload.
 
-## Exercises
-
-1. **Easy.** Run `code/main.py`. Confirm the speculative token distribution matches the verifier's direct-sample distribution on 50,000 tokens within chi-square p > 0.05.
-2. **Medium.** Plot speedup (tokens per big-model forward) as a function of `N` for `α = 0.5, 0.7, 0.85`. Identify the optimal `N` for each α. (Hint: expected tokens per verify call = `(1 - α^{N+1}) / (1 - α)`.)
-3. **Hard.** Implement a tiny Medusa: take the capstone GPT from Lesson 14, add 3 extra LM heads that predict positions t+2, t+3, t+4. Train on tinyshakespeare with a joint multi-head loss. Compare acceptance rates vs a vanilla draft made by truncating the same model.
-4. **Hard.** Implement rollback: start with a 10-token prefix KV cache, feed 5 draft tokens, simulate a rejection at position 3. Verify your cache reads correctly match "prefix + first 2 accepted drafts" at the next iteration.
 
 ## Key Terms
 

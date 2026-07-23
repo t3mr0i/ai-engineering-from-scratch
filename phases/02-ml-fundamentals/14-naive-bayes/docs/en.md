@@ -225,94 +225,6 @@ In practice, we work in log space to avoid floating-point underflow. Instead of 
 log P(class | features) = log P(class) + sum_i log P(feature_i | class)
 ```
 
-## Build It
-
-The code in `code/naive_bayes.py` implements both MultinomialNB and GaussianNB from scratch.
-
-### MultinomialNB
-
-The from-scratch implementation:
-
-1. **fit(X, y)**: For each class, count the frequency of each feature. Add Laplace smoothing. Compute log probabilities. Store class priors (log of class frequencies).
-
-2. **predict_log_proba(X)**: For each sample, compute log P(class) + sum of log P(feature_i | class) for all classes. This is a matrix multiplication: X @ log_probs.T + log_priors.
-
-3. **predict(X)**: Return the class with highest log probability.
-
-```python
-class MultinomialNB:
-    def __init__(self, alpha=1.0):
-        self.alpha = alpha
-
-    def fit(self, X, y):
-        classes = np.unique(y)
-        n_classes = len(classes)
-        n_features = X.shape[1]
-
-        self.classes_ = classes
-        self.class_log_prior_ = np.zeros(n_classes)
-        self.feature_log_prob_ = np.zeros((n_classes, n_features))
-
-        for i, c in enumerate(classes):
-            X_c = X[y == c]
-            self.class_log_prior_[i] = np.log(X_c.shape[0] / X.shape[0])
-            counts = X_c.sum(axis=0) + self.alpha
-            self.feature_log_prob_[i] = np.log(counts / counts.sum())
-
-        return self
-```
-
-The key insight: after fitting, prediction is just matrix multiplication plus a bias. This is why Naive Bayes is so fast.
-
-### GaussianNB
-
-For continuous features, we estimate mean and variance per class per feature:
-
-```python
-class GaussianNB:
-    def __init__(self):
-        pass
-
-    def fit(self, X, y):
-        classes = np.unique(y)
-        self.classes_ = classes
-        self.means_ = np.zeros((len(classes), X.shape[1]))
-        self.vars_ = np.zeros((len(classes), X.shape[1]))
-        self.priors_ = np.zeros(len(classes))
-
-        for i, c in enumerate(classes):
-            X_c = X[y == c]
-            self.means_[i] = X_c.mean(axis=0)
-            self.vars_[i] = X_c.var(axis=0) + 1e-9
-            self.priors_[i] = X_c.shape[0] / X.shape[0]
-
-        return self
-```
-
-Prediction uses the Gaussian PDF per feature, multiplied across features (added in log space).
-
-### Demo: Text Classification
-
-The code generates synthetic bag-of-words data simulating two classes (tech articles vs sports articles). Each class has a different word frequency distribution. MultinomialNB classifies them using word counts.
-
-The synthetic data works like this: we create 200 "words" (feature columns). Words 0-39 have high frequency in tech articles and low in sports. Words 80-119 have high frequency in sports and low in tech. Words 40-79 are medium frequency in both. This creates a realistic scenario where some words are strong class indicators and others are noise.
-
-### Demo: Continuous Features
-
-The code generates Iris-like data (3 classes, 4 features, Gaussian clusters). GaussianNB classifies using per-class mean and variance. Each class has a different center (mean vector) and different spread (variance), mimicking real-world data where measurements differ systematically between categories.
-
-The code also demonstrates:
-- **Smoothing comparison:** Training MultinomialNB with different alpha values to show the effect of smoothing strength on accuracy.
-- **Training size experiment:** How NB accuracy improves as training data grows from 20 to 1600 samples. NB reaches decent accuracy even with very few samples -- this is its main advantage.
-- **Confusion matrix:** Per-class precision, recall, and F1 score to show where NB makes mistakes.
-
-### Prediction Speed
-
-Naive Bayes prediction is a matrix multiplication. For n samples with d features and k classes:
-- MultinomialNB: one matrix multiply (n x d) @ (d x k) = O(n * d * k)
-- GaussianNB: n * k Gaussian PDF evaluations, each over d features = O(n * d * k)
-
-Both are linear in every dimension. Compare this to KNN (which requires distance computation to all training points) or SVM with RBF kernel (which requires kernel evaluation against all support vectors). NB is faster by orders of magnitude at prediction time.
 
 ## Use It
 
@@ -423,17 +335,6 @@ NB fails when the independence assumption causes incorrect rankings (not just in
 
 In practice, these failure modes are rare for text classification. Text features are numerous, individually weak, and the independence assumption's errors tend to cancel out. For tabular data with few strongly correlated features, consider logistic regression or tree-based models first.
 
-## Exercises
-
-1. **Smoothing experiment.** Train MultinomialNB on text data with alpha values of 0.01, 0.1, 1.0, 10.0, and 100.0. Plot accuracy vs alpha. Where does performance peak? Why does very high alpha hurt?
-
-2. **Feature independence test.** Take a real text dataset. Pick two words that are obviously correlated ("machine" and "learning"). Compute P(word1 | class) * P(word2 | class) and compare to P(word1 AND word2 | class). How wrong is the independence assumption? Does it affect classification accuracy?
-
-3. **Bernoulli implementation.** Extend the code with a BernoulliNB class. Convert bag-of-words to binary (present/absent) and compare accuracy against MultinomialNB on text data. When does Bernoulli win?
-
-4. **NB vs Logistic Regression.** Train both on text data. Start with 100 training samples and increase to 10,000. Plot accuracy vs training set size for both. At what point does Logistic Regression overtake Naive Bayes?
-
-5. **Spam filter.** Build a complete spam classifier: tokenize raw email text, build vocabulary, create bag-of-words features, train MultinomialNB, evaluate with precision and recall (not just accuracy -- why?).
 
 ## Key Terms
 

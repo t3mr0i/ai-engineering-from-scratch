@@ -98,13 +98,6 @@ Every senior engineer can name a feature that was shipped because "it feels bett
 
 This lesson produces `outputs/skill-ab-plan.md`. Given feature change, workload, baseline, picks platform, gates, sample size.
 
-## Exercises
-
-1. Run `code/main.py`. For an expected 5% lift with baseline 3% conversion, what sample size to 80% power?
-2. Pick Statsig or GrowthBook for a healthcare-regulated on-prem customer.
-3. Design an A/B that tests GPT-4 vs GPT-3.5 on cost-per-resolved-ticket. What's the primary metric, guardrail metric, secondary?
-4. Your canary passes but A/B shows -1.2% conversion. Do you ship? Write the escalation criteria.
-5. Apply CUPED to a pre-period with 60% of the variance of post. Compute the effective-sample-size boost.
 
 ## Key Terms
 

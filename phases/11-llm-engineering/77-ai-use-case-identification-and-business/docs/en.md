@@ -128,17 +128,6 @@ For cross-lesson context: Phase 11 · 32 (the use-case identification workshop) 
 
 `outputs/skill-use-case-triage.md` is a one-page paste-and-use decision aid for a working consultant: a triage checklist that runs a single use case through all five stages and produces a sponsor-ready verdict with supporting numbers.
 
-## Exercises
-
-1. Run `code/main.py`. Which use case is eliminated at Stage 1, and why? Change its `language_shaped` attribute to `True` and re-run — does it survive to Stage 5, and what rank does it reach?
-
-2. The output shows one use case blocked at Stage 4 (risk screen amber or red). What change to the architecture description would move it to green? Name the GDPR mechanism and the EU AI Act tier that apply.
-
-3. Estimate the annual token cost for a real use case in your current project or team: pick a document-processing task, estimate call volume and token counts, and use current Sonnet 4.x pricing. Is token cost above or below 10% of the labour cost avoided? What does that ratio imply for where to focus optimization effort?
-
-4. Run `code/main.py` and find the use case with the highest ROI ratio but the lowest composite score. Explain in two sentences why ROI alone is not a sufficient ranking criterion, and which Stage 3 or Stage 4 factor is the bottleneck.
-
-5. Pick a use case from your own work context. Fill in the five feasibility scan questions and the Stage 4 risk screen verbally. Would it be a quick win or a strategic project? What is the single biggest dependency that must be resolved before sprint 1 can start?
 
 ## Key Terms
 

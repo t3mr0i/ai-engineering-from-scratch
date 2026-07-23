@@ -72,22 +72,6 @@ Vapi (~450–600ms on an optimized premium stack) and Retell (~600ms end-to-end 
 
 End-to-end 450–600ms is premium. 800–1200ms is common. Anything > 1500ms feels broken.
 
-## Build It
-
-`code/main.py` is a frame-based toy pipeline with:
-
-- `Frame` types (audio, transcript, text, tts_audio, control).
-- `Processor` interface with `process(frame)`.
-- A five-stage pipeline (VAD → STT → LLM → TTS → transport) as scripted processors.
-- An UPSTREAM cancel frame to demonstrate barge-in.
-
-Run it:
-
-```
-python3 code/main.py
-```
-
-The trace shows normal flow and a barge-in cancel that stops TTS mid-utterance.
 
 ## Use It
 
@@ -100,13 +84,6 @@ The trace shows normal flow and a barge-in cancel that stops TTS mid-utterance.
 
 `outputs/skill-voice-pipeline.md` scaffolds a Pipecat-shaped voice pipeline with VAD + STT + LLM + TTS + transport plus barge-in handling.
 
-## Exercises
-
-1. Add a metrics observer to your toy pipeline: count frames per stage per second. Where does latency accumulate?
-2. Implement confidence-gated STT: below threshold, request "could you repeat that?"
-3. Add semantic turn detection: simple rule — if transcript ends with "?", end of turn.
-4. Read Pipecat's transport docs. Swap the stdlib transport for the SmallWebRTCTransport config (stub).
-5. Measure an OpenAI Realtime vs STT+LLM+TTS cascade on the same query. What latency cost does text-level control carry?
 
 ## Key Terms
 
