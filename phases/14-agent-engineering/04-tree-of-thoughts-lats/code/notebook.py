@@ -193,11 +193,25 @@ async def expand_state(numbers):
         children.append({"state": new_state, "step": line.strip()})
     return children
 
+async def get_initial_problem():
+    """Ask LLM for a fresh Game-of-24 instance (optimum for demonstrating search)."""
+    prompt = "Generate one unique set of 4 numbers between 1-9 that has a short path to 24 but requires search. Reply with exactly 4 comma-separated numbers."
+    r = await lrn_llm.call([{"role": "user", "content": prompt}], max_tokens=20)
+    numbers_str = lrn_llm.text(r).strip().replace(" ", "")
+    try:
+        numbers = [int(x) for x in numbers_str.split(",")]
+        if len(numbers) != 4 or any(not 1 <= n <= 9 for n in numbers):
+            numbers = [4, 6, 4, 1]
+    except:
+        numbers = [4, 6, 4, 1]
+    print(f"Generated initial problem: {numbers}")
+    return numbers
+
 async def tot_one_step():
     """Single BFS level: expand real children from the LLM's suggestions, score each
     with the LLM, keep the best. The new state is whatever the LLM's parsed step
-    produces, not a fixed value."""
-    numbers = [4, 6, 4, 1]
+    produces, not a fixed value. Now starts from LLM-generated instance."""
+    numbers = await get_initial_problem()
     print("\n=== Level 0: Initial ===")
     print(f"State: {numbers}")
 
@@ -214,6 +228,8 @@ async def tot_one_step():
     best = max(children, key=lambda c: c["score"])
     print(f"\nBest candidate: {best['step']} -> {best['state']} (score {best['score']}/10)")
     return best
+
+await tot_one_step()
 
 await tot_one_step()
 
