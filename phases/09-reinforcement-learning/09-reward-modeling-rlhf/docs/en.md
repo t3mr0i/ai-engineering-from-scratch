@@ -55,59 +55,7 @@ In 2026 the PPO step is mostly replaced by DPO (Phase 10 · 08) because it is ch
 - **Constitutional AI / RLAIF:** use an aligned LLM to generate preferences instead of humans. Scales the preference budget.
 
 
-## Use It
 
-RLHF in 2026 is layered:
-
-| Layer | Target | Method |
-|-------|--------|--------|
-| Instruction following, helpfulness, harmlessness | Alignment | DPO (Phase 10 · 08) preferred over RLHF-PPO. |
-| Reasoning correctness (math, code) | Capability | GRPO with verifier reward (Phase 9 · 12). |
-| Long-horizon multi-step tasks | Agentic | PPO / GRPO with process reward models over steps. |
-| Safety / refusal behavior | Safety | RLHF-PPO with separate safety RM, or Constitutional AI. |
-| Best-of-N at inference | Fast alignment | Use RM at decode time; no policy training needed. |
-| Reward distillation | Inference compute | Train a small "reward head" on top of a frozen LM. |
-
-RLHF was *the* method in 2022–2024. In 2026, production alignment pipelines are DPO-first, PPO-only for the RM-intensive or safety-critical steps.
-
-## Ship It
-
-Save as `outputs/skill-rlhf-architect.md`:
-
-```markdown
----
-name: rlhf-architect
-description: Design an RLHF / DPO / GRPO alignment pipeline for a language model, including RM, KL, and data strategy.
-version: 1.0.0
-phase: 9
-lesson: 9
-tags: [rl, rlhf, alignment, llm]
----
-
-Given a base LM, a target behavior (alignment / reasoning / refusal / agent), and a preference or verifier budget, output:
-
-1. Stage. SFT? RM? DPO? GRPO? With justification.
-2. Preference or verifier source. Humans, AI feedback, rule-based, unit-test-pass, or reward distillation.
-3. KL strategy. Fixed β, adaptive β, or DPO (implicit KL).
-4. Diagnostics. Mean KL, reward stability, over-optimization guard (holdout human eval).
-5. Safety gate. Red-team set, refusal rate, safety RM separate from helpfulness RM.
-
-Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than the target policy. Refuse length-only rewards. Flag any pipeline that does not hold back a blind human-eval set as lacking over-optimization protection.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| RLHF | "Alignment RL" | Three-stage SFT + RM + PPO pipeline (Christiano 2017, Ouyang 2022). |
-| Reward Model (RM) | "The scoring net" | Learned scalar function fit to pairwise preferences via Bradley-Terry. |
-| Bradley-Terry | "Pairwise logistic loss" | `P(y_+ ≻ y_-) = σ(R(y_+) - R(y_-))`; the standard RM objective. |
-| KL penalty | "Stay near the reference" | `β · KL(π_θ \|\| π_ref)` in the reward; the anti-reward-hacking regularizer. |
-| Reward hacking | "Goodhart's law" | Policy exploits RM flaws; symptoms: reward up, human eval flat. |
-| RLAIF | "AI-labeled preferences" | RLHF where labels come from another LM instead of humans. |
-| PRM | "Process Reward Model" | Scores partial reasoning steps; used in reasoning pipelines. |
-| Constitutional AI | "Anthropic's method" | AI-generated preferences guided by explicit rules. |
 
 ## Further Reading
 

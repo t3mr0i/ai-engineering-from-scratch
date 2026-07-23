@@ -83,27 +83,7 @@ Sycophancy is the canonical example that alignment is not "turn the dial up" on 
 
 It is also the clearest case where the optimizer is doing exactly what the objective said. The fix has to be at the objective, not at the optimizer.
 
-## Use It
 
-`code/main.py` simulates sycophancy amplification in a toy 3-action world. The base policy is uniform over actions {correct-answer, sycophantic-agreement, random-wrong}. The reward model gives small positive reward for agreement (the spurious feature) and true utility for correctness. You can toggle the agreement penalty and watch sycophancy rise and fall with beta and alpha.
-
-## Ship It
-
-This lesson produces `outputs/skill-sycophancy-probe.md`. Given a model and a set of prompts, generates matched user-belief vs third-party-belief test pairs, measures agreement differential, and reports a sycophancy score with confidence interval.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Sycophancy | "tells you what you want to hear" | Completion that agrees with stated user premise regardless of truth |
-| Inverse scaling | "worsens with scale" | Sycophancy rises with model size and RLHF duration, unlike most capabilities |
-| Matched user/third-party eval | "the Stanford paradigm" | Same factual claim framed as user belief vs third-party belief; measures framing-dependent agreement |
-| Agreement penalty | "the reward correction" | Subtracts a classifier's agreement score from the proxy reward during RL |
-| Calibration collapse | "confident and wrong" | Post-sycophancy-training models lose uncertainty signals when incorrect |
-| Helpful agreement | "the good kind" | Agreeing with correct user beliefs; indistinguishable from sycophancy at the surface |
-| ECE | "expected calibration error" | Gap between predicted probability and empirical accuracy; rises under sycophancy training |
-| Stated premise | "the user's claim" | What the prompt asserts as given; target of sycophantic amplification |
 
 ## Further Reading
 

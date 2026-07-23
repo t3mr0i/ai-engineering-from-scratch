@@ -121,49 +121,7 @@ When you are reviewing a feature before it ships, walk it through the four quest
 
 In our experience, features that pass all four checks are *rare*. Most features pass one or two and fail the others. The fix is always the same shape: name the thing, attach a date, make it queryable. The cost of doing this at design time is minutes; the cost of doing it after an incident is weeks and a write-up.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two decisions this lesson makes explicit:
-
-1. A **consequence classifier** that takes an output-type description and routes it to L0-L3 using a deterministic rule set, showing which attribute triggered the classification.
-2. A **control gap analyzer** that takes a use-case record (owner, control, evidence type, any exceptions) and identifies which of the four required elements are missing or deficient — including detecting open-ended exceptions with no expiry date, and expired exceptions that were never re-justified.
-
-The final block in the script is a **silent-reclassification audit** — the failure shape we see most often in 2026. An L0 use case is wired into a financial workflow with no re-classification, no new exception, and no owner change. The analyzer flags it, and the headline names the demonstrated failure.
-
-No LLM calls, no network — the point is to make the governance policy runnable and inspectable, the same way Phase 15 · 10 made the permission classifier runnable.
-
-## Ship It
-
-`outputs/skill-ai-risk-controls-checklist.md` is a one-page, paste-and-use decision aid for a working consultant or engineer: classify an output type, identify the required control, check that the four elements exist, and produce the minimum viable evidence package. Bring it to a client kickoff or a pre-deployment review.
-
-
-## Consultant field notes
-
-Patterns a senior consultant recognizes by name. Read them before the workshop, not after.
-
-- **The Ownership Vacuum.** "The AI team owns it" is the phrase that tells you nobody owns it. The fix is a single sentence in the register: a person, a title, a date. Auditors will not accept a team, a role, or a function.
-- **The Confirmation-Bias Review.** A review step that runs after the same model that produced the output is a confirmation step, not a control. L2 reviews require a *qualified* human reviewer independent of the model's confidence; the junior associate clicking "looks fine" is not a control, it is a stamp.
-- **The Silent Reclassification.** Same code, new consequence level, no governance change. The CRM RAG moved from "next-best-action hint" to "auto-populated pricing tier" with no re-classification. Re-classify at the moment the output's effect on a downstream decision changes, not at the moment the model changes.
-- **The Open-Ended Exception.** A documented deviation with no expiry date is not an exception; it is a permanent control removal that no one re-justified. Median age at audit in our 2026 sample: 11 months. Set the date on day one.
-- **The Notion-Page Register.** A backlog of use cases without a schema (no fields for owner, level, control, evidence, exception status) is a backlog, not a register. The auditor's first question is "what is the schema?"; if the answer is "free text," the audit is already over.
-- **The "We Have Oversight" Statement.** A stated control that cannot be retrieved as evidence is not a control; it is a posture. "We have human oversight" fails ISO 42001 clause 8.4. "A certified analyst reviews every L2 output before delivery; evidence is review-ticket ID + timestamp in the case-management system" passes.
-- **The Benchmark-Substitutes-For-Classification Error.** A team picks a frontier model on the basis of a benchmark score and concludes "the model is good enough, we can ship without the L2 review." This conflates *capability* with *acceptable residual error*. A 99.1% accurate model on 10,000 inferences per month produces ~90 misses; whether those 90 are acceptable depends on the consequence, not the benchmark. The model choice is a control *parameter*, not a substitute for a control.
-- **The Exception-Without-Trigger Anti-Pattern.** Some teams write exceptions that read "approved for this use case," with no named triggering condition and no expiry. This is not an exception; it is a backdoor permanent control removal. A real exception names the deviation, names the trigger ("when model confidence > 0.95"), and names the review cadence for that trigger.
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Consequence level | "Risk rating" | A fixed classification (L0-L3) assigned to an output *type* at design time, not per inference |
-| Named risk owner | "The AI team owns it" | A single person — not a team — accountable for the control and authorized to sign exceptions |
-| Policy exception | "We'll do it this way for now" | A written, expiry-dated record of a deviation from the stated control, with residual risk acknowledged |
-| Audit evidence | "We have oversight" | A machine-queryable artifact proving the control ran: timestamp, reviewer ID, sign-off ticket |
-| NIST AI RMF | "The US framework" | GOVERN / MAP / MEASURE / MANAGE functions for organizational AI risk management (v1.0, 2023) |
-| ISO 42001 | "The AI management standard" | International management system standard for AI; clause 6.1 covers risk assessment and treatment |
-| GPAI obligation | "EU AI Act rules" | Transparency and documentation requirements for providers of General-Purpose AI models in the EU market |
-| Residual risk | "What's left after controls" | The risk that remains after a control runs; must be explicitly accepted by the named owner |
-| Silent reclassification | "Same as before" | A change in the output's downstream effect (e.g. from hint to decision) that does not trigger re-classification |
-| Confirmation-bias review | "We have a human in the loop" | A review step run by an unqualified or rushed reviewer that rubber-stamps the model's output |
 
 ## Further Reading
 

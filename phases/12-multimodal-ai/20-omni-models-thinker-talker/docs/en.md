@@ -93,30 +93,7 @@ At 16kHz speech with 50 Hz base speech tokens, you need 50 speech tokens per sec
 
 This is why small dedicated Talker models exist rather than "just use the main model."
 
-## Use It
 
-`code/main.py`:
-
-- Simulates a Thinker-Talker pipeline with mock token-emission rates.
-- Computes TTFAB for configurable model sizes and mic sample rates.
-- Demonstrates half-duplex turn-taking with VAD silence threshold.
-
-## Ship It
-
-This lesson produces `outputs/skill-omni-streaming-budget.md`. Given a real-time voice product's target TTFAB and feature set (vision-in, bilingual, full-duplex), picks Qwen2.5-Omni, Qwen3-Omni, Moshi, or Mini-Omni and sizes the Thinker/Talker.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Thinker | "Reasoning brain" | Large text-generating transformer producing what to say |
-| Talker | "Speech-generating mouth" | Small transformer producing discrete speech tokens from Thinker's text |
-| TTFAB | "Latency budget" | Time-to-first-audio-byte: from user speech end to first audio sample out |
-| TMRoPE | "Time-aligned RoPE" | Position encoding using absolute timestamps across vision, audio, text |
-| Half-duplex | "Turn-taking" | User and model alternate; VAD silence detects user-done |
-| Full-duplex | "Simultaneous" | Model can speak and listen at the same time; backchannel capable |
-| Inner monologue | "Moshi separation" | Single-model design where thinking-stream and speaking-stream interleave |
 
 ## Further Reading
 

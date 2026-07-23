@@ -57,46 +57,7 @@ The 2024-2026 trend: flow matching is winning for music (faster inference, clean
 | Riffusion v2 | Music | Spectrogram diffusion | ~10s |
 
 
-## Use It
 
-| Task | 2026 stack |
-|------|------------|
-| Commercial TTS | ElevenLabs, OpenAI TTS, or Azure Neural |
-| Voice cloning (consent-verified) | XTTS v2 (open) or ElevenLabs Pro |
-| Background music, fast | Stable Audio 2.5 API, Suno, or Udio |
-| Music with lyrics | Suno v4 or Udio v1.5 |
-| Sound effects / Foley | AudioCraft 2, ElevenLabs SFX, or Stable Audio Open |
-| Real-time voice agent | GPT-4o realtime or Gemini Live |
-| Open-weights music research | MusicGen 3.3B, Stable Audio Open 1.0, AudioLDM 2 |
-| Dubbing / translation | HeyGen, ElevenLabs Dubbing |
-
-## Ship It
-
-Save `outputs/skill-audio-brief.md`. Skill takes an audio brief (task, duration, style, voice, license) and outputs: model + hosting, prompt format (genre tags, style descriptors, structural markers), codec + generator + vocoder chain, seed protocol, and eval plan (MOS / CLAP score / CER for TTS / user A/B).
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Codec | "Neural compression" | Encoder / decoder for audio; typical output is 50-75 Hz tokens. |
-| RVQ | "Residual VQ" | Cascade of K quantizers; each models the residual of the previous. |
-| Token | "One codec symbol" | Discrete index into a codebook; 1024 or 2048 typical. |
-| Delayed parallel | "Offset codebooks" | Emit K token streams with staggered offsets to reduce sequence length. |
-| Flow matching | "The 2024 win for audio" | Straighter-path alternative to diffusion; faster sampling. |
-| Voice prompt | "3-second sample" | Speaker embedding or token prefix that steers the cloned voice. |
-| Mel spectrogram | "The visual" | Log-magnitude perceptual spectrogram; used by many TTS systems. |
-| Vocoder | "Mel to wave" | Neural component that converts mel spectrograms back to audio. |
-
-## Production note: audio is a streaming problem
-
-Audio is the one output modality users expect to arrive *as it is generated*, not all-at-once. In production terms this means TPOT matters (Time Per Output Token) because the user's listening speed is the target throughput — not their reading speed. For 16kHz audio tokenized at ~75 tokens/second (Encodec), the server must generate ≥75 tokens/sec per user to keep playback smooth.
-
-Two architectural consequences:
-
-- **Flow-matching audio models cannot stream trivially.** Stable Audio 2.5 and AudioCraft 2 render a fixed clip length in one pass. To stream, you chunk the clip and overlap boundaries — think sliding-window diffusion — adding 100-300ms of latency overhead vs a codec AR model.
-
-If the product is "live voice chat" or "real-time music continuation", pick the codec AR path. If it is "render a 30-second clip on submit", flow-matching wins on quality and total latency.
 
 ## Further Reading
 

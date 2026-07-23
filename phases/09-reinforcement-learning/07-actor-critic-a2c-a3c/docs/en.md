@@ -54,59 +54,7 @@ with `λ ∈ [0, 1]`. `λ = 0` is TD (low variance, high bias). `λ = 1` is MC (
 Three terms: policy-gradient loss, value regression, entropy bonus. `c_v ~ 0.5`, `c_e ~ 0.01` are canonical starting points.
 
 
-## Use It
 
-A2C/A3C are rarely the final choice in 2026 but they are the architecture everything later refines:
-
-| Method | Relation to A2C |
-|--------|----------------|
-| PPO | A2C + clipped importance ratio for multi-epoch updates |
-| IMPALA | A3C + V-trace off-policy correction |
-| SAC (Phase 9 · 07) | Off-policy A2C with a soft-value critic (next lesson) |
-| GRPO (Phase 9 · 12) | A2C without the critic — group-relative advantage |
-| DPO | A2C collapsed into a preference-ranking loss, no sampling |
-| AlphaStar / OpenAI Five | A2C with league training + imitation pre-training |
-
-If you see "advantage" in a 2026 paper, think actor-critic.
-
-## Ship It
-
-Save as `outputs/skill-actor-critic-trainer.md`:
-
-```markdown
----
-name: actor-critic-trainer
-description: Produce an A2C / A3C / GAE configuration for a given environment, with advantage estimation and loss weights specified.
-version: 1.0.0
-phase: 9
-lesson: 7
-tags: [rl, actor-critic, gae]
----
-
-Given an environment and compute budget, output:
-
-1. Parallelism. A2C (GPU batched) vs A3C (CPU async) and the number of workers.
-2. Rollout length T. Steps per env per update.
-3. Advantage estimator. n-step or GAE(λ); specify λ.
-4. Loss weights. `c_v` (value), `c_e` (entropy), gradient clip.
-5. Learning rates. Actor and critic (separate if using).
-
-Refuse single-worker A2C on environments with horizon > 1000 (too on-policy, too slow). Refuse to ship without advantage normalization. Flag any run with `c_e = 0` and observed entropy < 0.1 as entropy-collapsed.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Actor | "The policy net" | `π_θ(a\|s)`, updated by policy gradient. |
-| Critic | "The value net" | `V_φ(s)`, updated by MSE regression to returns / TD targets. |
-| Advantage | "How much better than average" | `A(s, a) = Q(s, a) - V(s)` or its estimators. Multiplier for `∇ log π`. |
-| TD residual | "δ" | `δ_t = r + γ V(s') - V(s)`; one-step advantage estimate. |
-| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by `λ`. |
-| A2C | "Synchronous actor-critic" | Batched across envs; one gradient step per rollout. |
-| A3C | "Async actor-critic" | Worker threads push gradients to a shared param server. Original paper; less common in 2026. |
-| Bootstrap | "Use V at the horizon" | Truncate the rollout, add `γ^n V(s_{t+n})` to close the sum. |
 
 ## Further Reading
 

@@ -83,37 +83,7 @@ Cross-link: Phase 17 · 25 covers how to audit a running system for leaked secre
 
 The full OWASP LLM Top 10 2025 document is the authoritative reference for the technical descriptions; this lesson operationalises the business-facing subset.
 
-## Use It
 
-`code/main.py` implements the triage scorer as a deterministic, stdlib-only program. It defines a `UseCase` dataclass with a description and four optional keyword signals, a `score_category()` function that maps keyword presence to severity ratings, and a `triage()` function that applies the composite verdict logic. The driver runs three synthetic use cases — a benign internal analytics tool, a mid-risk document summariser, and a high-risk autonomous CRM agent — and prints a triage card for each, ending with a `HEADLINE:` summary that matches the claims in Exercise 1.
-
-## Ship It
-
-`outputs/skill-ai-threat-triage.md` is a one-page triage card template for working consultants and product engineers. It contains the four-category table, the severity rating guide, the composite verdict logic, and a blank triage card ready to fill in for any proposed use case. It is designed to be the first document produced in any AI feature discussion that involves real data or external systems.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Threat triage | "A quick security check" | A structured, documented assessment of which LLM risk categories a use case touches, producing an auditable verdict before scoping continues |
-| Prompt injection | "Hackers manipulate the AI" | Attacker-controlled text reaching a model prompt that redirects the model's behaviour; indirect injection arrives via documents or tool outputs, not direct user input |
-| Excessive agency | "The AI has too many permissions" | OWASP LLM06: a model is granted more tool access, data access, or authority than the task requires, amplifying the blast radius of any failure |
-| Sensitive data exposure | "PII leak" | Any model processing of data that is regulated, confidential, or commercially sensitive — broader than personal data alone |
-| Identity ambiguity | "Acting on behalf of" | The model executes actions using a service credential that does not accurately represent the authorisation level of the human it claims to represent |
-| HARD STOP | "We need security sign-off" | A triage verdict meaning no further scoping, prototyping, or stakeholder commitment may occur until a security architect clears the identified risk |
-| Blast radius | "How bad could it be" | The maximum scope of damage if the identified risk is exploited: records affected, systems reachable, financial exposure |
-| OWASP LLM Top 10 | "The AI security standard" | A community-maintained ranked list of the most critical security risks in LLM applications; current edition 2025 |
-
-## Consultant field notes
-
-Named patterns a senior consultant recognises from AI security triage work. Use these to spot the shape before the triage card is even filled in.
-
-- **The use case everyone approved but nobody wanted.** A clean architecture diagram and an enthusiastic steering committee, yet no clear owner for the model, the data pipeline, or the failure case. The triage verdict is rarely the blocker here — the absence of operational ownership is. Insist on a named accountable role before PROCEED becomes a real path forward.
-- **The RAG that returned the right doc but the wrong paragraph.** Retrieval precision is high, citation is honest, and the answer is still wrong because the relevant clause sat in section 4.2 and the chunker sliced at section 4. The data exposure score is usually fine; the misinformation risk from over-confident citation is what the triage undercounts. Add a condition: human review on any answer grounded in retrieved text.
-- **The AI feature that hit a cost ceiling in month two.** Token costs looked acceptable in the prototype and tripled after launch because real traffic contained long pasted documents and chatty retry loops. Security triage did not flag it; finance did. Build a cost guardrail into the conditions list whenever the proposal ingests user-supplied text.
-- **The vendor pilot that never made it past the security review.** The vendor's datasheet answered every functional question and zero architectural ones. The HARD STOP is almost never about capability — it is about identity propagation, data residency, and what the vendor logs on their side. Triage early, before the procurement team commits.
-- **The prompt that worked in the demo but failed in production.** The demo data was clean, the prompts were hand-crafted, and the model passed every acceptance test. The first month of real user input broke assumptions about input length, language, and adversarial phrasing. Untrusted input injection severity is rarely HIGH in the lab; in production it usually is.
 
 ## Further Reading
 

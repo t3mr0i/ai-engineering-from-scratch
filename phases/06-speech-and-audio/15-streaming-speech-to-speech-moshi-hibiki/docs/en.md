@@ -73,39 +73,7 @@ Sesame CSM (2025) uses a similar idea — a Llama-3 backbone with a Mimi codec h
 | Gemini 2.5 Live | ~350 ms | closed, Google API | commercial |
 
 
-## Use It
 
-| Situation | Pick |
-|-----------|------|
-| Lowest-latency voice companion | Moshi |
-| Live translation call | Hibiki |
-| Voice demo / research | Moshi, CSM |
-| Enterprise agent with tools | Pipeline (Lesson 12), not Moshi |
-| Custom-voice TTS in context | Sesame CSM |
-| Speech-to-speech, any languages | GPT-4o Realtime or Gemini 2.5 Live (commercial) |
-
-## Pitfalls
-
-- **Limited tool calling.** Moshi is a dialogue model, not an agent framework. Combine with pipeline for tools.
-- **Specific-voice conditioning.** Moshi uses a single trained persona; cloning is a separate training run.
-- **Language coverage.** French + English is excellent; others limited. Hibiki-Zero helps, but you still need training data.
-- **Resource cost.** A full Moshi session holds a GPU slot; not a cheap shared-tenant deploy pattern.
-
-## Ship It
-
-Save as `outputs/skill-duplex-pipeline.md`. Pick pipeline vs full-duplex architecture for a voice-agent workload, with reason.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Full-duplex | Hear-and-speak at once | Two audio streams active simultaneously on the same model. |
-| Inner monologue | Model's text stream | Moshi emits text tokens alongside its audio output. |
-| Depth transformer | Inter-codebook predictor | Small transformer that predicts 8 codebooks within one 80 ms frame. |
-| Mimi | Kyutai's codec | 12.5 Hz × 8 codebooks; semantic+acoustic; powers Moshi. |
-| Streaming S2S | Audio → audio live | Chunk-by-chunk translation/dialogue, no pipeline stages. |
-| Back-channeling | "Mhm" reactions | Moshi can emit small acknowledgments without breaking its turn. |
 
 ## Further Reading
 

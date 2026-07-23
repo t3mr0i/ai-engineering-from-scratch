@@ -89,29 +89,7 @@ For production agents this translates to a "what's missing" operator: given the 
 - **Retrieval quality.** Vector retrieval over skill descriptions degrades as the library grows past a few hundred. Supplement with tag filters and hard constraints ("only skills with `category=tooling`").
 
 
-## Use It
 
-- **Claude Agent SDK skills** (Anthropic) — the 2026 reference: each skill has a description, code, and instructions; loaded on demand during an agent session.
-- **skillkit** (npm: skillkit) — cross-agent skill management for 32+ AI coding agents.
-- **Custom skill libraries** — domain-specific (SQL skills for data agents, Terraform skills for infra agents). The Voyager pattern scales down.
-- **OpenAI Agents SDK `tools`** — at the low end; each tool is a lightweight skill.
-
-## Ship It
-
-`outputs/skill-skill-library.md` generates a Voyager-shaped skill library with registration, retrieval, versioning, and refinement wired in for any target runtime.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Skill | "Reusable capability" | Named chunk of code + description, retrievable by similarity |
-| Skill library | "Agent memory of how-to" | Persistent store of skills, searchable and composable |
-| Curriculum | "Task proposer" | Bottom-up goal generator driven by current capability gap |
-| Composition | "Skill DAG" | Skills invoking skills; topologically sorted on execution |
-| Iterative refinement | "Self-correcting loop" | Env feedback + errors + self-verification fold back into the next version |
-| Action-space-as-code | "Programmatic actions" | Emit functions, not primitive commands, for temporally extended behavior |
-| Dedup on write | "Skill collapse" | Near-duplicate descriptions collapse to one canonical skill |
 
 ## Further Reading
 

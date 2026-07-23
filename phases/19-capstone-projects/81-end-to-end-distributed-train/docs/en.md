@@ -56,27 +56,7 @@ The MLP from lesson 77 was sufficient to verify gradient sync. A tiny GPT adds t
 The loop runs a fixed 20 steps and exits. No `while True`, no human intervention, no resume from external state. A capstone you can leave running unattended and find a complete log when it finishes is a capstone that proves the system is wired correctly. If any piece deadlocks the demo never returns and the test rig catches it.
 
 
-## Use It
 
-Production patterns:
-
-- **DeepSpeed.** Combines DDP + ZeRO + pipeline + activation checkpointing under one config. The lesson's composition is the DeepSpeed shape in miniature.
-- **PyTorch FSDP.** The native equivalent. `FullyShardedDataParallel` with `ShardingStrategy.SHARD_GRAD_OP` is ZeRO-2.
-- **NeMo and Megatron-LM.** Add tensor parallel for the very largest models; otherwise the composition is the same shape.
-
-## Ship It
-
-The full track ends here. The 6 lessons together are the distributed-training subsystem a real team would build before adopting DeepSpeed; the abstraction has been proven against gloo and the failure modes have been exercised. Phase 17 (infrastructure and production) is the place to take this to a real cluster.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| End-to-end | "Wire it all up" | One run composes every piece, not a unit test per piece |
-| Memory profile | "GB per rank" | Bytes held on each rank for params, grads, optimiser state |
-| Resume contract | "Save and load" | Per-rank state byte-equal after a checkpoint round-trip |
-| Self-terminating | "Bounded run" | Fixed step count, exit 0 on completion, no human in the loop |
 
 ## Further Reading
 

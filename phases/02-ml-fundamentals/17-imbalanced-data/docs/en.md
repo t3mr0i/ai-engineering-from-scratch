@@ -212,59 +212,7 @@ flowchart TD
 ```
 
 
-## Use It
 
-With scikit-learn and imbalanced-learn, these techniques are one-liners:
-
-```python
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, f1_score
-from sklearn.model_selection import train_test_split
-from imblearn.over_sampling import SMOTE
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.pipeline import Pipeline
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y)
-
-model_weighted = LogisticRegression(class_weight="balanced")
-model_weighted.fit(X_train, y_train)
-print(classification_report(y_test, model_weighted.predict(X_test)))
-
-smote = SMOTE(random_state=42)
-X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
-model_smote = LogisticRegression()
-model_smote.fit(X_resampled, y_resampled)
-print(classification_report(y_test, model_smote.predict(X_test)))
-
-pipeline = Pipeline([
-    ("smote", SMOTE()),
-    ("model", LogisticRegression(class_weight="balanced")),
-])
-pipeline.fit(X_train, y_train)
-print(classification_report(y_test, pipeline.predict(X_test)))
-```
-
-The from-scratch implementations show exactly what each technique does. SMOTE is just k-NN interpolation on the minority class. Class weights multiply the loss. Threshold tuning is a for-loop over cutoffs. No magic.
-
-## Ship It
-
-This lesson produces:
-- `outputs/skill-imbalanced-data.md` -- a decision checklist for handling imbalanced classification problems
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Class imbalance | "One class has way more samples" | The distribution of classes in the dataset is significantly skewed, causing models to favor the majority class |
-| SMOTE | "Synthetic oversampling" | Creates new minority samples by interpolating between existing minority samples and their k-nearest minority neighbors |
-| Class weights | "Making errors on rare classes more expensive" | Multiplying the loss function by class-specific weights so the model penalizes minority misclassification more heavily |
-| Threshold tuning | "Moving the decision boundary" | Changing the probability cutoff for classification from the default 0.5 to a value that optimizes the desired metric |
-| Precision-recall tradeoff | "You cannot have both" | Lowering the threshold catches more positives (higher recall) but also flags more false positives (lower precision), and vice versa |
-| AUPRC | "Area under the PR curve" | Summarizes the precision-recall curve into a single number; more informative than AUC-ROC when classes are heavily imbalanced |
-| Matthews Correlation Coefficient | "The balanced metric" | A correlation between predicted and actual labels that produces a high score only when the model performs well on both classes |
-| Cost-sensitive learning | "Different mistakes cost different amounts" | Incorporating real-world misclassification costs into the training objective so the model optimizes for total cost, not error count |
-| Random oversampling | "Duplicate the minority" | Repeating minority class samples to balance class counts; simple but risks overfitting to duplicated points |
 
 ## Further Reading
 

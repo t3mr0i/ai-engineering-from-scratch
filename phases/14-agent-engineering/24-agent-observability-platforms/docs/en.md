@@ -64,29 +64,7 @@ Per Maxim (2026 field analysis): 89% of organizations have agent observability i
 - **Prompt versions not tied to traces.** When prod regresses, you cannot bisect to the prompt that caused it.
 
 
-## Use It
 
-- **Langfuse** self-hosted or cloud; wire via OTel or their SDK.
-- **Arize Phoenix** self-hosted; auto-instrument OpenInference.
-- **Comet Opik** self-hosted or cloud; automated optimization loop.
-- **Datadog LLM Observability** for mixed ops+ML teams that already run Datadog.
-
-## Ship It
-
-`outputs/skill-obs-platform-wiring.md` picks a platform and wires traces + evals + prompt versions into an existing agent.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Tracing | "Spans collector" | Ingest OTel / SDK spans; index by session |
-| Prompt management | "Prompt CMS" | Versioned prompts tied to traces |
-| LLM-as-judge | "Automated eval" | Separate LLM scores agent output against a rubric |
-| Session replay | "Trace playback" | Step through past runs for debugging |
-| RAG relevancy | "Retrieval quality" | Does the retrieved context match the query |
-| Trace clustering | "Behavioral grouping" | Cluster similar runs for drift detection |
-| Guardrail enforcement | "Policy at log time" | PII/toxicity/scope checks on logged content |
 
 ## Further Reading
 

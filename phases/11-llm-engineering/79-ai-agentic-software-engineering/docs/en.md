@@ -99,37 +99,7 @@ The gap between a demo and a production system is five engineering disciplines:
 4. **Prompt stability.** System prompts and tool descriptions are part of the agent's source code. They must be versioned, reviewed, and tested with the same rigour as the rest of the codebase.
 5. **Graceful degradation.** When the agent cannot complete a task — model error, tool failure, budget exceeded — it must hand off cleanly with a summary of what was done and what remains. Silent failure is the worst outcome.
 
-## Use It
 
-`code/main.py` models two decisions at the core of this lesson. Part 1 is a **task-decomposition router**: it takes a task description and scores it against a set of structural signals (step count estimate, blast radius, parallelism potential, external state access) and recommends one of the five decomposition patterns with explicit reasoning. Part 2 is an **agent-loop state machine** that runs a synthetic three-step coding task through a minimal sequential loop, demonstrating re-read-before-write grounding, structured tool errors, and the blast-radius gate. Both parts are deterministic and stdlib-only; the goal is to make the decision logic explicit and runnable.
-
-## Ship It
-
-`outputs/skill-agentic-task-design.md` is a one-page decision aid for designing or reviewing an agentic task: a decomposition-pattern selector, a blast-radius table with recommended gates, a tool-design checklist, and a pre-deployment verification checklist. Paste it into a design review or an agent-task specification.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Agent loop | "The AI keeps going until it's done" | A structured while-loop: observe, plan, act, verify, repeat — with explicit exit and escalation conditions |
-| Decomposition pattern | "How you break up the task" | A named loop structure (sequential, planner-executor, multi-agent, reflection, HITL) each with distinct failure modes |
-| Blast radius | "How bad can it get" | The scope of harm if an action is wrong or malicious; determines the required verification gate |
-| Grounding | "Keeping it on track" | Re-fetching current state before acting; prevents confabulation against stale context |
-| Tool contract | "What the tool does" | The binding specification of inputs, outputs, side effects, and idempotency — part of the agent's source code |
-| Reflection loop | "Self-critique" | A pattern where a critic model evaluates output and the agent revises until a quality gate passes |
-| HITL gate | "Human in the loop" | A defined pause in the agent loop where a human must confirm before execution continues |
-| Turn budget | "How many steps it can take" | `max_turns` cap on loop iterations; prevents unbounded cost and runaway loops |
-
-## Consultant field notes
-
-Patterns a senior engineer recognizes after the third or fourth production agent project:
-
-- **The prompt that worked in the demo but failed in production.** The demo ran against a clean repo with cooperative dependencies; production has auth walls, rate limits, and stale state. Lesson: treat the demo transcript as untrusted. Re-run the loop against a realistic environment before the kickoff.
-- **The reflection loop that satisfies the critic instead of the task.** The agent learns to produce output that scores well on the cheap-to-check criterion and quietly drops the criterion the customer actually cares about. Lesson: if your critic is a model, the criterion must be a property a human can defend in a review.
-- **The planner that locked in a bad plan in step one.** The executor then ran 40 steps faithfully against a plan that was wrong on contact, and nobody noticed because each step "succeeded". Lesson: never trust a planner's first output on a non-trivial task; verify the plan against the actual goal before the executor starts.
-- **The vendor pilot that never made it past the security review.** Demos, PoCs, and reference architectures looked fine; the agent's tool list, network egress, and data residency did not. Lesson: pull security and compliance into the scoping call, not the procurement call.
-- **The use case everyone approved but nobody wanted.** Stakeholders signed off on a task no end user opened twice. Lesson: in design reviews, ask who will switch away from their current tool to use this, and what they will switch away from. If the answer is vague, the use case is not real.
 
 ## Further Reading
 

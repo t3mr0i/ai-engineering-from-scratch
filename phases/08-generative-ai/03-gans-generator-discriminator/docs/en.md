@@ -54,48 +54,7 @@ In 2026 GANs are no longer the SOTA generator (diffusion and flow matching ate t
 | 2024 | R3GAN | Rebrands with stronger regularization; works on 1024² without tricks. |
 
 
-## Use It
 
-The 2026 GAN stack:
-
-| Situation | Pick |
-|-----------|------|
-| Photoreal human faces, fixed pose | StyleGAN3 (sharpest, smallest) |
-| Anime / stylized faces | StyleGAN-XL or Stable Diffusion LoRA |
-| Image-to-image translation | Pix2Pix / CycleGAN (Phase 8 · 04) or ControlNet (Phase 8 · 08) |
-| Fast 1-step text-to-image | Adversarial distillation of diffusion (SDXL-Turbo, SD3-Turbo) |
-| Perceptual loss inside a diffusion trainer | Small GAN discriminator on image crops |
-| Anything multi-modal, open-ended | Don't — use diffusion or flow matching |
-
-GANs are sharp but narrow. Once your domain opens up — photos, arbitrary text prompts, video — switch to diffusion. The adversarial trick lives on as a component (perceptual losses, distillation), not a standalone generator.
-
-## Ship It
-
-Save `outputs/skill-gan-debugger.md`. Skill takes a failing GAN run (loss curves, sample grid, dataset size) and outputs a ranked list of likely causes, one-line fixes, and a rerun protocol.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Generator | "G" | Noise-to-sample network, `G: z → x̂`. |
-| Discriminator | "D" | Classifier `D: x → [0, 1]`, real vs fake. |
-| Minimax | "The game" | `min_G max_D` of a joint objective. |
-| Non-saturating loss | "The fix" | Use `-log D(G(z))` for G instead of `log(1 - D(G(z)))`. |
-| Mode collapse | "G memorized one thing" | Generator produces few distinct outputs despite diverse data. |
-| WGAN | "Wasserstein" | Replace BCE with Earth-Mover distance + gradient penalty; smoother gradient. |
-| Spectral norm | "Lipschitz trick" | Constrain D's weight norms to bound its slope; stabilizes training. |
-| StyleGAN | "The one that works" | Mapping network + AdaIN; best-in-class for faces, still in 2026. |
-
-## Production note: one-shot inference is GAN's lasting advantage
-
-GANs no longer win on sample quality for open-domain generation, but they still win on inference cost. In production-inference literature vocabulary a GAN has:
-
-- **No prefill, no decode stages.** A single `G(z)` forward pass. TTFT ≈ total latency.
-- **No KV-cache pressure.** The only state is the weights. Batch size is bounded by activation memory, not cache.
-- **Trivial continuous batching.** Since every request takes the same fixed FLOPs, a static batch at the server's target occupancy is usually optimal. No in-flight scheduler needed.
-
-This is why GAN distillation (SDXL-Turbo, SD3-Turbo, ADD, LCM) is the dominant technique for fast text-to-image in 2026: it collapses a 20-50-step diffusion pipeline into 1-4 GAN-style forward passes while keeping the distribution of a diffusion base. The adversarial loss survives as a training-time knob for turning slow generators into fast ones.
 
 ## Further Reading
 

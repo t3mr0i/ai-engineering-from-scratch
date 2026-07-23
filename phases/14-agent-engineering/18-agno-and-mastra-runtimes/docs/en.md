@@ -63,27 +63,7 @@ Neither is trying to be LangGraph. They compete on:
 - **Enterprise license confusion.** Mastra's `ee/` directories are source-available, not Apache 2.0. Read the licenses if you're planning to fork.
 
 
-## Use It
 
-- **Agno** — Python backend that needs speed and FastAPI shape.
-- **Mastra** — TypeScript backend with many providers and workflow primitives.
-- Both ship first-party observability hooks. Both integrate with Langfuse.
-
-## Ship It
-
-`outputs/skill-runtime-picker.md` picks Agno, Mastra, LangGraph, or a provider SDK based on stack, latency budget, and operational shape.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Agno | "Fast Python agents" | Stateless session-scoped agent runtime |
-| Mastra | "TypeScript agents on Vercel AI SDK" | Agents + Tools + Workflows + Model Router |
-| Unified Model Router | "Multi-provider access" | Single client for 3,300+ models across 94 providers |
-| Composite storage | "Multiple backends" | Memory/workflows/observability each to a different store |
-| Mastra Studio | "Local debugger" | localhost:4111 UI for introspecting agents |
-| Source-available | "Not OSS" | License permits source reading but restricts commercial use |
 
 ## Further Reading
 

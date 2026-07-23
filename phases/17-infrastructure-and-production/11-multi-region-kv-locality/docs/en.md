@@ -87,28 +87,7 @@ EU customer PHI cannot leave EU. If your cache-aware router sends a Paris-origin
 - DR failure: 32% miss tokenizer/quant configs.
 - JPMorgan us-east-1 failover Nov 2024: 22 minutes (30-min SLA).
 
-## Use It
 
-`code/main.py` simulates three routing strategies (round-robin, cache-aware regional, cache-aware global) on a multi-region workload. Reports cache hit rate, TTFT P50/P99, and cross-region bill.
-
-## Ship It
-
-This lesson produces `outputs/skill-multi-region-router.md`. Given regions, residency constraints, and SLA, designs a routing plan.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Cache-aware routing | "smart LB" | Route on prefix-hash match to KV-cache-holding replica |
-| KV-cache events | "cache pub-sub" | Replicas publish block add/evict; router indexes |
-| Prefix hash | "cache key" | Hash of first N tokens used as router lookup |
-| GORGO | "cross-region routing research" | arXiv 2602.11688; network latency as explicit term |
-| Cross-region inference | "Bedrock CRI" | AWS product; availability failover, not TTFT awareness |
-| DR manifest | "the backup list" | Every file needed to restore — not just weights |
-| Data residency | "GDPR boundary" | Legal constraint on which region sees user data |
-| RTT | "round-trip time" | Network latency; 75 ms US-EU, 220 ms US-APAC |
-| LLM-aware LB | "cache-hit LB" | Cache-aware router as a product category |
 
 ## Further Reading
 

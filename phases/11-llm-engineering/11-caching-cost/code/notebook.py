@@ -88,7 +88,7 @@ MODEL_PRICING = {
 }
 
 def calculate_cost(model, input_tokens, output_tokens, cached_input_tokens=0):
-    # Gateway model ids carry a provider prefix (e.g. "azure/gpt-4o");
+    # Gateway model ids carry a provider prefix (e.g. "azure/gpt-5.4-mini"). Strip it off for pricing lookup.;
     # normalize to the bare model name used in MODEL_PRICING.
     pricing_key = model.split("/")[-1]
     if pricing_key not in MODEL_PRICING:
@@ -449,7 +449,7 @@ print("💾 Cost Tracker Demo\n")
 
 # Log the real LLM call from Step 6
 tracker.log_call(
-    "azure/gpt-4o",
+    "azure/gpt-5.4-mini",
     resp1.get('usage', {}).get('prompt_tokens', 100),
     resp1.get('usage', {}).get('completion_tokens', 50),
     latency_ms=latency1*1000,
@@ -459,7 +459,7 @@ tracker.log_call(
 
 # Log the cache hit
 tracker.log_call(
-    "azure/gpt-4o",
+    "azure/gpt-5.4-mini",
     100, 50, latency_ms=1, user_id="user_1", cache_status="hit"
 )
 
@@ -620,7 +620,7 @@ print(f"Response:\n{text}\n")
 
 in_tokens = resp.get('usage', {}).get('prompt_tokens', 100)
 out_tokens = resp.get('usage', {}).get('completion_tokens', 50)
-cost = calculate_cost("azure/gpt-4o", in_tokens, out_tokens)
+cost = calculate_cost("azure/gpt-5.4-mini", in_tokens, out_tokens)
 
 print(f"📊 Cost Breakdown:")
 print(f"  Input tokens: {in_tokens}")

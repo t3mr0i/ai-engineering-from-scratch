@@ -109,36 +109,7 @@ Use these for dashboards that do not need per-call detail.
 
 AgentOps (founded 2024) specializes in GenAI observability. It wraps popular frameworks (LangGraph, Pydantic AI, CrewAI) to emit OTel spans automatically. Useful if your stack uses a supported framework; use manual instrumentation otherwise.
 
-## Use It
 
-`code/main.py` emits OTel-shaped spans to stdout (in OTLP-JSON-like format) for an agent that calls an LLM, dispatches two tools, and makes one MCP round-trip. No real exporter — the lesson focuses on the span shape and attribute set. Paste the output into an OTLP-compatible viewer or just read it.
-
-What to look at:
-
-- Trace id is shared across all spans.
-- Parent-child links are encoded via `parentSpanId`.
-- Required `gen_ai.*` attributes are populated.
-- Content capture is off by default; one scenario turns it on via env var.
-
-## Ship It
-
-This lesson produces `outputs/skill-otel-genai-instrumentation.md`. Given an agent codebase, the skill produces an instrumentation plan: where to add spans, which attributes to populate, and which exporters to target.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| OTel | "OpenTelemetry" | Open standard for traces, metrics, logs |
-| GenAI semconv | "GenAI semantic conventions" | Stable attribute names for LLM / tool / agent spans |
-| `gen_ai.*` | "The attribute namespace" | All GenAI attributes share this prefix |
-| Span | "Timed operation" | A unit of work with a start, end, and attributes |
-| Trace | "Cross-span ancestry" | Tree of spans sharing a trace id |
-| SpanKind | "CLIENT / SERVER / INTERNAL" | Hints about span direction |
-| OTLP | "OpenTelemetry Line Protocol" | Wire format for exporters |
-| Opt-in content | "Prompt / completion capture" | Off by default; env var to enable |
-| traceparent | "W3C header" | Propagates trace context across services |
-| Exporter | "Backend-specific shipper" | Component that sends spans to Jaeger / Datadog / etc. |
 
 ## Further Reading
 

@@ -122,36 +122,7 @@ Drift-risk note: the SEP-1036 response shape is still settling; some SDKs return
 
 Elicitation plus sampling together enable MCP's "human-in-the-loop" model. A server's agent loop can pause for either user input (elicitation) or model reasoning (sampling). Phase 13 · 11 covered sampling; this lesson covers elicitation. Put them together for full mid-loop control.
 
-## Use It
 
-`code/main.py` extends the notes server with:
-
-- `roots/list` response that the server re-queries after root-list-changed notifications.
-- A `notes_delete` tool that uses `elicitation/create` to disambiguate when multiple notes match.
-- A `notes_setup` tool that uses URL-mode elicitation to open a first-run config page (simulated).
-- A boundary check that refuses operations on URIs outside the declared roots.
-
-The demo runs three scenarios: happy path (one match), disambiguation (three matches, elicitation fires), out-of-root-write (rejected).
-
-## Ship It
-
-This lesson produces `outputs/skill-elicitation-form-designer.md`. Given a tool that might need user confirmation or disambiguation, the skill designs the elicitation form schema and the message template.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Root | "Consent boundary" | URI the client has allowed the server to touch |
-| `roots/list` | "Server asks for scope" | Client returns the current root set |
-| `notifications/roots/list_changed` | "User changed scope" | Client signals the root set has mutated |
-| Elicitation | "Ask the user mid-call" | Server-initiated request for structured user input |
-| `elicitation/create` | "The method" | JSON-RPC method for elicitation requests |
-| Form mode | "Schema-driven form" | Flat JSON Schema rendered as a form in the client UI |
-| URL mode | "Browser redirect" | SEP-1036 experimental; opens a URL and waits |
-| `accept` / `decline` / `cancel` | "User response outcomes" | Three branches the server handles |
-| Disambiguation | "Pick one" | Common elicitation use case when a tool has N candidates |
-| Flat form | "Top-level properties only" | Elicitation schemas cannot nest |
 
 ## Further Reading
 

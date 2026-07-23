@@ -92,39 +92,7 @@ Same autoregressive generation as GPT. Greedy / beam / top-p sampling apply. Bea
 The trend since ~2022: decoder-only takes over tasks that encoder-decoder used to own because (a) instruction-tuned decoder-only LLMs generalize to anything via prompting, (b) one architecture scales easier than two, (c) RLHF assumes a decoder. Encoder-decoder holds on where input modality differs (speech, images) or where beam search quality matters.
 
 
-## Use It
 
-HuggingFace reference:
-
-```python
-from transformers import T5ForConditionalGeneration, T5Tokenizer
-tok = T5Tokenizer.from_pretrained("google/flan-t5-base")
-model = T5ForConditionalGeneration.from_pretrained("google/flan-t5-base")
-
-inputs = tok("translate English to French: Attention is all you need.", return_tensors="pt")
-out = model.generate(**inputs, max_new_tokens=32)
-print(tok.decode(out[0], skip_special_tokens=True))
-```
-
-The T5 trick: the task name goes into the input text. Same model handles dozens of tasks because each task is text-in, text-out. In 2026 this pattern has been generalized by instruction-tuned decoder-only models, but T5 codified it first.
-
-## Ship It
-
-See `outputs/skill-seq2seq-picker.md`. The skill picks between encoder-decoder and decoder-only for a new task given input-output structure, latency, and quality targets.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Encoder-decoder | "Seq2seq transformer" | Two stacks: bidirectional encoder for input, causal decoder with cross-attention for output. |
-| Cross-attention | "Where source talks to target" | Decoder's Q × encoder's K/V. The only place encoder information enters the decoder. |
-| Span corruption | "T5's pretraining trick" | Replace random spans with sentinel tokens; decoder outputs the spans. |
-| Denoising objective | "BART's game" | Apply a noise function to the input, train the decoder to reconstruct the clean sequence. |
-| Sentinel token | "The `<extra_id_N>` placeholder" | Special tokens that tag corrupted spans in the source and re-tag them in the target. |
-| Flan | "Instruction-tuned T5" | T5 fine-tuned on >1,800 tasks; made encoder-decoder competitive at instruction-following. |
-| Beam search | "Decoding strategy" | Keep top-k partial sequences at each step; standard for translation/summarization. |
-| Teacher forcing | "Training-time input" | During training, feed the true previous output token to the decoder, not the sampled one. |
 
 ## Further Reading
 

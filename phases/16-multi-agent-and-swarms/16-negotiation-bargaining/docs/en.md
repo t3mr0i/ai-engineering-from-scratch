@@ -103,34 +103,7 @@ Across all 2024-2026 negotiation benchmarks, the consistent engineering rule is:
 If the offer needs to be a number (price, ETA, quantity), generate it deterministically from the negotiation state and have the LLM produce the framing. If the offer needs to be a proposal structure (task decomposition, role assignment), let the LLM draft it, but validate it against a schema and constraint-check before sending.
 
 
-## Use It
 
-`outputs/skill-bargainer-designer.md` designs a bargaining protocol: who generates offers (deterministic or LLM), who narrates, how private scratchpads separate from public messages, and how deal rate is monitored.
-
-## Ship It
-
-Production bargaining checklist:
-
-- **Separate scratchpad.** Private state never reaches the counterpart's context. This is non-negotiable.
-- **Deterministic offer generation.** Prices, quantities, ETAs: compute, do not prompt.
-- **Validate all incoming offers** against a schema. Reject out-of-ZOPA offers at the protocol boundary.
-- **Bound rounds.** 3-5 rounds maximum; escalate to mediator on deadlock.
-- **Measure deal rate and payoff variance** continuously. A falling deal rate is a symptom — often a prompt drift or a counterpart-side attack.
-- **Log all rejected proposals** with the deterministic rationale. For Contract Net managers, losing bidders need to understand why.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Contract Net | "Task market" | Smith 1980, FIPA 1996. cfp + propose + accept/reject. The canonical task-market. |
-| ZOPA | "Zone of possible agreement" | Overlap between buyer's max and seller's min. Offers outside it cannot close. |
-| BATNA | "Best alternative to a negotiated agreement" | Your fallback if this deal fails. Sets your reservation price. |
-| OG-Narrator | "Offer generator + narrator" | Decomposition: deterministic offer, LLM narration. |
-| Zeuthen strategy | "Risk-minimizing concession" | Classical offer-generator that concedes based on risk limits. |
-| Rubinstein bargaining | "Alternating-offer equilibrium" | Game-theoretic model for infinite-horizon bargaining with discounting. |
-| CoT concealment | "Hide your reasoning" | Winners in arXiv:2503.06416 kept private scratchpads; public channel shows offer only. |
-| Persona manipulation | "Emotional posturing" | arXiv:2402.05863: ~20% payoff gain from desperation/urgency personas. |
 
 ## Further Reading
 

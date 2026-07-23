@@ -95,39 +95,7 @@ In 2026, the standard integration pattern for LLM-assisted backlog scoring is:
 
 The deterministic scoring layer is intentional. You do not want the ranking to change because you switched from Sonnet 4.5 to Sonnet 4.7. The model populates the inputs; the formula produces the output. This separation also makes the ranking auditable: you can replay any past ranking by re-running the deterministic function against the stored inputs.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only implementation of the scoring model this lesson describes. It defines a `BacklogItem` dataclass with value, effort, risk, and dependency fields, a `ScoringWeights` configuration, and a `score_and_rank` function that applies the weighted formula and dependency multiplier. A second function, `build_dependency_graph`, computes depth and fan-in for each item. The driver runs a synthetic backlog of eight items, prints the full score breakdown, flags high-risk and high-dependency items, and ends with a HEADLINE summary that matches what the exercises ask you to verify.
-
-## Ship It
-
-`outputs/skill-backlog-scoring-decision-record.md` is a one-page paste-and-use template for a prioritization session. It includes the weight-setting checklist, the scoring table structure, the dependency snapshot format, and the override log. Paste it into a Confluence page or a repo wiki before the session, fill it in during, and commit the result as the session's decision record.
-
-
-## Consultant field notes
-
-These are the patterns a senior PM or consultant recognises after a few AI-assisted prioritization cycles. They are not in the official docs.
-
-**The model-set-weights drift.** A team starts with the model scoring only. After two quarters of "what would the model change?" someone adds weight proposals because the model "had good judgment." Six months later, the weights encode the model's preferences, and nobody can explain why the strategic bet on platform investment scored lower than the third incremental dashboard request. Symptom: stakeholder reviews feel arbitrary, and the room cannot reconstruct why a given item ranked where it did. Cure: weights and the rationale behind them are owned by named humans, written down, and revisited quarterly.
-
-**The horizon-less backlog.** AI-assisted scoring optimises for what is on the page. Long-horizon items (platform investment, tech debt, hiring) sit quietly because they do not score well in any single sprint. Symptom: the strategic roadmap exists only in the head of one person, and the model keeps re-ranking the same tactical items to the top. Cure: a separate "horizon list" outside the scoring surface, reviewed on a different cadence, with its own explicit scoring criteria.
-
-**The fabricated dependency.** The model proposes "Item A blocks Item B" because the descriptions share keywords. No human ever confirmed it. Symptom: a refactor that nobody planned is suddenly on the critical path because the model said it was a blocker. Cure: dependencies are added to the backlog only by named humans; the model may suggest candidates but cannot insert them.
-
-**The RICE-shaped monoculture.** The model is good at RICE, so every item gets a RICE score, even items for which RICE is the wrong frame (compliance work, customer commitments, strategic investments with no measurable reach). Symptom: the same scoring dimensions are applied to items where they are not meaningful, and the rankings feel wrong to anyone who knows the work. Cure: the scoring model is per-item-type, and the choice of model is itself a decision.
-
-**The senior-tribal-knowledge loss.** An experienced PM's gut sense ("this will be a 3-month migration, not 2") encodes years of pattern recognition. When the LLM scores effort without that input, the estimate is more "even" but less accurate. Symptom: estimates that look reasonable in isolation are systematically optimistic, and the gap shows up at the quarter boundary. Cure: confidence scores are not just "the model's confidence" but the team's; capture named human input alongside the model output, and surface the disagreement.
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| RICE | "The scoring formula" | Reach × Impact × Confidence / Effort; a specific four-factor prioritization model from Intercom (2016) |
-| WSJF | "Weighted shortest job first" | SAFe prioritization model that divides Cost of Delay by job duration to maximize flow rate |
-| Decision record | "The rationale doc" | A structured artifact capturing weights, scores, risk flags, dependency snapshot, and overrides for a single prioritization session |
-| Dependency multiplier | "The blocker tax" | A scalar applied to effort when an item has unresolved blockers, reflecting schedule uncertainty |
-| Fan-in | "How much it unblocks" | Number of items in the backlog that are blocked by this item; high fan-in = force multiplier |
-| Value weight | "How much we care about value" | The explicit numeric weight applied to the value dimension in a scoring formula; must be set by humans, not the model |
-| Risk overlay | "The risk adjustment" | A per-item risk score (0–1) subtracted from the composite, weighted separately from value |
-| Structured output | "JSON from the model" | A prompt technique (Phase 11 · 01) that constrains the model's response to a machine-readable schema for downstream scoring |
 
 ## Further Reading
 

@@ -81,45 +81,7 @@ FinOps for LLMs (Phase 17 · 27) introduces practices from cloud financial manag
 - **Track cost-per-useful-output** as the primary KPI, not cost-per-query. This is the metric that survives a business review.
 - **Review routing policy monthly** against actual traffic distributions. Traffic mix drifts; a routing policy tuned on month-1 data may be suboptimal by month-4.
 
-## Use It
 
-`code/main.py` models the three core decisions this lesson is about in a single runnable program:
-
-1. A **cost model** that computes per-call cost under different cache-hit-rate assumptions, showing how hit rate dominates the per-query cost curve.
-2. A **routing policy simulator** that applies a simple three-signal rule to a set of synthetic queries and shows the cost difference between "always Opus" and the routed outcome.
-3. A **value-case calculator** that takes a time-saved scenario and computes break-even volume, cost-per-useful-output, and payback period.
-
-Run it to see concrete numbers that match the claims in the exercises.
-
-## Ship It
-
-`outputs/skill-ai-cost-value-decision-aid.md` is a one-page paste-and-use decision aid for a consultant or engineer scoping an AI system: a cost-layer checklist, a value-denominator worksheet, and the three questions any finance partner will ask before signing off on an LLM budget.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Token price | "The cost of the model" | The per-million-token rate; one of four cost layers, not the total cost |
-| Cache hit rate | "How often caching helps" | Fraction of input tokens served from cache; the dominant cost lever in production |
-| Model routing | "Sending easy queries somewhere cheaper" | A policy that matches query complexity to the cheapest model tier that meets quality bar |
-| Cost per useful output | "Real cost per transaction" | Total API cost divided by the count of outputs that meet acceptance criteria |
-| Prompt caching | "Reusing the context" | Provider-side caching of a prefix block; reads cost ~10% of a full input pass |
-| FinOps for LLMs | "Cloud cost management for AI" | Practices — tagging, showback, alerting — adapted from cloud FinOps to API spend |
-| Break-even volume | "When does this pay for itself" | The query volume at which cost savings from a change exceed its implementation cost |
-| Value denominator | "What we're measuring against" | The business unit (time, decisions, errors) against which cost per unit is computed |
-
-## Consultant field notes
-
-**The prompt that worked in the demo but failed in production.** A clean two-shot prompt with temperature 0.0 looked magical in five manual tests; the same prompt at 500K queries/month hits a cost ceiling because nobody modelled that the average input grew from 400 to 1,800 tokens as real users pasted context. Lesson: measure token length distribution under live traffic, not under the test set.
-
-**The RAG that returned the right doc but the wrong paragraph.** Vector retrieval nailed the source document 95% of the time, but the chunking strategy surfaced a tangentially related paragraph instead of the operative clause, so the LLM cited confidently and answered wrong. Lesson: retrieval quality is a chunking problem first and an embedding-model problem second.
-
-**The vendor pilot that never made it past the security review.** A six-week paid pilot produced a glowing value case and a champion in the business unit; the procurement and security review then surfaced data-residency, egress logging, and DPIA gaps that needed three more quarters to close. Lesson: loop in security and procurement before the pilot, not after the value case is written.
-
-**The use case everyone approved but nobody wanted.** A steering committee approved the project, the budget cleared, and the model performed to spec — yet adoption stayed at 4% of the intended user base because the workflow sat one click outside the tool the team already used every day. Lesson: distribution is a design constraint; the cheapest model in the world cannot save a feature nobody opens.
-
-**The AI feature that hit a cost ceiling in month two.** Month-one spend tracked at 60% of forecast and looked like headroom; month-two traffic tripled because the feature was embedded in a high-traffic surface, and the per-useful-output cost crossed the budget threshold the week finance started asking. Lesson: cost projections must model growth in eligible traffic, not just per-query efficiency.
 
 ## Further Reading
 

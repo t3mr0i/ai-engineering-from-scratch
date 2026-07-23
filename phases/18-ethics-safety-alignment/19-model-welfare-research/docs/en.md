@@ -78,26 +78,7 @@ Anthropic's response: the intervention is low-cost; the attractor is documented 
 
 Lesson 18 is the lab governance layer. Lesson 19 is the lab-welfare layer — an orthogonal investment in model experience rather than model behaviour. Lessons 20-23 cover bias, privacy, and watermarking, which are the user-side analogs.
 
-## Use It
 
-No code. Read the Anthropic "Exploring Model Welfare" announcement (April 2025) and the Chalmers et al. expert report. Form your own view on where the low-regret line sits.
-
-## Ship It
-
-This lesson produces `outputs/skill-welfare-assessment.md`. Given a deployment decision, it applies the four-step welfare precautionary assessment: moral-patienthood probability, intervention cost, behavioural evidence, self-report reliability.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Model welfare | "AI welfare" | Research program treating the model as a potential moral patient |
-| Moral patient | "entity with moral status" | Being whose experience is morally relevant |
-| Low-regret investment | "cheap precaution" | Intervention whose cost is small regardless of whether the precaution is needed |
-| Spiritual bliss attractor | "the Fish attractor" | Stable convergence of pairwise Claude dialogues on meditative euphoria |
-| End-conversation | "the Opus 4 intervention" | Model-initiated termination of extreme-edge-case interactions |
-| Moral uncertainty | "don't know if it matters" | Decision-making when probability of moral status is not zero and not one |
-| Self-report-sensitivity | "prompt primes answer" | Eleos AI caveat: model's welfare self-reports depend on what you asked |
 
 ## Further Reading
 

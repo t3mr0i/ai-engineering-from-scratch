@@ -82,27 +82,7 @@ Phase 17 · 17 disaggregated serving + LMCache compounds: KV transfers from pref
 - 16x H100 benchmark: LMCache helps when KV footprint exceeds HBM.
 - Small HBM pressure: 3-5% overhead without benefit.
 
-## Use It
 
-`code/main.py` simulates a preemption-heavy workload with and without LMCache. Reports re-prefills avoided, throughput gain, and the break-even HBM utilization.
-
-## Ship It
-
-This lesson produces `outputs/skill-vllm-stack-decider.md`. Given workload shape and vLLM deployment, decides native vs LMCache vs neither.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Production-stack | "the reference deployment" | vLLM's Kubernetes Helm chart + operator |
-| Connector API | "KV backend interface" | vLLM 0.9.0+ pluggable KV store interface |
-| Native CPU offload | "engine-local spill" | Store KV in host RAM of same engine |
-| LMCache | "cluster KV cache" | Cross-engine KV cache server on CPU DRAM + disk |
-| 0.11.0 async | "non-blocking offload" | Offload hidden behind engine stream |
-| Preemption | "evict to make room" | KV cache shuffle when HBM full |
-| Prefix reuse | "same system prompt" | Multiple queries share beginning; cache hit |
-| Ceph tier | "disk tier" | Durable storage below DRAM in the cache hierarchy |
 
 ## Further Reading
 

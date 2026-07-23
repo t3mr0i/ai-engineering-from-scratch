@@ -80,45 +80,7 @@ A production eval report should include:
 Any single metric is a lie. Three corroborating metrics + qualitative review are a claim.
 
 
-## Use It
 
-Production eval protocol in 2026:
-
-| Pillar | Minimum | Recommended |
-|--------|---------|-------------|
-| Sample quality | FID on 10k vs held-out real | + CMMD on 5k + FID on subset per category |
-| Prompt adherence | CLIP score on 30k | + HPSv2 + ImageReward + VQA-style question answering |
-| Preference | 200 blinded pairs vs baseline | + 2000 paired human + LLM-judge + Chatbot Arena |
-| Failure analysis | 50 hand-flagged | 500 hand-flagged + automated safety classifier |
-
-All four pillars in one report = claim. Any one alone = marketing.
-
-## Ship It
-
-Save `outputs/skill-eval-report.md`. Skill takes a new model checkpoint + baseline and outputs a full eval plan: sample sizes, metrics, failure-mode probes, sign-off criteria.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| FID | "Fréchet Inception Distance" | Fréchet distance of Gaussian fits to real vs gen Inception features. |
-| CLIP score | "Text-image similarity" | Cosine similarity between CLIP image and text embeddings. |
-| CMMD | "FID's replacement" | CLIP-feature MMD; less biased, no Gaussian assumption. |
-| IS | "Inception score" | Exp KL(p(y|x) || p(y)); correlates poorly on modern models, retired. |
-| HPSv2 / ImageReward / PickScore | "Learned preference proxies" | Small models trained on human preferences; used as automatic judges. |
-| Elo | "Chess rating" | Bradley-Terry aggregation of pairwise wins. |
-| PartiPrompts | "The benchmark prompt set" | 1,600 Google-curated prompts across 12 categories. |
-| FD-DINO | "Self-sup replacement" | FD using DINOv2 features; better for out-of-ImageNet domains. |
-
-## Production note: evaluation is an inference workload too
-
-Running FID on 10k samples means generating 10k images. For a 50-step SDXL base at 1024² on a single L4, that is ~11 hours of single-request inference. Evaluation budgets are real, and the framing is exactly the offline-inference scenario (maximize throughput, ignore TTFT):
-
-- **Batch hard, forget latency.** Offline eval = static batching at the largest size that fits in memory. `pipe(...).images` with `num_images_per_prompt=8` on an 80GB H100 runs 4-6× faster wall-clock than single-request.
-- **Cache the real features.** The Inception (FID) or CLIP (CLIP-score, CMMD) feature extraction over the real reference set is run *once*, stored as a `.npz`. Do not recompute per eval.
-
-For CI / regression gates: run FID + CLIP score on a 500-sample subset per PR (~30 min); run full 10k FID + HPSv2 + Elo nightly.
 
 ## Further Reading
 

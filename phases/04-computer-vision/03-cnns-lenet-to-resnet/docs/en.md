@@ -152,57 +152,7 @@ When the skip has to cross a downsample (stride=2), the identity path is replace
 The idea was not really about image classification. It was about turning deep networks from "cross-your-fingers and hope gradients survive" into a reliable, scalable engineering tool. Every transformer you will read about next phase has the exact same skip connection in every block. Without ResNet, there is no GPT.
 
 
-## Use It
 
-`torchvision.models` gives you pretrained versions of all of the above. The call signature is identical across families, which is exactly the point of the backbone abstraction.
-
-```python
-from torchvision.models import resnet18, ResNet18_Weights, vgg16, VGG16_Weights
-
-r18 = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
-r18.eval()
-
-print(f"ResNet-18 params: {sum(p.numel() for p in r18.parameters()):,}")
-print(r18.layer1[0])
-print()
-
-v16 = vgg16(weights=VGG16_Weights.IMAGENET1K_V1)
-v16.eval()
-print(f"VGG-16   params: {sum(p.numel() for p in v16.parameters()):,}")
-```
-
-ResNet-18 has 11.7M parameters. VGG-16 has 138M. Similar ImageNet top-1 accuracy (69.8% vs 71.6%). Residual connections buy you a 12x parameter efficiency win. That is why ResNet variants dominated from 2016 until ViT arrived in 2021 — and still dominate real-world deployments where compute is the constraint.
-
-For transfer learning, the recipe is always the same: load pretrained, freeze the backbone, replace the classifier head.
-
-```python
-for p in r18.parameters():
-    p.requires_grad = False
-r18.fc = nn.Linear(r18.fc.in_features, 10)
-```
-
-Three lines. You now have a 10-class CIFAR classifier that inherits the representations ImageNet paid for.
-
-## Ship It
-
-This lesson produces:
-
-- `outputs/prompt-backbone-selector.md` — a prompt that picks the right CNN family (LeNet/VGG/ResNet/MobileNet/ConvNeXt) given task, dataset size, and compute budget.
-- `outputs/skill-residual-block-reviewer.md` — a skill that reads a PyTorch module and flags skip-connection mistakes (missing shortcut on stride change, shortcut activation order, BN placement relative to addition).
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Backbone | "The model" | The stack of convolutional blocks that produces the feature map fed to the task head |
-| Residual connection | "Skip connection" | `y = F(x) + x`; lets the optimiser learn identity by setting F to zero, which makes arbitrary depth trainable |
-| BasicBlock | "Two 3x3 convs with a skip" | The ResNet-18/34 building block: conv-BN-ReLU-conv-BN-add-ReLU |
-| Bottleneck | "1x1 down, 3x3, 1x1 up" | The ResNet-50/101/152 block; cheap at high channel counts because the 3x3 runs on a reduced width |
-| Degradation problem | "Deeper is worse" | Past ~20 plain conv layers, both training and test error increase; solved by residual connections, not by more data |
-| Stem | "The first layer" | The initial conv that converts 3-channel input into the base feature width; usually 7x7 stride 2 for ImageNet, 3x3 stride 1 for CIFAR |
-| Head | "The classifier" | The layers after the final backbone block: adaptive pool, flatten, linear(s) |
-| Transfer learning | "Pretrained weights" | Loading a backbone trained on ImageNet and fine-tuning only the head on your task |
 
 ## Further Reading
 

@@ -91,40 +91,7 @@ Phase 11 · 10 covers the evaluation loop that runs after the AI workflow is dep
 
 Phase 18 · 27 covers provenance: can you trace a model output back to the training or retrieval record that drove it? That capability depends on the master data being clean enough that each record has a stable, unique identifier. A duplicated master record breaks provenance tracing because the model's output cannot be attributed to one canonical source.
 
-## Use It
 
-`code/main.py` models the two core decisions this lesson describes:
-
-1. A **data quality scorer** that takes a field-level profile (null rate, format variance, staleness) for a set of master data domains and produces a per-domain completeness and uniqueness score.
-2. A **go/no-go decision engine** that maps each domain's scores and the use case's criticality level to one of three verdicts: `DEPLOY`, `CONDITIONAL`, or `BLOCK` — encoding the threshold model from the concept section.
-
-The driver runs a synthetic three-domain assessment (customer, product, supplier) against two use case criticality levels and prints the full verdict with reasons.
-
-## Ship It
-
-`outputs/skill-data-quality-assessment-checklist.md` is a one-page consultant's checklist: the five assessment steps, the per-dimension threshold table, the go/no-go decision criteria, and the tooling shortlist. Paste it into the project kickoff to align data and AI engineering teams before any model work begins.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Master data | "The golden record" | Shared reference entities (customer, product, supplier) that give transactional data meaning; managed separately from transaction tables |
-| Entity resolution | "Deduplication" | The process of deciding whether two records refer to the same real-world entity; produces a confidence score, not a binary answer |
-| Data quality dimension | "Data quality issues" | A specific, measurable aspect of quality: completeness, uniqueness, consistency, timeliness, accuracy, referential integrity |
-| Null rate | "Missing data" | Fraction of records where a field is null or blank; a key completeness metric but not the only one |
-| Golden record | "The master" | The single authoritative representation of an entity after deduplication and merge; the output of an MDM process |
-| MDM (Master Data Management) | "The data governance system" | Platform and process for creating, maintaining, and distributing golden records across source systems |
-| Data contract | "Schema validation" | A formal, versioned specification of what a dataset's structure, quality, and freshness must satisfy; enforceable in CI |
-| Exposure rate | "How often it matters" | Fraction of real production queries that will hit a specific defect; determines whether a defect is a blocker or an acceptable risk |
-
-## Consultant field notes
-
-- **The dashboard that looked healthy until the model shipped.** Every per-field null rate and uniqueness metric was green in the legacy reporting stack; once the same data fed a fine-tuning corpus, contradictory labels surfaced because the legacy dashboards checked per-system health, not cross-system consistency. Lesson: a profiling run is only as good as the cross-source join it runs against.
-- **The RAG that returned the right doc but the wrong paragraph.** Retrieval precision was high on benchmark queries, but in production the chunking strategy inherited the master-data inconsistency — three product variants in three sections of one PDF, all retrieved as separate documents. Lesson: entity resolution must run before chunking, not after.
-- **The vendor pilot that never made it past the security review.** A 60-day data-quality assessment produced a clear blocker list; the vendor's remediation plan needed production read access to customer master data, which security refused. Lesson: scope the upstream data access the remediation will require before signing the assessment scope, not after.
-- **The use case everyone approved but nobody wanted.** A deduplicated golden-record feed enabled an AI workflow that solved a problem the steering committee had approved but the operational team had stopped raising because they had learned to work around it. Six months in, the workflow sat idle and the assessment work was written off. Lesson: validate end-user demand against the data fix, not against the executive sponsor.
-- **The AI feature that hit a cost ceiling in month two.** The data-quality gate was passed at kickoff, but reference-data freshness degraded as upstream systems changed ownership; the freshness filter re-ran on every query and inference cost roughly tripled before anyone traced it. Lesson: re-score freshness against the source `modified_at` distribution on a fixed cadence, not once at project start.
 
 ## Further Reading
 

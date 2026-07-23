@@ -77,49 +77,7 @@ Flow matching with a Gaussian-conditional path is diffusion *with a specific noi
 What flow matching added: the *clarity* of the target (a plain velocity), a cleaner loss, and the license to experiment with non-Gaussian interpolants.
 
 
-## Use It
 
-| Use case | 2026 stack |
-|----------|-----------|
-| Text-to-image, best quality | Flow matching: SD3, Flux.1-dev |
-| Text-to-image, 1-4 steps | Distilled flow matching: Flux.1-schnell, SD3-Turbo, SDXL-Turbo |
-| Real-time inference | Consistency distillation from a flow-matched base (LCM, PCM) |
-| Audio generation | Flow matching: Stable Audio 2.5, AudioCraft 2 |
-| Video generation | Flow matching mixed with diffusion (Sora, Veo, Stable Video) |
-| Science / physics (particle trajectories, molecules) | Flow matching + equivariant vector field |
-
-Whenever a paper says "faster than diffusion" in 2025-2026, it is almost always flow matching + distillation.
-
-## Ship It
-
-Save `outputs/skill-fm-tuner.md`. Skill takes a diffusion-style model spec and converts it to a flow-matching training config: schedule choice, time sampling distribution (uniform / logit-normal), optimizer, reflow plan, target step count, eval protocol.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Flow matching | "Straight-line diffusion" | Train `v_θ(x, t)` to match `x_1 - x_0` along an interpolant. |
-| Rectified flow | "Reflow" | Iterative procedure that straightens learned flows. |
-| Velocity field | "v_θ" | Output of the model — the direction to move `x_t`. |
-| Straight-line interpolant | "The path" | `x_t = (1-t)·x_0 + t·x_1`; trivial target derivative. |
-| Euler sampler | "1st order ODE solver" | Simplest integrator; works well when paths are straight. |
-| Logit-normal t | "SD3 sampling" | Concentrate `t` sampling toward mid-values where gradients are strongest. |
-| Consistency distillation | "1-step sampler" | Train a student to map any `x_t` directly to `x_0`. |
-| CFG with velocity | "v-CFG" | `v_cfg = (1+w) v_cond - w v_uncond`; same trick, new variable. |
-
-## Production note: Flux.1-schnell is flow matching at its fastest
-
-Flow matching's production win is Flux.1-schnell — a flow-matched DiT distilled to 1-4 inference steps while keeping Flux-dev-grade quality. Niels' "Run Flux on an 8GB machine" notebook is the reference deployment recipe: T5 + CLIP encode, quantized MMDiT denoise (in 4 steps for schnell vs 50 for dev), VAE decode. The cost accounting:
-
-| Variant | Steps | Latency at 1024² on L4 | Total FLOPs (relative) |
-|---------|-------|------------------------|------------------------|
-| Flux.1-dev (raw) | 50 | ~15 s | 1.0× |
-| Flux.1-schnell | 4 | ~1.2 s | 0.08× (12× faster) |
-| SDXL-base | 30 | ~4 s | 0.25× |
-| SDXL-Lightning 2-step | 2 | ~0.3 s | 0.03× |
-
-The production rule: **flow-matched base + distillation = the 2026 default for fast text-to-image.** Every major vendor ships this combo: SD3-Turbo (SD3 + flow + distillation), Flux-schnell (Flux-dev + rectified-flow straightening), CogView-4-Flash. Pure diffusion bases exist only for legacy checkpoints.
 
 ## Further Reading
 

@@ -58,30 +58,7 @@ The reviewer reads the diff, the state, the feedback, the verdict. It writes a r
 The gate (Phase 14 · 38) checks deterministic facts: did acceptance run, did rules pass, did scope hold. The reviewer makes qualitative judgments: was this the right work, is it documented, is the handoff usable. Both are required.
 
 
-## Use It
 
-Production patterns:
-
-- **Claude Code subagents.** A reviewer subagent runs after the builder closes a task. It posts a comment on the PR with the rubric scores.
-- **OpenAI Agents SDK handoffs.** Builder hands off to Reviewer on task completion. Reviewer can hand back with a list of findings or up to a human.
-- **Two-model pairing.** Builder runs on a faster cheaper model. Reviewer runs on a stronger model with smaller context, focused on judgment.
-
-The reviewer is the second pair of eyes the workbench grows when humans cannot do every review themselves.
-
-## Ship It
-
-`outputs/skill-reviewer-agent.md` generates a project-specific reviewer rubric, a reviewer agent stub wired to the builder's artifacts, and an integration with the verification gate so human review starts from a written report instead of a blank page.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Reviewer rubric | "Checklist" | Five-dimension 0-2 scoring with a written question per dimension |
-| Soft fail | "Needs revisions" | Total below 7; builder gets findings to address |
-| Hard fail | "Reject" | Total below 5 or any dimension at 0; halt and surface to human |
-| Role separation | "Different prompt" | Same model can be both roles; the discipline is inputs and posture |
-| Confidence floor | "Don't ship low-signal reports" | Refuse to emit a verdict when the rubric is uncertain |
 
 ## Further Reading
 

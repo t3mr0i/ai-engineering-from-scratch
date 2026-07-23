@@ -77,49 +77,7 @@ In 2026, min-p + temperature 0.7 is a reasonable default for open-weights models
 The core architecture hasn't changed much since GPT-2. Everything interesting has happened in data, scale, and post-training.
 
 
-## Use It
 
-PyTorch, 2026 idiom:
-
-```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
-tok = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
-
-prompt = "Attention is all you need because"
-inputs = tok(prompt, return_tensors="pt")
-out = model.generate(
-    **inputs,
-    max_new_tokens=64,
-    temperature=0.7,
-    top_p=0.9,
-    do_sample=True,
-)
-print(tok.decode(out[0]))
-```
-
-Under the hood, `generate()` runs the forward pass, pulls the final-position logits, samples the next token, appends it, and repeats. Every production LLM inference stack (vLLM, TensorRT-LLM, llama.cpp, Ollama, MLX) implements the same loop with heavy optimization — batched prefill, continuous batching, KV cache paging, speculative decoding.
-
-**GPT vs BERT, one line each:** GPT predicts `P(x_t | x_{<t})`. BERT predicts `P(x_masked | x_unmasked)`. The loss determines whether the model can generate.
-
-## Ship It
-
-See `outputs/skill-sampling-tuner.md`. The skill picks sampling parameters for a new generation task and flags when deterministic decoding is required.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Causal mask | "The triangle" | Upper-triangular `-inf` matrix added to attention scores so position `i` only sees positions `≤ i`. |
-| Next-token prediction | "The loss" | Cross-entropy of the model's distribution against the true next token at every position. |
-| Autoregressive | "Generate one at a time" | Feed output back as input; parallelism only during training, not during generation. |
-| Logits | "Pre-softmax scores" | Raw output of the LM head before softmax; sampling happens on these. |
-| Temperature | "Creativity knob" | Divide logits by T; T→0 = greedy, T→∞ = uniform. |
-| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to ≥p; sample from what remains. |
-| Min-p | "Better than top-p" | Keep tokens where `p ≥ min_p × max_p`; adapts cutoff to sharpness of distribution. |
-| Speculative decoding | "Draft + verify" | Cheap model proposes N tokens; big model verifies in parallel. |
-| Teacher forcing | "Training trick" | During training, feed the true previous token, not the model's prediction. Standard for every seq2seq LM. |
 
 ## Further Reading
 

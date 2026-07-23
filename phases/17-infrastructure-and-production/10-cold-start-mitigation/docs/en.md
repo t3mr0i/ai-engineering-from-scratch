@@ -85,29 +85,7 @@ Cold-start anatomy for a 70B model on a fresh node (illustrative):
 - Run:ai Model Streamer: ~2x weight-load speedup.
 - ServerlessLLM tiered loading: 10-200x latency reduction (paper numbers).
 
-## Use It
 
-`code/main.py` models a cold-start path with and without each mitigation. Reports total cold-start time, warm-pool cost, and the break-even request rate above which warm pool pays for itself.
-
-## Ship It
-
-This lesson produces `outputs/skill-cold-start-planner.md`. Given SLA, model size, and traffic shape, picks which mitigations to stack.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Cold start | "the big pause" | Time from request to first token on a fresh replica |
-| Warm pool | "always-on minimum" | `min_workers >= 1` to keep at least one replica ready |
-| Pre-seeded image | "baked AMI" | Node image with container weights pre-resident |
-| Bottlerocket | "AWS node OS" | AWS container-optimized OS with dual-volume snapshot support |
-| Model streamer | "streaming load" | Overlap weights I/O with compute setup |
-| GPU snapshot | "checkpoint to HBM" | Serialize post-load GPU state; deserialize on restart |
-| Tiered loading | "NVMe + DRAM + HBM" | Hierarchy of storage tiers; load on demand |
-| Live migration | "move tokens" | Transfer input (KB), recompute KV on destination |
-| `min_workers` | "warm replicas" | Serverless minimum keep-alive count |
-| Scale-to-zero | "full serverless" | No cost when idle; accept full cold-start tax |
 
 ## Further Reading
 

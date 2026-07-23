@@ -133,64 +133,7 @@ dL/db1 = dL/dz1
 Every gradient is a product of local derivatives traced back from the loss. That's all backpropagation is.
 
 
-## Use It
 
-PyTorch does everything above in a few lines. The core idea is identical -- autograd builds a computational graph during the forward pass and traces it backward to compute gradients.
-
-```python
-import torch
-import torch.nn as nn
-
-model = nn.Sequential(
-    nn.Linear(2, 4),
-    nn.Sigmoid(),
-    nn.Linear(4, 1),
-    nn.Sigmoid(),
-)
-optimizer = torch.optim.SGD(model.parameters(), lr=1.0)
-criterion = nn.MSELoss()
-
-X = torch.tensor([[0,0],[0,1],[1,0],[1,1]], dtype=torch.float32)
-y = torch.tensor([[0],[1],[1],[0]], dtype=torch.float32)
-
-for epoch in range(1000):
-    pred = model(X)
-    loss = criterion(pred, y)
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-
-print("PyTorch XOR Results:")
-with torch.no_grad():
-    for i in range(4):
-        pred = model(X[i])
-        print(f"  {X[i].tolist()} -> {pred.item():.4f} (expected {y[i].item()})")
-```
-
-`loss.backward()` is your `total_loss.backward()`. `optimizer.step()` is your manual `p.data -= lr * p.grad`. `optimizer.zero_grad()` is your `net.zero_grad()`. Same algorithm, industrial-strength implementation. PyTorch handles GPU acceleration, mixed precision, gradient checkpointing, and hundreds of layer types. But the backward pass is the same chain rule applied to the same computational graph.
-
-Training runs the forward pass, then the backward pass, then updates weights. Inference runs only the forward pass. No gradients, no updates. This distinction matters because inference is what happens in production. When you call an API like Claude or GPT, you're running inference -- your prompt flows forward through the network, and tokens come out the other end. No weights change. Understanding backprop matters because it shaped every weight in that network.
-
-## Ship It
-
-This lesson produces:
-- `outputs/prompt-gradient-debugger.md` -- a reusable prompt for diagnosing gradient problems (vanishing, exploding, NaN) in any neural network
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
-| Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
-| Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
-| Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
-| Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
-| Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
-| Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
-| Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 
 ## Further Reading
 

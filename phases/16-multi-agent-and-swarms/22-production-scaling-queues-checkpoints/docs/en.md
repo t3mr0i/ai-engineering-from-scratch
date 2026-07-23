@@ -117,35 +117,7 @@ This is standard for long-running stateful systems; the 2026 adaptation is that 
 - Observability: per-agent traces, super-step audit, retry counter.
 
 
-## Use It
 
-`outputs/skill-scaling-advisor.md` advises on durable-execution choice: FastAPI + Postgres, LangGraph runtime, Temporal, or custom. Calibrated by load, state-retention needs, and deploy frequency.
-
-## Ship It
-
-Canonical production hardening:
-
-- **Start simple (Bedi's rule).** FastAPI + Postgres until you measure it failing.
-- **Instrument everything before optimizing.** Per-run latency histogram, per-step time, retry count, failure categorization.
-- **Outbox pattern for side effects.** Especially payments and external API calls.
-- **Rainbow deploys.** Never kill in-flight agent runs during deploys.
-- **Adopt durable-execution engines (Temporal / LangGraph / Restate) when** you hit specific problems: hour-long human-in-the-loop waits, cross-region coordination, complex retry/compensation policies.
-- **Async for the I/O layer.** Threads only for CPU-bound post-processing.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Durable execution | "Persist the program state" | Engine writes state after each super-step; crash recovery is deterministic. |
-| Super-step | "Transactional boundary" | Unit of work between checkpoints. LangGraph term. |
-| thread_id | "Agent run identifier" | Key that binds checkpoints and resume logic. |
-| Idempotency | "Safe to retry" | Repeating a side effect produces the same result as one attempt. |
-| Outbox pattern | "Decouple side effects" | Write intent to a table; a separate executor performs and marks done. |
-| At-least-once delivery | "Possible duplicates" | Message queue semantics; dedup key makes consumer effective-once. |
-| Rainbow deploy | "Overlapping versions" | Multiple runtime versions concurrent during long-running workloads. |
-| Async fiber | "Cooperative yielding" | User-mode concurrency; cheap compared to threads for I/O-bound loads. |
-| Checkpoint | "State snapshot" | Serialized state at a super-step boundary; key for resume. |
 
 ## Further Reading
 

@@ -93,35 +93,7 @@ while True:
 
 `code/main.py` is exactly this loop in stdlib Python with fake token counts and fake forward latency. Running it shows how chunked prefill keeps decode sequences alive during a long prefill.
 
-## Use It
 
-`code/main.py` simulates a vLLM-style scheduler with toggleable features. Run it to see:
-
-- `NAIVE` mode: one request at a time, no batching.
-- `STATIC` mode: pad and wait, classic batching.
-- `CONTINUOUS` mode: iteration-level admission and release.
-- `CONTINUOUS + CHUNKED` mode: prefill slices interleaved with decode.
-
-The output shows total throughput (tokens per virtual second), TTFT mean, and P99 ITL. The `CONTINUOUS + CHUNKED` row should dominate on mixed traffic.
-
-## Ship It
-
-This lesson produces `outputs/skill-vllm-scheduler-reader.md`. Given a serving config (batch size, KV memory utilization, chunked prefill size, speculative config), it produces a scheduler diagnosis that names which of the three defaults is bottlenecking and what to tune.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| PagedAttention | "the KV trick" | Fixed-size block allocator for KV cache; fragmentation <4% |
-| Block table | "the page table" | Per-sequence map from logical token position to physical KV block |
-| Continuous batching | "dynamic batching, but right" | Admit/release decisions made every decode iteration |
-| Chunked prefill | "prefill splitting" | Break long prefill into 512-token slices interleaved with decode |
-| TTFT | "first token time" | Prefill + queue + network; dominated by prefill at long prompts |
-| ITL | "inter-token latency" | Time between consecutive decode tokens; dominated by batch size |
-| Goodput | "throughput that meets SLO" | Tokens/sec where every request still hit TTFT and ITL targets |
-| V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; N-gram spec decode is the chunked-prefill-compatible path |
-| `--gpu-memory-utilization` | "the memory knob" | Fraction of HBM reserved for KV blocks after weights and activations |
 
 ## Further Reading
 

@@ -126,33 +126,7 @@ This log is the artifact the EU AI Act's fundamental rights impact assessment re
 
 The decision-quality framework draws directly on the measurement machinery from Phase 11 · 10 (Evaluation): ECE, reliability diagrams, and subgroup slice metrics are the inputs to gates 1 and 3. The bias checks in gate 3 operationalise the harm taxonomy from Phase 18 · 20 (Bias and representational harm) — specifically, demographic parity, equalised odds, and individual fairness are the metrics that gate 3 applies. This lesson's role is to show how those individual measurement tools compose into a repeatable, auditable process.
 
-## Use It
 
-`code/main.py` models the decision gateway in two parts:
-
-1. A **decision-quality scorer** that takes a synthetic model output (point estimate, ECE, prediction set width, subgroup parity gap) and runs it through the four gates, reporting which pass and which block.
-2. An **accountability chain builder** that takes a sequence of scored decisions and produces a structured audit log, including flagging any decision where the approver accepted despite a failed gate.
-
-Both parts are deterministic and stdlib-only. The driver runs a batch of synthetic decisions spanning benign to irreversible, including one that demonstrates the contract-reviewer failure shape end-to-end — the model says "approve" with a clean point estimate, gate 1 and gate 3 both fail, and the approver clicks through anyway. The headline summary names that failure shape explicitly.
-
-## Ship It
-
-`outputs/skill-decision-quality-checklist.md` is a one-page paste-and-use checklist for a consultant or engineer approaching a new AI-assisted decision use case. It covers: decision-type classification, required metric signals, gate thresholds to set, HITL interface requirements, and audit log fields. Bring it to a project kickoff or a governance review.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Calibration | "The model is confident" | The stated probability matches empirical frequency; measured by ECE |
-| ECE | "Calibration error" | Expected Calibration Error: average gap between stated confidence and actual accuracy, binned |
-| Conformal prediction | "Uncertainty bounds" | A coverage-guaranteed prediction set or interval requiring only exchangeability, not distributional assumptions |
-| Prediction set width | "How uncertain it is" | Number of candidate labels (or interval size) in the conformal output; used as gate 2 signal |
-| Subgroup parity | "Is it fair" | Difference in a performance metric (accuracy, FPR) across demographic groups; gate 3 checks this |
-| Meaningful HITL | "Human in the loop" | Human oversight where the person has legible evidence, frictionless override, and logged authority — not a rubber stamp |
-| Rubber stamp | "We have human review" | A pattern where an approver clears a queue of decisions without reading them; produces false HITL |
-| Audit trail | "Logging" | Structured, tamper-evident record of every decision: model version, scores, gates, approver, override |
-| Decision gateway | "Approval workflow" | A sequential four-gate check (calibration, uncertainty, bias, accountability) that a model output must pass before an action is taken |
 
 ## Further Reading
 

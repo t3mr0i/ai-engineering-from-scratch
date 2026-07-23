@@ -61,31 +61,7 @@ OpenTelemetry support is built in. Every message emits a span; tool calls carry 
 Early 2026: AutoGen v0.7.x is stable for research and prototyping. Microsoft has shifted active development to the Microsoft Agent Framework (public preview Oct 1 2025; 1.0 GA targeted end of Q1 2026). AutoGen patterns port forward cleanly — the actor model is the durable idea.
 
 
-## Use It
 
-- **AutoGen v0.4/v0.7** (maintenance) — stable for research, prototyping, multi-agent patterns.
-- **Microsoft Agent Framework** (public preview) — the forward path; same actor-model ideas in a refreshed API.
-- **LangGraph swarm topology** (Lesson 13) — similar pattern via shared-tool handoffs.
-- **Custom actor runtime** — when you need specific transport (NATS, RabbitMQ, gRPC).
-
-## Ship It
-
-`outputs/skill-actor-runtime.md` generates a minimal actor runtime plus a team template (RoundRobin or Selector) for a given multi-agent task.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Actor | "Agent" | Private state + inbox + handler; no shared memory |
-| Message | "Event" | Typed payload; the only way actors interact |
-| Inbox | "Mailbox" | Per-actor queue of pending messages |
-| Runtime | "Agent host" | Event loop that routes messages and isolates failures |
-| Topic | "Channel" | Named publish-subscribe route between actors |
-| Fault isolation | "Let it crash" | One actor failing does not crash others |
-| RoundRobinGroupChat | "Fixed-rotation team" | Agents take turns in order |
-| SelectorGroupChat | "Context-routed team" | Selector picks who goes next |
-| Magentic-One | "Reference team" | Multi-agent squad for web + code + files |
 
 ## Further Reading
 

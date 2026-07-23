@@ -85,42 +85,7 @@ For a production inference workload, computing SCI requires four inputs:
 
 The output is a number in gCO₂eq per functional unit, directly comparable across model versions, prompt strategies, and serving regions. This is what goes into a sustainability report.
 
-## Use It
 
-`code/main.py` implements two deterministic, stdlib-only models of the core decisions in this lesson:
-
-1. A **token-efficiency scorer** that takes prompt variants for the same task and scores them on estimated token count and information density, producing a ranked recommendation.
-2. A **region carbon comparator** that takes a serving region name, looks up its approximate grid carbon intensity from a hardcoded reference table, and computes the SCI delta versus a low-carbon baseline — showing the concrete emissions savings of a region switch.
-
-Both functions run on synthetic inputs; no API key or network call is needed. The point is to make the decision criteria explicit and runnable, so the policy is legible rather than intuitive.
-
-## Ship It
-
-`outputs/skill-green-ai-checklist.md` is a one-page decision aid and checklist for use in architecture reviews or consulting engagements. It covers the four levers with concrete go/no-go criteria, a quick SCI calculation walkthrough, and a set of review questions for each decision point.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| SCI | "Carbon score for software" | Software Carbon Intensity: gCO₂eq per functional unit, per the Green Software Foundation spec |
-| Grid carbon intensity | "How green the electricity is" | grams CO₂ equivalent per kWh at a specific grid location and time |
-| Scope 3 emissions | "Supply chain carbon" | Indirect emissions from purchased goods/services — includes API consumption from vendors |
-| Token efficiency | "Shorter prompts" | Ratio of information content to token count; a direct proxy for energy cost |
-| Semantic caching | "Don't call the model twice" | Storing LLM outputs and serving them for semantically similar future queries |
-| Model routing | "Right model for the job" | Dynamically assigning requests to the appropriate model tier based on task requirements |
-| PUE | "Datacenter efficiency" | Power Usage Effectiveness: total datacenter power / IT equipment power; necessary but not sufficient for carbon accounting |
-| Functional unit | "Per what" | The denominator in SCI — the unit of output a workload delivers (per request, per user, per document) |
-
-## Consultant field notes
-
-Patterns a senior consultant recognizes by the second engagement:
-
-- **The sustainability slide that names a region but not the grid mix.** "Hosted in EU-West" sounds compliant; the actual grid carbon intensity of EU regions varies by roughly 2-3× in 2026. The fix is always to surface gCO₂eq/kWh on the architecture diagram, not the country name.
-- **The green-coding checklist that lives in a wiki nobody reads.** A sustainability policy that is not wired into the model router or the deployment pipeline produces zero emissions reduction. Pair every checklist item with the runtime decision it should influence.
-- **The model-downgrade proposal that lost the room because nobody measured output quality first.** "Switch Opus to Haiku" without a validation artifact is an opinion, not a recommendation. Always run the side-by-side evaluation on a held-out set before the cost conversation.
-- **The cache that hit on dev traffic and missed on production.** Semantic cache hit rates measured on synthetic or development queries routinely overestimate production rates by a factor of two or more. Measure hit rate on real production traffic for at least one full traffic cycle before sizing the savings.
-- **The use case everyone approved for sustainability reasons and nobody wanted to use.** Green coding is sometimes used to justify a feature whose adoption is below the break-even point. Honest consulting reports the adoption rate alongside the per-request emissions, not instead of it.
 
 ## Further Reading
 

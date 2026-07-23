@@ -71,31 +71,7 @@ The rule: **the capability you grant an MCP server is the capability you grant w
 
 Steps 2–4 are tool-independent. That's the point: invest in the plumbing and the discipline, not in the brand.
 
-## Use It
 
-`code/main.py` models the two decisions:
-
-1. A **tool-fit selector** that takes "where the work lives" and recommends Copilot / Cursor / Claude Code with the reasoning — encoding the axis that doesn't age, instead of a feature table that does.
-2. An **MCP capability/trust model** that takes a proposed MCP server (its capabilities and whether it reads attacker-controllable data) and returns the safe permission posture — surfacing the "capability granted = capability granted to whoever writes the data" rule.
-
-Deterministic, stdlib, no network.
-
-## Ship It
-
-`outputs/skill-mcp-ide-wiring.md` is a wiring guide: the four-question tool/MCP/permission/verify decision, plus an MCP server trust checklist you run before adding any server to your IDE.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| The loop | "How agents work" | read → plan → edit → run → verify; shared across all three tools |
-| MCP client | "IDE plugins" | The assistant consuming MCP servers (vs Phase 13, where you built them) |
-| Where-you-live axis | "Which tool is best" | The non-aging selection criterion: GitHub flow / editor / terminal |
-| Convergence | "They're all the same now" | Same loop + same models + same MCP plumbing; low lock-in |
-| Attacker-controllable text | "Untrusted input" | Any data the agent reads that an outsider can write (e.g. a ticket body) |
-| Indirect prompt injection | "Hidden instructions" | Malicious instructions in data the agent reads; not fully patchable (P18.15) |
-| Least-privilege MCP | "Read-only server" | Granting an MCP server only the capability the task needs |
 
 ## Further Reading
 

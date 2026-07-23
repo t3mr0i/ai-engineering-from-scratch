@@ -120,45 +120,7 @@ This replaces reward shaping and sample-heavy RL. The world model does the imagi
 | Magica / Mirage 2 | AI-native game engine | — | modifiable worlds | product |
 
 
-## Use It
 
-Production access patterns for 2026:
-
-- **Sora 2 API** (OpenAI) — text-to-video, synchronized audio. Premium pricing.
-- **Runway Gen-5 / GWM-1** (Runway) — image-to-video, interactive worlds.
-- **Wan-Video 2.1 / HunyuanVideo** — open-source self-host.
-- **Cosmos / Cosmos-Drive** (NVIDIA) — driving simulation open weights.
-- **Genie 3** — research preview, request access.
-
-For building an interactive world-model demo: start with Wan-Video for quality, layer on a latent-action adapter for interactivity. For autonomous driving simulation: Cosmos-Drive is the 2026 open reference.
-
-For robotics, the stack in the wild:
-
-1. Language goal -> VLM (Qwen3-VL) -> high-level plan.
-2. Plan -> latent-action video model -> imagined rollout.
-3. Rollout -> inverse dynamics model -> low-level actions.
-4. Actions executed -> observation fed back into step 1.
-
-## Ship It
-
-This lesson produces:
-
-- `outputs/prompt-video-model-picker.md` — picks between Sora 2 / Runway / Wan / HunyuanVideo / Cosmos given task, license, and latency.
-- `outputs/skill-physical-plausibility-checks.md` — a skill that defines automated checks (object permanence, gravity, continuity) to run on any generated video before shipping.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| World model | "Learned simulator" | A model that predicts future observations given state and action |
-| Video DiT | "Spacetime transformer" | Diffusion transformer with 3D patchification and divided attention |
-| Latent action | "Inferred control" | Discrete or continuous action latent inferred from frame pairs; used to condition next-frame generation |
-| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O(N^2) manageable |
-| Object permanence | "Things stay real" | Scene property that video models must learn; classic failure mode on food, glassware |
-| FVD | "Fréchet Video Distance" | Video equivalent of FID; primary visual quality metric |
-| Inverse dynamics model | "Observations to actions" | Given (state, next state), output the action that connects them; closes robotics loop |
-| Cosmos-Drive | "NVIDIA driving sim" | Open-weights autonomous-driving world model for RL and evaluation |
 
 ## Further Reading
 

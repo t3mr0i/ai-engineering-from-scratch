@@ -148,67 +148,7 @@ classDiagram
 ```
 
 
-## Use It
 
-Here is the PyTorch equivalent of what you just built:
-
-```python
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
-
-model = nn.Sequential(
-    nn.Linear(2, 16),
-    nn.ReLU(),
-    nn.Linear(16, 16),
-    nn.ReLU(),
-    nn.Linear(16, 8),
-    nn.ReLU(),
-    nn.Linear(8, 1),
-    nn.Sigmoid(),
-)
-
-criterion = nn.BCELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-
-for epoch in range(100):
-    model.train()
-    for inputs, targets in dataloader:
-        optimizer.zero_grad()
-        predictions = model(inputs)
-        loss = criterion(predictions, targets)
-        loss.backward()
-        optimizer.step()
-
-    model.eval()
-    with torch.no_grad():
-        test_predictions = model(test_inputs)
-```
-
-The structure is identical. `Sequential`, `Linear`, `ReLU`, `Sigmoid`, `BCELoss`, `Adam`, `zero_grad`, `backward`, `step`, `train`, `eval`. Every concept maps one-to-one. The difference is that PyTorch handles autograd automatically (no need to implement backward() in each module), runs on GPU, and has been optimized for years. But the bones are the same.
-
-Now when you see PyTorch code, you know exactly what is happening at every line. That understanding is the whole point.
-
-## Ship It
-
-This lesson produces:
-- `outputs/prompt-framework-architect.md` -- a prompt for designing neural network architectures using framework abstractions
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Module | "A layer" | The base abstraction in a framework -- anything with forward(), backward(), and parameters() |
-| Sequential | "Stack layers in order" | A container that chains modules, applying them in sequence for forward and reverse for backward |
-| Forward pass | "Run the network" | Computing the output by passing input through each module in order |
-| Backward pass | "Compute gradients" | Propagating the loss gradient through each module in reverse to compute parameter gradients |
-| Parameters | "The trainable weights" | All values in the network that the optimizer can update -- weights and biases |
-| Optimizer | "The thing that updates weights" | An algorithm that uses gradients to update parameters, implementing SGD, Adam, or other rules |
-| DataLoader | "The thing that feeds data" | An iterator that splits a dataset into batches, optionally shuffling between epochs |
-| Training mode | "model.train()" | A flag that enables stochastic behavior like dropout and batch normalization with batch stats |
-| Evaluation mode | "model.eval()" | A flag that disables dropout and uses running statistics for batch normalization |
-| Zero grad | "Clear the gradients" | Resetting all parameter gradients to zero before computing the next batch's gradients |
 
 ## Further Reading
 

@@ -289,46 +289,6 @@ flowchart TD
 ```
 
 
-## Use It
-
-sklearn provides `NearestCentroid` and synthetic data generators:
-
-```python
-from sklearn.neighbors import NearestCentroid
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-
-X, y = make_classification(
-    n_samples=500, n_features=2, n_redundant=0,
-    n_clusters_per_class=1, random_state=42
-)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-
-clf = NearestCentroid()
-clf.fit(X_train, y_train)
-print(f"Accuracy: {clf.score(X_test, y_test):.3f}")
-```
-
-## Ship It
-
-This lesson produces `outputs/prompt-ml-problem-framer.md` -- a prompt that turns vague business problems into concrete ML tasks. Give it a problem description ("we want to reduce churn" or "predict demand for next quarter") and it identifies the learning type, defines the prediction target, lists candidate features, picks a success metric, establishes a baseline, and flags pitfalls like data leakage or class imbalance. Use it at the start of any ML project to avoid building the wrong thing.
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Model | "The AI" | A mathematical function with learnable parameters that maps inputs to outputs |
-| Training | "Teaching the AI" | Running an optimization algorithm to adjust model parameters so predictions match known outputs |
-| Feature | "An input column" | A measurable property of the data that the model uses to make predictions |
-| Label | "The answer" | The known output for a training example, used to compute the error signal |
-| Hyperparameter | "A setting you tweak" | A parameter set before training that controls the learning process (learning rate, number of layers) |
-| Loss function | "How wrong the model is" | A function that measures the gap between predicted and actual outputs, which training tries to minimize |
-| Overfitting | "It memorized the test" | The model learned training-specific noise instead of general patterns, so it fails on new data |
-| Underfitting | "It didn't learn anything" | The model is too simple to capture the real patterns in the data |
-| Generalization | "It works on new data" | The model's ability to make accurate predictions on data it was not trained on |
-| Cross-validation | "Testing on different chunks" | Repeatedly splitting data into train/test folds and averaging results, giving a more robust performance estimate |
-| Regularization | "Keeping weights small" | Adding a penalty term to the loss function that discourages overly complex models |
-| Data drift | "The world changed" | The statistical distribution of incoming data shifts over time, degrading model performance |
 
 
 ## Further Reading

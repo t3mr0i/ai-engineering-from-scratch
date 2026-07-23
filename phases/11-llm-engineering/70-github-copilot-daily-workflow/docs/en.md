@@ -59,32 +59,7 @@ They converge on the same loop — plan, edit, run, verify — and increasingly 
 
 Copilot does not own: the decision of *what* to build, the architecture trade-off, the judgment that a green test suite actually covers the risk, and the accountability for the merge. Phase 15 · 09 showed that scaffolding now matters as much as the model. In the IDE *you* are part of the scaffold — the retrieval step (which tabs, which `#`-refs), the verifier (which tests you trust), and the kill switch (the approval you withhold).
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two decisions this lesson is about:
-
-1. A **task-to-mode router** that takes a short task description and routes it to the right rung of the ladder, with the reasoning shown.
-2. An **acceptance simulator** that takes a proposed diff plus a test result and decides `MERGE` / `REQUEST CHANGES` / `BLOCK` — encoding the "green tests are necessary, not sufficient" rule (it blocks a diff whose only change to a test is a weakened assertion, even when tests pass).
-
-No network and no real model — the point is to make the *decision policy* explicit and runnable, the same way Phase 15 · 10 made the permission classifier runnable.
-
-## Ship It
-
-`outputs/skill-copilot-task-router.md` is a one-page decision aid: paste a task, get the recommended Copilot surface, the context you should pin (`#`-refs, instructions file, MCP servers), and the verification gate to apply before the diff lands.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Ghost text | "Autocomplete" | Inline single-hunk completion as you type |
-| Copilot Chat | "Ask the AI" | Read-default Q&A over selection/file/workspace via `#`-references |
-| Agent mode | "Let it do the whole thing" | In-IDE loop: plan → multi-file edit → run terminal/tests → iterate |
-| Coding agent | "Copilot opens PRs" | Server-side agent assigned a GitHub issue, produces a draft PR |
-| `copilot-instructions.md` | "Config file" | Per-repo instructions read on every request — the IDE analogue of `CLAUDE.md` |
-| `#`-reference | "Tagging context" | Explicit context handles (`#file`, `#codebase`, `#changes`, `#terminalLastCommand`) |
-| Copilot code review | "AI reviewer" | Inline PR comments; a first-pass reviewer, not a merge owner |
-| MCP client | "Plugins for the IDE" | Copilot consuming MCP servers (Jira, docs) as agent-mode context |
 
 ## Further Reading
 

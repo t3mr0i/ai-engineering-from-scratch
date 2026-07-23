@@ -68,28 +68,7 @@ For documents that carry explicit structure (markdown, reStructuredText, RFC-sty
 A gold-labeled query carries the exact character offsets of the answer span inside the source document. After chunking, you ask: does any of the top-k chunks the retriever returned overlap the gold span? If yes, recall@k for that query is 1. If no, it is 0. Average across the query set. Run the same evaluation for each strategy and the spread shows you which boundary policy survives the corpus you have.
 
 
-## Use It
 
-Production patterns:
-
-- Run the eval before you ship a new pipeline; do not trust the strategy your library defaults to.
-- Re-run the eval whenever you change the embedding model or the corpus mix; the winner is corpus-dependent.
-- Persist the strategy name in each chunk's metadata so you can attribute regressions later.
-
-## Ship It
-
-The Track F end-to-end RAG system in lesson 69 uses the chunker selected here as its first stage. The eval harness in lesson 68 reads recall@k from the same shape that `eval_recall` returns in this lesson. Pick the strategy that wins on your corpus and feed it forward.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Recall@k | "Did we get the right chunk?" | Fraction of queries where any of the top-k chunks overlaps the gold answer span |
-| Chunk overlap | "Sliding window" | Re-include the last N characters of the previous chunk in the next chunk |
-| Structural splitter | "Header-aware chunks" | Cut at H1/H2/H3 boundaries; the heading text is part of the chunk |
-| Semantic chunker | "Topic-aware chunks" | Embed sentences, cluster by centroid similarity, cut on drift |
-| Centroid drift | "Topic shift" | Cosine similarity between the running mean and the next sentence drops past a threshold |
 
 ## Further Reading
 

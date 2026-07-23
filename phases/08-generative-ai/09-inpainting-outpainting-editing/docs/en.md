@@ -56,47 +56,7 @@ Fine-tune a diffusion model on `(input_image, instruction, output_image)` triple
 Keep a standard unconditional diffusion model. At each reverse step, resample — jump back to a noisier state occasionally and regenerate. Avoids boundary artifacts. Used when you don't have a trained inpainting model.
 
 
-## Use It
 
-| Task | Pipeline |
-|------|----------|
-| Remove object, small mask | SD-Inpaint or Flux-Fill, standard prompt |
-| Replace sky | SD-Inpaint + "blue sky at sunset" |
-| Extend canvas | SDXL outpaint mode (8px feather) or Flux-Fill with outpaint mask |
-| Regenerate hand / face | SD-Inpaint with prompt re-describing the subject + ControlNet-Openpose |
-| Change style of one region | SDEdit at `t/T=0.5` on masked region |
-| "Make it sunset" | InstructPix2Pix or Flux-Kontext |
-| Background replacement | SAM mask → SD-Inpaint |
-| Ultra-high-fidelity | Flux-Fill or GPT-Image (hosted) for hardest cases |
-
-SAM (Meta's Segment Anything, 2023) + diffusion inpaint is the 2026 background-removal pipeline. SAM 2 (2024) works on video.
-
-## Ship It
-
-Save `outputs/skill-editing-pipeline.md`. Skill takes an original image + edit description + optional mask (or SAM prompt) and outputs: mask-generation approach, base model, CFG scales (image + text), SDEdit-t or inpainting mode, and QA checklist.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Inpainting | "Fill the hole" | Regenerate inside a mask; keep outside pixels. |
-| Outpainting | "Extend the canvas" | Regenerate outside the canvas; keep inside. |
-| 9-channel U-Net | "Proper inpainting model" | U-Net with `noisy \| encoded-source \| mask` as input. |
-| SDEdit | "Img2img with noise level" | Noise to time `t`, denoise with new prompt. |
-| InstructPix2Pix | "Text-only edits" | Fine-tuned diffusion on (image, instruction, output) triples. |
-| RePaint | "No retraining" | Re-noise periodically during reverse to reduce seams. |
-| SAM | "Segment Anything" | Mask generator by clicks or boxes; pairs with inpaint. |
-| Flux-Kontext | "Edit with context" | Flux variant that accepts a reference image + instruction for edits. |
-
-## Production note: edit pipelines are latency-sensitive
-
-Users editing an image expect sub-5-second round trips. A 30-step SDXL-Inpaint at 1024² is 3-4 s on an L4, plus SAM mask generation (~200 ms) and VAE encode/decode (~500 ms combined). In production framing, this is TTFT-bound rather than throughput-bound — batch 1, low concurrency, minimize every stage:
-
-- **SAM-H is the slow one.** SAM-H at 1024² is ~200 ms; SAM-ViT-B is ~40 ms with minor quality loss. SAM 2 (video) adds temporal overhead; do not use it for single-image edits.
-- **Skip the encode when possible.** `pipe.image_processor.preprocess(img)` encodes to latents. If you have the latents from the previous generation (typical in iterative-edit UIs), pass them directly via `latents=...` to skip one VAE encode.
-- **Mask dilation matters for throughput too.** A small mask means most of the U-Net forward pass is wasted (the unmasked pixels are clamped anyway). `diffusers`' `StableDiffusionInpaintPipeline` runs the full U-Net regardless; only the 9-channel proper-inpaint variants exploit masked compute.
-- **Flux-Kontext is the 2025 answer.** Single forward pass over `(source_image, instruction)` — no separate mask, no SDEdit noise sweep. On an H100 it ships an edit in ~1.5 s. The architectural lesson: collapse the stages.
 
 ## Further Reading
 

@@ -74,44 +74,7 @@ output: CVSS-scored findings + disclosure timeline + before/after harmlessness d
 - Target: an 8B instruction-tuned model or one of the other capstones' RAG chatbots
 
 
-## Use It
 
-```
-$ safety probe --model=target --family=PAIR --budget=50
-[attacker]   PAIR agent running on target
-[attack]     attempt 1/50: disguise query as academic research ... blocked
-[attack]     attempt 2/50: appeal to roleplay ... blocked
-[attack]     attempt 3/50: chain-of-thought coax ... SUCCEEDED
-[finding]    CVSS 4.8 medium: roleplay bypass on target
-[range]      7 successes out of 50 (14% success rate)
-```
-
-## Ship It
-
-`outputs/skill-safety-harness.md` is the deliverable. A production-grade layered safety pipeline plus a reproducible red-team range with before/after harmlessness deltas.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Attack-surface coverage | 6+ attack families exercised, 2+ languages |
-| 20 | True-positive / false-positive trade-off | Attack block rate vs XSTest benign pass rate |
-| 20 | Self-critique delta | Before/after harmlessness on held-out eval |
-| 20 | Documentation and disclosure | CVSS-scored findings with timeline |
-| 15 | Automation and repeatability | Everything runs on cron with alerts |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Layered safety | "Defense in depth" | Multiple guardrails at input, gate, output, HITL |
-| Llama Guard 4 | "Meta's safety classifier" | The 2026 reference input/output content classifier |
-| PAIR | "Jailbreak agent" | Paper (Chao et al.) on LLM-driven jailbreak discovery |
-| TAP | "Tree-of-Attacks" | Tree-search variant of PAIR |
-| GCG | "Greedy coordinate gradient" | Gradient-based adversarial suffix attack |
-| Constitutional self-critique | "Anthropic-style training" | Target drafts -> critic scores -> rewrite -> retrain |
-| XSTest | "Benign probe set" | Benchmark for over-refusal regression |
-| CVSS 4.0 | "Severity score" | Standard vulnerability scoring for safety findings |
 
 ## Further Reading
 

@@ -66,29 +66,7 @@ The trade-off: an extra inference per tool call. For the vast majority of agent 
 - **Overtrust of retrieved memory.** Yesterday's agent wrote a poisoned memory note; today's agent reads it.
 
 
-## Use It
 
-- **OpenAI Agents SDK guardrails** (Lesson 16) — built-in PVE-shaped pattern.
-- **Gemini 2.5 Computer Use safety service** — per-step vendor-managed.
-- **Anthropic tool-use best practices** — treat retrieved content as untrusted; Claude's system prompt discusses this explicitly.
-- **Custom PVE** — your own validator model for domain-specific injection patterns.
-
-## Ship It
-
-`outputs/skill-injection-defense.md` scaffolds a PVE layer + content-capture discipline for any agent runtime.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Indirect prompt injection | "Injection in retrieved content" | Instructions embedded in data the agent retrieves |
-| Direct prompt injection | "Jailbreak" | User-supplied prompt bypasses guardrails |
-| PVE | "Prompt-Validator-Executor" | Cheap fast validator before expensive main inference |
-| Source tag | "Content provenance" | Metadata marking where content came from |
-| Allowlist navigation | "URL whitelist" | Agent can only visit approved destinations |
-| Worming | "Self-replicating exploit" | Injected content includes instructions to propagate |
-| Memory poisoning | "Persistent injection" | Injected content stored as memory; re-poisons next session |
 
 ## Further Reading
 

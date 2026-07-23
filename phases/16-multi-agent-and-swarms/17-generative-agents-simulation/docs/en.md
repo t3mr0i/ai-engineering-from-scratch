@@ -87,33 +87,7 @@ The architecture is the reference. Extensions swap components (vector store for 
 Smallville is the proof of concept that multi-agent emergence is cheap when the components are right. The architecture has now been replicated on open-source models (smaller LLMs lose believability gracefully, not sharply). Any production system that needs **emergent social behavior** uses this shape. Any system that needs **tight task execution** uses the supervisor / roles / primitives patterns from earlier in this phase.
 
 
-## Use It
 
-`outputs/skill-simulation-designer.md` designs a generative-agent simulation: number of agents, memory schema, reflection cadence, plan horizon, and evaluation metric.
-
-## Ship It
-
-Rules for production simulations:
-
-- **Memory is the database.** Pick a real store (vector DB, Postgres) at scale. In-memory stdlib is for prototypes.
-- **Log the retrieval trace.** For every action, log the top-k memories that drove it. This is your debug ability.
-- **Budget per-agent tokens.** Each agent's retrieve + reflect + plan per tick is O(k) LLM calls. N agents × T ticks × calls-per-tick can dwarf your budget.
-- **Compact memory periodically.** Summarize-and-prune low-importance entries. Retention policy is a design decision, not a detail.
-- **Detect spatial / social norm violations** explicitly. The architecture does not learn them.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Memory stream | "The agent's diary" | Append-only log of observations, actions, reflections, plans. |
-| Recency | "How new is the memory" | Exponential-decay score by age. |
-| Importance | "How much does the agent care" | Self-rated 1-10 at write time. Cached. |
-| Relevance | "How related to the current query" | Cosine similarity (embedding-based). |
-| Reflection | "Higher-order belief" | Synthesis generated from recent memories, re-ingested as a new memory. |
-| Plan | "Day/hour/action decomposition" | Top-down plan tree. Revisable when observations contradict. |
-| Smallville | "Park 2023's sandbox" | 25-agent simulation that produced the Valentine's Day emergence. |
-| Believability | "The quality metric" | Human-rater score for whether behavior seems like a plausible agent. |
 
 ## Further Reading
 

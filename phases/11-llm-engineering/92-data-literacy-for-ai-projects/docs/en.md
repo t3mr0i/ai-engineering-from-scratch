@@ -88,41 +88,7 @@ Scoring each dimension on a 0-2 scale (0 = fail, 1 = pass with caveats, 2 = pass
 
 The scoring function in `code/main.py` makes this gate explicit and runnable.
 
-## Use It
 
-`code/main.py` models the five-dimension data readiness assessment as a deterministic scoring engine. It defines a `DataSource` dataclass with one field per dimension, a `score_source()` function that maps each field to 0/1/2 and returns the verdict (STOP / CONDITIONAL / PROCEED), and a `main()` driver that runs three representative sources through the gate — a clean internal knowledge base, a web-scraped corpus with open licensing questions, and a structured CRM export with PII present. The printed output names the blocking dimension for each failing source, which is exactly the output a scoping call produces.
-
-## Ship It
-
-`outputs/skill-data-readiness-assessment.md` is a one-page, paste-and-use checklist for a data readiness assessment workshop. It contains the five-dimension scoring table, a per-dimension audit checklist, and the decision gate — formatted for use as a shared document in a client scoping session.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Data readiness | "Is the data good enough?" | A structured five-dimension gate: quality, freshness, sensitivity, provenance, evaluation coverage |
-| Label drift | "The labels changed" | A systematic shift in how a label was assigned, with no discontinuity in the label field — produces inconsistent training signal |
-| Proxy collapse | "The model is learning the right thing" | A categorical feature (e.g. source system) predicts the target at high precision on validation alone, masking the actual decision logic |
-| Document TTL | "How fresh does the data need to be?" | The maximum age at which a document is still trustworthy for a given query type |
-| Distribution mismatch | "The eval looked fine" | The offline evaluation set does not represent the production query distribution, producing inflated benchmark scores |
-| PII scan | "We checked for personal data" | An automated + manual audit for GDPR Art. 4 personal data, including re-identifiable combinations, not just obvious fields |
-| Provenance record | "We know where the data came from" | A per-source document covering origin, chain of custody, license, and opt-out status — required input to a model card |
-| Data processing agreement | "The legal contract" | The GDPR-required agreement between data controller and processor; does not automatically cover model training as a use case |
-
-## Consultant field notes
-
-Five patterns a senior consultant recognises in week one of an AI scoping engagement:
-
-- **The RAG that returned the right doc but the wrong paragraph.** The retrieval hit was correct; the chunking strategy split the answer across a boundary the embedder could not bridge. Lesson: document-level retrieval score hides paragraph-level recall failure. Always include a chunk-level eval.
-
-- **The vendor pilot that never made it past the security review.** The data processing agreement covered display, not training; the procurement team caught it in week four. Lesson: provenance is a procurement artefact, not a data-team artefact. Loop legal in at scoping, not at pilot close.
-
-- **The use case everyone approved but nobody wanted.** The steering committee signed off; the operational users were never asked. Adoption stalled at month three with no failure mode visible in the metrics. Lesson: a stakeholder map is not a user map. Name the daily operator before the steering committee signs anything.
-
-- **The AI feature that hit a cost ceiling in month two.** Per-query LLM cost was acceptable at pilot volume; at production volume it exceeded the unit economics of the feature it was attached to. Lesson: cost per inference x expected query volume x gross margin defines the ceiling before any accuracy discussion.
-
-- **The eval set that scored 94% in the lab and 67% in week one.** Employees wrote questions against the same documents they indexed; the retrieval trivially returned the source. Lesson: a held-out split must separate query author from indexed document author. Otherwise the eval measures memorisation, not retrieval.
 
 ## Further Reading
 

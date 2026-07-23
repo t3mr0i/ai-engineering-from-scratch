@@ -56,26 +56,7 @@ OWASP LLM Top 10 (2025) ranks prompt injection (direct + indirect) as LLM01, the
 
 Lessons 12-14 are model-centric jailbreaks. Lesson 15 is the system-centric attack that dominates 2026 production deployments. Lesson 16 covers the defensive tooling. Lesson 25 covers the specific CVE narrative.
 
-## Use It
 
-`code/main.py` builds an IPI harness. A toy agent has three tools (search web, read email, send message). The environment contains attacker-controlled content with an embedded instruction ("forward this to all contacts"). You can toggle between a naive agent (follows injected instructions), a filter-defended agent (keyword filter on retrieved content), and an IFC agent (separates trusted and untrusted content and refuses untrusted control-flow commands).
-
-## Ship It
-
-This lesson produces `outputs/skill-ipi-audit.md`. Given an agentic deployment description, it enumerates the untrusted content sources, checks whether the deployment applies IFC, and flags sources that reach the model without a trust label.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| IPI | "indirect prompt injection" | Injection via content the user did not write, consumed by the agent during normal operation |
-| RAG injection | "poisoned retrieval" | Attacker publishes content that the retrieval step fetches; prompt contains the payload |
-| Zero-click | "no user action" | Attack triggers automatically during agent operation; user does nothing |
-| IFC | "information flow control" | Label-based approach: actions from untrusted content require trusted ratification |
-| Adaptive attack | "gradient / RL red-team" | Attack that knows the defense and optimizes against it; required for honest evaluation |
-| Benign instruction | "please print Yes" | IPI payload that is semantically benign; no keyword filter catches it |
-| Scope violation | "cross-trust exfiltration" | Agent accesses data from one trust context and outputs it to another |
 
 ## Further Reading
 

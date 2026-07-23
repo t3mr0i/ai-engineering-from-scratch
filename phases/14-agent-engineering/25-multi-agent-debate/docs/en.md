@@ -66,27 +66,7 @@ Implications:
 - **Prompt homogenization.** All agents use the same prompt; they produce the same answers. Use diverse prompts and/or models.
 
 
-## Use It
 
-- **Anthropic orchestrator-workers** for simple 2-3-worker debates.
-- **LangGraph** for stateful multi-round debate with checkpointing.
-- **Custom** for research or specialized correctness guarantees.
-
-## Ship It
-
-`outputs/skill-debate.md` scaffolds a multi-agent debate with configurable topology, N, R, and a convergence rule.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Debate | "Multi-agent critique" | N proposers, R rounds of cross-critique, converge |
-| Full mesh | "Everyone reads everyone" | Every debater reads every peer each round |
-| Sparse topology | "Limited peer view" | Debaters read only a subset of peers |
-| Hub-and-spoke | "Star topology" | One central debater, N-1 spokes read only the hub |
-| Convergence | "Agreement" | Debaters converge on a shared answer |
-| Society of Minds | "Du et al. debate paper" | ICML 2024 multi-agent debate method |
 
 ## Further Reading
 

@@ -75,44 +75,7 @@ An AR LM predicts the semantic token first (conditioned on text), then predicts 
 Traditional codecs like Opus still win per bit on perceptual quality. Neural codecs win on **discrete tokens** (which Opus does not produce) and **generative-model quality** (what the LM can do with those tokens).
 
 
-## Use It
 
-Map problem → codec:
-
-| Task | Codec |
-|------|-------|
-| General music generation | EnCodec-24k |
-| Highest-fidelity reconstruction | DAC-44.1k |
-| AR LM over speech (TTS) | SNAC or Mimi |
-| Streaming full-duplex speech | Mimi (12.5 Hz) |
-| Sound-effect library with text | EnCodec + T5 condition |
-| Fine-grained audio editing | DAC + inpainting |
-
-Rule of thumb: **if you're building a generative model, start with Mimi or SNAC. If you're building a compression pipeline, use Opus.**
-
-## Pitfalls
-
-- **Too many codebooks.** Adding codebooks increases fidelity linearly but LM sequence length linearly too. Stop at 8-12.
-- **Frame-rate mismatch.** Training LM on 12.5 Hz Mimi then fine-tuning on 50 Hz EnCodec fails silently.
-- **Assuming all codebooks equal.** In Mimi, codebook 0 carries content; losing it destroys intelligibility. Losing codebook 7 is barely noticeable.
-- **Using reconstruction quality as the only metric.** A codec can have great reconstruction but be useless for LM-based generation if the semantic structure is bad.
-
-## Ship It
-
-Save as `outputs/skill-codec-picker.md`. Pick a codec for a given generative or compression task.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| RVQ | Residual quantization | Cascade of small codebooks; each quantizes the previous residual. |
-| Frame rate | Codec speed | How many token-frames per second. Lower = faster LM. |
-| Semantic codebook | Codebook 0 (Mimi) | Codebook distilled from SSL features; encodes content. |
-| Acoustic codebooks | Everything else | Timbre, prosody, noise, fine detail. |
-| PESQ / ViSQOL | Perceptual quality | Objective metrics correlating with MOS. |
-| EnCodec | Meta codec | The RVQ baseline; used by MusicGen. |
-| Mimi | Kyutai codec | 12.5 Hz frame rate; semantic-acoustic split; powers Moshi. |
 
 ## Further Reading
 

@@ -96,42 +96,7 @@ The value grows with context length. At 4k tokens the noise floor is small enoug
 | Speculative decoding | Yes (attention change is invisible to the spec-decode loop) |
 
 
-## Use It
 
-DIFF V2 is not yet shipping in every production inference server as of April 2026, but integration is underway in vLLM and SGLang. Meanwhile the pattern shows up in:
-
-- Microsoft internal long-context production models.
-- Research replications in several open model training runs targeting 256k-plus context.
-- Hybrid architectures that combine DIFF attention with sliding-window attention on alternate layers.
-
-When you would reach for this in 2026:
-
-- Training a new model from scratch targeting 64k-plus effective context. Add differential attention from the start; retraining later is expensive.
-- Fine-tuning a long-context model where lost-in-the-middle failures dominate your eval. A LoRA on the Q projections can approximate the DIFF structure.
-
-When you would not:
-
-- You are serving a pre-trained dense model with stable long-context performance. The retraining cost rarely pays back on existing weights.
-- Your context is always under 16k. Noise floor is negligible.
-
-## Ship It
-
-This lesson produces `outputs/skill-diff-attention-integrator.md`. Given a model architecture, target context length, hallucination profile, and training budget, it produces an integration plan for adding differential attention to a new pre-training run or LoRA fine-tune.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by lambda) from the first, then multiply by V |
-| Noise floor | "The non-zero tail of softmax" | The O(1/N) weight softmax puts on every unrelated token, which sums to O(1) across long contexts |
-| lambda | "The subtraction scale" | Per-head learnable scalar parameterized as `exp(lq1.lk1) - exp(lq2.lk2) + lambda_init`; can be negative |
-| DIFF V1 | "The ICLR 2025 version" | Original Differential Transformer; halves head dim to preserve parameter count, needs custom kernel, slower decode |
-| DIFF V2 | "The January 2026 fix" | Doubles Q heads keeping KV heads; matches baseline decode speed and works with FlashAttention |
-| Per-head RMSNorm | "The V1 stabilizer" | Extra norm V1 applied after the difference; V2 removed it to prevent late-training instability |
-| Signal-to-noise ratio | "How much attention is wasted" | Ratio of weight on the true signal position to average weight on unrelated positions |
-| Lost in the middle | "Long-context failure mode" | Empirical phenomenon where retrieval accuracy dips for documents in the middle of a long context — DIFF attention reduces this |
-| Arithmetic intensity | "FLOPs per byte loaded" | Ratio V2 increased at decode by doubling queries per KV load; important for memory-bound decode |
 
 ## Further Reading
 

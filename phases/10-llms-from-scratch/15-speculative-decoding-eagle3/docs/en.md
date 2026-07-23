@@ -74,52 +74,7 @@ For EAGLE-2 tree search, the verifier runs attention with a non-causal mask that
 In 2026 production: vLLM and SGLang default to EAGLE-3 when available, EAGLE-2 otherwise. TensorRT-LLM has the fastest Medusa path for Meta and NVIDIA public models. llama.cpp ships vanilla draft for CPU deployments.
 
 
-## Use It
 
-Production-level `vllm serve` with EAGLE-3:
-
-```bash
-vllm serve meta-llama/Llama-3.3-70B-Instruct \
-  --speculative-config '{
-    "model": "yuhuili/EAGLE3-LLaMA3.3-Instruct-70B",
-    "num_speculative_tokens": 5,
-    "method": "eagle3"
-  }'
-```
-
-SGLang with EAGLE-3 at batch 64 on H100: roughly 1.38× more throughput than batch-64 vanilla decoding, per the EAGLE-3 paper.
-
-When to reach for speculative decoding:
-
-- Any interactive chat workload where p50 latency matters more than peak throughput.
-- Code generation and structured output (JSON, SQL). `α` is above 0.9 because the target distribution is highly predictable.
-- Long-form generation (thousands of tokens). The amortized speedup keeps paying.
-
-When not to:
-
-- Very small models (< 3B). The draft is not that much cheaper than the verifier.
-- Tiny batch-1 CPU deployments. Memory overhead of the draft model may not be worth it.
-- Very-high-temperature creative sampling where `α` collapses.
-
-## Ship It
-
-This lesson produces `outputs/skill-eagle3-tuner.md`. Given an inference workload (model, batch size, target latency, task profile), it recommends a speculative-decoding strategy and tuning parameters (draft family, `N`, tree depth, temperature-aware switching).
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Leviathan rule | "min(1, q over p)" | Bernoulli accept/reject with probability `min(1, q(d)/p(d))`, preserves the verifier distribution exactly when you sample from the residual on rejection |
-| Residual distribution | "(q minus p) plus, normalized" | `(q - p)_+` clamped at zero and renormalized — the correct distribution to sample from on rejection |
-| Acceptance rate α | "how often the draft is right" | Expected per-token Bernoulli-success probability under the rejection rule; governs all speedup math |
-| EAGLE-1 | "hidden-state draft" | Tiny transformer draft conditioned on the verifier's last-layer hidden state (Li et al., 2024) |
-| EAGLE-2 | "dynamic draft tree" | EAGLE-1 plus a tree of candidate continuations scored with tree attention in one verifier pass |
-| EAGLE-3 | "training-time test" | Drops the feature-prediction loss, trains on direct token prediction with the draft fed its own outputs during training |
-| Training-time test (TTT) | "exposure bias fix" | Run the draft autoregressively during training so train and test input distributions match — the direct analog of scheduled sampling |
-| KV rollback | "undo rejected drafts" | Bookkeeping that resets the verifier's KV cache to the accepted-prefix length after a rejection |
-| Bonus token | "the free one" | When all `N` drafts accept, sample one extra from `q_{N+1}` at no additional verifier cost |
-| Tree attention | "verify many candidates at once" | Attention with a non-causal mask that respects the topology of a draft tree; computes `q_i` for every node in the tree in one forward pass |
 
 ## Further Reading
 

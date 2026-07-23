@@ -121,45 +121,7 @@ The steps below translate the lesson into a 60-90 minute security review session
 6. **Rank gaps.** For each gap, estimate consequence severity (using the cost framing in the triage table) and remediation cost. Produce a prioritised gap list.
 7. **Decide go/no-go.** A deployment with unmitigated High severity on two or more rows is not production-ready. The decision belongs to the engagement lead, not the engineering team — security review vetoes are cheap; incident post-mortems are not.
 
-## Use It
 
-`code/main.py` encodes the triage decision as a runnable classifier. It models three decisions:
-
-1. A **threat-surface scorer** that takes a deployment description (tool access, retrieval sources, output consumers) and scores each of the five surfaces, producing a priority-ordered risk list.
-2. An **injection triage classifier** that takes a sample prompt or content snippet and labels it as one of the five attack surface types with a confidence level, using structural heuristics rather than a model call.
-3. A **demonstration of the Quiet Document** failure shape: the same RAG summarizer is run on a benign document and on one with a hidden injection, and the classifier reveals why the second one was silently exfiltrating every retrieval. This is the lesson's core insight in code form — the injection does not look malicious to a human reader, which is exactly why the classifier's structural signals matter.
-
-All three are deterministic and stdlib-only. The driver runs them against a set of representative deployment profiles and sample inputs, and prints a triage summary ending in a "HEADLINE:" that names the failure shape the demonstration just produced.
-
-## Ship It
-
-`outputs/skill-ai-security-triage.md` is a one-page decision aid for working consultants: a scored checklist of deployment characteristics, a priority matrix for applying controls, and a minimum-viable audit record template. Paste it into a client engagement document or use it as the opening section of a security review.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Prompt injection | "Jailbreak" | Adversarial instruction embedded in any context-window source that overrides the developer's intent |
-| Indirect injection | "RAG poisoning" | Injection delivered through retrieved content, not direct user input; scales across all users who retrieve the infected source |
-| System prompt extraction | "Leaking the prompt" | Probing technique that causes the model to reproduce confidential operator instructions in its output |
-| Tool misuse | "The agent did something it wasn't supposed to" | Crafted inputs that cause a tool call with arguments outside the intended use case |
-| Provenance-aware scope | "Only operator can invoke write tools" | Tool-call gating based on the source of the instruction that triggered the call; retrieved content cannot invoke write tools without confirmation |
-| Minimal tool scope | "Least privilege for AI" | Granting each tool the narrowest permission set that supports the legitimate use case |
-| Trust boundary | "Who does the model obey?" | The decision about whether a given input source is treated as operator-level (trusted) or user-level (untrusted) instruction |
-| Output classifier | "Content filter on the way out" | A secondary check on model completions that detects PII, credential patterns, or adversarial outputs before they reach the caller |
-| Attack surface triage | "Where do we focus first?" | Priority ordering of injection surfaces based on deployment characteristics and consequence severity |
-| Quiet Document | "That PDF looked fine" | The failure shape where a retrieved document contains hidden instructions that trigger silently on every retrieval |
-
-## Consultant field notes
-
-Five patterns a senior consultant recognises by name. If you have seen three of these in the last six months, you are doing real AI security work; if you have seen all five, you have probably written an incident post-mortem.
-
-- **The Quiet Document.** A RAG corpus is poisoned by a document that looks legitimate but contains a hidden instruction. One document, thousands of victims, three weeks median time-to-detection. Detection requires structural signal matching, not semantic review — a human who reads the document sees a financial summary, not an attack.
-- **The Helpful Colleague.** A contractor pastes a web search snippet into Confluence; the snippet carries an invisible payload; the next agent that reads the page executes it. Not malicious — copy-paste. The blast radius is bounded entirely by the agent's tool scope, which is why tool scope is the single highest-leverage control in any agent deployment.
-- **The Confident Extractor.** A user asks the agent to repeat or translate its instructions. An unprotected system prompt leaks the refund policy, the discount thresholds, or worse. Roughly 15-25% of probing attempts succeed against an unprotected prompt; under 5% with explicit extraction resistance; near zero with server-side prompt shielding.
-- **The Argument Bender.** Retrieved content carries an instruction that triggers a write-capable tool. The tool scope was set correctly for the intended task; the failure is that the invocation originated from retrieved content rather than the user query. Fix: provenance-aware scope — write tools invoked on the basis of retrieved content require explicit confirmation.
-- **The Logged Leak.** The model includes a customer's email or partial card number in a summary because it was relevant to the resolution. Not malicious, not even an attack — just the model being helpful. Accounts for roughly 40% of AI incidents surfaced in security review. Fix is structural: output classifiers plus schema-constrained output modes.
 
 ## Further Reading
 

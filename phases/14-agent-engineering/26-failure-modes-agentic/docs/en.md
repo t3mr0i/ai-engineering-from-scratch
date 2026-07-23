@@ -74,29 +74,7 @@ Automated verification gates at every step of a reasoning chain, checking factua
 - **Over-alerting.** Every failure produces a page. Cluster and rate-limit.
 
 
-## Use It
 
-- **Phoenix** for production drift clustering (Lesson 24).
-- **Langfuse** for session replay + annotation.
-- **Custom** for domain-specific signatures your observability platform can't detect.
-
-## Ship It
-
-`outputs/skill-failure-detector.md` generates failure-mode detectors tailored to your domain, wired to a trace store.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| MASFT | "Multi-agent failure taxonomy" | Berkeley 14-mode categorization |
-| Cascading error | "Ripple failure" | One early mistake propagates through N steps |
-| Context loss | "Forgot the constraint" | Long-horizon turn drops early-turn facts |
-| Tool misuse | "Wrong tool / wrong args" | Valid call, wrong invocation |
-| Success hallucination | "Faked completion" | Agent claims success on a 400; state unchanged |
-| Scope creep | "Overreach" | Agent does more than asked |
-| Instruction-following deviation | "Disobedience" | Ignores system prompt or user constraint |
-| Sub-intention errors | "Plan bugs" | Omission, redundancy, disorder in plan execution |
 
 ## Further Reading
 

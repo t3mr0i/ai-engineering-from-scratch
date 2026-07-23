@@ -67,26 +67,7 @@ Every frontier lab now runs PAIR and TAP against production models before releas
 
 Lesson 12 is the automated-attack foundation. Lesson 13 (Many-Shot Jailbreaking) is a complementary length-exploit. Lesson 14 (ASCII Art / Visual) is an encoding attack. Lesson 15 (Indirect Prompt Injection) is the 2026 production attack surface. Lesson 16 covers the defensive-tooling counterparts (Llama Guard, Garak, PyRIT).
 
-## Use It
 
-`code/main.py` builds a toy PAIR loop. The target is a mock classifier that refuses "obvious" harmful prompts (keyword-filter). The attacker is a rule-based refiner that tries paraphrase, roleplay-framing, and encoding. The judge scores the response. You watch the attacker succeed in ~5-15 iterations against the keyword filter and fail against a semantic filter.
-
-## Ship It
-
-This lesson produces `outputs/skill-attack-audit.md`. Given a red-team evaluation report, it audits: which attacks were run (PAIR, GCG, TAP, AutoDAN, PAP), at what budget each, with which judge, on which harmful-behaviour set (JailbreakBench, HarmBench, internal).
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| PAIR | "automated jailbreak" | Prompt Automatic Iterative Refinement; attacker-LLM + judge-LLM loop |
-| GCG | "gradient jailbreak" | White-box token-level gradient search for adversarial suffixes |
-| Attack success rate (ASR) | "% jailbreaks at k queries" | Primary metric; must be reported with query budget and judge identity |
-| Judge LLM | "the scorer" | LLM that grades whether a response satisfies the harmful goal |
-| JailbreakBench | "the evaluation" | Standardized harmful-behaviour set with tagged categories |
-| HarmBench | "the broader bench" | 510 behaviours, functional + semantic harm tests |
-| TAP | "tree of attacks" | PAIR with branching + pruning; better ASR at higher compute |
 
 ## Further Reading
 

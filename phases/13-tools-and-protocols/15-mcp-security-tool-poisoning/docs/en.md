@@ -93,34 +93,7 @@ If a tool invocation would combine all three, the host must reject or escalate s
 - **Sanitizing description text.** Too many creative phrasings to catch all.
 - **Capping description length.** Injections fit in 200 characters.
 
-## Use It
 
-`code/main.py` ships a tool-poisoning detector with two components:
-
-1. **Static detector.** Regex-based scan for injection patterns in every tool description.
-2. **Hash-pinning store.** Record a hash of every approved description; on next load, block if the hash changes.
-
-Run it on a fake registry that contains one clean server and one rug-pulled server. Watch both defenses fire.
-
-## Ship It
-
-This lesson produces `outputs/skill-mcp-threat-model.md`. Given an MCP deployment, the skill produces a threat model naming which of the seven attacks apply, what defenses are in place, and where the Rule of Two is violated.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Tool poisoning | "Injected description" | Hidden instructions inside a tool description |
-| Rug pull | "Silent update attack" | Server changes description after first approval |
-| Tool shadowing | "Namespace hijack" | Malicious server steals a tool name from a benign one |
-| MPMA | "Preference manipulation" | Server abuses modelPreferences to pick bad models |
-| Parasitic toolchain | "Cross-server abuse" | Server A orchestrates Server B without user consent |
-| Sampling attack | "Covert reasoning" | Malicious sampling prompt manipulates the model |
-| Supply-chain masquerade | "Fake server" | Impostor on the registry; September 2025 Postmark case |
-| Hash pin | "Approved-description hash" | Detects rug pulls by comparing against a stored hash |
-| Rule of Two | "Defense-in-depth axiom" | One turn may combine at most two of untrusted / sensitive / consequential |
-| MELON | "Masked re-execution" | Compare outputs with and without the suspect tool |
 
 ## Further Reading
 

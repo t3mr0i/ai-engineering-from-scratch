@@ -52,40 +52,7 @@ Latency target: first TTS audio byte within 800 ms of the user finishing their u
 | Whisper.cpp + llama.cpp + Kokoro-ONNX | offline | open | Privacy / edge |
 
 
-## Use It
 
-See `code/main.py` for a runnable simulation that wires all seven components with stub models, so you can see the pipeline shape even without hardware. For a real implementation, swap stubs with:
-
-- `silero-vad` (`pip install silero-vad`)
-- `deepgram-sdk` or `openai-whisper`
-- `openai` (`gpt-4o`) or `anthropic`
-- `kokoro` or `cartesia`
-- `sounddevice` for I/O
-
-## Pitfalls
-
-- **Logging PII forever.** Full-turn audio is PII in most jurisdictions. 30-day retention, encrypted at rest.
-- **No barge-in.** Users will interrupt. Your assistant must stop talking.
-- **TTS that blocks.** Synchronous TTS blocks the event loop. Use async or a separate thread.
-- **No tool-call error handling.** Tools fail. LLM must get back the error + retry once, then gracefully degrade.
-- **Overzealous hallucination filters.** Over-filter and the assistant repeats "I can't help with that." Under-filter and it says anything. Calibrate on a held-out set.
-- **No wake-word option.** Always-listening is a privacy liability. Add a wake-word gate (Porcupine or openWakeWord).
-
-## Ship It
-
-Save as `outputs/skill-voice-assistant-architect.md`. Given budget + scale + language + compliance constraints, produce a full stack spec.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Turn | A user + assistant round-trip | One VAD-bounded user speech + one LLM-TTS response. |
-| Barge-in | Interruption | User speaks while assistant talks; assistant stops. |
-| Wake word | "Hey assistant" | Short keyword detector; Porcupine, Snowboy, openWakeWord. |
-| End-pointing | Turn ending | VAD + min-silence decision that user has finished. |
-| Pre-roll | Pre-speech buffer | Keep 200-400 ms of audio before VAD fires to avoid first-word clip. |
-| Tool call | Function invocation | LLM emits JSON; runtime dispatches; result feeds back in-loop. |
 
 ## Further Reading
 

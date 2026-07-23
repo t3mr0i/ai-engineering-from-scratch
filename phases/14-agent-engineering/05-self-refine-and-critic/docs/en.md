@@ -84,27 +84,7 @@ OpenAI Agents SDK ships this pattern as "output guardrails." A guardrail is a va
 - **CRITIC on trivial tasks.** If there is no external verifier, CRITIC degenerates to Self-Refine; do not pay the latency for a stub verifier.
 
 
-## Use It
 
-Anthropic's evaluator-optimizer is this pattern in Claude-friendly language. OpenAI Agents SDK's output guardrails are CRITIC-shaped (guardrails can call tools). LangGraph ships a reflection node that reads like Self-Refine. Google's Gemini 2.5 Computer Use adds a per-step safety evaluator that is a CRITIC variant: every action is verified before commit.
-
-## Ship It
-
-`outputs/skill-refine-loop.md` configures an evaluator-optimizer loop given task shape, verifier availability, and iteration budget. Emits prompts for generator, evaluator/verifier, and optimizer, plus a stop policy.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Self-Refine | "LLM that fixes itself" | Generate -> feedback -> refine loop in one model, with history |
-| CRITIC | "Tool-grounded verification" | Replace feedback with an external verifier (search, code, calc, tests) |
-| Evaluator-Optimizer | "Anthropic workflow pattern" | Two roles — evaluator scores, optimizer revises — looped to convergence |
-| Output guardrail | "Post-hoc check" | OpenAI Agents SDK validator that runs after an agent produces output |
-| Verify step | "Critique phase" | The load-bearing decision: grounded or self-rated |
-| Refine history | "What the model already tried" | Prior outputs + critiques prepended to refine prompt; drop and quality collapses |
-| Rubber-stamp loop | "Self-agreement failure" | Same-prompt critique returns "looks good"; fix with structurally different prompts |
-| Stop condition | "Convergence test" | Verifier passes OR no feedback AND iteration cap; never single-condition |
 
 ## Further Reading
 

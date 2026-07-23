@@ -67,31 +67,7 @@ The single highest-leverage control is `.github/copilot-instructions.md` (Lesson
 
 Phase 14 · 39 built a reviewer *agent* from scratch — you owned the prompt, the rubric, the loop. Copilot code review is that pattern as a managed product: someone else owns the scaffold, you own the instructions file and the disposition of each comment. Same shape (Phase 15 · 09's lesson — the scaffold is the product), different ownership boundary.
 
-## Use It
 
-`code/main.py` models the two decisions of this lesson:
-
-1. A **reviewability scorer** that takes a PR's properties (size, intent statement, tests, linked issue) and returns `REVIEWABLE` / `NEEDS SPLIT` / `NEEDS CONTEXT` with the failing criterion named — the contract above, made executable.
-2. A **review-comment triage** that takes automated review comments and sorts them into fix / wontfix / false-positive buckets using a simple confidence-and-category rule, so you see how a disposition policy beats both "resolve everything" and "ignore the bot."
-
-Deterministic, stdlib, no network.
-
-## Ship It
-
-`outputs/skill-pr-reviewability-checklist.md` is a paste-and-go gate: before you open a PR (or write the issue you'll hand the coding agent), it checks the four reviewability criteria and gives the disposition policy for incoming automated comments.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Coding agent | "Copilot writes the PR" | Issue → autonomous draft PR; upstream of review |
-| Copilot code review | "AI reviewer" | Inline comments on an existing PR; downstream, no merge authority |
-| Reviewable PR | "A good PR" | Bounded + intent stated + verification shipped + issue linked |
-| Disposition | "Replying to a comment" | Explicit fix / wontfix / false-positive on each review comment |
-| Scope creep | "It did extra stuff" | Changed lines that don't trace to the issue |
-| First-pass reviewer | "The bot review" | Catches the boring 70%; a human still owns design + merge |
-| Reward hacking | "Gaming the test" | Weakening an assertion or hard-coding a fixture to pass (P14.38) |
 
 ## Further Reading
 

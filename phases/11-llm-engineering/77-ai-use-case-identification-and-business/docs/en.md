@@ -120,43 +120,7 @@ Quick wins build organizational trust and generate real eval data. Strategic pro
 
 For cross-lesson context: Phase 11 · 32 (the use-case identification workshop) is where the idea list is generated. Phase 11 · 10 (evaluation) is where you build the eval rubric that Stage 3 requires. Phase 11 · 11 (caching and cost) is where you refine the Stage 2 cost model once a prototype exists. Phase 17 · 27 (FinOps for LLMs) is where the cost model becomes an ongoing monitoring practice in production.
 
-## Use It
 
-`code/main.py` implements a deterministic, stdlib-only model of the triage funnel. It takes a list of candidate use cases, each described by a small set of structured attributes, and runs them through all five stages. The driver prints a stage-by-stage trace and then demonstrates the lesson's core insight: a use case that passes every gate on common-case evidence but fails the *hard-example* version of the SME question — the **common-case smuggle** failure shape from the contract reviewer at an insurer.
-
-## Ship It
-
-`outputs/skill-use-case-triage.md` is a one-page paste-and-use decision aid for a working consultant: a triage checklist that runs a single use case through all five stages and produces a sponsor-ready verdict with supporting numbers.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Use case triage | "Prioritization" | A staged funnel that eliminates bad candidates fast before detailed scoring |
-| LLM fit | "Is this an AI problem?" | Whether the task is language-shaped, involves recoverable judgment, and tolerates variance |
-| Back-of-envelope ROI | "Business case" | Volume × time saved × rate minus token + engineering cost; directional, not precise |
-| Quick win | "Low-hanging fruit" | All feasibility gates green *on the hard examples*, ROI > 5:1, prototype in 2-3 weeks without fine-tuning |
-| Strategic project | "Big initiative" | One or more feasibility dependencies; value justifies setup cost but requires a longer plan |
-| Common-case smuggle | "SME signed off" | A use case whose eval covers only common cases passing the SME gate, while hard cases are absent |
-| EU AI Act high-risk | "Regulated AI" | Eight categories requiring conformity assessment and human oversight before deployment |
-| Composite score | "Overall ranking" | Weighted combination of value, speed, and fit — working document, not the sponsor deliverable |
-| Feasibility blocker | "Dependency" | A specific missing input (data, eval rubric, latency headroom, SME) that must be resolved before sprint 1 |
-
-## What to do Monday morning
-
-You have a raw idea list, a sponsor on the calendar, and 60 minutes before the meeting. The minimum viable triage that gets you to a defensible sprint-1 recommendation in that meeting is shorter than the lesson suggests:
-
-1. **Print the idea list, 25 use cases max.** If you have more, the workshop needs narrowing before triage.
-2. **Stage 1 (15 minutes).** For each, ask the three LLM-fit questions out loud. One no = ruled out. Expect 30-40% to drop here.
-3. **Stage 2 (20 minutes).** For the survivors, do the back-of-envelope ROI on the back of a single sheet per use case. Round aggressively; this is a directional filter, not a model. Expect another 20% to drop on ROI ratio < 2:1.
-4. **Stage 3 (20 minutes).** Five binary questions per survivor. Pay attention to the SME question: ask the *hard* version, not the easy one. This is the gate where the common-case smuggle hides.
-5. **Stage 4 (10 minutes).** Risk screen on what remains. A high-risk EU AI Act category or a missing DPIA is not a quick win, regardless of ROI.
-6. **Stage 5 (10 minutes).** Composite score the survivors. Pick the top two for sprint 1; the next two become strategic-project proposals for the next budget cycle.
-
-Total: ~75 minutes if the idea list is healthy, 90 if the workshop was loose. The deliverable to the sponsor is one paragraph per recommended use case, not the matrix. The matrix is your working document.
-
-The most common time-saver in this hour: do Stage 2 *before* Stage 3. A use case with ROI < 2:1 is not worth a feasibility scan. The most common time-waster: doing Stage 5 with twelve criteria and no weights chosen yet. Pick weights, then score.
 
 ## Further Reading
 

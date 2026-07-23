@@ -68,26 +68,7 @@ Pattern across the three: vendors initially rated EchoLeak low (information disc
 
 Lesson 15 is the attack class in the abstract. Lesson 25 is the concrete CVE layer. Lesson 24 is the regulatory framework that governs disclosure obligations. Lessons 26-27 cover documentation and data governance.
 
-## Use It
 
-`code/main.py` reconstructs the EchoLeak attack trace as a state-transition log. You can observe the email entering context, the instruction execution, and the exfiltration URL construction. A simple defense (scope separation: block tool calls triggered by untrusted content) prevents the exfiltration.
-
-## Ship It
-
-This lesson produces `outputs/skill-cve-review.md`. Given a production AI deployment, it enumerates the Scope Violation surfaces, checks whether each violates the three-independent-boundaries rule, and recommends controls.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| EchoLeak | "the M365 Copilot CVE" | CVE-2025-32711, CVSS 9.3, zero-click prompt injection |
-| LLM Scope Violation | "the new class" | Untrusted input triggers privileged-scope access + exfiltration |
-| CamoLeak | "the GitHub Copilot CVE" | CVSS 9.6 via Camo image proxy; image rendering disabled in fix |
-| Zero-click | "no user action" | Attack fires during routine agent operation |
-| XPIA | "the Microsoft PI filter" | Cross-Prompt Injection Attack filter; bypassed by EchoLeak |
-| OWASP LLM01 | "the top LLM threat" | Prompt injection; OWASP's 2025 ranking |
-| Three-boundary model | "Aim Labs framework" | Retrieval, scope, output — each must be independently controlled |
 
 ## Further Reading
 

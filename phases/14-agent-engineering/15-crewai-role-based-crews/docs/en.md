@@ -134,46 +134,7 @@ Independent of LangChain. Python 3.10 to 3.13. Uses `uv`. Star count: see [crewA
 - **Crew-as-prod.** Free-form Crew shipped to production without a Flow wrapper. Output variability is high; replay is impossible; on-call cannot diff a bad run against a good one. Wrap with a Flow.
 
 
-## Use It
 
-- **CrewAI Flow** for production. Even when the Flow is one step that calls `Crew.kickoff()`. The Flow gives the audit boundary.
-- **CrewAI Crew (Sequential)** for clear-ordering collaborative work, especially first drafts and review loops.
-- **CrewAI Crew (Hierarchical)** when routing depends on output and you have four or more specialists.
-- **LangGraph** (Lesson 13) for explicit state machines, durable resume, strict ordering.
-- **AutoGen v0.4** (Lesson 14) for actor-model concurrency and fault isolation.
-- **OpenAI Agents SDK** (Lesson 16) for OpenAI-first products with handoffs and guardrails.
-- **Claude Agent SDK** (Lesson 17) for Claude-first products with subagents and session store.
-
-## Ship It
-
-`outputs/skill-crew-or-flow.md` picks Crew vs Flow for a task and scaffolds the minimal implementation. Hard rejects on Crew-without-backstory, Flow-without-explicit-topics, Hierarchical with under three specialists.
-
-## Pitfalls
-
-- **Backstory as flavor.** It shapes outputs. Test three variants per agent; variance is real. Pick one, freeze it.
-- **Skipping `expected_output`.** Without a contract per task, downstream tasks pick up whatever the LLM produced. Crew runs; audit fails.
-- **Memory always-on.** Long-term writes every run. Vector DB grows. Retrieval gets noisy. Scope writes to tasks where the fact is persistent.
-- **Manager prompt drift.** Hierarchical's manager prompt is implicit. If routing gets weird, dump it in verbose mode and read.
-- **Tool side effects in Crews.** A Crew can call a tool more times than expected. POST, DELETE, payment belong in a Flow step, never a Crew tool.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Agent | "Persona" | Role + goal + backstory + tools |
-| Task | "Unit of work" | Description + expected output + assignee + optional structured output |
-| Crew | "Agent team" | Container for Agents + Tasks + Process |
-| Process | "Execution strategy" | Sequential / Hierarchical / Consensus (planned) |
-| Flow | "Deterministic workflow" | Event-driven, code-owned, testable |
-| Backstory | "Persona prompt" | Tone and judgment shaper for the Agent |
-| `@tool` | "Function tool" | Decorator that turns a function into a tool the Agent can call |
-| `BaseTool` | "Class tool" | Class-based tool with args schema, retries, async support |
-| Entity memory | "Per-entity facts" | Memory scoped to a customer / account / issue |
-| Long-term memory | "Cross-run memory" | Vector-backed memory that survives between kickoffs |
-| Contextual memory | "Just-in-time retrieval" | Memory pulled at the moment the Agent needs it |
-| Manager LLM | "Router agent" | Extra LLM in Hierarchical process that picks the next task |
-| `expected_output` | "Task contract" | String that tells the Agent (and audit) what shape to return |
 
 ## Further Reading
 

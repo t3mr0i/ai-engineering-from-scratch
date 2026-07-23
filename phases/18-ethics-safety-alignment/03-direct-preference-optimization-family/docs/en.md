@@ -120,28 +120,7 @@ DAAs do not escape Goodhart. They change the surface where it bites from "reward
 
 Every lab runs all five on a battery and picks the winner per task. There is no reason the optimum is the same for math reasoning and safety.
 
-## Use It
 
-`code/main.py` compares six losses (DPO, IPO, KTO, SimPO, ORPO, BPO) on a toy preference dataset where the true preference strength varies by pair. Each loss is optimized against the same 500-pair sample with a small softmax policy. Plots final win rate, chosen-log-prob drift, and implicit-reward spread per method.
-
-## Ship It
-
-This lesson produces `outputs/skill-preference-loss-selector.md`. Given dataset statistics (paired vs unpaired, variable vs uniform preference strength, length distribution) and a target (single-stage or SFT-then-preference), recommend a preference loss and report the failure mode it protects against.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| DPO | "RLHF without a reward model" | Loss derived from the closed-form RLHF optimum; policy parameters only |
-| Implicit reward | "the log-ratio" | `beta * log(pi(y\|x) / pi_ref(y\|x))` — the DPO-implied reward |
-| IPO | "bounded DPO" | Replaces log-sigmoid with identity; implicit reward gap capped by `1/(2 beta)` |
-| KTO | "unpaired DPO" | Prospect-theory utility over single labels with loss aversion |
-| SimPO | "reference-free DPO" | Length-normalized log-likelihood + margin; no reference policy |
-| ORPO | "one-stage DPO" | NLL + odds-ratio preference term; trains from base model in one pass |
-| BPO | "chosen-preserving DPO" | DPO plus a penalty for decreasing the chosen response's absolute log-prob |
-| Degraded Chosen | "chosen goes down" | DPO decreases chosen log-prob so long as rejected falls faster |
-| DAA | "direct alignment algorithm" | Any preference-loss method that skips an explicit RM |
 
 ## Further Reading
 

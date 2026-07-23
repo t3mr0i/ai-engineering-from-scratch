@@ -81,30 +81,7 @@ feature_list.json          # the backlog (Phase 14 · 36)
 Two tests keep the layering honest. The reachability test: an agent should reach any rule in at most two hops from the router, so the router must link every topic doc by path, not describe it in prose. The freshness test: the router is short enough that a reviewer rereads it on every PR, which is the only thing that stops it from silently growing back into the encyclopedia it replaced. A pointer that no longer resolves is a worse failure than a missing rule, so a broken link in the router is itself a startup-check violation.
 
 
-## Use It
 
-In production:
-
-- Claude Code, Codex, Cursor read the rules at session start and quote them when refusing actions. The checker re-runs them in CI to catch silent drift.
-- OpenAI Agents SDK guardrails register the same checks as input and output guardrails. The markdown is the docs surface; the SDK is the runtime surface.
-- LangGraph interrupts fire when an in-flight node violates a rule. The interrupt handler reads the rule, asks the human, and resumes.
-
-The rule set is portable across all three because it is just markdown plus function names.
-
-## Ship It
-
-`outputs/skill-rule-set-builder.md` interviews a project owner, classifies their existing prose instructions into the five categories, and emits a versioned `agent-rules.md` plus a checker stub.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Operational rule | "A real instruction" | A rule the workbench can check at runtime |
-| Aspirational rule | "Be careful" | A rule with no check; either delete or upgrade |
-| Definition of done | "Acceptance" | An objective, file-backed proof the task is complete |
-| Block severity | "Hard rule" | Violation halts the run; cannot be silenced without an operator |
-| Rule expiry | "Stale rule sweep" | A rule with no fails in N days is up for retirement |
 
 ## Further Reading
 

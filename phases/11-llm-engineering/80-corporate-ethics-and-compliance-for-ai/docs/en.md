@@ -78,35 +78,7 @@ In 2026, the dominant frontier models are Claude Sonnet/Opus 4.x (Anthropic), GP
 
 Open-weight models (Llama 4, Mistral Large 2) deployed on company-owned infrastructure sidestep the DPA requirement but introduce a different obligation: the company becomes the model operator under the AI Act and is fully responsible for all downstream harms from the model's outputs.
 
-## Use It
 
-`code/main.py` implements a two-part deterministic intake simulator. Part 1 is a **risk classifier**: given a structured description of a use case (data types, decision effect, sector), it maps the case to an AI Act tier and returns the obligation list for that tier. Part 2 is an **approval gate checker**: given the classifier output plus three boolean answers (DPA in place, data classification cleared, logging designed), it returns one of three decisions — `APPROVED`, `CONDITIONAL` (specifying which gaps must close), or `BLOCKED` — and prints a one-paragraph justification. The sample cases demonstrate all three outcomes.
-
-## Ship It
-
-`outputs/skill-ai-use-case-intake.md` is a one-page paste-and-use intake worksheet for a working consultant: a structured description template, the risk classification table, a GDPR trigger checklist, the three internal gates, and a routing matrix. Print it before the first project meeting where AI is mentioned.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| AI Act high-risk | "Heavily regulated AI" | Systems in EU AI Act Annex III — conformity assessment, logging, human oversight, and EU-database registration are all mandatory before deployment |
-| Prohibited use | "Things AI cannot do" | A closed list of AI applications the Act bans outright, including social scoring and real-time remote biometric identification in public spaces |
-| Article 22 GDPR | "No automated decisions" | Prohibition on decisions based solely on automated processing that have legal or similarly significant effects on a person, with three narrow exceptions |
-| Data Processing Agreement | "DPA" | Mandatory contract between a data controller and any processor that handles personal data on its behalf; must be signed before the first API call that includes personal data |
-| GPAI model | "Foundation model compliance" | General-Purpose AI models above capability thresholds must publish evaluations, copyright summaries, and (above 10^25 FLOP) systemic-risk mitigations |
-| Data classification gate | "Checking sensitivity" | Mapping every input data element to the enterprise classification scheme before selecting a model deployment option; determines whether a private endpoint is required |
-| Human-in-the-loop | "A human reviews it" | A defined human review step with actual authority to overrule the AI output before it has effect; rubber-stamping a recommendation does not satisfy this requirement |
-| SCCs | "Standard Contractual Clauses" | EU-approved transfer mechanism for sending personal data to a third country; must be in place before cross-border API calls that include personal data |
-
-## Consultant field notes
-
-- **The prompt that worked in the demo but failed in production.** Demos run on cleaned, sanitised data. The first production query carries a customer name, an account number, and an edge case the model has never seen. If the intake did not classify data sensitivity before the demo, the same team that celebrated week three is filling out an incident report by week four.
-- **The use case everyone approved but nobody wanted.** A sponsor signs off, legal signs off, InfoSec signs off. Then the frontline team that has to live with the AI output quietly routes around it. This almost always means the intake captured stakeholder sign-off but not end-user workflow — the "who actually clicks the button" question was never asked.
-- **The vendor pilot that never made it past the security review.** Procurement approved the vendor in principle six months ago. Security review starts, and the DPA is unsigned, the data residency is unclear, and the training-opt-out clause is buried in a tier that was never contracted. The fix is to make the security checklist a precondition of the pilot kickoff, not a deliverable of it.
-- **The AI feature that hit a cost ceiling in month two.** Per-token economics looked fine in the design doc. Real traffic, real prompts, real context windows, and a logging layer that retains full conversations for audit — the monthly invoice triples between month one and month three, and the business case quietly stops working. Intake should include a usage envelope, not just a unit price.
-- **The RAG that returned the right doc but the wrong paragraph.** Compliance approved the retrieval corpus because it was the right *source*. The system retrieved the right document and surfaced the wrong section — the one that contradicted the policy. Chunking strategy and citation grounding belong in the intake, not as a post-build tuning exercise.
 
 ## Further Reading
 

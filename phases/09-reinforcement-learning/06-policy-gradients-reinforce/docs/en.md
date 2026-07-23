@@ -53,59 +53,7 @@ i.e., score of the taken action minus its expected value under the policy.
 **Gaussian policy for continuous actions.** `π_θ(a | s) = N(μ_θ(s), σ_θ(s))`. `∇ log N(a; μ, σ)` has a closed form. That is all Phase 9 · 07's SAC needs.
 
 
-## Use It
 
-In 2026, REINFORCE is rarely run directly but its gradient formula is everywhere:
-
-| Use case | Derived method |
-|----------|---------------|
-| Continuous control | PPO / SAC with Gaussian policy |
-| LLM RLHF | PPO with KL penalty, running on token-level policy |
-| LLM reasoning (DeepSeek) | GRPO — REINFORCE with group-relative baseline, no critic |
-| Multi-agent | Centralized-critic REINFORCE (MADDPG, COMA) |
-| Discrete action robotics | A2C, A3C, PPO |
-| Preference-only settings | DPO — REINFORCE rewritten as a preference-likelihood loss, no sampling |
-
-When you read `loss = -advantage * log_prob` in a 2026 training script, that is REINFORCE with a baseline. Entire papers (DPO, GRPO, RLOO) are variance-reduction tricks on top of this one line.
-
-## Ship It
-
-Save as `outputs/skill-policy-gradient-trainer.md`:
-
-```markdown
----
-name: policy-gradient-trainer
-description: Produce a REINFORCE / actor-critic / PPO training config for a given task and diagnose variance issues.
-version: 1.0.0
-phase: 9
-lesson: 6
-tags: [rl, policy-gradient, reinforce]
----
-
-Given an environment (discrete / continuous actions, horizon, reward stats), output:
-
-1. Policy head. Softmax (discrete) or Gaussian (continuous) with parameter counts.
-2. Baseline. None (vanilla), running mean, learned `V̂(s)`, or A2C critic.
-3. Variance controls. Reward-to-go on by default, return normalization, gradient clip value.
-4. Entropy bonus. Coefficient β and decay schedule.
-5. Batch size. Episodes per update; on-policy data freshness contract.
-
-Refuse REINFORCE-no-baseline on horizons > 500 steps. Refuse continuous-action control with a softmax head. Flag any run with `β = 0` and observed policy entropy < 0.1 as entropy-collapsed.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Policy gradient | "Train the policy directly" | `∇J(θ) = E[G · ∇ log π_θ(a\|s)]`; derived from the log-derivative trick. |
-| REINFORCE | "The original PG algorithm" | Williams (1992); Monte Carlo returns multiplied by log-policy gradient. |
-| Log-derivative trick | "Score function estimator" | `∇P(τ;θ) = P(τ;θ) · ∇ log P(τ;θ)`; makes gradients of expectations tractable. |
-| Baseline | "Variance reduction" | Any `b(s)` subtracted from `G`; unbiased because `E[b · ∇ log π] = 0`. |
-| Reward-to-go | "Only future returns count" | `G_t^{from t}` instead of the full `G_0`; correct and lower-variance. |
-| Entropy bonus | "Encourage exploration" | `+β · H(π(·\|s))` term keeps the policy from collapsing. |
-| On-policy | "Train on what you just saw" | Gradient expectation is w.r.t. the current policy — cannot reuse old data directly. |
-| Advantage | "How much better than average" | `A(s, a) = G(s, a) - V(s)`; the signed quantity REINFORCE-with-baseline multiplies. |
 
 ## Further Reading
 

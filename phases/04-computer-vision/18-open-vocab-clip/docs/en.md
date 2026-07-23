@@ -89,53 +89,7 @@ Prompt engineering matters. OpenAI published 80 prompt templates for ImageNet ("
 Once you have a shared embedding space, every vision+language task becomes a distance computation.
 
 
-## Use It
 
-OpenCLIP is the community default in 2026:
-
-```python
-import open_clip
-import torch
-from PIL import Image
-
-model, _, preprocess = open_clip.create_model_and_transforms("ViT-B-32", pretrained="laion2b_s34b_b79k")
-tokenizer = open_clip.get_tokenizer("ViT-B-32")
-
-image = preprocess(Image.open("dog.jpg")).unsqueeze(0)
-text = tokenizer(["a photo of a dog", "a photo of a cat", "a photo of a car"])
-
-with torch.no_grad():
-    image_features = model.encode_image(image)
-    text_features = model.encode_text(text)
-    image_features = image_features / image_features.norm(dim=-1, keepdim=True)
-    text_features = text_features / text_features.norm(dim=-1, keepdim=True)
-    probs = (100.0 * image_features @ text_features.T).softmax(dim=-1)
-
-print(probs)
-```
-
-SigLIP is newer, trains better at small scales, and is preferred for new work: `google/siglip-base-patch16-224`. Hugging Face ships both.
-
-## Ship It
-
-This lesson produces:
-
-- `outputs/prompt-zero-shot-class-picker.md` — a prompt that designs class templates for zero-shot CLIP given a list of classes and a domain.
-- `outputs/skill-image-text-retriever.md` — a skill that builds an image embedding index with any CLIP checkpoint, supports query-by-text and query-by-image.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Two-tower | "Dual encoder" | Separate image and text encoders ending in a shared-dim projection head |
-| Zero-shot | "No task-specific training" | Classify into classes described only by text at inference; no labels touched |
-| Temperature / logit_scale | "tau" | Learned scalar that scales the similarity matrix before softmax |
-| Prompt template | "A photo of a {}" | Natural-language wrapper around class names; averaging many templates boosts zero-shot accuracy |
-| CLIP | "Image+text model" | The 2021 OpenAI model; vocabulary of the field in 2026 |
-| SigLIP | "Sigmoid CLIP" | Swaps softmax for per-pair sigmoid; trains better at small batches |
-| OpenCLIP | "Open reproduction" | Community-trained CLIP variants on LAION; production default for open-source pipelines |
-| VLM | "Vision-language model" | A CLIP-family encoder plus an LLM, trained to answer questions about images |
 
 ## Further Reading
 

@@ -104,48 +104,7 @@ flowchart LR
 ```
 
 
-## Use It
 
-To plug a real model in, write an adapter. The shape:
-
-```python
-class HttpAdapter:
-    name = "vendor.v1"
-
-    def __init__(self, endpoint, api_key):
-        self.endpoint = endpoint
-        self.api_key = api_key
-
-    def generate(self, prompts):
-        out = []
-        for prompt in prompts:
-            response = http_post(self.endpoint, prompt, self.api_key)
-            out.append(response["text"])
-        return out
-```
-
-Swap `ToyAdapter` for `HttpAdapter` at the top of `main()`. The harness, the tasks, the metrics, and the leaderboard stay the same.
-
-Three patterns to enforce when shipping the harness in a real project:
-
-- **Pin the task files.** The leaderboard.json carries hash-pinned task content or it carries the JSONLs alongside; otherwise the score moves when the task file does, and you cannot tell which.
-- **Diff predictions, not just scores.** The `--include-per-example` flag lets you see what the model said the day the score dropped.
-- **Cap the batch size.** Real adapters have rate limits. A small batch size keeps the harness compatible across vendors.
-
-## Ship It
-
-`outputs/skill-lm-eval-harness.md` carries the recipe: JSONL task spec, five metrics, swappable adapter, batched runner, leaderboard JSON with schema string. The task files in `outputs/tasks/` are the fixtures; copy them into a real project as starters.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Task spec | "The eval format" | JSONL file with prompt, targets, metric, optional extras per example |
-| Metric | "How you score" | Function from (prediction, targets, extras) to a float in [0, 1] |
-| Adapter | "The model client" | Object with a generate(prompts) -> list[str] method; the only model-specific code |
-| Leaderboard | "The scoreboard" | JSON with per-task scores, total counts, latency, and an overall average |
-| Code exec metric | "Run it and check" | Execute the prediction in a restricted namespace, compare against input-output pairs |
 
 ## Further Reading
 

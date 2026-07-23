@@ -97,40 +97,7 @@ They cannot reliably: determine whether a stated review date is genuine, resolve
 | Governance log not maintained | Log treated as optional; drift goes undetected | Make log a pipeline artifact, not an optional output |
 | Authority score trusted over currency | High-authority source passes even though it is three years old in a compliance domain | Each dimension scored independently; AND-gate, not weighted average |
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of two decisions this lesson defines:
-
-1. A **source quality scorer** that takes a candidate source record (tier, last-modified date, owner, scope-fit flag, consistency flag) and scores each of the four quality dimensions, then returns an overall disposition: `ADMIT`, `REJECT`, or `DEFER` (human review required).
-2. A **governance policy enforcer** that runs the scorer against a small synthetic corpus candidate list and prints the full governance log — the same structured output a real pipeline would write to disk.
-
-The program makes the AND-gate rule explicit: a source that scores well on three dimensions but fails currency is rejected, not averaged through. Run it and observe which sources are rejected and why.
-
-## Ship It
-
-`outputs/skill-source-quality-gate.md` is a one-page decision aid for a consultant or engineer setting up or auditing a RAG corpus. It includes the four-dimension scoring rubric, the tier classification table, domain recency windows, and a governance log checklist — paste it into a project kickoff or a corpus review session.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Source governance | "Deciding what goes in the index" | A formal, auditable process for evaluating candidate sources against defined quality criteria before indexing |
-| Authority tier | "How trusted the document is" | A tiered classification (T1/T2/T3) based on ownership, review process, and version control — not on content quality alone |
-| Recency window | "How old is too old" | A domain-specific time threshold after which a document's currency dimension score drops below the admission threshold |
-| AND-gate policy | "All dimensions must pass" | Each quality dimension is scored independently; a single failing dimension rejects the source regardless of other scores |
-| Governance log | "The audit trail" | A machine-readable record of every source evaluated, its scores, its disposition, and the reviewer — maintained as a pipeline artifact |
-| Supersession registry | "The replacement map" | A record linking each document to the document it replaces, used to remove outdated versions from the index automatically |
-| Corpus drift | "The index going stale" | The gradual degradation of corpus quality as documents age out of their recency window or are superseded after initial indexing |
-| Scope fit | "Does it belong here" | Whether a candidate source's content falls within the declared task domain of the assistant — independent of its authority or currency |
-
-## Consultant field notes
-
-- **The corpus that scored 0.82 recall and still shipped bad answers.** Offline retrieval metrics looked healthy; the real failure was three years of ungoverned sources feeding the index. Lesson: retrieval metrics measure the corpus you built, not the corpus you needed.
-- **The T3 document everyone trusted because it was on the intranet.** A widely-circulated AI-generated FAQ got past the gate because no one updated the tier policy. Lesson: the policy artifact is a versioned document, not a one-time decision.
-- **The superseded policy that nobody told the index about.** A new compliance document was published; the old one stayed in the corpus and kept being retrieved for six weeks. Lesson: supersession without a registry is just guessing.
-- **The recency window the team picked in the kickoff and never revisited.** Compliance domain, 36-month window — inherited from a stable technical reference domain. Old regulatory guidance stayed admissible for a year. Lesson: recency windows are domain-specific and must be set, not copied.
-- **The governance log the auditors never asked for, until they did.** Treat the log as a pipeline artifact from day one; backfilling it after a finding is roughly an order of magnitude more painful than running it from the start.
 
 ## Further Reading
 

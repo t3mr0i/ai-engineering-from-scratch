@@ -121,36 +121,7 @@ Descriptions land in the model's context verbatim. A malicious server can embed 
 
 All three are open; a full evaluation loop runs in under an hour on a modest GPU setup. Include one in your CI (eval-driven development is covered in a future phase).
 
-## Use It
 
-`code/main.py` ships a tool-schema linter that audits a registry against the rules above. It flags:
-
-- Names that violate `snake_case` or contain arguments.
-- Descriptions under 40 chars, over 1024 chars, or missing the "Do not use for" sentence.
-- Schemas with untyped fields, missing required lists, or suspicious description patterns (indirect-injection keywords).
-- Monolithic `action: str` designs.
-
-Run it on the included `GOOD_REGISTRY` (passes) and `BAD_REGISTRY` (fails on every rule) to see the exact findings.
-
-## Ship It
-
-This lesson produces `outputs/skill-tool-schema-linter.md`. Given any tool registry, the skill audits it against the design rules above and produces a fix-list with severities and suggested rewrites. Can run in CI.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Tool schema | "Input shape" | JSON Schema for the tool's arguments |
-| Tool description | "The when-to-use-it paragraph" | The natural-language brief the model reads during selection |
-| Atomic tool | "One tool one action" | A tool whose name uniquely identifies its behavior |
-| Monolithic tool | "Swiss Army" | Single tool with an `action` string argument; selection accuracy tanks |
-| Enum-closed set | "Categorical parameter" | `{type: "string", enum: [...]}` as the correct shape for closed domains |
-| Tool poisoning | "Injected description" | Hidden instructions in a tool description that hijack the agent |
-| Tool-selection accuracy | "Did it pick right?" | Percentage of queries where the model calls the correct tool |
-| Description linter | "CI for schemas" | Automated audit that enforces naming, length, disambiguation rules |
-| Namespace prefix | "notes_*" | Shared name prefix that groups related tools in large registries |
-| StableToolBench | "Selection benchmark" | Public benchmark for measuring tool-selection accuracy |
 
 ## Further Reading
 

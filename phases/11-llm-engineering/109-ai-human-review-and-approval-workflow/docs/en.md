@@ -100,37 +100,7 @@ Minimum audit record fields:
 - `revision_notes` — required when decision is request-revision; optional otherwise
 - `model_version` — the model and prompt version that produced the output
 
-## Use It
 
-`code/main.py` models two things. First, a **risk classifier** that takes a description of an AI output (type, reversibility, audience, downstream action) and assigns it a tier from the table above, with the gate requirements for that tier. Second, an **approval gate simulator** that runs a synthetic batch of AI outputs through the gate: some route to accept, some to revision, one to escalation, and one demonstrates the rubber-stamp detection signal. The simulator measures approval time against the rubber-stamp threshold and flags any output where approval was faster than the mandatory hold.
-
-## Ship It
-
-`outputs/skill-hitl-gate-designer.md` is a one-page decision aid: a filled-in template for specifying a new HITL gate, including the risk tier assessment, reviewer decision surface, escalation path, timeout schedule, and the four quality measurement signals to instrument from day one.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Human-in-the-loop (HITL) | "A human reviews the AI output" | A structured gate with a defined decision surface, named owner, timeout, and audit record |
-| Risk tier | "How sensitive the output is" | A classification by reversibility and downstream blast radius that determines gate requirements |
-| Rubber stamp | "Approving without reading" | A gate where approval time distribution collapses to near-zero, producing no quality signal |
-| Escalation path | "Who reviews if the first person doesn't" | A named sequence of reviewers with explicit timeouts ending in a conservative default action |
-| Conservative default | "What happens when no one decides" | Inaction or explicit rejection; never auto-approval — the most violated principle in gate design |
-| Decision surface | "What the reviewer is asked to decide" | The bounded, specific question the gate presents; reviewers asked open-ended questions perform worse |
-| Audit trail | "Logging who approved what" | A tamper-evident record including output id, reviewer identity, decision, timestamp, and model version |
-| Dual sign-off | "Two approvers" | Sequential or parallel approval by two independent reviewers; required for Tier 4 and high-value Tier 3 |
-
-## Consultant field notes
-
-Five patterns that show up in nearly every AI workflow engagement, named so you can spot them in a kickoff meeting and not be surprised six months later.
-
-- **The prompt that worked in the demo but failed in production.** The pilot team used 12 hand-picked examples; production saw 12,000 and the model's failure rate on the long tail was never measured. The fix is not a better prompt — it is an evaluation set built from the distribution the system will actually see, not the one the vendor demoed.
-- **The RAG that returned the right doc but the wrong paragraph.** The retrieval metric (recall@5, hit rate) was green; the answer was wrong because the chunking split the relevant clause across two segments and the generator stitched them badly. Retrieval quality is not answer quality. Measure the latter.
-- **The vendor pilot that never made it past the security review.** The procurement, legal, and infosec review started in week 10 of a 12-week pilot. The technology was never the blocker; the procurement timeline was. Build the governance review into the pilot plan from week one, or expect the pilot to die in legal.
-- **The use case everyone approved but nobody wanted.** The steering committee signed off on the AI-assisted contract review tool; the lawyers who would actually use it were never consulted. Adoption stalled at three users. The lesson: sponsor signoff without user signoff is not a use case, it is a slide.
-- **The AI feature that hit a cost ceiling in month two.** Per-call inference cost looked fine at 1,000 users; at 100,000 users the LLM API bill exceeded the feature's revenue contribution. Unit economics that work in pilot do not always survive contact with real volume — instrument cost per successful task from day one, not when finance notices.
 
 ## Further Reading
 

@@ -98,46 +98,7 @@ This lesson frames the prompting discipline that the rest of this course operati
 - **Phase 11 · 02** covers chain-of-thought and few-shot patterns. Hypothesis refinement loops are a natural application: few-shot examples of "hypothesis → challenge → refined hypothesis" train the model to hold the adversarial role reliably.
 - **Phase 14 · 39** (reviewer agent) extends the review discipline from a human-in-the-loop to a model-as-reviewer. The output contract defined here becomes the evaluation rubric for that reviewer agent.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two core decisions this lesson covers:
-
-1. A **stakeholder-context router** that takes a prompt description (audience level, decision type, belief state) and assigns it to one of four prompt templates with different framing strategies.
-2. A **hypothesis-quality scorer** that takes a candidate hypothesis and scores it against five criteria: specificity, falsifiability, audience alignment, scope constraint, and challenge invitation. The scorer flags which criteria are missing and outputs a recommended rewrite.
-
-No network, no real model — the point is to make the *framing policy* explicit, runnable, and inspectable. The same decision logic is what a prompt-review step in an agentic workflow would apply before sending a consultant's draft prompt to the underlying model.
-
-## Ship It
-
-`outputs/skill-consultative-prompt-designer.md` is a one-page, paste-and-use decision aid: given a consulting situation, it walks through the four-layer prompt structure, the hypothesis template, the output contract checklist, and the most common failure modes. Paste it into a system prompt or into a prompt review step.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Consultative prompting | "Better prompts for business" | Encoding role, stakeholder context, hypothesis, and output contract as a structured four-layer prompt |
-| Hypothesis prompt | "Tell it what you think first" | Stating a working answer for the model to challenge or extend, not asking an open question |
-| Stakeholder context | "Give it background" | Encoding the audience's level, existing belief, and decision type — not generic "executive" |
-| Output contract | "Tell it the format" | Specifying format, length limit, and the exact decision the output must enable |
-| Belief encoding | "Telling it what they think" | Explicitly stating the audience's current position so the model orients arguments to persuade, not survey |
-| Pyramid principle | "Answer first" | Stating the conclusion before the argument; applied to prompts: state the hypothesis before the question |
-| Sycophancy | "It always agrees with me" | Model tendency to confirm the user's stated position; countered by explicit challenge instructions |
-| Ghost deck | "Adversarial draft" | Pre-client document iterated with a challenging co-author; the model plays this role in the hypothesis loop |
-
-## Consultant field notes
-
-Named patterns a senior consultant recognizes from the room, not from the model card.
-
-**The prompt that worked in the demo but failed in production.** A clean four-layer prompt — role, stakeholder, hypothesis, output contract — produces a credible memo on a single test question, and the team declares victory. The same prompt, fed ten real client questions in sequence, drifts: the role layer is silently overridden by earlier turns, the hypothesis bleeds across unrelated questions, and the output contract is honored less than half the time. The lesson: a prompt is per-invocation, not per-project. Treat each new question as a fresh frame.
-
-**The RAG that returned the right doc but the wrong paragraph.** The retrieval system surfaces the correct policy document, but the model's output quotes a neighboring paragraph that says almost the opposite. The failure is not retrieval — it is the absence of a quote-anchored output contract. Add "every factual claim must cite the exact passage you read it from" to the contract, and the wrong-paragraph failure drops sharply in our experience.
-
-**The vendor pilot that never made it past the security review.** A use case is scoped, a vendor is selected, a paid pilot runs for six weeks, and the deliverable is shelved because the security architecture review surfaces data-flow issues that were never part of the prompt design. The lesson: stakeholder context must include the security and compliance reader, not just the business sponsor. A prompt that names the CISO as a downstream reader forces the model to flag the questions the CISO will ask.
-
-**The use case everyone approved but nobody wanted.** Steering committee, business unit, and IT all signed off. Adoption stalls. The lesson encoded in consultative prompting is that belief encoding applies to the end user too, not only to the decision-maker in the room. If the prompt never names what the frontline user already believes about the tool, the output optimizes for the sponsor, not the adopter.
-
-**The AI feature that hit a cost ceiling in month two.** The pilot numbers were small. Production traffic is roughly an order of magnitude larger, the per-call LLM cost compounds with retrieval and reasoning steps, and the budget conversation resets. The lesson: any consultative prompt that goes into a production system needs an explicit cost frame in the output contract — "this answer will be generated at most N times per session" — because the consulting memo that survives the first read is also the one the CFO will reread at scale.
 
 ## Further Reading
 

@@ -289,7 +289,6 @@ parsed by `site/build.js` into the lesson catalog.
 | 15 | [Prompt Caching & Context Caching](phases/11-llm-engineering/15-prompt-caching) | ✅ | ~60 min |
 | 16 | [LangGraph: State Machines for Agents](phases/11-llm-engineering/16-langgraph-state-machines) | ✅ | ~75 min |
 | 17 | [Agent Framework Tradeoffs](phases/11-llm-engineering/17-agent-framework-tradeoffs) | ✅ | ~45 min |
-| 18 | [Responsible AI Compliance Workflow](phases/11-llm-engineering/18-responsible-ai-compliance-workflow) | ✅ | ~45 min |
 | 19 | [AI-Driven Testing and QA](phases/11-llm-engineering/19-ai-driven-testing-qa) | ✅ | ~45 min |
 | 21 | [AI-Assisted Documentation](phases/11-llm-engineering/21-ai-assisted-documentation) | ✅ | ~45 min |
 | 23 | [AI-Enhanced User Research](phases/11-llm-engineering/23-ai-enhanced-user-research) | ✅ | ~45 min |
@@ -298,8 +297,6 @@ parsed by `site/build.js` into the lesson catalog.
 | 26 | [Consultative Prompting](phases/11-llm-engineering/26-consultative-prompting) | ✅ | ~45 min |
 | 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape) | ✅ | ~45 min |
 | 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai) | ✅ | ~45 min |
-| 30 | [Data Literacy for AI Projects](phases/11-llm-engineering/30-data-literacy-for-ai-projects) | ✅ | ~45 min |
-| 31 | [Hands-on Prompt Clinic](phases/11-llm-engineering/31-hands-on-prompt-clinic) | ✅ | ~45 min |
 | 32 | [AI Use Case Identification Workshop](phases/11-llm-engineering/32-ai-use-case-identification-workshop) | ✅ | ~45 min |
 | 33 | [AI Change Management and Team Integration](phases/11-llm-engineering/33-ai-change-management-team-integration) | ✅ | ~45 min |
 | 34 | [AI Champion Enablement](phases/11-llm-engineering/34-ai-champion-enablement) | ✅ | ~45 min |

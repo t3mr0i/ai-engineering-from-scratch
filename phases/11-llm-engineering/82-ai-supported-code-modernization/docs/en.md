@@ -70,46 +70,7 @@ The four-pass protocol surfaces information; it does not replace the following h
 
 The slice framework is a structured way to surface these decisions early, make them explicit, and record them so the reviewer agent in Phase 14 · 39 has the right context.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two core decisions in this lesson:
-
-1. A **legacy module scorer** that evaluates a module description against the five readiness dimensions and returns a numeric score and a readiness tier (Red / Amber / Green).
-2. A **slice prioritizer** that takes a list of candidate slices with their scores and orders them by: safety (no Red dimensions), then by a combined score of risk reduction and coupling, producing a recommended sequence with the rationale shown for each position.
-
-No network, no real model — the point is to make the scoring and prioritization policy explicit and verifiable before you apply it to a real codebase.
-
-## Ship It
-
-`outputs/skill-legacy-refactor-slice-planner.md` is a one-page decision aid: the four-pass prompt templates, the readiness scoring rubric in table form, slice sizing rules of thumb, and the verification gate checklist that links each slice to Phase 14 · 38's gate format.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Refactoring slice | "A chunk of the rewrite" | A bounded, independently deployable and verifiable unit of change with explicit entry/exit criteria |
-| Four-pass audit | "Let the model analyze the code" | A structured sequence of focused prompts (structure, risk, coverage, slice candidates) designed to produce actionable output, not a single open-ended analysis |
-| Readiness score | "Is this module safe to touch?" | A numeric rubric across five dimensions (coupling, coverage, secrets, dependency age, change frequency) used to sequence modernization work |
-| Coupling | "How tangled is it?" | The number and nature of callers across bounded context boundaries; high coupling increases slice blast radius |
-| Coverage gap map | "What's not tested?" | An enumeration of code paths without test coverage, produced in Pass 3; required before any slice can be declared safe to cut |
-| Domain contract | "Hidden business logic" | Implicit behavioral requirements embedded in legacy code that no documentation describes; the primary source of silent regressions in rewrites |
-| Verification gate | "Did this slice actually work?" | A pre-defined, automatable check (test suite, diff size bound, coverage delta) that a slice must pass before the next slice begins; operationalized in Phase 14 · 38 |
-| Slice sizing | "How big should the PR be?" | The constraint that a slice's full diff must be reviewable by a senior engineer in under 30 minutes; anything larger should be split |
-
-## Consultant field notes
-
-These are the patterns a senior modernization consultant recognizes from the second meeting onward. Names matter because they compress a diagnosis the team would otherwise spend two weeks rediscovering.
-
-1. **The demo-grade rewrite.** A model produces a clean refactor against a hand-picked sample of the legacy code; production reveals it never saw the ten callers that violated the implicit contract. The lesson is that the audit must run against the whole repository, not a representative module.
-
-2. **The high-score module with a hidden Red dimension.** The prioritizer ranks a module Green across four dimensions; the fifth is a 0 nobody looked at. The lesson is that readiness scores are only as honest as the assessment behind each cell — never accept a Green row without inspecting its evidence.
-
-3. **The slice that grew during review.** The PR opened at 400 lines; by the time three reviewers commented it was 1,800. The lesson is that a slice is sized at *cut* time, not at merge time — if review is finding scope to add, the boundary was wrong.
-
-4. **The vendor pilot that never escaped the security review.** The modernization ran a successful PoC against synthetic data; the real-data path surfaced secrets, PII handling, and audit-logging gaps that had no slice boundary at all. The lesson is that readiness scoring must include a sixth dimension: data classification, not just code hygiene.
-
-5. **The use case everyone approved but nobody wanted.** The business sponsor signed off, the architecture board signed off, and the resulting module shipped — and sat unused. The lesson is that slice selection should weight caller frequency and downstream user impact, not only risk reduction, or the team will produce correct code for a problem no one has.
 
 ## Further Reading
 

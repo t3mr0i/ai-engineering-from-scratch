@@ -72,30 +72,7 @@ Datadog v1.37+ maps GenAI attributes natively into its LLM Observability schema.
 - **Not setting stability opt-in.** Your attributes may get renamed on backend upgrade.
 
 
-## Use It
 
-- **Datadog LLM Observability** (v1.37+) maps attributes natively.
-- **Langfuse / Phoenix / Opik** (Lesson 24) — auto-instrument the ecosystem.
-- **Jaeger / Honeycomb / Grafana Tempo** — raw OTel traces; build dashboards from GenAI attributes.
-- **Self-hosted** — run the OTel Collector with a GenAI processor.
-
-## Ship It
-
-`outputs/skill-otel-genai.md` wires OTel GenAI spans into an existing agent with content-capture defaults and external-reference storage.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| GenAI SIG | "OpenTelemetry GenAI group" | OTel working group defining the schema |
-| invoke_agent | "Agent span" | Name of the span representing an agent run |
-| CLIENT span | "Remote call" | Span for a call to a remote agent service |
-| INTERNAL span | "In-process" | Span for an in-process agent run |
-| gen_ai.provider.name | "Provider" | anthropic / openai / aws.bedrock / google.vertex |
-| gen_ai.data_source.id | "RAG source" | Which corpus/store a retrieval hit |
-| Content capture | "Prompt logging" | Opt-in capture of messages; store externally in prod |
-| Stability opt-in | "Preview mode" | Env var to pin experimental conventions |
 
 ## Further Reading
 

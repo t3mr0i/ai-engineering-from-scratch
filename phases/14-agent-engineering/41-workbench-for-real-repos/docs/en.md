@@ -74,30 +74,7 @@ Workbench-guided:
 | `reviewer_total` | Qualitative judgment on top of the gate |
 
 
-## Use It
 
-This lesson is the case file you cite when:
-
-- Someone asks why every PR carries an `agent-rules.md` and a scope contract.
-- A team wants to drop the verification gate "just for this sprint."
-- A new agent product launches and you need a portable benchmark for whether it actually saves time.
-
-The numbers travel further than the explanation.
-
-## Ship It
-
-`outputs/skill-workbench-benchmark.md` is a portable evaluation harness that runs any agent product through both pipelines against a project's own sample app and reports the five outcomes.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Sample app | "Toy repo" | Small but realistic enough to exercise all seven surfaces |
-| Pipeline | "Workflow" | Ordered sequence of surface reads/writes the agent follows |
-| Before/after report | "The receipts" | The artifact you hand to a skeptic |
-| False negative | "Workbench overkill" | Tasks where prompt-only is faster; useful to enumerate honestly |
-| Workbench benchmark | "Reliability score" | Portable harness that runs the comparison on your codebase |
 
 ## Further Reading
 

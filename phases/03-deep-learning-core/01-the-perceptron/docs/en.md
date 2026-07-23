@@ -113,51 +113,7 @@ This is a fundamental limit. A single perceptron can only solve linearly separab
 The fix: stack perceptrons into layers. A multi-layer perceptron can solve XOR by combining two linear decisions into a nonlinear one.
 
 
-## Use It
 
-Everything you just built from scratch exists in one import:
-
-```python
-from sklearn.linear_model import Perceptron as SkPerceptron
-import numpy as np
-
-X = np.array([[0,0],[0,1],[1,0],[1,1]])
-y = np.array([0, 0, 0, 1])
-
-clf = SkPerceptron(max_iter=100, tol=1e-3)
-clf.fit(X, y)
-print([clf.predict([x])[0] for x in X])
-```
-
-Five lines. Your 30-line `Perceptron` class does the same thing. The sklearn version adds convergence checks, multiple loss functions, and sparse input support -- but the core loop is identical: weighted sum, step function, weight update on error.
-
-The real gap shows up at scale. What changes in production networks:
-
-- The step function becomes sigmoid, ReLU, or other smooth activations
-- Weights are learned automatically via backpropagation (Lesson 03)
-- Layers get deeper: 3, 10, 100+ layers
-- The same principle holds: each layer creates new features from the previous layer's outputs
-
-A single perceptron can only draw straight lines. Stack them, and you can draw any shape.
-
-## Ship It
-
-This lesson produces:
-- `outputs/skill-perceptron.md` - a skill covering when single-layer vs multi-layer architectures are needed
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Perceptron | "A fake neuron" | A linear classifier: dot product of inputs and weights, plus bias, through a step function |
-| Weight | "How important an input is" | A multiplier that scales each input's contribution to the decision |
-| Bias | "The threshold" | A constant that shifts the decision boundary, letting the perceptron fire even with zero inputs |
-| Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
-| Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
-| XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
-| Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## Further Reading
 

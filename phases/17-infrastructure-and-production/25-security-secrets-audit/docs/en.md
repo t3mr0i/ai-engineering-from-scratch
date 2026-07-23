@@ -103,29 +103,7 @@ Supply-chain attack: compromised CI/CD credentials exfiltrated env vars across t
 - Vercel 2026: CI/CD creds compromised → thousands of customer env vars leaked.
 - Audit log retention: SOC 2 = 1 year, HIPAA = 6 years.
 
-## Use It
 
-`code/main.py` implements a toy PII scrubber with consistent tokenization and an append-only audit log.
-
-## Ship It
-
-This lesson produces `outputs/skill-llm-security-plan.md`. Given regulatory scope and current state, plans the vault migration, scrubber, egress, audit log.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Vault | "secrets store" | Centralized credential management service |
-| IAM role | "identity-based auth" | Role assumed by app; returns short-lived creds |
-| OIDC for CI/CD | "cloud-issued tokens" | No static keys in CI — identity via OIDC |
-| TruffleHog / GitGuardian / Gitleaks | "secret scanners" | Commit-time secret detection |
-| RBAC / ABAC | "access control" | Role-based vs attribute-based |
-| PII scrubbing | "data masking" | Remove or tokenize sensitive entities |
-| Consistent tokenization | "stable placeholders" | Same value → same token each time |
-| Mesh approach | "Mesh tokenization" | Semantic-preserving tokenization pattern |
-| Egress whitelist | "outbound allowlist" | Only permitted domains reachable |
-| Audit log | "immutable history" | Append-only record for compliance |
 
 ## Further Reading
 

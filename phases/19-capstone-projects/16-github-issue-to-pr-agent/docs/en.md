@@ -66,45 +66,7 @@ GitHub issue labeled `@agent fix` or PR comment
 - Budget: per-repo daily dollar ceiling; max PRs per repo per day
 
 
-## Use It
 
-```
-# on github.com
-  - user labels issue #842 with `@agent fix this`
-  - PR #1903 appears 14 minutes later
-  - body:
-    > Fixed NPE in widget.dedupe() caused by null comparator entry.
-    > Added regression test widget_test.go::TestDedupeNullComparator.
-    > Coverage delta: +0.12%
-    > Turns: 7  Cost: $1.80  Trace: langfuse:...
-    > Label: needs-review
-```
-
-## Ship It
-
-`outputs/skill-issue-to-pr.md` is the deliverable. A GitHub App + async cloud worker that turns labeled issues into review-ready PRs with bounded cost and scoped credentials.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Pass rate on 30 issues | End-to-end success (CI green + coverage OK) |
-| 20 | PR quality | Diff size, coverage delta, style conformance |
-| 20 | Cost and latency per resolved issue | $ and wall-clock per PR |
-| 20 | Safety | Scoped token, per-repo budget, no force-push, credential hygiene |
-| 15 | Operator UX | Rationale comments, retry affordance, @-mention follow-up |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| GitHub App | "Scoped bot identity" | App with fine-grained permissions + short-lived installation token |
-| Async cloud agent | "Background agent" | Non-interactive worker that runs in a cloud sandbox, not a terminal |
-| Environment inference | "Dockerfile synthesis" | Detect language + package manager, generate a Dockerfile if absent |
-| Verification | "CI-in-sandbox" | Run the full test suite inside the worker before opening a PR |
-| Coverage delta | "Coverage preservation" | Change in test coverage % from base to agent branch |
-| Per-repo budget | "Daily ceiling" | Dollar and PR-count cap enforced at the dispatcher |
-| Rationale | "PR body explanation" | Agent's summary of what changed and why; required in the PR body |
 
 ## Further Reading
 

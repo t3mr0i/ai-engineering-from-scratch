@@ -36,57 +36,7 @@ Rule of thumb:
 - **Both:** HF Tokenizers — one library, training + serving.
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| Training a monolingual model from scratch | HF Tokenizers (BPE) |
-| Training a multilingual model | SentencePiece (Unigram, `character_coverage=0.9995`) |
-| Serving an OpenAI-compatible API | tiktoken (`o200k_base` for GPT-4+) |
-| Domain-specific vocab (code, math, protein) | Train custom BPE on domain corpus, merge with base vocab |
-| Edge inference, small model | Unigram (smaller vocabularies work better) |
-
-Vocabulary size is a scaling decision, not a constant. Rough heuristic: 32k for <1B params, 50-100k for 1-10B, 200k+ for multilingual/frontier.
-
-## Ship It
-
-Save as `outputs/skill-bpe-vs-wordpiece.md`:
-
-```markdown
----
-name: tokenizer-picker
-description: Pick tokenizer algorithm, vocab size, library for a given corpus and deployment target.
-version: 1.0.0
-phase: 5
-lesson: 19
-tags: [nlp, tokenization]
----
-
-Given a corpus (size, languages, domain) and deployment target (training from scratch / fine-tuning / API-compatible inference), output:
-
-1. Algorithm. BPE, Unigram, or WordPiece. One-sentence reason.
-2. Library. SentencePiece, HF Tokenizers, or tiktoken. Reason.
-3. Vocab size. Rounded to nearest 1k. Reason tied to model size and language coverage.
-4. Coverage settings. `character_coverage`, `byte_fallback`, special-token list.
-5. Validation plan. Average tokens-per-word on held-out set, OOV rate, compression ratio, round-trip decode equality.
-
-Refuse to train a character-coverage <0.995 tokenizer on corpora with rare-script content. Refuse to ship a vocab without a frozen `tokenizer.json` hash check in CI. Flag any monolingual tokenizer under 16k vocab as likely under-spec.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| BPE | Byte-Pair Encoding | Greedy merge of most-frequent character pairs until target vocab size hit. |
-| Byte-level BPE | No unknown tokens ever | BPE over raw 256 bytes; GPT-2 / Llama use this. |
-| Unigram | Probabilistic tokenizer | Prunes from a large candidate set using log-likelihood; used by T5, Gemma. |
-| SentencePiece | The whitespace one | Library that trains BPE/Unigram on raw text; space encoded as `▁`. |
-| tiktoken | The fast one | OpenAI's Rust-backed BPE encoder for pre-built vocabs. No training. |
-| Merge list | The magic numbers | Ordered list of `(a, b) → ab` merges; inference applies in order. |
-| Character coverage | How rare is too rare? | Fraction of characters in training corpus the tokenizer must cover; ~0.9995 typical. |
 
 ## Further Reading
 

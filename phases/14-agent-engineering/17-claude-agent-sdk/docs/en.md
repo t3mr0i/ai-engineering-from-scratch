@@ -78,30 +78,7 @@ The hosted alternative (beta header `managed-agents-2026-04-01`). Long-running a
 - **Session bloat.** Sessions accumulate; size grows. Use `list_sessions` + expiry policy.
 
 
-## Use It
 
-- **Claude Agent SDK** for Claude-first products that want the Claude Code harness shape.
-- **Claude Managed Agents** for hosted long-running async work.
-- **OpenAI Agents SDK** (Lesson 16) for OpenAI-first counterparts.
-- **LangGraph + custom tools** if you want the graph-shaped state machine instead.
-
-## Ship It
-
-`outputs/skill-claude-agent-scaffold.md` scaffolds a Claude Agent SDK app with subagents, hooks, session store, MCP server attachment, and W3C trace propagation.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Agent SDK | "Claude Code as a library" | Harness shape: tools, MCP, hooks, subagents, session store |
-| Subagent | "Child agent" | Separate context, own budget; results bubble up |
-| Session store | "Conversation DB" | Persist, load, list, delete turns with subagent cascade |
-| Hook | "Lifecycle callback" | Pre/post tool, session, prompt submit, compact, stop |
-| W3C trace context | "Cross-process trace" | Parent span propagates into CLI subprocess |
-| Managed Agents | "Hosted harness" | Anthropic-hosted long-running async work |
-| `--session-mirror` | "Transcript mirror" | Writes session turns to an external file as they stream |
-| MCP server | "Tool surface" | External tool/resource source attached to the agent |
 
 ## Further Reading
 

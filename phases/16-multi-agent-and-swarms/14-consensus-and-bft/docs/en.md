@@ -84,33 +84,7 @@ The `threshold` parameter decides when to accept and when to retry. Too low: you
 - **Adversarial multi-round.** If agents can observe prior rounds and mimic (Du 2023 debate), they start agreeing with each other regardless of truth. Bound the rounds (2-3 typically).
 
 
-## Use It
 
-`outputs/skill-consensus-designer.md` designs a consensus protocol for a multi-agent ensemble: clustering method, weighting, threshold, and the escalation policy for sub-threshold rounds.
-
-## Ship It
-
-Before shipping any consensus mechanism:
-
-- **Attack-test with at least the three patterns** above. Your protocol should fail predictably, not silently.
-- **Log every minority cluster** with provenance. Minority clusters are your early-warning system for correlated errors.
-- **Enforce bounded rounds.** No "keep debating until agreement" — that rewards sycophancy.
-- **Separate agreement from correctness.** Consensus output goes to a verifier; verifier is independent of the ensemble.
-- **Monitor the agreement rate.** A sharp rise means conformity bias; a sharp fall means model drift.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| BFT | "Byzantine fault tolerance" | Castro-Liskov 1999 protocol for consensus with `f < n/3` arbitrary faults. |
-| Byzantine | "Any bad behavior" | A node that can lie, drop messages, fail silently — anything but crash safely. |
-| Confidence probe | "How sure are you?" | Self-reported or calibrator-predicted probability attached to a vote. |
-| Semantic clustering | "Same answer, different words" | Grouping equivalent answers before counting votes. |
-| Geometric median | "Robust center" | The point minimizing sum of distances to sample points. Robust to outliers, unlike the mean. |
-| Monoculture | "Same model, same failures" | Correlated errors when agents share training data or base model. |
-| Sycophantic conformity | "Agreeing with the loud voice" | An agent's vote biases toward whoever spoke first/loudest. |
-| Core/Edge | "Hierarchical BFT" | WBFT split: small Core consensus first, Edge nodes follow. Bounds latency. |
 
 ## Further Reading
 

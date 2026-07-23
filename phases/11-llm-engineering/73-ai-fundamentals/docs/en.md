@@ -133,49 +133,7 @@ Before any AI project enters scoping or estimation, three questions must have wr
 
 If the answer to question 2 is "we will trust the output," the project is not ready to begin. If the answer to question 3 is "we have not assessed this," it is a risk that must be disclosed in writing before sign-off. The CRM RAG, the contract reviewer, and the prompt workshop all had a moment where one of these questions could have been asked and was not. Each was preventable.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the decisions this lesson is about. It runs three things:
-
-1. A **system-type classifier** that takes structured characteristics of a proposed AI use case and routes it to the correct AI system layer (rule-based, ML classifier, generative, or agentic), with the reasoning shown at each gate.
-2. A **risk evaluator** that applies the four agentic risk gates (blast radius, reversibility, oversight, injection surface) and produces PROCEED / REVIEW / BLOCK verdicts.
-3. A **failure-shape simulator** that replays the CRM RAG and email reply agent failure stories above against the classifier and risk evaluator, showing that the failures were predictable at scoping time and would have been flagged if the three questions had been asked.
-
-No network, no models — the point is to make the classification and risk policy explicit and runnable, and to demonstrate that a poorly classified system produces the wrong risk verdict.
-
-## Ship It
-
-`outputs/skill-ai-system-type-classifier.md` is a one-page decision aid: a table mapping use case characteristics to system type, the four agentic risk gates in checklist form, the EU AI Act risk tier quick-reference, and the three consultant questions. Paste it into a project kickoff or client workshop.
-
-
-## Consultant field notes
-
-Patterns a senior consultant recognises by name. Each is something you will see again.
-
-- **The chatbot that isn't.** A system is sold as a chatbot because the UI looks like chat, but architecturally it is agentic — it reads external text, calls tools, and takes actions. The classifier would call it AGENTIC; the scoping doc calls it a chatbot. The mismatch is where the failure happens. Always classify by capability, not by UI.
-
-- **The accuracy trap.** A 92 percent accurate generative system at scale is a flow of confidently wrong answers. Volume turns accuracy into throughput of error. The question is not "what is the accuracy" but "what is the verification layer and how quickly does a wrong answer surface."
-
-- **The policy-only HITL.** A human checkpoint that exists in a runbook but not in the code is not a checkpoint — it is a hopeful pattern that fails under deadline pressure. The agentic risk gate requires HITL to be technically enforced, not documented.
-
-- **The email-shaped attack surface.** Any agent that reads inbound email, support tickets, web pages, or external documents reads attacker-controllable text. Treat every such input as a potential prompt injection vector, and apply scope restrictions before the agent decides what to do with it. The prompt workshop failure story above started this way.
-
-- **The retrofit compliance bill.** Documenting an AI system for the EU AI Act after deployment costs roughly 3–5x what it costs during development, in our experience, because the design decisions that affect what is logged, who can override, and how the system explains itself were made without documentation in mind. Classify before you build.
-
-- **The model blame deflection.** When a generative system fails in production, the instinct is to blame the model ("it hallucinated"). The model did what models do. The system around the model — the retrieval layer, the verification layer, the human checkpoint — is what was missing. Reframe the post-mortem: the model behaved as expected; the system was incomplete.
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Machine learning | "Training the AI" | Statistical model fitting: mapping inputs to outputs via optimization on examples |
-| Foundation model | "The underlying model" | A large model pre-trained on broad data, adapted for tasks via prompting or fine-tuning |
-| Hallucination | "Making things up" | A model generating plausible-looking but factually incorrect content with no indication of uncertainty |
-| Agentic AI | "Autonomous AI" | A model that plans and takes actions via tools across multiple steps, with compounding state |
-| Prompt injection | "Jailbreaking" | Attacker-controlled text in model input that overrides the system's intended instructions |
-| EU AI Act | "AI regulation" | EU regulation in force 2026: classifies AI systems by risk tier with mandatory compliance obligations for high-risk systems |
-| RAG | "Giving the AI your data" | Retrieval-Augmented Generation: pairing a generator with a retrieval step to ground outputs in specific documents |
-| Blast radius | "How bad can it get" | The scope of real-world impact if an AI system takes an incorrect action |
 
 ## Further Reading
 

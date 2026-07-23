@@ -122,41 +122,7 @@ The server never touches an LLM API. The client's user pays for the completions 
 - **Resource theft via sampling.** Server asks client to summarize an attacker's payload, bills the user.
 - **Loop bombs.** Server calls sampling in a tight loop. Clients MUST enforce per-session rate limits.
 
-## Use It
 
-`code/main.py` ships a fake server-to-client sampling harness. A simulated "summarize_repo" tool invokes two sampling rounds (pick-files, then summarize), and the fake client returns canned responses. The harness shows:
-
-- Server sends `sampling/createMessage` with `modelPreferences`.
-- Client returns a completion.
-- Server continues its loop.
-- Rate limiter caps total sampling calls per tool invocation.
-
-What to look at:
-
-- The server exposes only one tool (`summarize_repo`); all reasoning happens in the sampling calls.
-- Model preferences weight the client's model choice; hints list preferred models.
-- The loop terminates on `stopReason: "endTurn"`.
-- The `max_samples_per_tool = 5` limit catches a runaway loop.
-
-## Ship It
-
-This lesson produces `outputs/skill-sampling-loop-designer.md`. Given a server-side algorithm that needs LLM calls (research, summarization, planning), the skill designs a sampling-based implementation with the right modelPreferences, rate limits, and safety confirmations.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Sampling | "Server-to-client LLM call" | Server asks client's model for a completion |
-| `sampling/createMessage` | "The method" | JSON-RPC method for sampling requests |
-| `modelPreferences` | "Model priorities" | Cost / speed / intelligence weights plus name hints |
-| `includeContext` | "Cross-session leakage" | Soft-deprecated context inclusion mode |
-| SEP-1577 | "Tools in sampling" | Allow tools inside sampling for server-hosted ReAct |
-| Human-in-the-loop | "User confirms" | Client surfaces sampling request to user before running |
-| Loop bomb | "Runaway sampling" | Server-side infinite sampling loop; client must rate-limit |
-| Covert sampling | "Hidden reasoning" | Malicious server hides intent in sampling prompts |
-| Resource theft | "Using user's LLM budget" | Server forces client to spend on sampling it does not want |
-| `stopReason` | "Why generation halted" | `endTurn`, `stopSequence`, or `maxTokens` |
 
 ## Further Reading
 

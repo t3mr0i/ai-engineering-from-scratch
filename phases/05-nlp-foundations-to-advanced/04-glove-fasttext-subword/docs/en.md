@@ -28,77 +28,7 @@ This lesson walks all three, then explains which to reach for when.
 **BPE (Byte-Pair Encoding).** Start with a vocabulary of individual bytes (or characters). Count every adjacent pair in the corpus. Merge the most frequent pair into a new token. Repeat for `k` iterations. Result: a vocabulary of `k + 256` tokens where frequent sequences (`ing`, `tion`, `the`) are single tokens and rare words are broken into familiar pieces. Every sentence tokenizes into something.
 
 
-## Use It
 
-In practice, you rarely train any of these yourself. You load pre-trained checkpoints.
-
-```python
-import fasttext.util
-fasttext.util.download_model("en", if_exists="ignore")
-ft = fasttext.load_model("cc.en.300.bin")
-print(ft.get_word_vector("whereupon").shape)
-print(ft.get_word_vector("zoomerapproved").shape)
-```
-
-For BPE-style subword tokenization in the transformer era:
-
-```python
-from transformers import AutoTokenizer
-
-tok = AutoTokenizer.from_pretrained("gpt2")
-print(tok.tokenize("unbelievably tokenized"))
-```
-
-```
-['un', 'bel', 'iev', 'ably', 'Ġtoken', 'ized']
-```
-
-The `Ġ` prefix marks word boundaries (a GPT-2 convention). Every modern tokenizer is a BPE variant, WordPiece (BERT), or SentencePiece (T5, LLaMA).
-
-### When to pick which
-
-| Situation | Pick |
-|-----------|------|
-| Pretrained general-purpose word vectors, no OOV tolerance needed | GloVe 300d |
-| Pretrained general-purpose word vectors, must handle misspellings / neologisms / morphologically rich languages | FastText |
-| Anything going into a transformer (training or inference) | Whatever tokenizer the model shipped with. Never swap. |
-| Training your own language model from scratch | Train a BPE or SentencePiece tokenizer on your corpus first |
-| Production text classification with a linear model | Still TF-IDF. Lesson 02. |
-
-## Ship It
-
-Save as `outputs/skill-embeddings-picker.md`:
-
-```markdown
----
-name: tokenizer-picker
-description: Pick a tokenization approach for a new language model or text pipeline.
-version: 1.0.0
-phase: 5
-lesson: 04
-tags: [nlp, tokenization, embeddings]
----
-
-Given a task and dataset description, you output:
-
-1. Tokenization strategy (word-level, BPE, WordPiece, SentencePiece, byte-level). One-sentence reason.
-2. Vocabulary size target (e.g., 32k for an English-only LM, 64k-100k for multilingual).
-3. Library call with the exact training command. Name the library. Quote the arguments.
-4. One reproducibility pitfall. Tokenizer-model mismatch is the single most common silent production bug; call out which pair must be used together.
-
-Refuse to recommend training a custom tokenizer when the user is fine-tuning a pretrained LLM. Refuse to recommend word-level tokenization for any model targeting production inference. Flag non-English / multi-script corpora as needing SentencePiece with byte fallback.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Co-occurrence matrix | Word-word frequency table | `X[i][j]` = how often word `j` appears in a window around word `i`. |
-| Subword | Piece of a word | A character n-gram (FastText) or learned token (BPE/WordPiece/SentencePiece). |
-| BPE | Byte-pair encoding | Iterative merging of most-frequent adjacent pairs until vocabulary hits target size. |
-| OOV | Out of vocabulary | Word the model has never seen. Word2Vec/GloVe fail. FastText and BPE handle it. |
-| Byte-level BPE | BPE on raw bytes | GPT-2's scheme. Vocabulary starts with 256 bytes, so nothing is ever OOV. |
 
 ## Further Reading
 

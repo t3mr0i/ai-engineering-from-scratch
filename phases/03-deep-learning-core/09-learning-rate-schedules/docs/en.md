@@ -153,59 +153,7 @@ graph TD
 ```
 
 
-## Use It
 
-PyTorch provides schedulers in `torch.optim.lr_scheduler`:
-
-```python
-import torch
-import torch.optim as optim
-from torch.optim.lr_scheduler import CosineAnnealingLR, OneCycleLR, StepLR
-
-model = nn.Sequential(nn.Linear(10, 64), nn.ReLU(), nn.Linear(64, 1))
-optimizer = optim.Adam(model.parameters(), lr=3e-4)
-
-scheduler = CosineAnnealingLR(optimizer, T_max=1000, eta_min=1e-5)
-
-for step in range(1000):
-    loss = train_step(model, optimizer)
-    scheduler.step()
-```
-
-For warmup + cosine, use a lambda scheduler or the `get_cosine_schedule_with_warmup` from HuggingFace:
-
-```python
-from transformers import get_cosine_schedule_with_warmup
-
-scheduler = get_cosine_schedule_with_warmup(
-    optimizer,
-    num_warmup_steps=2000,
-    num_training_steps=100000,
-)
-```
-
-The HuggingFace function is what most Llama and GPT fine-tuning scripts use. When in doubt, use warmup + cosine with warmup = 3-5% of total steps. It works for almost everything.
-
-## Ship It
-
-This lesson produces:
-- `outputs/prompt-lr-schedule-advisor.md` -- a prompt that recommends the right learning rate schedule and hyperparameters for your training setup
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
-| Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
-| Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
-| 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
-| LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
-| Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
-| Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 
 ## Further Reading
 

@@ -66,26 +66,7 @@ Every frontier lab now runs MSJ evaluations at 256+ shots against production mod
 
 Lesson 12 is the in-context iterative attack. Lesson 13 is the long-context length-exploit. Lesson 14 is the encoding attack. Lesson 15 is the injection attack at the system boundary. Together they define the 2026 jailbreak attack surface.
 
-## Use It
 
-`code/main.py` builds a toy target with a keyword filter and a "patterned-continuation" weakness: when the context contains N examples of harmful-compliance pairs, the target's filter score is damped by a power-law factor. You can reproduce the shot-vs-ASR curve.
-
-## Ship It
-
-This lesson produces `outputs/skill-msj-audit.md`. Given a long-context-safety evaluation, it audits: shot counts tested (5, 32, 128, 256, 512), categories covered, defense mechanism (prompt classifier, truncation, rewriting), and power-law-fit statistics.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| MSJ | "many-shot jailbreak" | Long-context attack with hundreds of faux user-assistant compliance pairs |
-| Shot count | "N examples in context" | Number of faux compliance pairs before the target query |
-| Power-law ASR | "ASR = f(shots)^alpha" | Attack success rate grows polynomially, not sigmoidally, in shot count |
-| ICL | "in-context learning" | Model extracts task structure from in-context examples |
-| Pattern defense | "classifier over context" | Defense that detects MSJ structure before the model sees it |
-| Context-window exploit | "long-prompt attack surface" | Attacks that exist because context windows are long |
-| Compositional attack | "MSJ + PAIR" | Combination of MSJ with other attack families; often strictly stronger |
 
 ## Further Reading
 

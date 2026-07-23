@@ -57,76 +57,7 @@ This is where every attention implementation goes wrong the first time. Read slo
 **One Bahdanau / Luong gotcha worth naming.** Bahdanau uses `s_{t-1}` (the decoder state *before* generating the current word). Luong uses `s_t` (the state *after*). Mixing them up produces subtly wrong gradients that are extremely hard to debug. Pick one paper and stick to its convention.
 
 
-## Use It
 
-PyTorch and TensorFlow ship attention directly.
-
-```python
-import torch
-import torch.nn as nn
-
-mha = nn.MultiheadAttention(embed_dim=128, num_heads=8, batch_first=True)
-query = torch.randn(2, 5, 128)
-key = torch.randn(2, 10, 128)
-value = torch.randn(2, 10, 128)
-
-output, weights = mha(query, key, value)
-print(output.shape, weights.shape)
-```
-
-```
-torch.Size([2, 5, 128]) torch.Size([2, 5, 10])
-```
-
-That is a transformer attention layer. Query batch of 5 positions, key/value batch of 10 positions, 128-dim each, 8 heads. `output` is the new context-augmented queries. `weights` is the 5x10 alignment matrix you can visualize.
-
-### When classical attention still matters
-
-- Pedagogy. The single-head, single-layer, RNN-based version makes every concept visible.
-- On-device sequence tasks where transformers do not fit.
-- Any paper from 2014-2017. You will misread it without knowing Bahdanau's convention.
-- Fine-grained alignment analysis in MT. Raw attention weights are an interpretability tool even on transformer models, and reading them requires knowing what they are.
-
-### The attention-weight-as-explanation trap
-
-Attention weights look interpretable. They are weights that sum to one across positions; you can plot them; high means "looked at this." Reviewers love them.
-
-They are not as interpretable as they look. Jain and Wallace (2019) showed that attention distributions can be permuted and replaced by arbitrary alternatives without changing model predictions for some tasks. Never report attention weights as evidence of reasoning without an ablation or counterfactual check.
-
-## Ship It
-
-Save as `outputs/prompt-attention-shapes.md`:
-
-```markdown
----
-name: attention-shapes
-description: Debug shape bugs in attention implementations.
-phase: 5
-lesson: 10
----
-
-Given a broken attention implementation, you identify the shape mismatch. Output:
-
-1. Which matrix has the wrong shape. Name the tensor.
-2. What its shape should be, derived from (d_s, d_h, d_attn, T_enc, T_dec, batch_size).
-3. One-line fix. Transpose, reshape, or project.
-4. A test to catch regressions. Typically: assert `output.shape == (batch, T_dec, d_h)` and `weights.shape == (batch, T_dec, T_enc)` and `weights.sum(dim=-1) close to 1`.
-
-Refuse to recommend fixes that silently broadcast. Broadcast-hiding bugs surface later as silent accuracy degradation, the worst kind of attention bug.
-
-For Bahdanau confusion, insist the decoder input is `s_{t-1}` (pre-step state). For Luong, `s_t` (post-step state). For dot-product, flag dimension mismatch between query and key as the most common first-time error.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Attention | Looking at things | Weighted average of a value sequence, weights computed from a query-key similarity. |
-| Query, Key, Value | QKV | Three projections: Q asks, K is what to match, V is what to return. |
-| Additive attention | Bahdanau | Feed-forward score: `v^T tanh(W q + U k)`. |
-| Multiplicative attention | Luong dot / general | Score is `q^T k` or `q^T W k`. Cheaper, same accuracy on most tasks. |
-| Alignment matrix | The pretty picture | Attention weights as a `(T_dec, T_enc)` grid. Read it to see what the model attended to. |
 
 ## Further Reading
 

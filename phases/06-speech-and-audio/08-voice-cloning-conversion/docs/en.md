@@ -58,43 +58,7 @@ Used by: F5-TTS (2024), YourTTS (2022), XTTS v2 (2024), OpenVoice v2 (2024).
 SECS > 0.70 is generally indistinguishable from the target for most listeners.
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| 5-sec zero-shot clone, open-source | F5-TTS or OpenVoice v2 |
-| Commercial production cloning | ElevenLabs Instant Voice Clone v2.5 |
-| Voice conversion (rewriting) | KNN-VC or Diff-HierVC |
-| Many-speaker fine-tune | StyleTTS 2 + speaker adapter |
-| Cross-lingual cloning | XTTS v2 or VALL-E X |
-| Deepfake detection | Wav2Vec2-AASIST |
-
-## Pitfalls
-
-- **Misaligned reference transcript.** F5-TTS and similar require the reference text to match the reference audio exactly, punctuation included.
-- **Reverberant reference.** Echo kills the clone. Record dry, close-mic.
-- **Emotional mismatch.** Training reference "cheerful" produces cheerful clones of everything. Match reference emotion to target use.
-- **Language leakage.** Cloning an English speaker then asking the model to speak French often carries the accent anyway; use cross-lingual models (XTTS, VALL-E X).
-- **No watermark.** Legally unshippable in EU from Aug 2026.
-
-## Ship It
-
-Save as `outputs/skill-voice-cloner.md`. Design a cloning or conversion pipeline with consent gate + watermark + quality target.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Zero-shot clone | 5 seconds is enough | Pretrained model + speaker embedding; no training. |
-| PPG | Phonetic posteriorgram | Per-frame ASR posteriors used as language-agnostic content rep. |
-| KNN-VC | Nearest-neighbor conversion | Replace each source frame with nearest target-pool frame. |
-| Neural codec TTS | VALL-E style | AR model over EnCodec/SoundStream tokens. |
-| Watermark | Inaudible signature | Bits embedded in audio, survive re-encode. |
-| SECS | Cloning fidelity | Cosine between target and clone speaker embeddings. |
-| AASIST | Deepfake detector | Anti-spoof model; detects synthesized speech. |
 
 ## Further Reading
 

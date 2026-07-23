@@ -81,62 +81,7 @@ The result matches o1 on AIME and MATH-500 at open weights, and is small enough 
 - *LLM reasoning*: no MCTS yet in production; GRPO on full rollouts, best-of-N for inference compute. Process reward models (PRMs) hint at step-level search being added back.
 
 
-## Use It
 
-The 2026 game-RL landscape, by domain:
-
-| Domain | Dominant method |
-|--------|-----------------|
-| Two-player zero-sum board games (Go, chess, shogi) | AlphaZero / MuZero / KataGo |
-| Imperfect info card games (poker) | CFR + deep learning (DeepStack, Libratus, Pluribus) |
-| Atari / pixel games | Muesli / MuZero / IMPALA-PPO |
-| Large multiplayer strategy (Dota, StarCraft) | PPO + self-play + league (OpenAI Five, AlphaStar) |
-| LLM math/code reasoning | GRPO (DeepSeek-R1, Qwen-RL, open replications) |
-| LLM alignment | DPO / RLHF-PPO (not GRPO; verifier is preference not verifiable) |
-| Robotics | PPO + DR (not game-RL, but uses same policy-gradient tools) |
-| Combinatorial problems | AlphaZero variants (AlphaTensor, AlphaDev) |
-
-The *recipe* — self-play, search-augmented improvement, policy distillation — spans text, pixels, and physical control. GRPO is the youngest instance; more are coming.
-
-## Ship It
-
-Save as `outputs/skill-game-rl-designer.md`:
-
-```markdown
----
-name: game-rl-designer
-description: Design a game-RL or reasoning-RL training pipeline (AlphaZero / MuZero / GRPO) for a given domain.
-version: 1.0.0
-phase: 9
-lesson: 12
-tags: [rl, alphazero, muzero, grpo, self-play]
----
-
-Given a target (perfect-info game / imperfect-info / Atari / LLM reasoning / combinatorial), output:
-
-1. Environment fit. Known rules? Markov? Stochastic? Multi-agent? Informs AlphaZero vs MuZero vs GRPO.
-2. Search strategy. MCTS (PUCT with learned prior), Gumbel-sampled, best-of-N, or none.
-3. Self-play plan. Symmetric self-play / league / offline data / verifier-generated.
-4. Target signal. Game outcome / verifier reward / preference / learned model. Include robustness plan.
-5. Diagnostics. Win rate vs baseline, ELO curve, verifier pass rate, KL to reference.
-
-Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a trusted verifier. Refuse any game-RL pipeline without a fixed baseline opponent set (self-play ELO is uncalibrated otherwise).
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned `(p, v)` priors. |
-| AlphaZero | "Self-play + MCTS" | Policy-value net trained to match MCTS visits and game outcome. |
-| MuZero | "Learned-model AlphaZero" | Same loop but in latent space via learned dynamics. |
-| GRPO | "Critic-free PPO" | Group Relative Policy Optimization; REINFORCE with group-mean baseline + KL. |
-| PUCT | "AlphaZero's UCB" | `Q + c · p · √N / (1 + N_a)` — balances value estimate with prior. |
-| Self-play | "Agent vs past self" | Standard for zero-sum; symmetric training signal. |
-| League play | "Population-based self-play" | Past + current + exploiters sampled as opponents. |
-| Verifier reward | "Verifiable RL" | Reward comes from a deterministic checker (tests pass, answer matches). |
-| Process reward | "PRM" | Scores each reasoning step, not just the final answer. |
 
 ## Further Reading
 

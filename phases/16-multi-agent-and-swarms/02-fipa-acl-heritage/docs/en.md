@@ -145,36 +145,7 @@ Mitigations without going full ontology:
 Reading the table top to bottom, the pattern is: keep the structural primitive, drop the formalism, let LLMs paper over the ambiguity.
 
 
-## Use It
 
-`outputs/skill-fipa-mapper.md` is a skill that reads any agent-protocol spec and produces the FIPA-ACL mapping. Use it before adopting a new protocol to answer: "Is this genuinely new, or is it `inform` with JSON syntax?"
-
-## Ship It
-
-Do not bring FIPA-ACL back. Bring back its checklist:
-
-- What is the intent primitive (performative) of each message?
-- Is there a correlation id for request-response and cancellation?
-- Is there an explicit content language (JSON-RPC, plain text, structured typed artifact)?
-- Are interaction protocols first-class, or are you re-implementing contract-net from scratch?
-- What happens when two agents disagree about content meaning (semantic drift)?
-
-Document these five questions for any new protocol before you ship it into production.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Speech act | "An utterance that does something" | Austin/Searle: utterances as actions. The theoretical parent of ACL. |
-| FIPA | "That old XML thing" | IEEE Foundation for Intelligent Physical Agents. Standardized ACL in 2000. |
-| ACL | "Agent Communication Language" | FIPA's envelope format: performative + content + metadata. |
-| Performative | "The verb" | The intent class of a message: `inform`, `request`, `propose`, `cfp`, etc. |
-| KQML | "FIPA's predecessor" | Knowledge Query and Manipulation Language (1993). Simpler, narrower. |
-| Ontology | "Shared vocabulary" | A formal definition of the concepts the content language talks about. |
-| SL0 / SL1 | "FIPA content languages" | Semantic Language levels 0 and 1 — the formal content language family. |
-| Contract Net | "Task market" | Manager issues cfp; bidders propose; manager accepts. The canonical interaction protocol. |
-| Interaction protocol | "Pattern of messages" | A sequence of performatives with known correctness: request-when, subscribe-notify, etc. |
 
 ## Further Reading
 

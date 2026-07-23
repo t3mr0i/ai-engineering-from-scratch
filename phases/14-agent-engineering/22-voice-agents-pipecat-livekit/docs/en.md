@@ -73,30 +73,7 @@ Vapi (~450–600ms on an optimized premium stack) and Retell (~600ms end-to-end 
 End-to-end 450–600ms is premium. 800–1200ms is common. Anything > 1500ms feels broken.
 
 
-## Use It
 
-- **Pipecat** for full control — custom processors, Python-first, pluggable providers.
-- **LiveKit Agents** for WebRTC-first deployments and telephony.
-- **Vapi / Retell** for hosted voice agents without a WebRTC team.
-- **OpenAI Realtime / Gemini Live** for direct audio-in/audio-out (MultimodalAgent).
-
-## Ship It
-
-`outputs/skill-voice-pipeline.md` scaffolds a Pipecat-shaped voice pipeline with VAD + STT + LLM + TTS + transport plus barge-in handling.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Frame | "Event" | Typed unit of data in the pipeline (audio, transcript, text, control) |
-| Processor | "Pipeline stage" | Handler with process(frame) |
-| DOWNSTREAM | "Forward flow" | Source to sink: audio in, speech out |
-| UPSTREAM | "Feedback flow" | Control: cancel, metrics, barge-in |
-| VAD | "Voice activity detection" | Detects when user is speaking |
-| Semantic turn detection | "Smart end-of-turn" | Model-based decision that the user is done |
-| MultimodalAgent | "Direct audio agent" | Audio in, audio out; no text in the middle |
-| VoicePipelineAgent | "Cascade agent" | STT + LLM + TTS; text-level control |
 
 ## Further Reading
 

@@ -49,28 +49,7 @@ If stage 0 takes 50 ms and stage 1 takes 100 ms, every cycle is gated on stage 1
 A pipeline runs M microbatches of size B each. The effective batch size is M*B. The gradient at the end of a pipeline step is the gradient on the combined M*B examples. Bubble fraction depends on M; the optimiser sees M*B. Tuning M means trading bubble (lower with high M) against per-microbatch memory (higher activation memory with high M for GPipe).
 
 
-## Use It
 
-Production patterns:
-
-- **Megatron-LM.** The reference for pipeline parallel at scale. Uses 1F1B and supports tensor + pipeline + data parallel combined.
-- **DeepSpeed Pipeline.** Integrates with ZeRO; ZeRO-1 + pipeline is a common combo for the largest open models.
-- **PyTorch Pipe.** The PyTorch-native pipeline wrapper, built on `torch.distributed.pipeline.sync.Pipe`.
-
-## Ship It
-
-Lesson 80 stores the per-stage parameter shards in the sharded checkpoint. Lesson 81 composes DDP + ZeRO + pipeline on the end-to-end demo (in spirit; the demo keeps the pipeline simulated for runtime).
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Pipeline | "Model parallel along depth" | One stage per rank, activations flow stage to stage |
-| Bubble | "Pipeline idle time" | (N-1) steps at start + end where some stages have no work |
-| Microbatch | "Slice of the batch" | One forward/backward unit; bubble shrinks as M grows |
-| GPipe | "Fill then drain" | All M forwards before any backward; high activation memory |
-| 1F1B | "Interleaved schedule" | One forward one backward per stage; bounded activation memory |
 
 ## Further Reading
 

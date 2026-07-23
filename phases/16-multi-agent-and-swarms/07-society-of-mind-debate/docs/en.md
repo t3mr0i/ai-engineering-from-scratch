@@ -57,33 +57,7 @@ Zhuge et al. ("Mindstorms in Natural Language-Based Societies of Mind," arXiv:23
 - **Compute blowup.** N agents × R rounds = N·R LLM calls, each with a context that grows. A 5-agent, 5-round debate is 25 calls at growing context. Cost per question can exceed 10× a single CoT call.
 
 
-## Use It
 
-`outputs/skill-debate-configurator.md` configures a debate for a new task: number of agents, number of rounds, heterogeneity (same model vs mixed), role assignment (symmetric vs one-adversarial). It also estimates the token cost before you run.
-
-## Ship It
-
-If you ship debate:
-
-- **Cap rounds at 3.** Du et al. show 3 rounds capture most of the gain. More is cost, not quality.
-- **Cap agents at 5.** Beyond 5, context bloat and cost dominate.
-- **Heterogeneous by default.** At least two different base models in the pool.
-- **Adversarial slot.** One agent prompted to disagree regardless. Breaks sycophancy.
-- **Log every round.** Debate systems that hide intermediate rounds cannot be debugged or audited.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Society of Mind | "Minsky's idea" | Intelligence as interacting specialists; 1986 framing now operationalized via LLM debate. |
-| Multi-agent debate | "Agents argue" | N agents propose, critique each other, revise over R rounds, majority-vote. |
-| Consensus | "They agree" | Not epistemic truth — just fraction-on-majority-answer. Can be confidently wrong. |
-| Rounds | "Exchange steps" | One round = each agent reads the others and updates once. |
-| Heterogeneous debate | "Mix model families" | Using different base models to decorrelate errors. |
-| Sycophancy cascade | "Everyone agrees with the loud one" | Debate failure where agents defer to the most confident agent regardless of correctness. |
-| NLSOM | "129-agent society" | Natural-language society of mind; Zhuge et al.'s scaled version. |
-| Correlated error | "Same model, same bug" | Why self-consistency saturates; debate across different views decorrelates. |
 
 ## Further Reading
 

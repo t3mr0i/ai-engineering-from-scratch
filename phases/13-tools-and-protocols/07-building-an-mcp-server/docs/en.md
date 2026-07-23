@@ -120,39 +120,7 @@ def notes_search(query: str, limit: int = 10) -> list[dict]:
 
 The TypeScript SDK has an equivalent shape. The graduation path is drop-in when you are ready; the concepts (capabilities, dispatch, content blocks) are the same.
 
-## Use It
 
-`code/main.py` is a complete notes MCP server over stdio, stdlib only. It handles `initialize`, `tools/list`, `tools/call` for three tools (`notes_list`, `notes_search`, `notes_create`), `resources/list` and `resources/read` for each note, and a `review_note` prompt. You can drive it by piping JSON-RPC messages:
-
-```
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | python main.py
-```
-
-What to look at:
-
-- The dispatcher is a `dict[str, Callable]` keyed by method name.
-- Every tool executor returns a list of content blocks, not a bare string.
-- `isError: true` is set when the executor raises.
-
-## Ship It
-
-This lesson produces `outputs/skill-mcp-server-scaffolder.md`. Given a domain (notes, tickets, files, database), the skill scaffolds an MCP server with the right tools / resources / prompts split and SDK graduation path.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| MCP server | "The thing that exposes tools" | Process that speaks MCP JSON-RPC over stdio or HTTP |
-| stdio transport | "Child process model" | Server is spawned by client; communicates via stdin/stdout |
-| Dispatcher | "Method router" | Map of JSON-RPC method name to handler function |
-| Content block | "Tool result chunk" | Typed element in the `content` array of a tool response |
-| `isError` | "Tool-level failure" | Signals the tool failed; distinguishes from JSON-RPC error |
-| Annotations | "Safety hints" | readOnly / destructive / idempotent / openWorld flags |
-| FastMCP | "Python SDK" | Decorator-based higher-level framework on top of the MCP protocol |
-| Resource URI | "Addressable data" | `file://`, `db://`, or custom scheme identifying a resource |
-| Prompt template | "Slash-command brief" | Server-supplied template with argument slots for host UIs |
-| Capability declaration | "Feature toggle" | Per-primitive flags declared in `initialize` |
 
 ## Further Reading
 

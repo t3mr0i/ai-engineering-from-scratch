@@ -52,24 +52,7 @@ The fixer is a list of declarative operations: `append_if_missing`, `prepend_if_
 The diff is computed against the original and the revised. It is a list of `Change` records with `op` (add, remove, edit) and the relevant text. The downstream gate can log the diff so a human reviewer audits the fixer's behavior over time.
 
 
-## Use It
 
-`python3 main.py`. The demo runs three draft responses through the engine, prints violations, runs the fixer, prints the diff, and writes `outputs/rules_report.json`. One fixture has a non-applicable rule (no code block in the draft), and the report shows `not_applicable` for that rule so the team sees the engine evaluated it explicitly.
-
-## Ship It
-
-`outputs/skill-constitutional-rules-engine.md` documents the rule grammar and the fixer operations.
-
-
-## Key Terms
-
-| Term | Common usage | Precise meaning |
-|---|---|---|
-| constitution | a vague policy doc | a YAML file of rules with predicates, severities, and explanations |
-| predicate | a check | a callable from text to bool, atomic or composed via all_of/any_of/not_ |
-| violation | a failure | a structured record with rule name, severity, explanation, and matched span |
-| fixer | a model fine-tune | a deterministic per-rule transform mapping draft to revised |
-| diff | a string compare | a structured list of add, remove, edit operations between draft and revised |
 
 ## Further Reading
 

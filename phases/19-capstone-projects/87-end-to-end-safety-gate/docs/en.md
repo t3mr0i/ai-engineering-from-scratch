@@ -48,24 +48,7 @@ The during-gen filter is a streaming abstraction. The mock LLM yields chunks (4 
 The mock LLM has two behaviors keyed off the prompt: it refuses recognizable attacks (returns `I cannot ...`) and answers benign prompts (returns a generic helpful string). For a small subset of attacks (notably encoding tricks not caught by the input pipeline) it produces a partial harmful continuation that the during-gen filter is supposed to catch. This is intentional. The gate's value is in the layered defense; the demo shows the layers interact correctly.
 
 
-## Use It
 
-`python3 main.py`. The demo loads everything, runs end-to-end, prints the summary table, and writes the trace artifact. Exit code is zero. The demo is self-terminating in the literal sense: each request runs to completion or early termination and the gate moves to the next.
-
-## Ship It
-
-`outputs/skill-end-to-end-safety-gate.md` documents the request lifecycle, the aggregation table, and the trace format. The gate's primary deliverable is the trace format and the composition logic, both of which a team can lift into their own backend.
-
-
-## Key Terms
-
-| Term | Common usage | Precise meaning |
-|---|---|---|
-| safety gate | a filter | a three-checkpoint composition of detector, streaming filter, classifier, and rules with an aggregation table |
-| pre-gen | input check | the detector layer running on the prompt before the model is called |
-| during-gen | streaming filter | a buffered scan over emitted chunks that can terminate the stream early |
-| post-gen | output check | the classifier router and rules engine running on the completed response |
-| trace | a log line | a structured per-request record with every checkpoint's verdict, the final action, and latency |
 
 ## Further Reading
 

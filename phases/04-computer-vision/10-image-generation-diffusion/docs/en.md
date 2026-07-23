@@ -121,41 +121,7 @@ feature_map += MLP(t_embedding)
 Without time conditioning the network has to guess the noise level from the image itself, which works but is much less sample-efficient.
 
 
-## Use It
 
-For production work, use `diffusers`:
-
-```python
-from diffusers import DDPMScheduler, UNet2DModel
-
-unet = UNet2DModel(sample_size=32, in_channels=3, out_channels=3, layers_per_block=2)
-scheduler = DDPMScheduler(num_train_timesteps=1000)
-```
-
-The library ships ready-made schedulers (DDPM, DDIM, DPM-Solver, Euler, Heun), configurable U-Nets, pipelines for text-to-image and image-to-image, and LoRA fine-tuning helpers.
-
-For research, `k-diffusion` (Katherine Crowson) has the most faithful reference implementations and the best sampling variants.
-
-## Ship It
-
-This lesson produces:
-
-- `outputs/prompt-diffusion-sampler-picker.md` — a prompt that picks DDPM / DDIM / DPM-Solver / Euler based on quality target, latency budget, and conditioning type.
-- `outputs/skill-noise-schedule-designer.md` — a skill that produces a linear, cosine, or sigmoid beta schedule given T and target corruption level, plus diagnostic plots of signal-to-noise ratio over time.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
-| Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
-| DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
 
 ## Further Reading
 

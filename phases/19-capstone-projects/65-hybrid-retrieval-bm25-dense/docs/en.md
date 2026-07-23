@@ -63,30 +63,7 @@ BM25 scores are unbounded and corpus-dependent. Cosine similarities are bounded 
 This is the same argument you hear about RankFusion vs RRF in Vespa and Weaviate documentation. They came to the same conclusion: stay rank-based unless you have very strong evidence to interpolate scores.
 
 
-## Use It
 
-Production patterns:
-
-- Index BM25 in process; the bottleneck is the term-frequency dictionary, not the vectors.
-- Index dense vectors in a separate store (in this lesson we use a flat list; in production you would use HNSW).
-- Run both queries in parallel; the fusion is a constant-time merge over the union.
-- Persist the modality of each retrieved hit so a downstream reranker can see which modality voted for it.
-
-## Ship It
-
-Lesson 66 takes the fused top-k from this lesson and reranks with a cross-encoder. Lesson 68 evaluates the entire pipeline with precision, recall, MRR, and nDCG. The hybrid retriever in this lesson is the first stage of the end-to-end system in lesson 69.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| BM25 | "Lexical search" | Probabilistic ranking with idf x saturating tf x length normalization |
-| RRF | "Rank fusion" | Sum of 1 / (k + rank) across ranked lists; k = 60 default |
-| k1 | "TF saturation" | Controls how fast a repeated term stops adding more score |
-| b | "Length penalty" | 0 means ignore document length, 1 means full normalization |
-| Field weighting | "Symbol boost" | Repeat tokens during indexing to boost matches in that field |
-| Rank-based vs score-based fusion | "Why RRF beats linear" | Ranks are comparable across modalities; scores are not |
 
 ## Further Reading
 

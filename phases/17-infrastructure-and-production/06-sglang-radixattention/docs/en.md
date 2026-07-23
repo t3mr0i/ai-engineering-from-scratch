@@ -86,27 +86,7 @@ You can implement KV reuse as a kernel trick. SGLang's insight is that reuse onl
 
 The two systems are not strict competitors. In 2026 vLLM added prefix caching (`--enable-prefix-caching`) and a cache-aware router (vLLM Router in Rust). The gap closed but did not fully disappear — SGLang's whole stack is radix-first; vLLM grafted it on. For workloads dominated by prefix reuse, SGLang remains the default. For general-purpose serving without strong prefix patterns, vLLM remains equal or better.
 
-## Use It
 
-`code/main.py` implements a toy radix-tree KV cache plus a scheduler with two policies: FCFS and cache-aware. Runs the same workload through both, reports prefix-cache hit rate and throughput delta. Then runs a "scrambled ordering" workload to show the 6.4x collapse.
-
-## Ship It
-
-This lesson produces `outputs/skill-radix-scheduler-advisor.md`. Given a workload description (prompt-template shape, retrieval pattern, number of concurrent tenants), it produces a prompt-ordering prescription and a go/no-go for SGLang adoption.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| RadixAttention | "the SGLang thing" | KV cache indexed as a radix tree so shared prefixes reuse blocks |
-| Radix tree | "compact trie" | Tree where each node owns a token range and its KV blocks |
-| Cache-aware scheduler | "hot-branch-first" | Scheduler that prefers requests sharing the resident branch |
-| Prefix-cache hit rate | "how much of your prompt was free" | Fraction of prompt tokens served from reused KV blocks |
-| FCFS | "first-come first-served" | Default scheduling that breaks prefix locality |
-| Branch-level LRU | "evict the leaf" | Eviction policy matched to radix shape |
-| Prompt template ordering | "the cache key" | The prompt's component order determines what the tree can share |
-| System prompt pinning | "resident prefix" | Keep the immutable system portion pinned to avoid eviction thrash |
 
 ## Further Reading
 

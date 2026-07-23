@@ -97,40 +97,7 @@ Most enterprise IoT use cases land on edge-preprocessed RAG or hybrid federated.
 
 The sequence is upstream of model selection. Choosing Claude Sonnet 4.6 vs. a self-hosted model is step 7, not step 1.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two decisions this lesson centers on:
-
-1. A **boundary classifier** that takes a data source description (jurisdiction, perimeter, sensitivity, refresh rate) and returns the boundary types it crosses and the feasible architecture patterns.
-2. A **latency budget modeler** that takes a use case's user-facing latency budget and a set of pipeline stages, checks feasibility, and identifies which stage is the binding constraint.
-
-The driver walks through three representative use cases (factory-floor fault detection, regulatory document summarization, customer-churn prediction with CRM data) and prints the classification, the recommended pattern, and the budget breakdown for each.
-
-## Ship It
-
-`outputs/skill-cloud-data-iot-boundary-mapper.md` is a one-page decision aid: a boundary-classification checklist and a latency-budget worksheet that a consulting team can fill in during a use-case scoping session to determine feasibility and the correct base architecture before the engagement begins.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Data sovereignty boundary | "We can't put it in the cloud" | A legal or contractual rule that data must not leave a specific jurisdiction or network perimeter |
-| OT network | "Factory floor systems" | Operational technology network — isolated from IT systems by design; IoT sensors typically originate here |
-| Gold zone | "Clean data" | The aggregated, certified layer of a data platform; appropriate for LLM context; not always fresh |
-| Semantic layer | "dbt metrics / Fabric models" | A query-time computed layer with full provenance; preferred for auditable LLM use cases |
-| Edge-preprocessed RAG | "Preprocess at the sensor" | IoT data is aggregated and normalized at the edge before reaching the LLM; reduces cost and latency |
-| Latency budget | "How fast does it need to be?" | The total user-visible response time broken into per-stage allocations; must be decomposed before architecture is chosen |
-| Hybrid federated | "Data from everywhere" | A pattern where sovereign and non-sovereign sources are queried separately and composed at the application layer |
-| Data steward | "Who owns this table?" | The business unit or individual accountable for schema, access, deletion, and audit of a dataset |
-
-## Consultant field notes
-
-- **The latency budget that worked on the whiteboard, then didn't.** A clean decomposition on a slide means nothing until someone actually measures the cross-region RAG retrieval. In our experience, retrieval and network hops account for the binding constraint in roughly four out of five latency overruns — not the model. If you cannot point to a measured millisecond for each stage, you do not have a budget, you have a guess.
-- **The RAG that returned the right doc but the wrong paragraph.** The vector index finds the correct source document; the chunker splits it at the wrong boundary; the LLM summarises across the split and invents a connection. The fix is never "use a better embedding" — the fix is the chunking strategy and the metadata that tells the retriever which chunk is the answer.
-- **The OT/IT boundary everyone knew about and no one had budgeted for.** The sensor data lives in an isolated OT network. The cloud LLM does not. The "simple" integration turns into a six-month air-gapped proxy project, and the use case quietly shrinks to whatever the proxy can carry. If a use case crosses OT, draw the proxy on the first diagram, not the last.
-- **The use case everyone approved but nobody wanted.** A clean architecture, a signed-off boundary table, an enthusiastic steering committee — and the end users route around the AI on day one. The pre-LLM processing discipline in this lesson does not solve adoption; the use case still has to be something the people on the factory floor (or in the back office) actually open.
-- **The AI feature that hit a cost ceiling in month two.** The pilot ran on a free tier, a credit grant, or a one-off sample dataset. Production traffic arrived, the semantic-layer queries grew, and the monthly invoice crossed the line item the steering committee had not approved. The latency budget has a twin: the cost budget per request, decomposed by stage, and owned by someone whose name is on the invoice.
 
 ## Further Reading
 

@@ -93,30 +93,7 @@ Phase 17 · 13 (observability) + 16 (model routing) + 19 (gateways) are the same
 - Kong pricing: $100/model/month, 5 max on Plus tier.
 - Cloudflare/Vercel: 1-3 ms overhead at the edge.
 
-## Use It
 
-`code/main.py` simulates gateway routing with fallback across 3 providers under 429/5xx injection. Reports latency, retry rate, and fallback hit rate.
-
-## Ship It
-
-This lesson produces `outputs/skill-gateway-picker.md`. Given scale, ops posture, compliance, latency budget, picks a gateway.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Gateway | "API broker" | Process sitting between apps and providers |
-| LiteLLM | "the MIT one" | Python OSS, 100+ providers, breaks at 2K RPS |
-| Portkey | "guardrails gateway" | Control plane + observability, Apache 2.0 |
-| Kong AI Gateway | "the scale one" | Built on Kong Gateway, benchmark leader |
-| Bifrost | "Maxim's gateway" | Retries + Anthropic fallback recipe |
-| Cloudflare AI Gateway | "edge managed" | Edge-deployed managed gateway, zero-ops |
-| PII redaction | "data scrub" | Regex + NER mask before sending to model |
-| Jailbreak detection | "prompt injection guard" | Classifier on user input |
-| Audit trail | "regulated log" | Immutable record of every LLM call |
-| Token-bucket | "simple rate limit" | Refill-based rate limiter |
-| Sliding-window | "precise rate limit" | Time-windowed rate limiter; better fairness |
 
 ## Further Reading
 

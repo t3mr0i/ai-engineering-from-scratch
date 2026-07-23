@@ -69,47 +69,7 @@ eval:
 - Compliance: role-based access labels on chunks; jurisdiction tags for GDPR/HIPAA
 
 
-## Use It
 
-```
-$ chat --role=analyst --jurisdiction=GDPR
-> what is the data-retention obligation for EU user profiles under our contract?
-[retrieve]  hybrid top-20 filtered to GDPR + analyst-role
-[rerank]    top-5 kept
-[synth]     claude-sonnet-4.7, cache hit 74%, 0.8s
-answer:
-  The contract (Section 12.4, Master Services Agreement dated 2024-03-11)
-  obligates EU user profile deletion within 30 days of termination per GDPR
-  Article 17. The DPA amendment (DPA-v2.1, Section 5) extends this to 14 days
-  for "restricted" category data.
-  citations: [MSA-2024-03-11 s12.4, DPA-v2.1 s5]
-```
-
-## Ship It
-
-`outputs/skill-production-rag.md` describes the deliverable. A regulated-domain chatbot deployed with compliance labels, passed through the rubric, observed with live drift monitoring.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | RAGAS faithfulness + answer relevance | Online scores on the golden set (200 Q/A) |
-| 20 | Citation correctness | Fraction of answers with verifiable source anchors |
-| 20 | Guardrail coverage | Llama Guard 4 pass rate + jailbreak suite results |
-| 20 | Cost / latency engineering | Prompt-cache hit rate, p95 latency, $/query |
-| 15 | Drift monitoring dashboard | Phoenix live dashboard with weekly retrieval-quality trend |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Prompt caching | "Cached system + context" | Claude/OpenAI feature: cached prefix tokens discounted 60-90% on hit |
-| RAGAS | "RAG evaluator" | Automated scoring of faithfulness, answer relevance, context precision |
-| Golden set | "Labeled eval" | 200+ expert-labeled Q/A with citations; the ground truth |
-| Jurisdiction tag | "Compliance label" | GDPR/HIPAA/SOC2 scope attached to chunks; enforced by retrieval filter |
-| Citation faithfulness | "Grounded answer rate" | Fraction of claims backed by retrievable source spans |
-| Drift | "Retrieval quality decay" | Weekly change in nDCG or citation score; alert threshold 5% |
-| Red team | "Adversarial eval" | Pre-release jailbreak, PII extraction, off-domain probes |
 
 ## Further Reading
 

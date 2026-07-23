@@ -148,76 +148,7 @@ Cost = MSE + lambda * sum(w_i^2)
 The penalty term discourages large weights. The hyperparameter lambda controls the tradeoff: higher lambda means smaller weights and more regularization. This is covered in depth in a later lesson. For now, know that it exists and why it helps.
 
 
-## Use It
 
-Now the same thing with scikit-learn, which is what you will actually use in production.
-
-```python
-from sklearn.linear_model import LinearRegression as SklearnLR
-from sklearn.linear_model import Ridge
-from sklearn.preprocessing import PolynomialFeatures, StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
-import numpy as np
-
-np.random.seed(42)
-X_sk = np.random.uniform(0, 10, (100, 1))
-y_sk = 3.0 * X_sk.squeeze() + 7.0 + np.random.normal(0, 2.0, 100)
-
-X_train, X_test, y_train, y_test = train_test_split(X_sk, y_sk, test_size=0.2, random_state=42)
-
-lr = SklearnLR()
-lr.fit(X_train, y_train)
-y_pred = lr.predict(X_test)
-
-print("=== Scikit-learn Linear Regression ===")
-print(f"Coefficient (w): {lr.coef_[0]:.4f}")
-print(f"Intercept (b): {lr.intercept_:.4f}")
-print(f"R-squared (test): {r2_score(y_test, y_pred):.4f}")
-print(f"MSE (test): {mean_squared_error(y_test, y_pred):.4f}")
-
-poly = PolynomialFeatures(degree=2, include_bias=False)
-X_poly_sk = poly.fit_transform(X_train)
-X_poly_test = poly.transform(X_test)
-
-lr_poly = SklearnLR()
-lr_poly.fit(X_poly_sk, y_train)
-print(f"\nPolynomial degree 2 R-squared: {r2_score(y_test, lr_poly.predict(X_poly_test)):.4f}")
-
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-ridge = Ridge(alpha=1.0)
-ridge.fit(X_train_scaled, y_train)
-print(f"Ridge R-squared: {r2_score(y_test, ridge.predict(X_test_scaled)):.4f}")
-print(f"Ridge coefficient: {ridge.coef_[0]:.4f}")
-```
-
-Your from-scratch implementation and scikit-learn produce the same results. The difference: scikit-learn handles edge cases, numerical stability, and performance optimizations. Use the library for production. Use the from-scratch version to understand what is happening.
-
-## Ship It
-
-This lesson produces:
-- `outputs/skill-regression.md` - a skill for choosing the right regression approach based on the problem
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
-| Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
-| Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
-| Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
-| Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
-| Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
-| Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## Further Reading
 

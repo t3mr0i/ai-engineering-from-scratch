@@ -69,35 +69,7 @@ Claude Agent SDK, OpenAI Agents SDK, LangGraph, AutoGen v0.4 AgentChat, CrewAI, 
 - **Loop length explosion.** Most 2026 agents run 40–400 steps. Debugging step 38's wrong decision requires observability (Lesson 23) and eval trajectories (Lesson 30).
 
 
-## Use It
 
-Every framework in Phase 14 sits on top of this loop. Once you own it, picking a framework is about ergonomics and operational shape (durable state, actor model, role templates, voice transport), not a different control flow.
-
-Reference the framework docs as you learn them:
-
-- Claude Agent SDK (Lesson 17) — built-in tools, subagents, lifecycle hooks.
-- OpenAI Agents SDK (Lesson 16) — Handoffs, Guardrails, Sessions, Tracing.
-- LangGraph (Lesson 13) — stateful graph of nodes, checkpoints after every step.
-- AutoGen v0.4 (Lesson 14) — asynchronous message-passing actors.
-- CrewAI (Lesson 15) — role + goal + backstory templating, Crews vs Flows.
-
-## Ship It
-
-`outputs/skill-agent-loop.md` is a reusable skill that any agent you build can load to explain the ReAct loop and generate a correct reference implementation for any language or runtime.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Agent | "Autonomous AI" | A loop: LLM thinks, picks a tool, result feeds back, repeat until stop |
-| ReAct | "Reasoning and Acting" | Yao et al. 2022 — interleave Thought, Action, Observation in one stream |
-| Tool call | "Function calling" | Structured output the runtime dispatches to an executable |
-| Observation | "Tool result" | The string representation of tool output fed back into the next prompt |
-| Reasoning channel | "Thinking tokens" | Native reasoning output on a separate stream, passed through across turns |
-| Stop condition | "Exit clause" | Explicit `finish`, no tool calls emitted, max turns, max tokens, or guardrail trip |
-| Turn budget | "Max steps" | Hard cap on loop iterations — agents run 40–400 steps per task in 2026 |
-| Trace | "Transcript" | Full record of thought, action, observation tuples for a run |
 
 ## Further Reading
 

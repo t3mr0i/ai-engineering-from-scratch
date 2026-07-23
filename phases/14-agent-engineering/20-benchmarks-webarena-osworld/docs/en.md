@@ -62,30 +62,7 @@ Claude computer use, OpenAI CUA, Gemini 2.5 Computer Use (Lesson 21) all train o
 - **Stale self-hosted apps.** WebArena's apps pin specific versions; update without re-curation breaks comparability.
 
 
-## Use It
 
-- **WebArena Verified** self-hosted on an internal cluster for continuous evaluation.
-- **OSWorld** in a VM fleet for desktop agents.
-- **Computer-use agents** (Lesson 21) — Claude, OpenAI CUA, Gemini — all trained on workloads like these.
-- **Your own product flows** — capture gold trajectories for your top 20 tasks; run agents against them weekly.
-
-## Ship It
-
-`outputs/skill-web-desktop-harness.md` builds a web/desktop agent harness with execution-based eval and trajectory efficiency metric.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| WebArena | "Web agent benchmark" | 812 tasks across 4 self-hosted apps; gym-style evaluation |
-| VisualWebArena | "Visual WebArena" | Visually grounded WebArena; screenshots are observations |
-| OSWorld | "Desktop agent benchmark" | 369 tasks on real Ubuntu/Windows/macOS |
-| GUI grounding | "Pixel-to-element mapping" | Model localizing UI elements in 1920x1080 |
-| Operational knowledge | "OS know-how" | Which menu, which shortcut, which preference pane |
-| OSWorld-G | "Grounding suite" | 564 grounding-only samples + training set |
-| OSWorld-Human | "Gold trajectories" | Manual expert action sequences to measure efficiency |
-| Trajectory efficiency | "Steps over gold" | Agent step count divided by human minimum |
 
 ## Further Reading
 

@@ -60,41 +60,7 @@ HPA on queue-wait metric
 - Reference: TensorRT-LLM speculative decoding for a vendor baseline
 
 
-## Use It
 
-```
-$ curl https://infer.example.com/v1/chat/completions -d '{"messages":[...]}'
-[serve]     vLLM 0.7, Llama 3.3 70B FP8, EAGLE-3 active
-[decode]    bs=8, accepted_tokens_per_step=3.2, acceptance_rate=0.76
-[latency]   first-token 42ms, full-response 980ms (620 tokens)
-[cost]      $0.34 per 1M output tokens at sustained throughput
-```
-
-## Ship It
-
-`outputs/skill-inference-server.md` describes the deliverable. A measured serving stack with speculative decoding, a full benchmark report, and a K8s deployment.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Measured speedup vs baseline | 2.5x+ throughput at matched quality on two models |
-| 20 | Acceptance rate on realistic traffic | Per-distribution acceptance-rate report |
-| 20 | P99 tail-latency discipline | p99 at batch 1/8/32 with and without speculation |
-| 20 | Ops | K8s deploy, HPA on queue-wait, rollout smooth |
-| 15 | Write-up and methodology | Clear explanation of what changed and why |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Draft model | "Speculator" | Small model that proposes N tokens for the target to verify |
-| EAGLE-3 | "2026 draft architecture" | Draft head trained on target hidden states; ~75% acceptance |
-| P-EAGLE | "Parallel speculation" | Tree of draft branches verified in one target pass |
-| Acceptance rate | "Hit rate" | Fraction of drafted tokens accepted without resampling |
-| Quantization | "FP8 / INT4" | Lower-precision weights to fit more model in GPU memory |
-| Queue wait | "HPA metric" | Time a request waits in the pending queue before inference starts |
-| Speculators hub | "Aligned drafts" | Red Hat Neural Magic hub of EAGLE drafts for common open models |
 
 ## Further Reading
 

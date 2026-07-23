@@ -102,42 +102,7 @@ The intake scores a process against a scoring rubric. It does not:
 
 A common failure: the intake meeting becomes a model selection meeting. Keep scope narrow. The intake produces a ranked, risk-annotated pilot backlog. Everything else is downstream.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two core decisions this lesson describes:
-
-1. A **use-case scorer** that takes a list of process candidates, each with a value score, a readiness score, and risk flags, and classifies each into `PILOT_NOW`, `IMPROVE_FIRST`, `DEPRIORITISE`, or `DEFER`.
-2. A **pilot ranker** that orders the `PILOT_NOW` candidates by a combined score after applying risk penalties, and prints the recommended first pilot with a one-line rationale.
-
-The driver runs a synthetic portfolio of eight candidates — including cases that look attractive but fail on readiness, and cases that score high but trigger the blast-radius constraint — and prints the full classification table followed by a `HEADLINE:` summary that the exercises reference directly.
-
-## Ship It
-
-`outputs/skill-use-case-intake.md` is a one-page, paste-and-use decision aid for a working consultant or technology manager. It contains the four discovery questions, the two scoring rubrics in table form, the risk overlay, and a structured output template for the pilot backlog. It is designed to be handed to a stakeholder as a standalone artifact without the lesson context.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Use-case intake | "The AI backlog session" | A structured funnel: discovery, scoring, pilot decision — in that order, not merged |
-| Value density | "Is it worth it?" | Annual business value per unit of engineering and inference cost, expressed as a number a budget holder signs |
-| Automation readiness | "Is it technically feasible?" | A 1-5 score over data availability, process structure, metric definition, and system access |
-| Pilot zone | "Top candidates" | The upper-right quadrant of the value × readiness grid (both ≥ 3) |
-| Blast radius | "What if it goes wrong?" | The number of customers or transactions affected by one erroneous model output per day |
-| Risk overlay | "The reality check" | Three penalty rules — regulatory, blast-radius, data availability — applied after scoring to reorder the pilot backlog |
-| Human-in-the-loop gate | "A human reviews it" | A mandatory review step before a model output triggers a consequential action; not optional for blast-radius ≥ 1 000/day |
-| Pilot backlog | "The shortlist" | The scored, risk-annotated list of candidates the business committed to attempting, ordered by recommended sequence |
-
-## Consultant field notes
-
-The five shapes below appear in roughly two thirds of the intake programs we have run or reviewed. Name them early; they save a quarter.
-
-- **The prompt that worked in the demo but failed in production.** A vendor or internal team tunes against three hand-picked queries, scores perfectly, and ships. Real traffic arrives, prompt-injection attempts and ambiguity that never existed in the test set show up in week one, and the same prompt drops to unusable accuracy within the month. Lesson: never let a pilot start without an evaluation set drawn from production-shaped inputs, not from the demo.
-- **The RAG that returned the right doc but the wrong paragraph.** Retrieval hits the correct source document at the top of the context, and the model faithfully summarises a section that has nothing to do with the question because the chunking cut the answer in half. The retrieval metric is green; the answer is wrong. Lesson: score retrieval by whether the cited passage actually answers the question, not by document recall alone.
-- **The vendor pilot that never made it past the security review.** A six-figure POC delivers a working model by week eight, then sits in the security queue for five months because the data flow was never mapped against the customer's own classification scheme at intake. Lesson: ask the security and data-protection teams to the discovery stage, not to the gate review.
-- **The use case everyone approved but nobody wanted.** The steering committee ranks it high because the value story is clean, the sponsor signs off, the budget lands — and the process owners who have to live with the output quietly route around the system. Adoption plateaus at 15 %. Lesson: a named operational owner who will use the output daily is a stronger readiness signal than any score on the grid.
-- **The AI feature that hit a cost ceiling in month two.** Inference cost was modelled at the median transaction volume, not at the long-tail queries that real users send. Volume doubles, the long-tail queries are 40× the median token count, and the monthly run rate triples before anyone notices. Lesson: the cost guardrail from Phase 15 · 13 is non-optional; it is what catches this before the CFO does.
 
 ## Further Reading
 

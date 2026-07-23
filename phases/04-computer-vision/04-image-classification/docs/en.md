@@ -110,50 +110,7 @@ Aggregate accuracy hides imbalance. A 90-10 binary classifier that always predic
 - **Calibration (ECE)** — does a 0.8 confidence prediction get it right 80% of the time? Modern networks are systematically over-confident; fix with temperature scaling or label smoothing.
 
 
-## Use It
 
-`torchvision` wraps everything above into idiomatic components. For real CIFAR-10 the full pipeline is four lines plus a training loop.
-
-```python
-from torchvision.datasets import CIFAR10
-from torchvision.transforms import Compose, RandomCrop, RandomHorizontalFlip, ToTensor, Normalize
-
-mean = (0.4914, 0.4822, 0.4465)
-std = (0.2470, 0.2435, 0.2616)
-train_tf = Compose([
-    RandomCrop(32, padding=4, padding_mode="reflect"),
-    RandomHorizontalFlip(),
-    ToTensor(),
-    Normalize(mean, std),
-])
-eval_tf = Compose([ToTensor(), Normalize(mean, std)])
-
-train_ds = CIFAR10(root="./data", train=True,  download=True, transform=train_tf)
-val_ds   = CIFAR10(root="./data", train=False, download=True, transform=eval_tf)
-```
-
-Two things to notice: the mean/std are **dataset-specific** — computed on the CIFAR-10 training set, not ImageNet — and the reflect pad is the community-default crop policy. Copy-pasting ImageNet stats here is a ~1% accuracy leak that nobody catches until someone profiles the model.
-
-## Ship It
-
-This lesson produces:
-
-- `outputs/prompt-classifier-pipeline-auditor.md` — a prompt that audits a training script for the five invariants above and surfaces the first violation.
-- `outputs/skill-classification-diagnostics.md` — a skill that, given a confusion matrix and a list of class names, summarises per-class failures and proposes the single most impactful fix.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Logits | "Raw outputs" | The pre-softmax vector of C numbers per image; cross-entropy expects these, not softmaxed values |
-| Cross-entropy | "The loss" | Negative log-probability of the correct class; combines log-softmax and NLL in one stable op |
-| DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
-| Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
-| Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
-| Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
-| Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 
 ## Further Reading
 

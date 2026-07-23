@@ -87,29 +87,7 @@ Voice agents are latency-sensitive (first token < 500 ms). Local inference elimi
 - Datacenter-edge bandwidth gap: 30-50x.
 - WebGPU mobile coverage: ~70-75% (Firefox Android lagging).
 
-## Use It
 
-`code/main.py` computes theoretical decode throughput ceilings from bandwidth-bound math across edge targets. Compares to observed benchmarks and highlights where bandwidth, not compute, is the bottleneck.
-
-## Ship It
-
-This lesson produces `outputs/skill-edge-target-picker.md`. Given platform (iOS/Android/browser/Jetson), model, and latency/memory budget, picks a quantization format and conversion pipeline.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| ANE | "Apple neural engine" | On-device NPU in M-series and A-series; unified memory |
-| Hexagon | "Qualcomm NPU" | Snapdragon NPU; QNN SDK for access |
-| WebGPU | "browser GPU" | W3C-standardized browser GPU API; Chrome/Safari 2026 |
-| WebLLM | "browser LLM runtime" | MLC-LLM project; Apache 2.0; OpenAI-compatible JS |
-| Jetson | "NVIDIA edge" | Orin Nano / AGX / Thor / T4000 family |
-| TRT Edge-LLM | "edge TensorRT" | 2026 edge port of TensorRT-LLM; EAGLE-3 + NVFP4 |
-| Unified memory | "shared pool" | CPU and NPU see same RAM; no copy overhead |
-| Bandwidth-bound | "memory limited" | Decode gated by bytes/sec reading weights |
-| Core ML | "Apple conversion" | Apple framework for ANE-native models |
-| QNN | "Qualcomm stack" | Qualcomm Neural Network SDK |
 
 ## Further Reading
 

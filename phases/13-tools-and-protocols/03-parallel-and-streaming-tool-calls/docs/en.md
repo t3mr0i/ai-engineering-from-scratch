@@ -110,35 +110,7 @@ Real-world caveat: parallel calls stress downstream APIs. A 10-way fan-out to a 
 
 If the model itself streams, you can start executing as soon as one call's arguments are complete, rather than waiting for all calls to finalize. This is an optimization OpenAI documents but not all SDKs expose. The harness in this lesson does it: as soon as the simulated stream yields a complete argument object, the host kicks off that call.
 
-## Use It
 
-`code/main.py` has two halves. The first runs three simulated weather calls sequentially and in parallel using `concurrent.futures.ThreadPoolExecutor` and prints wall-clock time. The second half replays a fake streaming response — chunks of `arguments` for three parallel calls interleaved on one stream — and reassembles them per-id with `StreamAccumulator`. No LLM, no network, just the reassembly logic.
-
-What to look at:
-
-- The sequential timer hits 1.8 seconds. The parallel timer hits 0.8 seconds on the same fake latencies.
-- The accumulator handles chunks arriving out of order by buffering per-id and parsing only when each call's JSON is complete.
-- The executor kicks off as soon as an id's arguments finalize, not after all streams end.
-
-## Ship It
-
-This lesson produces `outputs/skill-parallel-call-safety-check.md`. Given a tool registry, the skill audits which tools are safe to parallelize, which have ordering dependencies, and which would overwhelm downstream rate limits — returning a revised registry with per-tool `parallel_safe` flags.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Parallel tool calls | "Fan-out in one turn" | Model emits multiple tool calls in a single assistant message |
-| `parallel_tool_calls` | "OpenAI's flag" | Enable or disable multi-call emission |
-| `disable_parallel_tool_use` | "Anthropic's inverse" | Opt-out flag; default is parallel enabled |
-| Tool call id | "Correlation handle" | Per-call identifier the result message must echo |
-| Accumulator | "Stream buffer" | Per-id string buffer for partial `arguments` chunks |
-| Out-of-order completion | "Fastest first" | Parallel calls finish in unpredictable order; ids are the glue |
-| Dependency graph | "Ordering constraints" | Tools whose outputs feed into inputs of other tools; cannot parallelize |
-| Parse-early trap | "JSON.parse exploded" | Attempting to parse an incomplete `arguments` string |
-| `streamFunctionCallArguments` | "Gemini 3 feature" | Streamed argument chunks with unique id per call |
-| Completion-order reply | "Don't wait for all" | Reply with results as they arrive, keyed by id |
 
 ## Further Reading
 

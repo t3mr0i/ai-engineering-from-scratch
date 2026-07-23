@@ -127,29 +127,7 @@ For a new document-AI project:
 - Full arXiv ingestion: Nougat for math, VLM for figures.
 - Regulatory: OCR pipeline + VLM validator for cross-check.
 
-## Use It
 
-`code/main.py`:
-
-- A toy layout-aware tokenizer: given (text, bbox) pairs, produces the LayoutLMv3-style input.
-- A Donut-style task schema generator: JSON template for forms.
-- A comparison of token budgets per page across OCR-pipeline, Donut, Nougat, and VLM-native.
-
-## Ship It
-
-This lesson produces `outputs/skill-document-ai-stack-picker.md`. Given a document-AI project (domain, scale, quality, regulatory), picks between OCR pipeline, OCR-free specialist, and VLM-native.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| OCR pipeline | "Tesseract-style" | Stage-wise stack: detect -> OCR -> layout -> rules; deterministic, fragile |
-| OCR-free | "Donut-style" | Image-to-output transformer that skips explicit OCR; single model |
-| Layout-aware | "LayoutLM" | Input includes per-token bbox coordinates; unified masking across modalities |
-| VLM-native | "Frontier VLM" | Feed page image directly to Claude/GPT/Qwen VLM at high resolution; no pipeline |
-| DocVQA | "Doc benchmark" | Document VQA standard; most-cited score |
-| Markup output | "LaTeX / MD" | Structured output format instead of free-form text; enables downstream automation |
 
 ## Further Reading
 

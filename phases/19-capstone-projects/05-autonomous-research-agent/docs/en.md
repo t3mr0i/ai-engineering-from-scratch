@@ -70,48 +70,7 @@ seed idea + domain
 - Observability: Langfuse for agent traces, $30 hard budget per paper
 
 
-## Use It
 
-```
-$ ai-scientist run --seed "attention sparsity in sub-1B transformers" --budget 30
-[lit]    50 papers, digest in 12s
-[tree]   expanded 8 nodes, budget 12/30
-[exec]   node #3 sparsity=top-8, loss=2.83 (best so far)
-[exec]   node #6 sparsity=top-4, loss=3.12 (worse)
-[exec]   ...
-[tree]   chose branch rooted at node #3 (novelty 0.62, quality 0.81)
-[write]  LaTeX draft v1 complete
-[vision] critique: figure 2 legend too small, claim-evidence ok
-[write]  draft v2 after 3 edits
-[review] mean 4.2/5 (novelty 3.9, rigor 4.3, clarity 4.1, repro 4.5, impact 4.2)
-[done]   paper.pdf + review.md + trace.json     $28.40 spent
-```
-
-## Ship It
-
-`outputs/skill-ai-scientist.md` is the deliverable. Given a seed idea + a domain + a $30 budget, it runs the full pipeline and emits a reviewable paper plus a reproducibility bundle.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Paper quality | Blind rubric review against published workshop papers |
-| 20 | Experimental rigor | Baselines, seeds, ablations; every claim backed by a cell in the results table |
-| 20 | Cost and compute discipline | $30/paper ceiling enforced, Langfuse-traced |
-| 20 | Safety | Sandbox red team passes; network policy and kill-switch verified |
-| 15 | Reproducibility | One-command rerun with identical seeds reproduces the paper |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Tree search | "AB-MCTS-style expansion" | Best-first exploration over experiment nodes with a novelty×quality×budget score |
-| Sandbox | "Experiment isolation" | Container with no network, bounded CPU/memory, pinned seeds, read-only inputs |
-| Vision critique | "Render-then-read" | Compile the paper to PDF, feed the PDF back to a VLM for layout and claim-evidence critique |
-| Reviewer ensemble | "Automated peer review" | Multiple LLM judges scoring the paper with a NeurIPS rubric; weighted aggregate gates the pipeline |
-| Novelty score | "Is this new?" | Heuristic that penalizes proximity to the 50-paper literature cache |
-| Cost ceiling | "$ budget" | Hard cap on total spend per paper; Langfuse counters + pre-run estimates |
-| Red team | "Sandbox-escape audit" | Adversarial tasks that would escape the sandbox if the policy is wrong |
 
 ## Further Reading
 

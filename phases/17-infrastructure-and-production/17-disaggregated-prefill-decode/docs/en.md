@@ -105,28 +105,7 @@ Benchmark numbers drift — NVIDIA and the inference stack post updated results 
 - Disaggregation threshold: prompts >512 tokens + outputs >200 tokens.
 - KV transfer via NIXL: 20-80 ms for 4K-prompt KV on 70B FP8.
 
-## Use It
 
-`code/main.py` simulates colocated vs disaggregated serving. Reports throughput, cost per request, and the prompt-length crossover.
-
-## Ship It
-
-This lesson produces `outputs/skill-disaggregation-decider.md`. Given workload and cluster, decides whether to disaggregate.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Disaggregated serving | "split prefill/decode" | Separate GPU pools for each phase |
-| NIXL | "NVIDIA transport" | Dynamo's inter-node KV transfer (RDMA/TCP) |
-| NVIDIA Dynamo | "the orchestrator" | Stack-above coordinator for vLLM/SGLang/TRT-LLM |
-| llm-d | "Kubernetes native" | Red Hat + AWS K8s disaggregated stack |
-| Planner Profiler | "Dynamo auto-config" | Measures workload, configures pool ratios |
-| SLA Planner | "Dynamo policy" | Auto-rate-matches prefill:decode to meet SLOs |
-| `packDomain: rack` | "llm-d topology" | Pack prefill+decode on same rack for fast KV |
-| UCCL | "unified collective" | llm-d 0.5 networking layer for scale-to-zero |
-| MoE expert routing | "expert per token" | DeepSeek-V3 pattern; disaggregation helps |
 
 ## Further Reading
 

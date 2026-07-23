@@ -92,36 +92,7 @@ Official Registry mandates reverse-DNS names for public servers: `io.github.alic
 
 Phase 17 (production infrastructure) dives deeper on gateway operations.
 
-## Use It
 
-`code/main.py` ships a minimal gateway in ~150 lines: authenticates users by a fake Bearer token, holds a per-user RBAC policy, routes requests to two backend MCP servers, writes every call to an audit log, enforces a rate limit, and rejects any backend tool whose description hash does not match a pinned manifest.
-
-What to look at:
-
-- `RBAC` dict keyed by `user_id` with allowed `server_tool` entries.
-- `AUDIT_LOG` is an append-only list of events.
-- Rate limit uses a token bucket per user.
-- Pinned manifest is a dict of `server::tool -> hash`.
-
-## Ship It
-
-This lesson produces `outputs/skill-gateway-bootstrap.md`. Given an enterprise MCP plan (users, backends, compliance), the skill produces a gateway configuration spec.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Gateway | "MCP proxy" | Centralizing server between clients and backends |
-| Credential vaulting | "Backend tokens stay server-side" | Developers never see upstream tokens |
-| Session-aware routing | "Multi-backend session" | Gateway multiplexes N backend sessions per developer session |
-| Tool-hash pinning | "Approved manifest" | SHA256 of every approved tool description; blocks rug-pulls centrally |
-| RBAC | "Per-user policy" | Role-based access control for tools and servers |
-| Policy-as-code | "Declarative rules" | OPA/Rego, Kyverno, Styra policies enforced at gateway |
-| Audit log | "Who, what, when" | Append-only event log for compliance |
-| Rate limit | "Per-user token bucket" | Per-minute caps to prevent abuse |
-| Official MCP Registry | "Canonical upstream" | `registry.modelcontextprotocol.io`, namespace-verified |
-| Reverse-DNS naming | "Registry namespace" | `io.github.user/server` convention |
 
 ## Further Reading
 

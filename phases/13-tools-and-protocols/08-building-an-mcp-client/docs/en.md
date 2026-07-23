@@ -87,41 +87,7 @@ Phase 13 · 09 covers the Streamable HTTP reconnection semantics; stdio is simpl
 
 Streamable HTTP uses a `Mcp-Session-Id` header. Stdio has no session id — the process identity IS the session. Keepalive pings are optional; stdio pipes do not break under inactivity.
 
-## Use It
 
-`code/main.py` spawns three simulated MCP servers as subprocesses, handshakes each, merges their tool lists, and routes tool calls to the right one. The "servers" are actually other Python processes running toy responders (no real LLM). Run it to see:
-
-- Three initializations, each with their own capability set.
-- Three `tools/list` results merged into a 7-tool namespace.
-- A routing decision based on the tool name.
-- A collision prevented by namespace prefixing.
-
-What to look at:
-
-- The `Session` dataclass holds per-server state cleanly.
-- The background reader thread dequeues every line on stdout without blocking the main thread.
-- The dispatch table is a simple `dict[str, Session]`.
-- Collision handling is explicit: when two servers declare the same name, the later one is renamed with a prefix.
-
-## Ship It
-
-This lesson produces `outputs/skill-mcp-client-harness.md`. Given a declarative list of MCP servers (name, command, args), the skill produces a harness that spawns them, merges tool lists, and ships a routing function with collision resolution.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| MCP client | "The agent host" | Process that spawns servers and orchestrates tool calls |
-| Session | "Per-server state" | Capabilities, tool list, and pending-request bookkeeping |
-| Merged namespace | "One tool list" | Flat set of tool names across all active servers |
-| Namespace collision | "Two servers same tool" | Client must prefix, reject, or first-come the duplicate |
-| Routing | "Who gets this call?" | Dispatch from tool name to owning server |
-| Background reader | "Non-blocking stdout" | Thread or task that drains server stdout into a queue |
-| Sampling callback | "LLM-as-a-service" | Client handler for `sampling/createMessage` from server |
-| `notifications/*_changed` | "Primitive mutated" | Signal the client must re-discover or re-read |
-| Reconnection policy | "When server dies" | Restart semantics when transport fails |
-| Stdio session | "Process = session" | No session id; child process lifetime is the session |
 
 ## Further Reading
 

@@ -39,58 +39,7 @@ You cannot learn from this stream until you formalize it. "What I saw," "what I 
 These split expected return into "this step's reward" plus "discounted value of where you land." Recursive. Every algorithm in Phase 9 either iterates this equation to convergence (dynamic programming), samples from it (Monte Carlo), or bootstraps it one step (temporal difference).
 
 
-## Use It
 
-The 2026 stack reduces every RL pipeline to an MDP before touching code:
-
-| Situation | State | Action | Reward | γ |
-|-----------|-------|--------|--------|---|
-| Control (locomotion, manipulation) | Joint angles + velocities | Continuous torques | Task-specific shaped | 0.99 |
-| Games (chess, Go, poker) | Board + history | Legal move | Win=+1 / loss=-1 | 1.0 (finite) |
-| Inventory / pricing | Stock + demand | Order qty | Revenue - cost | 0.95 |
-| RLHF for LLMs | Context tokens | Next token | Reward-model score at end | 1.0 (episode ~200 tokens) |
-| GRPO for reasoning | Prompt + partial response | Next token | Verifier 0/1 at end | 1.0 |
-
-Write the five tuples before writing any training loop. Most "RL does not work" bug reports trace back to an MDP formulation that was broken on paper.
-
-## Ship It
-
-Save as `outputs/skill-mdp-modeler.md`:
-
-```markdown
----
-name: mdp-modeler
-description: Given a task description, produce a Markov Decision Process spec and flag formulation risks before training.
-version: 1.0.0
-phase: 9
-lesson: 1
-tags: [rl, mdp, modeling]
----
-
-Given a task (control / game / recommendation / LLM fine-tuning), output:
-
-1. State. Exact feature vector or tensor spec. Justify Markov property.
-2. Action. Discrete set or continuous range. Dimensionality.
-3. Transition. Deterministic, stochastic-with-known-model, or sample-only.
-4. Reward. Function and source. Sparse vs shaped. Terminal vs per-step.
-5. Discount. Value and horizon justification.
-
-Refuse to ship any MDP where the state is non-Markovian without explicit mention of frame-stacking or recurrent state. Refuse any reward that was not defined in terms of the target outcome. Flag any `γ ≥ 1.0` on an infinite-horizon task. Flag any reward range >100x the typical step reward as a likely gradient-explosion source.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| MDP | "Reinforcement learning setup" | Tuple `(S, A, P, R, γ)` satisfying the Markov property. |
-| State | "What the agent sees" | Sufficient statistic for future dynamics under the chosen policy class. |
-| Policy | "Agent's behavior" | Conditional distribution `π(a \| s)` or deterministic map `s → a`. |
-| Return | "Total reward" | Discounted sum `Σ γ^t r_t` from the current step. |
-| Value | "How good a state is" | Expected return under `π` starting from `s`. |
-| Q-value | "How good an action is" | Expected return under `π` starting from `s` with first action `a`. |
-| Bellman equation | "Dynamic programming recursion" | Fixed-point decomposition of value / Q into one-step reward plus discounted successor value. |
-| Discount `γ` | "Future vs present" | Geometric weight on far-future reward; effective horizon `~1/(1-γ)`. |
 
 ## Further Reading
 

@@ -283,69 +283,7 @@ for inputs, targets in loader:
 | Production use | Toy problems | Meta, OpenAI, Anthropic, HF | Google DeepMind, Midjourney |
 
 
-## Use It
 
-### Quick Comparison: Mini Framework vs PyTorch
-
-| Mini Framework (Lesson 10) | PyTorch |
-|---------------------------|---------|
-| `model = Sequential(Linear(784, 256), ReLU(), ...)` | `model = nn.Sequential(nn.Linear(784, 256), nn.ReLU(), ...)` |
-| `pred = model.forward(x)` | `pred = model(x)` |
-| `optimizer.zero_grad()` | `optimizer.zero_grad()` |
-| `grad = criterion.backward()` then `model.backward(grad)` | `loss.backward()` |
-| `optimizer.step()` | `optimizer.step()` |
-| No GPU | `model.to("cuda")` |
-| Manual backward for every module | Autograd handles everything |
-
-The interface is nearly identical. The difference is everything under the hood.
-
-### Saving and Loading Models
-
-```python
-torch.save(model.state_dict(), "model.pt")
-
-model = MNISTModel()
-model.load_state_dict(torch.load("model.pt", weights_only=True))
-model.eval()
-```
-
-Always save `state_dict()` (the parameter dictionary), not the model object. Saving the model object uses pickle, which breaks when you refactor code. State dicts are portable.
-
-### Learning Rate Scheduling
-
-```python
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-    optimizer, T_max=10
-)
-for epoch in range(10):
-    train_one_epoch(model, train_loader, criterion, optimizer, device)
-    scheduler.step()
-```
-
-PyTorch ships 15+ schedulers: StepLR, ExponentialLR, CosineAnnealingLR, OneCycleLR, ReduceLROnPlateau. All plug into the same optimizer interface.
-
-## Ship It
-
-This lesson produces two artifacts:
-
-- `outputs/prompt-pytorch-debugger.md` -- a prompt for diagnosing common PyTorch training failures
-- `outputs/skill-pytorch-patterns.md` -- a skill reference for PyTorch training patterns
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Tensor | "A multi-dimensional array" | A typed, device-aware array with automatic differentiation support baked into every operation |
-| Autograd | "Automatic backprop" | A tape-based system that records operations during forward pass, then replays them in reverse to compute exact gradients |
-| nn.Module | "A layer" | The base class for any differentiable computation block -- registers parameters, supports nesting, handles train/eval modes |
-| state_dict | "The model weights" | An OrderedDict mapping parameter names to tensors -- the portable, serializable representation of a trained model |
-| .backward() | "Compute gradients" | Traverse the computational graph in reverse, computing and accumulating gradients for every leaf tensor with requires_grad=True |
-| .to(device) | "Move to GPU" | Recursively transfer all parameters and buffers to the specified device (CPU, CUDA, MPS) |
-| DataLoader | "The data pipeline" | An iterator that batches, shuffles, and optionally parallelizes data loading from a Dataset |
-| Mixed precision | "Use float16" | Train with float16 forward/backward for speed while keeping float32 master weights for numerical stability |
-| Eager execution | "Run it now" | Operations execute immediately when called, not deferred to a later compilation step -- the core design choice that differentiates PyTorch from TF 1.x |
-| zero_grad | "Reset gradients" | Set all parameter gradients to zero before the next backward pass, since PyTorch accumulates gradients by default |
 
 ## Further Reading
 

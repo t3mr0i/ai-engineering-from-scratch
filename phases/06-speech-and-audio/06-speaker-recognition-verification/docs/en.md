@@ -50,43 +50,7 @@ The metric is **EER** — Equal Error Rate. Set your decision threshold so False
 "Who spoke when" in a multi-speaker clip. Pipeline: VAD → segment → embed each segment → cluster (agglomerative or spectral) → smooth boundaries. Modern stack: `pyannote.audio` 3.1, which bundles speaker segmentation + embedding + clustering behind one call. 2026 SOTA DER on AMI is ~15% (down from 23% in 2022).
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| Closed-set 1:1 verification, edge | ECAPA-TDNN + cosine threshold |
-| Open-set verification, cloud | WavLM-SV + AS-norm |
-| Diarization (meetings, podcasts) | `pyannote/speaker-diarization-3.1` |
-| Anti-spoofing (replay / deepfake detection) | AASIST or RawNet2 |
-| Tiny embedded (KWS + enrollment) | Titanet-Small (NeMo) |
-
-## Pitfalls
-
-- **Channel mismatch.** Model trained on VoxCeleb (web video) ≠ phone-call audio. Always evaluate on target channel.
-- **Short utterances.** EER degrades sharply below 3 seconds of test audio.
-- **Enrollment with noise.** One noisy enrollment poisons the anchor. Use ≥3 clean samples and average.
-- **Fixed threshold across conditions.** Always tune the threshold on a held-out dev set from the target domain.
-- **Cosine on non-normalized embeddings.** L2-normalize first; otherwise the magnitude dominates.
-
-## Ship It
-
-Save as `outputs/skill-speaker-verifier.md`. Pick model, enrollment protocol, threshold-tuning plan, and fraud safeguards.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| EER | The headline metric | Threshold where False Accept = False Reject. |
-| Verification | 1:1 | "Is this Alice?" |
-| Identification | 1:N | "Who is speaking?" |
-| Open-set | Unknown possible | Test set can contain unenrolled speakers. |
-| Enrollment | Registering | Computing a speaker's reference embedding. |
-| AAM-softmax | The loss | Softmax with additive angular margin; forces cluster separation. |
-| PLDA | Classic scoring | Probabilistic LDA; likelihood-ratio scoring on top of embeddings. |
-| DER | Diarization metric | Diarization Error Rate — miss + false alarm + confusion. |
 
 ## Further Reading
 

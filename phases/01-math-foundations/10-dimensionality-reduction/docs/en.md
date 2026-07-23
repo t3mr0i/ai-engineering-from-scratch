@@ -191,55 +191,7 @@ Plotting cumulative explained variance against number of components gives you th
 Reconstruction error is useful beyond choosing k. You can use it for anomaly detection: samples with high reconstruction error are outliers that do not fit the learned subspace. This is the basis of PCA-based anomaly detection in production systems.
 
 
-## Use It
 
-PCA as preprocessing before a classifier:
-
-```python
-from sklearn.decomposition import PCA as SklearnPCA
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X_mnist, y_mnist, test_size=0.2, random_state=42
-)
-
-results = {}
-for k in [10, 30, 50, 100, 200]:
-    pca_k = SklearnPCA(n_components=k)
-    X_tr = pca_k.fit_transform(X_train)
-    X_te = pca_k.transform(X_test)
-
-    clf = LogisticRegression(max_iter=1000, random_state=42)
-    clf.fit(X_tr, y_train)
-    acc = accuracy_score(y_test, clf.predict(X_te))
-    var_captured = sum(pca_k.explained_variance_ratio_)
-    results[k] = (acc, var_captured)
-    print(f"k={k:>3d}  accuracy={acc:.4f}  variance={var_captured:.4f}")
-```
-
-Performance plateaus well before 784 dimensions. That plateau is your operating point.
-
-## Ship It
-
-This lesson produces:
-- `outputs/skill-dimensionality-reduction.md` - a skill for choosing the right dimensionality reduction technique for a given task
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
-| PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
-| Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
-| t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
-| UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
-| Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |
-| Manifold | "The surface the data lives on" | A lower-dimensional surface embedded in a higher-dimensional space. A sheet of paper crumpled in 3D is a 2D manifold. |
 
 ## Further Reading
 

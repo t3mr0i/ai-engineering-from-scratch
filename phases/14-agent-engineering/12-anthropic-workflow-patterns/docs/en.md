@@ -60,29 +60,7 @@ Foundation for all five patterns: one LLM with three capabilities wired in — s
 "Effective context engineering for AI agents" (Anthropic 2025) formalizes the adjacent discipline: the 200k window is a budget, not a container. What to include, when to compact, when to let context grow. Covered in detail in Phase 14 lesson on context compression (Phase 14 earlier lesson 06 in this curriculum before the renumber).
 
 
-## Use It
 
-- Direct API calls for most tasks.
-- Framework only when the pattern genuinely needs durable state (LangGraph), actor-model concurrency (AutoGen v0.4), or role templating (CrewAI).
-- Reach for the Claude Agent SDK when you want the Claude Code harness shape without rebuilding it.
-
-## Ship It
-
-`outputs/skill-workflow-picker.md` picks the right pattern for a given task description, including the decision rationale and the refactor path to an agent if workflows fall short.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Workflow | "Predefined flow" | Engineer-owned graph of LLM and tool calls |
-| Agent | "Autonomous AI" | Model-owned graph; dynamic tool direction |
-| Augmented LLM | "LLM with tools" | LLM + search + tools + memory; the atomic unit |
-| Prompt chaining | "Sequential calls" | Output of call N is input to call N+1 |
-| Routing | "Classifier dispatch" | Pick which chain/model handles the input |
-| Parallelization | "Fan out" | N concurrent calls; aggregate by sectioning or voting |
-| Orchestrator-workers | "Dispatcher agent" | Orchestrator LLM picks specialist LLMs dynamically |
-| Evaluator-optimizer | "Proposer + judge" | Iterate until evaluator passes; Self-Refine generalized |
 
 ## Further Reading
 

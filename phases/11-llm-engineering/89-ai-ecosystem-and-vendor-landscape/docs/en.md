@@ -117,51 +117,7 @@ A defensible vendor/platform recommendation for a client involves scoring five a
 
 `code/main.py` makes this scoring model runnable with a concrete sample of options and workloads, and demonstrates the failure shape that the exit-cost row is designed to catch.
 
-## Use It
 
-`code/main.py` implements two deterministic models of this lesson's core decisions:
-
-1. A **vendor/platform scorer** that takes a workload descriptor (data-residency requirement, expected monthly token volume, latency requirement, open-weights requirement) and scores a hardcoded catalog of model provider + platform combinations against those requirements, eliminating non-feasible options and ranking the rest. The scoring rubric includes an **exit-cost axis** that a naive cost-only ranking would miss.
-2. A **deployment-mode router** that maps a task type, volume tier, and latency requirement to the recommended model band (flagship / balanced / commodity) with the cost reasoning shown.
-3. A **demonstration block** that runs a "flagship-default" workload through the scorer and shows the failure shape: the top-ranked option by raw score is not the option a senior consultant would actually pick, because the scorer without an exit-cost axis picks the option with the deepest lock-in. This is the lesson's core insight demonstrated by showing the system being wrong in a recognizable way.
-
-No network calls, no pip dependencies. The purpose is to make the scoring policy — including the exit-cost axis — explicit and runnable.
-
-## Ship It
-
-`outputs/skill-vendor-selection-scorecard.md` is a one-page consultant's scorecard: paste in a client's workload constraints, eliminate non-compliant options, score the remaining ones across the five axes (including exit cost), and arrive at a defensible recommendation. Includes the four-axis scoring rubric, a routing table for model band selection by task type, and an exit-cost checklist.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Model provider | "The AI company" | Entity that trains and publishes model weights or endpoints; separate from the platform that hosts inference |
-| Managed inference platform | "Hosting the model" | Cloud service that serves model API endpoints with SLA, scaling, and region selection |
-| AI gateway | "Proxy layer" | Middleware handling auth, routing, rate limiting, semantic caching, and audit logging across multiple model backends |
-| Exit cost | "Switching cost" | The sum of data egress, code re-instrumentation, eval re-tuning, and compliance re-attestation required to leave a vendor |
-| Semantic caching | "Caching AI responses" | Returning a stored response when an incoming query is semantically near-duplicate of a previous query; typically 20-40% cost reduction on high-volume QA workloads |
-| Open weights | "Open source AI" | Model weights are publicly downloadable and may be run on-premise; the layer with the lowest exit cost, but the highest operational cost |
-| Flagship default | "Use the best model" | The failure shape of routing low-complexity tasks to flagship-tier models because the procurement scorecard weighted "model quality" most heavily |
-| Dry-run migration | "Test the move" | Pointing one production workload at a different provider for 48 hours and counting touch points; the only honest way to estimate exit cost |
-| Data Processing Agreement (DPA) | "GDPR paperwork" | Contractual instrument required under GDPR Art. 28 before a cloud processor can handle personal data; a 6–10 week procurement activity at large enterprises |
-| Layer confusion | "It's all just AI" | Conflating model provider, inference platform, gateway, and agent framework as one monolithic vendor choice; the root cause of over-coupled AI architectures and unmodeled exit costs |
-
-## Consultant field notes
-
-A senior consultant recognizes the following patterns by name; they recur across engagements.
-
-**The flagship-default scorecard.** A vendor evaluation weighted "model quality" 40% and "exit cost" 5%. The team procured the most expensive option and now has an 11x monthly run-rate. Always weight exit cost at parity with monthly run-rate.
-
-**The gateway-as-overhead fallacy.** A six-service architecture wired directly to a single LLM provider because the gateway felt like premature infrastructure. Retrofit cost was approximately 12 engineer-weeks; the upfront cost would have been two.
-
-**The fine-tuning data hostage.** A team uploaded 80,000 labeled examples into a managed fine-tuning workspace, then discovered the workspace was not exportable. Always run fine-tuning datasets through your own data lake; the platform owns the training, you own the data.
-
-**The benchmark anchoring trap.** A team picked the MMLU leader for a task where the eval suite measured something else. Benchmarks are signals, not decisions; the eval suite is the decision.
-
-**The EU-default surprise.** A team procured an API whose default region is US East. Six months later, a client DPA review flagged every production call as a data-residency violation. The default region is the first thing a DPA review checks.
-
-**The hyperscaler gravity well.** A team chose a hyperscaler-specific managed model because the procurement was fast. Twelve months later, a strategic decision to support a second cloud provider requires re-platforming the inference layer at three times the original cost. The fastest procurement is not always the cheapest platform.
 
 ## Further Reading
 

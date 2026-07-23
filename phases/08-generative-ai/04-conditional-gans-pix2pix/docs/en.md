@@ -41,52 +41,7 @@ Pix2Pix needs paired `(x, y)` data. CycleGAN (Zhu et al., 2017) drops this requi
 In 2026, unpaired image-to-image is mostly done via diffusion (ControlNet, IP-Adapter) rather than CycleGAN, but the cycle-consistency idea survives in almost every unpaired domain adaptation paper.
 
 
-## Use It
 
-2026 state of image-to-image tasks:
-
-| Task | Best approach |
-|------|---------------|
-| Sketch → photo, same domain, paired data | Pix2Pix / Pix2PixHD (still fast, still sharp) |
-| Sketch → photo, unpaired | ControlNet with a Scribble conditioning model |
-| Semantic seg → photo | SPADE / GauGAN2 or SD + ControlNet-Seg |
-| Style transfer | Diffusion with IP-Adapter or LoRA; GAN methods are legacy |
-| Depth → photo | ControlNet-Depth over Stable Diffusion |
-| Super-resolution | Real-ESRGAN (GAN), ESRGAN-Plus, or SD-Upscale (diffusion) |
-| Colorization | ColTran, diffusion-based colorizers, or Pix2Pix-color |
-| Daytime → nighttime, seasons, weather | CycleGAN or ControlNet-based |
-
-Pix2Pix remains the right tool when (a) you have thousands of paired examples, (b) the task is narrow and repeatable, and (c) you need fast inference. On generic open-domain tasks, diffusion wins.
-
-## Ship It
-
-Save `outputs/skill-img2img-chooser.md`. Skill takes a task description, data availability (paired vs unpaired, N samples), and latency/quality budget, then outputs: approach (Pix2Pix, CycleGAN, ControlNet variant, SDXL + IP-Adapter), training data requirements, inference cost, and eval protocol (LPIPS, FID, task-specific).
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Conditional GAN | "GAN with labels" | G(z, c), D(x, c). Both networks see the condition. |
-| Pix2Pix | "Image-to-image GAN" | Paired cGAN with U-Net G and PatchGAN D + L1 loss. |
-| U-Net | "Encoder-decoder with skips" | Symmetric conv network; skips preserve high-freq. |
-| PatchGAN | "Local-realism classifier" | D outputs per-patch score instead of global score. |
-| CycleGAN | "Unpaired image translation" | Two G's + cycle-consistency loss; no paired data. |
-| SPADE | "GauGAN" | Normalizes intermediate activations with the semantic map; segmentation-to-image. |
-| FiLM | "Feature-wise linear modulation" | Per-feature affine transform from the condition; cheap conditioning. |
-
-## Production note: Pix2Pix as a latency-bound baseline
-
-When you have paired data and a narrow task (sketch → render, semantic map → photo, day → night), Pix2Pix's one-shot inference beats diffusion by an order of magnitude on latency. The production comparison is usually:
-
-| Path | Steps | Typical latency at 512² on a single L4 |
-|------|-------|----------------------------------------|
-| Pix2Pix (U-Net forward) | 1 | ~30 ms |
-| SD-Inpaint or SD-Img2Img | 20 | ~1.2 s |
-| SDXL-Turbo Img2Img | 1-4 | ~0.15-0.35 s |
-| ControlNet + SDXL base | 20-30 | ~3-5 s |
-
-Pix2Pix wins on throughput in static batches (every request is the same FLOPs). Diffusion wins on quality and generalization. The modern play is often to ship a Pix2Pix-style distilled model for the narrow task and a diffusion fallback for tail inputs.
 
 ## Further Reading
 

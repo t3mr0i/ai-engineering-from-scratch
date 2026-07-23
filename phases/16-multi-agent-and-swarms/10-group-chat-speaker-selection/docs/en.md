@@ -91,33 +91,7 @@ Same primitives, different defaults:
 Both use the four primitives from Lesson 04. Group chat defaults to LLM-selected orchestration and full-pool shared state.
 
 
-## Use It
 
-`outputs/skill-groupchat-selector.md` configures a GroupChat selector for a given task — round-robin vs LLM-selected vs custom, and what selector inputs (recent messages, agent specialties, turn counts) to use.
-
-## Ship It
-
-Checklist:
-
-- **Max rounds cap.** Always. 10-20 for typical tasks.
-- **Speaker-balance metric.** Track turns per agent; alert when imbalance exceeds a threshold.
-- **Termination token.** `TERMINATE` or a dedicated verifier agent.
-- **Projection or scoped memory.** After ~10 messages, consider giving each agent only a scoped view to prevent context bloat.
-- **Selector logging.** For LLM-selected variants, log both the selector's input and its choice. Otherwise debugging is impossible.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| GroupChat | "Agents in one chat room" | Shared message pool + selector function. AutoGen / AG2 primitive. |
-| Speaker selection | "Who talks next" | The function that picks the next agent. Round-robin, LLM-selected, or custom. |
-| GroupChatManager | "The meeting host" | AutoGen component that owns the selector and loops over turns. |
-| ConversableAgent | "The base agent" | AutoGen base class; an agent that can send and receive messages. |
-| Termination token | "The 'stop' word" | Sentinel string (usually `TERMINATE`) that ends the chat. |
-| Hot speaker | "One agent dominates" | Failure mode where the selector keeps picking the same agent. |
-| Context bloat | "Pool grows unbounded" | Each agent reads every prior message; context grows with turns. |
-| Projection | "Scoped view" | Role-specific view into the shared pool to prevent context bloat. |
 
 ## Further Reading
 

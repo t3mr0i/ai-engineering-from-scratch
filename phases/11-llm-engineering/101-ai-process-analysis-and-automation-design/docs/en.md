@@ -94,37 +94,7 @@ Process analysis does not require AI. The work is observation, measurement, and 
 
 The 2026 trap to avoid: using a model to analyze whether a process is ready to automate, then using the analysis to justify deploying a model. The circularity is real. Independent ground-truth measurement (human audit of a sample) remains the only non-circular baseline.
 
-## Use It
 
-`code/main.py` models the pre-automation gate as a deterministic decision function. It defines a `ProcessProfile` dataclass capturing the four readiness inputs, a `ReadinessScore` that computes a gate verdict from those inputs, and a `recommend` function that maps the verdict to a next-step recommendation. The driver runs five synthetic process profiles — ranging from clearly ready to clearly not ready — and prints the gate verdict and recommended next action for each, ending in a headline summary of which profiles passed and why.
-
-## Ship It
-
-`outputs/skill-process-automation-readiness.md` is a one-page decision aid: a checklist of the four readiness inputs, a scoring table, a set of "not ready" response templates, and a decision tree for whether to proceed to a pilot, run more analysis, or escalate to a process redesign.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Exception map | "Edge case list" | A categorized, frequency-weighted inventory of deviations from the happy path, built by observing the live process |
-| Automation readiness gate | "Go / no-go decision" | A structured check that verifies four specific inputs exist before a pilot budget is committed |
-| Output sensitivity | "How bad can a mistake be" | A scored assessment of the downstream financial, legal, and operational consequences of an incorrect AI output |
-| Manual baseline | "Current accuracy" | A measured (not assumed) error rate for the existing process, derived from a sample audit with a consistent rubric |
-| Volume profile | "How busy it gets" | The historical distribution of case volume over time, including peak periods that may differ by order of magnitude from average |
-| Shadow mode | "Running in parallel" | Deploying the AI alongside the live process without routing real decisions to it; see Phase 17 · 20 |
-| Scope contract | "What the AI handles" | A formal definition of which decisions the AI owns, which it escalates, and under what conditions; see Phase 14 · 36 |
-| Circular baseline | "AI validates AI" | The failure mode where the same model used to analyze readiness is then deployed, with no independent ground-truth measurement |
-
-## Consultant field notes
-
-Patterns a senior consultant recognizes from the field:
-
-- **The prompt that worked in the demo but failed in production.** The twenty curated examples share a distribution the live process does not. Build the exception map from the live queue, not from the workshop deck.
-- **The RAG that returned the right doc but the wrong paragraph.** Retrieval hit the source document; chunking and reranking did not isolate the clause the question was about. Sensitivity scoring forces a human review layer precisely because the answer sounds confident when it is wrong.
-- **The use case everyone approved but nobody wanted.** The steering committee signed off; the people doing the work were never asked. Adoption dies in the first month because the new tool adds a step instead of removing one.
-- **The vendor pilot that never made it past the security review.** Data residency, audit logging, and tenant isolation are not model problems. Raise them in the readiness gate, not in week eleven of the pilot.
-- **The AI feature that hit a cost ceiling in month two.** Per-call inference cost and human review time scale with volume, not accuracy. A pilot at 5% of production volume will not surface the economics. Volume profile is part of the gate for a reason.
 
 ## Further Reading
 

@@ -67,46 +67,7 @@ A tiny adapter that accepts an *image* as conditioning (alongside text). Uses th
 ControlNet ≈ spatial. LoRA ≈ semantic. Use both.
 
 
-## Use It
 
-| Goal | 2026 pipeline |
-|------|---------------|
-| Reproduce a brand's art style | LoRA trained on ~30 curated images at rank 32 |
-| Put my face in a generated image | DreamBooth or LoRA + IP-Adapter-FaceID |
-| Specific pose + prompt | ControlNet-Openpose + SDXL + text |
-| Depth-aware composition | ControlNet-Depth + SD3 |
-| Reference + prompt | IP-Adapter + text |
-| Exact layout | ControlNet-Scribble or ControlNet-Canny |
-| Background replace | ControlNet-Seg + Inpainting (Lesson 09) |
-| Fast 1-step style | LCM-LoRA on SDXL-Turbo |
-
-## Ship It
-
-Save `outputs/skill-sd-toolkit-composer.md`. Skill takes a task (input assets: prompt, optional reference image, optional pose, optional depth, optional scribble) and outputs the tool stack, weights, and a reproducible seed protocol.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
-| Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
-| rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
-| IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
-| DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
-| Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
-
-## Production note: LoRA swaps, ControlNet lanes, multi-tenant serving
-
-A real text-to-image SaaS serves hundreds of LoRAs and a dozen ControlNets over the same base checkpoint. The serving problem looks a lot like LLM multi-tenancy (the production literature covers the LLM case under continuous batching and LoRAX / S-LoRA):
-
-- **Hot-swap LoRAs, do not merge.** Merging `W' = W + α·B·A` into the base gives ~3-5% faster per-step inference but freezes `α` and the base. Keep LoRAs hot in VRAM as rank-r deltas; diffusers exposes `pipe.load_lora_weights()` + `pipe.set_adapters([...], adapter_weights=[...])` for per-request activation. Swap cost is the `2 · d · r · num_layers` weights — MB-scale, sub-second.
-- **ControlNet as a second attention lane.** The cloned encoder runs in parallel with the base. Two ControlNets at weight 1.0 each = two extra forward passes per step, not one merged pass. Batch-size headroom drops quadratically. Budget for ~1.5× step cost per active ControlNet.
-- **Quantized LoRAs too.** If you quantized the base (see Lesson 07, Flux on 8GB), the LoRA delta also quantizes cleanly to 8-bit or 4-bit. QLoRA-style loading lets you stack 5-10 LoRAs on top of a 4-bit Flux base without blowing memory.
-
-Flux-specific: Niels' Flux-on-8GB notebook quantizes the base to 4-bit; stacking a style LoRA (`pipe.load_lora_weights("user/style-lora")`) on that quantized base at `weight_name="pytorch_lora_weights.safetensors"` still works. This is the recipe most SaaS agencies ship in 2026.
 
 ## Further Reading
 

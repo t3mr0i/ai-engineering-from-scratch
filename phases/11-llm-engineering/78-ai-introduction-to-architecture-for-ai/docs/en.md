@@ -107,42 +107,7 @@ Given a new AI system requirement, the decision sequence is:
 
 `code/main.py` makes this decision sequence executable.
 
-## Use It
 
-`code/main.py` implements two deterministic models of this lesson's core decisions:
-
-1. An **architecture pattern classifier** that takes a set of requirement flags (needs RAG, needs tool use, latency-sensitive, multi-step workflow, data residency constraints) and selects the appropriate layer activations with reasoning.
-2. A **layer cost estimator** that takes an architecture choice and a usage profile (requests per day, tokens per request, tool calls per request) and produces a cost-per-day breakdown across the active layers — making the trade-off between a single-call and a full agent-RAG architecture numerically concrete.
-
-No network, no API keys — the point is to run the decision logic yourself and see how requirement flags drive architecture choices.
-
-## Ship It
-
-`outputs/skill-ai-system-architecture-picker.md` is a one-page consulting decision aid: a requirement intake checklist, the five-layer activation table, the orchestration pattern selector, and a cost order-of-magnitude reference. Paste it into a client kickoff to anchor the architecture conversation.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| RAG | "Grounded AI" | Retrieval-Augmented Generation: retrieve relevant chunks, inject into prompt, then generate |
-| Vector index | "The AI database" | An index of dense embeddings (e.g., Azure AI Search, pgvector) enabling semantic similarity search |
-| Agent loop | "Let it think by itself" | An iterative model-calls-tool-observes-result loop with no fixed number of steps |
-| Context window | "How much it can read" | Maximum token budget for a single model call; includes prompt, retrieved chunks, and response |
-| Orchestration | "The pipeline" | Code that controls the sequence, branching, and parallelism of model and tool calls |
-| Groundedness | "Does it match the sources?" | Whether a generated answer is supported by retrieved or provided reference material |
-| Data residency | "Where does the data live?" | Regulatory requirement that data be processed and stored in a specific geographic jurisdiction |
-| Managed API | "Cloud AI endpoint" | A hosted model endpoint (Azure OpenAI, Anthropic API, Bedrock) where the provider manages infrastructure |
-
-## Consultant field notes
-
-Five shapes you will see again. Name them early in the engagement; clients recognize the pattern faster than the abstract principle.
-
-- **The prompt that worked in the demo but failed in production.** A carefully crafted few-shot prompt dazzles on five curated examples, then collapses on real distribution: long inputs, adversarial users, languages it was never tested on. Lesson: never ship a prompt you have not evaluated against at least a few hundred real production queries, ideally stratified by user segment.
-- **The RAG that returned the right doc but the wrong paragraph.** The vector index hit at the document level; the chunk boundary cut the actual answer in half. The model then hallucinated the missing clause with confidence. Lesson: chunk strategy is a content-quality decision, not an embedding decision — re-rank and citation checks catch this; embedding similarity does not.
-- **The vendor pilot that never made it past the security review.** A six-week PoC ran beautifully, then stalled three months in procurement because data residency, audit logging, or model fine-tuning rights were never agreed at contract level. Lesson: involve InfoSec and legal on day one, not week eight.
-- **The use case everyone approved but nobody wanted.** A steering committee greenlit the AI assistant for case workers; six months later, adoption sits at 8% because the workflow did not match how the job actually gets done. Lesson: validate the use case with the end users, not just the sponsors — enthusiasm at the top is not a proxy for usage in the field.
-- **The AI feature that hit a cost ceiling in month two.** A prototype looked free at 200 test queries; at production volume the retrieval + LLM + re-rank stack pushed per-interaction cost past what the business case assumed, and the feature got quietly disabled. Lesson: model the cost ceiling at 10x your expected volume before approving scope, not after.
 
 ## Further Reading
 

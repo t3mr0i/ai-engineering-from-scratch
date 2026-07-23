@@ -57,30 +57,7 @@ Telemetry (Phase 14 · 23, OTel GenAI conventions) is for human operators review
 If the runner errors before capturing exit, the record carries `exit_code: null` and `error: <reason>`. The agent loop must refuse to claim success on a `null` exit. No exit, no progress.
 
 
-## Use It
 
-Production patterns:
-
-- **Claude Code Bash tool.** The tool already captures stdout, stderr, exit, and duration. The runner in this lesson is the framework-agnostic equivalent for any agent product.
-- **LangGraph nodes.** Wrap any shell node in the runner so the record persists outside graph state.
-- **CI logs.** Pipe the JSONL into your CI artifact store; reviewers can replay any command without rerunning the session.
-
-The runner is a thin wrapper that survives every framework migration because it owns the shape of the record.
-
-## Ship It
-
-`outputs/skill-feedback-runner.md` generates a project-specific `run_with_feedback.py` with the right truncation budget, a JSONL writer wired to the workbench, and a loader the agent reads at every turn.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Feedback record | "Run log" | Structured JSONL entry with command, output, exit, duration |
-| Tail truncation | "Trim the log" | Deterministic head+tail capture so records fit in token budget |
-| Refuse-on-null | "Block on missing data" | The loop must not advance when `exit_code` is null |
-| Agent note | "Expectation tag" | The one-line prediction the agent writes before reading the result |
-| Telemetry split | "Two log files" | Feedback for the next turn, telemetry for the operator |
 
 ## Further Reading
 

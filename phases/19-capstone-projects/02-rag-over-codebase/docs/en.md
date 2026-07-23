@@ -63,46 +63,7 @@ git push --> webhook --> ingest worker (LlamaIndex Workflow)
 - Observability: Langfuse spans per retrieval + synthesis step
 
 
-## Use It
 
-```
-$ code-rag ask "how is S3 multipart abort wired into our retry budget?"
-[retrieve]  12 chunks dense + 7 chunks bm25, 16 unique after dedup
-[rerank]    top-5 kept (cohere rerank-3)
-[synth]     claude-sonnet-4.7, cache hit rate 68%, 2.1s
-answer:
-  Multipart aborts are triggered by `AbortMultipartOnFail` in
-  services/uploader/retry.go:122-148, which decrements the per-bucket
-  retry budget defined in config/budgets.yaml:34-51 ...
-  citations: [services/uploader/retry.go:122-148, config/budgets.yaml:34-51,
-              libs/s3client/multipart.ts:44-61]
-```
-
-## Ship It
-
-Deliverable skill `outputs/skill-codebase-rag.md`. Given a corpus of repos, it stands up the ingestion pipeline, the hybrid index, and the query agent, and returns a cited answer for any cross-repo question. Rubric:
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Retrieval quality | MRR@10 and nDCG@10 on a 100-question held-out set |
-| 20 | Citation faithfulness | Fraction of answer claims with verifiable file:line anchors |
-| 20 | Latency and scale | p95 query latency at 10k QPS on the indexed corpus size |
-| 20 | Incremental indexing correctness | Time from git push to searchable on a 50-file commit |
-| 15 | UX and answer formatting | Citation clickability, snippet previews, follow-up affordance |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| AST-aware chunking | "Function-level splits" | Cutting code at tree-sitter node boundaries instead of fixed token windows |
-| Hybrid search | "Dense + sparse" | Run BM25 and vector search in parallel, merge top-k, rerank |
-| Cross-encoder rerank | "Second-stage rank" | Model that scores each (query, candidate) pair together, more accurate than cosine |
-| Prompt caching | "Cached system prompt" | 2026 Claude / OpenAI feature that discounts repeat prefix tokens up to 90% |
-| Symbol graph | "Code graph" | Edges for imports, calls, inheritance across files and repos |
-| Citation faithfulness | "Grounded answer rate" | Fraction of claims a user can verify by clicking the anchor and reading the referenced span |
-| Incremental re-index | "Push-to-search time" | Wall-clock from git push to the changed symbols being queryable |
 
 ## Further Reading
 

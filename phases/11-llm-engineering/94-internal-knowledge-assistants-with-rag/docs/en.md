@@ -127,50 +127,7 @@ Query arrives with user identity
 
 The faithfulness check is the only line that is not present in the pre-2026 design and is the single highest-value addition for catching wrong-doc confidence. Every other line is a refinement of an existing concern.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the three wrong-doc shapes and the runtime gates that catch them:
-
-1. A **chunk registry** with supersedure, provenance, and `content_hash` fields, plus a corpus of synthetic chunks that includes all three failure shapes.
-2. A **retrieval-with-gates** simulator that scores a query against the corpus and applies pre-filter, supersedure exclusion, content-hash dedup, and source-agreement checks.
-3. A **faithfulness gate** that compares the generated answer (given to the simulator) against the retrieved snippets and triggers the fallback if claims are unsupported.
-4. A **failure-shape demonstrator** that walks the same query through the corpus three times — once before gates, once after structural gates, once after the faithfulness gate — so the lesson's core insight is visible in the output: each gate catches one shape; the faithfulness gate is the only one that catches Shape 3.
-
-No model, no network. The point is to make the wrong-doc failure shapes concrete and the gate logic explicit, the same way the earlier planning classifiers made the planning policy runnable.
-
-## Ship It
-
-`outputs/skill-rag-source-governance.md` is the planning checklist updated with the supersedure gate, the `provenance_source_id` / `content_hash` schema, and the faithfulness-gate threshold calibration section.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Wrong-doc confidence | "The answer was wrong" | A high-score retrieval of a stale, mis-tagged, duplicated, or adjacent-topic chunk that the system treats as a correct answer with citation |
-| Supersedure gate | "Exclude old docs" | A per-chunk `superseded_by` field; the runtime excludes or downgrades chunks that have been officially replaced at the source system |
-| `provenance_source_id` | "Where did this come from?" | A pointer to the source system's canonical record ID (SharePoint GUID, Confluence page ID), stable across re-uploads |
-| `content_hash` | "Hash of the chunk" | SHA-256 of chunk text, used for dedup at index time and query time; catches Shape 2 deep |
-| Source agreement | "Are these the same source?" | A signal that k retrieved chunks come from distinct source-system records (distinct `provenance_source_id`), not from re-uploads of one |
-| Faithfulness gate | "Did the answer use the sources?" | A per-answer check that every claim is supported by the retrieved snippets; the only gate that catches Shape 3 |
-| Source readiness (extended) | "Is the doc good enough?" | Four gates: authority, currency, scope fit, and supersedure state |
-| Permission leakage | "It told me something I shouldn't know" | An answer derived from a chunk whose source-system permission list did not include the user, where the mis-tag was inherited from a mis-uploaded copy |
-
-## Consultant field notes
-
-These are the patterns a senior consultant recognizes by name in post-incident reviews. If you see one in your project, name it out loud and address it before go-live.
-
-1. **Stale supersedes current.** The retriever returns a 2019 policy because both documents are indexed and the older one happens to match the query phrasing more closely. Fix: supersedure gate, not a better embedding model.
-
-2. **Duplicate with wrong tagging.** A re-uploaded file lost its source-system permission list, and the indexer trusted the share path instead of the source-system record. Fix: `provenance_source_id` reconciled against the source system at index time, not at upload time.
-
-3. **Adjacent-topic with confident phrasing.** High retrieval score, in-scope, current, permitted — and the answer extrapolates beyond what the chunk supports. Fix: faithfulness gate. No metadata-only signal catches this.
-
-4. **Two-copies-as-agreement.** The retriever returns the same document twice (re-uploaded under two paths) and the system reads "two sources agree" as high confidence. Fix: `content_hash` dedup before counting source agreement.
-
-5. **The SharePoint trap.** Auto-discovery indexed every document in a SharePoint site that was technically accessible to everyone because no one ever restricted it. Fix: source-system reconciliation, not access control at the index layer. The index layer inherits whatever the source system says; if the source system says "everyone," the assistant will, too.
-
-6. **The "the citation proves it's fine" failure.** A reviewer approved an answer because a citation was present. The citation was correct. The chunk was wrong. Fix: a faithfulness gate that the reviewer can read in the log, not just a citation the reviewer can click.
 
 ## Further Reading
 

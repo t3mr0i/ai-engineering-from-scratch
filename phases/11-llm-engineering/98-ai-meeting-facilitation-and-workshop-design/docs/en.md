@@ -88,46 +88,7 @@ The Phase 14 · 39 reviewer agent pattern generalises cleanly. The meeting artif
 
 Running this as a two-agent loop surfaces gaps that a single extraction pass misses — in our experience typically 15-25% of typed artifacts return with a missing owner, an implicit decision disguised as an open question, or an undeclared action — at the cost of one extra model call per meeting, justified for any meeting whose output feeds external stakeholders.
 
-## Use It
 
-`code/main.py` implements a deterministic, stdlib-only model of the two core decisions in this lesson:
-
-1. An **artifact classifier** that takes a list of raw meeting notes and assigns each to one of the four artifact types (Decision, Action, OpenQuestion, ParkingLot) using rule-based matching — making the typing policy explicit without a real model.
-2. An **action quality scorer** that takes a structured action item and evaluates it against the four-field rubric, returning a score, a pass/fail verdict, and the specific fields that need attention.
-
-The driver runs a sample set of seven raw items and prints their classifications and scores, ending with a headline showing how many items are ready to publish versus blocked for rework.
-
-## Ship It
-
-`outputs/skill-meeting-artifact-extractor.md` is a one-page decision aid: a checklist for running the three-pass elicitation chain, a copy-paste prompt template for each pass, the quality rubrics as compact tables, and a privacy checklist to run before routing a transcript anywhere.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Decision artifact | "Meeting minutes" | Typed record: what was decided, rationale, owner, reversibility — distinct from action items |
-| Action artifact | "To-dos" | Task with a single named owner, specific deadline, and testable definition of done |
-| Open question | "Things we didn't resolve" | Explicitly typed item with a reopen trigger — not the same as a deferred decision |
-| Parking lot | "We'll handle that later" | Typed disposition (defer/discard/escalate) with an owner; becomes an action or decision elsewhere |
-| Elicitation chain | "The prompts" | Multi-pass prompt sequence: identify → enrich → quality-gate; enforces schema rather than summarising |
-| Quality gate | "Checking the output" | Rubric-based pass/fail per artifact field; blocks publication of incomplete items |
-| Decision log | "The archive" | Permanent, queryable register of typed decisions — feeds future meetings, onboarding, audits |
-| Reversibility | "Can we change it?" | Explicit declaration of conditions under which a decision can be revisited; critical for risk framing |
-
-## Consultant field notes
-
-Patterns a senior facilitator recognises after a few dozen rooms:
-
-- **The prompt that worked in the demo but failed in production.** The elicitation chain was tuned on three transcripts from the pilot team, all in clean English, all with one clear speaker. The first real meeting had two accents, crosstalk, a presenter reading from slides, and a client who joined late. The chain still extracted artifacts — just the wrong ones, confidently. Lesson: validate the rubric on a messy transcript before you trust the output, and keep a human in the confirmation loop on every meeting where you cannot replay the room.
-
-- **The decision log that grew faster than anyone could read it.** The discipline worked. Every meeting produced typed decisions with rationale, owner, and reversibility. Six months in, the log has more than a thousand entries and no one opens it before a meeting. The system produces artifacts nobody consumes. Lesson: a decision log is only useful if future meetings actually diff against it; otherwise it is a write-only database dressed up as governance.
-
-- **The workshop that surfaced the real question in the last ten minutes.** The agenda was tight, the elicitation prompts polished, the decision frame pre-built. At minute fifty a junior participant asked the question the whole session should have started with — and there was no time to answer it. Lesson: build a ten-minute open slot into every workshop frame and protect it; the most important artifact is often the one you did not plan to produce.
-
-- **The pre-meeting brief that nobody read.** The decision frame was distributed forty-eight hours before the workshop. Half the attendees skimmed it; the other half did not open it. The facilitator spent the first twenty minutes re-explaining what was already written. Lesson: a written brief is a forcing function for the author, not a substitute for the facilitator's opening — budget the recap or run the meeting differently.
-
-- **The meeting type nobody bothered to type.** Teams adopted the four-artifact discipline for project meetings and forgot about retrospectives, hiring debriefs, and incident reviews. Those meetings kept producing flat action lists while the rest of the organisation moved to typed artifacts. Lesson: the rubric only delivers value when it is applied uniformly across meeting types; exceptions become the gaps where accountability quietly evaporates.
 
 ## Further Reading
 

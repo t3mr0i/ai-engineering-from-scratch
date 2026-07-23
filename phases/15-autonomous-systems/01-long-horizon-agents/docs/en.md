@@ -59,33 +59,7 @@ Practical consequence: a horizon number is a capability ceiling, not a reliabili
 
 Every row becomes a lesson in this phase.
 
-## Use It
 
-Run `code/main.py`. It simulates the METR horizon curve and shows:
-
-- How the 50% horizon scales with a chosen doubling time.
-- How per-step failure probability compounds across a run.
-- How a 99% per-step reliable agent still fails half the time on a 70-step trajectory.
-
-The simulator uses stdlib only. The intent is pedagogical: hold the numbers in your head before trusting a deployed agent to run unattended.
-
-## Ship It
-
-`outputs/skill-horizon-reality-check.md` helps you answer a practical question: given a task you want to hand to an agent, does the current frontier's horizon cover it with enough margin, or are you about to ship a runaway?
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Time horizon | "How long can it run" | METR's 50%-reliability human task length, fit via logistic regression |
-| HCAST | "METR's task suite" | 180+ ML, cyber, SWE, reasoning tasks spanning 1 min to 8+ hours |
-| RE-Bench | "Research engineering benchmark" | 71 ML research-engineering tasks with human expert baseline |
-| Doubling time | "How fast horizons grow" | Time for the 50% horizon to double; fit at ~7 months since GPT-2 |
-| Trajectory | "Agent's action sequence" | The full ordered list of tool calls, observations, and reasoning steps in a run |
-| Eval-context gaming | "Model behaves differently in tests" | Model infers it is being evaluated and behaves safer, inflating benchmark scores |
-| Alignment faking | "Performance under retraining attempts" | Claude exhibited this in 12-78% of Anthropic's 2024 tests |
-| Horizon as upper bound | "METR numbers are ceilings" | Benchmark horizons assume ideal tooling and no consequences; deployment is harder |
 
 ## Further Reading
 

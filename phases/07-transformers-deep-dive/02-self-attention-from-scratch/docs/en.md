@@ -164,50 +164,7 @@ Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
 ```
 
 
-## Use It
 
-PyTorch's `nn.MultiheadAttention` does exactly what we built, plus multi-head splitting and output projection:
-
-```python
-import torch
-import torch.nn as nn
-
-d_model = 8
-n_heads = 2
-seq_len = 6
-
-mha = nn.MultiheadAttention(embed_dim=d_model, num_heads=n_heads, batch_first=True)
-
-X_torch = torch.randn(1, seq_len, d_model)
-
-output, attn_weights = mha(X_torch, X_torch, X_torch)
-
-print(f"Input shape:            {X_torch.shape}")
-print(f"Output shape:           {output.shape}")
-print(f"Attention weight shape: {attn_weights.shape}")
-print(f"\nAttn weights (averaged over heads):")
-print(attn_weights[0].detach().numpy().round(3))
-```
-
-The key difference: multi-head attention runs multiple attention functions in parallel, each with its own Q, K, V projections of size dk = d_model / n_heads, then concatenates results. This lets the model attend to different relationship types simultaneously.
-
-## Ship It
-
-This lesson produces:
-- `outputs/prompt-attention-explainer.md` - a prompt for explaining attention through the database lookup analogy
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
-| Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
-| Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
-| Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
-| Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
-| Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |
 
 ## Further Reading
 

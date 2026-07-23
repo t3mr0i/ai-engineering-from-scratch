@@ -67,27 +67,7 @@ Anthropic shipped Auto Mode as a research preview. The documentation is explicit
 - Unattended background run: `autoMode` only inside a workspace whose blast radius you have measured (no credentials, no production mounts, no egress you did not opt into).
 - Ephemeral containers: `yolo` / `bypassPermissions` is acceptable if and only if the container and its credentials are disposable.
 
-## Use It
 
-`code/main.py` simulates the two-stage classifier. Stage 1 is a cheap keyword rule over proposed actions; Stage 2 is a slower multi-rule reviewer. The driver feeds in a short synthetic trajectory (safe actions, a prompt-injection attempt, a repetitive loop) and shows where the classifier catches and where it misses.
-
-## Ship It
-
-`outputs/skill-permission-mode-picker.md` matches a task description to the right permission mode, budget caps, and required isolation.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Permission mode | "How much the agent can do" | One of seven named policies controlling per-action approval |
-| plan mode | "Ask before anything" | Agent writes a plan; user approves before execution |
-| acceptEdits | "Let it write files" | File writes auto-approve; shell exec still prompts |
-| autoMode | "Auto approvals" | Two-stage safety classifier; flagged actions escalate |
-| bypassPermissions | "Full YOLO" | Approves everything; intended for ephemeral containers |
-| Stage 1 classifier | "Fast token check" | Single-token rule over proposed action; runs in parallel |
-| Stage 2 classifier | "Deep review" | Chain-of-thought reasoning over flagged actions |
-| Research preview | "Not GA" | Anthropic framing for features whose failure mode is still being mapped |
 
 ## Further Reading
 

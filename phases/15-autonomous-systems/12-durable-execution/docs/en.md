@@ -64,33 +64,7 @@ METR observed that every agent class measured shows reliability decay beyond ~35
 - Strictly read-only information retrieval.
 - Tasks where correctness requires end-to-end within one context window (some reasoning tasks; some one-shot generation).
 
-## Use It
 
-`code/main.py` implements a minimal durable-execution engine in stdlib Python. It supports:
-
-- `@activity` decorator that logs inputs and outputs to a JSON event log.
-- A workflow function that sequences activities.
-- A `run_or_replay(workflow, event_log)` function that replays completed activities without re-executing them.
-
-The driver simulates a three-activity workflow, crashes halfway through, and shows (a) a naive retry re-executing everything versus (b) a replay running only the missing activity.
-
-## Ship It
-
-`outputs/skill-durable-execution-review.md` reviews a proposed long-running agent deployment for correct durable-execution shape: activities, determinism, checkpoint backend, human-input state, and HITL-on-resume policy.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Workflow | "Agent's script" | Deterministic orchestration code; replayable from event log |
-| Activity | "A step" | Non-deterministic unit (LLM call, tool call); logged before and after |
-| Event log | "The backing store" | Durable record of every state transition |
-| Replay | "Resume" | Re-run workflow; completed activities return logged results without re-execution |
-| Checkpoint | "Save point" | Persisted state keyed by thread_id; latest-wins on resume |
-| thread_id | "Session key" | Identifier that scopes durable state |
-| 35-minute degradation | "Reliability decay" | METR: success rate drops ~quadratically with horizon |
-| Non-determinism | "Drift on replay" | Wall clock, random, LLM output; must be registered as side effect |
 
 ## Further Reading
 

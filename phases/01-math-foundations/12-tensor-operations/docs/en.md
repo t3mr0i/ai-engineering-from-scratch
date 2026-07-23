@@ -102,73 +102,7 @@ graph LR
 Key patterns: `i,i->` (dot product), `i,j->ij` (outer product), `ii->` (trace), `ij->ji` (transpose), `bij,bjk->bik` (batch matmul), `bhtd,bhsd->bhts` (attention scores).
 
 
-## Use It
 
-### Scratch vs NumPy
-
-| Operation | Scratch (Tensor class) | NumPy |
-|---|---|---|
-| Create | `Tensor([[1,2],[3,4]])` | `np.array([[1,2],[3,4]])` |
-| Reshape | `t.reshape((3,4))` | `a.reshape(3,4)` |
-| Transpose | `t.transpose(0,1)` | `a.T` or `a.transpose(0,1)` |
-| Squeeze | `t.squeeze(0)` | `np.squeeze(a, 0)` |
-| Sum | `t.sum(axis=0)` | `a.sum(axis=0)` |
-| Einsum | N/A | `np.einsum("ij,jk->ik", a, b)` |
-
-### Scratch vs PyTorch
-
-```python
-import torch
-
-t = torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float32)
-t.shape
-t.stride()
-t.is_contiguous()
-
-t.reshape(3, 2)
-t.unsqueeze(0)
-t.transpose(0, 1)
-t.transpose(0, 1).contiguous()
-
-torch.einsum("ik,kj->ij", A, B)
-```
-
-PyTorch adds autograd, GPU support, and optimized BLAS kernels. The shape semantics are identical. If you understand the scratch version, PyTorch shape errors become readable.
-
-### Every neural network layer as a tensor operation
-
-| Operation | Tensor Form | Einsum |
-|---|---|---|
-| Linear layer | `Y = X @ W.T + b` | `"bd,od->bo"` + bias |
-| Attention QKV | `Q = X @ W_q` | `"btd,dh->bth"` |
-| Attention scores | `Q @ K.T / sqrt(d)` | `"bhtd,bhsd->bhts"` |
-| Attention output | `softmax(scores) @ V` | `"bhts,bhsd->bhtd"` |
-| Batch norm | `(X - mu) / sigma * gamma` | element-wise + broadcast |
-| Softmax | `exp(x) / sum(exp(x))` | element-wise + reduction |
-
-## Ship It
-
-This lesson produces two reusable prompts:
-
-1. **`outputs/prompt-tensor-shapes.md`** -- A systematic prompt for debugging tensor shape mismatches. Includes decision tables for every common operation (matmul, broadcast, cat, Linear, Conv2d, BatchNorm, softmax) and a fix lookup table.
-
-2. **`outputs/prompt-tensor-debugger.md`** -- A step-by-step debugging prompt you paste into any AI assistant when a shape error is blocking you. Feed it the error message and your tensor shapes, get back the exact fix.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Tensor | "A matrix but more dimensions" | A multi-dimensional array with uniform type and defined shape, strides, and operations |
-| Rank | "The number of dimensions" | The number of axes. A matrix has rank 2, not rank equal to its matrix rank |
-| Shape | "The size of the tensor" | A tuple listing the size along each axis. `(2, 3)` means 2 rows, 3 columns |
-| Stride | "How memory is laid out" | The number of elements to skip to advance one position along each axis |
-| Broadcasting | "It just works when shapes differ" | A strict set of rules: align from right, dimensions must be equal or one must be 1 |
-| Contiguous | "The tensor is normal" | Elements stored sequentially in memory with no gaps or reordering from the logical layout |
-| Einsum | "A fancy way to write matmul" | A general notation that expresses any tensor contraction, outer product, trace, or transpose in one line |
-| View | "Same as reshape" | A tensor sharing the same memory buffer but with different shape/stride metadata. Fails on non-contiguous data |
-| Contraction | "Summing over an index" | The general operation where a shared index between tensors is multiplied and summed, producing a lower-rank result |
-| NCHW / NHWC | "PyTorch vs TensorFlow format" | Memory layout conventions for image tensors. NCHW puts channels before spatial dims, NHWC puts them after |
 
 ## Further Reading
 

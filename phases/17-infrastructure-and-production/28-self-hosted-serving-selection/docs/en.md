@@ -91,28 +91,7 @@ Phase 17 · 01 (managed hyperscalers), · 02 (inference platforms) cover managed
 - SGLang production footprint: 400,000+ GPUs.
 - Ollama throughput gap vs llama.cpp: 15-30% slower; 3x under prod load.
 
-## Use It
 
-`code/main.py` is a decision-tree walker: given hardware + scale + workload, picks an engine and explains why.
-
-## Ship It
-
-This lesson produces `outputs/skill-engine-picker.md`. Given constraints, picks an engine and writes the migration plan.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| llama.cpp | "the CPU one" | Widest model support, fastest on CPU |
-| Ollama | "the laptop one" | One-command install, dev-grade throughput |
-| TGI | "HF's serving" | Maintenance mode since Dec 2025 |
-| vLLM | "the default" | Broad production baseline 2026 |
-| SGLang | "the agentic one" | Prefix-heavy, RadixAttention |
-| TRT-LLM | "NVIDIA-locked" | Blackwell throughput leader, NVIDIA only |
-| GGUF | "llama.cpp format" | Bundled K-quant variants |
-| Production-stack | "vLLM K8s" | Phase 17 · 18 reference deployment |
-| Pipeline pattern | "dev→stage→prod" | Ollama → llama.cpp → vLLM on same weights |
 
 ## Further Reading
 

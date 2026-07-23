@@ -137,46 +137,7 @@ A defensible procurement paper has four sections, in order, each answering one q
 
 A paper that leads with the scorecard and treats the gate log as an appendix has the analysis backwards. The gate log is the section that survives a compliance audit; the scorecard is the section that survives a stakeholder meeting.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only vendor scorecard engine. It models three concepts from this lesson:
-
-1. A **scorecard evaluator** that takes a set of vendors (with scores on the six dimensions) and a client weight profile (set by engagement context), computes weighted totals, and identifies the dimension where each vendor most diverges from the leader.
-2. A **hard-gate enforcement step** that disqualifies any vendor failing a non-negotiable criterion (DPA signed, no training on customer data, SOC 2 Type II, EU residency where required) — *before* the scorecard is run. This is the step the demo-data-disqualification story above shows the cost of skipping.
-3. A **cost-trap detector** that takes a vendor's quoted price plus a real traffic profile and surfaces the batch-vs-real-time mismatch, the context-window growth effect, and the implicit switching cost. The output is a "would this quote survive production?" verdict — not just a number.
-
-The drivers in each part include a vendor that *passes* the scorecard but *fails* the procurement reality, and a quote that *looks* cheap but costs 2-4x more at production scale. The final block names the specific failure shapes demonstrated.
-
-## Ship It
-
-`outputs/skill-vendor-scorecard.md` is a one-page decision aid: a ready-to-paste scorecard template, weight profiles for common engagement types, a hard-gate checklist, and a per-dimension evidence-gathering prompt list. Bring it to the first vendor evaluation working session.
-
-
-## Consultant field notes
-
-Patterns a senior evaluator recognises by name. The point of the name is so you can say "this is a case of [X]" across teams and everyone knows the failure shape.
-
-- **Demo-data disqualification** — A vendor scores top on capability because the eval was run on anonymized data; the DPA permits training on customer data by default and the data classification policy forbids opt-out by payment. The disqualification arrives at legal review, not at the scorecard. Estimate delay in weeks, not days.
-- **Statement of Applicability gap** — The vendor cites ISO 27001; the SoA excludes the inference API. The certificate is real and the marketing is technically accurate. The fix is a SoA review before the certificate is cited, not after.
-- **Batch-price quote** — A TCO comparison that mixes batch and real-time pricing hits a number that survives procurement challenge. The deployment is real-time. Always re-quote under the actual SLA the workload needs.
-- **Fine-tuning tax** — A team fine-tunes to lift accuracy by 8-12 points; the migration cost two years later is 5-10x the original fine-tuning investment. Treat fine-tuning as a long-term commitment and price the exit before you start.
-- **Context window creep** — A pricing model is built on 2K-token prompts; production averages 8K tokens once system prompt, history, and retrieval are included. The same vendor moves from cheapest to mid-tier on a spreadsheet, and the analysis still looks defensible because the math is correct. Use production traffic, not demo traffic.
-- **Demo-led procurement** — The decision is made on a live demo and a price list before the scorecard is built. The scorecard is then constructed to confirm the decision. Build the scorecard and the gate set first; run the demo last.
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| DPA | "Data agreement" | Data Processing Agreement — the legal contract defining a vendor's obligations as a GDPR data processor |
-| SOC 2 Type II | "They're SOC 2 certified" | Controls were audited in operation over a period; Type II is meaningfully stronger than Type I (design-only review) |
-| BSI C5 | "German cloud standard" | Bundesamt für Sicherheit in der Informationstechnik Cloud Computing Compliance Criteria Catalogue; required for German public sector |
-| EU AI Act Annex III | "High-risk AI" | Eight categories of AI systems (employment, credit, biometrics, etc.) subject to conformity assessment obligations |
-| CMEK | "Bring your own key" | Customer-managed encryption keys; the customer holds the KMS key material, not the vendor |
-| OpenAI-compatible endpoint | "Drop-in replacement" | An inference endpoint that accepts the OpenAI Chat Completions request schema; reduces switching cost but not lock-in from fine-tuned models |
-| Subprocessor | "Third-party vendor" | An entity the primary vendor uses to process your data; must be listed in the DPA and subject to equivalent data protection obligations |
-| Statement of Applicability | "Scope of the cert" | The ISO 27001 document that lists which controls are in scope; reading it tells you whether the inference API is covered |
-| Hard gate | "Disqualifier" | A non-negotiable criterion that removes a vendor from the shortlist before scoring; not a weighted dimension |
-| Task-representative eval | "Custom benchmark" | An evaluation set built from real production prompts for the client's use case; the only eval that survives vendor model updates |
 
 ## Further Reading
 

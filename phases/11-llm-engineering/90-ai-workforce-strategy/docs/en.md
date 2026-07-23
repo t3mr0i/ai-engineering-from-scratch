@@ -90,39 +90,7 @@ The role-capability matrix is the input to two downstream artefacts covered in o
 - **Phase 15 · 01 (Long-horizon agents):** the roles that operate long-horizon agents — task assignment, monitoring, and kill-switch authority — need the most stringent verification and escalation competencies. The matrix should flag these roles first.
 - **Phase 14 · 40 (Multi-session handoff):** the handoff protocol defines what context an AI system carries between sessions. The roles responsible for reviewing and approving that context need both output verification and governance competencies.
 
-## Use It
 
-`code/main.py` is a stdlib-only model of the two core decisions in this lesson. Part 1 scores a set of role-interaction-point pairs against the four competency categories and emits a gap rating (Adequate / Gap / Missing). Part 2 takes those gap ratings and prioritises them into an enablement backlog using a 2x2 impact-effort grid, with EU AI Act high-risk flagging applied as a priority override. The driver prints a complete gap report and a ranked backlog for a synthetic three-role example (engineer, product manager, compliance analyst), ending with a HEADLINE summary.
-
-## Ship It
-
-`outputs/skill-ai-workforce-gap-mapper.md` is a one-page decision aid: a blank role-capability matrix template, the four competency categories with example evidence for each, the prioritisation grid with worked examples, and a checklist for the governance owner to sign off at each audit cycle.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Role-capability matrix | "The skills gap analysis" | A table mapping roles to AI interaction points and the competency rating at each point |
-| Interaction point | "Where people touch the AI" | A specific step in an existing workflow where a person prompts, reviews, or governs an AI system |
-| Output verification | "Checking the AI's work" | The ability to judge correctness, completeness, and appropriateness of model output — not just whether it looks plausible |
-| Escalation judgment | "Knowing when to push back" | The trained ability to recognise when model output should not be acted on and who to involve |
-| EU AI Act Article 4 | "The literacy law" | The EU regulation requirement that operators of high-risk AI systems ensure staff have sufficient AI literacy |
-| Enablement backlog | "The training plan" | A prioritised list of capability gaps with matched remediation measures, ordered by impact and effort |
-| Accountability gap | "Who gets blamed" | The distance between perceived responsibility and actual accountability when an AI-assisted decision is wrong |
-| AI Operations Lead | "The model owner" | The role responsible for tracking AI system changes and communicating their effect on human verification requirements |
-
-## Consultant field notes
-
-**The use case everyone approved but nobody wanted.** A scope document signed off by the steering committee and disliked by the people who would actually use it. The matrix reveals it as a priority gap only after the launch team quietly stops logging in. Fix by reading the matrix's "Missing" ratings from the bottom up — those are the roles the use case was never designed for.
-
-**The prompt that worked in the demo but failed in production.** A prompt engineered against five hand-picked examples, deployed to a user population whose inputs sit two standard deviations outside the demo distribution. The competency gap is in **prompt craft under distribution shift**, not in the prompt itself. The matrix should rate the role's prompt-craft cell against production-shaped inputs, not curated ones.
-
-**The RAG that returned the right doc but the wrong paragraph.** The retrieval was correct; the chunking buried the answer below the model's attention budget. The gap lives in **output verification** — the reviewer must be trained to spot that the citation matches the question but the quote does not. Without this, every "verified" answer is a partial verification.
-
-**The vendor pilot that never made it past the security review.** Procurement, business sponsor, and a champion all aligned; the data classification team said no in week seven. The matrix missed the governance column. Add it as a first-class row before the second pilot, not after.
-
-**The AI feature that hit a cost ceiling in month two.** Adoption was healthy; per-call inference cost grew faster than revenue. The enablement backlog had rated **escalation judgment** as "Adequate" because nobody had been trained to recognise when not to call the model at all. Cheaper models are not the fix — fewer unnecessary calls are.
 
 ## Further Reading
 

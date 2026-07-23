@@ -61,50 +61,7 @@ When a new generative model paper drops, answer these five questions before read
 You will re-answer these five for every lesson in this phase. By the end, they will be reflex.
 
 
-## Use It
 
-Which family, for which task, in 2026?
-
-| Task | Best family | Why |
-|------|-------------|-----|
-| Photoreal faces, narrow domain | StyleGAN 2/3 | Still sharpest, fastest inference. |
-| General text-to-image | Latent diffusion + flow matching | SD3, Flux.1, DALL-E 3. |
-| Fast text-to-image | Rectified flow + distillation | SDXL-Turbo, SD3-Turbo, LCM. |
-| Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
-| Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
-| 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
-| Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
-
-## Ship It
-
-Save as `outputs/skill-model-chooser.md`.
-
-The skill takes a task description and outputs: (1) which family to use, (2) a ranked list of three open and three hosted options, (3) the likely failure mode you should watch for, and (4) a compute/time budget.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
-| Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
-| Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
-| Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |
-
-## Production note: five families, five inference shapes
-
-Each family maps to a different inference-server cost curve. production-inference literature frames LLM inference as prefill + decode; the same decomposition applies here:
-
-- **Autoregressive (bucket 1 and 5).** Sequential decode dominates latency; KV-cache, continuous batching, and speculative decoding all apply directly.
-- **VAE / diffusion / flow-matching (buckets 2 and 4).** There is no decode in the LLM sense. Cost = `num_steps × step_cost`, and the `step_cost` is a transformer or U-Net forward at the full latent resolution. The production knobs are step count (DDIM / DPM-Solver / distillation), batch size, and precision (bf16 / fp8 / int4).
-- **GAN (bucket 3).** One forward pass. No schedule, no KV-cache. TTFT ≈ total latency. This is why StyleGAN still wins on narrow-domain UX.
-
-When you see "faster than diffusion" in a paper abstract, translate it to "fewer steps × same step cost" or "same steps × cheaper step cost". Everything else is marketing.
 
 ## Further Reading
 

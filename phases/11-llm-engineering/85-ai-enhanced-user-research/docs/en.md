@@ -101,46 +101,7 @@ The full pipeline is: ingest → cluster (structured output, Phase 11 · 03) →
 
 The analyst cannot outsource the gate decisions. An LLM that "decides" which hypotheses are strong enough to act on is encoding the analyst's priors in an opaque way. The value of the pipeline is that it makes the analyst's judgment legible: every decision has a documented basis, every evidence claim is traceable, and every bias flag is named.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two core decisions in this lesson:
-
-1. A **hypothesis scorer** that takes a hypothesis with evidence counts and segment coverage, applies the confidence rubric, and returns a calibrated confidence score with its rationale.
-2. A **representational bias checker** that takes a cluster's segment evidence breakdown and participant population shares, and flags any cluster where evidence is skewed beyond the threshold.
-
-The driver runs five sample hypotheses (mixing strong, moderate, weak, and anecdote-grade evidence) and two bias scenarios (one clean, one flagged). The output shows the scoring decision and flag status for each, ending in a HEADLINE summary.
-
-## Ship It
-
-`outputs/skill-user-research-pipeline.md` is a one-page decision aid for a working consultant or researcher: a checklist for each of the four pipeline stages, the scoring rubric as a reference table, and the bias flag template to paste into a research report. It is designed to be used alongside a real synthesis session, not as a post-hoc sign-off document.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Affinity diagram | "Sticky-note clustering" | A method for grouping qualitative observations by semantic similarity; the manual precursor to LLM-assisted clustering |
-| Cluster traceability | "Source links" | The requirement that each cluster records participant IDs, segment labels, and snippet counts, not just a label and a quote |
-| Falsifiable hypothesis | "A real hypothesis" | A claim with a stated observable condition that would refute it in a future study |
-| Confidence score | "How sure are we" | A calibrated numeric estimate based on evidence density, segment coverage, and temporal consistency — not the analyst's gut |
-| Representational bias | "Who we heard from" | A skew in the evidence distribution where one participant segment dominates a cluster disproportionate to its share of the target population |
-| Silence check | "Who we didn't hear from" | Identifying segments present in the participant pool but absent from a cluster's evidence, and naming the possible reasons |
-| Coverage check | "Segment breakdown" | Verifying that no single segment provides more than a threshold share of a cluster's evidence |
-| Decision artefact | "The research readout" | The downstream document (PRD section, hypothesis backlog, design brief) that the synthesis pipeline produces and that the product team acts on |
-
-## Consultant field notes
-
-The patterns below recur across synthesis engagements. Recognising them early is worth more than any single tool choice.
-
-**The RAG that returned the right doc but the wrong paragraph.** The retrieval hit the right source file, then the synthesis layer pulled a quote from page two of a 40-page document that contradicted the page-one summary. Traceability through cluster IDs and snippet offsets is the only defence; verbatim quotes without offsets are the failure mode.
-
-**The prompt that worked in the demo but failed in production.** A scoring rubric that produced clean 0.8 confidence scores on five hand-picked transcripts returns 0.2 confidence on the next 200 because the evidence density never matched the demo. Calibrate the rubric against held-out transcripts before you trust it, not against the examples you used to write it.
-
-**The bias review that confirmed what the team already believed.** Coverage and silence checks are skipped or rubber-stamped when the hypothesis is politically convenient. The pipeline runs; the analyst does not block; the decision artefact carries an unfilled flag. Make the flag a required field that cannot be empty in the structured output, or it will be empty in practice.
-
-**The silent segment that turned out to be the customer.** The participants who dropped out of the study, or who never got recruited, often hold the pain point the product team most needs to hear. Silence check exists to name that absence — not to apologise for it.
-
-**The use case everyone approved but nobody wanted.** A hypothesis passes the falsifiability gate, the bias review, and the PM sign-off — and then the built feature sees adoption below 5 % in the first quarter. The synthesis pipeline did its job; the prior step (does anyone actually need this?) was never gated at all.
 
 ## Further Reading
 

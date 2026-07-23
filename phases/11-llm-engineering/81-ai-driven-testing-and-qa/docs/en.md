@@ -94,42 +94,7 @@ Evals answer "does this behave the way I specified?" They do not answer "did I s
 
 Similarly, eval scores are a sample from a distribution. A 0.1-point drop in a 50-case set may be statistical noise; a 0.1-point drop on a 500-case balanced set is a real signal. Size matters.
 
-## Use It
 
-`code/main.py` makes the two core decisions of this lesson explicit and executable:
-
-1. An **eval-set classifier** that takes a feature description and coverage-axis inputs and emits a recommended eval set design: layer priorities, minimum set sizes per axis, judge model selection, and threshold type.
-2. A **regression gate simulator** that takes a before/after metric portfolio and applies both absolute-floor and relative-delta rules, producing `PASS`, `BLOCK`, or `WARN` with the specific rule that fired.
-
-No network, no model calls — the point is to make the decision logic transparent and testable, in the same spirit as the task-to-mode router in Phase 15 · 10.
-
-## Ship It
-
-`outputs/skill-qa-gate-designer.md` is a one-page decision aid: paste a feature description and a model/prompt change, get the recommended eval layer, fixture minimum, gate thresholds, and CI placement. Paste it into a Confluence page or a PR description the next time your team ships an LLM feature.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Eval set | "Our test cases" | A curated input/expected-output (or rubric) collection designed along explicit coverage axes |
-| LLM-as-judge | "Let the model grade itself" | A separate judge-model run at temperature 0 with a rubric; not self-grading unless judge == subject |
-| Regression gate | "The CI quality check" | An automated pass/block rule applied to metric deltas before a model or prompt is promoted |
-| Behavioural eval | "Quality testing" | Rubric-based scoring of coherence, tone, factual grounding — not structure or schema |
-| Fixture task | "A fixed test case" | A pinned input/output pair that anchors the harness and runs on every commit |
-| Faithfulness | "Does it hallucinate?" | A RAGAS metric: what fraction of answer claims are grounded in the retrieved context |
-| Absolute floor | "Minimum score" | Gate rule blocking deploy if score drops below a fixed threshold regardless of baseline |
-| Relative delta | "Regression cap" | Gate rule blocking deploy if score drops more than X % relative to the current baseline |
-
-## Consultant field notes
-
-Named patterns a senior consultant recognises from LLM-feature delivery.
-
-- **The prompt that worked in the demo but failed in production.** The pilot ran on ten hand-picked inputs; production serves ten thousand. Edge cases (empty context, non-English input, adversarial phrasing) that the demo never saw start surfacing in week one. Lesson: an eval set sized for a demo is not an eval set sized for a launch — back-solve the minimum case count from real traffic distribution before sign-off.
-- **The RAG that returned the right doc but the wrong paragraph.** Faithfulness scored high because every claim was grounded *somewhere* in retrieved context — just not the passage the user actually needed. Lesson: a faithfulness rubric that ignores which chunk was cited will pass a system that cites the wrong evidence confidently.
-- **The use case everyone approved but nobody wanted.** The steering committee green-lit the feature; six months later usage sits below two percent of the target cohort. Evals can measure quality, not desirability — if no part of the discovery loop asks "would a real user open this on a Tuesday afternoon?", the eval will certify a feature nobody reaches for.
-- **The AI feature that hit a cost ceiling in month two.** Per-call judge-model evals plus LLM-as-judge in CI plus canary runs in production stacked into a bill that doubled the feature's infrastructure line item before the second release. Lesson: estimate the full eval-loop cost (judge calls × frequency × case count) at design time, not after the first invoice.
-- **The vendor pilot that never made it past the security review.** The team picked an eval vendor on rubric quality; the data processing addendum blocked procurement for nine months. Lesson: legal and infosec sign-off on eval tooling is a gate, not a checklist — start it in parallel with the technical evaluation, not after it.
 
 ## Further Reading
 

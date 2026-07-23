@@ -137,36 +137,7 @@ Patterns a senior consultant recognises by name. None of them are subtle after y
 5. **The missed kill switch.** An AI feature is producing harmful output. The on-call engineer wants to disable it. There is no documented individual with rollback authority, so three people start a thread to discuss it. The feature runs for another 40 minutes. Decide who can pull the plug before the incident.
 6. **The game-day gap.** A team swears their monitoring will catch a silent regression. They have never tested it. They run the game-day exercise and discover their LLM-as-judge panel is three weeks stale because nobody owned it. Write the test, then run the test, then act on the result.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two decisions this lesson is about:
-
-1. An **incident signal classifier** that takes a set of observed metric deltas and assigns the incident to one of the four categories, with the reasoning shown.
-2. A **runbook router** that takes a category plus a set of checked conditions and prints the next step — encoding the Detect → Scope → Diagnose → Mitigate → Escalate chain as an executable policy.
-
-The driver ends with a synthetic *silent drift* incident where a team *should* have caught the regression earlier — demonstrating the failure shape the lesson is built around. No model, no network. The point is to make the decision policy explicit and runnable, the same way Phase 15 · 10 made the permission classifier runnable.
-
-## Ship It
-
-`outputs/skill-ai-incident-triage.md` is a one-page decision aid: signal-to-category mapping, runbook checklist per category, severity table — formatted for pasting into a team runbook wiki or printing for a war-room wall.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Incident category | "What kind of outage" | One of four buckets: quality, cost, tool-use, or safety — determines which runbook to open |
-| L3 AI quality layer | "AI-specific monitoring" | LLM-as-judge scores and output-distribution metrics sitting between infrastructure (L1) and business (L4) |
-| LLM-as-judge | "Using AI to score AI" | A secondary LLM call that scores model output against a rubric; the standard low-latency quality proxy in 2026 |
-| Silent drift | "Provider surprise" | A provider serving a different model version without a breaking-change notice; leading cause of unexplained quality regressions |
-| Silent model update | "Provider surprise" | Same shape as silent drift; the term preferred in provider post-mortems |
-| Model version pinning | "Locking the model" | Using an explicit dated version suffix in the API call so provider rollouts do not affect production automatically |
-| Shadow evaluation | "Canary for LLMs" | Routing a small traffic fraction to a new model version and comparing L3 metrics before full rollout |
-| Runbook | "The procedure" | A bounded, on-call-executable checklist: Detect → Scope → Diagnose → Mitigate → Escalate → Post-mortem |
-| Rollback authority | "Who can pull the plug" | The pre-agreed individual or role allowed to disable an AI feature in production unilaterally during an incident |
-| Threshold-lowering trap | "Tuning the safety dial" | Lowering the safety classifier threshold to cut false positives; raises false negatives; the next safety incident is filed against the model, not the threshold |
-| MCP schema drift | "Tools changed underneath us" | MCP server schema bumped without coordination; agent picks wrong tool or loops on validation errors |
-| Kill switch | "Emergency stop" | The pre-agreed mechanism to disable an AI feature mid-incident, including documented ownership |
 
 ## Further Reading
 

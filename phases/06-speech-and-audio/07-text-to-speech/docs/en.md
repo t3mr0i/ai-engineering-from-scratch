@@ -67,45 +67,7 @@ By 2026 most "TTS" models are end-to-end from text to waveform; the mel spectrog
 | Parler-TTS Large | 3.76 | 2.8% | 2.3B |
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| Real-time English voice assistant | Kokoro (CPU) or XTTS v2 (GPU) |
-| Voice cloning from 5 s reference | F5-TTS |
-| Commercial character voices | ElevenLabs v2.5 |
-| Audiobook narration | ElevenLabs v2.5 or XTTS v2 + fine-tune |
-| Low-resource language | Train VITS on 5–20 h target-lang data |
-| Expressive / emotion tags | ElevenLabs v2.5 or StyleTTS 2 fine-tune |
-
-Open-source leader as of 2026: **F5-TTS for quality, Kokoro for efficiency**. Don't reach for Tacotron unless you are a historian.
-
-## Pitfalls
-
-- **No text normalizer.** "Dr. Smith" reads as "Doctor" or "Drive"? "2026" as "twenty twenty six" or "two zero two six"? Normalize BEFORE phonemizer.
-- **OOV proper nouns.** "Ghumare" → "ghyu-mair"? Ship a fallback grapheme-to-phoneme model for unknown tokens.
-- **Clipping.** Vocoder output rarely clips, but mel scaling mismatch at inference can overshoot ±1.0. Always `np.clip(wav, -1, 1)`.
-- **Sample-rate mismatch.** Kokoro outputs 24 kHz; your downstream pipeline expects 16 kHz → resample or get aliasing.
-
-## Ship It
-
-Save as `outputs/skill-tts-designer.md`. Design a TTS pipeline for a given voice, latency, and language target.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Phoneme | Sound unit | Abstract sound class; 39 in English (ARPABet). |
-| Duration predictor | How long each phoneme lasts | Non-AR model output; integer frames per phoneme. |
-| Vocoder | Mel → waveform | Neural net mapping mel-spec to raw samples. |
-| HiFi-GAN | Standard vocoder | GAN-based; dominant 2020–2024. |
-| MOS | Subjective quality | 1–5 mean opinion score from human raters. |
-| SECS | Voice-clone metric | Cosine similarity between target and output speaker embedding. |
-| F5-TTS | 2024 open-source SOTA | Flow-matching diffusion; zero-shot cloning. |
-| Kokoro | CPU English leader | 82M-param model, Apache 2.0. |
 
 ## Further Reading
 

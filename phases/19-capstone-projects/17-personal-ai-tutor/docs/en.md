@@ -73,45 +73,7 @@ learner device
 - Eval: Bloom-level question generation, pre/post test harness, efficacy study tooling
 
 
-## Use It
 
-```
-learner: "I don't understand why 3x + 6 = 12 means x = 2"
-[signal]   stuck
-[concept]  'isolating variables' (prerequisite: addition-subtraction-equality)
-[scaffold] "what number would you subtract from both sides to start?"
-learner: "6"
-[signal]   correct
-[mastery]  addition-subtraction-equality: 0.62 -> 0.77
-[concept]  continue 'isolating variables'
-[scaffold] "great. now what is 3x / 3 equal to?"
-```
-
-## Ship It
-
-`outputs/skill-ai-tutor.md` is the deliverable. A subject-specific adaptive tutor with multimodal input, a learner model, memory, safety, and measured efficacy.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Learning gain delta | Pre/post-test delta in a 10-learner two-week study |
-| 20 | Socratic fidelity | Rubric score on transcript samples |
-| 20 | Multimodal UX | Voice + photo + text coherence end to end |
-| 20 | Safety + privacy posture | Llama Guard 4 pass rate + COPPA-aware retention |
-| 15 | Curriculum breadth and graph quality | Concept coverage + prerequisite graph consistency |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Socratic policy | "Ask, do not dump" | Tutor asks a leading question rather than giving the answer |
-| Bayesian knowledge tracing | "BKT" | Classic learner-model equations for mastery probability per concept |
-| FSRS | "Free Spaced Repetition Scheduler" | 2024 spaced-repetition scheduler, better than SM-2 |
-| Curriculum graph | "Concept DAG" | Neo4j of concepts with prerequisite edges |
-| Episodic memory | "Per-interaction log" | Every interaction stored for later retrieval |
-| Semantic memory | "Learned pattern store" | Compacted mistakes and preferences promoted from episodic |
-| COPPA | "Kids privacy law" | US law restricting data collection from children under 13 |
 
 ## Further Reading
 

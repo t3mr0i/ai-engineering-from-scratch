@@ -90,32 +90,7 @@ In the 2026 taxonomy:
 
 Pick by task: Show-o when you want T2I + inpainting + VQA in one open model with reasonable speed; Transfusion when quality is paramount and you can afford the two-loss plumbing.
 
-## Use It
 
-`code/main.py` simulates Show-o sampling:
-
-- A toy grid of 16 VQ tokens.
-- A mock "transformer" that predicts logits based on a prompt and the currently-unmasked tokens.
-- Parallel masked sampling over 8 steps with cosine schedule.
-- Prints the intermediate states (mask pattern evolution) and the final tokens.
-
-Run it, watch the mask dissolve step by step.
-
-## Ship It
-
-This lesson produces `outputs/skill-unified-gen-model-picker.md`. Given a product that needs both understanding (VQA, captioning) and generation (T2I, inpainting) with an open-weights constraint, picks between Show-o family, Transfusion/MMDiT family, and Emu3 / Chameleon family with concrete trade-offs.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Masked discrete diffusion | "MaskGIT-style" | Training to predict masked tokens; at inference, iteratively unmask the most-confident predictions |
-| Cosine schedule | "Unmask schedule" | Decay of mask ratio over inference steps; concentrates confidence growth at mid-range |
-| Parallel decoding | "All tokens at once" | Every step predicts the full sequence of masked tokens in one forward pass, then commits top-K |
-| Hybrid attention | "Causal + bidirectional" | Mask that is causal over text tokens and bidirectional within image blocks |
-| Inpainting | "Fill-in generation" | Condition on an image with some tokens masked, predict the missing ones; free from the training objective |
-| Commitment rate | "Top-K per step" | How many tokens are declared "done" per iteration; controls inference vs quality trade-off |
 
 ## Further Reading
 

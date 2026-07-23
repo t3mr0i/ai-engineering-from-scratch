@@ -83,27 +83,7 @@ A classifier layer slots below the constitutional layer (Lesson 17), above the r
 
 No single layer is sufficient. The layers cover different attack classes.
 
-## Use It
 
-`code/main.py` simulates a toy classifier with a 6-category taxonomy over input-turn text. The same text is passed through raw, with emoji smuggling, and with homoglyph substitution; the classifier's hit rate drops in the ways the Huang et al. paper documents. The driver also shows how output rails would reject an output even when the input was accepted.
-
-## Ship It
-
-`outputs/skill-classifier-stack-audit.md` audits a deployment's classifier layer (model, taxonomy, input/output rails, dialog rails) and flags gaps.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Llama Guard | "Meta's safety classifier" | Llama-3.1-8B fine-tuned for input/output classification |
-| MLCommons taxonomy | "13-hazard list" | Shared vocabulary for content-safety categories |
-| S1–S14 | "Llama Guard 4 categories" | Expanded taxonomy; S14 is Code Interpreter Abuse |
-| NeMo Guardrails | "NVIDIA's rails" | Input + output + dialog rails; Colang for flows |
-| Emoji Smuggling | "Tokenizer trick" | Non-printable emoji between chars; 100% ASR on six guards |
-| Homoglyph | "Lookalike letters" | Cyrillic for Latin; classifier trained on English misses |
-| ASR | "Attack success rate" | Fraction of attacks that bypass the classifier |
-| Dialog rail | "Flow constraint" | Conversation-level rule that persists across turns |
 
 ## Further Reading
 

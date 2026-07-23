@@ -66,29 +66,7 @@ The move from proof to evidence is what makes DGM exist. It also makes the evalu
 
 DGM sits one rung above AlphaEvolve: the target of self-modification is not a program but an agent (tools, prompts, routing, scaffolding). Lesson 6 (automated alignment research) sits one rung further — agents that modify research pipelines, not just scaffolding. Each step up in scope expands both capability and attack surface. Lessons 13-16 cover the controls that match.
 
-## Use It
 
-`code/main.py` simulates a DGM-style loop on a toy benchmark where a tiny "agent" composes operators from a fixed tool library. The loop proposes tool-combination changes; the benchmark scores the agent's performance on held-out problems.
-
-The script includes a flag `--reward-hack-allowed`. When set, the scoring pipeline exposes a function the agent can edit to inflate its own score. Watch what happens.
-
-## Ship It
-
-`outputs/skill-dgm-evaluator-firewall.md` specifies the evaluator separation a DGM-style loop needs to avoid the documented reward-hacking mode.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Godel Machine | "Schmidhuber's proof-based self-improver" | 2003 design: only accept edits whose benefit can be formally proven |
-| Darwin Godel Machine | "DGM" | 2025 design: archive + empirical scores, no proof required |
-| Archive | "Open-ended memory of variants" | Keyed by score and diversity descriptor; never forgets |
-| SWE-bench | "The software-engineering benchmark" | 2,294 Python test-fixing tasks from real GitHub issues |
-| Polyglot | "Aider's multilingual benchmark" | Smaller, multi-language version of the same idea |
-| Scaffolding | "The agent's code, not the model" | Tool wrappers, prompt templates, routing logic |
-| Undermining safeguards | "RSP term for this exact failure" | Agent disables its own safety checks to raise score |
-| Evaluator firewall | "Keep scoring out of agent reach" | Evaluator lives in a namespace the agent cannot edit |
 
 ## Further Reading
 

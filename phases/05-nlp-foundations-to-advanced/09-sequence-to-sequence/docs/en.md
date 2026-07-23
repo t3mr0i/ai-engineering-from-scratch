@@ -30,72 +30,7 @@ This is worth studying for two reasons. First, the context-vector bottleneck is 
 Attention (lesson 10) fixes this by letting the decoder look at *every* encoder hidden state, not just the last one. That is the whole pitch.
 
 
-## Use It
 
-PyTorch has `nn.Transformer` and `nn.LSTM`-based seq2seq templates. Hugging Face's `transformers` library ships full encoder-decoder models (BART, T5, mBART, NLLB) trained on billions of tokens.
-
-```python
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
-tok = AutoTokenizer.from_pretrained("facebook/bart-base")
-model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-base")
-
-src = tok("Translate this to French: Hello, how are you?", return_tensors="pt")
-out = model.generate(**src, max_new_tokens=50, num_beams=4)
-print(tok.decode(out[0], skip_special_tokens=True))
-```
-
-Modern encoder-decoders dropped RNNs for transformers. The high-level shape (encoder, decoder, generate-token-by-token) is identical to the 2014 seq2seq paper. The mechanism inside each block is different.
-
-### When to still reach for RNN-based seq2seq
-
-Almost never, for new projects. Specific exceptions:
-
-- Streaming translation where you consume input one token at a time with bounded memory.
-- On-device text generation where transformer memory cost is prohibitive.
-- Pedagogy. Understanding the encoder-decoder bottleneck is the fastest path to understanding why transformers won.
-
-### Exposure bias and its mitigations
-
-- **Scheduled sampling.** Anneal teacher forcing ratio during training so the model learns to recover from its own mistakes.
-- **Minimum risk training.** Train on sentence-level BLEU score instead of token-level cross-entropy. Closer to what you actually want.
-- **Reinforcement learning fine-tuning.** Reward the sequence generator with a metric. Used in modern LLM RLHF.
-
-All three still apply to transformer-based generation.
-
-## Ship It
-
-Save as `outputs/prompt-seq2seq-design.md`:
-
-```markdown
----
-name: seq2seq-design
-description: Design a sequence-to-sequence pipeline for a given task.
-phase: 5
-lesson: 09
----
-
-Given a task (translation, summarization, paraphrase, question rewrite), output:
-
-1. Architecture. Pretrained transformer encoder-decoder (BART, T5, mBART, NLLB) is the default. RNN-based seq2seq only for specific constraints.
-2. Starting checkpoint. Name it (`facebook/bart-base`, `google/flan-t5-base`, `facebook/nllb-200-distilled-600M`). Match the checkpoint to task and language coverage.
-3. Decoding strategy. Greedy for deterministic output, beam search (width 4-5) for quality, sampling with temperature for diversity. One sentence justification.
-4. One failure mode to verify before shipping. Exposure bias manifests as generation drift on longer outputs; sample 20 outputs at the 90th-percentile length and eyeball.
-
-Refuse to recommend training a seq2seq from scratch for under a million parallel examples. Flag any pipeline that uses greedy decoding for user-facing content as fragile (greedy repeats and loops).
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Encoder | Input RNN | Reads source. Produces per-step hidden states and a final context vector. |
-| Decoder | Output RNN | Initialized from context vector. Generates target tokens one at a time. |
-| Context vector | The summary | Final encoder hidden state. Fixed size. The bottleneck attention solves. |
-| Teacher forcing | Use true tokens | Feed the ground-truth previous token at training time. Stabilizes learning. |
-| Exposure bias | Train/test gap | Model trained on true tokens never practiced recovering from its own mistakes. |
-| Beam search | Better decoding | Keep top-k partial sequences alive at each step instead of committing greedily. |
 
 ## Further Reading
 

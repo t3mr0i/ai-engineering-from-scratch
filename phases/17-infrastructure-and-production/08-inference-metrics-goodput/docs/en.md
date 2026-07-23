@@ -100,28 +100,7 @@ Enterprise SLOs tighten TTFT (200-400 ms) and loosen E2E. The point is to write 
 - Run 30-50 iterations, take percentiles of the combined sample.
 - Publish with tool name, tool version, model, hardware, concurrency, prompt distribution.
 
-## Use It
 
-`code/main.py` is a toy goodput calculator. Generate a synthetic latency distribution, apply an SLO, and compute goodput. Also shows the GenAI-Perf vs LLMPerf TPOT difference on the same trace.
-
-## Ship It
-
-This lesson produces `outputs/skill-slo-goodput-gate.md`. Given a workload and SLO, it produces a CI/CD-ready benchmark recipe that gates deploys on goodput rather than throughput.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| TTFT | "time to first token" | Queue + network + prefill; dominated by prefill at long prompts |
-| TPOT | "time per output token" | Memory-bound decode cost per token after first |
-| ITL | "inter-token latency" | Same as TPOT in most tools (not all — see GenAI-Perf) |
-| E2E | "end to end" | TTFT + TPOT * output_len; response-side network on top |
-| Throughput | "tok/s" | Fleet efficiency; useless without latency percentiles |
-| Goodput | "SLO-met rate" | Fraction of requests meeting every SLO constraint simultaneously |
-| P99 | "tail" | 1-in-100 worst-case latency; the user experience metric |
-| SLO multi-constraint | "the joint" | AND of all three latency bounds; a request fails if any one is violated |
-| GenAI-Perf vs LLMPerf | "the tool trap" | Tools disagree on whether ITL includes TTFT |
 
 ## Further Reading
 

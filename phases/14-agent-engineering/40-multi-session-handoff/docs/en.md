@@ -75,30 +75,7 @@ So the session does not end when the feature works. It ends when the workbench i
 The cleanup phase emits a `clean_state.json` of blocking issues; an empty list is the precondition the handoff generator asserts before it writes a packet. A handoff built on a dirty tree is not a handoff, it is a forwarded mess. The two artifacts pair: cleanup proves the workbench is safe to leave, the handoff proves the next session knows where to start.
 
 
-## Use It
 
-Production patterns:
-
-- **Session-end hook.** The runtime fires the generator when the user closes the chat. The packet goes into `outputs/handoff/<session_id>/`.
-- **PR template.** The generator's markdown is also a PR body. Reviewers read it without opening five other files.
-- **Cross-agent handoff.** Build with one product (Claude Code), continue with another (Codex). The packet is the lingua franca.
-
-The packet is small, regular, and cheap to produce. The cost saving compounds with every session.
-
-## Ship It
-
-`outputs/skill-handoff-generator.md` produces a generator tuned to a project's artifact paths, an end-of-session hook that runs it, and a `handoff.json` schema the next agent reads on startup.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Handoff packet | "Session summary" | Generated artifact carrying the seven fields, both markdown and JSON |
-| Next action | "What to do first" | The one concrete step that starts the next session |
-| Feedback trim | "Log summary" | Last K records plus every non-zero exit |
-| Status report | "What we did" | A document missing `next_action`; useful, but not a handoff |
-| Verdict pointer | "Receipt" | Path to the verification + review reports for traceability |
 
 ## Further Reading
 

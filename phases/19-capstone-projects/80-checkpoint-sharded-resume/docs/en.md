@@ -69,28 +69,7 @@ Each defence rejects the bad load early; the alternative is silent corruption th
 Concurrent write to one file via `O_APPEND` works on POSIX for byte-aligned writes, but in practice the offsets within one shard span MB-sized regions and the locking dominates. Per-rank files have no contention and benefit from striping when the underlying filesystem is parallel (Lustre, GPFS). Production stacks (DeepSpeed, FSDP, NeMo) all use per-rank files for that reason.
 
 
-## Use It
 
-Production patterns:
-
-- **DeepSpeed checkpointing.** `deepspeed.save_checkpoint(tag=step)` writes per-rank files and a `latest` file pointing at the active tag.
-- **PyTorch FSDP checkpointing.** `torch.distributed.checkpoint` saves sharded state with a `Planner` that decides per-rank layout.
-- **NeMo.** Wraps DeepSpeed and FSDP with a uniform `save_to_checkpoint` API that adds metadata.
-
-## Ship It
-
-Lesson 81 saves a sharded checkpoint of the end-to-end DDP+ZeRO run and reloads it on the same world size to prove the resume contract holds.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Sharded checkpoint | "Per-rank save" | Each rank writes its own shard file in parallel |
-| Manifest | "Index" | JSON file recording shard paths, offsets, and sha256 |
-| Atomic write | "tmp then rename" | Write to .tmp then POSIX rename so a crash leaves the previous file live |
-| Partial write | "Truncated shard" | A crash during write produces a corrupt shard; sha256 catches it |
-| Rotation | "Keep last K" | Delete oldest checkpoint before writing new one to bound disk usage |
 
 ## Further Reading
 

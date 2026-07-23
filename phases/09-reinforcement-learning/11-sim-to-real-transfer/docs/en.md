@@ -47,59 +47,7 @@ You need a policy that is *robust to sim-to-real distribution shift*. Three hist
 5. Deploy. Zero-shot on 10+ environments. If it fails, do minutes of real-world fine-tuning with safety-constrained PPO.
 
 
-## Use It
 
-The 2026 sim-to-real stack:
-
-| Domain | Stack |
-|--------|-------|
-| Legged locomotion (ANYmal, Spot, humanoid) | Isaac Lab + DR + privileged teacher / student |
-| Manipulation (dexterous hands, pick-and-place) | Isaac Lab + DR + DR-GAN for vision |
-| Autonomous driving | CARLA / NVIDIA DRIVE Sim + DR + real fine-tune |
-| Drone racing | RotorS / Flightmare + DR + online adaptation |
-| Finger/in-hand manipulation | OpenAI Dactyl (DR at unprecedented scale) |
-| Industrial arms | MuJoCo-Warp + SI + small real fine-tune |
-
-For control at all scales, the workflow is consistent: fit the sim as best you can, randomize what you can't fit, train enormous policies, distill, deploy with a safety shield.
-
-## Ship It
-
-Save as `outputs/skill-sim2real-planner.md`:
-
-```markdown
----
-name: sim2real-planner
-description: Plan a sim-to-real transfer pipeline for a given robot + task, covering DR, SI, and safety.
-version: 1.0.0
-phase: 9
-lesson: 11
-tags: [rl, sim2real, robotics, domain-randomization]
----
-
-Given a robot platform, a task, and access to real hardware time, output:
-
-1. Reality gap inventory. Suspected sources ranked by expected impact (contact, sensing, actuation delay, vision).
-2. DR parameters. Exact list, ranges, distribution. Justify each range against real measurements.
-3. SI steps. Which parameters to measure; measurement method.
-4. Teacher/student split. What privileged info the teacher uses; what obs the student uses.
-5. Safety envelope. Low-level limits, emergency stops, backup controller.
-
-Refuse to deploy without (a) a zero-shot sim-variant test, (b) a safety shield, (c) a rollback plan. Flag any DR range wider than 3× measured real variability as likely over-randomized.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Reality gap | "Sim-to-real difference" | Distribution shift between training and deployment physics/sensing. |
-| Domain randomization (DR) | "Train across random sims" | Randomize sim parameters during training so policy generalizes. |
-| System identification (SI) | "Measure real and fit sim" | Estimate real physical parameters; set sim to match. |
-| Domain adaptation | "Fine-tune on real data" | Small real-world fine-tune after sim training; may adapt obs or dynamics. |
-| Privileged info | "Ground truth for teacher" | Information only the sim has; student must infer it from obs history. |
-| Teacher/student | "Distill privileged -> observable" | Teacher trained with shortcuts; student learns to mimic without them. |
-| ADR | "Automatic Domain Randomization" | Curriculum that widens DR ranges as the policy improves. |
-| Real2Sim | "Close the gap with real data" | Learn a residual to make the sim mimic real rollouts. |
 
 ## Further Reading
 

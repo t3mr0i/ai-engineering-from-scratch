@@ -41,58 +41,7 @@ at is prep of running
 ```
 
 
-## Use It
 
-Every production NLP library ships POS and dependency parsers as part of a standard pipeline.
-
-- **spaCy** (`en_core_web_sm` / `md` / `lg` / `trf`). Fast, accurate, integrated with tokenization + NER + lemmatization. `token.tag_` (Penn), `token.pos_` (UD), `token.dep_` (dependency relation).
-- **Stanford NLP (stanza)**. Stanford's successor to CoreNLP. State-of-the-art on 60+ languages.
-- **trankit**. Transformer-based, good UD accuracy.
-- **NLTK**. `pos_tag`. Usable, slow, older. Fine for teaching.
-
-### Where this still matters in 2026
-
-- **Lemmatization.** Lesson 01 needs POS to lemmatize correctly. Always.
-- **Structured extraction from LLM outputs.** Validate that a generated sentence respects grammatical constraints (e.g., subject-verb agreement, required modifiers).
-- **Aspect-based sentiment.** Dependency parses tell you which adjective modifies which noun.
-- **Query understanding.** "movies directed by Wes Anderson starring Bill Murray" decomposes into structured constraints via the parse.
-- **Cross-lingual transfer.** UD tags and dependency relations are language-agnostic, enabling zero-shot structured analysis of new languages.
-- **Low-compute pipelines.** If you cannot ship a transformer, POS + dependency parse + gazetteer gets you surprisingly far.
-
-## Ship It
-
-Save as `outputs/skill-grammar-pipeline.md`:
-
-```markdown
----
-name: grammar-pipeline
-description: Design a classical POS + dependency pipeline for a downstream NLP task.
-version: 1.0.0
-phase: 5
-lesson: 07
-tags: [nlp, pos, parsing]
----
-
-Given a downstream task (information extraction, rewrite validation, query decomposition, lemmatization), you output:
-
-1. Tagset to use. Penn Treebank for English-only legacy pipelines, Universal Dependencies for multilingual or cross-lingual.
-2. Library. spaCy for most production, stanza for academic-grade multilingual, trankit for highest UD accuracy. Name the specific model ID.
-3. Integration pattern. Show the 3-5 lines that call the library and consume the needed attributes (`.pos_`, `.dep_`, `.head`).
-4. Failure mode to test. Noun-verb ambiguity (`saw`, `book`, `can`) and PP-attachment ambiguity are the classical traps. Sample 20 outputs and eyeball.
-
-Refuse to recommend rolling your own parser. Building parsers from scratch is a research project, not an application task. Flag any pipeline that consumes POS tags without handling lowercase/uppercase variants as fragile.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| POS tag | Word's type | Grammatical category. PTB has 36; UD has 17. |
-| Penn Treebank | Standard tagset | English-specific. Fine-grained verb tenses and noun number. |
-| Universal Dependencies | Multilingual tagset | Coarser than PTB; language-neutral; defaults for cross-lingual work. |
-| Dependency parse | Sentence tree | Each word has one head, each edge has a grammatical relation. |
-| Viterbi | Dynamic programming | Finds the highest-probability tag sequence given emissions and transitions. |
 
 ## Further Reading
 

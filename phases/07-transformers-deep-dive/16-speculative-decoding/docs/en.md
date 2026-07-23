@@ -81,59 +81,7 @@ Verification feeds `N` draft tokens into the verifier in one forward pass. This 
 Production implementations (vLLM's `--speculative-model`, TensorRT-LLM's LookaheadDecoder) handle this with scratch KV buffers. Write first, commit on acceptance. It's not conceptually hard, but it is fiddly.
 
 
-## Use It
 
-Production:
-
-```bash
-# vLLM with EAGLE
-vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model /models/llama-3.1-eagle-70b \
-    --speculative-draft-tensor-parallel-size 1 \
-    --num-speculative-tokens 5
-
-# vLLM with vanilla draft model
-vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model meta-llama/Llama-3.2-1B-Instruct \
-    --num-speculative-tokens 5
-```
-
-TensorRT-LLM has the fastest Medusa path as of mid-2026. `faster-whisper` wraps speculative decoding for Whisper-large with a small draft.
-
-**Picking a draft:**
-
-| Strategy | When to pick | Speedup |
-|----------|--------------|---------|
-| Vanilla draft (1B/3B Llama family) | Fast prototype, no training | 1.8–2.3× |
-| Medusa heads | You can fine-tune the verifier | 2–3× |
-| EAGLE-2 / 3 | Production, max speed | 3–4× |
-| Lookahead | No draft, no training, no extra params | 1.3–1.6× |
-
-**When NOT to spec-decode:**
-
-- Single-sequence generation of 1–5 tokens. Overhead dominates.
-- Wildly creative / high-temperature sampling (α drops).
-- Memory-constrained deployments (draft model adds VRAM).
-
-## Ship It
-
-See `outputs/skill-spec-decode-picker.md`. The skill picks a speculative decoding strategy (vanilla / Medusa / EAGLE / lookahead) and tuning parameters (N, draft temperature) for a new inference workload.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Draft model | "The cheap one" | A smaller model that proposes candidate tokens; usually 10–50× cheaper than the verifier. |
-| Verifier | "The big one" | The target model whose distribution we preserve; runs once per speculative step. |
-| Acceptance rate (α) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
-| Residual distribution | "The rejection fallback" | `(q - p)_+` normalized; sampling from this on rejection preserves the verifier's distribution. |
-| Bonus token | "The free one" | When all N drafts accepted, sample one more from the verifier's next-step distribution. |
-| Medusa | "Draft-less speculative" | Multiple LM heads on the verifier predict positions t+1..t+k in parallel. |
-| EAGLE | "Hidden-state draft" | Tiny transformer draft conditioned on the verifier's last-layer hidden states. |
-| Lookahead decoding | "Jacobi iteration" | Self-speculation using a fixed-point iteration; no draft model. |
-| Tree attention | "Verify many candidates at once" | Branching verification that considers several draft continuations simultaneously. |
-| KV rollback | "Undo rejected drafts" | Scratch KV buffer; commit on acceptance, discard on reject. |
 
 ## Further Reading
 

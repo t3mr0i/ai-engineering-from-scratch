@@ -66,43 +66,7 @@ For classification: take `[CLS]` hidden state → linear → softmax. For DINOv2
 ViT needs *a lot* of data to match CNNs because it has none of the CNN inductive biases (translation invariance, locality). Without >100M labeled images or strong self-supervised pretraining, CNNs still win at matched compute. DeiT fixed this in 2021 with distillation tricks; DINOv2 fixed it permanently in 2023 with self-supervision.
 
 
-## Use It
 
-```python
-from transformers import ViTImageProcessor, ViTModel
-import torch
-from PIL import Image
-
-processor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k")
-model = ViTModel.from_pretrained("google/vit-base-patch16-224-in21k")
-
-img = Image.open("cat.jpg")
-inputs = processor(img, return_tensors="pt")
-out = model(**inputs).last_hidden_state   # (1, 197, 768): [CLS] + 196 patches
-cls_emb = out[:, 0]                       # image representation
-```
-
-**DINOv2 embeddings are the 2026 default for image features.** Freeze the backbone, train a tiny head. Works for classification, retrieval, detection, captioning. Meta's DINOv2 checkpoints outperform CLIP on every non-text vision task.
-
-**Patch-size picking.** Small models use 16×16 (ViT-B/16). Dense prediction (segmentation) uses 8×8 or 14×14 (SAM, DINOv2). Very large models use 14×14.
-
-## Ship It
-
-See `outputs/skill-vit-configurator.md`. The skill picks a ViT variant and patch size for a new vision task given dataset size, resolution, and compute budget.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Patch | "The vision-transformer token" | Flat vector of pixel values for a `P × P × C` region of the image. |
-| Patchify | "Chop + flatten" | Slice image into non-overlapping patches, flatten each to a vector. |
-| `[CLS]` token | "The image summary" | Prepended learnable token; its final embedding is the image representation. |
-| Inductive bias | "What the model assumes" | ViT has fewer priors than CNNs; needs more data to make up the gap. |
-| DINOv2 | "Self-supervised ViT" | Trained without labels using image augmentation + momentum teacher. Best general image features in 2026. |
-| SigLIP | "CLIP's successor" | ViT + text encoder trained with sigmoid contrastive loss; better than CLIP on matched compute. |
-| Swin | "Windowed ViT" | Hierarchical ViT with local attention + shifted windows; sub-quadratic. |
-| Register tokens | "2023 trick" | A few extra learnable tokens that soak up attention sinks; improves DINOv2 features. |
 
 ## Further Reading
 

@@ -114,65 +114,7 @@ Broadcasting stretches the vector across rows:
 Every modern framework does this automatically. Understanding it prevents confusion when shapes seem wrong but the code runs.
 
 
-## Use It
 
-NumPy does everything above in fewer lines and orders of magnitude faster.
-
-```python
-import numpy as np
-
-A = np.array([[1, 2], [3, 4]])
-B = np.array([[5, 6], [7, 8]])
-
-print("A + B =\n", A + B)
-print("A * B (element-wise) =\n", A * B)
-print("A @ B (matrix multiply) =\n", A @ B)
-print("A^T =\n", A.T)
-print("det(A) =", np.linalg.det(A))
-print("A^-1 =\n", np.linalg.inv(A))
-print("I =\n", np.eye(2))
-
-inputs = np.random.randn(3, 1)
-weights = np.random.randn(2, 3)
-bias = np.array([[0.1], [0.1]])
-output = np.maximum(0, weights @ inputs + bias)
-
-print(f"\nNeural network layer: {weights.shape} @ {inputs.shape} = {output.shape}")
-print(f"Output:\n{output}")
-```
-
-The `@` operator in Python calls `__matmul__`. NumPy implements it with optimized BLAS routines written in C and Fortran. Same math, 100x faster.
-
-Broadcasting in NumPy:
-
-```python
-matrix = np.array([[1, 2, 3], [4, 5, 6]])
-bias = np.array([10, 20, 30])
-print(matrix + bias)
-```
-
-NumPy automatically broadcasts the 1D bias across both rows. This is how bias addition works in every neural network framework.
-
-## Ship It
-
-This lesson produces a prompt for teaching matrix operations through geometric intuition. See `outputs/prompt-matrix-operations.md`.
-
-The Matrix class built here is the foundation for the mini neural network framework we build in Phase 3, Lesson 10.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Vector | "An arrow" | An ordered list of numbers. In AI: a point in high-dimensional space. |
-| Matrix | "A table of numbers" | A linear transformation. It maps vectors from one space to another. |
-| Matrix multiply | "Just multiply the numbers" | Dot products between every row of the first matrix and every column of the second. Order matters. |
-| Transpose | "Flip it" | Swap rows and columns. Turns an m x n matrix into n x m. Critical in backpropagation. |
-| Determinant | "Some number from the matrix" | Measures how much the matrix scales area (2D) or volume (3D). Zero means the transformation crushes a dimension. |
-| Inverse | "Undo the matrix" | The matrix that reverses the transformation. Only exists when the determinant is not zero. |
-| Identity matrix | "The boring matrix" | The matrix equivalent of multiplying by 1. Used in residual connections (ResNets). |
-| Broadcasting | "Magic shape fixing" | Stretching a smaller array to match a larger one by repeating along missing dimensions. |
-| Element-wise | "Regular multiplication" | Multiply matching positions. Both arrays must have the same shape (or be broadcastable). |
 
 ## Further Reading
 

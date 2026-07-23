@@ -107,41 +107,7 @@ Each tool imposes a hidden cost beyond the API bill — **the attention you spen
 
 The trap is treating all three as "delegation" and applying the same supervisory discipline. The chat assistant can be backgrounded in your attention. The multi-file edit cannot. The server-side PR absolutely cannot. Match the supervision to the blast radius and to your familiarity with the task shape, not to the headline capability of the tool.
 
-## Use It
 
-`code/main.py` models the two core decisions of this lesson: a **task-to-tool router** that takes a task description and maps it to the appropriate tool category with reasoning shown, and a **verification-tier classifier** that takes a task and context and returns the required verification tier, the checks to run, and a block flag when the data classification and tool choice are incompatible.
-
-The final demonstration block reproduces the **contract reviewer failure shape** in miniature: a confidential supplier contract summarization routed correctly to a tool that respects data classification, but with the verifier still required to flag the position-bias follow-up as mandatory. The headline summary at the bottom names the specific failure shape the code just demonstrated. No network and no real model — the point is to make the *decision policy* explicit and runnable, including the policy gap where a tool is correctly chosen but the verification step is still load-bearing.
-
-## Ship It
-
-`outputs/skill-ai-tool-selection-guide.md` is a one-page decision aid: a task classification checklist, tool selection table, verification tier guide, and a data-handling quick reference — formatted to paste into a team wiki or share before an AI tool onboarding session.
-
-
-## Consultant field notes
-
-Patterns a senior consultant recognizes on sight:
-
-- **The single-tool default.** "Just use the chat assistant for everything." The first sign of a team that has not internalized tool/task matching. Productivity plateaus at month three and starts to decline as Tier 3 consequences go undetected.
-- **Tier 1 verification on Tier 3 output.** The consultant skimmed a 47-page treaty summary in four minutes and signed off. Verification tier is consequence-driven, not time-driven.
-- **The summarizer as source of truth.** "The AI said so" treated as evidence rather than as a first draft. Hallucinated specificity and position bias are both invisible until something forces the check.
-- **The voice-flattened team.** Six months in, every status update, every client email, every internal doc reads like the same assistant produced it. The team has lost a differentiator they did not know they were losing.
-- **The break-glass data paste.** A consultant pastes a client's financial model into a public chat assistant because the deadline is in an hour. The breach disclosure is in the next quarter's incident register.
-- **The hidden attention cost.** A team adopts a server-side coding agent and reports a productivity gain that evaporates within a quarter because the supervisor attention overhead was not counted. The headline metric went up; the actual billable throughput did not.
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Retrieval-Augmented Generation (RAG) | "AI that searches your docs" | A pipeline that retrieves relevant chunks from a corpus, then uses an LLM to synthesize a grounded answer |
-| Data classification | "How sensitive is it" | A formal tier (public / internal / confidential / regulated) that governs which systems may process the data |
-| Position bias | "It misses the middle" | Transformer tendency to weight beginning and end of context more heavily; affects long-document summarization |
-| Hallucinated specificity | "It made up the number" | Model-generated plausible-but-wrong detail, especially in numerical or named-entity contexts |
-| Verification tier | "How carefully do we check it" | A consequence-proportional checklist: Tier 1 (read once) to Tier 4 (qualified second reviewer) |
-| DPA | "Data Processing Agreement" | Legal instrument specifying how a vendor may process personal data; required before sending regulated data to a third-party API |
-| Voice homogenization | "Everything sounds the same" | Loss of individual or organizational voice from heavy AI drafting; a slow-burn risk over months of use |
-| Attention cost | "How long did it take" | The supervisor attention a tool consumes beyond its wall-clock runtime; often the binding constraint on knowledge-worker productivity |
-| Zero-shot vs. few-shot | "Just tell it what to do" vs. "show it an example" | Whether the prompt relies on instructions alone or includes worked examples; see Phase 11 · 02 |
 
 ## Further Reading
 

@@ -89,32 +89,7 @@ For products that do not need understanding, Janus-Pro is overqualified — pick
 
 For products that need both, Janus-Pro is now the reference open architecture.
 
-## Use It
 
-`code/main.py` simulates Janus-Pro routing:
-
-- Two mock encoders: SigLIP-like (produces 256-dim semantic vectors) and VQ-like (produces integer codes).
-- A prompt router that picks the encoder based on a task tag.
-- A shared body (stand-in) that processes token sequences regardless of which encoder produced them.
-- A switch from stage 1 (alignment) to stage 3 (instruction tune) weighted-sample schedule.
-
-Print the routed paths for 3 examples: image QA, T2I, image editing.
-
-## Ship It
-
-This lesson produces `outputs/skill-decoupled-encoder-picker.md`. Given a product that wants unified generation + understanding at frontier-ish quality, it picks Janus-Pro, JanusFlow, or InternVL-U with a concrete data-scale recommendation.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Decoupled encoding | "Two visual encoders" | Separate tokenizer or encoder per direction: semantic for understanding, reconstruction for generation |
-| Shared body | "One transformer" | Single transformer processes either encoder's output; no modality-specific weights |
-| SigLIP for understanding | "Semantic features" | CLIP-family vision tower providing rich conceptual features but poor reconstruction |
-| VQ for generation | "Reconstruction codes" | Vector-quantized tokens that decode cleanly back to pixels |
-| JanusFlow | "Rectified-flow variant" | Janus-Pro with a continuous flow-matching generation head instead of VQ |
-| Routing tag | "Task tag" | Prompt marker (`<understand>` / `<generate>`) that picks the input encoder |
 
 ## Further Reading
 

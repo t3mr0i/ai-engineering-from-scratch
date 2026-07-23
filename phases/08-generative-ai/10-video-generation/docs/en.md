@@ -61,47 +61,7 @@ Standard diffusion loss (ε or v prediction) over spatiotemporal latents. Data: 
 Open weights are closing the gap faster than in the image space: HunyuanVideo + WAN 2.2 LoRAs already power most open-source workflows by mid-2026.
 
 
-## Use It
 
-| Use case | 2026 pick |
-|----------|-----------|
-| Highest-quality text-to-video, hosted | Veo 3 or Sora |
-| Camera-controlled cinematic | Runway Gen-3 with motion brushes |
-| Character consistency across clips | Pika 2.0 or Kling 2.1 |
-| Open weights, fast fine-tune | WAN 2.2 + LoRA |
-| Image-to-video | WAN 2.2-I2V, Kling 2.1 I2V, or Runway |
-| Audio-to-video lip sync | Veo 3 (native audio) or a dedicated lip-sync model |
-| Video editing | Runway Act-Two, Kling Motion Brush, Flux-Kontext (still-frame) |
-
-Cost per second of video at quality parity has dropped 20x between 2024 and 2026.
-
-## Ship It
-
-Save `outputs/skill-video-brief.md`. Skill takes a video brief (duration, aspect ratio, style, camera plan, subject consistency, audio) and outputs: model + hosting, prompt scaffolding (camera language, subject description, motion descriptors), seed + reproducibility protocol, and a frame-level QA checklist.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Video VAE | "3-D VAE" | Encoder that compresses `(T, H, W, C)` → spatiotemporal latent. |
-| Patches | "The tokens" | Fixed-size 3-D blocks of the latent; input to the DiT. |
-| Factorized attention | "Spatial + temporal" | Run attention over space, then over time; skip full 3-D attention. |
-| Image-to-video (I2V) | "Animate this photo" | Model takes an image + text, outputs a video that starts from it. |
-| Keyframe conditioning | "Anchor frames" | Pin specific frames to control the video's arc. |
-| Motion brush | "Directional hint" | UI input where the user paints motion vectors onto the image. |
-| Re-captioning | "Dense captions" | Using an LLM to re-label training clips with detailed prompts. |
-| Flicker | "Temporal artifact" | Frame-to-frame inconsistency; fixed with coupled denoising. |
-
-## Production note: video latents are a memory-bandwidth problem
-
-A 10-second 1080p clip at 24 fps is 240 frames × 1920 × 1080 × 3 ≈ 1.5 GB of raw pixels. After a 4× video VAE compression (`2 × spatial × 2 × temporal`) the latent is ~100 MB per request. Run this through a spatiotemporal DiT for 30 steps at batch 1 and you are moving ~3 GB/step through HBM — memory bandwidth, not FLOPs, is the bottleneck.
-
-Three production knobs, all straight from production-inference literature inference chapter:
-
-- **TP across the DiT.** Text-to-video models are routinely ≥10B params. TP=4 across 4 H100s is standard; PP=2 × TP=2 for 405B-class models. Latency per step drops roughly linearly with TP up to the all-reduce wall.
-- **Frame batching = continuous batching.** At generation time, video is conceptually a batch of frames linked by attention. Continuous batching (in-flight scheduling) applies: start rendering frame `t+1` while frame `t-1` is being returned, if the model architecture allows sliding-window generation.
-- **Clip-level prefill cache.** For image-to-video, the first-frame conditioning is analogous to an LLM's prompt prefill: compute it once, reuse across the temporal decoder passes. This is effectively a KV-cache for video.
 
 ## Further Reading
 

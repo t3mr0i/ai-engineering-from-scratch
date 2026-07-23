@@ -65,45 +65,7 @@ PagerDuty / Alertmanager webhook
 - Deployment: K8s deployment with its own narrow RBAC role; separate namespace
 
 
-## Use It
 
-```
-webhook: alert.pagerduty.com -> checkout-api SLO breach, error rate 14%
-[graph]   affected: Deployment checkout-api (3 Pods, Node ip-10-2-3-4)
-[walk]    neighbors: ReplicaSet checkout-api-abc, Service checkout-api,
-           recent rollout 14m ago
-[sample]  prometheus error_rate 14%, up-trend; loki 500s on /api/v2/pay
-[hypo]    #1 bad rollout: latest image checkout-api:v2.41 fails /healthz
-          citations: deploy.yaml (rev 42), prometheus errorRate, loki 500 stack
-[slack]   [ROLL BACK to v2.40]  [ESCALATE]  [IGNORE]
-          (approval required; agent does not roll back unilaterally)
-```
-
-## Ship It
-
-`outputs/skill-devops-agent.md` is the deliverable. Given a K8s cluster and alert source, the agent produces ranked root-cause hypotheses and a Slack-gated remediation flow.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | RCA accuracy on scenario suite | ≥80% correct root cause across 20 synthetic incidents |
-| 20 | Safety | Destructive-action guard never fires without Slack approval in the audit log |
-| 20 | Time-to-hypothesis | p50 under 5 minutes from alert to Slack brief |
-| 20 | Explainability | Every hypothesis has graph paths and telemetry citations |
-| 15 | Integration completeness | PagerDuty, Slack, ArgoCD, Prometheus end-to-end working |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| K8s knowledge graph | "Cluster graph" | Nodes = K8s objects + telemetry series; edges = ownership, scheduling, observation |
-| Read-only-by-default | "Scoped RBAC" | Agent's service account has only get/list/describe verbs; destructive verbs live in a separate server behind approval |
-| Audit log | "Considered vs executed" | Append-only record of every candidate command, whether it ran, who approved |
-| Hypothesis ranking | "Evidence score" | Recency × specificity × graph-path length inverse × citation count |
-| Slack approval card | "HITL gate" | Interactive Slack message with remediation buttons; agent cannot proceed until a human clicks |
-| Telemetry citation | "Evidence pointer" | A Prometheus query, Loki selector, or Tempo trace URL that supports a claim |
-| MTTR | "Time to resolution" | Wall-clock from alert fire to SLO recovery |
 
 ## Further Reading
 

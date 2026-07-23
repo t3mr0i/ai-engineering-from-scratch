@@ -149,57 +149,7 @@ For perspective: tokenizing 15 trillion tokens for Llama 3 pre-training at 1 mil
 You are building in Python to understand the algorithm. In production, you would use a compiled implementation and only touch the Python wrapper.
 
 
-## Use It
 
-### Comparing Real Tokenizers
-
-Load the actual tokenizers from Llama 3, GPT-4, and Mistral. See how each handles the same multilingual paragraph.
-
-```python
-import tiktoken
-
-gpt4_enc = tiktoken.get_encoding("cl100k_base")
-
-test_paragraph = "Machine learning is powerful. 机器学习很强大。 L'apprentissage automatique est puissant. 🤖💪"
-
-tokens = gpt4_enc.encode(test_paragraph)
-pieces = [gpt4_enc.decode([t]) for t in tokens]
-print(f"GPT-4 ({len(tokens)} tokens): {pieces}")
-```
-
-```python
-from transformers import AutoTokenizer
-
-llama_tok = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B")
-mistral_tok = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
-
-for name, tok in [("Llama 3", llama_tok), ("Mistral", mistral_tok)]:
-    tokens = tok.encode(test_paragraph)
-    pieces = tok.convert_ids_to_tokens(tokens)
-    print(f"{name} ({len(tokens)} tokens): {pieces[:20]}...")
-```
-
-You will see different token counts for the same text. Llama 3 with 128K vocabulary is more aggressive at merging common patterns. GPT-4 with 100K sits in the middle. Mistral with 32K produces more tokens but has a smaller embedding layer.
-
-The tradeoff is always the same: larger vocabulary means shorter sequences but more parameters.
-
-## Ship It
-
-This lesson produces a prompt for building and debugging production tokenizers. See `outputs/prompt-tokenizer-builder.md`.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Byte-level BPE | "Tokenizer that works on bytes" | BPE with a base vocabulary of 256 byte values -- handles any input without unknown tokens |
-| Pre-tokenization | "Splitting before BPE" | Regex or rule-based splitting that prevents BPE from merging across word boundaries |
-| NFKC normalization | "Unicode cleanup" | Canonical decomposition followed by compatibility composition -- "fi" ligature becomes "fi", fullwidth "A" becomes "A" |
-| Chat template | "How messages become tokens" | The exact format for converting a list of role/content messages into a flat token sequence -- model-specific and must match training format |
-| Special tokens | "Control tokens" | Reserved token IDs that bypass BPE -- [BOS], [EOS], [PAD], chat markers -- matched exactly before merge |
-| Fertility | "Tokens per word" | Ratio of output tokens to input words -- 1.3 for English in GPT-4, 2-3 for Korean, higher means wasted context |
-| tiktoken | "OpenAI tokenizer" | Rust BPE implementation with Python bindings -- 10-100x faster than pure Python |
-| Merge table | "The vocabulary" | Ordered list of byte-pair merges learned during training -- this IS the tokenizer's learned knowledge |
 
 ## Further Reading
 

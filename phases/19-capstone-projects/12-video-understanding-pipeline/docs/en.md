@@ -63,46 +63,7 @@ answer + (start, end) timestamps + frame thumbs + citations
 - Hallucination benchmark: counting and action-type subsets with hand labels
 
 
-## Use It
 
-```
-$ video-qa ask --url=https://youtube.com/watch?v=X "how many cars pass the intersection in the first minute?"
-[scene]    23 scenes detected
-[asr]      transcript complete, 4m12s
-[index]    69 vectors written (23 scenes x 3)
-[query]    top scene: scene 3 [01:32-01:54], confidence 0.84
-[ground]   refined window: [00:12-00:58]
-[synth]    gemini 2.5 pro, 1.4s
-answer:    5 cars pass the intersection between 00:12 and 00:58.
-citations: [scene 3: 00:12-00:58]
-          [frame preview at 00:14, 00:27, 00:44, 00:51, 00:57]
-```
-
-## Ship It
-
-`outputs/skill-video-qa.md` is the deliverable. Given a YouTube URL or uploaded video, the pipeline indexes scenes and answers questions with timestamped citations.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Temporal grounding IoU | Intersection-over-union on held-out grounding set |
-| 20 | QA accuracy | NeXT-GQA and custom 100-query |
-| 20 | Ingest throughput | Hours of video per dollar spent |
-| 20 | UI and citation UX | Timestamp links, thumbnail strip, jump-to-frame |
-| 15 | Hallucination rate | Counting and action-type accuracy separately |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Scene segmentation | "Shot detection" | Cutting video into scenes at shot boundaries |
-| Multi-vector index | "Caption + frame + transcript" | Qdrant collection with named vectors per representation |
-| Temporal grounding | "When exactly did it happen" | Refining the (start, end) window for a query answer |
-| Frame embedding | "Visual representation" | A vector embedding of a keyframe; used for scene-visual similarity |
-| RRF fusion | "Reciprocal rank fusion" | Merge strategy across multiple ranked lists; a classic hybrid-retrieval trick |
-| Counting hallucination | "Miscount" | Known failure mode of VLMs on "how many X" questions |
-| ActivityNet-QA | "Video-QA benchmark" | Long-form video QA accuracy benchmark |
 
 ## Further Reading
 

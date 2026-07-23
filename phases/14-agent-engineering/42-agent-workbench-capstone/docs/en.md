@@ -84,30 +84,7 @@ A short `bin/install.sh` (or `bin/install.py`):
 The pack carries a `VERSION` file. Schema bumps and script changes that require migrations bump the major. Doc-only changes bump the patch. The target repo's `agent_state.json` records which pack version it was initialized against.
 
 
-## Use It
 
-Three places the pack ships:
-
-- **As a directory you drop into a repo.** `cp -r outputs/agent-workbench-pack /path/to/repo`.
-- **As a public template repo.** Fork-and-customize, with `VERSION` controlling drift.
-- **As a SkillKit skill.** Wired into your agent product so a single command lays it down.
-
-The pack is the recipe. Each install is a serving.
-
-## Ship It
-
-`outputs/skill-workbench-pack.md` generates a project-tuned pack: rules sharpened to the team's history, scope globs matched to the repo, rubric dimensions extended with one domain-specific entry.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Workbench pack | "The starter kit" | A versioned directory carrying all seven surfaces |
-| Installer | "Setup script" | `bin/install.sh` that lays the pack down idempotently |
-| Pack version | "VERSION" | Major bumps for schema/script changes, patch for doc-only |
-| Drop-in pack | "cp -r and go" | Pack works without per-repo customization on day one |
-| Forkable template | "GitHub template" | Public repo that GitHub's "Use this template" can clone from |
 
 ## Further Reading
 

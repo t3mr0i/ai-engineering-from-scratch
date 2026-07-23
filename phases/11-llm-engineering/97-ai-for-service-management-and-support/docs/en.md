@@ -93,42 +93,7 @@ Current production deployments use models at two points in the pipeline:
 
 The pipeline does not call the large model on ambiguous, low-confidence tickets — in our experience, the model's groundedness on those tickets typically drops to roughly 60-70% compared to 90%+ on high-confidence retrievals, which is why the review-flag path sends a human-checked draft instead.
 
-## Use It
 
-`code/main.py` models the two most consequential decision points in the pipeline:
-
-1. A **ticket triage router** that extracts structured fields from a raw ticket, applies a three-outcome routing policy (route, route-with-flag, escalate), and explains the routing decision with the confidence score that drove it.
-2. A **response quality scorer** that takes a draft response and a set of retrieved articles, scores it on groundedness and actionability, and returns a PASS / PARTIAL / BLOCK verdict with the specific failing dimension.
-
-No network calls, no LLM API. The point is to make the routing policy and quality gate logic explicit and runnable, so the exercises can verify the behavior you would configure in a real deployment.
-
-## Ship It
-
-`outputs/skill-service-ai-pipeline.md` is a one-page deployment checklist: the five pipeline stages, the verification gate for each, and a two-column table of common failure modes with their mitigations. Paste it into a kickoff deck or use it as a pre-deployment review checklist.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Ticket triage | "AI routes the ticket" | Structured extraction + three-outcome routing policy with a calibrated confidence threshold |
-| Review flag | "Human in the loop" | A specific pipeline outcome: ticket routed to best-guess queue, draft held until a human confirms within SLA |
-| Version filtering | "Filter by product" | Hard pre-filter on the retrieval candidate set by product version tag before semantic ranking |
-| Citation enforcement | "Grounded response" | Architectural constraint: every procedural step in a draft must trace to a specific retrieved article |
-| Groundedness score | "No hallucinations" | Fraction of procedural steps in the draft that cite a retrieved article; target 1.0 |
-| Incident handoff | "Escalation summary" | Structured six-field brief assembled from ticket history, similar incidents, and runbook pointer |
-| Calibrated threshold | "Confidence cutoff" | The model confidence percentile at which calibrated accuracy on your ticket distribution meets SLA |
-| Extraction schema | "What the AI pulls out" | The fixed set of structured fields (intent, product, version, urgency, prior contact) parsed from raw ticket text |
-
-## Consultant field notes
-
-A few shapes you will recognise the second time you see them:
-
-- **The prompt that worked in the demo but failed in production.** The demo ticket was clean, detailed, versioned; the real ticket was three lines, all caps, with a screenshot. Short and misspelled tickets make up 40-60% of real service desk volume, and any extraction prompt that scored 95% on the demo set will land closer to 70% on the live distribution. Always evaluate on the worst tickets, not the average ones.
-- **The RAG that returned the right doc but the wrong paragraph.** Semantic similarity matched the article title, the article was version-correct, and the response still told the customer to run a command that does not exist in their tier. Without hard pre-filtering on version and tier before semantic ranking, the retrieval step looks healthy on dashboards and poisons responses downstream.
-- **The use case everyone approved but nobody wanted.** Stakeholders signed off on ticket triage because the slide deck was convincing. The agents who would actually use it never sat in the kickoff. Adoption stalled not because the model was wrong, but because the review-flag path added 20 seconds to every ticket and the SLA math never accounted for it. Pilot with the people who close tickets, not just the people who sign purchase orders.
-- **The vendor pilot that never made it past the security review.** A clean vendor demo, a strong POC on synthetic tickets, then six months of waiting for the data processing addendum and the per-user gateway token. In 2026, security review is the actual deployment date — design the architecture so the audit can complete before the model selection, not after.
-- **The AI feature that hit a cost ceiling in month two.** The pipeline routed all ambiguous tickets to a frontier model "for safety." Volume was fine in the pilot at a few hundred tickets a day; at thousands per day the larger-model bill exceeded the entire service desk tooling budget within weeks. Calibrated routing is not a quality nicety — it is how the deployment stays live past the first quarter.
 
 ## Further Reading
 

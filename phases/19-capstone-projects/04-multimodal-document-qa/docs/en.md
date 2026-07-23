@@ -60,44 +60,7 @@ query ----+----> retrieve top-k pages (MaxSim)
 - Viewer UI: Next.js 15 with canvas overlay for evidence regions
 
 
-## Use It
 
-```
-$ doc-qa ask "what was the 2024 operating margin change for segment EMEA?"
-[retrieve]   top-5 pages in 320ms (ColQwen2.5, MaxSim, Vespa)
-[synth]      qwen3-vl-30b, 1.4s, cited (form-10k-2024, p. 88) + (..., p. 92)
-answer:
-  EMEA operating margin moved from 18.2% to 16.8%, a 140bp decline.
-  cited: 10-K-2024.pdf p.88 (Table 4, Segment Operating Margin)
-         10-K-2024.pdf p.92 (MD&A, Operating Performance)
-[viewer]     open with highlighted bounding boxes overlaid on p.88 Table 4
-```
-
-## Ship It
-
-`outputs/skill-doc-qa.md` describes the deliverable: a vision-first multimodal document QA system tuned to a specific corpus and evaluated against an OCR-then-text baseline on ViDoRe v3.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | ViDoRe v3 / M3DocVQA accuracy | Benchmark numbers vs OCR-text baseline and published leaderboard |
-| 20 | Evidence-region grounding | Fraction of cited regions that actually contain the answer span |
-| 20 | Storage and latency engineering | DocPruner compression ratio, index p95, answer p95 |
-| 20 | Multi-page reasoning | Accuracy on a hand-labeled 100-question multi-page set |
-| 15 | Source-inspection UX | Viewer clarity, overlay fidelity, side-by-side comparison tools |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Late interaction | "ColPali-style retrieval" | Query tokens score against page patches independently; MaxSim aggregates |
-| Multi-vector | "Per-patch embedding" | Each document has many vectors, not one pooled vector |
-| MaxSim | "Late-interaction scoring" | For every query token, take max similarity over document vectors; sum |
-| DocPruner | "Patch compression" | 2026 pruning that keeps 50% of patches with negligible accuracy loss |
-| ViDoRe v3 | "Document-retrieval benchmark" | The 2026 standard for measuring visual-document retrieval |
-| Evidence region | "Cited bounding box" | A bbox on the source page that localizes the answer span |
-| OCR fallback | "Equation channel" | Text pipeline used alongside vision for equation- or table-heavy pages |
 
 ## Further Reading
 

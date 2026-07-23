@@ -67,44 +67,7 @@ Postgres    S3 listing  Jira       Linear     Datadog
 - Audit: structured JSONL per-tenant bucket with per-call lineage
 
 
-## Use It
 
-```
-$ curl -H "Authorization: Bearer eyJhbGc..." \
-       -X POST https://mcp.internal.example.com/ \
-       -d '{"jsonrpc":"2.0","method":"tools/call",
-            "params":{"name":"postgres.readonly","arguments":{"sql":"SELECT 1"}}}'
-[registry]   capability validated: postgres.readonly v1.2
-[policy]    scope postgres:query:readonly present; allowed
-[audit]     logged: user=u42 tool=postgres.readonly outcome=ok
-response:    { "result": { "rows": [[1]] } }
-```
-
-## Ship It
-
-`outputs/skill-mcp-server.md` describes the deliverable. A production-grade MCP server + registry + audit layer for internal tools with OAuth 2.1 scopes and OPA gating.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Spec conformance | StreamableHTTP + capability manifest passes MCP conformance tests |
-| 20 | Security | Scope enforcement, OPA coverage across every tool, secret hygiene |
-| 20 | Observability | Per-tool-call audit log with PII redaction |
-| 20 | Scale | 100-client load test horizontal scale demonstration |
-| 15 | Registry UX | Discover / validate / enable-disable workflow |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| StreamableHTTP | "2026 MCP transport" | Stateless HTTP + streaming; replaces SSE + stdio for networked servers |
-| Capability manifest | "Well-known doc" | `.well-known/mcp-capabilities` with tool list, auth, transport URL |
-| OPA / Rego | "Policy engine" | Open Policy Agent for authorizing tool calls against external rules |
-| Scope elevation | "Approved-by-human" | Short-lived scope granted via Slack approval, required for destructive tools |
-| Registry | "Tool discovery" | Service that indexes MCP servers from their capability manifests |
-| Workload identity | "SPIFFE / SPIRE" | Cryptographic service identity for OAuth token issuance |
-| Conformance suite | "Spec tests" | Official MCP test battery for StreamableHTTP + tool manifest correctness |
 
 ## Further Reading
 

@@ -67,44 +67,7 @@ model card (2026 MOF) + safety eval (Llama Guard 4)
 - Observability: W&B for training, Langfuse for inference
 
 
-## Use It
 
-```
-$ ./pipeline.sh config/llama3.3-8b-domainX.yaml
-[data]    300k deduped, 12k filtered, 280k accepted (seed=7)
-[SFT]     3 epochs, 8xH100, 6h12m, val loss 1.42 -> 1.03
-[DPO]     1 epoch, beta=0.08, 4xH100, 1h40m
-[quant]   GPTQ-INT4 4.6 GB, AWQ-INT4 4.8 GB, GGUF-Q4_K_M 5.1 GB
-[serve]   vLLM 0.7, EAGLE-3 acceptance 0.74, p99 126ms @ bs=8
-[eval]    MMLU-Pro +3.2, MT-Bench-v2 +0.41, RewardBench-2 +0.08
-[card]    model-card.md generated under 2026 MOF
-```
-
-## Ship It
-
-`outputs/skill-finetuning-pipeline.md` describes the deliverable. A single command runs data through SFT through DPO through quant through serve through eval, and emits a model card + the served endpoint.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Eval delta vs base | Measured gain on target tasks (MMLU-Pro, MT-Bench-v2, task-specific) |
-| 20 | Pipeline reproducibility | One command reruns end to end with identical seeds |
-| 20 | Data hygiene | Dedup rate, PII scrub coverage, contamination check green |
-| 20 | Serving efficiency | tokens/s at bs=1/8/32, EAGLE-3 acceptance rate, $/1M tokens |
-| 15 | Model card + safety eval | 2026 MOF completeness + Llama Guard 4 pass rate |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Axolotl | "SFT trainer" | Unified YAML-driven trainer for SFT, DPO, and distillation |
-| TRL | "Preference tuner" | Hugging Face library for DPO, GRPO, PPO on LLMs |
-| GRPO | "Group-relative policy optimization" | DeepSeek R1's RL recipe with verifiable rewards |
-| EAGLE-3 | "Speculative decoding draft" | Draft heads that predict N tokens ahead; vLLM verifies with target model |
-| MOF | "Model Openness Framework" | 2026 standard for grading model releases on data, code, license |
-| Contamination check | "Split hygiene" | MinHash-based detection of test-set leakage into training |
-| Acceptance rate | "EAGLE / MTP metric" | Fraction of drafted tokens the target model accepts |
 
 ## Further Reading
 

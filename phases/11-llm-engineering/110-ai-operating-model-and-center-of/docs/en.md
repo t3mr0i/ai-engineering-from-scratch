@@ -110,40 +110,7 @@ The consulting task is usually to move a client from level 1 or 2 to level 3 wit
 
 Phase 13 · 22 covered the technical layer: how skills, tool definitions, and agent SDKs are structured and versioned. The CoE operating model is the organizational wrapper around that technical layer. The asset library *is* the skills and scaffold repository from Phase 13 · 22, governed. The model routing config *is* the SDK abstraction layer, centrally maintained. A consultant who knows only the organizational model and not the technical layer cannot credibly author the standards; one who knows only the technical layer and not the organizational model will build excellent tools that no one reuses.
 
-## Use It
 
-`code/main.py` encodes two policies as runnable Python:
-
-1. A **CoE readiness scorer** that takes a set of yes/no signals about an organization (funded team, enforced standards, asset library in use, champion network active, governance cadence defined) and scores maturity level 1–5, with the next-step recommendation.
-2. An **operating model router** that takes a decision (funding a new use case, retiring a model, responding to a security incident) and routes it to the correct owner — CoE platform, delivery team, or joint decision — based on the ownership boundary rules from this lesson.
-
-## Ship It
-
-`outputs/skill-coe-operating-model.md` is a one-page paste-and-use decision aid: a readiness checklist, the ownership boundary table, the champion program minimum requirements, and the governance cadence template — enough to run a CoE kickoff workshop with a client team.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Center of Excellence | "The AI team" | The organizational unit that owns standards, reusable assets, champion network, and governance cadence — not delivery |
-| Operating model | "How we run AI" | The explicit partition of decisions: what the platform owns vs. what delivery teams own |
-| Hub and spoke | "Centralized AI" | CoE owns platform; BUs consume; works only if champion network prevents bottleneck |
-| Champion network | "AI ambassadors" | Embedded part-time practitioners who translate CoE standards into BU context and surface signal back |
-| Asset library | "Shared templates" | Versioned, eval-scored prompts, harnesses, scaffolds, and routing config; the compounding layer |
-| Governance cadence | "AI steering committee" | A defined operating rhythm (weekly/monthly/quarterly) that converts portfolio signal into decisions |
-| Maturity level | "Where we are on the journey" | One of five stages from ad hoc pilots to transformational embedding; the consulting diagnostic |
-| Model tier policy | "Which AI to use" | A standardized mapping of (task type, cost, sensitivity) to model endpoint, maintained by the CoE |
-
-## Consultant field notes
-
-Patterns a senior consultant recognizes in the room before the slides are out.
-
-- **The CoE that audited itself into irrelevance.** A central team writes a 40-page standard, requires sign-off from five stakeholders before any model call ships, and measures success by the number of reviews completed. Delivery teams route around it within two quarters and the wiki becomes the deliverable. Lesson: governance that is not enforced in CI is theater; charter the platform, not the paper.
-- **The use case everyone approved but nobody wanted.** The steering committee green-lights an AI feature because it scores well on the prioritization matrix; six months in, no business unit has adopted it because nobody consulted the operational owners who would have to live with its outputs. Lesson: a CoE without champion signal from delivery will fund elegant artifacts that never touch a workflow.
-- **The champion program that was actually a mailing list.** Champions are named in a slide, asked to attend a quarterly hour, and given no protected time. Within twelve months they have stopped attending and the central team complains the network is unresponsive. Lesson: a champion without allocated capacity is a volunteer, and volunteers stop volunteering.
-- **The embedded model that dissolved after the rotation ended.** A CoE rotates engineers into delivery teams for two years; they integrate well, deliver value, and then return to a central team that no longer has a charter. The asset library stops being maintained and the standards revert to per-team defaults within 18 months. Lesson: embedded models need a permanent home for the institutional memory or the compounding layer collapses back to ad hoc.
-- **The kill decision that never came.** A pilot has missed two milestones, consumes one champion's full sprint capacity, and produces a working demo that nobody outside the pilot team has seen. The monthly portfolio review is the forum that should kill it; in our experience, in roughly half of mid-sized programs this forum does not actually convene, and the pilot drifts for another two to three quarters before budget pressure ends it. Lesson: a governance cadence that exists on paper is not a cadence.
 
 ## Further Reading
 

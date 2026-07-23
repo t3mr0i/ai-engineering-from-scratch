@@ -80,29 +80,7 @@ Decision order:
 - **Fake hierarchy.** Three layers because "enterprise"; two actual teams. Collapse.
 
 
-## Use It
 
-- **LangGraph** for supervisor and hierarchical (nested subgraphs).
-- **OpenAI Agents SDK** for handoffs-as-tools (supervisor-shaped).
-- **CrewAI Flow** for production deterministic.
-- **Custom** for debate or when you want exact control.
-
-## Ship It
-
-`outputs/skill-orchestration-picker.md` picks a topology and implements it.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Supervisor-worker | "Router + specialists" | Central LLM dispatches to specialists; they don't talk to each other |
-| Swarm | "Peer-to-peer" | Direct handoffs via shared tools; no central router |
-| Hierarchical | "Supervisors of supervisors" | Nested subgraphs for large populations |
-| Debate | "Proposer + critique" | Parallel proposers, cross-critique (Lesson 25) |
-| Tool-call-based supervision | "Supervisor without a library" | Implement supervisor as direct tool calls for context control |
-| Crew | "Autonomous team" | CrewAI's role-based collaboration mode |
-| Flow | "Deterministic workflow" | CrewAI's event-driven production mode |
 
 ## Further Reading
 

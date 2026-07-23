@@ -57,28 +57,7 @@ For `step > total_steps` the learning rate stays at `lr_min`. The contract is ex
 The schedule is half of training health. The gradient norm is the other half. The training loop logs both per step. A divergent training run shows the gradient norm spike before the loss does; a well-tuned warmup keeps the norm rising linearly with the rate; a too-aggressive peak shows up as a norm that stays high after warmup. The dataset on disk is `step, lr, grad_l2_norm, loss`. The CSV is the only durable record.
 
 
-## Use It
 
-Production patterns:
-
-- **Sweep peak before sweeping anything else.** `lr_max` is the most sensitive knob. Sweep it on a small model first; the optimal `lr_max` scales weakly with model size, so the small-model sweep is a strong prior.
-- **Warmup is a fraction of total steps, not an absolute count.** A 200-million-step run with 2,000 warmup steps starts at peak almost immediately; a 20,000-step run with the same number warms up for 10 percent. Configure warmup as a fraction (typical: 1-3 percent) so the schedule scales with training duration.
-- **`lr_min` is non-zero on purpose.** A floor that is 10 percent of `lr_max` keeps the optimizer learning during the long tail. A `lr_min = 0` schedule produces a training curve that looks great on a plot and a model that has not actually finished training.
-
-## Ship It
-
-`outputs/skill-cosine-warmup.md` would, on a real project, describe which config carries the schedule, which trainer step the global counter is read from, and what `lr_max` sweep produced the deployed value. This lesson ships the engine.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Warmup | "Slow start" | Linear ramp from zero to `lr_max` over the first `warmup_steps` updates |
-| Cosine decay | "Smooth drop" | Upper-half cosine curve from `lr_max` to `lr_min` over the remaining steps |
-| Floor | "After training" | The fixed `lr_min` value the schedule pins at past `total_steps` |
-| Gradient norm | "L2 of grads" | The Euclidean norm of the concatenated gradient vector, logged each step |
-| Global step | "Schedule axis" | A monotonic step counter that survives restarts and drives the schedule |
 
 ## Further Reading
 

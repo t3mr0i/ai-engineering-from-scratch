@@ -70,33 +70,7 @@ Every role in your system is an LLM and every role's output is "looks good to me
 - **OpenAI Agents SDK** — handoff tools between role-specialized Agents.
 
 
-## Use It
 
-`outputs/skill-role-designer.md` takes a task and produces the role roster (3-5 roles), the input/output schema per role, and the verifier check. Use this before wiring agents into a framework.
-
-## Ship It
-
-Checklist:
-
-- **At least one deterministic verifier.** Never all-LLM.
-- **Explicit I/O schema per role.** The planner returns a spec, not prose; the executor reads that schema.
-- **Communicative dehallucination.** Executor must ask the planner when info is missing; never invent it.
-- **Critic/verifier ordering.** Run critic first (cheap, catches design issues), verifier second (slow, catches bugs).
-- **Loop budget.** Max 2 critic-executor revision rounds before escalating to human.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Role specialization | "Different agents, different jobs" | Distinct system prompts tuned for planner/executor/critic/verifier roles. |
-| SOP pattern | "Encoded standard operating procedure" | MetaGPT's framing: strict I/O schemas per role turn a team into a pipeline. |
-| Communicative dehallucination | "Ask before inventing" | ChatDev pattern: executor asks planner when a detail is missing rather than making one up. |
-| Critic | "LLM reviewer" | Subjective, opinionated reviewer. Catches taste issues. Can be fooled by plausible prose. |
-| Verifier | "Deterministic check" | Code-based pass/fail. Test runner, type checker, schema validator. Cannot be fooled. |
-| Verification gap | "No one checked" | 21.3% of MAST failures. Answer shipped without a check that would have caught the bug. |
-| Revision loop | "Critic sends it back" | Critic rejection triggers executor re-run with feedback. Needs a budget. |
-| All-LLM anti-pattern | "Looks good to me" | Every role is an LLM, no deterministic check. Classic MAST failure. |
 
 ## Further Reading
 

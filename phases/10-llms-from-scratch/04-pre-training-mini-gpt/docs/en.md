@@ -221,53 +221,7 @@ The learning rate schedule matters more than you might expect. GPT-2 warms up fr
 The output projection (logits head) shares weights with the token embedding matrix. This is called weight tying -- it reduces the parameter count by 38M and improves performance because it forces the model to use the same representation space for input and output.
 
 
-## Use It
 
-### Full Training and Generation Demo
-
-```python
-corpus = """The transformer architecture has revolutionized natural language processing.
-Attention mechanisms allow the model to focus on relevant parts of the input.
-Self-attention computes relationships between all pairs of positions in a sequence.
-Multi-head attention splits the representation into multiple subspaces.
-Each attention head can learn different types of relationships.
-The feedforward network provides nonlinear transformations at each position.
-Residual connections enable gradient flow through deep networks.
-Layer normalization stabilizes training by normalizing activations.
-Position embeddings give the model information about token ordering.
-The causal mask ensures autoregressive generation during training.
-Pre-training on large text corpora teaches the model general language understanding.
-Fine-tuning adapts the pre-trained model to specific downstream tasks."""
-
-model = train_mini_gpt(corpus, num_steps=200)
-
-prompt = list("The transformer".encode("utf-8"))
-output_tokens = generate(model, prompt, max_new_tokens=100, temperature=0.8)
-generated_text = bytes(output_tokens).decode("utf-8", errors="replace")
-print(f"\nGenerated: {generated_text}")
-```
-
-On a small corpus with a small model, the generated text will be semi-coherent at best. It will learn some byte-level patterns from the training text but cannot generalize the way GPT-2 does with 40GB of training data and the full 124M parameter architecture. The point is not the output quality. The point is that you can trace every step: embedding lookup, attention computation, feedforward transformation, logit projection, softmax, and sampling. Every operation is visible.
-
-## Ship It
-
-This lesson produces `outputs/prompt-gpt-architecture-analyzer.md` -- a prompt that analyzes the architecture choices in any GPT-style model. Feed it a model card or technical report and it breaks down the parameter allocation, attention design, and scaling decisions.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Autoregressive | "It generates one word at a time" | Each output token is conditioned on all previous tokens -- the model predicts P(token_n \| token_0, ..., token_{n-1}) |
-| Causal mask | "It can't see the future" | An upper-triangular matrix of -infinity values that prevents attention to future positions during training |
-| Multi-head attention | "Multiple attention patterns" | Splitting Q, K, V into parallel heads (e.g., 12 heads of 64 dims each for GPT-2) so each head can learn different relationship types |
-| KV Cache | "Caching for speed" | Storing computed Key and Value tensors from previous tokens to avoid redundant computation during autoregressive generation |
-| Prefill | "Processing the prompt" | The first inference phase where all prompt tokens are processed in parallel -- compute-bound on GPU FLOPS |
-| Decode | "Generating tokens" | The second inference phase where tokens are generated one at a time -- memory-bound on GPU bandwidth |
-| Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
-| Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
-| Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
 
 ## Further Reading
 

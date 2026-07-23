@@ -64,42 +64,7 @@ production apps:
 - SDKs supported out of the box: OpenAI, Anthropic, Google GenAI, LangChain, LlamaIndex, vLLM
 
 
-## Use It
 
-```
-$ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
-[collector]  accepted 1 trace, 3 spans
-[clickhouse] inserted 3 spans (app=chat, user=u_42)
-[eval]       DeepEval faithfulness 0.82, toxicity 0.03
-[drift]      weekly PSI 0.08 (below 0.2 threshold)
-[ui]         live at https://obs.example.com
-```
-
-## Ship It
-
-`outputs/skill-llm-observability.md` is the deliverable. Given an LLM application, the dashboard ingests its traces, runs evals, alerts on drift, and surfaces cost/user breakdown in Next.js.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
-| 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
-| 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
-| 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| GenAI semconv | "OTel LLM attributes" | 2025 OpenTelemetry spec for LLM span attributes (system, model, tokens) |
-| Tail sampling | "Post-trace sample" | Collector decides to keep or drop a trace after it completes (can peek errors) |
-| PSI | "Population stability index" | Drift metric comparing two distributions; > 0.2 typically signals meaningful drift |
-| LLM-judge | "Eval as model" | An LLM scoring another LLM's output on a rubric (faithfulness, toxicity, PII) |
-| Tail-sampling policy | "Keep-rule" | Rule that decides which traces to persist vs drop; errored + sample-rate |
-| Eval span | "Linked eval trace" | Child span carrying an eval score linked to the original LLM call span |
-| Cost per user | "Unit economics" | Dollar cost attributed to a user_id over a window; key product metric |
 
 ## Further Reading
 

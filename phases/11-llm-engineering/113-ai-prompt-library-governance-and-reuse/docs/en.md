@@ -108,36 +108,7 @@ Purpose-built prompt registries are still an emerging category. In 2026 the comm
 
 The model in `code/main.py` implements the internal registry pattern because it makes every policy decision explicit and runnable, not hidden behind a vendor's UI.
 
-## Use It
 
-`code/main.py` implements a minimal prompt registry with the four governance primitives as a lifecycle state machine. It demonstrates two decision functions: `can_promote`, which checks whether a prompt record can advance to the next state (owner exists, anchor passes, reviewer is not owner), and `apply_retirement_rules`, which evaluates all registered retirement conditions against the current context (model availability, accuracy score, calendar date). The driver registers three synthetic prompts at different lifecycle stages, attempts several promotions — some valid, some blocked — and then runs retirement checks, printing the reason for every decision. The run ends with a HEADLINE summary showing how many prompts are STABLE versus at risk.
-
-## Ship It
-
-`outputs/skill-prompt-library-governance.md` is a one-page decision aid: a checklist for onboarding a new prompt into a governed registry, a promotion gate table, and a retirement trigger reference. Paste it into your team's confluence, notion, or internal wiki as the standing operating procedure for your prompt library.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Prompt registry | "Where we keep our prompts" | A structured store of prompt records with owner, version, anchor, and retirement rule as required fields |
-| Evaluation anchor | "Our test case" | One or more (input, expected-output) pairs stored alongside the prompt text, required to pass before promotion to STABLE |
-| Lifecycle state | "Is it live?" | One of DRAFT / REVIEW / STABLE / DEPRECATED / RETIRED — a machine-checkable condition, not an informal label |
-| Retirement rule | "When do we delete it?" | A machine-checkable condition (model sunset, accuracy floor, date, replacement-stable) that triggers archival with a tombstone |
-| Patch / minor / major bump | "We updated the prompt" | Semver discipline applied to prompt text: patch = cosmetic, minor = additive, major = contract change requiring new anchor |
-| CODEOWNERS analogy | "Someone owns it" | Every prompt record has a named owner; no version advances from REVIEW to STABLE without a non-owner reviewer |
-| LLM-as-judge | "Use a model to score it" | A secondary model (e.g. Claude Sonnet 4.x) scores prompt output against a rubric; fast but requires calibration against human raters |
-| Tombstone | "It's deprecated" | A retired registry record that persists with a redirect to the replacement, so callers get an explicit deprecation warning |
-
-## Consultant field notes
-
-A few shapes we see repeatedly across prompt-library engagements — worth naming so the team recognises them early.
-
-- **The prompt that passed the demo but failed in production.** The anchor test was tuned on a cherry-picked input the author loved; the first real batch surfaced every failure mode the demo never exercised. Lesson: the anchor has to come from a real production sample, not from the prompt author's favourite example.
-- **The "shared library" that turned into a data leak.** A prompt was checked into the central registry and promptly scraped into a vector index, a Notion export, and a vendor's evaluation harness — with internal rules, customer names, and pricing logic embedded in the system prompt. Lesson: a registry is also a data-handling surface; treat prompt text the way you treat code that contains secrets, with scoped access and a review path.
-- **The use case everyone approved but nobody wanted.** Governance passed because the prompt technically worked, but the workflow it sat inside had no caller — the upstream system already solved the problem with a regex. Lesson: a STABLE prompt in the registry is not the same as a useful one; track consumption, not just lifecycle state.
-- **The registry that hit a cost ceiling in month two.** LLM-as-judge anchors ran on every promotion, every nightly batch, and every model-upgrade regression sweep. At a few hundred STABLE prompts and three daily sweeps the judge bill overtook the team's tool budget. Lesson: anchor cost is a first-class metric; sample, do not re-run all of them, on every cycle.
 
 ## Further Reading
 

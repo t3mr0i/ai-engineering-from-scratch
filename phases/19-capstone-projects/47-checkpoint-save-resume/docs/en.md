@@ -81,30 +81,7 @@ The index records the shard count, the sha256 of each shard, and the sha256 of t
 A resume that snaps to the start of the next epoch wastes anywhere from minutes to a day. The fix is `(epoch, batch_in_epoch)` plus the RNG state. After load, the training loop fast-forwards the random number generator past the batches already consumed in the current epoch and continues from `batch_in_epoch`. The lesson code does this exactly; the assertion is that the loss trajectory after resume matches the uninterrupted baseline within 1e-4.
 
 
-## Use It
 
-Production training stacks ship checkpointing as part of the trainer. The shape is the same: model + optimizer + scheduler + counters + RNG, written atomically, named by step so the latest is easy to find. Sharded layouts power large model loading with parallel reads; the index.json is what makes that work.
-
-Three patterns to enforce:
-
-- **Schema is a string in the payload.** Migrations branch on it. Without it you cannot evolve the format without breaking old runs.
-- **Sha256 every shard.** A silently truncated download is the worst kind of bug; the loader fails fast or it fails late.
-- **Keep checkpoint cadence honest.** Save every N steps and every wallclock-minute, whichever is shorter. Otherwise the long step that crashes wastes a full window of work.
-
-## Ship It
-
-`outputs/skill-checkpoint-save-resume.md` is the recipe for any new training script: payload shape, atomic write, RNG capture, sharded index. Drop the skill into a repo, wire `save_checkpoint` at the periodic save site, wire `load_checkpoint` at startup, and the run survives kills.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Atomic save | "Write and pray" | Write to a temp file in the same directory, then os.replace into the target name |
-| State dict | "The weights" | Model parameters and buffers, keyed by parameter name |
-| Sharded checkpoint | "Big model file" | Multiple files, one per shard, plus a meta file and a JSON index with sha256s |
-| RNG state | "Random seed" | Captured state for python random, numpy, torch CPU, torch CUDA; not just the seed |
-| Mid-epoch resume | "Restart" | Fast-forward the RNG and continue from the next batch in the same epoch |
 
 ## Further Reading
 

@@ -65,28 +65,7 @@ State writes need to survive partial failures: write to a tempfile, fsync, renam
 When the schema changes, ship a migration script next to the schema bump. The state file carries a `schema_version` field; the manager refuses to load a file from a version it cannot migrate.
 
 
-## Use It
 
-In production:
-
-- **LangGraph checkpointers.** Same idea, different storage. The checkpointer persists graph state to SQLite, Postgres, or a custom backend. The schema this lesson teaches is what you reach for when the checkpointer dies and you need to read state by hand.
-- **Letta memory blocks.** Persistent blocks with structured schemas (Phase 14 · 08). Same discipline scoped to long-running personas.
-- **OpenAI Agents SDK session store.** Pluggable backends, schema-aware. The state file in this lesson is the local-file backend.
-
-## Ship It
-
-`outputs/skill-state-schema.md` generates a project-specific JSON Schema pair (state + board), a Python `StateManager` wired to atomic writes, and a migration scaffold so the next schema bump does not break the workbench.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Repo memory | "Notes file" | State stored in tracked files in the repo, under schema |
-| Schema-first | "Validate inputs" | Define the contract before the writer, refuse drift |
-| Atomic write | "Just rename" | Write to temp, fsync, rename, so partial failures cannot corrupt |
-| Migration | "Schema bump" | A script that turns vN state into v(N+1) state |
-| System of record | "Source of truth" | The artifact the workbench treats as authoritative |
 
 ## Further Reading
 

@@ -600,61 +600,7 @@ graph TB
 - **ANP** provides identity verification for agents you don't control
 
 
-## Use It
 
-### Real Implementations
-
-**A2A** is the most mature. Google's [official spec](https://github.com/google/A2A) is open-source under the Linux Foundation. SDKs for Python and TypeScript. If your agents need dynamic discovery and collaboration, start here.
-
-**ACP** is merging into A2A. IBM's [BeeAI project](https://github.com/i-am-bee/acp) created ACP as a REST-first alternative, but the trajectory metadata concept is being absorbed into the A2A ecosystem. Use ACP patterns (trajectory logging, run lifecycle) even if you use A2A as the transport.
-
-**ANP** is the most experimental. The [community repo](https://github.com/agent-network-protocol/AgentNetworkProtocol) has a Python SDK (AgentConnect). The meta-protocol negotiation concept is genuinely novel. Worth watching for cross-organizational agent deployments.
-
-**MCP** is already covered in Phase 13. If you want agents to use tools, MCP is the standard.
-
-### Picking the Right Protocol
-
-```mermaid
-graph TD
-    START{Do agents need<br/>to use tools?}
-    START -->|Yes| MCP_R[Use MCP]
-    START -->|No| TALK{Do agents need to<br/>talk to each other?}
-    TALK -->|No| NONE[You don't need<br/>a protocol]
-    TALK -->|Yes| AUDIT{Need audit trails<br/>for compliance?}
-    AUDIT -->|Yes| ACP_R[A2A + ACP<br/>trajectory patterns]
-    AUDIT -->|No| ORG{All agents<br/>within your org?}
-    ORG -->|Yes| A2A_R[A2A<br/>Agent Cards + Tasks]
-    ORG -->|No| INFRA{Shared<br/>infrastructure?}
-    INFRA -->|Yes| BROKER[A2A + message broker]
-    INFRA -->|No| ANP_R[ANP + A2A<br/>DID verification]
-
-    style MCP_R fill:#d1fae5,stroke:#059669
-    style A2A_R fill:#dbeafe,stroke:#2563eb
-    style ACP_R fill:#fef3c7,stroke:#d97706
-    style ANP_R fill:#f3e8ff,stroke:#7c3aed
-    style BROKER fill:#e0e7ff,stroke:#4338ca
-```
-
-## Ship It
-
-This lesson produces:
-- `code/main.ts` -- complete implementation of all four protocol patterns
-- `outputs/prompt-protocol-selector.md` -- a prompt that helps you choose protocols for your system
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| MCP | "The protocol for AI tools" | A client-server protocol for agents to discover and use tools. Agent-to-tool, not agent-to-agent. |
-| A2A | "Google's agent protocol" | A peer-to-peer protocol for agent collaboration under the Linux Foundation. Discovery via Agent Cards, 9-state task lifecycle, streaming via SSE. Supports JSON-RPC, REST, and gRPC bindings. |
-| ACP | "Enterprise agent messaging" | IBM/BeeAI's REST API for agent runs with TrajectoryMetadata: every response carries the full chain of reasoning and tool calls. Merging into A2A. |
-| ANP | "Decentralized agent identity" | A community protocol using `did:wba` (DID) for cryptographic identity, HPKE for E2EE, and AI-powered meta-protocol negotiation for agents that have never seen each other. |
-| Agent Card | "An agent's business card" | A JSON document at `/.well-known/agent-card.json` describing skills, supported MIME types, security schemes, and protocol bindings. |
-| DID | "Decentralized ID" | W3C standard for cryptographically verifiable identities hosted on the agent's own domain. ANP uses `did:wba` method. |
-| TrajectoryMetadata | "The audit receipt" | ACP's mechanism for attaching reasoning steps, tool calls, and their inputs/outputs to every agent response. |
-| Meta-protocol | "Agents negotiating how to talk" | ANP's approach where agents use natural language to dynamically agree on data formats, then generate code to handle them. |
-| Task | "A unit of work" | A2A's stateful object tracking work from submission through completion. Immutable once terminal. |
 
 ## Further Reading
 

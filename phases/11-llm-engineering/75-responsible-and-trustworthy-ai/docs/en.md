@@ -126,46 +126,7 @@ The point of the three gates is that they fail for *different* reasons, and the 
 
 A common mistake is to run only the first gate and stop there. The contract-reviewer story is a textbook case: gate one passed, gate two was skipped, gate three was never built. The composition is the gate.
 
-## Use It
 
-`code/main.py` is a stdlib-only policy engine. Three sections:
-
-1. **GDPR risk scorer** — takes a retrieval context (purpose + annotated fields) and returns a risk tier (GREEN / AMBER / RED) with the specific violation. Special-category data without an Art. 9 basis, or any field declared unnecessary, is RED. Personal data without an Art. 6 basis is AMBER.
-2. **Guardrail policy evaluator** — composes the data tier with the AI Act use-case tier and the output type. Returns ALLOW / ESCALATE / BLOCK with the specific rule that fired. The key rule: a CV-shortlisting assistant with GREEN data and no human review is ESCALATE, not ALLOW — the use case, not the data, is the deciding factor.
-3. **Proxy-bias audit** — the live demonstration the lesson is named for. A simulated CV shortlister evaluates 400 candidates. The model is given no protected attributes. It is given a UK postcode. The system computes the disparity ratio across postcode bands. The verdict: the ratio is below the four-fifths rule and the deployment is BLOCKED — not by the GDPR gate, not by the AI Act use-case gate, but by the proxy-bias gate that would have caught the contract reviewer's clause-extraction prompts.
-
-No model, no network. The point is to make the three gates composable and runnable in a CI pipeline, a pre-deployment checklist, or a live retrieval-layer guard.
-
-## Ship It
-
-`outputs/skill-responsible-ai-compliance-checklist.md` is the one-page decision aid: paste the three gates (data tier, use-case tier, proxy-bias audit) into a project kickoff document or a sprint zero workshop. Same engine the code runs, in checklist form.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Special-category data | "Sensitive data" | GDPR Art. 9: health, biometric, racial origin, political opinion, religious belief, trade-union membership, sexual orientation, genetic, criminal record — Art. 9 lawful bases only |
-| Data minimisation | "Only use what you need" | Art. 5(1)(c): each field in a prompt must be necessary for the declared purpose; over-broad retrieval is a violation |
-| Purpose limitation | "Don't repurpose data" | Art. 5(1)(b): logs of LLM calls cannot be used for model training without a fresh compatible-purpose assessment |
-| AI Act high-risk | "Regulated AI" | Annex III use cases (recruitment, credit, benefits, biometrics, education) trigger conformity assessment, FRIA, and Art. 14 human oversight |
-| Proxy bias | "Indirect discrimination" | Model outputs correlated with protected attributes via proxies (postcode, name, language style) — audit the proxy, not the attribute |
-| Disparity ratio | "Four-fifths rule" | Lowest-group outcome rate ÷ highest-group; ≥ 0.80 is the conservative floor; 0.85 is typical for EU high-risk deployments |
-| DPIA | "Privacy impact assessment" | Art. 35 GDPR — mandatory when processing is likely high-risk; documents risks and mitigating controls |
-| FRIA | "Rights impact assessment" | AI Act — Fundamental Rights Impact Assessment for high-risk deployers; non-discrimination, privacy, right to explanation |
-| Art. 14 oversight | "Human in the loop" | AI Act obligation: confidence indicator, override path, kill switch, audit trail — engineering requirements, not UX nice-to-haves |
-| Compliance theatre | "We have a sign-off doc" | A documented control that exists on paper but is not enforced in CI; the contract reviewer's GREEN data tier with no Annex III check is the textbook case |
-
-## Consultant field notes
-
-These are the patterns a senior consultant recognises by name. They show up in every third engagement.
-
-- **Green-isn't-shippable.** The data tier is GREEN (clean context, lawful basis declared, retention set) and the team declares the system compliant. The AI Act use case is Annex III high-risk and the Art. 14 obligations were never met. The data-tier gate is a *necessary* condition; it is not *sufficient*.
-- **Compliance theatre.** A documented control exists (sign-off doc, DPIA, FRIA) that does not match the running system. The retrieval source changed; the DPIA does not mention it. The model version changed; the FRIA does not mention it. The sign-off was a paragraph, not a gate.
-- **The retrieval-time toggle.** The most expensive moment to add a compliance control is *after* the context window is populated. A field annotation done at retrieval time is worth twenty fields scrubbed post-hoc. Push the gate to the retrieval layer, not the log layer.
-- **Logs as a second context.** Prompt-and-completion logs are processed personal data with their own lawful-basis requirement, retention requirement, and redaction requirement. The DPO's most common finding in 2026 audits is not "your prompt is unlawful" but "your log is unlawful".
-- **DPO-veto-power.** The DPO's sign-off is the only approval that survives contact with a regulator. The product owner's sign-off is internal; the legal team's sign-off is internal; the DPO's is the one the data-protection authority reads. If the DPO has not signed, the system is not deployable in any EU member state.
-- **Kill-switch-by-redeploy.** "We'll roll back if there's an incident" is not a kill switch. A kill switch that requires a code change or a re-deployment is one whose first real use will be the day the incident is already out of control. The feature flag is the design, not the fallback.
 
 ## Further Reading
 

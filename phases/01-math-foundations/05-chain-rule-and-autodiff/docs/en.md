@@ -164,65 +164,7 @@ PyTorch internally:
 The graph is dynamic (define-by-run). A new graph is built on every forward pass. This is why PyTorch supports control flow (if/else, loops) inside models.
 
 
-## Use It
 
-### Verify against PyTorch
-
-```python
-import torch
-
-x1 = torch.tensor(2.0, requires_grad=True)
-x2 = torch.tensor(3.0, requires_grad=True)
-a = x1 * x2
-b = a + 1.0
-y = torch.relu(b)
-y.backward()
-
-print(f"PyTorch dy/dx1 = {x1.grad.item()}")  # 3.0
-print(f"PyTorch dy/dx2 = {x2.grad.item()}")  # 2.0
-```
-
-Same gradients. Your engine computes the same result as PyTorch because the math is the same: reverse-mode autodiff via the chain rule.
-
-### A more complex expression
-
-```python
-a = Value(2.0)
-b = Value(-3.0)
-c = Value(10.0)
-f = (a * b + c).relu()  # relu(2*(-3) + 10) = relu(4) = 4
-
-f.backward()
-print(f"df/da = {a.grad}")  # -3.0 (= b)
-print(f"df/db = {b.grad}")  #  2.0 (= a)
-print(f"df/dc = {c.grad}")  #  1.0
-```
-
-## Ship It
-
-This lesson produces:
-- `outputs/skill-autodiff.md` -- a skill for building and debugging autograd systems
-- `code/autodiff.py` -- a minimal autograd engine you can extend
-
-The Value class built here is the foundation for the neural network training loop in Phase 3.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Chain rule | "Multiply the derivatives" | The derivative of composed functions equals the product of each function's local derivative, evaluated at the right point |
-| Computational graph | "The network diagram" | A directed acyclic graph where nodes are operations and edges carry values (forward) or gradients (backward) |
-| Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
-| Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
-| Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
-| Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
-| Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
-| Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
-| Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
-| MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
 
 ## Further Reading
 

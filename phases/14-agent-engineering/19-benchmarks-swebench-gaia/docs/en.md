@@ -77,30 +77,7 @@ GAIA is what you run to measure "generalist capability." Do not confuse with cod
 - **Benchmark-as-development-target.** Optimizing for the benchmark diverges from production usefulness.
 
 
-## Use It
 
-- **SWE-bench Verified** for code agents. Always report Verified scores.
-- **GAIA** for generalist agents. Use the private leaderboard split.
-- **AgentBench** for multi-environment comparison.
-- **Custom evals** (Lesson 30) for your product's actual shape.
-
-## Ship It
-
-`outputs/skill-benchmark-harness.md` builds a SWE-bench-style harness for any codebase-task pair with FAIL_TO_PASS / PASS_TO_PASS gating.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| SWE-bench | "Code agent benchmark" | 2,294 GitHub issues; patch must flip FAIL_TO_PASS tests |
-| SWE-bench Verified | "Clean SWE-bench" | 500 human-curated tasks, OpenAI |
-| FAIL_TO_PASS | "Fix gate" | Tests previously failing that must pass after the patch |
-| PASS_TO_PASS | "No-regression gate" | Tests that were passing and must still pass |
-| GAIA | "Generalist benchmark" | 466 human-easy / AI-hard multi-tool questions |
-| AgentBench | "Multi-env benchmark" | 8 environments; long-horizon multi-turn |
-| Contamination | "Training-set leak" | Benchmark tasks present in model training |
-| SWE-bench+ | "Contamination audit" | 32.67% solution leakage found in successful SWE-bench patches |
 
 ## Further Reading
 

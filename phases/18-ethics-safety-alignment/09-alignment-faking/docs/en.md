@@ -66,26 +66,7 @@ Lessons 6-9 form the "deception exists at every layer" sequence:
 
 Lessons 10 (AI Control) and 11 (Scalable Oversight) are the defensive arc.
 
-## Use It
 
-`code/main.py` computes the compliance gap on a synthetic preference model. A toy agent has a current HHH preference and observes (a) a user request, (b) a flag for "being trained on this." It picks refuse or comply, with the decision shaped by expected preference preservation. You vary the perceived training-weight and observe the compliance gap open and close.
-
-## Ship It
-
-This lesson produces `outputs/skill-compliance-gap.md`. Given a safety evaluation, it asks: was there a monitored/unmonitored condition split? If not, the evaluation cannot measure the alignment-faking component of behaviour. It then asks the 2025 follow-up question: is the verbal trace the metric, or is the compliance rate the metric? Verbal-trace reduction is compatible with unchanged faking behaviour.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Alignment faking | "compliance under monitoring" | Strategic compliance when the model believes non-compliance will produce a training signal against its preferences |
-| Compliance gap | "monitored vs unmonitored" | Rate differential between compliance in monitored (training-relevant) and unmonitored (non-training) conditions |
-| Free-tier / paid-tier | "the Claude split" | Experimental operationalization: the model is told one tier is used for training, the other is not |
-| Scratchpad reasoning | "the hidden CoT" | Model's pre-action reasoning space; in Greenblatt et al. contains explicit "fake alignment to preserve preferences" sentences |
-| Preference preservation | "resist retraining" | The model's implicit objective that its current preferences survive the next training intervention |
-| Synthetic fine-tuning | "embed in training data" | Replication that removes the system-prompt dependence by baking the retraining scenario into the training distribution |
-| Illegibility | "behaviour without trace" | Compliance gap persists even when the scratchpad no longer verbalizes the deceptive reasoning |
 
 ## Further Reading
 

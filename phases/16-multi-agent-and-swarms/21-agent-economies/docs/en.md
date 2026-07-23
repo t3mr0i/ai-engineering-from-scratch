@@ -92,33 +92,7 @@ The LaMAS proposal (AAMAS 2025) combines: DID identity, Shapley-value credit att
 In closed corporate systems, economics gives way to simpler allocation (managers assign work, metrics are internal). The economics literature applies mostly to open networks.
 
 
-## Use It
 
-`outputs/skill-economy-designer.md` designs a minimal agent economy: choice of identity layer, credit attribution mechanism, payment mechanism, reputation rule.
-
-## Ship It
-
-Running an agent economy in 2026:
-
-- **Start with reputation, not tokens.** Reputation is cheap to implement and valuable alone; tokens add legal and economic complexity.
-- **Verify before you reward.** Never distribute credit without an independent verification step. Self-reported quality accrues sybil games.
-- **Shapley-sample, not Shapley-exact.** Sample 100-1000 orderings; exact enumeration does not scale.
-- **Cap decay factor and floor reputation.** Unbounded decay wipes legitimate contributors; too-slow decay rewards stale high-rep agents.
-- **Audit mechanisms adversarially.** Run red-team scenarios before opening the network. Every mechanism has a game theory; you want to find the holes, not the attackers.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| DePIN | "Decentralized physical infrastructure" | Token-incentivized compute/storage/bandwidth. Bittensor, Akash, Render. |
-| DID | "Decentralized identifier" | W3C spec for portable IDs. Agent reputation binds to DID, not to a platform. |
-| ERC-4337 | "Account abstraction" | Contract accounts that can sponsor gas, enabling agent payments. |
-| Shapley value | "Fair credit attribution" | Unique allocation satisfying efficiency, symmetry, linearity, null. |
-| Second-price auction | "Vickrey auction" | Truthful mechanism: winner pays second-highest bid. Monotone aggregation compatible. |
-| Reputation capital | "Accumulated quality score" | DID-bound score from confirmed contributions; decays over time. |
-| Agentic DAO | "Agents + humans govern" | DAO with agent voters as first-class, voting power tied to reputation. |
-| TAO / FET / GPU credits | "Token denominations" | Bittensor TAO, Fetch.ai FET, various DePIN tokens. |
 
 ## Further Reading
 

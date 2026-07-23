@@ -64,44 +64,7 @@ file under failure class + attach repro
 - Dashboard: failure-taxonomy dashboard with per-class counts and exemplar diffs
 
 
-## Use It
 
-```
-$ migrate legacy-java-service --target java17
-[recipe]   27 rewrites applied (JUnit 4->5, HashMap initializer, try-with-resources)
-[build]    FAIL: cannot find symbol sun.misc.BASE64Encoder
-[agent]    turn 1 classify: removed_jdk_api
-[agent]    turn 2 apply: sun.misc.BASE64Encoder -> java.util.Base64
-[build]    OK
-[tests]    412/412 passing; coverage 84.1% -> 84.3%
-[pr]       opened #1841  cost=$3.20  turns=4
-```
-
-## Ship It
-
-`outputs/skill-migration-agent.md` is the deliverable. Given a repo, it executes deterministic recipes then an agent loop to produce a green migrated branch, or files the repo under a taxonomy class.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | MigrationBench pass rate | 50-repo subset pass@1 |
-| 20 | Test-coverage preservation | Mean coverage delta vs base |
-| 20 | Cost per migrated repo | $/repo on passing runs |
-| 20 | Agent / deterministic-tool integration | Fraction of fixes that OpenRewrite handled vs agent authored |
-| 15 | Failure analysis write-up | Taxonomy completeness with exemplars |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Deterministic substrate | "Recipe engine" | OpenRewrite / libcst: declarative AST rewrites with safety guarantees |
-| Codemod | "Code-modifying program" | A rewrite rule that changes source code mechanically |
-| Build drift | "Tool version skew" | Subtle Maven / Gradle / uv behavior changes between major versions |
-| Failure class | "Taxonomy bucket" | A labeled reason a repo did not migrate: dep, syntax, test, build-tool, budget |
-| Coverage delta | "Coverage preservation" | Change in test coverage % from base to migrated branch |
-| Agent turn | "Tool-call round" | One plan -> act -> observe cycle in the agent loop |
-| Budget exhaustion | "Hit the ceiling" | The repo consumed its 30-min / $8 / 20-turn limit without passing |
 
 ## Further Reading
 

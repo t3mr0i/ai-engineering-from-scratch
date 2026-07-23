@@ -94,35 +94,7 @@ When you front multiple MCP servers with a gateway (Phase 13 · 17), the gateway
 
 Some enterprises deploy MCP servers behind gRPC or message-queue transports inside their own networks. This is non-standard — MCP's spec does not formally define these. Gateways can expose a Streamable HTTP surface to MCP clients while using gRPC internally. Keep the external surface spec-compliant; the gateway owns the translation.
 
-## Use It
 
-`code/main.py` implements a minimal Streamable HTTP endpoint using `http.server` (stdlib). It handles POST, GET, and DELETE on `/mcp`, sets `Mcp-Session-Id` on first response, validates `Origin`, and rejects requests from non-allowlisted origins. The handler reuses the Lesson 07 notes server's dispatch logic.
-
-What to look at:
-
-- The POST handler reads the JSON-RPC body, dispatches, and writes a JSON response (the single-response variant; SSE variant is structurally similar).
-- The `Origin` check rejects the default `http://evil.example` probe but accepts `http://localhost`.
-- Session ids are random 128-bit hex strings; the server keeps per-session state in memory.
-
-## Ship It
-
-This lesson produces `outputs/skill-mcp-transport-migrator.md`. Given an HTTP+SSE (legacy) MCP server, the skill produces a migration plan to Streamable HTTP with session-id continuity, Origin checks, and backwards-compatible probe support.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| stdio transport | "Local child process" | JSON-RPC over stdin/stdout, newline-delimited |
-| Streamable HTTP | "The remote transport" | Single-endpoint POST + GET + optional SSE, 2025-03-26 spec |
-| HTTP+SSE | "Legacy" | Two-endpoint model being removed in mid-2026 |
-| `Mcp-Session-Id` | "Session header" | Server-assigned random id echoed on every subsequent request |
-| `Origin` allowlist | "DNS-rebinding defense" | Reject requests whose Origin is not approved |
-| Single endpoint | "One URL" | `/mcp` handles POST / GET / DELETE for all session operations |
-| `last-event-id` | "SSE replay" | Header used to resume a dropped stream without missing events |
-| Backwards-compat probe | "Old vs new detection" | Client response-shape check that auto-selects transport |
-| Long-lived HTTP | "SSE streaming" | Server pushes events for minutes or hours on one TCP connection |
-| Session revocation | "Force re-init" | Server invalidates a session id; client must handshake again |
 
 ## Further Reading
 

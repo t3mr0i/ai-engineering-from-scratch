@@ -276,77 +276,7 @@ A common misconception: zero-padding a signal before FFT improves frequency reso
 True frequency resolution depends only on the observation time T = N / fs. To resolve two frequencies separated by delta_f, you need at least T = 1 / delta_f seconds of data. No amount of zero-padding changes this fundamental limit.
 
 
-## Use It
 
-For real work, use numpy's FFT which is backed by highly optimized C libraries.
-
-```python
-import numpy as np
-
-signal = np.sin(2 * np.pi * 5 * np.arange(256) / 256)
-spectrum = np.fft.fft(signal)
-freqs = np.fft.fftfreq(256, d=1/256)
-
-power = np.abs(spectrum) ** 2
-
-positive_freqs = freqs[:len(freqs)//2]
-positive_power = power[:len(power)//2]
-```
-
-For windowing and more advanced spectral analysis:
-
-```python
-from scipy.signal import windows, stft
-
-window = windows.hann(256)
-windowed = signal * window
-spectrum = np.fft.fft(windowed)
-```
-
-For convolution:
-
-```python
-from scipy.signal import fftconvolve
-
-result = fftconvolve(signal, kernel, mode='full')
-```
-
-For spectrograms:
-
-```python
-from scipy.signal import stft
-
-frequencies, times, Zxx = stft(signal, fs=sample_rate, nperseg=256)
-spectrogram = np.abs(Zxx) ** 2
-```
-
-The spectrogram matrix has shape (n_frequencies, n_time_frames). Each column is the power spectrum at one time window. This is what audio ML models consume as input.
-
-## Ship It
-
-Run `code/fourier.py` to generate `outputs/prompt-spectral-analyzer.md`.
-
-
-## Key Terms
-
-| Term | What it means |
-|------|---------------|
-| DFT (Discrete Fourier Transform) | Converts N time-domain samples into N frequency-domain coefficients. Each coefficient is the correlation with a complex sinusoid at that frequency |
-| FFT (Fast Fourier Transform) | An O(N log N) algorithm to compute the DFT. The Cooley-Tukey algorithm splits even/odd indices recursively |
-| Inverse DFT | Reconstructs the time-domain signal from frequency coefficients. Same formula as DFT with flipped exponent sign and 1/N scaling |
-| Frequency bin | Each index k in the DFT output represents frequency k*fs/N Hz. The "bin" is the discrete frequency slot |
-| DC component | X[0], the zero-frequency coefficient. Proportional to the signal mean |
-| Nyquist frequency | fs/2, the maximum frequency representable at sampling rate fs. Frequencies above this alias |
-| Power spectrum | \|X[k]\|^2, the squared magnitude of each frequency coefficient. Shows energy distribution across frequencies |
-| Phase spectrum | angle(X[k]), the phase offset of each frequency component. Often ignored in analysis |
-| Spectral leakage | Spurious frequency content caused by treating a non-periodic signal as periodic. Reduced by windowing |
-| Window function | A tapering function (Hann, Hamming, Blackman) applied before DFT to reduce spectral leakage |
-| Twiddle factor | The complex exponential e^(-2*pi*i*k/N) used to combine sub-DFTs in the FFT butterfly computation |
-| Convolution theorem | Convolution in time domain equals pointwise multiplication in frequency domain. Fundamental to signal processing and CNNs |
-| Circular convolution | Convolution where the signal wraps around. This is what the DFT naturally computes |
-| Linear convolution | Standard convolution without wraparound. Achieved by zero-padding before DFT |
-| Parseval's theorem | Total energy is preserved through the Fourier transform. sum \|x[n]\|^2 = (1/N) sum \|X[k]\|^2 |
-| Aliasing | When frequencies above Nyquist appear as lower frequencies due to insufficient sampling rate |
 
 ## Further Reading
 

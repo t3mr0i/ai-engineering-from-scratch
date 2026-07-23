@@ -96,28 +96,7 @@ Chain-of-thought, math, code-gen with long context — these suffer visibly from
 - Blackwell datacenter, validated quality: NVFP4 + FP8 KV.
 - Ambiguous: run a 1,000-sample eval on each candidate format.
 
-## Use It
 
-`code/main.py` computes memory footprint (weights + KV + activations) and relative throughput across the six formats for a range of model sizes. Shows where KV cache dominates, where weight compression pays, and where FP8 is the safe pick.
-
-## Ship It
-
-This lesson produces `outputs/skill-quantization-picker.md`. Given hardware, model size, workload type, and quality tolerance, picks a format and produces a calibration/validation plan.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| GGUF | "llama.cpp format" | File format bundling K-quant variants; CPU/edge default |
-| Q4_K_M | "Q4 K M" | 4-bit K-quant medium; the production GGUF default |
-| GPTQ | "gee pee tee q" | Post-train INT4 with calibration; supports LoRA in vLLM |
-| AWQ | "a w q" | Activation-aware INT4; Marlin kernels; best Pass@1 at INT4 |
-| Marlin kernels | "fast INT4 kernels" | Custom CUDA kernels for INT4 on Hopper; 10x speedup |
-| FP8 | "eight-bit float" | Safe precision default on Hopper/Ada/Blackwell |
-| MXFP4 / NVFP4 | "microscaling four" | Blackwell 4-bit FP with per-block scale factors |
-| Calibration dataset | "cal data" | Input text used to pick quantization parameters; must match domain |
-| KV cache quantization | "KV INT8" | Separate choice from weights; affects attention accuracy |
 
 ## Further Reading
 

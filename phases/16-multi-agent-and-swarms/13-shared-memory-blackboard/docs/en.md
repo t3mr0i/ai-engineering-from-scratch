@@ -102,33 +102,7 @@ The most load-bearing mitigation is the read-only verifier. Implementation rules
 Without this separation, the verifier's outputs become new entries in the pool, which means a poisoned pool poisons the verifier, which poisons its verifications.
 
 
-## Use It
 
-`outputs/skill-memory-auditor.md` is a skill that audits any multi-agent system's shared-memory design for provenance, versioning, and verifier separation. Run it on new multi-agent architectures before production.
-
-## Ship It
-
-For any shared-memory design:
-
-- Record provenance on every write: `(writer, timestamp, prompt_hash, tool_calls_cited, source_uri)`.
-- Make the log append-only. Corrections are new entries that reference the superseded one.
-- Deploy at least one read-only verifier agent with independent source access.
-- Route verifier output to a separate channel, not back into the shared pool.
-- Log the ratio of writes that are supersessions — a rising ratio is early evidence of hallucination patterns.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Message pool | "Shared chat history" | Append-only log that every agent reads. Full transparency, poor scaling. |
-| Blackboard | "Shared workspace" | Topic-keyed pub/sub. Agents subscribe to relevant topics. Scales farther. |
-| Provenance | "Who wrote what" | Metadata on each write: writer, timestamp, prompt, sources. |
-| Memory poisoning | "Hallucinations spreading" | One agent's error enters shared state, downstream agents adopt it as fact. |
-| Append-only | "No in-place updates" | Corrections are new entries that supersede. Preserves audit trail. |
-| Unwritable verifier | "Independent auditor" | Read-only agent that re-fetches sources and flags inconsistencies. |
-| Projection | "Scoped view" | Per-agent view computed from global state. LangGraph reducers are the canonical case. |
-| Knowledge Source | "Specialist agent" | Hayes-Roth's 1985 term for a blackboard participant. |
 
 ## Further Reading
 

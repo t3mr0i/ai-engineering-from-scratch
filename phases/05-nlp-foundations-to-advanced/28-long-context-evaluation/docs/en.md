@@ -47,58 +47,7 @@ Long-context evaluation measures these axes. This lesson names the benchmarks, w
 Two numbers for your spec sheet: retrieval-effective and reasoning-effective. Usually the reasoning-effective is 25-50% of the advertised window.
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Benchmark |
-|-----------|-----------|
-| Quick sanity check | Custom NIAH at 3 depths × 3 lengths |
-| Model selection for production | RULER (13 tasks) at your target length |
-| Real-world QA quality | LongBench v2 single-doc-QA subset |
-| Multi-hop reasoning | BABILong or custom variable-tracing |
-| Conversational / dialogue | MRCR 8-needle at your target length |
-| Model upgrade regression | Fixed in-house NIAH + RULER harness, run on every new model |
-
-Rule of thumb for production: never trust a context window until you have NIAH + 1 reasoning task at your intended length.
-
-## Ship It
-
-Save as `outputs/skill-long-context-eval.md`:
-
-```markdown
----
-name: long-context-eval
-description: Design a long-context evaluation battery for a given model and use case.
-version: 1.0.0
-phase: 5
-lesson: 28
-tags: [nlp, long-context, evaluation]
----
-
-Given a target model, target context length, and use case, output:
-
-1. Tests. NIAH depth × length grid; RULER multi-hop; custom domain task.
-2. Sampling. Depths 0, 0.25, 0.5, 0.75, 1.0 at each length.
-3. Metrics. Retrieval pass rate; reasoning pass rate; time-to-first-token; cost-per-query.
-4. Cutoff. Effective retrieval length (90% pass) and effective reasoning length (70% pass). Report both.
-5. Regression. Fixed harness, rerun on every model upgrade, surface deltas.
-
-Refuse to trust a context window from the model card alone. Refuse NIAH-only evaluation for any multi-hop workload. Refuse vendor self-reported long-context scores as independent evidence.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| NIAH | Needle in haystack | Plant a fact in filler, ask the model to retrieve it. |
-| RULER | NIAH on steroids | 13 task types across retrieval / multi-hop / aggregation / QA. |
-| Effective context | The real capacity | Length at which accuracy still holds above threshold. |
-| Lost in the middle | Depth bias | Models under-attend to content in the middle of long inputs. |
-| Multi-needle | Many facts at once | Multiple plants; tests attention juggling, not retrieval alone. |
-| MRCR | Multi-round coref | 8, 24, or 100-needle coreference; exposes attention saturation. |
-| NoLiMa | Non-lexical needle | Needle and query share no literal tokens; requires reasoning. |
 
 ## Further Reading
 

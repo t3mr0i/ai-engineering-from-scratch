@@ -69,40 +69,7 @@ Safe-to-ship patterns:
 4. Tag generations with watermarks + metadata.
 
 
-## Use It
 
-| Goal | Stack |
-|------|-------|
-| Instrumental sound design | Stable Audio Open |
-| Game / adaptive music | Google Lyria RealTime (closed) |
-| Full songs with vocals (commercial) | Suno v5 or Udio v4 with explicit license |
-| Full songs with vocals (open) | ACE-Step XL or YuE |
-| Short ad jingle | MusicGen melody-conditioned on a hummed reference |
-| Music-video background | MusicGen + Stable Video Diffusion |
-
-## Pitfalls that still ship in 2026
-
-- **Copyright-laundering prompts.** "Song in the style of Taylor Swift" — commercial Suno/Udio filter these now, open models do not. Add your own filter list.
-- **Repetition / drift past 30 s.** AR models loop. Crossfade multiple generations, or use ACE-Step for structural coherence.
-- **Tempo drift.** Models wander off the BPM. Use BPM tags in the prompt and post-filter with librosa's `beat_track`.
-- **Vocal intelligibility.** Suno is excellent; open models are often mushy on words. If lyrics matter, use a commercial API or fine-tune.
-- **Mono output.** Open models generate mono or fake-stereo. Upgrade with a proper stereo reconstruction (ezst, Cartesia's stereo diffusion).
-
-## Ship It
-
-Save as `outputs/skill-music-designer.md`. Pick model, license strategy, length / structure plan, and disclosure metadata for a music-gen deployment.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| FAD | Audio FID | Fréchet distance between embedding distributions of real vs generated. |
-| Chromagram | Melody as pitches | 12-dim per-frame vector; input to melody conditioning. |
-| Stems | Instrument tracks | Separated bass / drums / vocals / melody as WAV. |
-| Inpainting | Regen a section | Mask a time window; model regenerates just that. |
-| CLAP | Text-audio CLIP | Contrastive audio-text embedding; eval text-audio alignment. |
-| EnCodec | Music codec | Meta's neural codec used by MusicGen; 32 kHz, 4 codebooks. |
 
 ## Further Reading
 

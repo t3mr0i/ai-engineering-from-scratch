@@ -91,42 +91,7 @@ A register in this form makes the portfolio auditable: a compliance officer can 
 
 The MCP lesson (Phase 11 · 14) established that tool-call boundaries are a form of scope contract. An AI ADR for an MCP-based system should record the MCP server endpoints used, the data classification of what flows through each, and the vendor for each server — because a third-party MCP server is a vendor relationship even if it looks like a library.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of two decisions this lesson covers:
-
-1. An **ADR validator** that checks a candidate ADR dict for completeness — required fields, trigger conditions, cost projection, and owner — and returns a structured gap report.
-2. A **portfolio register simulator** that maintains a list of AI ADRs, flags overdue reviews, and prints a cost-governance summary (total projected monthly spend across accepted decisions).
-
-No network, no model calls. The goal is to make the *governance policy* explicit and runnable, so engineers can wire it into a CI check or a pre-merge hook.
-
-## Ship It
-
-`outputs/skill-ai-adr-governance.md` is a one-page decision aid: a fill-in-the-blank AI ADR template, a trigger-condition checklist, and a cost-projection formula. Paste it into a new Confluence page or a `/docs/adr/` directory and start the first decision record.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| ADR | "Architecture doc" | Architecture Decision Record: a structured log of one decision, its context, alternatives, and consequences |
-| Trigger condition | "When to revisit" | A specific, measurable event that mandates re-evaluating an accepted decision |
-| Dedicated throughput | "Reserved capacity" | An inference endpoint where your traffic is isolated from other tenants; stronger data-boundary guarantees, higher cost |
-| Behavioral drift | "The model changed" | Observable shift in model outputs across an API update at the same endpoint, without a version change in the caller |
-| Data residency | "Where data lives" | Regulatory or contractual constraint specifying the geography where data may be stored and processed |
-| Model tier | "Which model" | A capability-and-cost bracket (frontier reasoning / frontier general / efficient / self-hosted) used to reason about substitutability |
-| Cost ceiling | "Budget line" | A documented monthly-spend threshold above which the current model choice must be re-evaluated |
-| Portfolio register | "Decision log" | A centralized list of all active AI ADRs with status, owner, and next-review date |
-
-## Consultant field notes
-
-Five patterns a senior consultant sees across engagements — the shapes that recur regardless of model, vendor, or industry.
-
-- **The prompt that worked in the demo but failed in production.** A small, hand-tuned prompt shipped beautifully in a 50-row evaluation; the same prompt degraded once it met real user phrasing, which is messier, multilingual, and adversarial. The decision an ADR should have recorded was not the prompt — it was the evaluation set. Without a frozen eval, "the model works" is unfalsifiable.
-- **The RAG that returned the right doc but the wrong paragraph.** The retriever hit the right source; the chunker split across a table, a list, and a sentence that contradicted the answer. The architecture looked correct in the diagram. Lesson: ADRs must record chunking and retrieval policy alongside the model choice, because the model was rarely the bottleneck.
-- **The vendor pilot that never made it past the security review.** A two-week proof-of-value produced a working integration, then stalled in legal and infosec for six months. The ADR was written after the pilot, not before — and the security boundary had no documented owner. Lesson: the ADR must exist before the pilot, with at least the data classification named, or the pilot is sunk cost.
-- **The use case everyone approved but nobody wanted.** A steering committee signed off on a high-value use case; the end users routed around it within a quarter. There was no ADR for the rollout, no owner for adoption, and no measurement of whether the feature was used. Lesson: an ADR without an adoption owner is a procurement document, not a governance document.
-- **The AI feature that hit a cost ceiling in month two.** Volume was underestimated in the cost projection — typically because the prototype volume, not production volume, was used. The ADR's cost ceiling fired exactly as designed, but the team had no cheaper tier benchmarked and no migration plan. Lesson: every ADR must record the cheaper fallback model, not just the chosen one.
 
 ## Further Reading
 

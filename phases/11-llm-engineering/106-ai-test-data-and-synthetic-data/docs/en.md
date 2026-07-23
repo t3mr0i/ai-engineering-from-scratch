@@ -84,46 +84,7 @@ This lesson is the entry point for the course; the downstream lessons handle the
 
 The governance layer connects them: a test-data policy without a training-data policy produces contamination from the other direction (a clean test set evaluated against a model whose fine-tuning set overlaps the clean test set). Both policies must be maintained together.
 
-## Use It
 
-`code/main.py` makes the three-lever policy explicit and runnable in two parts:
-
-1. A **synthetic record generator** that produces a deterministic fake customer dataset from a schema, applies k-anonymity masking to quasi-identifiers, and computes coverage statistics (label balance, length distribution, adversarial-example fraction).
-2. A **leakage classifier** that takes a candidate evaluation set and a simulated training corpus, runs exact-match and 13-gram overlap checks, and emits a per-record verdict (`CLEAN`, `EXACT_MATCH`, `NGRAM_FLAG`) plus an aggregate contamination score.
-
-No network, no pip, no real user data — the point is to make the decision policy explicit and auditable.
-
-## Ship It
-
-`outputs/skill-synthetic-test-data-governance.md` is a one-page decision aid: given a test dataset you need to build, it walks through origin control, anonymisation technique selection, leakage check choice, and coverage gate thresholds. Paste it into a project wiki or data-governance review.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Anonymisation | "We removed the names" | Technical standard under GDPR: data from which no individual can be identified by any means reasonably likely |
-| Pseudonymisation | "Anonymised with tokens" | Direct identifiers replaced; quasi-identifiers intact; still personal data under GDPR |
-| k-anonymity | "Each record looks like k others" | Every record matches at least k-1 others on the set of quasi-identifiers chosen for masking |
-| Benchmark contamination | "Training-set leakage" | Evaluation examples present in the model's training corpus; inflates benchmark scores |
-| 13-gram overlap | "N-gram leakage score" | Fraction of 13-token shingles in an evaluation example that also appear in the training corpus |
-| Membership inference attack | "Did the model see this?" | Probing technique that infers training-set membership from model output confidence |
-| Differential privacy (DP) | "Privacy-preserving noise" | Mathematical guarantee (ε, δ) bounding the probability that any individual record influenced the output |
-| Coverage check | "Test set quality gate" | Explicit assertions on distribution dimensions (length, label balance, adversarial fraction) that the test set must satisfy |
-
-## Consultant field notes
-
-Patterns a senior practitioner recognises after the third post-mortem:
-
-- **The Faker set that was "distributionally faithful" but missed the long tail.** A schema-driven generator reproduces the obvious centroids and quietly drops the rare phrasings, code-switched inputs, and adversarial edge cases that production traffic contains at low but non-zero rates. The coverage check passes, the CI gate is green, and the model still regresses the first month in production. Mitigation: seed the generator with a small sample of real edge cases (synthesised, not raw) and assert they survive.
-
-- **The benchmark whose 13-gram overlap was "low" against the public training corpus but high against the fine-tuning set.** Origin control on the test data and provenance control on the training data live in different tickets owned by different teams. Contamination enters from the direction nobody checked. Mitigation: treat the two policies as one artefact, reviewed in the same change.
-
-- **The k-anonymity report with k=5 that re-identified a customer with three public attributes.** Quasi-identifier generalisation looks safe on paper until someone links the masked record to LinkedIn, a public registry, or a leaked customer ID from a different system. Sweeney's 2–3 auxiliary attributes finding is not theoretical; it is a Tuesday afternoon in the DPO's office. Mitigation: re-identification testing against external sources, not just internal uniqueness.
-
-- **The LLM-synthesised eval set the vendor delivered with no memorisation audit.** A prompt-to-pipeline generator is fast, looks plausible, and may have quietly memorised parts of the prompt examples verbatim. The MIA is the only check that catches this, and it is the check most often skipped because it requires held-out reference data the vendor did not provide. Mitigation: require a contamination report as a contractual deliverable, not a courtesy.
-
-- **The AI feature that hit a cost ceiling in month two.** Synthetic data generation and per-record leakage checks are cheap in development and surprisingly expensive at the scale of a real evaluation campaign — every example scanned against a large training corpus, every membership-inference probe generating thousands of completions. A team that budgeted for a 10k-example eval set often discovers the monthly recurring cost of running it is the real number the finance partner remembers.
 
 ## Further Reading
 

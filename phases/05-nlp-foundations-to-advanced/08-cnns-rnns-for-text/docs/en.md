@@ -32,77 +32,7 @@ Plain RNNs suffer vanishing gradients. The **LSTM** adds gates that decide what 
 **Bidirectional RNNs** run one RNN forward and another backward, concatenating hidden states. Every token's representation sees both left and right context. Essential for tagging tasks.
 
 
-## Use It
 
-PyTorch's `nn.LSTM`, `nn.GRU`, and `nn.Conv1d` are production-ready. Training code is standard.
-
-Hugging Face ships pretrained embeddings you plug in as the input layer:
-
-```python
-from transformers import AutoModel
-
-encoder = AutoModel.from_pretrained("bert-base-uncased")
-for param in encoder.parameters():
-    param.requires_grad = False
-
-
-class BertCNN(nn.Module):
-    def __init__(self, n_classes, filter_widths=(2, 3, 4), n_filters=64):
-        super().__init__()
-        self.encoder = encoder
-        self.convs = nn.ModuleList([nn.Conv1d(768, n_filters, kernel_size=k) for k in filter_widths])
-        self.fc = nn.Linear(n_filters * len(filter_widths), n_classes)
-
-    def forward(self, input_ids, attention_mask):
-        with torch.no_grad():
-            out = self.encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
-        x = out.transpose(1, 2)
-        pooled = [F.max_pool1d(F.relu(conv(x)), kernel_size=conv(x).size(2)).squeeze(2) for conv in self.convs]
-        return self.fc(torch.cat(pooled, dim=1))
-```
-
-Use-when-it-fits-the-constraint checklist.
-
-- **Edge / on-device inference.** TextCNN with GloVe embeddings is 10-100x smaller than a transformer. If your deploy target is a phone, this is the stack.
-- **Streaming / online classification.** RNN processes one token at a time; transformers need the full sequence. For real-time incoming text, LSTMs still win.
-- **Tiny models for baselines.** Fast iteration on a new task. Train a TextCNN in 5 minutes on a CPU.
-- **Sequence labeling with limited data.** BiLSTM-CRF (lesson 06) is still a production-grade NER architecture for 1k-10k labeled sentences.
-
-Everything else goes to a transformer.
-
-## Ship It
-
-Save as `outputs/prompt-text-encoder-picker.md`:
-
-```markdown
----
-name: text-encoder-picker
-description: Pick a text encoder architecture for a given constraint set.
-phase: 5
-lesson: 08
----
-
-Given constraints (task, data volume, latency budget, deploy target, compute budget), output:
-
-1. Encoder architecture: TextCNN, BiLSTM, BiLSTM-CRF, transformer fine-tune, or "use a pretrained transformer as a frozen encoder + small head".
-2. Embedding input: random init, GloVe / fastText frozen, or contextualized transformer embeddings.
-3. Training recipe in 5 lines: optimizer, learning rate, batch size, epochs, regularization.
-4. One monitoring signal. For RNN/CNN models: attention mechanism absence means they miss long-range deps; check per-length accuracy. For transformers: fine-tuning collapse if LR too high; check train loss.
-
-Refuse to recommend fine-tuning a transformer when data is under ~500 labeled examples without showing that a TextCNN / BiLSTM baseline has plateaued. Flag edge deployment as needing architecture-before-everything.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| TextCNN | CNN for text | Stack of 1D convolutions over word embeddings with global max-pool. Kim (2014). |
-| RNN | Recurrent net | Hidden state updated at each time step: `h_t = f(W x_t + U h_{t-1})`. |
-| LSTM | Gated RNN | Adds input / forget / output gates + a cell state. Trains stably through long sequences. |
-| GRU | Simpler LSTM | Two gates instead of three. Similar accuracy, fewer parameters. |
-| Bidirectional | Both directions | Forward + backward RNN concatenated. Every token sees both sides of its context. |
-| Vanishing gradient | Training signal dies | Repeated multiplication by <1 weights in plain RNNs makes early-step gradients effectively zero. |
 
 ## Further Reading
 

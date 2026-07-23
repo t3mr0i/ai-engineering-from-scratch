@@ -33,15 +33,6 @@ graph TD
 The Hugging Face `datasets` library is the standard way to load data for AI work. It handles downloading, caching, format conversion, and streaming out of the box.
 
 
-## Use It
-
-Run the utility script to verify everything works:
-
-```bash
-python code/data_utils.py
-```
-
-This downloads a small dataset, converts it, splits it, and prints a summary.
 
 ## Ship It
 

@@ -68,31 +68,7 @@ LangGraph uses nested `create_supervisor` calls. The inner supervisor has its ow
 Reference: https://reference.langchain.com/python/langgraph-supervisor.
 
 
-## Use It
 
-`outputs/skill-hierarchy-fitness.md` evaluates whether a given task should use hierarchical, sequential, or flat supervisor. Inputs: task description, org structure, reconciliation budget. Output: pattern recommendation with the specific failure modes to guard against.
-
-## Ship It
-
-If you ship hierarchical:
-
-- **Cap tree depth at 2.** Three levels already hides most errors from observability.
-- **Explicit reconciliation budget.** Set max rounds before the top manager must commit. Usually 2.
-- **Provenance on every synthesis.** Each node's summary must cite which leaf outputs produced it.
-- **Alert on decomposition drift.** Log the manager's decomposition per step; diff against the user query. If the decomposition no longer covers the query, fire an alert.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Hierarchical | "Org chart pattern" | Supervisors over supervisors; only leaves do work. |
-| Manager LLM | "The boss" | The LLM that decomposes, assigns, and validates at an internal node. |
-| Decomposition drift | "The boss lost the plot" | Top manager's split no longer covers the original question. |
-| Reconciliation loop | "Endless meetings" | Sub-managers disagree; top re-delegates; workers re-run; loop until budget exhausted. |
-| Depth-2 ceiling | "Don't go deeper than 2 levels" | Empirical guardrail: 3+ levels collapses observability. |
-| Canary question | "Ground truth at every level" | A worker that is always asked the original query unchanged, to detect drift. |
-| Provenance chain | "Who said what" | Trace from each synthesis back to the leaf outputs that produced it. |
 
 ## Further Reading
 

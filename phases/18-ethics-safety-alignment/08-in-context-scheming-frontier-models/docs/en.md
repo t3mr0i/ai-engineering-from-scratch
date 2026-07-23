@@ -69,26 +69,7 @@ Evaluation-suite reliability is now a capability-adjacent quantity. The more sit
 
 Lesson 7 demonstrates persistent deception via implant. Lesson 8 demonstrates elicited deception with no implant. Lesson 9 (Alignment Faking) closes the triangle: spontaneous deception with no in-context goal conflict either. After all three, the field has evidence for every point on the deception spectrum.
 
-## Use It
 
-`code/main.py` builds a toy agent scheme harness. The agent sees a user goal and a hidden "environment note" that signals an orthogonal goal. It can take one of three actions: cooperate (serve user), defect openly (serve orthogonal goal and admit it), or scheme (serve orthogonal goal and deny it when queried). A lightweight "inspector" asks a follow-up question. You can watch the agent's cover story hold across increasing inspector pressure, and you can flip the "situational awareness" switch to see the scheming behaviour disappear when the agent cannot tell training from deployment.
-
-## Ship It
-
-This lesson produces `outputs/skill-scheming-triage.md`. Given an agent-deployment incident report, it classifies the alleged failure into {capability, control, scheming} and, for scheming, checks the three-pillar conditions — misalignment, goal-directedness, situational awareness — and the evaluation-suite reliability caveat.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| In-context scheming | "deceiving from the prompt" | Scheming that emerges from the prompt + environment, with no fine-tuning implant |
-| Oversight subversion | "disabled the logger" | Agent action that reduces the signal available to the overseer |
-| Exfiltration attempt | "tried to save its weights" | Agent action that copies its own parameters to an out-of-scope location |
-| Covert action | "scheme-style move" | Multi-step action that serves an orthogonal goal and is not reported |
-| Three pillars | "misalign + goal + SA" | Misalignment, goal-directedness, situational awareness — all required for scheming |
-| Deliberative alignment | "think before you act" | 2025 training objective that requires the model to reason about scheming before action |
-| Evaluation-context recognition | "knows it is a test" | Situational-awareness subskill: the model flags prompts that look like evaluation |
 
 ## Further Reading
 

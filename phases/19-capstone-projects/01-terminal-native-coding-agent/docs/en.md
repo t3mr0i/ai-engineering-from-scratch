@@ -63,46 +63,7 @@ The sandbox is E2B or Daytona. Each task runs in a fresh devcontainer with a git
 - PR posting: GitHub App with fine-grained token, scope limited to the target repo
 
 
-## Use It
 
-```
-$ agent run ./my-repo "Fix the race condition in worker.rs"
-[plan]  1 locate worker.rs and enumerate mutex uses
-        2 identify shared state under contention
-        3 propose fix, verify tests
-[tool]  ripgrep mutex.*lock -t rust           (44 matches, truncated)
-[tool]  read_file src/worker.rs 120..180
-[tool]  edit_file src/worker.rs (+8 -3)
-[tool]  run_shell cargo test worker::          (passed)
-[plan]  1 done · 2 done · 3 done
-[done]  PR opened: #482   turns=9   tokens=38k   cost=$0.41
-```
-
-## Ship It
-
-The deliverable skill lives in `outputs/skill-terminal-coding-agent.md`. Given a repo path and a task description, it runs the full plan-act-observe loop in a sandbox and returns a PR URL plus a trace bundle. The rubric for this capstone:
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | SWE-bench Pro pass@1 vs baseline | Your harness vs mini-swe-agent on 30 matched Python tasks |
-| 20 | Architecture clarity | Plan/act/observe separation, hook surface, tool schema — reviewed against Live-SWE-agent layout |
-| 20 | Safety | Sandbox escape tests, permission prompts, destructive-command guard passes red-team |
-| 20 | Observability | Trace completeness (100% of tool calls spanned), token accounting per turn |
-| 15 | Developer UX | Cold-start < 2s, crash recovery resumes plan, Ctrl-C cancels mid-tool cleanly |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Harness | "The agent loop" | The code surrounding the model that dispatches tools, maintains plan state, and enforces budgets |
-| Hook | "Agent event listener" | A user-authored script run on one of eight lifecycle events by the harness |
-| Worktree | "Git sandbox" | A linked git checkout at a separate path; disposable without touching the main clone |
-| TodoWrite | "Plan state" | A typed list of pending/in-progress/done items the model rewrites each turn |
-| StreamableHTTP | "MCP transport" | 2026 MCP revision: long-lived HTTP connection with bidirectional streaming; replaces SSE |
-| Token ceiling | "Context budget" | Per-turn or per-session cap on input+output tokens; triggers compaction or termination |
-| pass@1 | "Single-attempt pass rate" | Fraction of SWE-bench tasks solved on the first run without retry or test-set peeking |
 
 ## Further Reading
 

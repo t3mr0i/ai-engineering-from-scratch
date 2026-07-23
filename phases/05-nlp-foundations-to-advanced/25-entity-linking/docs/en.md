@@ -46,58 +46,7 @@ Both steps are learnable. Both are benchmarked. The combined pipeline has been s
 Always report both. A system with 99% disambiguation on 80% candidate recall is an 80% pipeline.
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| General-purpose English + Wikipedia | BLINK or REL |
-| Cross-lingual, KB = Wikipedia | mGENRE |
-| LLM-friendly, few mentions/day | Prompt Claude/GPT-4 with candidate list + constrained JSON |
-| Domain-specific KB (medical, legal) | Custom BERT with KB-aware retrieval + fine-tune on domain AIDA-style set |
-| Extremely low-latency | Exact-match prior only (Milne-Witten baseline) |
-| Research SOTA | GENRE / ExtEnD / generative LLM-EL |
-
-Production pattern that ships in 2026: NER → coref → EL on each mention → collapse clusters to one canonical entity per cluster. Output: one KB id per entity in the document, not one per mention.
-
-## Ship It
-
-Save as `outputs/skill-entity-linker.md`:
-
-```markdown
----
-name: entity-linker
-description: Design an entity linking pipeline — KB, candidate generator, disambiguator, evaluation.
-version: 1.0.0
-phase: 5
-lesson: 25
-tags: [nlp, entity-linking, knowledge-graph]
----
-
-Given a use case (domain KB, language, volume, latency budget), output:
-
-1. Knowledge base. Wikidata / Wikipedia / custom KB. Version date. Refresh cadence.
-2. Candidate generator. Alias-index, embedding, or hybrid. Target mention recall @ K.
-3. Disambiguator. Prior + context, embedding-based, generative, or LLM-prompted.
-4. NIL strategy. Threshold on top score, classifier, or explicit NIL candidate.
-5. Evaluation. Mention recall @ 30, top-1 accuracy, NIL-detection F1 on held-out set.
-
-Refuse any EL pipeline without a mention-recall baseline (you cannot evaluate a disambiguator without knowing candidate gen surfaced the right entity). Refuse any pipeline using LLM-prompted EL without constrained output to valid KB ids. Flag systems where popularity bias affects minority entities (e.g. name-clashes) without domain fine-tuning.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Entity linking (EL) | Link to Wikipedia | Map a mention to a unique KB entry. |
-| Candidate generation | Who could it be? | Return a shortlist of plausible KB entries for a mention. |
-| Disambiguation | Pick the right one | Score candidates using context, pick the winner. |
-| Alias index | The lookup table | Map from surface form → candidate entities. |
-| NIL | Not in KB | Explicit prediction that no KB entry matches. |
-| KB | Knowledge base | Wikidata, Wikipedia, DBpedia, or your domain KB. |
-| AIDA-CoNLL | The benchmark | 1,393 Reuters articles with gold entity links. |
 
 ## Further Reading
 

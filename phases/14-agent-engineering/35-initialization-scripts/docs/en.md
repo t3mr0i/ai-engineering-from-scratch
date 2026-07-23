@@ -57,30 +57,7 @@ Run it twice in a row. The second run should be a no-op except for a fresh times
 Rules (Phase 14 · 33) describe what must be true to act. Init is the script that establishes that those rules can be checked. Rules without init become "be careful." Init without rules becomes a polished failure.
 
 
-## Use It
 
-In production:
-
-- **Claude Code hooks.** `pre-task` hook calls the init script and refuses to launch the agent if it fails.
-- **GitHub Actions.** A `setup-agent` job runs the init script; the agent job depends on it.
-- **Docker entrypoint.** The agent container runs the init script before exec-ing the agent runtime; logs surface on failure.
-
-The init script is portable because it makes no calls to a specific framework. Bash, Make, or a tasks file can all wrap it.
-
-## Ship It
-
-`outputs/skill-init-script.md` interviews the project, classifies its setup work into probes, and emits a project-specific `init_agent.py` plus a CI workflow that runs it before any agent step.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Probe | "A check" | A deterministic function returning `(name, status, detail)` |
-| Init report | "Setup output" | JSON written next to state with the probe results |
-| Idempotent | "Safe to re-run" | Two runs in a row produce identical reports modulo timestamp |
-| Fail loud | "Don't swallow" | Halt and surface to the human; no silent fallback |
-| Setup tax | "Bootstrap cost" | The tokens the agent spends per session rediscovering the obvious |
 
 ## Further Reading
 

@@ -55,29 +55,7 @@ NCCL runs over PCIe and NVLink with hardware-offloaded reductions. On CPU you do
 Every primitive lands with a unit test that compares its output against `torch.distributed` initialised with the gloo backend on the same tensor across the same world size. If your ring allreduce diverges from gloo by more than float32 epsilon, the test fails. Verification against a reference implementation is non-negotiable; without it the primitive looks correct until step 10000 of a real training run.
 
 
-## Use It
 
-Production patterns:
-
-- **PyTorch DDP.** Calls `dist.all_reduce` on bucketed gradients after backward. The bucket size is tunable; default 25 MB is reasonable for 100Gbit Ethernet.
-- **DeepSpeed ZeRO.** Issues reduce_scatter to shard gradients and allgather to reconstruct full parameters before forward. The lesson's primitives are exactly the calls ZeRO makes.
-- **FSDP.** Forward begins with allgather to unshard the layer, computes, then reduces with reduce_scatter and discards the unshard. Same primitives, different schedule.
-
-## Ship It
-
-Use the queue-mesh primitives in lessons 77-81. Lesson 77 wires allreduce into DDP. Lesson 78 wires reduce_scatter into ZeRO. Lesson 79 wires broadcast into pipeline activations. Lesson 81 composes all four into the end-to-end demo.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Allreduce | "Sum across ranks" | After the call every rank holds the same reduced tensor |
-| Ring | "The fast topology" | N-1 chunks of size T/N flow around the cycle twice |
-| Tree | "The log topology" | Reduction follows a binary tree; depth is log2(N) hops |
-| Allgather | "Concatenate shards" | Every rank ends with every other rank's shard |
-| Reduce_scatter | "Split the sum" | Each rank ends with the sum of one chunk only |
-| Bucket | "Fuse small tensors" | Coalesce N small allreduces into one large one |
 
 ## Further Reading
 

@@ -98,33 +98,7 @@ Fuyu (Adept, 2023) is a related approach: skip the separate vision encoder entir
 
 AnyGPT (Zhan et al., 2024) extends Chameleon to four modalities: text, image, speech, music. Same VQ-VAE trick for each, shared transformer. Any-to-any generation. Covered more in Lesson 12.16.
 
-## Use It
 
-`code/main.py` builds a toy end-to-end early-fusion model:
-
-- A tiny VQ-VAE-style quantizer that maps 8x8 patches to codebook indices (K=16).
-- A shared vocabulary of (text ids 0..31) + (image ids 32..47) + (separators 48, 49).
-- A toy autoregressive decoder (bigram table) trained on synthetic captions + image-token sequences.
-- Sampling loop that emits alternating text + image tokens given a prompt.
-
-The code intentionally keeps the transformer tiny (bigrams) so you can trace the signal flow end to end.
-
-## Ship It
-
-This lesson produces `outputs/skill-tokenizer-vs-adapter-picker.md`. Given a product spec (understand only vs understand + generate, required image quality, cost budget), it picks between Chameleon-family (early fusion) and LLaVA-family (late fusion) and justifies with quantitative rules of thumb.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Early fusion | "Unified tokens" | Images converted to discrete tokens sharing the transformer's vocabulary from step one |
-| VQ-VAE | "Image tokenizer" | CNN + ViT + codebook that maps images to integer indices the transformer can predict |
-| Shared vocabulary | "One dictionary" | A single token ID space covering text + image + modality separators |
-| QK-Norm | "Attention stabilizer" | LayerNorm applied to query and key before their dot product, prevents norm blowup |
-| Mixed-modality generation | "Text + image output" | Inference that autonomously produces interleaved text and image tokens in one pass |
-| Codebook size | "K entries" | Number of discrete vectors the VQ-VAE can quantize to; trades compression for fidelity |
-| Tokenizer ceiling | "Reconstruction limit" | Best PSNR achievable by decoding VQ tokens; bounds the model's image quality |
 
 ## Further Reading
 

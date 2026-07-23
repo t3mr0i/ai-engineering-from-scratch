@@ -109,32 +109,7 @@ Qwen2.5-VL's agent training explicitly targets structured tool calls:
 
 Parsing is deterministic: JSON.parse over the model's output. Compare to free-form "click at (1024, 512)" which required regex and ambiguity handling. The shift is why Qwen2.5-VL's ScreenSpot scores jumped from Qwen2-VL's 55% to 84%.
 
-## Use It
 
-`code/main.py` implements:
-
-- M-RoPE position computation for a packed sequence mixing text, image patches, and video frames.
-- Dynamic-FPS sampler: given (duration, budget, motion_level), pick FPS and emit frame timestamps.
-- A toy Qwen2.5-VL JSON-output parser that handles tool-call responses with coordinate fields.
-
-Run it, then feel the difference when you swap fixed-FPS for dynamic-FPS on a 5-minute video.
-
-## Ship It
-
-This lesson produces `outputs/skill-qwen-vl-pipeline-designer.md`. Given a video task (monitoring, agent, action recognition, accessibility), it emits the Qwen2.5-VL configuration (frame budget, FPS strategy, window-attention flag, agent-output mode) and a latency estimate. Use this whenever you deploy a Qwen-VL-family model for a video product.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| M-RoPE | "Multimodal RoPE" | 3D rotary position embedding with temporal, height, and width bands in the hidden dim |
-| Dynamic FPS | "Smart sampling" | Frame sampling rate chosen per video based on motion, duration, and token budget |
-| Absolute time token | "Timestamp token" | `<time>t</time>` interleaved in the sequence so the model sees actual seconds not frame index |
-| Window attention | "Local attention" | Spatial self-attention restricted to small windows for speed; global attention added periodically |
-| Structured agent output | "JSON mode" | Training data supervision teaching the VLM to emit parseable JSON with coords and tool names |
-| min_pixels / max_pixels | "Resolution bounds" | Per-request Qwen2.5-VL controls bounding total pixel count and therefore token count |
-| Grounding | "Point-at-it" | Outputting bounding-box coordinates as text tokens; used since Qwen-VL v1 |
 
 ## Further Reading
 

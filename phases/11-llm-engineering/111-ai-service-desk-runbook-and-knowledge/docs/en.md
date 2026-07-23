@@ -84,37 +84,7 @@ The silent killer of automated resolution systems is runbook drift: the system c
 - **Scheduled LLM freshness review.** Monthly: feed the runbook to Claude Sonnet 4.x alongside the system's changelog for the past 30 days. Ask: "Identify steps in this runbook that may be invalidated by these changes." Human reviews the output.
 - **Version and timestamp every runbook edit.** Retrieval systems should prefer the most recent version; alert when no edit has occurred in 180 days.
 
-## Use It
 
-`code/main.py` models the two core decisions this lesson is about. Part 1 is a **ticket classifier** that takes a synthetic ticket description and assigns it to one of the four triage zones (A/B/C/D) based on keyword signals for knowledge quality and resolution determinism. Part 2 is a **runbook scorer** that applies the five-dimension rubric to sample runbook metadata and outputs a score, an automation verdict, and the specific dimensions that need improvement. The driver prints a full report for six synthetic tickets and three runbooks, ending with a HEADLINE summary of which items are ready to automate and which require documentation work first.
-
-## Ship It
-
-`outputs/skill-service-desk-ai-triage.md` is a one-page decision aid: a quick reference for the four-zone model, the runbook scoring rubric, and the shadow-mode validation checklist. Paste it into a project kick-off or a client discovery session to frame the automation readiness assessment.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Zone A ticket | "We can automate this" | High knowledge quality AND high resolution determinism; safe to build runbook-driven automation |
-| Zone C ticket | "The fix is obvious" | Deterministic resolution but no adequate documentation; document before automating |
-| Runbook | "The SOP" | A step-by-step procedure for resolving a specific ticket class; quality varies enormously |
-| Runbook drift | "It stopped working" | A runbook becomes inaccurate because the underlying system changed after the last review |
-| Shadow mode | "Dry run" | Automation runs and logs what it would do without acting; used for validation before go-live |
-| Knowledge gap | "Nobody wrote it down" | A resolution step that analysts perform consistently but that is absent from any KB article |
-| Automability | "Can we automate it" | A composite assessment of knowledge quality + resolution determinism; not a binary |
-| HITL gate | "Human approval step" | An explicit analyst approval action required before a state-changing automation step executes |
-
-## Consultant field notes
-
-Named patterns a senior consultant recognises from this work:
-
-- **The RAG that returned the right doc but the wrong paragraph.** The retriever scored high on the article; the LLM pulled the step from a sibling section about a different system version. Lesson: chunk by runbook section, not by article, and pin the version.
-- **The prompt that worked in the demo but failed in production.** Three curated tickets, perfect answers; the real distribution has 30% noise, missing fields, and three languages. Lesson: evaluate on a stratified sample of the actual ticket stream before any go/no-go.
-- **The use case everyone approved but nobody wanted.** Endorsed by the steering committee, ignored by the floor — because the analyst's real pain was a different ticket class entirely. Lesson: validate demand with the people who close tickets, not the people who sign off on slides.
-- **The automation that hit a cost ceiling in month two.** Pilot ran on 200 tickets a week; full rollout surfaced 4,000, and the per-ticket LLM call exceeded the analyst's salary. Lesson: model the steady-state per-resolution cost before zone assignment, not after.
-- **The runbook that drifted the day after go-live.** Production change shipped Friday, runbook review scheduled for next quarter. Lesson: tie runbook staleness to change-management events, not calendar reviews.
 
 ## Further Reading
 

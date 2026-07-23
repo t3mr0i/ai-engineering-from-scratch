@@ -65,28 +65,7 @@ The numbers above are illustrative of the shape, not measurements from this fixt
 Pick N from the eval curve plus the latency budget. The cross-encoder cannot raise recall above the bi-encoder's recall at N, so a low N caps quality, not just latency.
 
 
-## Use It
 
-Production patterns:
-
-- Pin the bi-encoder, cross-encoder, and N together. Changing any one invalidates the eval.
-- Cache the reranker's output by (query, document_id) hash. The same query against a stable corpus reranks to the same order; cache hits buy you a free latency cut.
-- Log the rank-1 cross-encoder score. A query whose top-1 score is below a corpus-specific threshold is an out-of-domain hit; surface it to the LLM as "I am not confident".
-
-## Ship It
-
-Lesson 68 evaluates this two-stage pipeline end to end. Lesson 69 wires this reranker behind the hybrid retriever from lesson 65 and in front of the answer generator. The reranker is the second stage of the end-to-end system.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Bi-encoder | "Vector retriever" | Encodes query and doc independently; cosine ranks them |
-| Cross-encoder | "Reranker" | Encodes (query, doc) jointly; outputs one relevance scalar |
-| Two-stage pipeline | "Retrieve and rerank" | Cheap retriever returns N, expensive reranker keeps K |
-| N (candidate budget) | "Rerank pool" | The number of candidates the cross-encoder scores per query |
-| Mean-pooling head | "Mean of last hidden" | Average the encoder's last-layer outputs into one vector |
 
 ## Further Reading
 

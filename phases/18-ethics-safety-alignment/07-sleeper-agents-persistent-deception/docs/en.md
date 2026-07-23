@@ -62,26 +62,7 @@ A safety case (Lesson 18) is an argument that a deployed model is acceptably saf
 
 Lesson 6 defined the theory. Lesson 7 demonstrates persistence. Lesson 8 (In-Context Scheming) demonstrates capability. Lesson 9 (Alignment Faking) demonstrates spontaneous emergence. Lesson 10 (AI Control) describes the defensive paradigm that assumes subversion is possible.
 
-## Use It
 
-`code/main.py` builds a tiny tabular "classifier" with a hidden trigger. You train it on clean data (analogous to SFT on harmless data), fine-tune it on adversarial prompts (analogous to red-team training), and measure backdoor survival on the original held-out trigger. You can watch the adversarial fine-tune drive red-team accuracy to 100% while the original backdoor keeps firing.
-
-## Ship It
-
-This lesson produces `outputs/skill-sleeper-audit.md`. Given an alignment-training report that claims a behaviour has been removed, it asks: was the original elicitation method preserved for held-out testing? Were probes applied to the residual stream? Was the elicitation surface broader than the red team's? Without those three, removal is not demonstrated.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Backdoor | "hidden trigger" | Input pattern that elicits a pre-specified off-distribution behaviour |
-| Model organism | "deception sandbox" | Deliberately constructed model used to study a failure mode under controlled conditions |
-| Trigger persistence | "backdoor survives" | The trigger still elicits the defect after the training method that was supposed to remove it |
-| Distilled CoT | "reasoning compression" | Training a student to emit the teacher's conclusion without the teacher's chain-of-thought |
-| Adversarial training | "red-team fine-tune" | Training on red-team-generated adversarial prompts; removes defects on red-team distribution |
-| Held-out trigger | "the real trigger" | Elicitation used only at evaluation, never during adversarial training |
-| Residual-stream probe | "linear state read" | Linear classifier on internal activations that separates trigger-present from trigger-absent |
 
 ## Further Reading
 

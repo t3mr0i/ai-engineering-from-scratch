@@ -106,37 +106,7 @@ Users deploy with `docker compose up`. Claude Code, Cursor, Codex, and opencode 
 | 20 | Routing gateway for the LLM layer |
 | 21 | SKILL.md + AGENTS.md packaging |
 
-## Use It
 
-`code/main.py` stitches the previous lessons' patterns into one runnable demo. All stdlib, all in-process so you can read it end to end. It runs the full flow for the research-and-report scenario: handshake with gateway, OAuth 2.1 simulated, tools/list merged, generate_report as a task, A2A call to writer, ui:// resource returned, OTel spans emitted.
-
-What to look at:
-
-- One trace id across every hop.
-- Gateway policy blocks a second user from writing.
-- Task lifecycle goes working → completed and returns both text and ui:// content.
-- A2A call's inner state is opaque to the orchestrator.
-- AGENTS.md and SKILL.md are the only files another agent needs to reproduce the workflow.
-
-## Ship It
-
-This lesson produces `outputs/skill-ecosystem-blueprint.md`. Given a product need (research, summarization, automation), the skill produces the full architecture: which MCP primitives, which gateway controls, which A2A calls, which telemetry, which packaging.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Capstone | "Phase-13 integration demo" | End-to-end system using every primitive |
-| Research and report | "The scenario" | Search, summarize, render pattern |
-| Ecosystem | "All the pieces together" | Server + client + gateway + sub-agent + telemetry + package |
-| Trace hierarchy | "Single trace id" | Every hop's span shares the trace; parent-child via span ids |
-| Gateway-issued token | "Transitive auth" | Client sees only gateway's token; gateway holds upstream creds |
-| Merged namespace | "All tools in one flat list" | Multi-server merge at the gateway, prefix-on-collision |
-| Opacity boundary | "A2A call hides internals" | Sub-agent's reasoning invisible to orchestrator |
-| Three-layer stack | "AGENTS.md + SKILL.md + MCP" | Project context + workflow + tools |
-| Defense-in-depth | "Multiple security layers" | Pinned hashes, OAuth, RBAC, Rule of Two, audit log |
-| Spec compliance matrix | "What we ship that the spec requires" | Checklist mapping deliverables to 2025-11-25 requirements |
 
 ## Further Reading
 

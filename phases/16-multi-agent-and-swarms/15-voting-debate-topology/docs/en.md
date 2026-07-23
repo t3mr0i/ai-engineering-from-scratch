@@ -98,34 +98,7 @@ The Sibyl framework (cited in Minsky-LLM literature) formalizes a "jury" — a s
 - The task is simple. A single agent with self-consistency at N=5 is cheaper and as accurate.
 
 
-## Use It
 
-`outputs/skill-topology-picker.md` is a skill that reads a task description and recommends a topology (star / chain / tree / graph), an N (number of agents), a heterogeneity profile (base models to use), and a round bound.
-
-## Ship It
-
-For any ensemble:
-
-- Start with **self-consistency at N=5** using one strong base model. It is the cheap baseline.
-- Upgrade to **heterogeneous voting at N=3** if accuracy matters. Measure the delta.
-- Only upgrade to **debate topology** if the task has structure (research, multi-step) and bounded rounds are feasible.
-- Always log the minority cluster. When a minority is persistently right, you have a diversity signal.
-- Benchmark wall-clock and tokens alongside accuracy. "Better accuracy at 10x cost" is a business decision.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Self-consistency | "Sample N times, vote" | Wang 2022. Single model, N temperature>0 samples, majority vote on reasoning paths. |
-| Heterogeneity | "Different models" | Ensemble of different base models or prompt families. Breaks monoculture. |
-| MAD | "Multi-agent debate" | Generic term for agents exchanging critiques over rounds. See Du 2023. |
-| A-HMAD | "Adversarial Heterogeneous MAD" | MAD variant emphasizing different models + adversarial structure. |
-| Topology | "Who talks to whom" | Star, chain, tree, graph. Determines information flow. |
-| Coordination tax | "Diminishing returns" | Above ~4 agents on graph, cost grows faster than quality. |
-| Volunteer behavior | "Unprompted help" | AgentVerse emergent pattern: an agent offers to take a step. |
-| Conformity behavior | "Agreement under pressure" | AgentVerse emergent pattern: an agent aligns with a critic. |
-| Jury | "Small specialized panel" | Sibyl-style ensemble with roles (examiner, context, scorer). |
 
 ## Further Reading
 

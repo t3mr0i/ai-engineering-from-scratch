@@ -83,55 +83,7 @@ Reported results (Microsoft 2024): 5–10% lower perplexity, 1.5–2× longer ef
 | Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
 
-## Use It
 
-2026 production patterns:
-
-```python
-from transformers import AutoModelForCausalLM
-# Gemma 3 mixes SWA (window=1024) and global layers at 5:1.
-model = AutoModelForCausalLM.from_pretrained("google/gemma-3-27b-it")
-# print(model.config.sliding_window, model.config.layer_types)
-```
-
-FlexAttention in PyTorch 2.5+ accepts a mask function:
-
-```python
-from torch.nn.attention.flex_attention import flex_attention, create_block_mask
-
-def swa_pattern(b, h, q_idx, kv_idx):
-    return (q_idx - kv_idx < 1024) & (q_idx >= kv_idx)
-
-mask = create_block_mask(swa_pattern, B=batch, H=heads, Q_LEN=n, KV_LEN=n)
-out = flex_attention(q, k, v, block_mask=mask)
-```
-
-This compiles to a custom Triton kernel. Within 10% of FlashAttention-3 speed for common patterns, and the mask function is a Python callable.
-
-**When to pick each:**
-
-- **Pure full attention** — every layer up to ~16K context, or when retrieval quality is paramount.
-- **SWA + global mix** — long context (>32K), training and inference memory-bound. The 2026 default above 32K.
-- **Sparse block attention** — custom kernel, custom pattern. Reserved for specialized workloads (retrieval, audio).
-- **Differential attention** — any workload where attention-sink contamination hurts (long-context RAG, needle-in-haystack).
-
-## Ship It
-
-See `outputs/skill-attention-variant-picker.md`. The skill picks an attention topology for a new model given target context length, retrieval demands, and training/inference compute profile.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Sliding window attention (SWA) | "Local attention" | Each query attends to its last `W` tokens; KV cache shrinks to `O(W)`. |
-| Effective receptive field | "How far back the model sees" | In an `L`-layer SWA stack with window `W`, up to `L × W` tokens. |
-| Longformer / BigBird | "Local + global + random" | Sparse patterns with a few always-attending global tokens; early long-context approach. |
-| Native Sparse Attention | "DeepSeek's kernel trick" | Learn block-level sparsity; skip zero blocks at the kernel level while keeping quality. |
-| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned `λ` times a second attention map from the first to cancel attention sinks. |
-| Attention sink | "Weight bleeds to token 0" | Softmax normalization forces rows to sum to 1; uninformative queries dump weight on position 0. |
-| FlexAttention | "Mask-as-Python" | PyTorch 2.5+ API that compiles arbitrary mask functions into FlashAttention-shape kernels. |
-| Layer type mix | "5:1 SWA-to-global" | Interleave sparse and full attention layers in a stack to keep quality at lower memory. |
 
 ## Further Reading
 

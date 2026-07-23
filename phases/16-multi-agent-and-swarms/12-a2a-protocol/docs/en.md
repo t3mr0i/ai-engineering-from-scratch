@@ -99,33 +99,7 @@ Several related specs emerged in 2024-2026:
 A2A is the most-adopted peer protocol as of April 2026. See arXiv:2505.02279 (Liu et al., "A Survey of Agent Interoperability Protocols") for the comparison.
 
 
-## Use It
 
-`outputs/skill-a2a-integrator.md` designs an A2A integration: Agent Card contents, task schemas, auth choice, streaming vs polling.
-
-## Ship It
-
-Checklist:
-
-- **Pin the spec version.** A2A is still evolving; the Agent Card should declare the protocol version.
-- **Idempotent task creation.** Duplicate submissions (network retries) should produce one task.
-- **Artifact schemas.** Declare what shapes the agent returns; consumers should validate.
-- **Rate limits + auth.** A2A is public-facing; apply standard web security.
-- **Dead-letter for failed tasks.** Inspect patterns over time for recurring failure types.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| A2A | "Agent-to-agent" | Peer protocol for agents to call other agents across systems. Google 2025. |
-| Agent Card | "The agent's business card" | JSON at `/.well-known/agent.json` describing skills, endpoints, auth. |
-| Task | "The unit of work" | Async stateful object with a lifecycle; artifacts produced on completion. |
-| Artifact | "The result" | Typed output: text, structured JSON, image, video, audio. First-class media. |
-| Opaque lifecycle | "How it's solved is the agent's business" | Client sees state transitions; server is free to choose framework/tools. |
-| Discovery | "Finding the agent" | `GET /.well-known/agent.json` returns the card. |
-| MCP vs A2A | "Tools vs peers" | MCP: vertical agent ↔ tool. A2A: horizontal agent ↔ agent. |
-| ACP / ANP / NLIP | "Sibling protocols" | Adjacent specs; A2A is the most-adopted 2026. |
 
 ## Further Reading
 

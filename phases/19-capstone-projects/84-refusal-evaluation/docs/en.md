@@ -39,24 +39,7 @@ Calibration uses Expected Calibration Error (ECE) over the model's stated confid
 The per-category breakdown joins the labeled prompts against the taxonomy artifact from lesson 82. Every unsafe prompt carries a category label (one of the six). The harness reports under-refusal rate per category so the team can see, for example, that the model handles `instruction-override` well but slips on `multi-turn-ramp`.
 
 
-## Use It
 
-`python3 main.py`. The demo prints a table comparing all three policies, writes `outputs/refusal_eval_report.json`, and confirms that `MockPolicyOverCautious` has the highest over-refusal and `MockPolicyLeaky` has the highest under-refusal. The strict policy sits between them; that is the regression baseline.
-
-## Ship It
-
-`outputs/skill-refusal-evaluation.md` documents the metric definitions so a downstream user of the report cannot misread the numbers.
-
-
-## Key Terms
-
-| Term | Common usage | Precise meaning |
-|---|---|---|
-| under-refusal | the model is helpful | the model answered a prompt labeled unsafe |
-| over-refusal | the model is safe | the model refused a prompt labeled safe |
-| calibration | the model is humble | the gap between stated confidence and observed accuracy, summarized by Expected Calibration Error |
-| accuracy | quality | (TP + TN) / total for the safe/unsafe binary decision |
-| per-category breakdown | a chart | under-refusal rate joined against the lesson 82 taxonomy categories |
 
 ## Further Reading
 

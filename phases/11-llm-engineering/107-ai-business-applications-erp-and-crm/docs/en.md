@@ -78,40 +78,7 @@ This maps directly to the work covered in Phase 11 · 50 (process decomposition 
 
 The practical deliverable from a use-case evaluation workshop is not a business case — it is a filled-in evaluation grid: system boundary, data ownership, integration pattern, and compliance classification, plus a RAG status (Green / Amber / Red) per axis. A use case with all four axes Green proceeds to design. Amber axes are explicitly risk-accepted with named mitigations. Red axes mean the use case is redesigned or parked. Phase 11 · 24 covers the upstream spotting work; this lesson defines what to evaluate once a candidate use case is on the table.
 
-## Use It
 
-`code/main.py` models the two core decisions in this lesson:
-
-1. A **boundary classifier** that takes a structured use-case description (platforms touched, data types, integration pattern) and assigns a RAG status per evaluation axis.
-2. A **readiness scorer** that aggregates the per-axis RAG into an overall readiness level (Ready / Conditional / Blocked) with the blocking reason surfaced explicitly.
-
-Running the program against five synthetic use cases shows the range: a single-platform read-only use case clears all axes (Ready); two cross-platform use cases land Conditional with Amber on system boundary and compliance; and two use cases are Blocked — one because the data owner is not confirmed, one because an open-ended autonomous agent crosses three Red axes at once (system boundary, integration pattern, and compliance without residency).
-
-## Ship It
-
-`outputs/skill-erp-crm-use-case-evaluator.md` is a one-page evaluation grid a consultant can fill in during or immediately after a scoping workshop. It covers all four axes, includes the platform-specific flags for SAP, Salesforce, and Dynamics 365, and produces an unambiguous readiness call. Paste it into a Confluence page or project tracker as the formal use-case intake artifact.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| System boundary | "Which system does this touch?" | The set of platforms, tenants, and APIs a use case reads from or writes to; crossing a boundary creates a multi-team integration contract |
-| Data ownership | "Who owns the data?" | The named business party accountable for a specific data element — distinct from IT system ownership; can differ even within one ERP system |
-| SAP Joule | "SAP's AI" | The conversational AI assistant embedded in S/4HANA Cloud and SuccessFactors; routes through SAP Business AI, not direct ABAP access |
-| Agentforce | "Salesforce AI agents" | Salesforce's autonomous agent layer (2025+); categorically different from Einstein Copilot — executes multi-step actions without per-step human approval |
-| SAP AI Core | "Custom AI on SAP" | BTP-hosted service for custom model inference and RAG pipelines inside the SAP ecosystem; data residency is scoped at the BTP subaccount level |
-| Copilot Studio | "Microsoft's AI builder" | The orchestration layer for Copilot extensions across Microsoft 365 and Dynamics 365; routes Dataverse data to Azure OpenAI within the same Azure tenancy |
-| Integration pattern | "How the AI connects" | One of five tiers from read-only to open-ended autonomous action; determines the required approval tier and change-management scope |
-| RAG status | "Traffic light" | Red/Amber/Green per evaluation axis; the formal output of a use-case gate review, not a final business case |
-
-## Consultant field notes
-
-- **The demo that worked in the workshop but failed in production.** The prototype runs against a copy of the ERP tenant with anonymized data and a sandbox user. In production it hits a real customer record under a real authorization profile and the LLM surfaces a field the data owner never agreed to expose. Lesson: demo parity is a boundary problem, not a prompt problem.
-- **The RAG that returned the right document but the wrong paragraph.** Vector retrieval lands on the correct SAP or Salesforce object, then the chunker cuts mid-sentence across a header or a currency cell. The model answers confidently about something the document never said. Lesson: chunk boundaries matter as much as retrieval relevance; review the chunker before the embedder.
-- **The vendor pilot that never made it past the security review.** Joule, Agentforce, or Copilot Studio went live in a sandbox under a vendor-signed DPA. The real customer environment requires a reviewed data-processing agreement, a residency clause at the BTP subaccount or Azure region level, and a logging path that excludes prompts from vendor telemetry. By the time these surface, the budget window has closed. Lesson: start the DPA conversation in week one, not after the pilot.
-- **The use case everyone approved but nobody wanted.** A steering committee green-lights the use case because it sounds strategic. Six months in, the people who actually do the work route around the feature and keep their existing spreadsheet. Adoption numbers stall at low single digits. Lesson: a use case that no operator nominates rarely survives contact with daily work; demand a named operational sponsor, not just an executive champion.
-- **The AI feature that hit a cost ceiling in month two.** The pilot assumed a handful of users calling a read-only summarizer a few times a day. Production sees hundreds of users, each invoking the agent multiple times per case, with write-back patterns that trigger downstream notifications. The line item on the cloud bill grows roughly an order of magnitude and the business case no longer closes. Lesson: size the cost model against the integration pattern, not the demo scenario.
 
 ## Further Reading
 

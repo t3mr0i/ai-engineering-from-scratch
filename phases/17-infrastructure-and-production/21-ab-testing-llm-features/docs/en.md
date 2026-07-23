@@ -90,30 +90,7 @@ Every senior engineer can name a feature that was shipped because "it feels bett
 - CUPED variance reduction: 30-70%.
 - LLM non-determinism → +30-50% sample-size buffer.
 
-## Use It
 
-`code/main.py` simulates a sequential A/B test with fixed and sequential boundaries. Shows how sequential lets you stop early.
-
-## Ship It
-
-This lesson produces `outputs/skill-ab-plan.md`. Given feature change, workload, baseline, picks platform, gates, sample size.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Eval | "offline test" | Labeled-set evaluation of model capability |
-| A/B test | "experiment" | Live randomized comparison on users |
-| CUPED | "variance reduction" | Pre-period regression to reduce variance |
-| Sequential test | "peek-ok test" | Always-valid procedure allowing early stop |
-| Multiple comparison | "the family error" | Running many tests inflates false positives |
-| Bonferroni | "tight correction" | Divide α by number of tests |
-| Benjamini-Hochberg | "BH FDR" | False-discovery-rate control, less conservative |
-| SRM | "bad split" | Sample ratio mismatch; assignment bug |
-| Statsig | "OpenAI owned" | Commercial all-in-one, acquired 2025 |
-| GrowthBook | "the OSS one" | MIT warehouse-native platform |
-| mSPRT | "sequential probability ratio test" | Classical sequential procedure |
 
 ## Further Reading
 

@@ -51,56 +51,7 @@ Why it matters in 2026:
 - Cataphora (pronoun before referent): "When **she** walked in, Mary smiled."
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| English, single document | `en_coreference_web_trf` (spaCy-experimental) or AllenNLP neural coref |
-| Multilingual | SpanBERT / XLM-R trained on OntoNotes or Multilingual CoNLL |
-| Cross-document event coref | Specialized end-to-end models (2025–26 SOTA) |
-| Quick LLM baseline | GPT-4o / Claude with structured-output coref prompt |
-| Production dialog systems | Rule-based fallback + neural primary + manual review for critical slots |
-
-The integration pattern that ships in 2026: run NER first, run coref, merge coref clusters into NER entities. Downstream tasks see one entity per cluster, not one entity per mention.
-
-## Ship It
-
-Save as `outputs/skill-coref-picker.md`:
-
-```markdown
----
-name: coref-picker
-description: Pick a coreference approach, evaluation plan, and integration strategy.
-version: 1.0.0
-phase: 5
-lesson: 24
-tags: [nlp, coref, information-extraction]
----
-
-Given a use case (single-doc / multi-doc, domain, language), output:
-
-1. Approach. Rule-based / neural span-based / LLM-prompted / hybrid. One-sentence reason.
-2. Model. Named checkpoint if neural.
-3. Integration. Order of operations: tokenize → NER → coref → downstream task.
-4. Evaluation. CoNLL F1 (MUC + B³ + CEAF-φ4 average) on held-out set + manual cluster review on 20 documents.
-
-Refuse LLM-only coref for documents over 2,000 tokens without sliding-window merge. Refuse any pipeline that runs coref without a mention-level precision-recall report. Flag gender-heuristic systems deployed in demographically diverse text.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Mention | A reference | A span of text that refers to an entity (name, pronoun, noun phrase). |
-| Antecedent | What "it" refers to | The earlier mention a later one corefers with. |
-| Cluster | The entity's mentions | Set of mentions that all refer to the same real-world entity. |
-| Anaphora | Backward reference | Later mention refers to earlier ("he" → "John"). |
-| Cataphora | Forward reference | Earlier mention refers to later ("When he arrived, John..."). |
-| Bridging | Implicit reference | "I bought a car. The wheels were bad." (wheels of THAT car.) |
-| CoNLL F1 | The number on leaderboards | Average of MUC, B³, CEAF-φ4 F1 scores. |
 
 ## Further Reading
 

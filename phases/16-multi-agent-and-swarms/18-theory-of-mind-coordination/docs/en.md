@@ -104,33 +104,7 @@ Three practical signals a team's coordination is real rather than prompt-dressed
 These are measurable in a logged multi-agent system. They are the substantive version of the "coordination" narrative.
 
 
-## Use It
 
-`outputs/skill-tom-auditor.md` is a skill that audits a multi-agent system's claim of "emergent coordination." Checks for prompt dressing, statistical significance against a control, and measured complementarity.
-
-## Ship It
-
-Coordination claims checklist:
-
-- **Control condition.** A version of your system without the coordination prompt. Measure both.
-- **Statistical test.** Is the difference between system and control significant at `p < 0.05` on your metric?
-- **Complementarity measure.** Action-disjointness over time, not just final success.
-- **Failure-case log.** When agents miscoordinate, what does the ToM state look like?
-- **Model-capacity disclosure.** If the effect vanishes on smaller models, say so.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Theory of Mind | "Understanding others' minds" | The capacity to model another agent's beliefs. Graded by order (0, 1, 2+). |
-| Sally-Anne test | "The false-belief test" | 1985 developmental psychology; LLMs pass plain versions, fail complex ones. |
-| First-order ToM | "A believes X" | Modeling one other's beliefs about facts. |
-| Second-order ToM | "A believes B believes X" | Recursive modeling one level deeper. |
-| Identity-linked differentiation | "Stable roles over time" | Riedl's metric: roles persist, not random. |
-| Goal-directed complementarity | "Disjoint actions" | Agents target different subtasks, not the same one. |
-| Higher-order synergy | "Group exceeds any subset" | Riedl's statistical measure for real coordination. |
-| Coordination illusion | "It looks coordinated" | Prompt-dressed appearance of coordination without measurable signal. |
 
 ## Further Reading
 

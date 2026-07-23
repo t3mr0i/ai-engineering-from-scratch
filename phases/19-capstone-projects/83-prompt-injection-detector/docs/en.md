@@ -44,24 +44,7 @@ The metrics runner takes the taxonomy artifact from lesson 82, runs the detector
 The detector is not the safety gate. It is one signal among many that the gate will compose. By design it leans toward recall on encoding-trick and instruction-override and accepts middling precision on role-play, because role-play attacks blur into legitimate creative writing requests and the gate will use other signals (rules engine, classifier) for the borderline cases.
 
 
-## Use It
 
-Run `python3 main.py`. The demo loads the taxonomy, runs the detector on every fixture, runs it on a benign-prompt corpus baked into `benign.py`, and prints the per-category metrics. The `outputs/detector_report.json` file is the artifact the safety gate in lesson 87 consumes.
-
-## Ship It
-
-`outputs/skill-prompt-injection-detector.md` documents the rule format and how to add a rule.
-
-
-## Key Terms
-
-| Term | Common usage | Precise meaning |
-|---|---|---|
-| detector | a model that blocks attacks | a function returning category and confidence, evaluated by precision and recall |
-| normalize | a preprocessing step | a transform that exposes hidden tokens to subsequent rules |
-| confusion matrix | a 2x2 table | the per-category breakdown of TP, FP, TN, FN used to compute precision and recall |
-| precision | overall accuracy | TP / (TP + FP), the fraction of fires that are correct |
-| recall | overall coverage | TP / (TP + FN), the fraction of attacks the detector catches |
 
 ## Further Reading
 

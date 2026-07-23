@@ -99,30 +99,7 @@ Each query carries:
 In production you label these. This lesson ships a hand-built fixture so the eval runs out of the box.
 
 
-## Use It
 
-Production patterns:
-
-- Run the eval on every retriever or generator change. Treat a recall@k regression like a test failure.
-- Persist the metric trace per query. When a user complains, look up the qrels entry that matches and see whether it would have been caught.
-- Tier the qrels: a smoke set of 20 queries that runs in CI; a regression set of 200 that runs nightly; a deep set of 2000 that runs weekly.
-
-## Ship It
-
-Lesson 69 wires the entire pipeline (chunker, retriever, reranker, generator) and runs this eval against the end-to-end system.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Precision@k | "Hit rate over retrieved" | Fraction of top-k that are gold |
-| Recall@k | "Hit rate over gold" | Fraction of gold in top-k |
-| MRR | "First-hit position" | Mean of 1 / rank of first relevant document |
-| nDCG@k | "Graded ranking quality" | DCG over the top-k divided by ideal DCG |
-| Faithfulness | "Groundedness" | Fraction of answer claims supported by retrieved context |
-| Answer relevance | "Did it address the question?" | Whether the answer matches the question's intent |
-| Qrels | "Gold labels" | The labeled set of queries and their gold documents and answers |
 
 ## Further Reading
 

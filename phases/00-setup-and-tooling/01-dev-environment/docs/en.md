@@ -34,16 +34,6 @@ graph TD
 We install bottom-up. Each layer depends on the one below it.
 
 
-## Use It
-
-Your environment is now ready for every lesson in this course. Here's what you'll use where:
-
-| Language | Used In | Package Manager |
-|----------|---------|-----------------|
-| Python | Phases 1-12 (ML, DL, NLP, Vision, Audio, LLMs) | uv |
-| TypeScript | Phases 13-17 (Tools, Agents, Swarms, Infra) | pnpm |
-| Rust | Phases 12, 15-17 (Performance-critical systems) | cargo |
-| Julia | Phase 1 (Math foundations) | Pkg |
 
 ## Ship It
 

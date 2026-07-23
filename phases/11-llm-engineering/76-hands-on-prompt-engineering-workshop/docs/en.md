@@ -93,48 +93,7 @@ A prompt is maintainable when a second person can:
 
 In practice this means: keep prompts in version control, annotate the structure, keep the probe set alongside the prompt, and document the output contract as a separate artifact. The skill-checklist in this lesson's `outputs/` directory is the format this team uses.
 
-## Use It
 
-`code/main.py` is a deterministic, stdlib-only model of the two core decisions in this lesson:
-
-1. A **prompt pattern classifier** that takes a prompt string and identifies which of the six named patterns it uses (or flags it as unstructured), with the reasoning shown.
-2. An **output contract validator** that takes a model response and a labelled-template contract and reports which required fields are present, which are missing, and whether any value constraint is violated.
-
-No network, no model calls — the point is to make the classification and validation logic explicit and runnable so you can apply it to prompts from your own work.
-
-## Ship It
-
-`outputs/skill-prompt-pattern-picker.md` is a one-page decision aid: given a task type, it maps to the right pattern, the minimum prompt layers needed, the output contract format to use, and the probe set size. Paste it into your team wiki or keep it open alongside whatever LLM tool you use.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Prompt pattern | "The way I wrote the prompt" | A named, reusable template structure with documented intent and expected output shape |
-| Output contract | "Specify the format" | An explicit, checkable specification of required fields, types, and value constraints |
-| Few-shot | "Give it examples" | Providing complete input → output pairs that shift the model's format *and* reasoning style |
-| Chain-of-thought | "Tell it to think step by step" | Eliciting explicit intermediate reasoning, which reduces errors on multi-step tasks |
-| Critic-then-revise | "Have it check itself" | A two-call pattern where a second model call evaluates the first against a rubric before the output is used |
-| Probe set | "Test cases for prompts" | A fixed set of varied inputs (typical, edge, adversarial) used to verify and regression-test a prompt |
-| Scope constraint | "Tell it what not to do" | Explicit exclusions in the prompt that prevent output bloat and scope creep |
-| Decompose and route | "Break it into parts" | Splitting a complex task across multiple focused prompts rather than one overloaded instruction |
-
-## Consultant field notes
-
-These are the patterns a senior prompt engineer recognises by name after a few projects. They are not in the official docs; they come from watching prompts behave in production.
-
-**The demo-vs-production gap.** A prompt that returns perfect JSON on three hand-picked demo inputs fails on the fourth in production because the developer never built a probe set. Symptom: "it worked in the workshop." Cure: ship the probe set with the prompt. The team that demos without a probe set demos twice — once to the client, once when the first production incident lands.
-
-**The clever sentence nobody can explain.** A single sentence in a prompt pulls 80% of the quality lift, but the developer who wrote it left and nobody knows what it does. Symptom: nobody dares to edit the prompt because they might break it. Cure: every non-obvious sentence in a prompt gets a one-line comment in the prompt file explaining what failure it prevents. Comments live next to the prompt, not in a wiki nobody reads.
-
-**The one-prompt Swiss-army knife.** A single prompt is asked to classify, extract, summarise, and reply — and does each of them at maybe 70% quality. Symptom: the team is happy because the prompt "works" but the failure rate is hidden in 30% of every output. Cure: decompose. One prompt per job, routed by the first one. Three focused prompts at 95% each beat one generalist at 70%.
-
-**The frozen-in-time prompt.** A prompt that worked on Claude 3.5 in 2024 silently degrades as the model is updated. Symptom: quality drift over months, attributed to "the data" or "the users" before anyone checks the model version. Cure: pin the model in production, run the probe set on every model change, treat a model upgrade as a prompt change.
-
-**The five-example tax.** A few-shot prompt grows to five examples because the team is afraid of removing any. Symptom: the prompt costs €X per call more than it should, and the examples contradict each other on edge cases. Cure: three examples is usually enough; the fourth and fifth should have to earn their place by covering a failure the first three do not.
-
-**The prompt-as-secret-weapon.** One developer owns a prompt and refuses to share the structure because it is their "competitive advantage" inside the team. Symptom: nobody else can debug it, and the team's prompt quality depends on one person being available. Cure: prompts are team assets, not personal IP. The competitive advantage of a consulting team is the *quality of their probe sets and their review loop*, not the contents of a single prompt string.
 
 ## Further Reading
 

@@ -76,28 +76,7 @@ Defense patterns (2026 convergence):
 - **Long horizons without observability.** A 200-click run that fails at click 180 is un-debuggable without per-step traces.
 
 
-## Use It
 
-- Pick the model whose launch constraints match your product (desktop / web / consumer).
-- Wire the per-step safety service explicitly; do not rely on the model alone.
-- Human-in-the-loop on anything that moves money, shares data, or logs into a new service.
-
-## Ship It
-
-`outputs/skill-computer-use-safety.md` generates a per-step safety classifier + confirmation gate scaffold for any computer-use agent.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Computer use | "Agent driving a computer" | Vision-based input + keyboard/mouse output |
-| Accessibility APIs | "OS UI APIs" | Not used by Claude / OpenAI CUA / Gemini — pure vision |
-| Per-step safety | "Action guard" | Classifier runs before every action, blocks unsafe ones |
-| Untrusted input | "Screen content" | Screenshots, DOM, tool outputs; not permission |
-| Virtual display | "Xvfb" | Headless X server used to render screens for the agent |
-| Online-Mind2Web | "Live web benchmark" | Real web navigation benchmark Gemini 2.5 reports against |
-| Sensitive action | "Guarded action" | Login, purchase, delete — require human-in-the-loop |
 
 ## Further Reading
 

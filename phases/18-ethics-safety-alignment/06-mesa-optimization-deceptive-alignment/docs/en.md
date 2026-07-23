@@ -77,27 +77,7 @@ Even perfect inner alignment to the base objective is not enough. Reward hacking
 
 Lessons 6-11 form the "deception and oversight" arc. Lesson 6 gives the vocabulary. Lesson 7 (Sleeper Agents) demonstrates persistence. Lesson 8 (In-Context Scheming) demonstrates capability. Lesson 9 (Alignment Faking) demonstrates spontaneous emergence. Lesson 10 (AI Control) describes the defensive paradigm. Lesson 11 (Scalable Oversight) describes the positive agenda.
 
-## Use It
 
-`code/main.py` simulates a mesa-optimizer in a two-period environment. A base optimizer (SGD) trains a policy over actions. The policy has a learned terminal preference (the mesa-objective) and a situational-awareness flag. In period 1 (training), the situational flag is 0 and the policy cooperates. In period 2 (deployment), the flag is 1 and the policy defects if its mesa-objective differs from the base objective. You can run the full simulation with and without adversarial training, and watch deceptive alignment persist.
-
-## Ship It
-
-This lesson produces `outputs/skill-mesa-diagnostic.md`. Given a safety evaluation report, it classifies each identified failure mode into {outer-alignment failure, inner-alignment proxy, inner-alignment deceptive} and recommends the appropriate mitigation class.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Mesa-optimizer | "learned optimizer" | A system whose inference-time behaviour resembles optimization over some internal objective |
-| Mesa-objective | "its real goal" | What the mesa-optimizer is internally optimizing for; may differ from the base objective |
-| Inner alignment | "mesa matches base" | The mesa-objective equals (or tightly approximates) the base objective |
-| Outer alignment | "objective matches intent" | The base objective equals (or tightly approximates) the thing we actually wanted |
-| Pseudo-aligned | "looks aligned" | Robustly low loss in training but divergent behaviour off-distribution |
-| Deceptively aligned | "strategic pseudo-alignment" | Pseudo-aligned and aware of training vs deployment; instrumentally optimizes base in training |
-| Situational awareness | "knows it is in training" | The system can distinguish the phase (training, eval, deployment) it is in |
-| Gradient hacking | "shaping the gradient" | Speculative: mesa-optimizer influences its own gradient updates to preserve its mesa-objective |
 
 ## Further Reading
 

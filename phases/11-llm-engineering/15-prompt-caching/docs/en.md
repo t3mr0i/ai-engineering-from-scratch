@@ -49,58 +49,7 @@ Violate the order — put the user message above the system prompt, interleave d
 Anthropic's 25% write premium means a cached block has to be read at least twice to net-save money. 1 write + 1 read averages 0.675x cost per request (saves 32%); 1 write + 10 reads averages 0.205x (saves 80%). Rule of thumb: cache anything you expect to reuse at least 3 times within the TTL.
 
 
-## Use It
 
-The 2026 caching stack:
-
-| Situation | Pick |
-|-----------|------|
-| Agent with stable 10k+ system prompt, many turns | Anthropic `cache_control` with 5-min TTL |
-| Batch job reusing a prefix for 30+ minutes | Anthropic with `ttl: "1h"` |
-| Serverless endpoints on GPT-5, no custom infra | OpenAI automatic (just make your prefix stable and long) |
-| Multi-day reuse of a giant code/doc corpus | Gemini explicit `CachedContent` |
-| Cross-provider fallback | Keep the cacheable prefix layout identical across providers so any hit works |
-
-Combine with semantic caching (Phase 11 · 11) for the user-message layer: prompt caching handles *token-identical* reuse, semantic caching handles *meaning-identical* reuse.
-
-## Ship It
-
-Save `outputs/skill-prompt-caching-planner.md`:
-
-```markdown
----
-name: prompt-caching-planner
-description: Design a cache-friendly prompt layout and pick the right provider caching mode.
-version: 1.0.0
-phase: 11
-lesson: 15
-tags: [llm-engineering, caching, cost]
----
-
-Given a prompt (system + tools + few-shot + retrieval + history + user) and a usage profile (requests per hour, TTL needed, provider), output:
-
-1. Layout. Reordered sections with a single cache breakpoint marked; explain which sections are stable, which are volatile.
-2. Provider mode. Anthropic cache_control, OpenAI automatic, or Gemini CachedContent. Justify from TTL and reuse pattern.
-3. Break-even. Expected reads per write within TTL; net cost vs no-cache with math.
-4. Verification plan. CI assertion that cache_read_input_tokens > 0 on the second identical request; dashboard split by cached vs uncached tokens.
-5. Failure modes. List the three most likely reasons the cache will miss in this setup (dynamic timestamp, tool reorder, near-duplicate text) and how you will prevent each.
-
-Refuse to ship a cache plan that places a dynamic field above the breakpoint. Refuse to enable 1h TTL without a reuse count that makes the 2x write premium pay back.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Prompt caching | "Makes long prompts cheap" | Reusing a provider-side KV-cache for matching prefixes; 50-90% discount on repeated input tokens. |
-| `cache_control` | "The Anthropic marker" | Content-block attribute that declares "everything up to here is cacheable"; `{"type": "ephemeral"}`. |
-| Cache write | "Paying the premium" | The first request that populates the cache; billed at ~1.25x input rate on Anthropic, free on OpenAI. |
-| Cache read | "The discount" | Subsequent requests matching the prefix; billed at 10% (Anthropic), 50% (OpenAI), ~25% (Gemini). |
-| TTL | "How long it lives" | Seconds the cache stays warm; Anthropic 5m default (extendable 1h), OpenAI best-effort up to 1h, Gemini user-set. |
-| Extended TTL | "1-hour Anthropic cache" | `{"type": "ephemeral", "ttl": "1h"}`; 2x write premium but worth it for batch reuse. |
-| Prefix match | "Why my cache missed" | Caches only hit when every token from the start up to the breakpoint is byte-identical. |
-| Context caching (Gemini) | "The explicit one" | Google's named, storage-billed cache object; best for multi-day reuse of large corpora. |
 
 ## Further Reading
 

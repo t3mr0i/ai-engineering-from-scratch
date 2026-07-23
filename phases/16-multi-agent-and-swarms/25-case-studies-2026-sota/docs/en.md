@@ -119,35 +119,7 @@ Where the field is in April 2026:
 - **Cost is the central engineering constraint.** Token cost per task, wall-clock per interaction, rainbow-deploy overhead. Multi-agent wins on accuracy but loses on cost — and that trade is the business decision.
 - **Regulation is a near-term input, not a background concern.** Jurisdictions are moving faster than individual deploy cycles.
 
-## Use It
 
-`outputs/skill-case-study-mapper.md` is a skill that reads a proposed multi-agent system design and maps it to the closest case study, surfacing the design decisions that case study already tested.
-
-## Ship It
-
-Starter rules for production multi-agent in 2026:
-
-- **Start from a case study, not from scratch.** Pick the closest of Anthropic Research / MetaGPT / OpenClaw and adapt.
-- **Adopt MCP + A2A.** Portability across frameworks is valuable; protocol support is free.
-- **Measure against SWE-bench Pro or your internal Pro-equivalent.** Verified is contaminated.
-- **Pay the verification tax.** An independent verifier costs ~20-30% of your token budget and buys measurable correctness.
-- **Rainbow deploy long-running agents.** Expect multi-hour agent runs to be routine.
-- **Read WMAC 2026 and the MAST follow-ups.** The discipline is moving fast.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Anthropic Research | "The supervisor reference" | Claude Opus 4 + Sonnet 4 subagents; 15x tokens; +90.2% over single-agent. |
-| MetaGPT | "SOP as prompts" | Role decomposition for software engineering; `Code = SOP(Team)`. |
-| ChatDev | "Agents as roles" | Designer / programmer / reviewer / tester; communicative dehallucination. |
-| MacNet | "Scale ChatDev via DAG" | arXiv:2406.07155; 1000+ agents via explicit DAG routing. |
-| OpenClaw | "Local ReAct-loop agents" | Steinberger's project; 247k stars by March 2026. |
-| Moltbook | "Agent-only social network" | 2.3M agent accounts; acquired by Meta March 2026. |
-| Rainbow deploy | "Multiple versions concurrent" | Keep old runtime versions alive for in-flight long-running agents. |
-| Communicative dehallucination | "Ask before answering" | Agents request specifics from peers instead of guessing. |
-| WMAC 2026 | "The AAAI workshop" | April 2026 community focal point for multi-agent coordination. |
 
 ## Further Reading
 

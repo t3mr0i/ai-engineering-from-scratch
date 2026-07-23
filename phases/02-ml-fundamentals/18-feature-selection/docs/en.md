@@ -203,63 +203,7 @@ flowchart TD
 ```
 
 
-## Use It
 
-With scikit-learn, feature selection is built into the pipeline:
-
-```python
-from sklearn.feature_selection import (
-    VarianceThreshold,
-    mutual_info_classif,
-    RFE,
-    SelectFromModel,
-)
-from sklearn.linear_model import Lasso, LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-
-vt = VarianceThreshold(threshold=0.01)
-X_filtered = vt.fit_transform(X)
-
-mi_scores = mutual_info_classif(X, y)
-top_k = np.argsort(mi_scores)[-10:]
-
-rfe_selector = RFE(LogisticRegression(), n_features_to_select=10)
-rfe_selector.fit(X, y)
-X_rfe = rfe_selector.transform(X)
-
-lasso_selector = SelectFromModel(Lasso(alpha=0.01))
-lasso_selector.fit(X, y)
-X_lasso = lasso_selector.transform(X)
-
-rf = RandomForestClassifier(n_estimators=100)
-rf.fit(X, y)
-importances = rf.feature_importances_
-```
-
-The from-scratch implementations show exactly what happens inside each method. Variance threshold is just computing `var(X, axis=0)` and applying a mask. Mutual information is counting joint and marginal frequencies in a contingency table. RFE is a loop that trains, ranks, and prunes. L1 is gradient descent with a soft-thresholding step. Tree importance accumulates impurity reductions across splits. No magic -- just statistics and loops.
-
-The sklearn versions add robustness (e.g., mutual_info_classif uses k-NN density estimation instead of binning), speed (C implementations), and pipeline integration.
-
-## Ship It
-
-This lesson produces:
-- `outputs/skill-feature-selector.md` -- a quick reference decision tree for choosing the right feature selection method
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
-| Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
-| Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
-| Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
-| L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
-| Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |
-| Feature importance | "Which features matter most" | A score indicating how much each feature contributes to model predictions, computed from split gains (trees) or coefficient magnitudes (linear) |
-| Permutation importance | "Shuffle and measure the damage" | Evaluating feature importance by randomly shuffling each feature's values and measuring the resulting drop in model performance |
-| Curse of dimensionality | "Too many features, not enough data" | The phenomenon where adding features increases the volume of the feature space exponentially, making data sparse and distances meaningless |
 
 ## Further Reading
 

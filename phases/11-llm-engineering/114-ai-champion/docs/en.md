@@ -70,40 +70,7 @@ Most CoPs die in month four. The three structural reasons:
 
 The CoP's technical anchor should be the eval harness from Phase 19 · 27. Running the harness before and after a capability update is a meeting agenda that generates genuine signal rather than enthusiasm.
 
-## Use It
 
-`code/main.py` models the two core champion decisions in a deterministic, stdlib-only form:
-
-1. An **artifact prioritizer** that takes a (audience level, knowledge type) pair and returns the recommended artifact format plus the next artifact to produce in the compounding chain.
-2. A **pilot gate evaluator** that takes a pilot's current evidence and returns which gate it has passed, which it has not, and what the champion must produce before proceeding.
-
-The driver runs a synthetic set of champion scenarios and prints a recommendation for each, ending in a HEADLINE that states the core structural finding.
-
-## Ship It
-
-`outputs/skill-ai-champion-triage.md` is a one-page decision aid for a working champion: given an incoming request (brown bag, pilot, Slack question, CoP agenda), the table tells you which artifact to produce, for which audience level, and what the next compounding artifact is. Paste it into your team wiki and update the model column when a major capability shift lands.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| AI Champion | "Our AI person" | A named role responsible for structured knowledge transfer, CoP facilitation, and piloting new AI approaches with a defined artifact chain |
-| Community of Practice (CoP) | "Our AI group chat / meeting" | A recurring structured forum that produces persistent artifacts; dies without a recurring output and a success metric |
-| Decision aid | "A cheat sheet" | A one-page, paste-and-use table or checklist that answers one specific choice; designed for L1/L2 audiences and updated on major capability shifts |
-| Eval harness | "The tests for the AI" | Fixture tasks with a scoring rubric that catches model-quality regressions; the technical anchor for gate 2 of a pilot and for a long-lived CoP |
-| Pilot gate | "We're testing it" | One of three explicit checkpoints (feasibility, quality, transfer) before a new AI approach is scaled to the team |
-| Changelog literacy | "Keeping up with AI news" | A triage discipline: distinguishing capability shifts that change a decision aid from noise that does not warrant a team response |
-| Audience level | "Where people are" | L1 (aware), L2 (practitioner), L3 (builder) — the primary variable in artifact format selection |
-| Compounding chain | "Building on what we have" | Session → decision aid → reference implementation → eval harness; each artifact enables the next |
-
-## Consultant field notes
-
-- **The prompt that worked in the demo but failed in production.** A single staged example with a friendly audience hides variance; production traffic surfaces the long tail of malformed inputs and adversarial contexts. Lesson: if a prompt only has anecdotal validation, it is not a deliverable — it is a prototype that needs the eval harness before anyone else depends on it.
-- **The RAG that returned the right doc but the wrong paragraph.** Embedding recall can be high while chunking strategy makes the cited passage irrelevant to the question. Lesson: an eval harness that scores retrieval at the passage level, not the document level, catches what document-level metrics miss.
-- **The vendor pilot that never made it past the security review.** A promising tool enters a six-week evaluation; legal and infosec receive it on week five and the architecture must be redesigned. Lesson: route vendor and tooling pilots through security and architecture intake before the feasibility gate, not after.
-- **The use case everyone approved but nobody wanted.** A steering committee greenlights a use case because the slides are clean; field users keep doing it the old way because the AI workflow does not fit their actual job. Lesson: the champion must run a transfer-gate dry run with a real user who was not in the requirements session before declaring a use case adopted.
-- **The AI feature that hit a cost ceiling in month two.** A feature is priced on a per-call basis, launched at modest volume, and the bill compounds faster than the usage curve. Lesson: cost is a capability and must be evaluated at the quality gate with a representative traffic mix, not deferred to a post-launch FinOps review.
 
 ## Further Reading
 

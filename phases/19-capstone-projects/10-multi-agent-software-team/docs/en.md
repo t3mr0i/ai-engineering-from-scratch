@@ -65,49 +65,7 @@ Coder A          Coder B          Coder C          Coder D          (4 parallel)
 - Deployment: K8s with each role as a separate Deployment + HPA on backlog
 
 
-## Use It
 
-```
-$ team run --issue https://github.com/acme/widget/issues/842
-[architect] plan: 4 subtasks (parser, cache, api, migration)
-[board]     dispatched to 4 coders in parallel worktrees
-[coder-A]   subtask parser  -> 42 lines, tests pass locally
-[coder-B]   subtask cache   -> 88 lines, tests pass locally
-[coder-C]   subtask api     -> 31 lines, tests pass locally
-[coder-D]   subtask migration -> 19 lines, tests pass locally
-[merge]     3-way merge: 0 conflicts
-[reviewer]  comments on cache (thread pool sizing); routed to coder-B
-[coder-B]   revision: 92 lines; submits
-[reviewer]  approved
-[tester]    all 412 tests pass
-[pr]        opened #3382   4 coders, 1 revision, $4.90, 18m
-```
-
-## Ship It
-
-`outputs/skill-multi-agent-team.md` is the deliverable. Given an issue URL and parallelism level, the team produces a merge-ready PR with per-role token accounting.
-
-| Weight | Criterion | How it is measured |
-|:-:|---|---|
-| 25 | SWE-bench Pro pass@1 | Matched 50-issue subset, pass@1 |
-| 20 | Parallel speedup | Wall-clock vs single-agent baseline |
-| 20 | Review quality | False-approval rate on injected-bug probe |
-| 20 | Token efficiency | Total tokens per solved issue vs single-agent |
-| 15 | Coordination engineering | Merge-conflict resolution, handoff-failure histogram |
-| **100** | | |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Parallel worktree | "Isolated branch" | `git worktree add` producing a fresh working tree per coder |
-| Task board | "Shared message bus" | File or Redis store of typed messages agents subscribe to |
-| Handoff | "Role boundary" | Any message crossing from one role's context to another's |
-| Token amplification | "Multi-agent overhead" | Total tokens across roles / single-agent tokens for the same task |
-| A2A protocol | "Agent-to-agent" | Google's 2025 spec for typed inter-agent messages |
-| Merge coordinator | "Integrator" | Component that runs three-way merge and mediates conflicts |
-| False approval | "Reviewer hallucination" | Reviewer approves a diff with known bugs |
 
 ## Further Reading
 

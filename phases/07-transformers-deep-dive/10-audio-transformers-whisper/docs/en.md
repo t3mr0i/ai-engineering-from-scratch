@@ -90,55 +90,7 @@ Large-v3-turbo (2024) cut the decoder from 32 layers to 4. 8× faster decoding w
 | Audio + language | AudioLM, SeamlessM4T | Text tokens + audio tokens in one transformer |
 
 
-## Use It
 
-```python
-import whisper
-model = whisper.load_model("large-v3-turbo")
-result = model.transcribe("meeting.wav", language="en", task="transcribe")
-print(result["text"])
-print(result["segments"][0]["start"], result["segments"][0]["end"])
-```
-
-Faster, OpenAI-compatible:
-
-```python
-from faster_whisper import WhisperModel
-model = WhisperModel("large-v3-turbo", compute_type="int8_float16")
-segments, info = model.transcribe("meeting.wav", vad_filter=True)
-for s in segments:
-    print(f"{s.start:.2f} - {s.end:.2f}: {s.text}")
-```
-
-**When to pick Whisper in 2026:**
-
-- Multilingual ASR with one model.
-- Robust transcription of noisy, diverse audio.
-- Research / prototype ASR — fastest starting point.
-
-**When to pick something else:**
-
-- Ultra-low latency streaming on edge — Moonshine beats Whisper at matched quality.
-- Real-time conversational AI needing <200 ms — dedicated streaming ASR.
-- Speaker diarization — Whisper does not do this; bolt on pyannote.
-
-## Ship It
-
-See `outputs/skill-asr-configurator.md`. The skill picks an ASR model, decoding parameters, and preprocessing pipeline for a new speech application.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Mel spectrogram | "Audio image" | 2D representation: frequency bins on one axis, time frames on the other; log-scaled energy per cell. |
-| Log-mel | "What Whisper sees" | Mel spectrogram passed through log; approximates human perception of loudness. |
-| Frame | "One time slice" | A 25 ms window of samples; overlapping at 10 ms stride. |
-| Task token | "Prompt prefix for speech" | Special tokens like `<\|transcribe\|>` / `<\|translate\|>` in the decoder prompt. |
-| Voice activity detection (VAD) | "Find the speech" | Gate that removes silence before ASR; cuts cost massively. |
-| CTC | "Connectionist Temporal Classification" | Classic ASR loss for alignment-free training; Whisper does NOT use it. |
-| Whisper-turbo | "Small decoder, full encoder" | large-v3 encoder + 4-layer decoder; 8× faster decoding. |
-| Faster-whisper | "The production wrapper" | CTranslate2 reimplementation; int8 quantization; 4× faster than OpenAI's reference. |
 
 ## Further Reading
 

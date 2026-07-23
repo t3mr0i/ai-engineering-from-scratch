@@ -65,30 +65,7 @@ The gate emits one `verification_report.json` per task close-out, written under 
 Block-severity findings cannot be overridden by the agent. They can only be overridden by a human, with a recorded `override_reason` and an `overridden_by` user id. The override is a signed change, not an agent decision.
 
 
-## Use It
 
-Production patterns:
-
-- **CI step.** A `verify_agent` job runs the gate against the agent's final artifacts. Merge protection refuses without `passed: true`.
-- **Pre-handoff hook.** The agent runtime calls the gate before generating the handoff doc. No green verdict, no handoff.
-- **Manual triage.** Operators read the report when an agent claims success and a human suspects it.
-
-The gate is the deciding edge in the workbench flow. Every other surface is upstream of it.
-
-## Ship It
-
-`outputs/skill-verification-gate.md` wires the gate into a specific project: which acceptance commands feed it, which rules are block-severity, which off-scope writes are tolerated, how the override audit log is stored.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Verification gate | "The check that stops things" | Deterministic function over workbench artifacts producing a pass/fail verdict |
-| Block severity | "Hard fail" | A finding that prevents `passed: true` and requires a signed override |
-| Override log | "Why we let it through" | Signed entries with reason and user id, audited by review |
-| Acceptance command | "The proof" | A shell command whose zero exit is what `done` means |
-| One report path | "Source of truth" | `outputs/verification/<task_id>.json`, consumed by CI and humans alike |
 
 ## Further Reading
 

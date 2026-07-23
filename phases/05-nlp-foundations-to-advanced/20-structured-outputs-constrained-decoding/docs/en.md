@@ -53,55 +53,7 @@ Field order matters. Put `answer` before `reasoning`, and the model commits to a
 Schema field order is logic, not formatting.
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| OpenAI/Anthropic/Google model, simple schema | Native vendor structured output |
-| Any provider, Pydantic workflow, can tolerate retries | Instructor |
-| Local model, need 100% validity, flat schema | Outlines (FSM) |
-| Local model, recursive schema | XGrammar or llguidance |
-| Self-hosted inference server | vLLM guided decoding |
-| Batch processing with retries acceptable | Instructor + cheapest model |
-
-## Ship It
-
-Save as `outputs/skill-structured-output-picker.md`:
-
-```markdown
----
-name: structured-output-picker
-description: Choose a structured output approach, schema design, and validation plan.
-version: 1.0.0
-phase: 5
-lesson: 20
-tags: [nlp, llm, structured-output]
----
-
-Given a use case (provider, latency budget, schema complexity, failure tolerance), output:
-
-1. Mechanism. Native vendor structured output, Instructor retries, Outlines FSM, or XGrammar CFG. One-sentence reason.
-2. Schema design. Field order (reasoning first, answer last), nullable fields for "unknown", enum vs regex, required fields.
-3. Failure strategy. Max retries, fallback model, graceful `null` handling, out-of-distribution refusal.
-4. Validation plan. Schema compliance rate (target 100%), semantic validity (LLM-judge), field-coverage rate, latency p50/p99.
-
-Refuse any design that puts `answer` or `decision` before reasoning fields. Refuse to use bare JSON mode without a schema. Flag recursive schemas behind an FSM-only library.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Constrained decoding | Force valid output | Mask invalid-token logits at every generation step. |
-| Logit processor | The thing that constrains | Function: `(logits, state) -> masked_logits`. |
-| FSM | Finite-state machine | Compiled grammar representation; O(1) valid-next-token lookup. |
-| CFG | Context-free grammar | Grammar that handles recursion; slower but more expressive than FSM. |
-| Schema field order | Does it matter? | Yes — first field commits; always put reasoning before answer. |
-| Guided decoding | vLLM's name for it | Same concept, integrated into the inference server. |
-| JSON mode | OpenAI's early version | Guarantees JSON syntax; does NOT guarantee schema match. |
 
 ## Further Reading
 

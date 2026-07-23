@@ -71,26 +71,7 @@ Single-source evaluations are unreliable: labs evaluating their own models have 
 
 Lessons 7-11 reference Redwood and Apollo work; Lesson 18 references METR's framework comparison; Lesson 19 references Eleos. Lesson 28 is the explicit organisational map for the ecosystem the rest of the Phase relies on.
 
-## Use It
 
-No code. Read METR's "Common Elements of Frontier AI Safety Policies" as an example of how external synthesis adds value to lab-internal policy work.
-
-## Ship It
-
-This lesson produces `outputs/skill-ecosystem-map.md`. Given an alignment claim or evaluation, it identifies the organisation, the publication venue, and the methodological style, and cross-checks against known-counterpart organisations.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| MATS | "the mentorship program" | ML Alignment & Theory Scholars; 527+ researchers since 2021 |
-| Redwood Research | "the control lab" | Applied alignment; AI Control authors; UK AISI partner |
-| Apollo Research | "the scheming evals" | Pre-deployment scheming evaluations for frontier labs |
-| METR | "the task-horizon evals" | Task-based capability evaluations; framework synthesis |
-| Eleos AI | "the welfare lab" | Model-welfare pre-deployment evaluations |
-| Talent pipeline | "MATS -> labs" | MATS graduates flow to Anthropic, DM, OpenAI, Redwood, Apollo, METR |
-| External evaluation | "non-lab check" | Evaluation not done by the model's producer; adds credibility |
 
 ## Further Reading
 

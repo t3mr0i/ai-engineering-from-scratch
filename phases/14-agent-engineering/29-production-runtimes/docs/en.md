@@ -81,31 +81,7 @@ Without OpenTelemetry GenAI spans (Lesson 23) plus a Langfuse/Phoenix/Opik backe
 - **Skipping durable state.** Any run > 30 seconds where you can't afford to restart needs durable execution.
 
 
-## Use It
 
-- **Request-response** for chat-style UX.
-- **Streaming** for progressive responses.
-- **Durable** for long-horizon tasks.
-- **Queue** for batch / async / long-running.
-- **Event** for agent reactivity.
-- **Cron** for housekeeping (memory consolidation, evals, cost reports).
-
-## Ship It
-
-`outputs/skill-runtime-shape.md` picks a runtime shape for a task and wires the observability requirements.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Request-response | "Synchronous" | User waits; short tasks only |
-| Streaming | "SSE / WS" | Progressive output; better UX; latency observable per chunk |
-| Durable execution | "Resume from failure" | Checkpointed state; restart at last step |
-| Queue-based | "Background jobs" | Producer / worker pool / DLQ |
-| Event-driven | "Trigger-based" | Agent reacts to external events |
-| DLQ | "Dead-letter queue" | Parking lot for failed jobs |
-| Claude Managed Agents | "Hosted harness" | Anthropic-hosted long-running async with caching + compaction |
 
 ## Further Reading
 

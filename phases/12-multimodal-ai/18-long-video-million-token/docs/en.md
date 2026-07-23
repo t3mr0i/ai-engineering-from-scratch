@@ -92,31 +92,7 @@ In practice, production long-video pipelines are hybrid:
 
 This combines brute-context for global understanding and retrieval for local detail.
 
-## Use It
 
-`code/main.py`:
-
-- Computes token budgets for videos from 1 minute to 3 hours at varying FPS + pooling.
-- Simulates a needle-in-a-haystack run: inject a marker at a random timestamp, ask a question, score recall.
-- Includes an agentic-retrieval router simulator that picks specific clips to feed to a downstream VLM.
-
-Run the budget table and feel the scale gap.
-
-## Ship It
-
-This lesson produces `outputs/skill-long-video-strategy-planner.md`. Given a video duration and query complexity, it picks between brute-context, compression, and agentic retrieval, and computes the latency + quality expectations.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|------------------------|
-| Brute context | "Just more tokens" | Scale LLM context to millions of tokens; process everything in one pass |
-| Ring attention | "LWM-style parallel" | Distributed attention pattern where each device holds a chunk and rotates |
-| Token compression | "Summary tokens" | Reduce per-clip tokens via a learned compressor before the LLM |
-| Needle-in-haystack | "NIH test" | Insert a unique marker at a random point, ask model to recall it at test time |
-| Agentic retrieval | "LLM as query planner" | LLM asks a retrieval tool for relevant clips, reads them via a VLM, composes answer |
-| VideoAgent | "Retrieval pattern for video" | Canonical agentic-retrieval design: question -> tool -> clip -> answer |
 
 ## Further Reading
 

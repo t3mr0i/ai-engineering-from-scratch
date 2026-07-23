@@ -71,44 +71,7 @@ Canonical workflow in 2026:
 Community results: fine-tuning Medium on 20 hours of medical dictation drops WER from 12% to 4.5% on medical vocabulary. Fine-tuning Turbo on 4 hours of Icelandic drops WER from 18% to 6%.
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| General English, offline | Large-v3-turbo via `whisperx` |
-| Mobile / edge | Whisper-Tiny quantized (int8) or Moonshine |
-| Multilingual long-form | Large-v3 via `whisperx` + diarization |
-| Low-resource language | Fine-tune Medium or Turbo with LoRA |
-| Streaming (2 s latency) | Whisper-Streaming or Parakeet-TDT |
-| Word-level timestamps | WhisperX (forced alignment via wav2vec 2.0) |
-
-`faster-whisper` (CTranslate2 backend) is the fastest CPU+GPU inference runtime in 2026 — 4× faster than vanilla with identical output.
-
-## Pitfalls that still ship in 2026
-
-- **Hallucinated text on silence.** Whisper trained on captions includes "Thanks for watching!", "Subscribe!", song lyrics. Always VAD-gate before calling.
-- **`condition_on_previous_text` cascade.** One hallucination pollutes subsequent windows. Set `False` unless you need fluency across chunks.
-- **Short-clip padding.** A 2-second clip padded to 30 seconds can hallucinate in the trailing silence. Use `pad=False` or VAD-gate.
-- **Wrong mel stats.** Using librosa's mels instead of Whisper's produces near-random output. Use `whisper.audio.log_mel_spectrogram`.
-
-## Ship It
-
-Save as `outputs/skill-whisper-tuner.md`. Design a Whisper fine-tune or inference pipeline for a given domain.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| 30-sec window | Whisper's limit | Hard input cap; chunk longer audio. |
-| SOT | Start-of-transcript | `<\|startoftranscript\|>` kicks off the decoder prompt. |
-| Timestamps token | Temporal alignment | Every 0.02 s offset is a special token in the 51k vocab. |
-| Turbo | The fast variant | 4-decoder layers, 8× faster, <1% WER regression. |
-| WhisperX | The long-form wrapper | VAD + Whisper + wav2vec alignment + diarization. |
-| LoRA fine-tune | Efficient tuning | Add low-rank adapters to attention; train ~0.3% of params. |
-| Hallucination | The silent failure | Whisper produces fluent English from noise/silence. |
 
 ## Further Reading
 

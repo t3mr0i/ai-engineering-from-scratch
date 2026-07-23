@@ -101,35 +101,7 @@ One retry is usually enough. Three retries catches weak-model flakes. Beyond thr
 
 Constrained decoding works on small models. A 3B-parameter open model with grammar enforcement out-performs a 70B-parameter model with raw prompting on structured tasks. This is the main reason structured outputs matter for production: it decouples reliability from model size.
 
-## Use It
 
-`code/main.py` ships a minimal JSON Schema 2020-12 validator in stdlib (types, required, enum, min/max, pattern, items, additionalProperties). It wraps an `Invoice` schema and runs a fake LLM output through the validator, demonstrating parse error, schema violation, and refusal paths. Swap the fake output for any provider's real response in production.
-
-What to look at:
-
-- The validator returns a typed `[ValidationError]` list with path and message. That is the shape you want surfaced to the retry prompt.
-- The refusal branch does NOT retry. It logs and returns a typed refusal. Phase 14 · 09 uses refusals as a safety signal.
-- The `additionalProperties: false` check fires on the adversarial test input, showing why strict mode shuts the door on hallucinated fields.
-
-## Ship It
-
-This lesson produces `outputs/skill-structured-output-designer.md`. Given a free-text extraction target (invoices, support tickets, resumes, etc.), the skill produces a JSON Schema 2020-12 that is strict-mode-compatible and a Pydantic model that mirrors it, with typed refusal and retry handling stubbed in.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| JSON Schema 2020-12 | "The schema spec" | IETF-draft schema dialect every modern provider speaks |
-| Strict mode | "Guaranteed schema" | OpenAI flag that enforces schema via constrained decoding |
-| Constrained decoding | "Logit masking" | Decode-time enforcement that masks invalid next-tokens |
-| Refusal | "Model declines" | Typed outcome when input cannot fit the schema |
-| Parse error | "Invalid JSON" | Output did not parse as JSON; impossible under strict |
-| Schema violation | "Wrong shape" | Parsed but violated types / required / enum / range |
-| `additionalProperties: false` | "No extras allowed" | Forbids unknown fields; required in OpenAI strict |
-| Pydantic BaseModel | "Typed output" | Python class that emits and validates JSON Schema |
-| Zod schema | "TypeScript output type" | TS runtime schema for provider output validation |
-| Grammar enforcement | "Open-weights constrained decode" | FSM-based logit masking, as in outlines / guidance |
 
 ## Further Reading
 

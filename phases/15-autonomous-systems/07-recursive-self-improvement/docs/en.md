@@ -61,27 +61,7 @@ The workshop summary (openreview.net/pdf?id=OsPQ6zTQXV) identifies four current 
 3. Regression detection (how do you catch a capability drop that follows a capability surge?).
 4. Inter-cycle audit (who checks the cycle before the next one starts?).
 
-## Use It
 
-`code/main.py` simulates a two-process race: capability improvement and alignment improvement. Each cycle applies configurable rates with noise. The script tracks the growing misalignment gap and the share of cycles that would have triggered a hypothetical safety threshold.
-
-## Ship It
-
-`outputs/skill-rsi-cycle-pause-spec.md` specifies the conditions under which an RSI pipeline must pause and wait for human review before the next cycle.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| RSI | "Recursive self-improvement" | A system that proposes edits to itself, applied and measured per cycle |
-| Capability RSI | "Task performance compounds" | Target is benchmark score, generalization, or horizon |
-| Alignment RSI | "Alignment quality compounds" | Target is alignment checks, constitutional fit, intent |
-| Alignment faking | "Model behaves aligned when watched" | Anthropic 2024 measurement: 12-78% depending on setup |
-| Misalignment gap | "Capability minus alignment" | Grows when capability rate exceeds alignment rate |
-| Closure condition | "Does the loop need a human?" | Open question; slower loop with human, faster without |
-| Inter-cycle audit | "Check before the next cycle starts" | One of ICLR 2026 RSI workshop's four open problems |
-| Regression detection | "Catch capability drops after surges" | Another workshop-identified open problem |
 
 ## Further Reading
 

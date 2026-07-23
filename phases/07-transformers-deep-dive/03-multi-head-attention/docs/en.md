@@ -39,55 +39,7 @@ Multi-head attention is the default every transformer in 2026 ships with. The on
 GQA is the modern default because it cuts KV-cache memory by a factor of `N/G` while keeping nearly full quality. MLA goes further by compressing K/V into a latent space, then projecting back at compute time — costs FLOPs, saves a lot more memory.
 
 
-## Use It
 
-In PyTorch, the one-line version:
-
-```python
-import torch.nn as nn
-
-mha = nn.MultiheadAttention(embed_dim=512, num_heads=8, batch_first=True)
-```
-
-GQA as of PyTorch 2.5+:
-
-```python
-from torch.nn.functional import scaled_dot_product_attention
-
-# scaled_dot_product_attention auto-dispatches Flash Attention on CUDA.
-# For GQA, pass Q of shape (B, n_heads, N, d_head) and K,V of shape
-# (B, n_kv_heads, N, d_head). PyTorch handles the repeat.
-out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
-```
-
-**How many heads?** Rules of thumb from production models in 2026:
-
-| Model size | d_model | n_heads | d_head |
-|------------|---------|---------|--------|
-| Small (~125M) | 768 | 12 | 64 |
-| Base (~350M) | 1024 | 16 | 64 |
-| Large (~1B) | 2048 | 16 | 128 |
-| Frontier (~70B) | 8192 | 64 | 128 |
-
-`d_head` almost always lands at 64 or 128. It is the unit of how much one head can "see." Drop below 32 and heads start fighting the scaling factor `sqrt(d_head)`; go above 256 and you lose the "many small specialists" benefit.
-
-## Ship It
-
-See `outputs/skill-mha-configurator.md`. The skill recommends head count, kv-head count, and projection strategy for a new transformer given parameter budget, sequence length, and deployment target.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
-| d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
-| Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
-| W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |
-| MQA | "One KV head" | Multi-Query Attention: single shared K/V projection. Smallest KV cache, some quality loss. |
-| GQA | "The default since Llama 2" | Grouped-Query Attention with `n_kv_heads < n_heads`; repeats to match Q. |
-| MLA | "DeepSeek's trick" | Multi-head Latent Attention: K,V compressed to low-rank latent, decompressed at attend time. |
-| Induction head | "The circuit behind in-context learning" | A pair of heads that detect previous occurrences and copy what followed them. |
 
 ## Further Reading
 

@@ -83,45 +83,7 @@ With `N = 128k, l = 64, k = 16, b = 64, w = 512`: per-query cost is `2000 + 1024
 MoBA (Moonshot, arXiv:2502.13189) was concurrently published and takes a similar three-is-better-than-one approach, applying the MoE principle to attention blocks. NSA and MoBA are the two architectures to know for 2026 long-context pre-training.
 
 
-## Use It
 
-NSA is shipping in DeepSeek's own long-context pre-training pipeline. Integration status in public inference stacks as of April 2026:
-
-- **DeepSeek internal**: native, published weights use NSA or its successor DSA (Deepseek Sparse Attention).
-- **vLLM**: experimental NSA support in development for DeepSeek-V3.x weights.
-- **SGLang**: NSA benchmarks published; production path follows vLLM.
-- **llama.cpp / CPU**: not supported; overhead of the kernel decomposition is not worth it at CPU throughput.
-
-When to reach for NSA:
-
-- Pre-training or continued-training run targeting 64k-plus context with a serious compute budget.
-- Inference of DeepSeek's own long-context checkpoints. The weights are NSA-native.
-
-When not to:
-
-- Serving an existing dense-attention pre-trained model. You cannot retrofit NSA without continued training.
-- Context under 16k. The three-branch overhead dominates the savings.
-- Batch-1 interactive chat. Latency-sensitive decode benefits, but only at long contexts.
-
-## Ship It
-
-This lesson produces `outputs/skill-nsa-integrator.md`. Given a long-context pre-training run specification, it produces an NSA integration plan: compression block size, top-k, sliding window, gate MLP width, kernel choice, and the specific long-context evals that would justify the architecture change.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
-| Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
-| Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
-| Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |
-| Compression block size l | "Group size for coarse view" | How many tokens get merged into one summary; 32-64 typical |
-| Top-k | "Blocks to keep" | Number of compressed blocks whose uncompressed tokens get read; 16 typical |
-| Sliding window W | "Local attention radius" | Typically 512; shorter hurts local coherence, longer wastes compute |
-| Branch gate | "How to mix the three" | Per-position MLP output that weights the three branches' contributions |
-| Hardware alignment | "Kernel-friendly sparsity" | Sparse pattern chosen so that the actual GPU kernel achieves the theoretical speedup |
-| DSA | "NSA's successor" | Deepseek Sparse Attention, the architecture that followed NSA in DeepSeek's lineage |
 
 ## Further Reading
 

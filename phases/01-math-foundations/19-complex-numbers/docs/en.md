@@ -268,61 +268,7 @@ graph LR
 ```
 
 
-## Use It
 
-Python has built-in complex number support. The literal `j` represents the imaginary unit.
-
-```python
-z = 3 + 2j
-w = 1 + 4j
-
-print(z + w)
-print(z * w)
-print(abs(z))
-
-import cmath
-print(cmath.phase(z))
-print(cmath.exp(1j * cmath.pi))
-```
-
-For arrays, numpy handles complex numbers natively:
-
-```python
-import numpy as np
-
-z = np.array([1+2j, 3+4j, 5+6j])
-print(np.abs(z))
-print(np.angle(z))
-print(np.conj(z))
-print(np.real(z))
-print(np.imag(z))
-
-signal = np.sin(2 * np.pi * 5 * np.linspace(0, 1, 128))
-spectrum = np.fft.fft(signal)
-freqs = np.fft.fftfreq(128, d=1/128)
-```
-
-## Ship It
-
-Run `code/complex_numbers.py` to generate `outputs/skill-complex-arithmetic.md`.
-
-
-## Key Terms
-
-| Term | What it means |
-|------|---------------|
-| Complex number | A number a + bi where a is the real part, b is the imaginary part, and i^2 = -1 |
-| Imaginary unit | The number i, defined by i^2 = -1. Not imaginary in the philosophical sense -- it is a rotation operator |
-| Complex plane | The 2D plane where the x-axis is real and the y-axis is imaginary. Also called the Argand plane |
-| Magnitude (modulus) | The distance from the origin: sqrt(a^2 + b^2). Written as \|z\| |
-| Phase (argument) | The angle from the positive real axis: atan2(b, a). Written as arg(z) |
-| Conjugate | The mirror image across the real axis: conjugate of a + bi is a - bi |
-| Polar form | Expressing z as r * e^(i*theta) instead of a + bi. Makes multiplication easy |
-| Euler's formula | e^(i*theta) = cos(theta) + i*sin(theta). Connects exponentials to trigonometry |
-| Phasor | A rotating complex number e^(i*omega*t) representing a sinusoidal signal |
-| Roots of unity | The N complex numbers e^(2*pi*i*k/N) for k = 0 to N-1. N equally spaced points on the unit circle |
-| DFT | Discrete Fourier Transform. Decomposes a signal into complex sinusoidal components using roots of unity |
-| RoPE | Rotary Position Embedding. Uses complex multiplication to encode relative position in transformer attention |
 
 ## Further Reading
 

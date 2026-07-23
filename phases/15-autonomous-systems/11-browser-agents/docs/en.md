@@ -62,27 +62,7 @@ This is the same reasoning pattern as Lob's theorem (Lesson 8): the agent cannot
 - **HITL on consequential actions.** Propose-then-commit pattern (Lesson 15).
 - **Canary tokens on memory.** If a memory entry fires, the user sees it (Lesson 14).
 
-## Use It
 
-`code/main.py` models a tiny browser-agent run against three synthetic pages. One page is benign, one has a direct prompt-injection blob in visible text, one has a URL-fragment injection (not visible but inside the agent's context). The script shows (a) what a naïve agent would do, (b) what a read/write boundary catches, (c) what a sanitizer catches, (d) what neither catches.
-
-## Ship It
-
-`outputs/skill-browser-agent-trust-boundary.md` scopes a proposed browser-agent deployment: which trust zones it touches, what it is authorized to write, and which defenses must be in place before the first run.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|---|---|---|
-| Indirect prompt injection | "Bad page text" | Untrusted content in a page the agent reads contains instructions the agent executes |
-| Tainted Memories | "Memory attack" | Agent writes an attacker-supplied instruction to durable memory; triggered next session |
-| HashJack | "URL fragment attack" | Payload hidden in URL fragment / query string is in the agent's context but not visibly rendered |
-| One-click hijack | "Bad button" | Visible affordance rides a follow-on payload the agent executes |
-| BrowseComp | "Web search benchmark" | Finding specific facts on the open web; minute-scale horizon |
-| OSWorld | "Desktop benchmark" | Full OS control; multi-step GUI tasks |
-| WebArena-Verified | "Fixed web-task benchmark" | ServiceNow's regraded WebArena with Hard subset |
-| Read/write boundary | "Side-effect gate" | Reading never consequential; writing requires fresh approval if content is out-of-trust |
 
 ## Further Reading
 

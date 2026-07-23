@@ -87,33 +87,7 @@ When someone claims a multi-agent result:
 Building your own internal benchmark for the axis you actually care about is often the right move.
 
 
-## Use It
 
-`outputs/skill-benchmark-reader.md` reads any multi-agent benchmark claim and applies the scrutiny checklist. Output: a grade and caveats.
-
-## Ship It
-
-Production evaluation discipline:
-
-- **Build an internal benchmark** that reflects your actual production distribution. Public benchmarks inform but do not substitute.
-- **Include a random baseline** in every comparison. If you cannot beat random by a large margin on a coordination task, the task may be ill-posed.
-- **Report cost alongside accuracy.** Token cost and wall-clock. Ops teams need both.
-- **Rebuild the benchmark quarterly.** Production distribution shifts; stale benchmarks mislead.
-- **Avoid published-benchmark overfitting.** If your team is optimizing specifically for SWE-bench Pro numbers, you will regress on production.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| MARBLE | "MultiAgentBench" | ACL 2025; star/chain/tree/graph topologies with milestone KPIs. |
-| COMMA | "Multimodal benchmark" | Multimodal asymmetric-info coordination; frontier models struggle vs random. |
-| MedAgentBoard | "Domain stress test" | Four medical categories; often finds multi-agent does not dominate single-LLM. |
-| AgentArch | "Enterprise benchmark" | Tools + memory + orchestration layered. |
-| SWE-bench Pro | "Contamination-resistant" | 1865 problems, 41 repos; ~23% vs 70%+ on Verified (the contamination signal). |
-| Milestone achievement | "Partial credit" | Benchmarks that reward progress, not only final success. |
-| Contamination | "Benchmark leaked into training" | Post-release, benchmarks drift into training corpora; scores inflate. |
-| WMAC | "AAAI 2026 Bridge Program" | Workshop on Multi-Agent Coordination; community focal point. |
 
 ## Further Reading
 

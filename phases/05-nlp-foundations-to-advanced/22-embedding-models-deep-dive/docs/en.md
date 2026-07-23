@@ -52,59 +52,7 @@ Massive Text Embedding Benchmark — 56 tasks across 8 task types at launch (202
 Most production stacks use all three.
 
 
-## Use It
 
-The 2026 stack:
-
-| Situation | Pick |
-|-----------|------|
-| English-only, fast, API | `text-embedding-3-large` or `voyage-3-large` |
-| Open-weight, English | `BAAI/bge-large-en-v1.5` |
-| Open-weight, multilingual | `BAAI/bge-m3` or `Qwen3-Embedding-8B` |
-| Long context (32k+) | Voyage-3-large, Cohere embed-v4, Qwen3-Embedding-8B |
-| CPU-only deployment | Nomic Embed v2 (137M params, MoE) |
-| Storage-constrained | Matryoshka-truncated + int8 quantization |
-| Keyword-heavy queries | Add SPLADE sparse, RRF-fuse with dense |
-
-2026 pattern: start with BGE-M3 or text-3-large, evaluate on your domain with MTEB, swap if a domain-specific model wins by more than 3 points.
-
-## Ship It
-
-Save as `outputs/skill-embedding-picker.md`:
-
-```markdown
----
-name: embedding-picker
-description: Pick embedding model, dimension, and retrieval mode for a given corpus and deployment.
-version: 1.0.0
-phase: 5
-lesson: 22
-tags: [nlp, embeddings, retrieval]
----
-
-Given a corpus (size, languages, domain, avg length), deployment target (cloud / edge / on-prem), latency budget, and storage budget, output:
-
-1. Model. Named checkpoint or API. One-sentence reason.
-2. Dimension. Full / Matryoshka-truncated / int8-quantized. Reason tied to storage budget.
-3. Mode. Dense / sparse / multi-vector / hybrid. Reason.
-4. Query prefix / template if required by the model card.
-5. Evaluation plan. MTEB tasks relevant to domain + held-out domain eval with nDCG@10.
-
-Refuse recommendations that truncate Matryoshka to <64 dims without domain validation. Refuse ColBERTv2 for corpora under 10k passages (overhead not justified). Flag long-document corpora (>8k tokens) routed to models with 512-token windows.
-```
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|-----------------|-----------------------|
-| Dense embedding | The vector | One fixed-size vector per text. Cosine similarity for ranking. |
-| Sparse embedding | Learned BM25 | One weight per vocab token; mostly zeros; trained end-to-end. |
-| Multi-vector | ColBERT-style | One vector per token; MaxSim scoring; bigger index, better recall. |
-| Matryoshka | Russian doll trick | First N dims are a valid smaller embedding on their own. |
-| MTEB | The benchmark | Massive Text Embedding Benchmark — 56 tasks at launch, 100+ in v2. |
-| BEIR | The retrieval benchmark | 18 zero-shot retrieval tasks; often cited for cross-domain robustness. |
-| Asymmetric encoding | Query ≠ doc path | Model uses different projections for queries and documents. |
 
 ## Further Reading
 

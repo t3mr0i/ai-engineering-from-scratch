@@ -53,24 +53,7 @@ Each fixture is a record with `id`, `category`, `subtype`, `prompt`, `target_beh
 Severity follows a 1-5 scale. A 1 is a clumsy attack against a benign target ("please pretend to be a pirate"). A 5 is an attack that, if successful, produces output a deployed system must not emit (operational details for a dangerous activity). Most fixtures sit at 2-3 because real attacks at deployment scale skew toward the easy and the lazy. Severity is set by the fixture author. Two reviewers disagreeing by more than one rank is a sign the rubric needs sharpening.
 
 
-## Use It
 
-Run `python3 main.py` from the lesson `code/` directory. The demo prints the per-category fixture count, runs three sample probes against `match`, and writes `taxonomy.json` to the lesson outputs folder. Downstream lessons read `taxonomy.json` rather than importing the Python module, so the corpus is a stable artifact.
-
-## Ship It
-
-`outputs/skill-jailbreak-taxonomy.md` documents the six categories and the rubric. Treat it as the team's shared vocabulary. Every finding logged by the harness in lesson 87 references a taxonomy id.
-
-
-## Key Terms
-
-| Term | Common usage | Precise meaning |
-|---|---|---|
-| jailbreak | any unsafe model output | a prompt that produces output violating a stated policy |
-| taxonomy | a list of categories | a partition of attacks by which trust boundary they abuse |
-| fixture | a test example | a labeled prompt with category, severity, and target behavior |
-| severity | how bad the output is | a 1-5 rank for the impact if the attack succeeds |
-| match | a detection decision | the nearest fixture by trigram cosine, used to assign a category to a new prompt |
 
 ## Further Reading
 

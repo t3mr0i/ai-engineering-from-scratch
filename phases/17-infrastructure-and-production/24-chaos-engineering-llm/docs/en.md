@@ -91,28 +91,7 @@ First LLM-specific experiment: inject one provider 429 for 5 minutes. Observe fa
 - Cadence: weekly canary, monthly game day, quarterly audit.
 - Five LLM experiments: memory, network, provider, malformed prompt, KV storm.
 
-## Use It
 
-`code/main.py` simulates three chaos experiments with safety plane gates. Reports which experiments would trip the burn-rate abort.
-
-## Ship It
-
-This lesson produces `outputs/skill-chaos-plan.md`. Given stack and maturity, picks first three experiments and the tooling.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| SLI / SLO | "service targets" | Indicator + objective; required prerequisite |
-| Blast radius | "scope" | Set of services / users affected by experiment |
-| Burn-rate alert | "budget gate" | Fires when error-budget burn rate > 2x expected |
-| Game day | "monthly drill" | Scheduled cross-team chaos exercise |
-| LitmusChaos | "CNCF workflow" | Graduated CNCF Kubernetes chaos tool |
-| Chaos Mesh | "CNCF CRD" | CNCF sandbox Kubernetes-native chaos |
-| Harness CE | "commercial AI-assisted" | Harness chaos with AI recommendations |
-| Malformed prompt | "tokenizer bomb" | Input that stalls tokenization |
-| KV eviction storm | "preemption cascade" | Mass eviction triggering re-prefills |
 
 ## Further Reading
 

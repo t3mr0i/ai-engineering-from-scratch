@@ -60,28 +60,7 @@ A transformer has thousands of parameter tensors. One allreduce per tensor pays 
 Every rank must call `torch.manual_seed(seed + rank)` for shuffling but `torch.manual_seed(seed)` for parameter init. A single shared seed means every rank sees the same batch order (defeating data parallel); a rank-specific seed for params means initial parameters disagree by float epsilon and gradient sync no longer makes the replicas identical. Get the seed pattern right or the test for parameter equivalence fails on step 1.
 
 
-## Use It
 
-Production patterns:
-
-- **PyTorch DDP.** The canonical implementation. `torch.nn.parallel.DistributedDataParallel(model)` wires bucketing, overlap, and the no_sync context.
-- **HuggingFace Accelerate.** Adds a launcher that handles `torchrun` env vars and the model wrap. Same DDP under the hood.
-- **Megatron-LM data parallel.** Combines DDP with tensor parallel for large models; the data-parallel piece is the same allreduce-after-backward pattern.
-
-## Ship It
-
-Lesson 78 (ZeRO sharding) replaces the per-parameter allreduce with reduce_scatter so each rank only stores its shard of the optimiser state. Lesson 81 composes DDP with ZeRO into the end-to-end demo.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|------------------------|
-| DDP | "Data parallel" | Wrapper that broadcasts params and allreduces grads each step |
-| Bucket | "Fuse grads" | Group N small allreduces into one large one |
-| Overlap | "Hide comm" | Issue allreduce while later layers still computing backward |
-| no_sync | "Accumulate" | Skip the post-backward allreduce for gradient accumulation |
-| find_unused | "Branchy forward" | Detect parameters with no grad before reducing |
 
 ## Further Reading
 
