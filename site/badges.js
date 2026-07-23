@@ -17,6 +17,9 @@
   var PATH_RE = /(phases\/[^/]+\/[^/]+)\/?/;
   var READ_FULL = 0.9; // mirrors progress.js threshold
 
+  // Awards UI hidden for now (nav link + toasts) — flip to false to restore.
+  var AWARDS_HIDDEN = true;
+
   function hasOwn(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
 
   // Badge titles/descriptions and a few render-time UI strings are bilingual
@@ -592,9 +595,11 @@
       }
       if (newly.length) {
         writeSeen(seen);
-        var objs = [];
-        for (var k = 0; k < newly.length; k++) { var b = byId(newly[k]); if (b) objs.push(b); }
-        showToast(objs);
+        if (!AWARDS_HIDDEN) {
+          var objs = [];
+          for (var k = 0; k < newly.length; k++) { var b = byId(newly[k]); if (b) objs.push(b); }
+          showToast(objs);
+        }
       }
       renderMountTargets(r2);
       updateNavCount(r2.earned.length);
