@@ -22,13 +22,8 @@ window.SITE_I18N = {
   footer_report_short: { en: "Report", de: "Melden" },
 
   // index.html
-  hero_title: { en: "What are you shipping?", de: "Was lieferst du gerade?" },
-  hero_sub: { en: "R03-TC · LP03 · pick the task that matches the next thing on your plate.", de: "R03-TC · LP03 · wähle die Aufgabe, die zu deinem nächsten To-do passt." },
-  search_courses_ph: { en: "Search courses...", de: "Kurse suchen..." },
-  profile_label: { en: "Profile", de: "Profil" },
-  level_label: { en: "Level", de: "Level" },
-  interests_label: { en: "Interests", de: "Interessen" },
-  reset_btn: { en: "Reset", de: "Zurücksetzen" },
+  hero_title: { en: "What are you learning?", de: "Was lernst du gerade?" },
+  hero_sub: { en: "Last opened lesson — click to jump in", de: "Zuletzt geöffnete Lektion — hier klicken zum direkten Einstieg" },
 
   // catalog.html
   catalog_title: { en: "Lesson Catalog", de: "Lektionskatalog" },

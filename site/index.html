@@ -40,17 +40,15 @@
   <main class="page page--home">
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
-        <h1 id="heroTitle" data-i18n="hero_title">What are you shipping?</h1>
-        <p data-i18n="hero_sub">R03-TC · LP03 · pick the task that matches the next thing on your plate.</p>
-        <form class="hero-search" role="search" id="searchForm">
-          <span class="hero-search__icon" aria-hidden="true">
-            <i class="ph-light ph-magnifying-glass"></i>
-          </span>
-          <input type="search" id="searchInput" placeholder="Search courses..." aria-label="Search courses" autocomplete="off" data-i18n-placeholder="search_courses_ph">
-        </form>
+        <h1 id="heroTitle" data-i18n="hero_title">What are you learning?</h1>
+        <p id="lastLessonName" class="last-lesson-name"></p>
+        <a id="resumeButton" href="#" class="resume-button" data-i18n-title="resume_button">
+          <span class="button-text">Continue with this lesson</span>
+        </a>
       </div>
     </section>
 
+    <!-- Original cockpit / course view stays intact -->
     <section class="cockpit" id="cockpit" aria-label="AI course catalog">
       <div class="selector-card" aria-label="Choose profile and level">
         <label class="selector-field">
@@ -89,5 +87,64 @@
   <script src="lrn/data.js"></script>
   <script src="lrn/curriculum-map.js"></script>
   <script src="lrn/lrn.js"></script>
+
+  <!-- Resume from last lesson (localStorage) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Time-of-day header — a bit more agile / personal (morning / afternoon / evening)
+      const now = new Date();
+      const hour = now.getHours();
+      let heroText;
+      if (hour < 6 || hour >= 18) {
+        heroText = "Guten Abend! Was lernst du gerade?";
+      } else if (hour < 12) {
+        heroText = "Guten Morgen! Was lernst du gerade?";
+      } else {
+        heroText = "Guten Nachmittag! Was lernst du gerade?";
+      }
+      document.getElementById('heroTitle').textContent = heroText;
+
+      // Dynamic last lesson name — reads the most recently visited lesson
+      // from the LRN/progress storage (locus Dovage / aifs:progress:v1)
+      const lastLessonNameEl = document.getElementById('lastLessonName');
+      const resumeButton = document.getElementById('resumeButton');
+
+      let lastLessonNameText = 'No lesson opened yet';
+      let resumeHref = '#';
+      try {
+        const progressRaw = localStorage.getItem('aifs:progress:v1');
+        if (progressRaw) {
+          const progress = JSON.parse(progressRaw);
+          if (progress.lessons && Object.keys(progress.lessons).length > 0) {
+            let lastVisited = 0;
+            let lastPath = '';
+            Object.keys(progress.lessons).forEach(path => {
+              const ls = progress.lessons[path];
+              if (ls.visitedAt > lastVisited) {
+                lastVisited = ls.visitedAt;
+                lastPath = path;
+              }
+            });
+            if (lastPath) {
+              // Short pretty name e.g. "05-jupyter-notebooks" -> "Jupyter Notebooks"
+              const slug = lastPath.split('/').pop();
+              lastLessonNameText = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+              resumeHref = `lesson.html?path=${lastPath}`;
+            }
+          }
+        }
+      } catch (e) {
+        // silent fail
+      }
+
+      lastLessonNameEl.textContent = lastLessonNameText;
+      resumeButton.href = resumeHref;
+      if (lastLessonNameText === 'No lesson opened yet') {
+        resumeButton.style.display = 'none';
+      } else {
+        resumeButton.style.display = '';
+      }
+    });
+  </script>
 </body>
 </html>
