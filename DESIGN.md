@@ -217,14 +217,21 @@ design and should be deleted, not designed around).
 
 ## 5. Components
 
-### Buttons
-- **Shape:** pill (`border-radius: 999px`).
-- **Primary:** Core Blue background, white text, `sm` shadow at rest, `lg`
-  shadow + slight lift on hover.
-- **Secondary / Ghost:** transparent background, Core Blue text and 1px
-  Core-Blue border; same pill shape and hover lift.
-- **Hover / Focus:** background shifts to Blue 600 on primary; a 2px Core
-  Blue focus-visible outline with 3px offset on all variants.
+### Buttons — New LHIND Design System (aligned with Lufthansa Group DS)
+
+We now use the official Lufthansa Group Design System Button component as the single source of truth:
+
+- **Variants:**
+  - `primary` (Core Blue #05164d bg, white text)
+  - `secondary` (transparent, Core Blue text + border)
+  - `ghost` (Blue-100 tint, Blue-600 text)
+  - `tertiary` (inline text link, no padding, sentence-case only)
+- **Shape:** always pill (`999px` radius)
+- **Size:** `sm` / `md` / `lg` padding + font scaling
+- **Hover:** darkens to Blue 600; soft blue-tinted ambient shadow lift
+- **Usage:** Always sentence-case labels. Never mono font, never uppercase, never hard shadows. Use `full` for full-width. Pair with Phosphor icons via `iconLeft` / `iconRight` props in React contexts (otherwise plain CSS classes below).
+
+See `site/lrn/tokens.css` for `--btn-*` tokens and `style.css` for `.btn*` classes.
 
 ### Chips / Badge-tier pills
 - **Style:** pill shape, uppercase label type (12px, 0.08em tracking, ≤4

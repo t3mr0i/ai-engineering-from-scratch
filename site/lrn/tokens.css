@@ -179,6 +179,28 @@
   --radius-lg:   20px;
   --radius-pill: 999px;
 
+  /* ── Button tokens (Lufthansa Group Design System) ───────────────────── */
+  --btn-padding: 12px 26px;
+  --btn-padding-sm: 8px 18px;
+  --btn-padding-lg: 16px 34px;
+  --btn-font-size: 16px;
+  --btn-font-size-sm: 14px;
+  --btn-font-size-lg: 18px;
+  --btn-radius: var(--radius-pill);
+  --btn-primary-bg: var(--lhg-core-blue);
+  --btn-primary-color: var(--lhg-white);
+  --btn-primary-hover: var(--lhg-blue-600);
+  --btn-secondary-bg: transparent;
+  --btn-secondary-color: var(--lhg-core-blue);
+  --btn-secondary-border: var(--lhg-core-blue);
+  --btn-secondary-hover: var(--lhg-core-blue);
+  --btn-secondary-hover-color: var(--lhg-white);
+  --btn-ghost-bg: var(--lhg-blue-100);
+  --btn-ghost-color: var(--lhg-blue-600);
+  --btn-ghost-hover: #d6e4ff;
+  --btn-tertiary-color: var(--lhg-blue-500);
+  --btn-tertiary-hover: var(--lhg-blue-600);
+
   /* ── Borders + shadow (soft, blue-tinted) ─────────────────────── */
   --border-width:    1px;
   --border-hairline: 1px solid var(--border-subtle);

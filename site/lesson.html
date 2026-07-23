@@ -6,16 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="A lesson from the LHIND AI Learning Catalog curriculum by Lufthansa Industry Solutions. 490 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
+  <meta name="description" content="A lesson from the LHIND AI Learning Catalog curriculum by Lufthansa Industry Solutions. 478 lessons across 14 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
   <meta property="og:title" content="LHIND AI Learning Catalog · Lesson">
-  <meta property="og:description" content="490 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
+  <meta property="og:description" content="478 lessons across 14 phases from Lufthansa Industry Solutions. Backpropagation, the tokenizer, attention, and the agent loop, implemented from first principles.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="LHIND AI Learning Catalog">
-  <meta name="twitter:description" content="490 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
+  <meta name="twitter:description" content="478 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2844,7 +2844,7 @@
             return p.replace(/[*_`]/g, '').slice(0, 200);
           }
         }
-        return '490 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
+        return '478 lessons across 14 phases from Lufthansa Industry Solutions. Every algorithm implemented from first principles.';
       }
 
       // Client-side per-lesson SEO. Robust indexing comes with build-time
@@ -3616,8 +3616,10 @@
             _glossSeen.add(lower);
             var def = entry.means || entry.says || '';
             if (!def) return m;
-            return pre + '<span class="gloss-term" tabindex="0">' + term +
-              '<span class="gloss-popover" role="tooltip">' + escapeHtml(def) + '</span></span>';
+            var isHidden = localStorage.getItem('hideGlossUnderline') === 'true';
+            var glossClass = 'gloss-term' + (isHidden ? ' hide-underline' : '');
+            return pre + '<span class="' + glossClass + '" tabindex="0">' + term +
+              '<span class="gloss-popover" role="tooltip">' + mdToHtml(def) + '</span></span>';
           });
         }
         text = text.replace(/(^|[^A-Za-z0-9])Phase\s+(\d{1,2})\b/g, function (m, pre, num) {
@@ -3852,6 +3854,30 @@
           btn.textContent = isSaved ? 'Saved to My Merkzettel ✓' : 'Save to My Merkzettel';
           btn.classList.toggle('is-saved', isSaved);
         }
+
+        // Right-click context menu — save entire page as Bookmarklet
+        btn.addEventListener('contextmenu', function (e) {
+          e.preventDefault();
+          var menu = document.createElement('div');
+          menu.style.cssText = 'position:fixed; background:#fff; border:1px solid #ccc; box-shadow:0 4px 12px rgba(0,0,0,0.2); padding:4px; z-index:9999; font-family:var(--font-body); font-size:0.95rem;';
+          menu.innerHTML = `
+            <a href="javascript:(function(){var p=location.href; localStorage.setItem('aifs_saved_page_'+Date.now(), JSON.stringify({title:document.title, url:p, html:document.documentElement.outerHTML, timestamp:Date.now()})); alert('Page saved to Merkzettel! Bookmarklet ready.'); window.open('notes.html','_blank');})()" style="display:block;padding:6px 12px;text-decoration:none;color:#000;">Save entire page as Bookmarklet</a>
+            <div onclick="this.parentElement.remove()" style="padding:6px 12px; cursor:pointer; color:#666;">Cancel</div>
+          `;
+          document.body.appendChild(menu);
+
+          var rect = btn.getBoundingClientRect();
+          menu.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+          menu.style.left = (rect.left + window.scrollX) + 'px';
+
+          // Close menu on outside click
+          setTimeout(function () {
+            document.addEventListener('click', function handler() {
+              if (menu.parentNode) menu.parentNode.remove();
+              document.removeEventListener('click', handler);
+            }, { once: true });
+          }, 10);
+        });
 
         btn.addEventListener('click', function () {
           if (btn.classList.contains('is-saved')) {
@@ -5323,6 +5349,14 @@
         var div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
+      }
+
+      function mdToHtml(md) {
+        if (!md) return '';
+        return md
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em>$1</em>')
+          .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
       }
 
       function escapeAttr(str) {

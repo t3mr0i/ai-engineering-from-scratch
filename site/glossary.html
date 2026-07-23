@@ -152,6 +152,21 @@
       font-size: 1.1rem;
     }
 
+    .glossary-sort {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .glossary-sort select {
+      margin-left: 8px;
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg-surface);
+      color: var(--text);
+    }
+
     @media (max-width: 768px) {
       .glossary-page {
         padding: 80px 0 48px;
@@ -194,6 +209,20 @@
       <div class="glossary-search-wrap">
         <input type="text" class="glossary-search" id="glossarySearch" placeholder="Search terms..." data-i18n-placeholder="glossary_search_ph">
       </div>
+      <div class="glossary-sort" style="text-align: center; margin-bottom: 24px;">
+        <label for="glossarySort" data-i18n="sort_label">Sort by</label>
+        <select id="glossarySort">
+          <option value="term">Term</option>
+          <option value="says">What people say</option>
+          <option value="means">What it means</option>
+        </select>
+      </div>
+      <div class="glossary-toggle" style="text-align: center; margin-bottom: 16px;">
+        <label>
+          <input type="checkbox" id="glossaryHideUnderline">
+          <span data-i18n="hide_underline">Hide term underlines in documents</span>
+        </label>
+      </div>
       <div class="glossary-count" id="glossaryCount"></div>
       <div class="glossary-list" id="glossaryList"></div>
     </div>
@@ -227,7 +256,7 @@
           return div.innerHTML;
         }
 
-        function renderGlossary(filter) {
+        function renderGlossary(filter, sortBy = 'term') {
           var terms = GLOSSARY;
           if (filter) {
             var q = filter.toLowerCase();
@@ -236,6 +265,15 @@
                 t.says.toLowerCase().indexOf(q) !== -1 ||
                 t.means.toLowerCase().indexOf(q) !== -1;
             });
+          }
+
+          // sort
+          if (sortBy === 'says') {
+            terms.sort(function(a, b) { return a.says.localeCompare(b.says); });
+          } else if (sortBy === 'means') {
+            terms.sort(function(a, b) { return a.means.localeCompare(b.means); });
+          } else {
+            terms.sort(function(a, b) { return a.term.localeCompare(b.term); });
           }
 
           countEl.textContent = terms.length + ' of ' + GLOSSARY.length + ' terms';
@@ -281,6 +319,29 @@
             renderGlossary(searchInput.value.trim());
           });
         }
+
+        var sortSelect = document.getElementById('glossarySort');
+        var hideCheckbox = document.getElementById('glossaryHideUnderline');
+
+        function handleRender() {
+          var filter = searchInput.value.trim();
+          var sortBy = sortSelect ? sortSelect.value : 'term';
+          renderGlossary(filter, sortBy);
+        }
+        if (sortSelect) {
+          sortSelect.addEventListener('change', handleRender);
+        }
+
+        if (hideCheckbox) {
+          hideCheckbox.addEventListener('change', function () {
+            localStorage.setItem('hideGlossUnderline', hideCheckbox.checked);
+            // reload lessons if open, but for now just set
+            window.location.reload(); // simple, forces re-render on lesson pages
+          });
+        }
+
+        // initial
+        handleRender();
       });
     })();
   </script>

@@ -68,20 +68,13 @@ Anthropic's Dec 2024 guidance: start with the simplest. If the task is one tool 
 
 ## Build It
 
-`code/main.py` implements a toy ReWOO:
-
-- `Planner` — a scripted policy that emits a plan DAG from a prompt.
-- `Worker` — dispatches each node's tool call via the registry.
-- `Solver` — scripted composition that reads evidence and produces a final answer.
-- Dependency resolution — references like `#E1` are substituted with earlier worker outputs.
+The core toy ReWOO (Planner / Worker / Solver + dependency resolution) lives in `code/main.py` (stdlib-only scripted version). The full interactive Jupyter notebook demo with live LLM calls for the planner and workers is in `code/notebook.py`.
 
 The demo answers "What is the population of the capital of France, rounded to millions?" using a two-step plan: (1) look up the capital, (2) look up the population, then solve.
 
-Run it:
-
-```
-python3 code/main.py
-```
+**Run the notebook (JupyterLite):**
+- Open `code/notebook.py` in the lesson's JupyterLite environment (or run `python3 -m jupyter notebook code/notebook.py` after setup).
+- The notebook steps through the planner, parses the plan, resolves references, executes workers, and composes the solver output.
 
 The trace shows the full plan first, then worker results, then solver composition. Compare the token count (we print a rough character count) to a ReAct-style interleaved run — ReWOO wins on this kind of structured task.
 

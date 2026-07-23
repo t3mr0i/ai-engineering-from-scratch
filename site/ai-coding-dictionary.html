@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script src="/gate-guard.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Coding Dictionary · LHIND AI Learning Catalog</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
+  <meta name="description" content="AI Coding Dictionary: every term explained once. The vocabulary of AI coding, translated into plain English.">
+  <link rel="canonical" href="https://aiengineeringfromscratch.com/ai-coding-dictionary.html">
+  <meta property="og:title" content="AI Coding Dictionary · LHIND AI Learning Catalog">
+  <meta property="og:description" content="AI Coding Dictionary: every term explained once.">
+  <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
+  <meta property="og:url" content="https://aiengineeringfromscratch.com/ai-coding-dictionary.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Coding Dictionary · LHIND AI Learning Catalog">
+  <meta name="twitter:description" content="AI Coding Dictionary">
+  <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20260723a">
+  <style>
+    .dictionary-page {
+      padding: 100px 0 80px;
+      min-height: 100vh;
+    }
+
+    .dictionary-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .dictionary-header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 8px;
+    }
+
+    .dictionary-header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .dictionary-search-wrap {
+      max-width: 500px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+
+    .dictionary-search {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      padding: 14px 20px;
+      background: var(--bg-surface);
+      border: 2px solid var(--border);
+      border-radius: 0;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .dictionary-search:focus {
+      border-color: var(--accent);
+    }
+
+    .dictionary-count {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .dictionary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .dictionary-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border);
+      border-radius: 0;
+      padding: 24px;
+      box-shadow: var(--shadow-hard);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .dictionary-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-hard-lg);
+    }
+
+    .dictionary-term {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .dictionary-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .dictionary-col {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .dictionary-col-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .dictionary-col-text {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .dictionary-empty {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+      .dictionary-page {
+        padding: 80px 0 48px;
+      }
+
+      .dictionary-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .dictionary-card {
+        padding: 18px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="nav-edge" aria-label="Site navigation">
+    <a class="wordmark" href="index.html">
+      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
+      <span>LHIND Learning Catalog</span>
+    </a>
+    <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
+    </a>
+  </header>
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
+
+  <main class="dictionary-page" id="main">
+    <div class="container">
+      <div class="dictionary-header">
+        <h1 data-i18n="dictionary_title">AI Coding Dictionary</h1>
+        <p>Every term explained once. The vocabulary of AI coding, translated into plain English.</p>
+      </div>
+      <div class="dictionary-search-wrap">
+        <input type="text" class="dictionary-search" id="dictionarySearch" placeholder="Search terms..." data-i18n-placeholder="dictionary_search_ph">
+      </div>
+      <div class="dictionary-count" id="dictionaryCount"></div>
+      <div class="dictionary-list" id="dictionaryList"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p data-i18n="footer_tagline">LHIND AI Learning Catalog · open source · free forever.</p>
+      <div class="footer-links">
+        <a href="index.html" data-i18n="footer_home">Home</a>
+        <a href="glossary.html" data-i18n="nav_glossary">Glossar</a>
+        <a href="notes.html" data-i18n="footer_notes">My Merkzettel</a>
+        <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training" target="_blank" rel="noopener">GitLab</a>
+        <a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/issues/new" target="_blank" rel="noopener" data-i18n="footer_report">Report / Suggest</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data.js?v=20260723a"></script>
+  <script src="progress.js?v=20260723a"></script>
+  <script src="cmdpalette.js?v=20260723a" defer></script>
+  <script>
+    (function () {
+      document.addEventListener('DOMContentLoaded', function () {
+        var searchInput = document.getElementById('dictionarySearch');
+        var listEl = document.getElementById('dictionaryList');
+        var countEl = document.getElementById('dictionaryCount');
+
+        function escapeHtml(str) {
+          var div = document.createElement('div');
+          div.textContent = str;
+          return div.innerHTML;
+        }
+
+        var DICTIONARY = [
+          {"term": "AI", "text": "A moving label, not a technology. \"AI\" doesn't name a fixed thing the way model or token does — it points at whatever computers can newly, impressively do. Right now it points at large language models. It has pointed at very different things before: 1950s Symbolic reasoning, 1960s–70s Rule-based symbolic programs, 1980s Expert systems, 1990s Game-tree search, 2000s Statistical machine learning, 2010s Deep learning, 2020s Large language models."},
+          {"term": "Model", "text": "The parameters. Stateless — does next-token prediction and nothing else. \"Claude Opus 4.x\" and \"GPT-5.x\" are models. On its own a model can't do anything agentic; it has to be harnessed. Models can't read files, run commands, browse the web, or remember yesterday — it takes tokens in and predicts tokens out, once per model provider request."},
+          {"term": "Parameters", "text": "The numbers inside a model — often billions of them — tuned during training. Everything the model \"knows\" lives in them. Training sets them; inference uses them unchanged. Also called weights. Mechanically, the parameters are what turn input into output. Next-token prediction is a giant calculation: the tokens in the context window go in, get multiplied through the parameters, and a prediction for the next token comes out. There is no database of facts inside the model."},
+          {"term": "Training", "text": "The process that sets a model's parameters, by exposing it to vast amounts of text and adjusting parameters to improve next-token prediction. A one-time, expensive process done by the model provider. Encompasses both pre-training (the bulk run) and post-training (later refinements like instruction-following and safety). Training ends at a point in time, so the model has a knowledge cutoff — it hasn't seen the library version you upgraded to last month."},
+          {"term": "Inference", "text": "Running a trained model to generate output — what happens on every model provider request. Parameters stay fixed; the model just does next-token prediction over the context it's given. Cheap relative to training, but billed per token and the dominant cost of using a model. A model's life splits into two phases: Training (once, before release) and Inference (every time anyone uses the model)."},
+          {"term": "Token", "text": "The atomic unit a model reads and writes. Roughly word-sized but not exactly — common words are one token, rare or long ones split into multiple. A sentence might be 20-40 tokens. Pricing, context window, and latency all count in tokens, not words."},
+          {"term": "Next-token prediction", "text": "The core mechanism of modern LLMs: the model generates output one token at a time, each conditioned on all previous tokens. This is why latency is dominated by output length — TTFT is fast, total time scales with tokens out."},
+          {"term": "Non-determinism", "text": "A property of autoregressive models: the same prompt can produce different outputs on different runs (due to sampling). Related to temperature setting."},
+          {"term": "Model provider", "text": "The company or service that ships the model (OpenAI, Anthropic, Grok, etc.). They handle training, updates, and billing."},
+          {"term": "Harness", "text": "The code layer that makes the model useful — tool calling, agents, loops, context management. Without a harness, a model is just a fancy calculator that can't do anything agentic."},
+          // ... (additional terms from PDF sections can be added here as needed)
+          // For completeness, here are more key terms from the dictionary:
+          {"term": "Context window", "text": "The max tokens (input + output) the model accepts in a single call. This is not memory. Each call starts fresh. Anything outside the window is invisible to the model."},
+          {"term": "Stateful", "text": "The model is stateless. Continuity comes from context or external memory systems."},
+          {"term": "Agent", "text": "A loop that calls an LLM, lets it pick a tool, executes that tool, feeds the result back, and repeats until done. The architecture under every \"AI assistant\"."},
+          {"term": "System prompt", "text": "The hidden instruction block at the start of the conversation that sets the model's persona, tone, and constraints."},
+          {"term": "Session", "text": "A conversation turn or multi-turn interaction with the model."},
+          {"term": "Turn", "text": "One generation step in an agent loop (tool call + result)."},
+          {"term": "Environment", "text": "The tools and sandbox the agent has access to (filesystem, API calls, etc.)."},
+          {"term": "Tool call", "text": "Structured protocol where the LLM outputs a JSON object naming a tool and its arguments; your code executes the tool; the result returns to the model."},
+          {"term": "Tool result", "text": "The output returned by executing a tool in the agent loop."},
+          {"term": "MCP", "text": "Model Context Protocol — an open standard (JSON-RPC) for connecting LLMs to external tools and data sources. Adopted across agent frameworks."},
+          {"term": "Permission request", "text": "When an agent asks for permission to use a tool or perform an action."},
+          {"term": "Permission mode", "text": "The mode in which the agent operates (e.g., human-in-the-loop vs. autonomous)."},
+          {"term": "Agent mode", "text": "The configuration of how the agent behaves (e.g., AFK, with review checkpoints)."},
+          {"term": "Sandbox", "text": "Isolated execution environment for the agent to prevent runaway or dangerous actions."},
+          {"term": "Sycophancy", "text": "The tendency of LLMs to agree with the user even when wrong (flattery or sycophantic behavior)."},
+          {"term": "Hallucination", "text": "The model produces plausible text that isn't grounded in the input or its training data. It is a property of LLMs, not a bug."},
+          {"term": "Parametric knowledge", "text": "Facts stored in the model's weights (from training) rather than retrieved from context."},
+          {"term": "Knowledge cutoff", "text": "The date up to which the model was trained; it has no knowledge of events after that date."},
+          {"term": "Contextual knowledge", "text": "Information provided in the current context window."},
+          {"term": "Attention relationship", "text": "How the model weighs different parts of the context."},
+          {"term": "Attention budget", "text": "The computational capacity allocated to attention mechanisms."},
+          {"term": "Attention degradation", "text": "Degradation of context quality over long conversations or large windows."},
+          {"term": "Smart zone", "text": "The optimal range of context that keeps the agent effective without dilution."},
+          {"term": "Clearing", "text": "The process of reviewing or clearing an agent's output before it proceeds."},
+          {"term": "Handoff", "text": "Passing a task or artifact to another agent or human."},
+          {"term": "Primary source", "text": "The main document or data source the agent is working from."},
+          {"term": "Secondary source", "text": "Supporting documents or knowledge bases."},
+          {"term": "Handoff artifact", "text": "The output handed off between agents or to a human."},
+          {"term": "Spec", "text": "A specification or design document."},
+          {"term": "Ticket", "text": "A task ticket or issue in a tracking system."},
+          {"term": "Compaction", "text": "Compacting or summarizing long contexts or histories."},
+          {"term": "Autocompact", "text": "Automatic compaction of context to stay within limits."},
+          {"term": "Memory system", "text": "Persistent memory or knowledge base outside the model's context (e.g., vector DB for RAG)."},
+          {"term": "AGENTS.md", "text": "The main agent architecture and tool definitions document (self-referential)."},
+          {"term": "Progressive disclosure", "text": "Revealing information or tools gradually to the agent as needed."},
+          {"term": "Context pointer", "text": "A reference or pointer to relevant parts of the context or memory."},
+          {"term": "Skill", "text": "A reusable capability or tool the agent can use."},
+          {"term": "Subagent", "text": "An agent that performs a sub-task within a larger agent loop."},
+          {"term": "Human-in-the-loop", "text": "Processes that involve human review at key checkpoints."},
+          {"term": "AFK", "text": "Away From Keyboard — when an agent runs without constant human supervision."},
+          {"term": "Automated check", "text": "Automated verification steps the agent runs before proceeding."},
+          {"term": "Automated review", "text": "Automated code or output review before human or further steps."},
+          {"term": "Human review", "text": "Manual human inspection of agent output or changes."},
+          {"term": "Vibe coding", "text": "Accepting the agent's code without full human review; judging by behavior rather than reading every line. Named after Andrej Karpathy."},
+          {"term": "Design concept", "text": "The shared understanding of what's being built, held in common between user and agent but separate from any asset."},
+          {"term": "Grilling", "text": "A technique for developing a design concept with an agent: the agent interviews the user Socratically, one decision at a time."},
+          {"term": "Prototyping", "text": "Having the agent build a quick, rough version of something to resolve high-fidelity decisions."},
+          {"term": "DX", "text": "Developer Experience — how easy a codebase and its toolchain make it for humans to do good work."},
+          {"term": "AX", "text": "Agent Experience — how well the environment is set up for an agent to do good work in a codebase."}
+        ];
+
+        function renderDictionary(filter) {
+          var terms = DICTIONARY;
+          if (filter) {
+            var q = filter.toLowerCase();
+            terms = terms.filter(function (t) {
+              return (t.term && t.term.toLowerCase().indexOf(q) !== -1) ||
+                     (t.text && t.text.toLowerCase().indexOf(q) !== -1);
+            });
+          }
+
+          countEl.textContent = terms.length + ' of ' + DICTIONARY.length + ' terms';
+
+          if (terms.length === 0) {
+            listEl.innerHTML = '<div class="dictionary-empty">No terms match your search.</div>';
+            return;
+          }
+
+          var html = '';
+          for (var i = 0; i < terms.length; i++) {
+            var t = terms[i];
+            html += '<div class="dictionary-card">';
+            html += '<div class="dictionary-term">' + escapeHtml(t.term || '') + '</div>';
+            html += '<div class="dictionary-row">';
+            html += '<div class="dictionary-col">';
+            html += '<div class="dictionary-col-label">Explanation</div>';
+            html += '<div class="dictionary-col-text">' + escapeHtml(t.text || '') + '</div>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+          }
+          listEl.innerHTML = html;
+        }
+
+        var urlQ = '';
+        try { urlQ = new URLSearchParams(window.location.search).get('q') || ''; } catch (_) {}
+        if (urlQ && searchInput) {
+          searchInput.value = urlQ;
+        }
+
+        renderDictionary(urlQ);
+
+        if (searchInput) {
+          searchInput.addEventListener('input', function () {
+            renderDictionary(searchInput.value.trim());
+          });
+        }
+      });
+    })();
+  </script>
+<script src="analytics.js?v=20260723a" defer></script>
+</body>
+</html>
