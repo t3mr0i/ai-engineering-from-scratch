@@ -142,14 +142,18 @@ cookie — the gate is intentionally disabled here (`GATE_DISABLED=true`, see
 above). This differs from the old Azure deployment (see §1), which required
 a valid `ase_gate` cookie on everything but `/gate.html`.
 
-### Public hostname: default OCP03 domain, not `trainingcamp.lhind.ai`
+### Public hostname: `trainingcamp.lhind.app.lufthansa.com` (reverse-proxied)
 
 `trainingcamp.lhind.ai` was the original plan but got dropped: `lhind.ai`
 isn't a resolvable internal DNS zone (confirmed via `nslookup` → NXDOMAIN;
-it only exists for external AI services in eLDP). Standing up a real zone
-via Kyndryl was one option, but the team picked the fast path instead —
-**no custom host at all**. `openshift/route.yaml` has no `spec.host`, so
-OpenShift generates one under the cluster's own wildcard domain:
+it only exists for external AI services in eLDP). The team since stood up
+`trainingcamp.lhind.app.lufthansa.com` instead (CNAME to
+`cloud.lhind.app.lufthansa.com`, confirmed reachable + serving this app,
+`200` on `/`, `/gate.html`, `/data.js`) — this is the address to give
+learners, not the raw OCP03 route below. `openshift/route.yaml` itself
+still has no `spec.host` (no change needed there); the reverse proxy in
+front of it rewrites the Host header per the note below. OpenShift
+generates its own route hostname under the cluster's wildcard domain:
 
 ```
 ase-site-gated-trainingcamp-prod.apps.ocp03.cloud.lhind.app.lufthansa.com
@@ -171,9 +175,8 @@ Implications:
   sets a custom `spec.host` directly, where no rewrite is needed — that was
   the `trainingcamp.lhind.ai` plan, abandoned for the DNS-zone reason above.)
 - If a friendlier public name is wanted later, revisit the DNS-zone options
-  discussed with the network team (new Kyndryl-managed zone + cert, or a
-  hostname under the existing `lhind.app.lufthansa.com` zone) — out of
-  scope for the initial deploy.
+  discussed with the network team (new Kyndryl-managed zone + cert) — moot
+  for now since `trainingcamp.lhind.app.lufthansa.com` already covers this.
 
 ### Redeploy after a code change
 
