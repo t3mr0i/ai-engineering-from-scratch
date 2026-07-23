@@ -4,7 +4,7 @@
 # Framework: none
 # Requires API key: False
 
-"""agent-loop"""
+"""ReWOO: plan every tool call upfront in one LLM call, execute the plan without re-invoking the LLM between steps, then synthesize a final answer from the collected results."""
 
 # %%
 import sys, json, types

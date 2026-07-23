@@ -174,63 +174,84 @@ print(f"Time: {exec_result['execution_time_ms']}ms")
 # %% [markdown]
 # ## Step 4 — The Function Calling Loop: Use Real LLM Calls
 #
-# This is the core agent loop. We send the user's message and tool definitions to the LLM. The model decides which tool to call. We execute it. The result goes back to the model for synthesis.
+# This is the core agent loop. We send the user's message and tool definitions to the
+# LLM. The model decides which tool to call. We execute it. **Step 5 of the diagram
+# above**: the result goes back to the model, which uses it to produce a final
+# synthesized answer — it may also decide it needs another tool call first, so this
+# repeats until the model gives a direct answer or a `max_iterations` guard trips
+# (without it, a model that keeps requesting tools, or keeps failing the same call,
+# would loop forever).
 
 # %%
-async def run_function_calling_loop(user_message):
+async def run_function_calling_loop(user_message, max_iterations=5):
     """
-    Run a single turn of the function calling loop:
+    Run the function calling loop to completion:
     1. Send user message + tool definitions to LLM
-    2. LLM decides which tool to call
-    3. Execute the tool
-    4. Return result to user
+    2. LLM decides: call a tool, or answer directly
+    3. If a tool call: execute it, feed the result back to the LLM (Step 5), go to 2
+    4. If a direct/final response: return it
+    Bounded by max_iterations so a model that keeps requesting tools can't loop forever.
     """
-    # Prepare tool definitions for the LLM
-    tool_definitions = [t["definition"] for t in TOOL_REGISTRY.values()]
-    
-    # Step 1: Call LLM to decide which tool(s) to invoke
     system_prompt = """You are a helpful assistant with access to tools.
 When the user asks a question:
 1. Decide which tool(s) would help answer it
 2. Call the appropriate tool with the correct arguments
 3. DO NOT call tools for general knowledge questions
+4. Once a tool result has been given to you, use it to produce a final natural-language answer
 
 You MUST respond with a JSON object in this exact format:
 {"tool_name": "<name>", "arguments": {<args>}}
 
-Or if no tool is needed:
-{"response": "Your direct answer here"}"""
-    
-    messages = [{"role": "user", "content": user_message}]
-    
-    response = await lrn_llm.call(messages, system=system_prompt, max_tokens=300)
-    model_output = lrn_llm.text(response)
-    
-    print(f"LLM decision: {model_output[:150]}..." if len(model_output) > 150 else f"LLM decision: {model_output}")
-    
-    # Step 2: Parse the LLM's decision
-    try:
-        decision = json.loads(model_output)
-    except json.JSONDecodeError:
-        return {"error": True, "message": "LLM returned invalid JSON", "raw": model_output}
-    
-    # Step 3: If no tool needed, return direct response
-    if "response" in decision:
-        return {"type": "direct", "response": decision["response"]}
-    
-    # Step 4: Execute the tool call
-    if "tool_name" in decision:
-        tool_call = {"name": decision["tool_name"], "arguments": decision.get("arguments", {})}
-        exec_result = execute_tool_call(tool_call)
-        
-        if exec_result["result"].get("error"):
-            return {"type": "error", "tool": exec_result["tool"], "error": exec_result["result"]["message"]}
-        
-        return {"type": "tool_call", "tool": exec_result["tool"], "result": exec_result["result"], "time_ms": exec_result["execution_time_ms"]}
-    
-    return {"error": True, "message": "LLM response did not contain tool_name or response field"}
+Or, once you have enough information to answer (including right after a tool result
+was given to you):
+{"response": "Your final answer here"}"""
 
-print("✅ Function calling loop ready")
+    transcript = [f"User: {user_message}"]
+    tool_calls_made = []
+
+    for iteration in range(1, max_iterations + 1):
+        response = await lrn_llm.call(
+            [{"role": "user", "content": "\n".join(transcript)}],
+            system=system_prompt, max_tokens=300
+        )
+        model_output = lrn_llm.text(response)
+        print(f"[Iteration {iteration}] LLM: " +
+              (f"{model_output[:150]}..." if len(model_output) > 150 else model_output))
+
+        try:
+            decision = json.loads(model_output)
+        except json.JSONDecodeError:
+            return {"type": "error", "message": "LLM returned invalid JSON", "raw": model_output,
+                    "iterations": iteration, "tool_calls": tool_calls_made}
+
+        if "response" in decision:
+            return {"type": "final" if tool_calls_made else "direct",
+                    "response": decision["response"], "iterations": iteration,
+                    "tool_calls": tool_calls_made}
+
+        if "tool_name" in decision:
+            tool_call = {"name": decision["tool_name"], "arguments": decision.get("arguments", {})}
+            exec_result = execute_tool_call(tool_call)
+            tool_calls_made.append(exec_result["tool"])
+
+            if exec_result["result"].get("error"):
+                return {"type": "error", "tool": exec_result["tool"],
+                        "error": exec_result["result"]["message"], "iterations": iteration,
+                        "tool_calls": tool_calls_made}
+
+            # Step 5: feed the tool result back to the model instead of returning it to
+            # the caller — this is the step that was previously skipped.
+            transcript.append(f"Assistant: called {exec_result['tool']}({tool_call['arguments']})")
+            transcript.append(f"Tool result: {json.dumps(exec_result['result'])}")
+            continue
+
+        return {"type": "error", "message": "LLM response did not contain tool_name or response field",
+                "iterations": iteration, "tool_calls": tool_calls_made}
+
+    return {"type": "error", "message": f"Exceeded max_iterations ({max_iterations}) without a final response",
+            "iterations": max_iterations, "tool_calls": tool_calls_made}
+
+print("✅ Function calling loop ready (feeds tool results back, guarded by max_iterations)")
 
 # %% [markdown]
 # ## Step 5 — Try It: Weather Query
@@ -238,16 +259,19 @@ print("✅ Function calling loop ready")
 # Let's ask the agent about the weather. The LLM will decide to call the `get_weather` tool.
 
 # %%
+def print_loop_result(result):
+    """Result is always the model's own final answer now — 'final' means it came
+    after one or more tool calls whose results were fed back; 'direct' means no tool
+    was needed at all."""
+    print(f"\nResult type: {result.get('type')} (iterations: {result.get('iterations')}, "
+          f"tools called: {result.get('tool_calls') or 'none'})")
+    if result.get('type') in ('final', 'direct'):
+        print(f"Response: {result.get('response')}")
+    elif result.get('type') == 'error':
+        print(f"Error: {result.get('error') or result.get('message')}")
+
 result = await run_function_calling_loop("What's the weather in Tokyo?")
-print(f"\nResult type: {result.get('type')}")
-if result.get('type') == 'tool_call':
-    print(f"Tool called: {result['tool']}")
-    print(f"Result: {json.dumps(result['result'], indent=2)}")
-    print(f"Execution time: {result['time_ms']}ms")
-elif result.get('type') == 'error':
-    print(f"Tool error: {result['error']}")
-else:
-    print(f"Response: {result.get('response')}")
+print_loop_result(result)
 
 # %% [markdown]
 # ## Step 6 — Try It: Calculator Query
@@ -256,15 +280,7 @@ else:
 
 # %%
 result = await run_function_calling_loop("Calculate (100 + 250) * 0.15")
-print(f"\nResult type: {result.get('type')}")
-if result.get('type') == 'tool_call':
-    print(f"Tool called: {result['tool']}")
-    print(f"Result: {json.dumps(result['result'], indent=2)}")
-    print(f"Execution time: {result['time_ms']}ms")
-elif result.get('type') == 'error':
-    print(f"Tool error: {result['error']}")
-else:
-    print(f"Response: {result.get('response')}")
+print_loop_result(result)
 
 # %% [markdown]
 # ## Step 7 — Try It: General Knowledge Query
@@ -273,14 +289,7 @@ else:
 
 # %%
 result = await run_function_calling_loop("What is the capital of France?")
-print(f"\nResult type: {result.get('type')}")
-if result.get('type') == 'tool_call':
-    print(f"Tool called: {result['tool']}")
-    print(f"Result: {json.dumps(result['result'], indent=2)}")
-elif result.get('type') == 'error':
-    print(f"Tool error: {result['error']}")
-else:
-    print(f"Direct response: {result.get('response')}")
+print_loop_result(result)
 
 # %% [markdown]
 # ## Try It Yourself
@@ -296,13 +305,4 @@ query = "What's the weather in New York?"
 print(f"User query: {query}\n")
 
 result = await run_function_calling_loop(query)
-print(f"\nResult type: {result.get('type')}")
-if result.get('type') == 'tool_call':
-    print(f"Tool called: {result['tool']}")
-    print(f"Result:")
-    print(json.dumps(result['result'], indent=2))
-    print(f"Execution time: {result['time_ms']}ms")
-elif result.get('type') == 'error':
-    print(f"Tool error: {result['error']}")
-else:
-    print(f"Direct response: {result.get('response')}")
+print_loop_result(result)

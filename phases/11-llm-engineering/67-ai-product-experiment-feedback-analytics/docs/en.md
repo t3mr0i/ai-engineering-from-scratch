@@ -4,7 +4,7 @@
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 11 Lesson 23 (AI-Enhanced User Research), Phase 11 Lesson 55 (AI Product Backlog and Prioritization)
+**Prerequisites:** Phase 11 Lesson 23 (AI-Enhanced User Research), Phase 11 Lesson 105 (AI-Assisted Backlog Scoring)
 **Time:** ~45 minutes
 **Capability:** Products and Value Streams - Experiment Feedback Fit
 

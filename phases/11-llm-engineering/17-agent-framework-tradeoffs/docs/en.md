@@ -131,4 +131,4 @@ Refuse to reach for a framework before you can draw the graph, the org chart, th
 - [Park et al., "Generative Agents: Interactive Simulacra of Human Behavior" (UIST 2023)](https://arxiv.org/abs/2304.03442) — role-play foundation that CrewAI-style persona stacks build on.
 - Phase 11 · 16 (LangGraph) — the framework this lesson benchmarks against.
 - Phase 11 · 19 (Reflexion) — a pattern that maps cleanly to LangGraph but awkwardly to CrewAI.
-- Phase 11 · 22 (Production observability) — how to instrument whichever framework you pick.
+- Phase 17 · 13 (LLM Observability Stack Selection) — how to instrument whichever framework you pick.

@@ -77,22 +77,49 @@ print(f"✅ LLM erreichbar: {r}")
 # %% [markdown]
 # ## Step 2 — The JSON-RPC 2.0 Envelope
 #
-# MCP sits on top of JSON-RPC 2.0, a lightweight request/response/notification protocol. Every message is a JSON object with a specific shape. Let's ask the LLM to explain what each envelope type means.
+# MCP sits on top of JSON-RPC 2.0, a lightweight request/response/notification protocol. Every message is a JSON object with a specific shape — code can classify one by its keys alone, without needing an LLM to describe it.
 
 # %%
-system_prompt = """You are an MCP (Model Context Protocol) expert. Explain JSON-RPC 2.0 message shapes clearly and concisely."""
+def classify_message(msg):
+    """Classify a JSON-RPC 2.0 message by its keys, per the spec's own rule:
+    a notification is a request with no 'id' (no response expected)."""
+    if "method" in msg and "id" not in msg:
+        return "notification"
+    if "method" in msg:
+        return "request"
+    if "result" in msg or "error" in msg:
+        return "response"
+    return "unknown"
 
-message = "What is the difference between a JSON-RPC request, response, and notification? Give one sentence each, then a JSON example for each."
-
-r = await lrn_llm.call([{"role": "user", "content": message}], system=system_prompt, max_tokens=300)
-print(lrn_llm.text(r))
+examples = {
+    "request":      {"jsonrpc": "2.0", "id": 1, "method": "tools/list"},
+    "response":     {"jsonrpc": "2.0", "id": 1, "result": {"tools": []}},
+    "notification": {"jsonrpc": "2.0", "method": "notifications/initialized"},
+}
+for expected_kind, msg in examples.items():
+    actual_kind = classify_message(msg)
+    assert actual_kind == expected_kind, f"{msg} classified as {actual_kind}, expected {expected_kind}"
+    print(f"{expected_kind:14} -> {json.dumps(msg)}")
+print("\n✅ all three envelope shapes classified correctly")
 
 # %% [markdown]
 # ## Step 3 — Building a JSON-RPC Request: initialize
 #
-# The MCP lifecycle starts with an `initialize` request. The client sends its capabilities and client info; the server responds with its own capabilities, server info, and protocol version. Let's construct this message and ask the LLM to validate it.
+# The MCP lifecycle starts with an `initialize` request. The client sends its capabilities and client info; the server responds with its own capabilities, server info, and protocol version. Let's construct this message and validate it in code — not by asking the model whether it looks right.
 
 # %%
+def validate_initialize_request(msg):
+    """Real structural validation, not an LLM opinion: assert every field the MCP
+    spec requires for an initialize request is present and correctly shaped."""
+    assert msg.get("jsonrpc") == "2.0", "missing/wrong jsonrpc version"
+    assert "id" in msg, "initialize is a request, must have an id"
+    assert msg.get("method") == "initialize", "wrong method"
+    params = msg.get("params", {})
+    assert "protocolVersion" in params, "missing protocolVersion"
+    assert "clientInfo" in params and "name" in params["clientInfo"], "missing/incomplete clientInfo"
+    assert isinstance(params.get("capabilities"), dict), "capabilities must be an object"
+    return True
+
 # Build the initialize request as per the lesson domain (notes-server)
 initialize_request = {
     "jsonrpc": "2.0",
@@ -111,19 +138,19 @@ initialize_request = {
 
 print("Client initialize request:")
 print(json.dumps(initialize_request, indent=2))
-
-# Ask the LLM to validate it
-validation_msg = f"Is this a valid MCP initialize request? {json.dumps(initialize_request)}"
-r = await lrn_llm.call([{"role": "user", "content": validation_msg}], system=system_prompt, max_tokens=150)
-print("\nValidation from LLM:")
-print(lrn_llm.text(r))
+assert classify_message(initialize_request) == "request"
+validate_initialize_request(initialize_request)
+print("\n✅ valid initialize request (jsonrpc, id, method, protocolVersion, clientInfo, capabilities all present)")
 
 # %% [markdown]
 # ## Step 4 — Parsing the Server Response
 #
-# The server responds with its own capabilities and info. Let's parse it and have the LLM explain what capabilities are negotiated.
+# The server responds with its own capabilities and info. Negotiated capabilities are
+# whatever both sides declared — code computes that intersection directly.
 
 # %%
+CLIENT_CAPS = initialize_request["params"]["capabilities"]
+
 # Server's initialize response
 server_response = {
     "jsonrpc": "2.0",
@@ -141,16 +168,16 @@ server_response = {
 
 print("Server initialize response:")
 print(json.dumps(server_response, indent=2))
+assert classify_message(server_response) == "response"
+assert server_response["id"] == initialize_request["id"], "response id must match the request it answers"
 
-# Ask the LLM to explain what's negotiated
-caps_msg = f"""Given this server response, what capabilities are now mutually supported?
-{json.dumps(server_response, indent=2)}
-
-List the operations the client can now safely invoke."""
-
-r = await lrn_llm.call([{"role": "user", "content": caps_msg}], system=system_prompt, max_tokens=200)
-print("\nCapability negotiation analysis:")
-print(lrn_llm.text(r))
+server_caps = server_response["result"]["capabilities"]
+# Server-only capabilities (tools, resources, prompts) are what the client can now
+# invoke. Client-only capabilities (sampling, elicitation) are what the *server* may
+# now request of the client — negotiation is per-direction, not a plain set overlap.
+print(f"\nOperations the client can now invoke on the server: {sorted(server_caps.keys())}")
+print(f"Capabilities the server may now request of the client: {sorted(CLIENT_CAPS.keys())}")
+assert "tools" in server_caps, "server must declare tools capability before tools/list is valid"
 
 # %% [markdown]
 # ## Step 5 — Tool Discovery: tools/list
@@ -193,10 +220,25 @@ tools_list_response = {
 print("\nServer tools/list response:")
 print(json.dumps(tools_list_response, indent=2))
 
+def validate_tool_schema(tool):
+    """Real JSON-Schema-shape check on a discovered tool, not an LLM opinion."""
+    schema = tool["inputSchema"]
+    assert schema.get("type") == "object", "tool inputSchema must be an object schema"
+    props = schema.get("properties", {})
+    for req_field in schema.get("required", []):
+        assert req_field in props, f"required field {req_field!r} missing from properties"
+    return True
+
+for tool in tools_list_response["result"]["tools"]:
+    validate_tool_schema(tool)
+print(f"\n✅ {len(tools_list_response['result']['tools'])} tool(s) discovered, schema(s) valid")
+
 # %% [markdown]
 # ## Step 6 — Tool Invocation: tools/call
 #
-# Now we invoke the `notes_search` tool. Let's construct the request and have the LLM generate a realistic response based on what the tool would return.
+# Now we invoke the `notes_search` tool. The server's response is what a real
+# notes_search implementation would return for this query — deterministic code, not
+# an LLM asked to improvise a protocol message.
 
 # %%
 # Client calls the notes_search tool
@@ -212,25 +254,43 @@ tools_call_request = {
 
 print("Client tools/call request:")
 print(json.dumps(tools_call_request, indent=2))
+assert classify_message(tools_call_request) == "request"
 
-# Ask the LLM to generate a realistic tool response
-response_msg = f"""You are a notes server responding to this MCP tools/call request:
-{json.dumps(tools_call_request, indent=2)}
+# The server's response, built the way notes_search itself would build it — not
+# fabricated by an LLM asked to "generate something realistic".
+NOTES_DB = [
+    {"id": "note-14", "title": "JSON-RPC 2.0 intro"},
+    {"id": "note-22", "title": "MCP handshake walkthrough"},
+]
 
-Generate a realistic server response that includes:
-- A content array with text blocks
-- isError set to false
-- Don't include explanation; just the JSON response object (with result field for the id)."""
+def notes_search(query, limit=10):
+    matches = [n for n in NOTES_DB if query.lower() in n["title"].lower()]
+    return matches[:limit]
 
-r = await lrn_llm.call([{"role": "user", "content": response_msg}], system="You are a JSON expert.", max_tokens=200)
-response_text = lrn_llm.text(r)
-print("\nServer tools/call response (LLM-generated):")
-print(response_text)
+results = notes_search(**tools_call_request["params"]["arguments"])
+tools_call_response = {
+    "jsonrpc": "2.0",
+    "id": tools_call_request["id"],
+    "result": {
+        "content": [{"type": "text", "text": f"Found {len(results)} notes matching 'JSON-RPC':"}]
+                   + [{"type": "text", "text": f"- {n['id']} {n['title']}"} for n in results],
+        "isError": False,
+    }
+}
+
+print("\nServer tools/call response:")
+print(json.dumps(tools_call_response, indent=2))
+assert classify_message(tools_call_response) == "response"
+assert tools_call_response["id"] == tools_call_request["id"]
+assert all(block["type"] == "text" and "text" in block for block in tools_call_response["result"]["content"])
+print(f"\n✅ response validated: {len(tools_call_response['result']['content'])} content block(s), isError=False")
 
 # %% [markdown]
 # ## Step 7 — Notifications: tools/list_changed
 #
-# While operation is in progress, either side can send notifications. Let's construct a `notifications/tools/list_changed` to show what happens when the server's tool list mutates.
+# While operation is in progress, either side can send notifications. A client that
+# actually handles this dispatches on the method name and reacts — it doesn't just
+# read a description of what the notification means.
 
 # %%
 # Server sends a notification (no id, no response expected)
@@ -241,22 +301,42 @@ tools_changed_notification = {
 
 print("Server sends notification (no response expected):")
 print(json.dumps(tools_changed_notification, indent=2))
+assert classify_message(tools_changed_notification) == "notification"
+assert "id" not in tools_changed_notification, "a notification must not have an id — no response is expected"
 
-# Ask the LLM what this means
-notif_msg = """In MCP, what does notifications/tools/list_changed mean? 
-Why does it have no 'id' field?
-What should the client do when it receives this?"""
+# A minimal client-side dispatch table: real handling, not a description of handling.
+client_state = {"tool_list_stale": False}
 
-r = await lrn_llm.call([{"role": "user", "content": notif_msg}], system=system_prompt, max_tokens=200)
-print("\nLLM explanation:")
-print(lrn_llm.text(r))
+def handle_notification(msg):
+    handlers = {
+        "notifications/tools/list_changed": lambda: client_state.__setitem__("tool_list_stale", True),
+    }
+    handler = handlers.get(msg["method"])
+    if handler is None:
+        raise ValueError(f"no handler registered for notification: {msg['method']}")
+    handler()
+
+handle_notification(tools_changed_notification)
+assert client_state["tool_list_stale"] is True
+print("\n✅ client marked its cached tool list stale — next tools/list will be re-fetched, not reused")
 
 # %% [markdown]
 # ## Step 8 — Error Handling
 #
-# If the client requests a tool that doesn't exist or there's an error, the server responds with a JSON-RPC error. Let's construct an error response.
+# If the client requests a tool that doesn't exist, the server responds with a
+# JSON-RPC error. A real client branches on `"error" in response`, not on an LLM's
+# description of what an error code means.
 
 # %%
+# JSON-RPC 2.0 standard error codes actually used across this lesson's examples.
+JSONRPC_ERROR_CODES = {
+    -32700: "Parse error",
+    -32600: "Invalid Request",
+    -32601: "Method not found",
+    -32602: "Invalid params",
+    -32603: "Internal error",
+}
+
 # Client tries to call a non-existent tool
 error_request = {
     "jsonrpc": "2.0",
@@ -284,17 +364,29 @@ error_response = {
 
 print("\nServer error response:")
 print(json.dumps(error_response, indent=2))
+assert classify_message(error_response) == "response"
+assert error_response["error"]["code"] == -32601
+assert JSONRPC_ERROR_CODES[error_response["error"]["code"]] == error_response["error"]["message"], \
+    "response message doesn't match the standard meaning of this error code"
 
-# Explain the error code
-error_msg = "What does JSON-RPC error code -32601 mean? Why is it used for missing tools in MCP?"
-r = await lrn_llm.call([{"role": "user", "content": error_msg}], system=system_prompt, max_tokens=150)
-print("\nError code explanation:")
-print(lrn_llm.text(r))
+def handle_response(response):
+    """A real client branches on this, rather than reading an LLM's prose about it."""
+    if "error" in response:
+        code = response["error"]["code"]
+        return {"ok": False, "code": code, "meaning": JSONRPC_ERROR_CODES.get(code, "unknown"),
+                "message": response["error"]["message"]}
+    return {"ok": True, "result": response["result"]}
+
+outcome = handle_response(error_response)
+print(f"\n✅ client-side handling: ok={outcome['ok']}, "
+      f"{outcome['code']} = {outcome['meaning']!r} (not a made-up description)")
 
 # %% [markdown]
 # ## Step 9 — Lifecycle Summary
 #
-# Let's recap the three phases of the MCP lifecycle and have the LLM validate our understanding.
+# Let's recap the three phases of the MCP lifecycle, and prove in code what breaks if
+# a client skips the initialize handshake — instead of asking an LLM to explain why
+# it would matter.
 
 # %%
 lifecycle = {
@@ -308,27 +400,53 @@ for phase, desc in lifecycle.items():
     print(f"  {desc}")
     print()
 
-# Ask the LLM why this three-phase structure matters
-why_msg = """Why does MCP require explicit initialize/initialized handshake before any tool calls?
-What breaks if the client skips capability negotiation?"""
+class MCPClient:
+    """Enforces the handshake instead of describing it: tools/call before a
+    completed initialize/initialized handshake is a protocol violation, not just
+    bad practice."""
+    def __init__(self):
+        self.initialized = False
 
-r = await lrn_llm.call([{"role": "user", "content": why_msg}], system=system_prompt, max_tokens=200)
-print("\nWhy the three-phase structure matters:")
-print(lrn_llm.text(r))
+    def initialize(self, request, response):
+        assert classify_message(request) == "request" and request["method"] == "initialize"
+        assert classify_message(response) == "response" and response["id"] == request["id"]
+        self.initialized = True
+
+    def call_tool(self, request):
+        if not self.initialized:
+            raise RuntimeError(
+                "protocol violation: tools/call sent before initialize/initialized "
+                "completed — the client doesn't yet know what capabilities the "
+                "server supports, or even that the server accepted this protocol version"
+            )
+        return {"dispatched": request["params"]["name"]}
+
+# What breaks if a client skips the handshake: a real exception, not a description.
+client = MCPClient()
+try:
+    client.call_tool(tools_call_request)
+    raise AssertionError("expected a RuntimeError — handshake was skipped")
+except RuntimeError as e:
+    print(f"❌ skipping the handshake: {e}")
+
+# Completing it first makes the same call legal.
+client.initialize(initialize_request, server_response)
+result = client.call_tool(tools_call_request)
+print(f"\n✅ after initialize/initialized: {result}")
 
 # %% [markdown]
 # ## Try It Yourself
 #
 # Now it's your turn! Below is a sandbox cell where you can:
 # 1. Build your own JSON-RPC envelope (request, response, or notification)
-# 2. Ask the LLM to validate it
-# 3. Parse another's request and explain what it does
+# 2. Classify it with `classify_message` and check it against the spec in code
+# 3. If it's a tool definition, validate its schema with `validate_tool_schema`
 #
 # Some ideas:
 # - Build a `prompts/list` request (MCP has three server primitives: tools, resources, prompts)
 # - Construct a `resources/read` request for a file URI
-# - Modify the `notes_search` tool's inputSchema and ask the LLM if it's valid
-# - Build your own tool definition and have the LLM review it
+# - Modify the `notes_search` tool's inputSchema and run it through `validate_tool_schema`
+# - Build your own tool definition and validate it the same way
 
 # %%
 # TODO: Try building your own MCP message!
@@ -368,10 +486,10 @@ print(lrn_llm.text(r))
 
 print("Modify this cell to build and validate your own MCP message!")
 print()
-print("Once you've built 'your_request', uncomment and run this:")
+print("Once you've built 'your_request' (or 'your_tool'), uncomment and run this:")
 print()
 print("""# print(json.dumps(your_request, indent=2))
-# validation = f"Validate this MCP message or tool: {json.dumps(your_request)}"
-# r = await lrn_llm.call([{"role": "user", "content": validation}], system=system_prompt, max_tokens=200)
-# print(lrn_llm.text(r))
+# print("kind:", classify_message(your_request))
+# # if it's a tool definition instead of an envelope:
+# # validate_tool_schema(your_tool)
 """)

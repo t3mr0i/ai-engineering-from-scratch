@@ -182,11 +182,23 @@ for decl in tool_declarations:
 # 3. Refuse the request
 #
 # In this example, the user asks a question that should trigger a tool call.
+#
+# **This is deliberately the weak baseline, not the recommended solution.** Asking the
+# model in a system prompt to "respond with a JSON object" and hoping it complies is
+# exactly the prompt-and-pray pattern this lesson exists to move you past — nothing
+# validates that the model actually returns that shape, there's no schema the API
+# enforces, and free-text JSON is trivially broken by the model adding a sentence
+# before or after it. Production code uses the provider's native function-calling API
+# instead: pass the tool schemas as a structured `tools` parameter (not prose in the
+# system prompt) and get back a typed `tool_calls` field the API guarantees the shape
+# of, not a string you hope parses as JSON. Steps 5-7 below still show parse/execute/
+# feed-back on this baseline's freeform output because that plumbing is the same either
+# way — only *how the model is asked* differs.
 
 # %%
 user_query = "What is the weather in Bengaluru?"
 print(f"User: {user_query}")
-print("\n--- Sending to model with tool declarations ---\n")
+print("\n--- Sending to model with tool declarations (freeform JSON baseline) ---\n")
 
 system_prompt = (
     "You are a helpful assistant with access to a set of tools. "

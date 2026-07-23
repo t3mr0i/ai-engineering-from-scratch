@@ -158,8 +158,11 @@ print(f"A: {answer}")
 # ```
 #
 # The agent loop uses `kind` to decide the next state:
-# - `schema` or `not_found` → `on_error` (replan needed)
-# - `timeout` or `transient` → `on_error` (may retry or replan)
+# - `schema` or `not_found` → `on_error` (replan needed, never retried — deterministic)
+# - `transient` → always retried with backoff
+# - `timeout` → retried **only if the caller marked the call `idempotent`**; a timeout
+#   doesn't tell you whether the handler's side effect already committed, so retrying
+#   a non-idempotent call by default (e.g. a payment) could duplicate it
 # - `budget_exceeded` → special state (stop, no budget left)
 #
 # Let's ask the LLM about error recovery.
@@ -192,12 +195,12 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-# Mini dispatcher for teaching: timeout + retry (no idempotency yet)
 @dataclass
 class DispatchError:
-    kind: str
+    kind: str            # schema | not_found | transient | timeout | internal | budget_exceeded
     message: str
     attempts: int
+    jsonrpc_code: int
 
 @dataclass
 class DispatchOk:
@@ -205,38 +208,110 @@ class DispatchOk:
     attempts: int
 
 class TransientError(Exception):
-    """Raised to signal the error is retryable."""
+    """Raised by a handler to signal the error is retryable regardless of idempotency
+    (the handler itself is asserting nothing committed yet)."""
     pass
+
+class SchemaError(Exception):
+    """Raised by a handler to signal invalid arguments — deterministic, never retried."""
+    pass
+
+class NotFoundError(Exception):
+    """Raised when the dispatcher can't resolve the requested tool/handler —
+    deterministic, never retried."""
+    pass
+
+JSONRPC_CODES = {
+    "not_found": -32601,   # Method not found
+    "schema": -32602,      # Invalid params
+    "internal": -32603,    # Internal error
+    "timeout": -32000,     # Server error (implementation-defined range)
+    "transient": -32000,
+    "budget_exceeded": -32000,
+}
 
 class MiniDispatcher:
     def __init__(self, max_attempts=3, timeout_s=5.0):
         self.max_attempts = max_attempts
         self.timeout_s = timeout_s
-    
-    async def dispatch(self, handler_coro, timeout_s=None):
-        """Run handler with timeout and retry on TransientError."""
-        timeout_s = timeout_s or self.timeout_s
+        self._inflight = {}   # idempotency_key -> Future, for calls currently running
+        self._completed = {}  # idempotency_key -> (finished_at, result), 60s TTL
+
+    def _cached(self, key):
+        entry = self._completed.get(key)
+        if entry is None:
+            return None
+        finished_at, result = entry
+        if time.monotonic() - finished_at > 60.0:
+            del self._completed[key]
+            return None
+        return result
+
+    async def dispatch(self, handler_factory, *, timeout_s=None, idempotency_key=None, idempotent=False):
+        """Dispatch handler_factory() with timeout, retry, and idempotency dedup.
+
+        handler_factory: a zero-arg callable returning a fresh coroutine each call —
+        a coroutine object can only be awaited once, so a retry needs a fresh one per
+        attempt, not the same object re-awaited.
+        idempotency_key: if two calls share a key, a call already in flight is joined
+        instead of re-run, and a call that completed within the last 60s returns the
+        cached result instead of running again.
+        idempotent: whether a *timeout* on this call is safe to retry. A timeout alone
+        doesn't tell you whether the handler's side effect already committed — retrying
+        a non-idempotent call (e.g. a payment) can duplicate it. TransientError always
+        retries regardless, because raising it is the handler asserting "nothing
+        committed yet".
+        """
+        if idempotency_key is not None:
+            cached = self._cached(idempotency_key)
+            if cached is not None:
+                return cached
+            inflight = self._inflight.get(idempotency_key)
+            if inflight is not None:
+                return await inflight
+            fut = asyncio.get_running_loop().create_future()
+            self._inflight[idempotency_key] = fut
+
+        result = await self._run_with_retries(handler_factory, timeout_s or self.timeout_s, idempotent)
+
+        if idempotency_key is not None:
+            del self._inflight[idempotency_key]
+            self._completed[idempotency_key] = (time.monotonic(), result)
+            fut.set_result(result)
+        return result
+
+    async def _run_with_retries(self, handler_factory, timeout_s, idempotent):
+        """The actual timeout + retry + error-classification loop. Subclasses that add
+        concurrency limiting wrap this method rather than dispatch() — see Step 8 —
+        so a call that only joins an in-flight duplicate never has to wait for a
+        concurrency slot just to receive that result."""
         attempt = 0
         last_error = None
-        
         while attempt < self.max_attempts:
             attempt += 1
             try:
-                result = await asyncio.wait_for(handler_coro, timeout=timeout_s)
+                result = await asyncio.wait_for(handler_factory(), timeout=timeout_s)
                 return DispatchOk(result=result, attempts=attempt)
             except asyncio.TimeoutError:
-                last_error = DispatchError(kind="timeout", message=f"timeout after {timeout_s}s", attempts=attempt)
-                if attempt < self.max_attempts:
-                    await asyncio.sleep(0.1 * (2 ** (attempt - 1)))  # backoff
-                    handler_coro = handler_coro  # restart coro (in real code, recreate it)
+                last_error = DispatchError(kind="timeout", message=f"timeout after {timeout_s}s",
+                                            attempts=attempt, jsonrpc_code=JSONRPC_CODES["timeout"])
+                if not idempotent:
+                    return last_error  # may have partially committed — unsafe to retry
             except TransientError as e:
-                last_error = DispatchError(kind="transient", message=str(e), attempts=attempt)
-                if attempt < self.max_attempts:
-                    await asyncio.sleep(0.1 * (2 ** (attempt - 1)))
-        
-        return last_error or DispatchError(kind="internal", message="unknown error", attempts=attempt)
+                last_error = DispatchError(kind="transient", message=str(e), attempts=attempt,
+                                            jsonrpc_code=JSONRPC_CODES["transient"])
+            except SchemaError as e:
+                return DispatchError(kind="schema", message=str(e), attempts=attempt,
+                                      jsonrpc_code=JSONRPC_CODES["schema"])
+            except NotFoundError as e:
+                return DispatchError(kind="not_found", message=str(e), attempts=attempt,
+                                      jsonrpc_code=JSONRPC_CODES["not_found"])
+            if attempt < self.max_attempts:
+                await asyncio.sleep(0.1 * (2 ** (attempt - 1)))  # backoff
+        return last_error or DispatchError(kind="internal", message="unknown error",
+                                            attempts=attempt, jsonrpc_code=JSONRPC_CODES["internal"])
 
-print("✅ MiniDispatcher defined")
+print("✅ MiniDispatcher defined (idempotency dedup, retry-only-if-idempotent timeouts, JSON-RPC error codes)")
 
 # %% [markdown]
 # ## Step 7 — A Simple Agent Loop Using the Dispatcher
@@ -265,9 +340,10 @@ async def classify_intent_handler(query: str):
 
 dispatcher = MiniDispatcher(max_attempts=2, timeout_s=10.0)
 
-# Dispatch a single call
+# Dispatch a single call. handler_factory is a zero-arg callable (here a lambda) so a
+# retry can create a fresh coroutine instead of re-awaiting an already-used one.
 result = await dispatcher.dispatch(
-    classify_intent_handler("Hello, how are you?"),
+    lambda: classify_intent_handler("Hello, how are you?"),
     timeout_s=10.0
 )
 
@@ -290,22 +366,26 @@ class ConcurrentDispatcher(MiniDispatcher):
     def __init__(self, max_attempts=3, timeout_s=5.0, concurrency=2):
         super().__init__(max_attempts, timeout_s)
         self._sem = asyncio.Semaphore(concurrency)
-    
-    async def dispatch(self, handler_coro, timeout_s=None):
+
+    async def _run_with_retries(self, handler_factory, timeout_s, idempotent):
+        # Bounds the actual backend calls to `concurrency` at a time. Wrapping
+        # _run_with_retries (not dispatch) means a call that only joins an in-flight
+        # duplicate via idempotency_key never has to wait on this semaphore.
         async with self._sem:
-            return await super().dispatch(handler_coro, timeout_s)
-    
-    async def dispatch_many(self, coros):
-        """Dispatch multiple coroutines with bounded concurrency."""
-        return await asyncio.gather(*[self.dispatch(c) for c in coros])
+            return await super()._run_with_retries(handler_factory, timeout_s, idempotent)
+
+    async def dispatch_many(self, factories):
+        """Dispatch multiple handler factories with bounded concurrency."""
+        return await asyncio.gather(*[self.dispatch(f) for f in factories])
 
 conc_dispatcher = ConcurrentDispatcher(max_attempts=2, timeout_s=10.0, concurrency=2)
 
-# Create multiple classification tasks
+# Create multiple classification tasks as factories (zero-arg callables), not
+# already-created coroutines — see the dispatch() docstring in Step 6.
 tasks = [
-    classify_intent_handler("What time is it?"),
-    classify_intent_handler("Please send an email."),
-    classify_intent_handler("Hi there!"),
+    lambda: classify_intent_handler("What time is it?"),
+    lambda: classify_intent_handler("Please send an email."),
+    lambda: classify_intent_handler("Hi there!"),
 ]
 
 results = await conc_dispatcher.dispatch_many(tasks)
@@ -320,32 +400,78 @@ for i, res in enumerate(results):
 # %% [markdown]
 # ## Step 9 — Error Scenarios
 #
-# Let's demonstrate error handling by asking the LLM about different error types.
+# Each scenario below actually calls `dispatcher.dispatch()` and inspects the real
+# `DispatchOk`/`DispatchError` it returns — nothing here is a printed description.
 
 # %%
-# Demonstrate error scenarios
+def make_schema_check_handler(user_id):
+    """Returns a handler factory that validates its own argument first — this is what
+    makes a schema error fail fast instead of retrying."""
+    async def _run():
+        if not isinstance(user_id, int):
+            raise SchemaError(f"user_id must be an int, got {type(user_id).__name__!r}")
+        return {"user_id": user_id}
+    return _run
 
-# Scenario 1: Valid request (happy path)
-valid_resp = await lrn_llm.call(
-    [{"role": "user", "content": "What is 2+2?"}],
-    max_tokens=10
+_flaky_state = {"calls": 0}
+async def flaky_handler():
+    """Fails with a transient error on the first attempt, succeeds on retry."""
+    if _flaky_state["calls"] == 0:
+        _flaky_state["calls"] += 1
+        raise TransientError("upstream not ready")
+    return {"ok": True}
+
+async def slow_handler():
+    """Always exceeds a short timeout — a real asyncio.TimeoutError, not a description of one."""
+    await asyncio.sleep(2)
+    return {"ok": True}
+
+_charge_calls = {"n": 0}
+async def counted_handler():
+    """Counts how many times it actually ran — used to prove idempotency dedup below."""
+    _charge_calls["n"] += 1
+    await asyncio.sleep(0.05)
+    return {"charged": True}
+
+scenario_dispatcher = MiniDispatcher(max_attempts=3, timeout_s=10.0)
+
+# 1. Happy path
+r1 = await scenario_dispatcher.dispatch(lambda: classify_intent_handler("What is 2+2?"))
+if isinstance(r1, DispatchOk):
+    print(f"1. Happy path               -> ok (attempts={r1.attempts})")
+else:
+    print(f"1. Happy path               -> unexpected error: {r1.kind}")
+
+# 2. Schema error — fails fast, no retry
+r2 = await scenario_dispatcher.dispatch(make_schema_check_handler("not-a-number"))
+print(f"2. Schema error             -> kind={r2.kind} jsonrpc_code={r2.jsonrpc_code} "
+      f"attempts={r2.attempts} (no retry)")
+
+# 3. Transient error — retried, succeeds on the 2nd attempt
+_flaky_state["calls"] = 0
+r3 = await scenario_dispatcher.dispatch(flaky_handler)
+status = "ok after retry" if isinstance(r3, DispatchOk) else r3.kind
+print(f"3. Transient error          -> {status} (attempts={r3.attempts})")
+
+# 4. Timeout on a non-idempotent call (the default) — fails immediately, no retry
+r4 = await scenario_dispatcher.dispatch(slow_handler, timeout_s=0.2)
+print(f"4. Timeout, non-idempotent  -> kind={r4.kind} jsonrpc_code={r4.jsonrpc_code} "
+      f"attempts={r4.attempts} (no retry: may have already committed)")
+
+# 5. Timeout on an idempotent call — retried up to max_attempts
+r5 = await scenario_dispatcher.dispatch(slow_handler, timeout_s=0.2, idempotent=True)
+print(f"5. Timeout, idempotent      -> kind={r5.kind} jsonrpc_code={r5.jsonrpc_code} "
+      f"attempts={r5.attempts} (retried up to max_attempts={scenario_dispatcher.max_attempts})")
+
+# 6. Idempotency-key dedup — two concurrent calls sharing a key collapse into one
+# underlying handler invocation.
+_charge_calls["n"] = 0
+await asyncio.gather(
+    scenario_dispatcher.dispatch(counted_handler, idempotency_key="charge-42"),
+    scenario_dispatcher.dispatch(counted_handler, idempotency_key="charge-42"),
 )
-print(f"✅ Happy path: {lrn_llm.text(valid_resp)[:50]}")
-
-# Scenario 2: Schema error (we'd validate args before dispatch)
-print("\n⚠️  Schema error example:")
-print("   If args={\"id\": \"not-a-number\"} and schema expects integer")
-print("   kind='schema', attempts=0 (fail fast, no retry)")
-
-# Scenario 3: Transient error (would happen in handler)
-print("\n🔄 Transient error example:")
-print("   If handler raises TransientError(\"upstream not ready\")")
-print("   kind='transient', attempts increases, will retry with backoff")
-
-# Scenario 4: Timeout
-print("\n⏱️  Timeout error example:")
-print("   If handler doesn't complete within timeout_s")
-print("   kind='timeout', attempts increases, may retry if idempotent=True")
+print(f"6. Idempotency dedup        -> handler ran {_charge_calls['n']}x for 2 concurrent "
+      f"calls sharing a key (expected: 1)")
 
 # %% [markdown]
 # ## Step 10 — Try It Yourself
@@ -386,9 +512,10 @@ test_texts = [
     "It's okay, nothing special.",
 ]
 
-# Dispatch all sentiment analyses with concurrency limit
+# Dispatch all sentiment analyses with concurrency limit. Each task is a zero-arg
+# factory (not an already-created coroutine) — see the dispatch() docstring in Step 6.
 task_dispatcher = ConcurrentDispatcher(max_attempts=2, timeout_s=10.0, concurrency=2)
-tasks = [sentiment_handler(t) for t in test_texts]
+tasks = [(lambda t=t: sentiment_handler(t)) for t in test_texts]
 sentiment_results = await task_dispatcher.dispatch_many(tasks)
 
 print("Sentiment Analysis Results:")
