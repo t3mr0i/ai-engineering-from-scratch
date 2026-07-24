@@ -2214,11 +2214,12 @@
     // raw var(...) references, so these must be literal resolved values;
     // fontFamily is the one field mermaid just forwards into inline SVG
     // styles unparsed, so 'var(--font-text)' works there directly.
+    function cssVar(name, fallback) {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    }
+    window.cssVar = cssVar;
     function mermaidConfig() {
-      function cssVar(name, fallback) {
-        var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        return v || fallback;
-      }
       return {
         startOnLoad: false,
         theme: 'base',
@@ -4293,11 +4294,24 @@
 
       function mermaidPreprocess(def) {
         var dark = mermaidTheme() === 'dark';
-        return def.replace(/fill\s*:\s*(#[0-9a-fA-F]{6})/g, function (m, hex) {
+        def = def.replace(/fill\s*:\s*(#[0-9a-fA-F]{6})/g, function (m, hex) {
           var hsl = hexToHsl(hex.toLowerCase());
           if (dark && hsl[2] > 0.65) return 'fill:' + hslToHex(hsl[0], hsl[1], 0.26);
           if (!dark && hsl[2] < 0.30) return 'fill:' + hslToHex(hsl[0], Math.min(hsl[1], 0.5), 0.86);
           return m;
+        });
+        // A lesson's `color:` is picked for legibility against its ORIGINAL
+        // fill (e.g. white text on a hardcoded dark navy box). Once the fill
+        // above gets flipped light for this theme, that original color goes
+        // stale -- white-on-white -- so recompute it from the theme's own
+        // ink/surface tokens against the fill's FINAL (post-flip) lightness,
+        // same brand palette as the rest of the app instead of the author's
+        // one-off hex.
+        var inkHex = cssVar('--ink', '#05164d');
+        var surfaceHex = cssVar('--bg-surface', '#ffffff');
+        return def.replace(/(style\s+\S+\s+[^\n]*?fill\s*:\s*(#[0-9a-fA-F]{6})[^\n]*?)color\s*:\s*#[0-9a-fA-F]{3,6}/g, function (m, before, fillHex) {
+          var hsl = hexToHsl(fillHex.toLowerCase());
+          return before + 'color:' + (hsl[2] > 0.55 ? inkHex : surfaceHex);
         });
       }
 
