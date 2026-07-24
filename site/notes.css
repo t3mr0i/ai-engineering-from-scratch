@@ -94,6 +94,54 @@ p.notes-glossary-hint {
   color: var(--ink-soft);
 }
 
+.notes-section-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--blueprint);
+}
+
+.notes-snippets {
+  margin-bottom: 40px;
+}
+
+.notes-snippet {
+  border: 1px solid var(--border, #e0e0e0);
+  border-left: 3px solid var(--blueprint);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.notes-snippet__text {
+  margin: 0 0 12px;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.notes-snippet__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.notes-snippet__source {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--blueprint);
+}
+
+.notes-snippet__date {
+  color: var(--ink-soft);
+}
+
+.notes-snippet__remove {
+  margin-left: auto;
+}
+
 @media print {
   .nav-edge,
   .notes-actions,
@@ -102,7 +150,8 @@ p.notes-glossary-hint {
     display: none !important;
   }
 
-  .notes-lesson {
+  .notes-lesson,
+  .notes-snippet {
     break-inside: avoid;
   }
 }

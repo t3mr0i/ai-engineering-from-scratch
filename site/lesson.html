@@ -879,6 +879,28 @@
       border-color: var(--blueprint);
     }
 
+    .snippet-save-btn {
+      position: absolute;
+      z-index: 1000;
+      background: var(--blueprint);
+      color: var(--bg);
+      border: 1px solid var(--blueprint);
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(5, 22, 77, 0.18);
+      white-space: nowrap;
+    }
+
+    .snippet-save-btn.is-saved {
+      background: var(--ink-soft);
+      border-color: var(--ink-soft);
+      cursor: default;
+    }
+
     .learning-objectives {
       background: transparent;
       border: 1px solid var(--blueprint);
@@ -2170,7 +2192,7 @@
   <script src="i18n.js"></script>
   <script src="lang.js"></script>
   <script src="data.js?v=20260525a"></script>
-  <script src="progress.js?v=20260525a"></script>
+  <script src="progress.js?v=20260724a"></script>
   <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js?v=20260610a"></script>
   <script src="lrn/curriculum-map.js?v=20260610a"></script>
@@ -2883,6 +2905,7 @@
         initCodeCopy();
         initGlossTooltips();
         initKeyTermsSave();
+        initSnippetSave();
         renderMermaidBlocks();
         if (window.mountLessonFigures) window.mountLessonFigures(el);
         renderAIPanels();
@@ -3828,30 +3851,6 @@
           btn.classList.toggle('is-saved', isSaved);
         }
 
-        // Right-click context menu — save entire page as Bookmarklet
-        btn.addEventListener('contextmenu', function (e) {
-          e.preventDefault();
-          var menu = document.createElement('div');
-          menu.style.cssText = 'position:fixed; background:#fff; border:1px solid #ccc; box-shadow:0 4px 12px rgba(0,0,0,0.2); padding:4px; z-index:9999; font-family:var(--font-body); font-size:0.95rem;';
-          menu.innerHTML = `
-            <a href="javascript:(function(){var p=location.href; localStorage.setItem('aifs_saved_page_'+Date.now(), JSON.stringify({title:document.title, url:p, html:document.documentElement.outerHTML, timestamp:Date.now()})); alert('Page saved to Merkzettel! Bookmarklet ready.'); window.open('notes.html','_blank');})()" style="display:block;padding:6px 12px;text-decoration:none;color:#000;">Save entire page as Bookmarklet</a>
-            <div onclick="this.parentElement.remove()" style="padding:6px 12px; cursor:pointer; color:#666;">Cancel</div>
-          `;
-          document.body.appendChild(menu);
-
-          var rect = btn.getBoundingClientRect();
-          menu.style.top = (rect.bottom + window.scrollY + 5) + 'px';
-          menu.style.left = (rect.left + window.scrollX) + 'px';
-
-          // Close menu on outside click
-          setTimeout(function () {
-            document.addEventListener('click', function handler() {
-              if (menu.parentNode) menu.parentNode.remove();
-              document.removeEventListener('click', handler);
-            }, { once: true });
-          }, 10);
-        });
-
         btn.addEventListener('click', function () {
           if (btn.classList.contains('is-saved')) {
             window.AIFSProgress.removeKeyTerms(lessonPath);
@@ -3869,8 +3868,66 @@
         var el = document.getElementById('navNotesCount');
         if (!el || !window.AIFSProgress) return;
         var n = window.AIFSProgress.getAllSavedKeyTerms().length;
+        if (window.AIFSProgress.getAllSnippets) n += window.AIFSProgress.getAllSnippets().length;
         if (n > 0) { el.textContent = String(n); el.setAttribute('data-show', 'true'); }
         else { el.setAttribute('data-show', 'false'); }
+      }
+
+      // Highlight any prose in the lesson body → a small floating "+ Merkzettel"
+      // button appears near the selection → click saves the selected text as a
+      // snippet tied to this lesson (shown later on notes.html).
+      function initSnippetSave() {
+        if (!lessonPath || !window.AIFSProgress || !window.AIFSProgress.saveSnippet) return;
+        var article = document.querySelector('.lesson-article');
+        if (!article) return;
+        var popup = null;
+
+        function dismiss() {
+          if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+          popup = null;
+        }
+
+        article.addEventListener('mouseup', function () {
+          // Let the selection settle before reading it.
+          setTimeout(function () {
+            var sel = window.getSelection();
+            if (!sel || sel.isCollapsed || !sel.rangeCount) { dismiss(); return; }
+            var text = sel.toString().trim();
+            if (!text) { dismiss(); return; }
+            var range = sel.getRangeAt(sel.rangeCount - 1);
+            // Only offer to save selections that live inside the article body.
+            if (!article.contains(range.commonAncestorContainer)) { dismiss(); return; }
+            var rect = range.getBoundingClientRect();
+            if (!rect || (!rect.width && !rect.height)) { dismiss(); return; }
+
+            dismiss();
+            popup = document.createElement('button');
+            popup.type = 'button';
+            popup.className = 'snippet-save-btn';
+            popup.textContent = '+ Merkzettel';
+            document.body.appendChild(popup);
+            var top = rect.bottom + window.scrollY + 6;
+            var left = rect.left + window.scrollX + (rect.width / 2) - (popup.offsetWidth / 2);
+            left = Math.max(8 + window.scrollX, left);
+            popup.style.top = top + 'px';
+            popup.style.left = left + 'px';
+
+            popup.addEventListener('mousedown', function (e) { e.preventDefault(); });
+            popup.addEventListener('click', function () {
+              window.AIFSProgress.saveSnippet(lessonPath, text);
+              popup.textContent = 'Gespeichert ✓';
+              popup.classList.add('is-saved');
+              updateNotesNavCount();
+              setTimeout(dismiss, 1000);
+            });
+          }, 0);
+        });
+
+        // Any new selection, scroll, or outside click clears the popup.
+        document.addEventListener('mousedown', function (e) {
+          if (popup && e.target !== popup) dismiss();
+        });
+        window.addEventListener('scroll', dismiss, true);
       }
 
       // Once the popover was actually opened (hover dwell / focus / tap), the

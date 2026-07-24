@@ -27,7 +27,7 @@
   var listeners = [];
 
   function emptyState() {
-    return { lessons: {}, streak: emptyStreak(), updatedAt: 0 };
+    return { lessons: {}, snippets: [], streak: emptyStreak(), updatedAt: 0 };
   }
 
   // ── Streak tracking ───────────────────────────────────────────────────
@@ -260,6 +260,42 @@
     return out;
   }
 
+  // Free-text Merkzettel snippets: the learner highlights any passage in a
+  // lesson and saves it. Cross-lesson and chronological, so they live as a
+  // flat top-level list rather than nested under each lesson.
+  function saveSnippet(path, text) {
+    if (!path) return;
+    text = String(text == null ? '' : text).trim();
+    if (!text) return;
+    var state = read();
+    if (!Array.isArray(state.snippets)) state.snippets = [];
+    state.snippets.push({
+      id: 'snip_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      path: path,
+      text: text,
+      savedAt: Date.now()
+    });
+    touchActivity(state);
+    write(state);
+  }
+
+  function removeSnippet(id) {
+    if (!id) return;
+    var state = read();
+    if (!Array.isArray(state.snippets)) return;
+    var before = state.snippets.length;
+    state.snippets = state.snippets.filter(function (s) { return s.id !== id; });
+    if (state.snippets.length !== before) write(state);
+  }
+
+  // All saved snippets, newest first — feeds notes.html.
+  function getAllSnippets() {
+    var state = read();
+    var out = Array.isArray(state.snippets) ? state.snippets.slice() : [];
+    out.sort(function (a, b) { return b.savedAt - a.savedAt; });
+    return out;
+  }
+
   function getLessonProgress(path) {
     if (!path) return null;
     var state = read();
@@ -326,6 +362,17 @@
     }
   });
 
+  // Best-effort: ask the browser not to auto-evict this origin's storage
+  // under disk pressure. Guarded to run once; silently ignored where the API
+  // is absent or the browser declines. Does NOT protect against the user (or
+  // browser) explicitly clearing site data — nothing web-side can. The real
+  // safety net is the Markdown export on notes.html.
+  try {
+    if (navigator.storage && typeof navigator.storage.persist === 'function') {
+      navigator.storage.persist().catch(function () {});
+    }
+  } catch (e) { /* no-op */ }
+
   window.AIFSProgress = {
     getState: function () { return read(); },
     recordVisit: recordVisit,
@@ -336,6 +383,9 @@
     removeKeyTerms: removeKeyTerms,
     getKeyTerms: getKeyTerms,
     getAllSavedKeyTerms: getAllSavedKeyTerms,
+    saveSnippet: saveSnippet,
+    removeSnippet: removeSnippet,
+    getAllSnippets: getAllSnippets,
     getLessonProgress: getLessonProgress,
     isLessonComplete: isLessonComplete,
     recordReadProgress: recordReadProgress,

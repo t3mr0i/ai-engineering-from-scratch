@@ -38,17 +38,42 @@
     if (!list || !window.AIFSProgress) return;
 
     var saved = window.AIFSProgress.getAllSavedKeyTerms();
-    if (!saved.length) {
+    var snippets = window.AIFSProgress.getAllSnippets
+      ? window.AIFSProgress.getAllSnippets() : [];
+
+    if (!saved.length && !snippets.length) {
       actions.hidden = true;
-      list.innerHTML = '<div class="notes-empty">Noch keine Begriffe gespeichert. '
-        + 'Öffne eine Lektion, scrolle zu "Key Terms" am Ende und klicke auf '
-        + '<strong>"Save to My Merkzettel"</strong>.</div>';
+      list.innerHTML = '<div class="notes-empty">Noch nichts gespeichert. '
+        + 'Markiere in einer Lektion eine Textstelle und klicke auf '
+        + '<strong>"+ Merkzettel"</strong>, oder speichere unten die '
+        + '<strong>"Key Terms"</strong> einer Lektion.</div>';
       return;
     }
 
     actions.hidden = false;
     var index = lessonIndex();
     var html = "";
+
+    // Notizen: free-text snippets, chronological across all lessons. Only
+    // shown when at least one snippet exists (kept separate from Key Terms).
+    if (snippets.length) {
+      html += '<section class="notes-snippets">';
+      html += '<h2 class="notes-section-title">Notizen</h2>';
+      snippets.forEach(function (s) {
+        var meta = index[s.path] || { title: s.path, phase: "" };
+        html += '<div class="notes-snippet" data-id="' + escapeAttr(s.id) + '">';
+        html += '<blockquote class="notes-snippet__text">' + escapeHtml(s.text) + '</blockquote>';
+        html += '<div class="notes-snippet__meta">';
+        html += '<a class="notes-snippet__source" href="lesson.html?path=' + encodeURIComponent(s.path) + '">'
+          + escapeHtml(meta.title) + '</a>';
+        html += '<span class="notes-snippet__date">' + escapeHtml(shortDate(s.savedAt)) + '</span>';
+        html += '<button type="button" class="notes-lesson__remove notes-snippet__remove" data-id="' + escapeAttr(s.id) + '">Entfernen</button>';
+        html += '</div></div>';
+      });
+      html += '</section>';
+    }
+
+    if (saved.length) html += '<h2 class="notes-section-title">Key Terms</h2>';
     saved.forEach(function (entry) {
       var meta = index[entry.path] || { title: entry.path, phase: "" };
       html += '<div class="notes-lesson" data-path="' + escapeAttr(entry.path) + '">';
@@ -68,19 +93,36 @@
     });
     list.innerHTML = html;
 
-    list.querySelectorAll(".notes-lesson__remove").forEach(function (btn) {
+    list.querySelectorAll(".notes-lesson__remove[data-path]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         window.AIFSProgress.removeKeyTerms(btn.getAttribute("data-path"));
         render();
         updateNotesNavCount();
       });
     });
+
+    list.querySelectorAll(".notes-snippet__remove").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        window.AIFSProgress.removeSnippet(btn.getAttribute("data-id"));
+        render();
+        updateNotesNavCount();
+      });
+    });
+  }
+
+  function shortDate(ts) {
+    if (!ts) return "";
+    try {
+      return new Date(ts).toLocaleDateString("de-DE",
+        { day: "2-digit", month: "short", year: "numeric" });
+    } catch (e) { return ""; }
   }
 
   function updateNotesNavCount() {
     var el = document.getElementById("navNotesCount");
     if (!el || !window.AIFSProgress) return;
     var n = window.AIFSProgress.getAllSavedKeyTerms().length;
+    if (window.AIFSProgress.getAllSnippets) n += window.AIFSProgress.getAllSnippets().length;
     if (n > 0) { el.textContent = String(n); el.setAttribute("data-show", "true"); }
     else { el.setAttribute("data-show", "false"); }
   }
@@ -88,7 +130,9 @@
   function exportMarkdown() {
     if (!window.AIFSProgress) return;
     var saved = window.AIFSProgress.getAllSavedKeyTerms();
-    if (!saved.length) return;
+    var snippets = window.AIFSProgress.getAllSnippets
+      ? window.AIFSProgress.getAllSnippets() : [];
+    if (!saved.length && !snippets.length) return;
     var index = lessonIndex();
     var md = "# Meine Merkzettel\n\n";
     saved.forEach(function (entry) {
@@ -101,6 +145,16 @@
       });
       md += "\n";
     });
+
+    if (snippets.length) {
+      md += "## Notizen\n\n";
+      snippets.forEach(function (s) {
+        var meta = index[s.path] || { title: s.path, phase: "" };
+        md += "> " + String(s.text).replace(/\n+/g, " ").trim() + "\n>\n";
+        md += "> — [" + meta.title + "](lesson.html?path=" + encodeURIComponent(s.path) + ")"
+          + " · " + shortDate(s.savedAt) + "\n\n";
+      });
+    }
 
     var blob = new Blob([md], { type: "text/markdown" });
     var url = URL.createObjectURL(blob);
