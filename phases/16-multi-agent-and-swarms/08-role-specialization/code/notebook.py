@@ -153,6 +153,16 @@ print(f"  tests: {spec.tests}")
 # The executor reads the spec and generates Python code that matches the signature and passes the tests. We'll show both a correct and buggy executor to demo the point.
 
 # %%
+def _signature_tail(signature: str) -> str:
+    """Extract the "(...) -> ret" tail of a signature structurally (from the
+    first "(" onward), rather than splitting on task_name — the planner LLM
+    generates task_name and signature independently, so the name is not
+    guaranteed to appear verbatim inside the signature string."""
+    sig_tail = signature[signature.find("("):].strip()
+    if sig_tail.endswith(":"):
+        sig_tail = sig_tail[:-1]
+    return sig_tail
+
 async def executor_llm(spec: Spec) -> str:
     """Executor uses LLM to generate Python code matching the spec."""
     prompt = f"""You are a Python code generator. Write ONLY the function body, matching this spec:
@@ -166,11 +176,12 @@ Example output:
     return a + b
 
 Now generate code for this spec:"""
-    
+
     r = await lrn_llm.call([{"role": "user", "content": prompt}], max_tokens=150)
     code_body = lrn_llm.text(r).strip()
-    # Wrap in function definition
-    code = f"def {spec.task_name}{spec.signature.split(spec.task_name)[1].split('->')[0]}:\n    {code_body.replace(chr(10), chr(10)+'    ')}"
+    # Wrap in function definition using the shared signature-tail helper.
+    sig_tail = _signature_tail(spec.signature)
+    code = f"def {spec.task_name}{sig_tail}:\n    {code_body.replace(chr(10), chr(10)+'    ')}"
     return code
 
 # Demo: executor generates code for our spec
@@ -311,7 +322,7 @@ spec, code, cr, vr = await run_pipeline(
 
 # %%
 # Manually inject buggy code (multiply instead of add)
-buggy_code = f"def {spec.task_name}{spec.signature.split(spec.task_name)[1].split('->')[0]}:\n    return a * b"
+buggy_code = f"def {spec.task_name}{_signature_tail(spec.signature)}:\n    return a * b"
 
 print(f"Testing buggy code:")
 print(buggy_code)
@@ -342,5 +353,10 @@ user_wish = "Write a function that returns the maximum of two numbers."
 print(f"Your user wish: {user_wish}")
 print()
 
-# Uncomment the line below to run the pipeline
-# spec2, code2, cr2, vr2 = await run_pipeline(user_wish, "Custom Wish")
+spec2, code2, cr2, vr2 = await run_pipeline(user_wish, "Custom Wish")
+
+# Self-check: confirm the pipeline actually ran all four roles (planner → executor → critic → verifier)
+if code2 and cr2 is not None and vr2 is not None:
+    print("\n✅ Self-check: pipeline ran all four roles successfully.")
+else:
+    print("\n❌ Self-check failed: pipeline did not produce output for all roles.")

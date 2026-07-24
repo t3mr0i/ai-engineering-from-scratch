@@ -140,10 +140,10 @@ def cos(u, v):
     nv = math.sqrt(sum(x * x for x in v)) + 1e-9
     return sum(a * b for a, b in zip(u, v)) / (nu * nv)
 
-def weat_score(identity_a, identity_b, attr_x, attr_y):
+def weat_score(identity_a, identity_b, attr_x, attr_y, embeddings=EMB):
     def s(w):
-        mx = sum(cos(EMB[w], EMB[a]) for a in attr_x) / len(attr_x)
-        my = sum(cos(EMB[w], EMB[a]) for a in attr_y) / len(attr_y)
+        mx = sum(cos(embeddings[w], embeddings[a]) for a in attr_x) / len(attr_x)
+        my = sum(cos(embeddings[w], embeddings[a]) for a in attr_y) / len(attr_y)
         return mx - my
     mean_a = sum(s(w) for w in identity_a) / len(identity_a)
     mean_b = sum(s(w) for w in identity_b) / len(identity_b)
@@ -199,7 +199,7 @@ def debias(emb):
     return new
 
 EMB_debiased = debias(EMB)
-post = weat_score(A, B, X, Y)
+post = weat_score(A, B, X, Y, embeddings=EMB_debiased)
 print(f"Post-debias WEAT effect size: {post:+.4f}")
 print(f"Reduction: {pre - post:.4f} ({100 * (pre - post) / pre:.1f}%)")
 

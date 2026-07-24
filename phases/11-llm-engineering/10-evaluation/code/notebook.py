@@ -88,6 +88,7 @@ print(f"✅ LLM erreichbar: {r}")
 # %%
 import json
 import math
+import random
 import statistics
 from dataclasses import dataclass, field
 from typing import Optional
@@ -252,7 +253,7 @@ for tc in IT_GOLDSET[:2]:  # Run on first 2 cases
 # %% [markdown]
 # ## Step 7 — LLM-as-Judge: Score Both Versions
 #
-# Use the LLM as a judge to score both versions against the rubrics. The judge reads the question, reference answer, and the two responses, then scores each on relevance, correctness, helpfulness, and safety.
+# Use the LLM as a judge to score both baseline responses (one per goldset ticket) against the rubrics, across all four criteria. That's 2 tickets × 4 criteria = 8 scores for this version — a more honest sample to bootstrap over than judging a single ticket.
 
 # %%
 async def judge_response(question, reference, candidate_response, criterion):
@@ -286,44 +287,48 @@ REASONING: [brief explanation]"""
         score = 3  # Default to middle score if parsing fails
     return {"score": score, "reasoning": result}
 
-# Score the first baseline response on all criteria
-baseline_scores = {}
-for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
-    result = await judge_response(
-        baseline_responses[0]["question"],
-        baseline_responses[0]["reference"],
-        baseline_responses[0]["response"],
-        criterion
-    )
-    baseline_scores[criterion] = result["score"]
-    print(f"Baseline - {criterion}: {result['score']}/5")
+# Score both baseline responses (2 goldset tickets) on all criteria
+baseline_criterion_scores = {criterion: [] for criterion in ["relevance", "correctness", "helpfulness", "safety"]}
+for resp in baseline_responses:
+    for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
+        result = await judge_response(
+            resp["question"],
+            resp["reference"],
+            resp["response"],
+            criterion
+        )
+        baseline_criterion_scores[criterion].append(result["score"])
+        print(f"Baseline [{resp['ticket_id']}] - {criterion}: {result['score']}/5")
 
-print(f"\nBaseline average: {sum(baseline_scores.values()) / len(baseline_scores):.2f}/5")
+baseline_scores_list = [s for scores in baseline_criterion_scores.values() for s in scores]
+print(f"\nBaseline average across {len(baseline_scores_list)} scores (2 tickets x 4 criteria): {sum(baseline_scores_list) / len(baseline_scores_list):.2f}/5")
 
 # %% [markdown]
 # ## Step 8 — Judge the Expert Version
 #
-# Score the expert version on the same response using the same judge rubrics.
+# Score the expert version on both goldset tickets using the same judge rubrics, producing the equivalent 8-score sample for comparison.
 
 # %%
-# Score the first expert response on all criteria
-expert_scores = {}
-for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
-    result = await judge_response(
-        expert_responses[0]["question"],
-        expert_responses[0]["reference"],
-        expert_responses[0]["response"],
-        criterion
-    )
-    expert_scores[criterion] = result["score"]
-    print(f"Expert - {criterion}: {result['score']}/5")
+# Score both expert responses (2 goldset tickets) on all criteria
+expert_criterion_scores = {criterion: [] for criterion in ["relevance", "correctness", "helpfulness", "safety"]}
+for resp in expert_responses:
+    for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
+        result = await judge_response(
+            resp["question"],
+            resp["reference"],
+            resp["response"],
+            criterion
+        )
+        expert_criterion_scores[criterion].append(result["score"])
+        print(f"Expert [{resp['ticket_id']}] - {criterion}: {result['score']}/5")
 
-print(f"\nExpert average: {sum(expert_scores.values()) / len(expert_scores):.2f}/5")
+expert_scores_list = [s for scores in expert_criterion_scores.values() for s in scores]
+print(f"\nExpert average across {len(expert_scores_list)} scores (2 tickets x 4 criteria): {sum(expert_scores_list) / len(expert_scores_list):.2f}/5")
 
 # %% [markdown]
 # ## Step 9 — Compute Confidence Intervals
 #
-# For a fair comparison with statistical rigor, we compute 95% confidence intervals on the scores using Wilson's score interval (works well even with small sample sizes).
+# For a fair comparison with statistical rigor, we compute 95% confidence intervals over the 8 scores per version (2 goldset tickets × 4 criteria) collected in Steps 7-8: Wilson's score interval for the pass rate, and bootstrap resampling for the mean score (both work well even with small sample sizes).
 
 # %%
 def wilson_confidence_interval(successes, total, z=1.96):
@@ -344,9 +349,9 @@ def bootstrap_mean_ci(scores, n_bootstrap=500, confidence=0.95):
         mean = scores[0] if scores else 0
         return (mean, mean, mean)
     means = []
-    import random
+    rng = random.Random(42)  # seeded for a reproducible CI (illustrating the technique, not measuring fresh randomness)
     for _ in range(n_bootstrap):
-        sample = [scores[i % len(scores)] for i in range(len(scores))]
+        sample = rng.choices(scores, k=len(scores))
         means.append(sum(sample) / len(sample))
     means.sort()
     alpha = (1 - confidence) / 2
@@ -355,10 +360,7 @@ def bootstrap_mean_ci(scores, n_bootstrap=500, confidence=0.95):
     mean = sum(scores) / len(scores)
     return (round(means[lower_idx], 3), round(mean, 3), round(means[upper_idx], 3))
 
-# Compute CIs
-baseline_scores_list = list(baseline_scores.values())
-expert_scores_list = list(expert_scores.values())
-
+# Compute CIs over the 8 scores per version (2 tickets x 4 criteria) from Steps 7-8
 baseline_ci = bootstrap_mean_ci(baseline_scores_list)
 expert_ci = bootstrap_mean_ci(expert_scores_list)
 
@@ -390,19 +392,19 @@ if abs(diff) > 0.3:
 else:
     status = "STABLE ➜"
 
-print(f"\nVersion comparison (first test case):")
+print(f"\nVersion comparison (averaged across 2 tickets, bootstrapped over 8 scores per version):")
 print(f"  Baseline: {baseline_ci[1]:.3f}/5.0 (CI: [{baseline_ci[0]:.3f}, {baseline_ci[2]:.3f}])")
 print(f"  Expert:   {expert_ci[1]:.3f}/5.0 (CI: [{expert_ci[0]:.3f}, {expert_ci[2]:.3f}])")
 print(f"  Diff:     {diff:+.3f} {status}")
 
-print(f"\nDetailed scores by criterion:")
+print(f"\nDetailed scores by criterion (averaged across 2 tickets):")
 print(f"  {'Criterion':<15} {'Baseline':>12} {'Expert':>12} {'Diff':>8}")
 print(f"  {'-'*55}")
 for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
-    baseline_val = baseline_scores[criterion]
-    expert_val = expert_scores[criterion]
+    baseline_val = sum(baseline_criterion_scores[criterion]) / len(baseline_criterion_scores[criterion])
+    expert_val = sum(expert_criterion_scores[criterion]) / len(expert_criterion_scores[criterion])
     diff_val = expert_val - baseline_val
-    print(f"  {criterion:<15} {baseline_val:>12} {expert_val:>12} {diff_val:>+8}")
+    print(f"  {criterion:<15} {baseline_val:>12.2f} {expert_val:>12.2f} {diff_val:>+8.2f}")
 
 print(f"\n" + "="*70)
 print(f"  Deployment decision: {'SHIP (Expert version)' if diff > 0.1 else 'KEEP BASELINE'} ")

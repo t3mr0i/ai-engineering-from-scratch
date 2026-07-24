@@ -325,13 +325,27 @@ print(response_text)
 try:
     corrected_args = json.loads(response_text)
     print(f"\nCorrected args: {corrected_args}")
-    
+
     # Validate the corrected args
     result = registry.validate("db.get_user", corrected_args)
     if isinstance(result, Ok):
         print("✅ Corrected arguments are valid!")
     else:
         print(f"❌ Still has errors: {[e.to_dict() for e in result]}")
+
+    # Self-check: don't just trust that the validator returned Ok() —
+    # confirm the self-corrected args actually match the known-good shape
+    # for db.get_user (id is an int, fields only contains id/name/email).
+    try:
+        assert isinstance(result, Ok), "validator still reports errors on the corrected args"
+        assert isinstance(corrected_args.get("id"), int) and not isinstance(corrected_args.get("id"), bool), \
+            "id must be corrected to an integer"
+        allowed_fields = {"id", "name", "email"}
+        assert all(f in allowed_fields for f in corrected_args.get("fields", [])), \
+            "fields must only contain the allowed enum values (id, name, email)"
+        print("✅ PASS: self-corrected args match the expected shape")
+    except AssertionError as e:
+        print(f"❌ WRONG: {e}")
 except json.JSONDecodeError:
     print("Could not parse JSON from LLM response")
 
@@ -365,19 +379,19 @@ print(f"✅ Override successful. Registry now has: {registry.names()}")
 # %% [markdown]
 # ## Try it yourself
 #
-# Edit the tool schema and arguments below to experiment with validation. Try:
+# The `user.signup` schema below has a bug — fix it before running the rest
+# of the cell successfully. Once fixed, feel free to keep experimenting:
 # - Adding a new required field
 # - Changing minLength or maxLength on a string
 # - Adding a pattern (regex) constraint
 # - Creating your own tool and registering it
-#
-# Then ask the LLM to validate your schema against some test arguments.
 
 # %%
-# TODO: Design your own tool schema. Example: a search function with query string and result limit.
-# Then register it and test validation with the LLM.
-
-# For now, let's create a simple email validation tool as an example:
+# TODO: Fix the bug in this schema. Every test case below passes `subscribe`
+# as a boolean (True), but the schema types it as "string" — so Case 1 (which
+# should be valid) will fail validation with a type error. Change the type
+# to "boolean" so Case 1 passes while Cases 2 and 3 still fail for their
+# intended reasons (bad email pattern, invalid enum tag).
 my_schema = {
     "type": "object",
     "required": ["email", "subscribe"],
@@ -388,7 +402,7 @@ my_schema = {
             "minLength": 5,
             "maxLength": 100
         },
-        "subscribe": {"type": "boolean"},
+        "subscribe": {"type": "string"},  # BUG: should be "boolean"
         "tags": {
             "type": "array",
             "items": {"type": "string", "enum": ["news", "updates", "offers"]}

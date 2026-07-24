@@ -229,7 +229,7 @@ i[class^="ph "] {
 /* ── Resume CTA button — Lufthansa colors, high contrast on blue hero ───────── */
 .resume-button {
   margin-top: var(--space-6);
-  background: var(--lhg-blue-500);
+  background: var(--lhg-core-blue);
   color: var(--lhg-white);
   border: 2px solid var(--lhg-white);
   border-radius: 9999px;

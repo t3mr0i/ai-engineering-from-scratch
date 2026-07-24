@@ -778,3 +778,19 @@ async def try_it_yourself():
     return loop, result
 
 my_loop, my_result = await try_it_yourself()
+
+# Self-check: resume past any pending tool calls, then verify a well-formed
+# goal actually reaches the harness's real success signal — DONE with
+# reason "goal_met" — not just that transitions were printed above.
+while isinstance(my_result, PullRequest) and not my_result.reason.startswith("budget_exceeded"):
+    my_result = await my_loop.resume({"result": "mock tool result"})
+
+if isinstance(my_result, SessionResult) and my_result.state == State.DONE and my_result.reason == "goal_met":
+    print(f"\n✅ PASS — reached {my_result.state.value}/{my_result.reason!r}")
+else:
+    outcome = my_result.reason if hasattr(my_result, "reason") else type(my_result).__name__
+    print(f"\n❌ WRONG — expected SessionResult(state=done, reason='goal_met'), got {outcome!r}")
+
+assert isinstance(my_result, SessionResult) and my_result.reason == "goal_met", (
+    f"expected DONE/goal_met, got {my_result!r}"
+)

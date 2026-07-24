@@ -145,10 +145,10 @@ print(f"Test: {test_attempt} → sum={sum(test_attempt)}, success={success}, del
 # The Actor (LLM) generates three integers. On the first trial it gets a generic prompt; on later trials, it sees reflections from prior failures.
 
 # %%
-async def actor(memory: EpisodicMemory, trial: int) -> list[int]:
-    """LLM generates three integers in [1..9] that should sum to TARGET."""
+async def actor(memory: EpisodicMemory, trial: int, target: int = TARGET) -> list[int]:
+    """LLM generates three integers in [1..9] that should sum to target."""
     reflection_context = memory.as_prompt()
-    prompt = f"""You are solving a puzzle: pick three integers from 1 to 9 (inclusive) that sum to {TARGET}.
+    prompt = f"""You are solving a puzzle: pick three integers from 1 to 9 (inclusive) that sum to {target}.
 Return ONLY a valid JSON array of exactly 3 integers, e.g. [3, 5, 7]
 
 Prior trial reflections (if any):
@@ -182,10 +182,10 @@ print(f"Trial 1 attempt: {attempt}, sum={sum(attempt)}")
 # If the trial fails, the Self-Reflector (LLM) writes a one-line reflection explaining why.
 
 # %%
-async def self_reflector(attempt: list[int], delta: int, trial: int) -> str:
+async def self_reflector(attempt: list[int], delta: int, trial: int, target: int = TARGET) -> str:
     """LLM writes a one-line reflection on why the attempt failed."""
     prompt = f"""You just tried {attempt}, which sums to {sum(attempt)}.
-Target is {TARGET}. Delta (actual - target) = {delta}.
+Target is {target}. Delta (actual - target) = {delta}.
 
 Write ONE SHORT LINE explaining what went wrong and how to fix it next time.
 Be specific: e.g. 'sum was too low by 3; need larger integers' or 'tried [8,9,9] which overshoots by 6; need smaller'.
@@ -217,16 +217,16 @@ class TrialResult:
     delta: int
     reflection: str
 
-async def run_reflexion(max_trials: int) -> list[TrialResult]:
+async def run_reflexion(max_trials: int, target: int = TARGET) -> list[TrialResult]:
     """Run reflexion loop: actor → evaluator → reflector → memory → repeat."""
     global memory
     memory = EpisodicMemory()  # Fresh memory for this run
     trials: list[TrialResult] = []
-    
+
     for t in range(1, max_trials + 1):
         print(f"\n--- Trial {t} ---")
-        attempt = await actor(memory, trial=t)
-        success, delta = binary_evaluator(attempt, TARGET)
+        attempt = await actor(memory, trial=t, target=target)
+        success, delta = binary_evaluator(attempt, target)
         
         print(f"Attempt: {attempt}, sum={sum(attempt)}, delta={delta:+d}", end="")
         
@@ -237,7 +237,7 @@ async def run_reflexion(max_trials: int) -> list[TrialResult]:
             break
         else:
             print(" ❌")
-            reflection_text = await self_reflector(attempt, delta, t)
+            reflection_text = await self_reflector(attempt, delta, t, target=target)
             print(f"Reflection: {reflection_text}")
             memory.add(Reflection(trial=t, text=reflection_text))
             trials.append(TrialResult(t, attempt, success, delta, reflection_text))
@@ -280,14 +280,13 @@ print(f"\n💡 The LLM adapted based on reflections, improving each trial.")
 # 2. Or modify the actor prompt above to be more or less explicit
 # 3. Or add a heuristic evaluator (e.g., mark stuck if same attempt twice)
 
-# For now, re-run the loop with a different target
+# Re-run the loop with a different target
 TARGET_EXPERIMENT = 18  # Change this
 print(f"Running reflexion with TARGET = {TARGET_EXPERIMENT}")
-print("(Note: actor prompt still references TARGET={TARGET}, so this is a partial experiment)")
 
-# Uncomment to run with your custom target:
-# trials_exp = await run_reflexion(max_trials=4)
-# summarize(trials_exp, f"EXPERIMENT (TARGET={TARGET_EXPERIMENT})")
+trials_exp = await run_reflexion(max_trials=4, target=TARGET_EXPERIMENT)
+summarize(trials_exp, f"EXPERIMENT (TARGET={TARGET_EXPERIMENT})")
+print(f"\n=== Final: {'✅ Success' if trials_exp[-1].success else '❌ Failed'} in {len(trials_exp)} trials (target={TARGET_EXPERIMENT}) ===")
 
 print("\n✅ Notebook complete! You now understand:")
 print("  - Actor: LLM generates attempts")

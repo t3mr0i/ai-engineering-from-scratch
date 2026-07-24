@@ -476,10 +476,10 @@ print(f"6. Idempotency dedup        -> handler ran {_charge_calls['n']}x for 2 c
 # %% [markdown]
 # ## Step 10 — Try It Yourself
 #
-# Modify the code below to dispatch your own LLM calls. Examples:
-# - Change the system prompt to a different task (summarize, translate, etc.)
-# - Add more queries to dispatch in parallel
-# - Adjust the timeout and concurrency limits
+# The cell below dispatches a batch of sentiment-analysis calls (same scenario
+# as Step 9) through the `ConcurrentDispatcher` — but it has one deliberate bug.
+# Find and fix the `# TODO: fix this` marker so all three dispatches complete
+# with `DispatchOk` instead of raising an error.
 #
 # Remember:
 # - The dispatcher handles timeout, retry, and concurrency
@@ -487,25 +487,24 @@ print(f"6. Idempotency dedup        -> handler ran {_charge_calls['n']}x for 2 c
 # - The LLM is called via `await lrn_llm.call([{...}], system=..., max_tokens=...)`
 
 # %%
-# TODO: Try it yourself!
-# Modify this code to:
-# 1. Define a new handler that calls the LLM for a different task (e.g., "summarize", "translate")
-# 2. Create a few test inputs
-# 3. Dispatch them using the concurrent dispatcher
-# 4. Print the results
+# TODO: fix this - one of the keyword arguments below is misspelled, so every
+# call to lrn_llm.call() inside sentiment_handler raises TypeError("_lrn_call()
+# got an unexpected keyword argument 'syste'") instead of dispatching. Find the
+# typo and fix it so the sentiment dispatches below succeed.
 
-# Example: sentiment analysis
+# Sentiment analysis (same scenario as Step 9's classify_intent_handler, just a
+# different classification task)
 async def sentiment_handler(text: str):
     system = "Classify the sentiment as positive, negative, or neutral. Respond with one word."
     msg = f"Analyze sentiment: '{text}'"
     resp = await lrn_llm.call(
         [{"role": "user", "content": msg}],
-        system=system,
+        syste=system,  # TODO: fix this - misspelled kwarg, should be `system=system`
         max_tokens=10
     )
     return {"sentiment": lrn_llm.text(resp).strip(), "text": text}
 
-# Create test inputs
+# Test inputs
 test_texts = [
     "I love this product!",
     "This is terrible.",
@@ -524,3 +523,10 @@ for i, res in enumerate(sentiment_results):
         print(f"  {test_texts[i][:40]:40s} → {res.result['sentiment']} (attempts={res.attempts})")
     else:
         print(f"  {test_texts[i][:40]:40s} → ERROR ({res.kind})")
+
+# Self-check: once the typo is fixed, every dispatch should succeed (DispatchOk),
+# using the same isinstance(result, DispatchOk)/DispatchError pattern as Step 9.
+assert all(isinstance(res, DispatchOk) for res in sentiment_results), (
+    "Not all sentiment dispatches succeeded — did you fix the misspelled kwarg above?"
+)
+print("✅ Self-check passed: all sentiment dispatches succeeded")

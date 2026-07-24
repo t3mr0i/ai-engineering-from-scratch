@@ -258,10 +258,13 @@ async def run_agent(user_message, max_turns=5):
             obs_text = "\n".join(observations)
             messages.append({"role": "user", "content": f"Tool results:\n{obs_text}"})
 
-        # Check for stop condition
-        if "DONE" in assistant_text.upper():
+        # Check for stop condition (case-insensitive throughout: the model was only
+        # asked to "say DONE", so lowercase/mixed-case "done" must stop and extract
+        # the same way an exact-case match would)
+        done_match = re.search(r'done', assistant_text, re.IGNORECASE)
+        if done_match:
             print(f"\n✅ Agent finished. Final answer:")
-            print(assistant_text.split("DONE")[1] if "DONE" in assistant_text else assistant_text)
+            print(assistant_text[done_match.end():])
             return assistant_text
 
         print()
@@ -290,16 +293,26 @@ print(f"   4. Tool results come back (Observe)")
 print(f"   5. Loop until the LLM says DONE")
 
 # %% [markdown]
-# ## Try it yourself
+# ## Try it yourself — with a self-check
 #
-# Modify the user message below and re-run. The LLM will figure out what tools to call. Try:
-# - "What is $200 with 20% tax?"
-# - "Store the value 'pi' then retrieve it"
-# - "Calculate 50 * 3, then add 10%"
+# Same tax-calculator domain as Step 6, but this time we know the correct answer
+# up front: $80 plus 25% tax is `80 * 1.25 = 100.00`. Run the agent loop and check
+# the *extracted final answer* actually contains that number — don't just eyeball
+# the printout.
 
 # %%
-# TODO: Edit the message below and run this cell to try your own agent prompt
-my_message = "Calculate $75 plus 10% tax and store it as 'final_total'"
+check_message = "What is $80 plus 25% tax? Give me just the total."
+expected_total = 80 * 1.25  # 100.0
 
-result = await run_agent(my_message, max_turns=4)
-print(f"\nFinal result: {result}")
+check_result = await run_agent(check_message, max_turns=4)
+
+done_match = re.search(r'done', check_result, re.IGNORECASE)
+final_answer = check_result[done_match.end():] if done_match else check_result
+
+expected_variants = [f"{expected_total:.2f}", f"{expected_total:g}"]
+found = any(variant in final_answer for variant in expected_variants)
+
+print(f"\nExpected total: {expected_total:.2f}")
+print(f"Final answer:   {final_answer.strip()}")
+print("✅ PASS — correct total found in the agent's final answer" if found
+      else "❌ WRONG — expected total not found in the agent's final answer")

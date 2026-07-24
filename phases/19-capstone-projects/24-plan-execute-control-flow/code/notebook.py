@@ -338,14 +338,38 @@ for i, step in enumerate(result["history"], 1):
 # TODO: Try calling the loop with a different goal and observe how the LLM planner adapts.
 
 # %%
-# TODO: Experiment here
-# Uncomment and modify to test:
+# Exercise: run the plan-execute loop again on the lesson's own goal ("ship the
+# report") and self-check the result. The plan itself may vary run-to-run (it's
+# LLM-generated), but tool_executor (Step 4) is deterministic: transform(mode="v1")
+# always fails, transform(mode!="v1") always succeeds — that's what forces the
+# replanning path this lesson teaches. The self-check below verifies exactly that,
+# plus that the loop actually reaches a definite end state.
 
-# result2 = await plan_execute_loop(
-#     goal="process and validate the dataset",
-#     max_steps=15,
-#     max_replans=3
-# )
-# print(f"Status: {result2['status']}")
+result2 = await plan_execute_loop(
+    goal="ship the report",
+    max_steps=12,
+    max_replans=2
+)
 
-print("✅ Ready for experimentation. Uncomment the code above and modify as desired.")
+print(f"\n📊 Self-Check Result:")
+print(f"  Status: {result2['status']}")
+print(f"  Reason: {result2['reason']}")
+print(f"  History length: {len(result2['history'])}")
+
+transform_steps = [s for s in result2["history"] if s.tool_name == "transform"]
+v1_always_failed = all(s.error is not None for s in transform_steps if s.args.get("mode", "v1") == "v1")
+other_always_ok = all(
+    s.error is None and s.result is not None and s.result.get("ready") is True
+    for s in transform_steps if s.args.get("mode", "v1") != "v1"
+)
+reached_end_state = result2["status"] in ("completed", "failed") and result2["reason"] != "no_plan"
+
+if v1_always_failed and other_always_ok and reached_end_state:
+    print("✅ PASS: transform v1 failed / other modes succeeded as tool_executor guarantees, loop terminated cleanly")
+else:
+    print("❌ WRONG: tool_executor invariant violated or loop did not reach a clean end state")
+    print(f"   transform steps: {[(s.args, s.error, s.result) for s in transform_steps]}")
+
+assert v1_always_failed, "transform(mode='v1') must always fail per the simulated outage in tool_executor"
+assert other_always_ok, "transform(mode!='v1') must always succeed with ready=True per tool_executor"
+assert reached_end_state, f"plan_execute_loop did not reach a definite end state: {result2['status']}/{result2['reason']}"

@@ -85,6 +85,9 @@ MODEL_PRICING = {
     "claude-opus-4": {"input": 15.00, "output": 75.00, "cached_input": 1.50},
     "claude-sonnet-4": {"input": 3.00, "output": 15.00, "cached_input": 0.30},
     "claude-haiku-3.5": {"input": 0.80, "output": 4.00, "cached_input": 0.08},
+    # Illustrative only: gpt-5.4-mini is served via an internal gateway proxy
+    # and has no public list pricing. Rates approximate the gpt-4o-mini tier.
+    "gpt-5.4-mini": {"input": 0.15, "output": 0.60, "cached_input": 0.075},
 }
 
 def calculate_cost(model, input_tokens, output_tokens, cached_input_tokens=0):

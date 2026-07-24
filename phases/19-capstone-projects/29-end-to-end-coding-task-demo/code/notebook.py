@@ -238,26 +238,30 @@ print("✅ Agent state machine defined")
 # The agent's first step: read the project structure.
 
 # %%
-async def survey_phase(state: AgentState, sandbox: Sandbox) -> str:
+async def survey_phase(state: AgentState, sandbox: Sandbox, ledger: ObservationLedger, span: SpanBuilder) -> str:
     """SURVEY: Read the project structure."""
     tool = "read_file"
-    
+    span_ctx = span.start_span("SURVEY")
+
     # Check gate
     if not GateChain.evaluate(tool):
         state.add_observation(f"❌ Tool {tool} denied by gate")
+        span.end_span(span_ctx, status="DENIED")
         return None
-    
+
     # Execute in sandbox
     project_files = "\n".join(sandbox.files.keys())
     observation = f"Project structure:\n{project_files}"
     state.add_observation(observation)
     state.messages.append({"role": "assistant", "content": f"I read the project files: {project_files}"})
-    
+    ledger.log_call(tool, observation)
+
     print(f"[SURVEY] {observation}")
     state.transition("RUN_TESTS")
+    span.end_span(span_ctx)
     return observation
 
-await survey_phase(AgentState(), Sandbox())
+await survey_phase(AgentState(), Sandbox(), ObservationLedger(), SpanBuilder())
 print("✅ Survey phase works")
 
 # %% [markdown]
@@ -266,33 +270,40 @@ print("✅ Survey phase works")
 # The agent runs tests to see if the code is working.
 
 # %%
-async def run_tests_phase(state: AgentState, sandbox: Sandbox) -> bool:
+async def run_tests_phase(state: AgentState, sandbox: Sandbox, ledger: ObservationLedger, span: SpanBuilder) -> bool:
     """RUN_TESTS: Execute tests. Return True if passed, False otherwise."""
     tool = "run_tests"
-    
+    span_ctx = span.start_span("RUN_TESTS")
+
     if not GateChain.evaluate(tool):
         state.add_observation(f"❌ Tool {tool} denied by gate")
+        span.end_span(span_ctx, status="DENIED")
         return False
-    
+
     result = sandbox.run_tests()
     state.add_observation(f"Test result: {result}")
     state.messages.append({
         "role": "assistant",
         "content": f"Tests ran: {result['message'] if result.get('passed') else result.get('error')}"
     })
-    
+    ledger.log_call(tool, str(result))
+
     if result["passed"]:
         print(f"[RUN_TESTS] ✅ Tests PASSED")
+        span.end_span(span_ctx)
         return True
     else:
         print(f"[RUN_TESTS] ❌ Tests FAILED: {result['error']}")
         state.transition("INSPECT")
+        span.end_span(span_ctx, status="FAILED")
         return False
 
 # Simulate the test phase
 state = AgentState()
 sandbox = Sandbox()
-await run_tests_phase(state, sandbox)
+ledger = ObservationLedger()
+span = SpanBuilder()
+await run_tests_phase(state, sandbox, ledger, span)
 print(f"State transitioned to: {state.state}")
 
 # %% [markdown]
@@ -301,21 +312,26 @@ print(f"State transitioned to: {state.state}")
 # When tests fail, the agent reads the source and asks the LLM to identify and fix the bug.
 
 # %%
-async def inspect_and_fix_phase(state: AgentState, sandbox: Sandbox) -> str:
+async def inspect_and_fix_phase(state: AgentState, sandbox: Sandbox, ledger: ObservationLedger, span: SpanBuilder) -> str:
     """INSPECT: Read the failing source. Then FIX: Ask LLM to write a fix."""
-    
+
     # --- INSPECT ---
     tool = "read_file"
+    inspect_span = span.start_span("INSPECT")
     if not GateChain.evaluate(tool):
         state.add_observation(f"❌ Tool {tool} denied")
+        span.end_span(inspect_span, status="DENIED")
         return None
-    
+
     source_code = sandbox.read_file("src/words.py")
     state.add_observation(f"Source code read (length={len(source_code)})")
+    ledger.log_call(tool, source_code)
     print(f"[INSPECT] Read src/words.py ({len(source_code)} chars)")
     state.transition("FIX")
+    span.end_span(inspect_span)
 
     # --- FIX: Ask LLM ---
+    fix_span = span.start_span("FIX")
     state.messages.append({
         "role": "user",
         "content": f"""The test failed with: "Expected 'fox brown quick the', got 'the quick brown fox'".
@@ -340,7 +356,10 @@ Identify the bug and provide the fixed version (Python code only, no explanation
     print(f"[FIX] LLM provided fix ({len(fixed_code)} chars)")
     state.add_observation(f"LLM provided fix")
     state.messages.append({"role": "assistant", "content": fixed_code})
-    
+    tokens = (resp.get("usage") or {}).get("total_tokens", 0)
+    ledger.log_call("llm_call", fixed_code, tokens=tokens)
+    span.end_span(fix_span)
+
     return fixed_code
 
 print("✅ Inspect & Fix phase ready (uses real LLM)")
@@ -351,34 +370,43 @@ print("✅ Inspect & Fix phase ready (uses real LLM)")
 # Write the fixed code and verify the tests pass.
 
 # %%
-async def write_and_verify_phase(state: AgentState, sandbox: Sandbox, fixed_code: str) -> bool:
+async def write_and_verify_phase(state: AgentState, sandbox: Sandbox, fixed_code: str, ledger: ObservationLedger, span: SpanBuilder) -> bool:
     """Write the fixed code and verify tests pass."""
-    
+
     # --- WRITE ---
     tool = "write_file"
+    write_span = span.start_span("WRITE")
     if not GateChain.evaluate(tool):
         state.add_observation(f"❌ Tool {tool} denied")
+        span.end_span(write_span, status="DENIED")
         return False
-    
+
     result = sandbox.write_file("src/words.py", fixed_code)
     state.add_observation(result)
+    ledger.log_call(tool, result)
     print(f"[WRITE] {result}")
     state.transition("VERIFY")
-    
+    span.end_span(write_span)
+
     # --- VERIFY ---
     tool = "run_tests"
+    verify_span = span.start_span("VERIFY")
     if not GateChain.evaluate(tool):
         state.add_observation(f"❌ Tool {tool} denied")
+        span.end_span(verify_span, status="DENIED")
         return False
-    
+
     result = sandbox.run_tests()
     state.add_observation(f"Verify result: {result}")
-    
+    ledger.log_call(tool, str(result))
+
     if result["passed"]:
         print(f"[VERIFY] ✅ Tests PASSED - bug fixed!")
+        span.end_span(verify_span)
         return True
     else:
         print(f"[VERIFY] ❌ Tests still failing: {result['error']}")
+        span.end_span(verify_span, status="FAILED")
         return False
 
 print("✅ Write & Verify phase ready")
@@ -399,33 +427,50 @@ async def run_agent():
     print("\n" + "="*60)
     print("START: End-to-End Coding Agent")
     print("="*60 + "\n")
-    
+
+    def _budget_check() -> bool:
+        if not state.within_budget():
+            print(f"⏹️ Budget exhausted after {state.steps} steps (max_steps={state.max_steps})")
+            return False
+        return True
+
     # SURVEY
-    await survey_phase(state, sandbox)
-    
+    if not _budget_check():
+        return False
+    await survey_phase(state, sandbox, ledger, span)
+
     # RUN_TESTS (first time)
-    tests_passed = await run_tests_phase(state, sandbox)
-    
+    if not _budget_check():
+        return False
+    tests_passed = await run_tests_phase(state, sandbox, ledger, span)
+
     if not tests_passed:
         # INSPECT & FIX
-        fixed_code = await inspect_and_fix_phase(state, sandbox)
+        if not _budget_check():
+            return False
+        fixed_code = await inspect_and_fix_phase(state, sandbox, ledger, span)
         if not fixed_code:
             print("ERROR: LLM did not provide valid code")
             return False
-        
+
         # WRITE & VERIFY
-        success = await write_and_verify_phase(state, sandbox, fixed_code)
+        if not _budget_check():
+            return False
+        success = await write_and_verify_phase(state, sandbox, fixed_code, ledger, span)
     else:
         success = True
-    
+
     # Summary
     print("\n" + "="*60)
     print(f"RESULT: {'✅ SUCCESS' if success else '❌ FAILED'}")
     print(f"Steps taken: {state.steps}")
     print(f"Final state: {state.state}")
     print(f"Observations: {len(state.observations)}")
+    print(f"Tool calls logged: {len(ledger.calls)}")
+    print(f"Tokens used: {ledger.tokens_used}")
+    print(f"Spans recorded: {len(span.spans)}")
     print("="*60 + "\n")
-    
+
     return success
 
 success = await run_agent()
@@ -437,19 +482,14 @@ print(f"\nAgent run completed with success={success}")
 # Modify the LLM's system prompt or the test case below. Can you make the agent fix a different type of bug?
 
 # %%
-# TODO: Experiment!
-# Try changing the bug in sandbox.files["src/words.py"] or the test assertion,
-# then re-run the agent. What happens if the bug is more complex?
-# For example, change reverse_words to also uppercase words, or add a new test.
+# Run the established words.py scenario again end-to-end (fresh state + sandbox)
+# to watch the agent's survey -> test -> inspect -> fix -> verify loop reach a result.
+# Feel free to experiment further: change the bug in Sandbox.files["src/words.py"]
+# or the assertion in Sandbox.run_tests() above, then re-run this cell.
+success = await run_agent()
 
-# Example: modify the test to be stricter
-# Uncomment the line below and re-run run_agent():
-# sandbox.files["tests/test_words.py"] = '''from src.words import reverse_words
-# def test_reverse_words():
-#     result = reverse_words("one two three four")
-#     assert result == "four three two one"
-#     assert reverse_words("solo") == "solo"
-#     assert reverse_words("") == ""
-# '''
-
-print("Ready for experimentation. Modify the code above and run the agent again.")
+if success:
+    print("PASS: agent fixed reverse_words and the tests now pass")
+else:
+    print("WRONG: agent did not fix the bug - tests still failing")
+assert success is True, "Expected the LLM-powered agent to fix reverse_words and pass the tests"

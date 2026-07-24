@@ -256,6 +256,7 @@ async def extract_recommendation_with_retry(brief, schema, max_retries=2):
         try:
             parsed = json.loads(raw)
         except json.JSONDecodeError as e:
+            errors = [f"Response was not valid JSON: {e}"]
             print(f"  Attempt {attempt + 1}: JSON parse error -- {e}")
             continue
         

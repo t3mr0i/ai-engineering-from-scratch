@@ -57,7 +57,7 @@ print("✅ notebook ready · endpoint:", lrn_llm.API_BASE)
 # %% [markdown]
 # ## Step 0a — Endpoint & Key
 #
-# Set your API key (optional; the gateway works without a key on the LHIND network). The default model is GPT-4o via the LHIND gateway.
+# Set your API key (optional; the gateway works without a key on the LHIND network). The default model is GPT-5.4 mini via the LHIND gateway.
 
 # %%
 # Optional: set your API key here if needed
@@ -125,7 +125,7 @@ class CodeEvalResult:
     def average_score(self):
         if not self.scores:
             return 0.0
-        return sum(s.score for s in self.scores) / len(self.scores())
+        return sum(s.score for s in self.scores) / len(self.scores)
 
 print("✅ Data structures defined: CodeTestCase, EvalScore, CodeEvalResult")
 

@@ -261,10 +261,32 @@ for k_val in [1, 3, 5, 10]:
 # Let's ask Claude multiple times and compute pass@k:
 
 # %%
+# Approximate per-call pricing for azure/gpt-5.4-mini: the gateway proxy has
+# no public list price, so these rates approximate the gpt-4o-mini tier (see
+# phases/11-llm-engineering/11-caching-cost/code/notebook.py's MODEL_PRICING).
+_INPUT_PRICE_PER_M = 0.15
+_OUTPUT_PRICE_PER_M = 0.60
+
+def estimate_cost(response: dict, text: str) -> tuple[float, str]:
+    """Real per-call cost from the gateway's token usage when available;
+    otherwise an approximate cost from a word-count token proxy (flagged)."""
+    usage = response.get("usage") or {}
+    in_tok, out_tok = usage.get("prompt_tokens"), usage.get("completion_tokens")
+    if in_tok is not None and out_tok is not None:
+        cost = (in_tok / 1_000_000) * _INPUT_PRICE_PER_M + (out_tok / 1_000_000) * _OUTPUT_PRICE_PER_M
+        return cost, "measured"
+    # No usage field in this response: approximate tokens from word count
+    # (~0.75 tokens/word) and flag it as an estimate, not a measurement.
+    approx_tokens = len(text.split()) / 0.75
+    cost = (approx_tokens / 1_000_000) * _OUTPUT_PRICE_PER_M
+    return cost, "approximate (no usage field)"
+
 # Run 3 samples
 k = 3
 passes = 0
 results = []
+latencies = []
+costs = []
 
 for sample_idx in range(k):
     prompt = f"""Here is a buggy Python function:
@@ -274,39 +296,51 @@ for sample_idx in range(k):
 Goal: {fizzbuzz_task.goal}
 
 Respond with ONLY the corrected Python code, no explanation."""
-    
+
+    start = time.monotonic()
     r = await lrn_llm.call(
         [{"role": "user", "content": prompt}],
         max_tokens=300
     )
-    
-    agent_code = extract_code(lrn_llm.text(r))
+    elapsed_ms = (time.monotonic() - start) * 1000
+    latencies.append(elapsed_ms)
+
+    agent_text = lrn_llm.text(r)
+    cost, cost_note = estimate_cost(r, agent_text)
+    costs.append(cost)
+
+    agent_code = extract_code(agent_text)
     scratch_files = {"fizzbuzz.py": agent_code}
     passed, detail = verify_file_equals(scratch_files, fizzbuzz_task.expected_files, fizzbuzz_task.verifier_args)
-    
+
     if passed:
         passes += 1
-    
-    results.append({"sample": sample_idx, "passed": passed, "detail": detail})
-    print(f"Sample {sample_idx}: {'✅ PASS' if passed else '❌ FAIL'} - {detail}")
+
+    results.append({"sample": sample_idx, "passed": passed, "detail": detail,
+                     "latency_ms": round(elapsed_ms, 1), "cost": round(cost, 6)})
+    print(f"Sample {sample_idx}: {'✅ PASS' if passed else '❌ FAIL'} - {detail} "
+          f"({elapsed_ms:.1f} ms, cost {cost_note})")
 
 pass_rate = passes / k
-pass_at_k_value = pass_at_k(pass_rate, k)
 
 print(f"\nSummary:")
 print(f"  Passes: {passes}/{k}")
-print(f"  Pass@1: {pass_rate:.4f}")
-print(f"  Pass@{k}: {pass_at_k_value:.4f}")
+print(f"  Pass rate (this run): {pass_rate:.4f}")
 
 # %% [markdown]
 # ## Step 9 — Aggregate Metrics
 #
-# The harness computes:
-# - **pass@1**: Probability of success on first try
-# - **pass@k**: Probability of success in k tries  
-# - **mean_latency_ms**: Average time per sample
-# - **p95_latency_ms**: 95th percentile latency
-# - **mean_cost**: Average LLM cost per sample
+# The harness computes, from the k samples actually run in Step 8:
+# - **pass_rate**: observed fraction of samples that passed *this run* (not a
+#   probabilistic estimate — we already know exactly how many of the k passed,
+#   so re-deriving a `pass@k` probability from that same k would just be
+#   restating it through an unnecessary formula; see Step 7 for `pass@k` used
+#   as intended, on a hypothetical pass rate across varying k)
+# - **mean_latency_ms**: average measured time per sample
+# - **p95_latency_ms**: 95th percentile of measured latency
+# - **mean_cost**: average per-sample cost (measured from gateway token usage
+#   where available, otherwise an approximate word-count-based estimate — see
+#   the per-sample cost note printed in Step 8)
 
 # %%
 def percentile_95(values: list[float]) -> float:
@@ -317,10 +351,7 @@ def percentile_95(values: list[float]) -> float:
     idx = max(0, int(round(0.95 * len(sorted_vals))) - 1)
     return sorted_vals[min(idx, len(sorted_vals) - 1)]
 
-# Example latencies (in ms) from our runs
-latencies = [120.5, 115.3, 118.7]
-costs = [1.2, 1.2, 1.2]  # Arbitrary cost units
-
+# Real latencies/costs measured during the k samples in Step 8
 mean_latency = statistics.mean(latencies)
 p95_latency = percentile_95(latencies)
 mean_cost = statistics.mean(costs)
@@ -329,11 +360,10 @@ print(f"Task Report:")
 print(f"  Task ID: {fizzbuzz_task.id}")
 print(f"  k: {k}")
 print(f"  Passes: {passes}/{k}")
-print(f"  Pass@1: {pass_rate:.4f}")
-print(f"  Pass@k: {pass_at_k_value:.4f}")
+print(f"  Pass rate (this run): {pass_rate:.4f}")
 print(f"  Mean latency: {mean_latency:.1f} ms")
 print(f"  P95 latency: {p95_latency:.1f} ms")
-print(f"  Mean cost: {mean_cost:.4f} units")
+print(f"  Mean cost: {mean_cost:.6f} units")
 
 # %% [markdown]
 # ## Step 10 — Structured Report (JSON)
@@ -346,7 +376,6 @@ report = {
     "k": k,
     "passes": passes,
     "pass_rate": round(pass_rate, 4),
-    "pass_at_k": round(pass_at_k_value, 4),
     "mean_latency_ms": round(mean_latency, 3),
     "p95_latency_ms": round(p95_latency, 3),
     "mean_cost": round(mean_cost, 4),

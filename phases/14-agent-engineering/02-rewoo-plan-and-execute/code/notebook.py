@@ -301,20 +301,22 @@ print(final_answer)
 # ReWOO token estimate (char count as proxy)
 planner_tokens = len(plan_prompt) + len(plan_text)
 worker_tokens = sum(
-    len(f"Search: {bound_args.get('query', '')}") + len(v)
+    sum(len(str(v)) for v in bound_args.values()) + len(evidence.get(step.id, ""))
     for step in plan.steps
     for bound_args in [{k: resolve_references(v, evidence) for k, v in step.args.items()}]
-    for k, v in evidence.items()
-    if step.id == k
 )
 solver_tokens = len(solver_context) + len(final_answer)
 rewoo_total = planner_tokens + worker_tokens + solver_tokens
 
-# ReAct would need the full context at each step
-react_estimated = len(question)
-for i in range(len(plan.steps)):
-    # Each ReAct step includes the original question + all prior steps + the new action
-    react_estimated += len(question) + 200 + 100  # rough per-step overhead
+# ReAct would resend the growing context (question + every prior step's tool
+# call and observation) at each turn. Simulate that growth using the real
+# tool-call args and evidence strings already produced above, in execution order.
+history_so_far = ""
+react_estimated = 0
+for step in ordered:
+    step_repr = f"{step.tool}({step.args})"
+    react_estimated += len(question) + len(history_so_far) + len(step_repr)
+    history_so_far += step_repr + evidence.get(step.id, "")
 react_estimated += len(final_answer)
 
 print(f"ReWOO token estimate (chars): {rewoo_total}")

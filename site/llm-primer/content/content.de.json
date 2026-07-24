@@ -1335,8 +1335,8 @@
         {
             "id": "ondevice",
             "cat": "erweiterungen",
-            "title": "Live: KI auf deinem Gerät",
-            "lecture": "<p>Zum Abschluss wird es echt. Wenn du das Modell lädst, rechnet hier eine echte <b data-g=\"inferenz\">Inferenz</b> direkt <b data-g=\"on-device\">auf deinem Gerät</b>, ganz ohne Server. Möglich macht das die <b data-g=\"quantisierung\">Quantisierung</b>. Sie schrumpft das Modell so weit, dass es überhaupt ins Handy passt.</p><p><b>Der Magier spricht Englisch.</b> Warum eigentlich? Ein richtig gutes „Deutsch“-Modell kann meistens viele Sprachen auf einmal. Das macht es groß. Zu groß für den knappen <b>Arbeitsspeicher (RAM)</b> im Handy, sodass es nicht mehr gut antwortet. Was klein genug fürs Handy ist, kann dafür am besten Englisch. Mit mehr Speicher gingen auch mehr Sprachen. Bis es so weit ist, heißt es hier: <i>English, please</i>. </p><p>Tippe also einen englischen Satz und sieh zu, wie er Wort für Wort umgeschrieben wird. Das nennt man <b data-g=\"streaming\">Streaming</b>. Kleine Modelle können Text gut umformen und sind schwach bei Fakten. Das ist genau die Faustregel aus „Grenzen &amp; Risiken“. Und keine Sorge, der Pirat ist mit an Bord. </p><p class=\"lecture-next\">Lade das Modell und verwandle einen Satz. Probier es ruhig auch im Flugmodus.</p>",
+            "title": "KI auf deinem Gerät",
+            "lecture": "<p>Die Idee: Statt einen Server zu rufen, rechnet das Modell direkt auf deinem Gerät. Möglich macht das die <b data-g=\"quantisierung\">Quantisierung</b> &ndash; sie schrumpft das Modell so weit, dass es überhaupt ins Handy passt. Einmal geladen, läuft jede <b data-g=\"inferenz\">Inferenz</b> <b data-g=\"on-device\">auf dem Gerät</b> und funktioniert sogar im Flugmodus.</p><p><b>Der Magier spricht Englisch.</b> Warum eigentlich? Ein richtig gutes „Deutsch“-Modell kann meistens viele Sprachen auf einmal. Das macht es groß. Zu groß für den knappen <b>Arbeitsspeicher (RAM)</b> im Handy, sodass es nicht mehr gut antwortet. Was klein genug fürs Handy ist, kann dafür am besten Englisch. Mit mehr Speicher gingen auch mehr Sprachen. Bis es so weit ist, heißt es hier: <i>English, please</i>.</p><p>Zum Herunterladen braucht es aber eine erste Verbindung &ndash; und die ist in diesem Netz blockiert. Deshalb siehst du hier kein Live-Beispiel, sondern ein vorgerechnetes: denselben Satz, ein paar Mal anders umgeschrieben, unter anderem als Pirat.</p><p class=\"lecture-next\">Schau dir das Beispiel unten an.</p>",
             "game": "ondevice",
             "gameData": {
                 "sample": "Can you help me move some furniture tomorrow afternoon?",
@@ -1385,7 +1385,7 @@
                     ]
                 }
             },
-            "takeaway": "Moderne Geräte können kleine Modelle selbst ausführen, offline und ohne Server. Sie können Text gut umformen, am besten auf Englisch. Bei Fakten sind sie schwach."
+            "takeaway": "Moderne Geräte können kleine Modelle selbst ausführen, offline und ohne Server &ndash; sobald sie einmal geladen sind. Sie können Text gut umformen, am besten auf Englisch. Bei Fakten sind sie schwach."
         },
         {
             "id": "hallucination",

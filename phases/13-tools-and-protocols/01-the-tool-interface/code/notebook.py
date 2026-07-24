@@ -220,21 +220,31 @@ print(f"Model response:\n{model_reply}")
 # %%
 import re
 
-# Parse the model's response to extract tool call
-tool_call = None
-try:
-    # Try to parse as JSON
-    data = json.loads(model_reply)
-    if "tool_name" in data and "arguments" in data:
-        tool_call = data
-except:
-    pass
+def parse_tool_call(model_reply):
+    """Parse a model's freeform reply into a tool call dict, or None if it can't be parsed.
 
-if not tool_call:
-    # Fallback: extract from text
-    match = re.search(r'get_weather.*?city.*?Bengaluru', model_reply, re.IGNORECASE | re.DOTALL)
-    if match:
-        tool_call = {"tool_name": "get_weather", "arguments": {"city": "Bengaluru"}}
+    Reused by the "Try It Yourself" cell below — keep this the single source
+    of truth for parsing rather than re-implementing it there.
+    """
+    tool_call = None
+    try:
+        # Try to parse as JSON
+        data = json.loads(model_reply)
+        if "tool_name" in data and "arguments" in data:
+            tool_call = data
+    except:
+        pass
+
+    if not tool_call:
+        # Fallback: extract from text
+        match = re.search(r'get_weather.*?city.*?Bengaluru', model_reply, re.IGNORECASE | re.DOTALL)
+        if match:
+            tool_call = {"tool_name": "get_weather", "arguments": {"city": "Bengaluru"}}
+
+    return tool_call
+
+# Parse the model's response to extract tool call
+tool_call = parse_tool_call(model_reply)
 
 if tool_call:
     print(f"✅ Parsed tool call:")
@@ -242,7 +252,6 @@ if tool_call:
     print(f"   Arguments: {tool_call['arguments']}")
 else:
     print(f"⚠️  No tool call detected in model response")
-    tool_call = {"tool_name": "get_weather", "arguments": {"city": "Bengaluru"}}
 
 # %% [markdown]
 # ## Step 6 — Execute: Run the Tool
@@ -272,25 +281,40 @@ def validate_schema(schema, value):
         errors.append(f"value {value!r} not in enum {schema['enum']}")
     return errors
 
-# Find the tool in registry and execute
-tool_to_call = None
-for t in tools_registry:
-    if t["name"] == tool_call["tool_name"]:
-        tool_to_call = t
-        break
+def execute_tool_call(tool_call):
+    """Find the tool in registry, validate arguments, and execute it.
 
-if tool_to_call:
+    Returns (tool, result) — either may be None if the tool wasn't found or
+    validation failed. Reused by the "Try It Yourself" cell below.
+    """
+    tool_to_call = None
+    for t in tools_registry:
+        if t["name"] == tool_call["tool_name"]:
+            tool_to_call = t
+            break
+
+    if not tool_to_call:
+        print(f"❌ Tool '{tool_call['tool_name']}' not found in registry")
+        return None, None
+
     print(f"Validating arguments against schema...")
     errs = validate_schema(tool_to_call["input_schema"], tool_call["arguments"])
     if errs:
         print(f"❌ Validation failed: {errs}")
-    else:
-        print(f"✅ Arguments valid")
-        print(f"\nExecuting {tool_to_call['name']}...")
-        result = tool_to_call["executor"](tool_call["arguments"])
-        print(f"✅ Tool result: {json.dumps(result, indent=2)}")
+        return tool_to_call, None
+
+    print(f"✅ Arguments valid")
+    print(f"\nExecuting {tool_to_call['name']}...")
+    result = tool_to_call["executor"](tool_call["arguments"])
+    print(f"✅ Tool result: {json.dumps(result, indent=2)}")
+    return tool_to_call, result
+
+# Find the tool in registry and execute
+if tool_call:
+    tool_to_call, result = execute_tool_call(tool_call)
 else:
-    print(f"❌ Tool '{tool_call['tool_name']}' not found in registry")
+    print("⚠️  Nothing to execute — no tool call was parsed in Step 5")
+    tool_to_call, result = None, None
 
 # %% [markdown]
 # ## Step 7 — Observe: Feed Result Back to Model
@@ -299,20 +323,23 @@ else:
 
 # %%
 # Append tool result to conversation
-history = [
-    {"role": "user", "content": user_query},
-    {"role": "assistant", "content": f"I'll check the weather for Bengaluru using the get_weather tool."},
-    {"role": "tool", "content": json.dumps(result), "name": tool_to_call["name"]}
-]
+if tool_call:
+    history = [
+        {"role": "user", "content": user_query},
+        {"role": "assistant", "content": f"I'll check the weather for Bengaluru using the get_weather tool."},
+        {"role": "tool", "content": json.dumps(result), "name": tool_to_call["name"]}
+    ]
 
-print("Conversation history with tool result appended:")
-for msg in history:
-    print(f"\n  {msg['role'].upper()}: {msg.get('content', '')[:80]}...")
+    print("Conversation history with tool result appended:")
+    for msg in history:
+        print(f"\n  {msg['role'].upper()}: {msg.get('content', '')[:80]}...")
 
-print("\n--- Asking model for final answer ---\n")
-final_resp = await lrn_llm.call(history, system=system_prompt, max_tokens=150)
-final_answer = lrn_llm.text(final_resp)
-print(f"Final Answer:\n{final_answer}")
+    print("\n--- Asking model for final answer ---\n")
+    final_resp = await lrn_llm.call(history, system=system_prompt, max_tokens=150)
+    final_answer = lrn_llm.text(final_resp)
+    print(f"Final Answer:\n{final_answer}")
+else:
+    print("⚠️  Nothing to observe — no tool call was executed in Step 6")
 
 # %% [markdown]
 # ## The Full Loop: Summary
@@ -343,11 +370,15 @@ print(f"Final Answer:\n{final_answer}")
 # - "Tell me the weather in Tokyo"
 # - "Write me a haiku about tea" (this should NOT trigger a tool; model should answer directly)
 #
-# Watch how the model decides which tool to call (or not call at all).
+# This cell runs the same parse → validate → execute pipeline as Steps 5-7
+# above (`parse_tool_call` / `execute_tool_call`), then checks the result
+# against what "Please add 42 and 58" should produce. Change `custom_query`
+# and `expected_result` together if you try a different question.
 
 # %%
-# TODO: Edit this query and re-run the cell
+# TODO: Edit this query (and expected_result below) and re-run the cell
 custom_query = "Please add 42 and 58"
+expected_result = {"sum": 100}
 
 print(f"User: {custom_query}")
 print("\n--- Step 2: Decide (model chooses tool) ---\n")
@@ -357,5 +388,22 @@ resp = await lrn_llm.call(messages, system=system_prompt, max_tokens=200)
 model_reply = lrn_llm.text(resp)
 print(f"Model: {model_reply}")
 
-print("\n--- Try adding your own logic to parse and execute ---")
-print("Hint: look for tool_name and arguments in the response above.")
+print("\n--- Step 5: Parse the tool call ---\n")
+custom_tool_call = parse_tool_call(model_reply)
+if custom_tool_call:
+    print(f"✅ Parsed tool call:")
+    print(f"   Tool: {custom_tool_call['tool_name']}")
+    print(f"   Arguments: {custom_tool_call['arguments']}")
+
+    print("\n--- Step 6: Execute the tool call ---\n")
+    custom_tool, custom_result = execute_tool_call(custom_tool_call)
+else:
+    print(f"⚠️  No tool call detected in model response")
+    custom_result = None
+
+print("\n--- Self-check ---")
+if custom_result == expected_result:
+    print(f"✅ PASS — got {custom_result}, expected {expected_result}")
+else:
+    print(f"❌ WRONG — got {custom_result}, expected {expected_result}")
+assert custom_result == expected_result, f"expected {expected_result}, got {custom_result}"

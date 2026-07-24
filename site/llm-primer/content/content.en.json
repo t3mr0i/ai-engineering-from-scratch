@@ -1331,8 +1331,8 @@
         {
             "id": "ondevice",
             "cat": "erweiterungen",
-            "title": "Live: AI on your device",
-            "lecture": "<p>To finish, it gets real. When you load the model, a real <b data-g=\"inferenz\">inference</b> runs here directly <b data-g=\"on-device\">on your device</b>, with no server at all. What makes this possible is <b data-g=\"quantisierung\">quantization</b>. It shrinks the model far enough to even fit on a phone.</p><p>Small models are great at <b>rewriting</b> text and weak at facts. That is exactly the rule of thumb from \"Limits &amp; Risks\": lean on them to reshape what you give them, and double-check anything factual.</p><p>So type an English sentence and watch it get rewritten word by word. That is called <b data-g=\"streaming\">streaming</b>. It even works in airplane mode, because nothing ever leaves your device. And don't worry, the pirate is on board too. </p><p class=\"lecture-next\">Load the model and transform a sentence. Feel free to try it in airplane mode.</p>",
+            "title": "AI on your device",
+            "lecture": "<p>The idea: instead of calling a server, the model runs directly on your device (phone, laptop). What makes that possible is <b data-g=\"quantisierung\">quantization</b> &mdash; it shrinks the model far enough to even fit on a phone. Once it is downloaded, every <b data-g=\"inferenz\">inference</b> stays <b data-g=\"on-device\">on-device</b> and even works in airplane mode.</p><p>Small models like this are great at <b>rewriting</b> text and weak at facts. That is exactly the rule of thumb from \"Limits &amp; Risks\": lean on them to reshape what you give them, and double-check anything factual.</p><p>Downloading the model needs a first connection, though &mdash; and on this network, that download is blocked. So below is a worked example instead of a live one: the same sentence, rewritten a few different ways by that pirate-loving text magician.</p><p class=\"lecture-next\">Have a look at the worked example below.</p>",
             "game": "ondevice",
             "gameData": {
                 "sample": "Can you help me move some furniture tomorrow afternoon?",
@@ -1381,7 +1381,7 @@
                     ]
                 }
             },
-            "takeaway": "Modern devices can run small models themselves, offline and without a server. They are good at reshaping text and weak at facts."
+            "takeaway": "Modern devices can run small models themselves, offline and without a server, once downloaded. They are good at reshaping text and weak at facts."
         },
         {
             "id": "hallucination",
