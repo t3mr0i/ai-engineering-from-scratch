@@ -14,9 +14,14 @@ p.notes-glossary-hint {
 
 .notes-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
+  margin-top: 32px;
   margin-bottom: 32px;
   flex-wrap: wrap;
+}
+
+.notes-actions .btn {
+  padding: 14px 30px;
 }
 
 .notes-actions[hidden] {

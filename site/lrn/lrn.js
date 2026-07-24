@@ -138,8 +138,6 @@
   var els = {
     profileSelect: document.getElementById("profileSelect"),
     levelSelect: document.getElementById("levelSelect"),
-    ctaBtn: document.getElementById("ctaBtn"),
-    ctaLabel: document.getElementById("ctaLabel"),
     interestChips: document.getElementById("interestChips"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
@@ -264,18 +262,6 @@
       announce(i18n("lrn_announce_level_set").replace("{level}", level));
     });
 
-    els.ctaBtn.addEventListener("click", function () {
-      state.filter = "recommended";
-      saveState();
-      renderFilters();
-      render();
-      // Scroll to the filter bar (not the grid) so the now-active "Recommended"
-      // pill is visible — otherwise the click reads as "just scrolled" because
-      // the thing that changed is pushed out of view.
-      els.courseFilters.scrollIntoView({ behavior: "smooth", block: "start" });
-      flashCourseGrid();
-    });
-
     document.addEventListener("sitelang:change", function () {
       renderControls();
       render();
@@ -296,7 +282,6 @@
     renderInterestChips();
     renderFilters();
     renderCourses(computed);
-    updateCta(computed);
     refreshIcons();
   }
 
@@ -323,17 +308,6 @@
   function syncSelects() {
     if (els.profileSelect.value !== state.profileId) els.profileSelect.value = state.profileId;
     if (els.levelSelect.value !== String(state.externalLevel)) els.levelSelect.value = String(state.externalLevel);
-  }
-
-  // CTA shows a live count of recommended courses for the current selection so
-  // changing profile/level gives immediate feedback before scrolling anywhere.
-  function updateCta(computed) {
-    var count = computed.entries.filter(function (entry) {
-      return entry.kind === "recommended";
-    }).length;
-    els.ctaLabel.textContent = count === 1
-      ? i18n("lrn_cta_recommended_singular")
-      : i18n("lrn_cta_recommended_plural").replace("{count}", count);
   }
 
   function renderInterestChips() {
@@ -377,14 +351,6 @@
       });
       return btn;
     }));
-  }
-
-  // Brief highlight so the CTA's effect on the grid is perceptible even when
-  // the grid was already on-screen (restart-safe for repeat clicks).
-  function flashCourseGrid() {
-    els.courseGrid.classList.remove("course-grid--flash");
-    void els.courseGrid.offsetWidth;
-    els.courseGrid.classList.add("course-grid--flash");
   }
 
   var lastVisibleSignature = null;

@@ -1221,8 +1221,8 @@
     .mermaid-modal-overlay.open { display: flex; }
 
     .mermaid-modal {
-      width: min(1100px, 96vw);
-      height: min(760px, 88vh);
+      width: min(1400px, 96vw);
+      height: min(900px, 90vh);
       background: var(--modal-bg);
       border: 1px solid var(--ink);
       display: flex;
@@ -1274,7 +1274,7 @@
       justify-content: center;
     }
 
-    .mermaid-modal-body svg { max-width: none; height: auto; }
+    .mermaid-modal-body svg { width: 100%; height: 100%; max-width: 100%; max-height: 100%; }
 
     .lesson-article .mermaid-container pre {
       overflow: visible;
@@ -1289,13 +1289,10 @@
       height: auto;
     }
 
-    :where(
-      .lesson-article .mermaid-render foreignObject p,
-      .lesson-article .mermaid-render foreignObject span,
-      .mermaid-modal-body foreignObject p,
-      .mermaid-modal-body foreignObject span
-    ) {
-      font-family: var(--font-mono);
+    .lesson-article .mermaid-render foreignObject p,
+    .lesson-article .mermaid-render foreignObject span,
+    .mermaid-modal-body foreignObject p,
+    .mermaid-modal-body foreignObject span {
       font-size: 13px;
       line-height: 1.4;
       letter-spacing: 0.02em;
@@ -1304,7 +1301,15 @@
       margin: 0;
       hyphens: none;
       -webkit-hyphens: none;
-      color: var(--ink);
+      /* Inherit rather than force a color: mermaid sets each node's own
+         text color inline (matching its fill, including lesson-authored
+         overrides like `style X color:#fff`) and a plain `p { color: ... }`
+         reset elsewhere on the page was winning over a prior :where()
+         override here, making authored light-on-dark text unreadable.
+         !important because mermaid's own generated <style> block (for
+         e.g. subgraph/cluster title text) is inserted into the DOM later
+         than this stylesheet and wins ties on document order alone. */
+      color: inherit !important;
     }
 
     .lesson-nav-bottom {
@@ -2201,23 +2206,59 @@
   <script src="analytics.js?v=20260525a" defer></script>
   <script src="figures.js?v=20260607a"></script>
   <script src="lesson-figures.js?v=20260607a"></script>
+  <script>
+    // Shared by the mermaid init below and updateMermaidThemeAndRerender()
+    // further down, so both configure mermaid identically. Colors and font
+    // are resolved from the page's own design tokens (not mermaid's stock
+    // theme palette) via getComputedStyle -- mermaid's color engine rejects
+    // raw var(...) references, so these must be literal resolved values;
+    // fontFamily is the one field mermaid just forwards into inline SVG
+    // styles unparsed, so 'var(--font-text)' works there directly.
+    function mermaidConfig() {
+      function cssVar(name, fallback) {
+        var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fallback;
+      }
+      return {
+        startOnLoad: false,
+        theme: 'base',
+        fontFamily: 'var(--font-text)',
+        themeVariables: {
+          fontSize: '13px',
+          background: cssVar('--bg-surface', '#ffffff'),
+          primaryColor: cssVar('--bg-surface', '#ffffff'),
+          primaryTextColor: cssVar('--ink', '#05164d'),
+          primaryBorderColor: cssVar('--blueprint', '#05164d'),
+          lineColor: cssVar('--ink-soft', '#52617c'),
+          textColor: cssVar('--ink', '#05164d'),
+          mainBkg: cssVar('--bg-surface', '#ffffff'),
+          nodeBorder: cssVar('--blueprint', '#05164d'),
+          clusterBkg: cssVar('--blueprint-tint', 'rgba(5, 22, 77, 0.06)'),
+          clusterBorder: cssVar('--rule-soft', '#e3e1de'),
+          edgeLabelBackground: cssVar('--bg-surface', '#ffffff'),
+          tertiaryColor: cssVar('--blueprint-tint', 'rgba(5, 22, 77, 0.06)')
+        },
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          nodeSpacing: 40,
+          rankSpacing: 50,
+          padding: 16,
+          wrappingWidth: 200
+        },
+        // Node/cluster label height is occasionally under-computed by
+        // mermaid's own layout pass for multi-line labels, which silently
+        // clips the last line inside the foreignObject box. There's no
+        // reliable per-diagram fix for the height math itself, so this
+        // forces the overflow to stay visible rather than be cut off.
+        themeCSS: 'foreignObject { overflow: visible !important; }'
+      };
+    }
+    window.mermaidConfig = mermaidConfig;
+  </script>
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: document.documentElement.getAttribute('data-theme') === 'light' ? 'default' : 'dark',
-      fontFamily: 'JetBrains Mono, ui-monospace, monospace',
-      themeVariables: {
-        fontSize: '13px'
-      },
-      flowchart: {
-        useMaxWidth: true,
-        htmlLabels: true,
-        nodeSpacing: 40,
-        rankSpacing: 50,
-        padding: 12
-      }
-    });
+    mermaid.initialize(window.mermaidConfig());
     window._mermaidReady = mermaid;
   </script>
   <script>
@@ -4185,9 +4226,7 @@
       function renderMermaidBlocks() {
         var fontsReady = (document.fonts && document.fonts.load)
           ? Promise.all([
-              document.fonts.load('400 13px "JetBrains Mono"'),
-              document.fonts.load('500 13px "JetBrains Mono"'),
-              document.fonts.load('700 13px "JetBrains Mono"')
+              document.fonts.load('400 13px "Lufthansa Text"')
             ]).catch(function () {})
           : Promise.resolve();
         var check = setInterval(function () {
@@ -4265,13 +4304,7 @@
       function updateMermaidThemeAndRerender() {
         if (!window._mermaidReady) return;
         try {
-          window._mermaidReady.initialize({
-            startOnLoad: false,
-            theme: mermaidTheme(),
-            fontFamily: 'JetBrains Mono, ui-monospace, monospace',
-            themeVariables: { fontSize: '13px' },
-            flowchart: { useMaxWidth: true, htmlLabels: true, nodeSpacing: 40, rankSpacing: 50, padding: 12 }
-          });
+          window._mermaidReady.initialize(window.mermaidConfig());
         } catch (_) {}
         rerenderMermaidBlocks();
         rerenderMermaidModal();

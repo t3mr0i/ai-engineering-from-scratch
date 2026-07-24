@@ -1,93 +1,522 @@
-/* LHG (Lufthansa Group) colour overrides for the embedded JupyterLite app.
+/* LHG (Lufthansa Group) theme for the embedded JupyterLite app.
  *
  * JupyterLab themes everything through --jp-* CSS custom properties (see
- * @jupyterlab/theme-light-extension/index.css in the built output for the
- * full set + defaults). We don't touch the theme package itself — that gets
- * regenerated on every `jupyter lite build` — instead this stylesheet is
- * injected after it (see inject-lhg-theme.py) so these overrides win the
- * cascade at equal specificity.
+ * @jupyterlab/theme-light-extension in the built output for the full set +
+ * defaults). We don't touch the theme package itself — that gets regenerated
+ * on every `jupyter lite build` — instead this stylesheet is injected after
+ * it (see inject-lhg-theme.py) so these overrides win the cascade.
  *
- * Values are pulled 1:1 from site/lrn/tokens.css (the LHG design tokens
- * already used by the rest of the site) so the notebook UI reads as part of
- * the same product instead of stock Jupyter blue/green/orange/red.
+ * !important on contested declarations: the theme package's stylesheet is
+ * not a static <link> — it's injected into <head> at runtime by its webpack
+ * style-loader bundle, which appends AFTER this file's statically-injected
+ * <link>, regardless of source order in the HTML. Without !important the
+ * theme package wins the cascade at equal specificity.
  *
- * !important on every declaration: the theme package's own stylesheet
- * (@jupyterlab/theme-light-extension) is not a static <link> — it's injected
- * into <head> at runtime by its webpack style-loader bundle, which appends
- * AFTER this file's statically-injected <link>, regardless of source order in
- * the HTML. Without !important the theme package wins the cascade at equal
- * specificity and these overrides are silently no-ops.
+ * This file runs INSIDE the JupyterLite iframe, so it cannot see the parent
+ * page's tokens (site/lrn/tokens.css) — every value is inlined here, kept
+ * 1:1 with those tokens. Fonts are loaded via @font-face below from the
+ * same-origin /lrn/assets/fonts/ path (absolute, because this CSS sits at
+ * /jupyterlite/lhg-theme.css).
+ *
+ * Design: markdown prose flows directly on the warm-grey page like an
+ * article; code cells + their outputs read as white cards (12px radius,
+ * hairline border, soft blue-tinted shadow) — same card language as the
+ * rest of the site.
  */
+
+/* ---------- 1. Lufthansa webfonts (same-origin) ---------- */
+
+@font-face {
+  font-family: "Lufthansa Text";
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url("/lrn/assets/fonts/LHGTextWEB-Light.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/lrn/assets/fonts/LHGTextWEB-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src: url("/lrn/assets/fonts/LHGTextWEB-RegularItalic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lufthansa Text";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/lrn/assets/fonts/LHGTextWEB-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lufthansa Head";
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url("/lrn/assets/fonts/LHGHeadWEB-Light.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lufthansa Head";
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url("/lrn/assets/fonts/LHGHeadWEB-Medium.woff2") format("woff2");
+}
+
+/* ---------- 2. JupyterLab variable overrides ---------- */
+
 :root {
+  /* Local copies of the LHG tokens (iframe can't see site/lrn/tokens.css) */
+  --lhg-core-blue: #05164d;
+  --lhg-blue-600: #243f9b;
+  --lhg-blue-500: #2d5fe4;
+  --lhg-blue-100: #e5f1ff;
+  --lhg-slate-700: #52617c;
+  --lhg-warm-grey: #7a7673;
+  --lhg-grey-100: #f9f8f8;
+  --lhg-grey-200: #f1f0ef;
+  --lhg-grey-300: #e3e1de;
+  --lhg-grey-400: #cfccc8;
+  --lhg-teal: #368089;
+  --lhg-purple: #a82e61;
+  --lhg-font-text: "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
+  --lhg-font-head: "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
+  --lhg-font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --lhg-shadow-sm: 0 2px 8px rgba(5, 22, 77, 0.06);
+  --lhg-shadow-md: 0 5px 15px rgba(5, 22, 77, 0.08);
+  --lhg-focus-ring: 0 0 0 3px rgba(45, 95, 228, 0.30);
+
   /* Brand ramp (spinner, active states, links, selected cell border) */
-  --jp-brand-color0: #05164d !important; /* --lhg-core-blue */
-  --jp-brand-color1: #243f9b !important; /* --lhg-blue-600 */
-  --jp-brand-color2: #2d5fe4 !important; /* --lhg-blue-500 */
-  --jp-brand-color3: #e5f1ff !important; /* --lhg-blue-100 */
+  --jp-brand-color0: #05164d !important;
+  --jp-brand-color1: #243f9b !important;
+  --jp-brand-color2: #2d5fe4 !important;
+  --jp-brand-color3: #e5f1ff !important;
   --jp-brand-color4: #f3f8ff !important;
 
-  /* Secondary accent (progress bars, some toggle states) -> LHG teal */
+  /* Secondary accent -> LHG teal */
   --jp-accent-color0: #234f55 !important;
-  --jp-accent-color1: #368089 !important; /* --lhg-teal */
+  --jp-accent-color1: #368089 !important;
   --jp-accent-color2: #8fbcc1 !important;
   --jp-accent-color3: #dcedef !important;
 
   /* Status colours -> LHG semantic tokens */
   --jp-warn-color0: #a4712f !important;
-  --jp-warn-color1: #e2974b !important; /* --lhg-warning */
+  --jp-warn-color1: #e2974b !important;
   --jp-warn-color2: #eec18d !important;
   --jp-warn-color3: #f8e6d1 !important;
-  --jp-warn-color-normal: var(--jp-warn-color1) !important;
-  --jp-warn-color-hover: var(--jp-warn-color0) !important;
-  --jp-warn-color-active: var(--jp-warn-color0) !important;
-
-  --jp-error-color0: #a81b30 !important; /* darker step of --lhg-error */
-  --jp-error-color1: #e22743 !important; /* --lhg-error */
+  --jp-error-color0: #a81b30 !important;
+  --jp-error-color1: #e22743 !important;
   --jp-error-color2: #ee7789 !important;
   --jp-error-color3: #f9d7dc !important;
-
   --jp-success-color0: #135f3f !important;
-  --jp-success-color1: #1b8a5a !important; /* --lhg-success */
+  --jp-success-color1: #1b8a5a !important;
   --jp-success-color2: #7bc4a4 !important;
   --jp-success-color3: #dcefe6 !important;
 
-  /* Layout surfaces -> warm-grey scale instead of pure white/md-grey */
-  --jp-layout-color0: #ffffff !important; /* --lhg-white */
+  /* Layout surfaces: warm-grey page, white chrome */
+  --jp-layout-color0: #ffffff !important;
   --jp-layout-color1: #ffffff !important;
-  --jp-layout-color2: #f1f0ef !important; /* --lhg-grey-200 */
-  --jp-layout-color3: #e3e1de !important; /* --lhg-grey-300 */
-  --jp-layout-color4: #cfccc8 !important; /* --lhg-grey-400 */
+  --jp-layout-color2: #f1f0ef !important;
+  --jp-layout-color3: #e3e1de !important;
+  --jp-layout-color4: #cfccc8 !important;
 
   --jp-border-color0: #cfccc8 !important;
-  --jp-border-color1: #cfccc8 !important;
+  --jp-border-color1: #e3e1de !important;
   --jp-border-color2: #e3e1de !important;
   --jp-border-color3: #f1f0ef !important;
+  --jp-border-radius: 8px !important;
 
-  /* Text -> LHG ink scale (core blue reads as "near-black" at body sizes) */
+  /* Text -> LHG ink scale */
   --jp-ui-font-color0: #05164d !important;
   --jp-ui-font-color1: #05164d !important;
-  --jp-ui-font-color2: #52617c !important; /* --lhg-slate-700 */
-  --jp-ui-font-color3: #7a7673 !important; /* --lhg-warm-grey */
+  --jp-ui-font-color2: #52617c !important;
+  --jp-ui-font-color3: #7a7673 !important;
+  --jp-content-font-color0: #05164d !important;
+  --jp-content-font-color1: #05164d !important;
+  --jp-content-font-color2: #52617c !important;
+  --jp-content-font-color3: #7a7673 !important;
 
-  /* Fonts for casual learners — LHG body sans-serif everywhere except code which stays monospace for clarity */
-  --jp-ui-font-family: var(--font-body), sans-serif !important;
-  --jp-cell-editor-font-family: var(--font-mono), monospace !important;
-  --jp-cell-output-font-family: var(--font-body), sans-serif !important;
-  --jp-markdown-font-family: var(--font-body), sans-serif !important;
+  /* UI + content typography */
+  --jp-ui-font-family: var(--lhg-font-text) !important;
+  --jp-ui-font-size1: 13px !important;
+  --jp-content-font-family: var(--lhg-font-text) !important;
+  --jp-content-font-size1: 16px !important;
+  --jp-content-line-height: 1.65 !important;
+  --jp-content-heading-font-weight: 500 !important;
+  --jp-content-heading-line-height: 1.25 !important;
+  --jp-content-heading-margin-top: 1.6em !important;
+  --jp-content-heading-margin-bottom: 0.6em !important;
+  --jp-content-link-color: #2d5fe4 !important;
+  --jp-content-link-hover-color: #243f9b !important;
+  --jp-content-link-visited-color: #243f9b !important;
 
-  /* Card-like notebook UI bundling for casual users — soft borders, card shadows, rounded cells */
-  --jp-cell-editor-background: #f9f8f8 !important; /* --lhg-grey-100 */
-  --jp-cell-editor-border-color: #e3e1de !important;
-  --jp-cell-editor-active-border-color: var(--jp-brand-color2) !important;
-  --jp-cell-background: var(--lhg-grey-100) !important;
-  --jp-cell-border-color: var(--lhg-grey-300) !important;
-  --jp-cell-radius: var(--radius-md) !important;
-  --jp-cell-shadow: 0 2px 8px rgba(5, 22, 77, 0.06) !important; /* --shadow-sm */
+  /* Code */
+  --jp-code-font-family: var(--lhg-font-mono) !important;
+  --jp-code-font-size: 13px !important;
+  --jp-code-line-height: 1.7 !important;
+  --jp-code-padding: 8px !important;
+  --jp-cell-editor-background: #f9f8f8 !important;
+  --jp-cell-editor-border-color: transparent !important;
+  --jp-cell-editor-active-background: #f9f8f8 !important;
+  --jp-cell-editor-active-border-color: transparent !important;
+  --jp-cell-editor-box-shadow: none !important;
 
-  /* Code cells */
-  --jp-cell-inprompt-font-color: #2d5fe4 !important; /* --lhg-blue-500 */
-  --jp-cell-outprompt-font-color: #368089 !important; /* --lhg-teal */
+  /* CodeMirror syntax palette, muted + tuned to the LHG family */
+  --jp-mirror-editor-keyword-color: #243f9b !important;
+  --jp-mirror-editor-def-color: #2d5fe4 !important;
+  --jp-mirror-editor-variable-color: #05164d !important;
+  --jp-mirror-editor-property-color: #2d5fe4 !important;
+  --jp-mirror-editor-builtin-color: #243f9b !important;
+  --jp-mirror-editor-string-color: #368089 !important;
+  --jp-mirror-editor-string-2-color: #368089 !important;
+  --jp-mirror-editor-number-color: #a82e61 !important;
+  --jp-mirror-editor-atom-color: #a82e61 !important;
+  --jp-mirror-editor-comment-color: #7a7673 !important;
+  --jp-mirror-editor-operator-color: #52617c !important;
+  --jp-mirror-editor-meta-color: #52617c !important;
+  --jp-mirror-editor-punctuation-color: #52617c !important;
 
-  /* Focus ring to match the rest of the site (site/lrn/tokens.css --shadow-focus) */
-  --jp-toolbar-box-shadow: 0 0 0 1px rgba(5, 22, 77, 0.06) !important;
+  /* Cells + prompts */
+  --jp-cell-padding: 6px !important;
+  --jp-cell-prompt-width: 52px !important;
+  --jp-cell-prompt-font-family: var(--lhg-font-mono) !important;
+  --jp-cell-prompt-letter-spacing: 0 !important;
+  --jp-cell-inprompt-font-color: #7a7673 !important;
+  --jp-cell-outprompt-font-color: #368089 !important;
+  --jp-cell-prompt-not-active-font-color: #7a7673 !important;
+  --jp-cell-prompt-not-active-opacity: 0.6 !important;
+
+  /* Notebook geometry */
+  --jp-notebook-max-width: 1000px !important;
+  --jp-notebook-padding: 8px !important;
+  /* Selected-cell wash would paint a white slab behind transparent markdown
+   * cells — selection is already carried by the collapser + card border. */
+  --jp-notebook-select-background: transparent !important;
+  --jp-notebook-multiselected-color: rgba(45, 95, 228, 0.08) !important;
+
+  /* Toolbar */
+  --jp-toolbar-background: #ffffff !important;
+  --jp-toolbar-border-color: #e3e1de !important;
+  --jp-toolbar-box-shadow: none !important;
+  --jp-toolbar-header-margin: 0 !important;
+}
+
+/* ---------- 3. Page + chrome ---------- */
+
+/* Warm-grey article background behind everything the notebook shows.
+ * The windowed-panel viewport/inner wrappers otherwise paint a white sheet
+ * behind all cells, which would swallow the card treatment below. */
+body,
+.jp-NotebookPanel,
+.jp-NotebookPanel > .jp-Toolbar + * ,
+.jp-WindowedPanel-outer,
+.jp-Notebook {
+  background: #f9f8f8 !important;
+}
+.jp-WindowedPanel-inner,
+.jp-WindowedPanel-viewport,
+.jp-Notebook-cellList {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Top header: white bar, hairline, document title in LHG Head */
+#jp-top-panel {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e3e1de !important;
+}
+#jp-NotebookLogo {
+  display: none !important;
+}
+#jp-title,
+.jp-DocumentTitle {
+  font-family: var(--lhg-font-head) !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  color: #05164d !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Menubar: quiet, body font, subtle hover */
+.lm-MenuBar {
+  background: #ffffff !important;
+  font-family: var(--lhg-font-text) !important;
+  font-size: 13px !important;
+  color: #52617c !important;
+}
+.lm-MenuBar-item.lm-mod-active {
+  background: #f1f0ef !important;
+  border-radius: 8px !important;
+  color: #05164d !important;
+}
+.lm-Menu {
+  background: #ffffff !important;
+  border: 1px solid #e3e1de !important;
+  border-radius: 8px !important;
+  box-shadow: var(--lhg-shadow-md) !important;
+  font-family: var(--lhg-font-text) !important;
+}
+.lm-Menu-item.lm-mod-active {
+  background: #f1f0ef !important;
+  color: #05164d !important;
+}
+
+/* Trust badge is meaningless noise for learners */
+.jp-NotebookTrustedStatus,
+[data-jp-item-name="trust"] {
+  display: none !important;
+}
+
+/* Toolbar: white, hairline separation, decluttered */
+.jp-NotebookPanel-toolbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e3e1de !important;
+  padding: 6px 12px !important;
+  min-height: 40px !important;
+}
+.jp-NotebookPanel-toolbar [data-jp-item-name="cut"],
+.jp-NotebookPanel-toolbar [data-jp-item-name="copy"],
+.jp-NotebookPanel-toolbar [data-jp-item-name="paste"] {
+  display: none !important;
+}
+.jp-Toolbar .jp-ToolbarButtonComponent {
+  border-radius: 8px !important;
+}
+.jp-Toolbar .jp-ToolbarButtonComponent:hover {
+  background: #f1f0ef !important;
+}
+
+/* Thin, quiet scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cfccc8;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7a7673;
+}
+
+/* ---------- 4. Notebook: article layout ---------- */
+
+.jp-Notebook {
+  padding-top: 40px !important;
+  padding-bottom: 120px !important;
+}
+
+/* Collapsers: keep the affordance, lose the visual weight */
+.jp-Collapser {
+  width: 5px !important;
+  min-width: 5px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+}
+.jp-Cell.jp-mod-active .jp-Collapser {
+  background: rgba(45, 95, 228, 0.35) !important;
+}
+.jp-Cell.jp-mod-active .jp-Collapser:hover {
+  background: #2d5fe4 !important;
+}
+
+/* Markdown cells: prose directly on the page, no chrome at all.
+ * The notebook7 app paints cells via
+ *   body[data-notebook="notebooks"] ... .jp-Cell...  { background: var(--jp-layout-color0) !important }
+ * at higher specificity than any sane selector here — so instead of a
+ * specificity war, blank out the variable it reads, scoped to markdown
+ * cells only. */
+.jp-Notebook .jp-Cell.jp-MarkdownCell {
+  --jp-layout-color0: transparent;
+  background: transparent !important;
+  border: none !important;
+  margin: 0 0 4px 0 !important;
+}
+.jp-MarkdownCell .jp-InputPrompt {
+  visibility: hidden !important;
+}
+.jp-RenderedMarkdown {
+  color: #05164d !important;
+}
+.jp-RenderedMarkdown h1,
+.jp-RenderedMarkdown h2,
+.jp-RenderedMarkdown h3,
+.jp-RenderedMarkdown h4 {
+  font-family: var(--lhg-font-head) !important;
+  color: #05164d !important;
+  letter-spacing: -0.01em !important;
+}
+.jp-RenderedMarkdown h1 {
+  font-weight: 300 !important;
+  font-size: 30px !important;
+}
+.jp-RenderedMarkdown h2 {
+  font-weight: 300 !important;
+  font-size: 24px !important;
+}
+.jp-RenderedMarkdown h3 {
+  font-weight: 500 !important;
+  font-size: 19px !important;
+}
+.jp-RenderedMarkdown h4 {
+  font-weight: 500 !important;
+  font-size: 16px !important;
+}
+.jp-RenderedMarkdown p,
+.jp-RenderedMarkdown li {
+  max-width: 72ch;
+}
+.jp-RenderedMarkdown code {
+  background: #f1f0ef !important;
+  border-radius: 4px !important;
+  padding: 1px 5px !important;
+  font-size: 0.85em !important;
+  color: #243f9b !important;
+}
+.jp-RenderedMarkdown pre code {
+  background: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+}
+.jp-RenderedMarkdown pre {
+  background: #f1f0ef !important;
+  border-radius: 8px !important;
+  padding: 12px 14px !important;
+}
+.jp-RenderedMarkdown blockquote {
+  border-left: 1px solid #cfccc8 !important;
+  color: #52617c !important;
+  margin-left: 0 !important;
+  padding-left: 16px !important;
+}
+.jp-RenderedMarkdown table {
+  border-collapse: collapse !important;
+}
+.jp-RenderedMarkdown th,
+.jp-RenderedMarkdown td {
+  border: 1px solid #e3e1de !important;
+  padding: 6px 12px !important;
+}
+.jp-RenderedMarkdown th {
+  background: #f1f0ef !important;
+  font-weight: 700 !important;
+}
+
+/* Code cells: white cards */
+.jp-CodeCell {
+  background: #ffffff !important;
+  border: 1px solid #e3e1de !important;
+  border-radius: 12px !important;
+  box-shadow: var(--lhg-shadow-sm) !important;
+  margin: 14px 0 !important;
+  padding: 10px 12px 10px 6px !important;
+  transition: border-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+.jp-CodeCell.jp-mod-active {
+  border-color: rgba(45, 95, 228, 0.55) !important;
+  box-shadow: var(--lhg-shadow-md) !important;
+}
+
+/* Editor block inside the card: sunken warm-grey, rounded */
+.jp-CodeCell .jp-InputArea-editor {
+  background: #f9f8f8 !important;
+  border: 1px solid #f1f0ef !important;
+  border-radius: 8px !important;
+}
+.jp-CodeCell.jp-mod-active .jp-InputArea-editor,
+.jp-CodeCell .jp-InputArea-editor:focus-within {
+  border-color: #e3e1de !important;
+}
+.cm-editor {
+  background: transparent !important;
+}
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+.cm-cursor {
+  border-left-color: #2d5fe4 !important;
+}
+.cm-activeLine {
+  background: rgba(45, 95, 228, 0.04) !important;
+}
+.cm-selectionBackground,
+.cm-editor ::selection {
+  background: rgba(45, 95, 228, 0.16) !important;
+}
+
+/* Prompts: tiny execution-order hints, not columns of chrome */
+.jp-InputPrompt,
+.jp-OutputPrompt {
+  font-size: 10px !important;
+  opacity: 0.75;
+  padding-top: 10px !important;
+}
+
+/* Outputs: part of the card, separated by a hairline */
+.jp-CodeCell .jp-Cell-outputWrapper {
+  border-top: 1px solid #f1f0ef !important;
+  margin-top: 8px !important;
+  padding-top: 6px !important;
+}
+.jp-OutputArea-output {
+  background: transparent !important;
+  font-size: 13px !important;
+}
+.jp-RenderedText pre {
+  font-family: var(--lhg-font-mono) !important;
+  font-size: 12.5px !important;
+  line-height: 1.6 !important;
+  color: #05164d !important;
+}
+
+/* Cell hover toolbar (duplicate/move/delete): quiet card */
+.jp-cell-toolbar {
+  background: #ffffff !important;
+  border: 1px solid #e3e1de !important;
+  border-radius: 8px !important;
+  box-shadow: var(--lhg-shadow-sm) !important;
+}
+
+/* ---------- 5. Dialogs, buttons, misc ---------- */
+
+.jp-Dialog-content {
+  border-radius: 12px !important;
+  box-shadow: 0 14px 40px rgba(5, 22, 77, 0.12) !important;
+  font-family: var(--lhg-font-text) !important;
+}
+.jp-Dialog-button {
+  border-radius: 999px !important;
+  font-family: var(--lhg-font-text) !important;
+}
+.jp-Dialog-button.jp-mod-accept {
+  background: #05164d !important;
+  color: #ffffff !important;
+}
+.jp-Dialog-button.jp-mod-accept:hover {
+  background: #243f9b !important;
+}
+
+/* Keyboard focus stays visible (WCAG) */
+.jp-ToolbarButtonComponent:focus-visible,
+.lm-MenuBar-item:focus-visible,
+.jp-Dialog-button:focus-visible {
+  outline: none !important;
+  box-shadow: var(--lhg-focus-ring) !important;
+}
+
+/* Notification status blob bottom-left: keep quiet */
+.jp-Notification-Status {
+  background: #ffffff !important;
+  border: 1px solid #e3e1de !important;
+  border-radius: 999px !important;
+  color: #52617c !important;
 }

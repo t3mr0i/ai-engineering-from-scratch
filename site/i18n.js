@@ -96,10 +96,6 @@ window.SITE_I18N = {
   lrn_status_completed: { en: "Completed", de: "Abgeschlossen" },
   lrn_status_all: { en: "All", de: "Alle" },
 
-  // lrn/lrn.js — CTA button (wording matches lrn_status_recommended above)
-  lrn_cta_recommended_singular: { en: "Show 1 recommended course", de: "1 empfohlenen Kurs anzeigen" },
-  lrn_cta_recommended_plural: { en: "Show {count} recommended courses", de: "{count} empfohlene Kurse anzeigen" },
-
   // lrn/lrn.js — empty-state copy
   lrn_empty_no_match: { en: "No match.", de: "Kein Treffer." },
   lrn_empty_no_onpath: { en: "No on-path match. Try the All filter.", de: "Keine passenden Kurse im Lernpfad. Versuche den Filter „Alle“." },
