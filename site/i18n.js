@@ -80,5 +80,33 @@ window.SITE_I18N = {
   dialog_close_aria: { en: "Close", de: "Schließen" },
 
   // badges.html — reset-progress confirm()
-  badges_reset_confirm: { en: "Reset all learning progress and badges? This cannot be undone.", de: "Gesamten Lern-Fortschritt und alle Badges zurücksetzen? Das kann nicht rückgängig gemacht werden." }
+  badges_reset_confirm: { en: "Reset all learning progress and badges? This cannot be undone.", de: "Gesamten Lern-Fortschritt und alle Badges zurücksetzen? Das kann nicht rückgängig gemacht werden." },
+
+  // lrn/lrn.js — level select options
+  lrn_level_basic: { en: "Basic", de: "Basis" },
+  lrn_level_foundation: { en: "Foundation", de: "Grundlagen" },
+  lrn_level_practitioner: { en: "Practitioner", de: "Praktiker" },
+  lrn_level_advanced: { en: "Advanced", de: "Fortgeschritten" },
+  lrn_level_lead: { en: "Lead / Principal", de: "Lead / Principal" },
+
+  // lrn/lrn.js — status filter tabs
+  lrn_status_recommended: { en: "Recommended", de: "Empfohlen" },
+  lrn_status_optional: { en: "Optional", de: "Optional" },
+  lrn_status_started: { en: "Started", de: "Begonnen" },
+  lrn_status_completed: { en: "Completed", de: "Abgeschlossen" },
+  lrn_status_all: { en: "All", de: "Alle" },
+
+  // lrn/lrn.js — CTA button (wording matches lrn_status_recommended above)
+  lrn_cta_recommended_singular: { en: "Show 1 recommended course", de: "1 empfohlenen Kurs anzeigen" },
+  lrn_cta_recommended_plural: { en: "Show {count} recommended courses", de: "{count} empfohlene Kurse anzeigen" },
+
+  // lrn/lrn.js — empty-state copy
+  lrn_empty_no_match: { en: "No match.", de: "Kein Treffer." },
+  lrn_empty_no_onpath: { en: "No on-path match. Try the All filter.", de: "Keine passenden Kurse im Lernpfad. Versuche den Filter „Alle“." },
+  lrn_empty_no_matches: { en: "No matches. Try All or clear the search.", de: "Keine Treffer. Versuche „Alle“ oder lösche die Suche." },
+
+  // lrn/lrn.js — aria-live announcements
+  lrn_announce_profile_set: { en: "Profile set: {profile}.", de: "Profil festgelegt: {profile}." },
+  lrn_announce_level_set: { en: "Level set: {level}.", de: "Level festgelegt: {level}." },
+  lrn_announce_reset: { en: "Selection reset. Activity progress is preserved in the activity tracker.", de: "Auswahl zurückgesetzt. Der Aktivitätsfortschritt bleibt im Aktivitäts-Tracker erhalten." }
 };

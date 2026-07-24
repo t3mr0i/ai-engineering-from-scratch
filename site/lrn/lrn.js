@@ -9,12 +9,24 @@
   var state = loadState();
 
   var levelDefinitions = [
-    { value: 1, label: "Basic", focusLevels: ["Acquire"] },
-    { value: 2, label: "Foundation", focusLevels: ["Acquire", "Deepen"] },
-    { value: 3, label: "Practitioner", focusLevels: ["Deepen"] },
-    { value: 4, label: "Advanced", focusLevels: ["Deepen", "Create"] },
-    { value: 5, label: "Lead / Principal", focusLevels: ["Create"] }
+    { value: 1, labelKey: "lrn_level_basic", focusLevels: ["Acquire"] },
+    { value: 2, labelKey: "lrn_level_foundation", focusLevels: ["Acquire", "Deepen"] },
+    { value: 3, labelKey: "lrn_level_practitioner", focusLevels: ["Deepen"] },
+    { value: 4, labelKey: "lrn_level_advanced", focusLevels: ["Deepen", "Create"] },
+    { value: 5, labelKey: "lrn_level_lead", focusLevels: ["Create"] }
   ];
+
+  // Mirrors lang.js's entry() lookup so lrn.js-owned UI chrome strings (level
+  // labels, status tabs, CTA, empty-state, announcements) translate with the
+  // rest of the site. Guarded for load order even though index.html loads
+  // i18n.js/lang.js before lrn.js.
+  function i18n(key) {
+    var dict = window.SITE_I18N || {};
+    var lang = window.SiteLang ? window.SiteLang.get() : "en";
+    var entry = dict[key];
+    if (!entry) return key;
+    return entry[lang] || entry.en || key;
+  }
 
   // Max courses shown as "Recommended". Beyond this, level- and interest-relevant
   // courses are demoted to "Optional" so the recommended list stays focused.
@@ -223,7 +235,7 @@
       saveState();
       renderControls();
       render();
-      announce("Selection reset. Activity progress is preserved in the activity tracker.");
+      announce(i18n("lrn_announce_reset"));
     });
 
     if (els.searchInput) {
@@ -240,7 +252,7 @@
       state.profileId = profile.id;
       saveState();
       render();
-      announce("Profile set: " + profile.label + ".");
+      announce(i18n("lrn_announce_profile_set").replace("{profile}", profile.label));
     });
 
     els.levelSelect.addEventListener("change", function () {
@@ -249,7 +261,7 @@
       state.externalLevel = level;
       saveState();
       render();
-      announce("Level set: " + level + ".");
+      announce(i18n("lrn_announce_level_set").replace("{level}", level));
     });
 
     els.ctaBtn.addEventListener("click", function () {
@@ -262,6 +274,11 @@
       // the thing that changed is pushed out of view.
       els.courseFilters.scrollIntoView({ behavior: "smooth", block: "start" });
       flashCourseGrid();
+    });
+
+    document.addEventListener("sitelang:change", function () {
+      renderControls();
+      render();
     });
   }
 
@@ -297,7 +314,7 @@
     replaceChildren(els.levelSelect, levelDefinitions.map(function (level) {
       var option = document.createElement("option");
       option.value = String(level.value);
-      option.textContent = "LV" + level.value + " · " + level.label;
+      option.textContent = "LV" + level.value + " · " + i18n(level.labelKey);
       return option;
     }));
     els.levelSelect.value = String(state.externalLevel);
@@ -315,8 +332,8 @@
       return entry.kind === "recommended";
     }).length;
     els.ctaLabel.textContent = count === 1
-      ? "Open 1 on-path task"
-      : "Open " + count + " on-path tasks";
+      ? i18n("lrn_cta_recommended_singular")
+      : i18n("lrn_cta_recommended_plural").replace("{count}", count);
   }
 
   function renderInterestChips() {
@@ -340,17 +357,17 @@
 
   function renderFilters() {
     var options = [
-      { id: "recommended", label: "Recommended" },
-      { id: "optional", label: "Optional" },
-      { id: "inprogress", label: "Started" },
-      { id: "completed", label: "Completed" },
-      { id: "all", label: "All" }
+      { id: "recommended", labelKey: "lrn_status_recommended" },
+      { id: "optional", labelKey: "lrn_status_optional" },
+      { id: "inprogress", labelKey: "lrn_status_started" },
+      { id: "completed", labelKey: "lrn_status_completed" },
+      { id: "all", labelKey: "lrn_status_all" }
     ];
     replaceChildren(els.courseFilters, options.map(function (option) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "seg-btn";
-      btn.textContent = option.label;
+      btn.textContent = i18n(option.labelKey);
       btn.setAttribute("aria-pressed", String(state.filter === option.id));
       btn.addEventListener("click", function () {
         state.filter = option.id;
@@ -388,11 +405,11 @@
       // combination simply has no on-path match — point the user at Optional.
       var hasOptional = computed.entries.some(function (entry) { return entry.kind === "optional"; });
       if (term) {
-        empty.textContent = "No match.";
+        empty.textContent = i18n("lrn_empty_no_match");
       } else if (state.filter === "recommended" && hasOptional) {
-        empty.textContent = "No on-path match. Try the All filter.";
+        empty.textContent = i18n("lrn_empty_no_onpath");
       } else {
-        empty.textContent = "No matches. Try All or clear the search.";
+        empty.textContent = i18n("lrn_empty_no_matches");
       }
       replaceChildren(els.courseGrid, [empty]);
       return;

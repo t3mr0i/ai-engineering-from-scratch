@@ -231,6 +231,12 @@
         '<div class="hero-emoji"><i class="ph-light ph-brain" aria-hidden="true"></i></div>' +
         '<h1 class="h1 center">' + esc(D.meta.title) + "</h1>" +
         '<p class="lead center">' + esc(D.meta.subtitle) + "</p>" +
+        (D.meta.intro
+          ? '<div class="card primer-intro">' +
+              '<p class="primer-intro-term"><i class="ph-light ph-sparkle" aria-hidden="true"></i> ' + esc(D.meta.intro.term) + "</p>" +
+              (D.meta.intro.body || []).map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") +
+            "</div>"
+          : "") +
         '<div class="badge-row">' +
           '<span class="badge"><i class="ph-light ph-clock" aria-hidden="true"></i> ' + esc(D.meta.duration) + "</span>" +
           '<span class="badge"><i class="ph-light ph-game-controller" aria-hidden="true"></i> ' + fmt(T.cover_minigames, { n: D.chapters.length }) + "</span>" +

@@ -2,7 +2,14 @@
     "meta": {
         "title": "LLM verstehen",
         "subtitle": "In 75 Minuten lernst du die wichtigsten Begriffe rund um große Sprachmodelle. Mit kleinen Minispielen und echten Visualisierungen.",
-        "duration": "ca. 75 Minuten"
+        "duration": "ca. 75 Minuten",
+        "intro": {
+            "term": "LLM = Large Language Model",
+            "body": [
+                "Hier lernst du in einfachen Worten, was das ist und wie du es nutzen kannst.",
+                "Ein LLM ist wie ein extrem belesener Assistent, der Millionen von Texten gelesen hat und daraus gelernt hat, wie man auf fast jede Frage eine passende Antwort formuliert. Du gibst ihm in normaler Sprache eine Aufgabe oder Frage, und er antwortet in normaler Sprache zurück, ganz ohne Programmierkenntnisse."
+            ]
+        }
     },
     "glossary": [
         {

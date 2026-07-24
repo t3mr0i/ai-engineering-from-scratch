@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import sys
 from typing import List, Optional
 
@@ -207,6 +208,76 @@ def split_jupytext(src: str) -> Optional[List[dict]]:
     return cells
 
 
+# --- Learner-facing cleanup ---------------------------------------------------
+# Audit-generated notebooks open with boilerplate the learner never needs now
+# that the LLM gateway key is injected server-side: a "Step 0a — Endpoint & Key"
+# cell (sets an optional API_KEY) and a "Step 1 — Reachability" cell (a ping).
+# We strip both so the notebook opens on real content, collapse the one setup
+# cell that stays (it defines `lrn_llm`, still required to run the rest), and
+# renumber the remaining "Step N —" headings from 1 so they read cleanly.
+
+# Markdown headings we drop entirely, along with the code cell(s) that follow
+# them up to the next markdown cell.
+_CEREMONY_HEADINGS = ("Step 0a — Endpoint & Key", "Step 1 — Reachability")
+# A section heading line like "## Step 2 — The Scenario". The em dash keeps this
+# from matching inline code comments such as "# Step 1: hybrid search".
+_STEP_HEADING_RE = re.compile(r"(?m)^(#+\s*)Step\s+\S+(\s*—)")
+
+
+def _strip_ceremony(cells: List[dict]) -> List[dict]:
+    out: List[dict] = []
+    i = 0
+    while i < len(cells):
+        c = cells[i]
+        if c["cell_type"] == "markdown" and any(
+            h in "".join(c["source"]) for h in _CEREMONY_HEADINGS
+        ):
+            # drop this heading and every code cell up to the next markdown cell
+            i += 1
+            while i < len(cells) and cells[i]["cell_type"] != "markdown":
+                i += 1
+            continue
+        out.append(c)
+        i += 1
+    return out
+
+
+def _hide_setup(cells: List[dict]) -> None:
+    """Collapse the input of the first setup cell (defines lrn_llm). It still
+    runs on Run All / Shift-Enter — only the source is hidden from view."""
+    for c in cells:
+        if c["cell_type"] == "code" and (
+            "notebook ready" in "".join(c["source"])
+            or "lrn_llm.call = " in "".join(c["source"])
+        ):
+            # drop the dangling "set in Step 0a" reference — that step is gone.
+            src = "".join(c["source"]).replace(
+                "# optional; set in Step 0a", "# gateway key is injected server-side"
+            )
+            c["source"] = src.splitlines(keepends=True)
+            c.setdefault("metadata", {}).setdefault("jupyter", {})[
+                "source_hidden"
+            ] = True
+            return
+
+
+def _renumber_steps(cells: List[dict]) -> None:
+    n = 0
+
+    def repl(m):
+        nonlocal n
+        n += 1
+        return f"{m.group(1)}Step {n}{m.group(2)}"
+
+    for c in cells:
+        if c["cell_type"] != "markdown":
+            continue
+        text = "".join(c["source"])
+        new_text, cnt = _STEP_HEADING_RE.subn(repl, text)
+        if cnt:
+            c["source"] = new_text.splitlines(keepends=True)
+
+
 def build_notebook(src: str) -> dict:
     cells = split_jupytext(src)
     if cells is None:
@@ -218,6 +289,9 @@ def build_notebook(src: str) -> dict:
             cells.append(code_cell(setup_src))
         if run_src:
             cells.append(code_cell(run_src))
+    cells = _strip_ceremony(cells)
+    _hide_setup(cells)
+    _renumber_steps(cells)
     return {
         "cells": cells,
         "metadata": {

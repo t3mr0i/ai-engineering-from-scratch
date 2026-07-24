@@ -229,7 +229,7 @@ i[class^="ph "] {
 /* ── Resume CTA button — Lufthansa colors, high contrast on blue hero ───────── */
 .resume-button {
   margin-top: var(--space-6);
-  background: var(--lhg-core-blue);
+  background: var(--lhg-blue-500);
   color: var(--lhg-white);
   border: 2px solid var(--lhg-white);
   border-radius: 9999px;
@@ -241,14 +241,14 @@ i[class^="ph "] {
   align-items: center;
   gap: 0.75rem;
   text-decoration: none;
-  box-shadow: 0 10px 30px -10px rgba(5, 22, 77, 0.35);
+  box-shadow: var(--shadow-md);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .resume-button:hover {
-  background: rgba(90, 138, 201, 0.95); /* lighter blue variant */
+  background: var(--lhg-blue-600);
   transform: translateY(-3px);
-  box-shadow: 0 15px 35px -10px rgba(5, 22, 77, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .resume-button:active {
@@ -268,64 +268,6 @@ i[class^="ph "] {
   font-weight: var(--weight-light);
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-display);
-  white-space: nowrap;
-}
-
-.hero__lede {
-  max-width: 56ch;
-  margin: var(--space-3) auto 0;
-  color: rgba(255, 255, 255, 0.86);
-  font-family: var(--font-text);
-  font-weight: var(--weight-light);
-  font-size: var(--fs-lead);
-  line-height: var(--lh-relaxed);
-}
-
-.hero-search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: min(36rem, 100%);
-  margin: var(--space-5) auto 0;
-}
-
-.hero-search__icon {
-  position: absolute;
-  inset-inline-start: var(--space-4);
-  display: inline-flex;
-  color: var(--lh-mid);
-  pointer-events: none;
-  font-size: 1.125rem;
-}
-
-.hero-search input {
-  width: 100%;
-  min-height: 56px;
-  padding: 0 var(--space-4) 0 calc(var(--space-4) + 1.75rem);
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
-  background: var(--lhg-white);
-  color: var(--text-primary);
-  font-family: var(--font-text);
-  font-weight: var(--weight-light);
-  font-size: var(--fs-body);
-  box-shadow: 0 8px 28px rgba(5, 22, 77, 0.28);
-  transition:
-    box-shadow var(--dur-base) var(--ease-standard),
-    border-color var(--dur-base) var(--ease-standard);
-}
-
-.hero-search input::placeholder {
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.hero-search input:focus-visible {
-  outline: none;
-  border-color: var(--lhg-blue-500);
-  box-shadow:
-    0 8px 28px rgba(5, 22, 77, 0.3),
-    var(--shadow-focus);
 }
 
 /* ── Selector card (overlaps the hero edge) ──────────────────── */
@@ -608,11 +550,11 @@ i[class^="ph "] {
 
 /* Per-family tints — Lufthansa brand-adjacent, single brand-blue family. */
 .course-card[data-theme="foundation"]   { --tile-ink: var(--lhg-core-blue); --tile-bg: var(--lhg-blue-100); }
-.course-card[data-theme="productivity"] { --tile-ink: var(--lhg-teal);      --tile-bg: #dcecee; }
-.course-card[data-theme="consulting"]   { --tile-ink: var(--lhg-purple);    --tile-bg: #f3e1ea; }
-.course-card[data-theme="engineering"]  { --tile-ink: var(--lhg-blue-500);  --tile-bg: #e8edfc; }
+.course-card[data-theme="productivity"] { --tile-ink: var(--lhg-blue-500);  --tile-bg: #e8edfc; }
+.course-card[data-theme="consulting"]   { --tile-ink: var(--lhg-blue-600);  --tile-bg: rgba(45, 95, 228, 0.10); }
+.course-card[data-theme="engineering"]  { --tile-ink: var(--lhg-core-blue); --tile-bg: rgba(5, 22, 77, 0.07); }
 .course-card[data-theme="governance"]   { --tile-ink: var(--lhg-slate-700); --tile-bg: #eef0f3; }
-.course-card[data-theme="leadership"]   { --tile-ink: var(--lhg-sand);      --tile-bg: #f2ede7; }
+.course-card[data-theme="leadership"]   { --tile-ink: var(--lhg-slate-500); --tile-bg: rgba(101, 120, 152, 0.10); }
 
 .course-card__tile {
   display: inline-grid;
@@ -1177,62 +1119,17 @@ i[class^="ph "] {
   }
 }
 
-/* ── Antigravity SOTA Micro-animations & Premium UI polish (LRN Cockpit) ── */
+/* ── Micro-interactions (LRN Cockpit) ─────────────────────────── */
+/* Consolidated: previously duplicated the base transition/hover rules above
+   with !important. Only genuinely new behavior lives here now — no forced
+   specificity, single cascade order decides. */
 
-/* Course card interactive transforms */
-.course-card {
-  transition: border-color var(--dur-base) var(--ease-standard),
-              transform var(--dur-base) var(--ease-standard),
-              box-shadow var(--dur-base) var(--ease-standard) !important;
-}
-@media (hover: hover) and (pointer: fine) {
-  .course-card:hover {
-    transform: translateY(-5px) scale(1.01) !important;
-    box-shadow: 0 12px 28px rgba(5, 22, 77, 0.16) !important;
-  }
-  [data-theme="dark"] .course-card:hover {
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45) !important;
-  }
-}
-.course-card:active {
-  transform: translateY(-1px) scale(0.99) !important;
-}
-
-/* Card internal tiles and links hover effects */
-.course-card__tile {
-  transition: transform var(--dur-base) var(--ease-standard) !important;
-}
-.course-card:hover .course-card__tile {
-  transform: scale(1.06) rotate(1deg);
-}
-.course-card__open {
-  transition: transform var(--dur-base) var(--ease-standard),
-              background-color var(--dur-base) var(--ease-standard),
-              color var(--dur-base) var(--ease-standard),
-              border-color var(--dur-base) var(--ease-standard) !important;
-}
-.course-card:hover .course-card__open {
-  transform: translateX(4px) !important;
-}
-
-/* Segmented controls and filter buttons press scale feedback */
-.seg-btn {
-  transition: background-color var(--dur-base) var(--ease-standard),
-              color var(--dur-base) var(--ease-standard),
-              transform var(--dur-fast) var(--ease-standard) !important;
-}
 .seg-btn:active {
   transform: scale(0.96);
 }
 
-.chip {
-  transition: background-color var(--dur-base) var(--ease-standard),
-              border-color var(--dur-base) var(--ease-standard),
-              color var(--dur-base) var(--ease-standard),
-              transform var(--dur-fast) var(--ease-standard) !important;
-}
 .chip:active {
-  transform: scale(0.96) !important;
+  transform: scale(0.96);
 }
 @media (hover: hover) and (pointer: fine) {
   .chip:hover:not([aria-pressed="true"]) {
@@ -1243,35 +1140,33 @@ i[class^="ph "] {
   }
 }
 
-/* Selector CTA & Primary CTA hover/active scales */
-.selector-cta, .primary-cta {
-  transition: background-color var(--dur-base) var(--ease-standard),
-              transform var(--dur-fast) var(--ease-standard),
-              box-shadow var(--dur-base) var(--ease-standard) !important;
-}
-.selector-cta:hover, .primary-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(5, 22, 77, 0.15);
+/* Selector CTA & Primary CTA hover lift + press scale */
+@media (hover: hover) and (pointer: fine) {
+  .selector-cta:hover, .primary-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
 }
 .selector-cta:active, .primary-cta:active {
-  transform: translateY(1px) scale(0.98) !important;
+  transform: translateY(1px) scale(0.98);
 }
 
 /* Back Link Hover Shift */
 .back-link {
-  transition: color var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard) !important;
+  transition: color var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard);
 }
 .back-link:hover {
   transform: translateX(-4px);
 }
 
-/* Lesson unit row animations (Lufthansa Design System custom effect) */
+/* Lesson unit row accent bar */
 .activity-link {
   position: relative;
   overflow: hidden;
-  transition: background-color var(--dur-base) var(--ease-standard),
-              transform var(--dur-fast) var(--ease-standard),
-              padding-left var(--dur-base) var(--ease-standard) !important;
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard),
+    padding-left var(--dur-base) var(--ease-standard);
 }
 .activity-link::before {
   content: "";
@@ -1287,8 +1182,7 @@ i[class^="ph "] {
 }
 @media (hover: hover) and (pointer: fine) {
   .activity-link:hover {
-    padding-left: calc(var(--space-2, 8px) + 6px) !important;
-    background: var(--color-surface-sunken) !important;
+    padding-left: calc(var(--space-2, 8px) + 6px);
   }
   .activity-link:hover::before {
     left: 0;
