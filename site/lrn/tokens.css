@@ -107,7 +107,7 @@
 
   --text-primary:           var(--lhg-core-blue);
   --text-secondary:         var(--lhg-slate-700);
-  --text-muted:             var(--lhg-warm-grey);
+  --text-muted:             #6b6764; /* darkened from --lhg-warm-grey for AA margin on small caption text */
   --text-on-dark:           var(--lhg-white);
   --text-link:              var(--lhg-blue-500);
 

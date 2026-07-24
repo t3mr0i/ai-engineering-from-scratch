@@ -42,7 +42,7 @@ window.SITE_I18N = {
   // glossary.html
   glossary_title: { en: "AI Glossary", de: "KI-Glossar" },
   glossary_search_ph: { en: "Search terms...", de: "Begriffe suchen..." },
-  nav_glossary: { en: "Glossar", de: "Glossar" },
+  nav_glossary: { en: "Glossary", de: "Glossar" },
   sort_label: { en: "Sort by", de: "Sortieren nach" },
   hide_underline: { en: "Hide term underlines in documents", de: "Begriffe-Unterstreichung in Dokumenten ausblenden" },
 

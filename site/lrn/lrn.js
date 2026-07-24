@@ -628,7 +628,8 @@
     wrap.setAttribute("aria-valuemax", "100");
     wrap.setAttribute("aria-valuenow", String(percent));
     var bar = document.createElement("span");
-    bar.style.width = percent + "%";
+    var fillPercent = percent > 0 ? Math.max(percent, 6) : 0;
+    bar.style.transform = "scaleX(" + (fillPercent / 100) + ")";
     var text = document.createElement("strong");
     text.textContent = percent + "%";
     wrap.append(bar, text);

@@ -3,6 +3,7 @@
   "jupyter-config-data": {
     "defaultKernelName": "python",
     "enableMemoryStorage": true,
-    "settingsStorageDrivers": ["localStorage"]
+    "contentsStorageDrivers": ["memoryStorageDriver"],
+    "settingsStorageDrivers": ["localStorageWrapper"]
   }
 }

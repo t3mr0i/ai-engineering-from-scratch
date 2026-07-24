@@ -44,6 +44,24 @@ rm -rf "$BUILD_DIR" && mkdir -p "$BUILD_DIR"
 echo "== 4. inject-lhg-theme.py =="
 python3 "$REPO/ide/jupyterlite/inject-lhg-theme.py" "$OUTPUT"
 
+echo "== 4b. inject storage config (jupyter lite build drops it) =="
+# jupyter-lite.json's jupyter-config-data (enableMemoryStorage,
+# contentsStorageDrivers, ...) does NOT survive `jupyter lite build` into the
+# output configs — confirmed by inspecting the built files. Without it,
+# JupyterLite mirrors every opened notebook into IndexedDB and serves that
+# stale copy forever, shadowing rebuilt notebooks. Merge the source config
+# into every output jupyter-lite.json (root + each app dir) so contents are
+# memory-only and always load fresh from the server.
+python3 - "$REPO/ide/jupyterlite/jupyter-lite.json" "$OUTPUT" <<'PY'
+import json, pathlib, sys
+src = json.loads(pathlib.Path(sys.argv[1]).read_text())["jupyter-config-data"]
+for f in pathlib.Path(sys.argv[2]).rglob("jupyter-lite.json"):
+    d = json.loads(f.read_text())
+    d.setdefault("jupyter-config-data", {}).update(src)
+    f.write_text(json.dumps(d, indent=2))
+    print("  patched", f)
+PY
+
 echo "== 5. copy into site/jupyterlite =="
 rm -rf "$REPO/site/jupyterlite"
 cp -r "$OUTPUT" "$REPO/site/jupyterlite"

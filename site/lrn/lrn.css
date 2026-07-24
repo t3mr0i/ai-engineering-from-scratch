@@ -406,8 +406,8 @@ i[class^="ph "] {
   padding: 0 var(--space-5);
   border: 1px solid var(--lhg-core-blue);
   border-radius: var(--radius-pill);
-  background: var(--lhg-core-blue);
-  color: var(--lhg-white);
+  background: transparent;
+  color: var(--lhg-core-blue);
   font-family: var(--font-text);
   font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
@@ -416,6 +416,7 @@ i[class^="ph "] {
   cursor: pointer;
   transition:
     background-color var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard),
     transform var(--dur-fast) var(--ease-standard),
     box-shadow var(--dur-base) var(--ease-standard);
 }
@@ -431,7 +432,7 @@ i[class^="ph "] {
 
 @media (hover: hover) and (pointer: fine) {
   .selector-cta:hover {
-    background: var(--lhg-blue-600);
+    background: var(--lhg-blue-100);
     box-shadow: var(--shadow-sm);
   }
 }
@@ -530,8 +531,8 @@ i[class^="ph "] {
 
 .chip[aria-pressed="true"] {
   border-color: var(--lhg-core-blue);
-  background: var(--lhg-core-blue);
-  color: var(--lhg-white);
+  background: var(--lhg-blue-100);
+  color: var(--lhg-core-blue);
   font-weight: var(--weight-regular);
 }
 
@@ -607,11 +608,11 @@ i[class^="ph "] {
 
 /* Per-family tints — Lufthansa brand-adjacent, single brand-blue family. */
 .course-card[data-theme="foundation"]   { --tile-ink: var(--lhg-core-blue); --tile-bg: var(--lhg-blue-100); }
-.course-card[data-theme="productivity"] { --tile-ink: var(--lhg-core-blue); --tile-bg: var(--lhg-blue-100); }
-.course-card[data-theme="consulting"]   { --tile-ink: var(--lhg-core-blue); --tile-bg: var(--lhg-blue-100); }
-.course-card[data-theme="engineering"]  { --tile-ink: var(--lhg-core-blue); --tile-bg: var(--lhg-blue-100); }
-.course-card[data-theme="governance"]   { --tile-ink: var(--lhg-core-blue); --tile-bg: var(--lhg-blue-100); }
-.course-card[data-theme="leadership"]   { --tile-ink: var(--lhg-core-blue); --tile-bg: var(--lhg-blue-100); }
+.course-card[data-theme="productivity"] { --tile-ink: var(--lhg-teal);      --tile-bg: #dcecee; }
+.course-card[data-theme="consulting"]   { --tile-ink: var(--lhg-purple);    --tile-bg: #f3e1ea; }
+.course-card[data-theme="engineering"]  { --tile-ink: var(--lhg-blue-500);  --tile-bg: #e8edfc; }
+.course-card[data-theme="governance"]   { --tile-ink: var(--lhg-slate-700); --tile-bg: #eef0f3; }
+.course-card[data-theme="leadership"]   { --tile-ink: var(--lhg-sand);      --tile-bg: #f2ede7; }
 
 .course-card__tile {
   display: inline-grid;
@@ -755,18 +756,20 @@ i[class^="ph "] {
 .progress-meter::before {
   content: "";
   grid-area: 1 / 1;
-  height: 4px;
+  height: 6px;
   border-radius: var(--radius-pill);
   background: var(--color-track);
 }
 
 .progress-meter span {
   grid-area: 1 / 1;
-  height: 4px;
-  width: 0;
+  height: 6px;
+  width: 100%;
   border-radius: var(--radius-pill);
   background: var(--lhg-blue-500);
-  transition: width var(--dur-slow) var(--ease-out);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-slow) var(--ease-out);
 }
 
 .progress-meter strong {
