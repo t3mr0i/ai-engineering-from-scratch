@@ -242,10 +242,13 @@ def _strip_ceremony(cells: List[dict]) -> List[dict]:
     return out
 
 
-def _hide_setup(cells: List[dict]) -> None:
+def _hide_setup(cells: List[dict]) -> Optional[int]:
     """Collapse the input of the first setup cell (defines lrn_llm). It still
-    runs on Run All / Shift-Enter — only the source is hidden from view."""
-    for c in cells:
+    runs on Run All / Shift-Enter — only the source is hidden from view.
+
+    Returns the index of that cell, so the caller can guard the cells below it.
+    """
+    for i, c in enumerate(cells):
         if c["cell_type"] == "code" and (
             "notebook ready" in "".join(c["source"])
             or "lrn_llm.call = " in "".join(c["source"])
@@ -258,7 +261,40 @@ def _hide_setup(cells: List[dict]) -> None:
             c.setdefault("metadata", {}).setdefault("jupyter", {})[
                 "source_hidden"
             ] = True
-            return
+            return i
+    return None
+
+
+# The setup cell is hidden (above) and the ceremony steps around it are gone, so
+# the notebook opens on a heading that reads "Step 1". Starting there is the
+# natural thing to do — and it fails with a bare `NameError: lrn_llm`, because
+# the kernel is fresh on every reload (jupyter-lite.json uses memory storage).
+# These two additions make that impossible to hit silently: a visible note above
+# the hidden cell, and a guard on every cell below it that needs `lrn_llm`.
+_RUN_FIRST_NOTE = (
+    "> ▶️ **Run this first.** The next cell is collapsed — it defines the "
+    "`lrn_llm` client every step below needs. Select it and press "
+    "**Shift+Enter**, or use *Kernel → Restart Kernel and Run All Cells*."
+)
+
+_GUARD = (
+    'if "lrn_llm" not in globals():\n'
+    '    raise RuntimeError(\n'
+    '        "Setup cell not run — Kernel > Restart Kernel and Run All Cells"\n'
+    '    )\n'
+)
+
+
+def _guard_llm_cells(cells: List[dict], setup_idx: int) -> None:
+    """Prepend a guard to every code cell below the setup cell that uses
+    `lrn_llm`, turning a bare NameError into an actionable instruction."""
+    for c in cells[setup_idx + 1 :]:
+        if c["cell_type"] != "code":
+            continue
+        src = "".join(c["source"])
+        if "lrn_llm" not in src or src.startswith(_GUARD):
+            continue
+        c["source"] = (_GUARD + "\n" + src).splitlines(keepends=True)
 
 
 def _renumber_steps(cells: List[dict]) -> None:
@@ -290,7 +326,10 @@ def build_notebook(src: str) -> dict:
         if run_src:
             cells.append(code_cell(run_src))
     cells = _strip_ceremony(cells)
-    _hide_setup(cells)
+    setup_idx = _hide_setup(cells)
+    if setup_idx is not None:
+        _guard_llm_cells(cells, setup_idx)
+        cells.insert(setup_idx, md_cell(_RUN_FIRST_NOTE))
     _renumber_steps(cells)
     return {
         "cells": cells,
