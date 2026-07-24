@@ -178,11 +178,43 @@ Implications:
   discussed with the network team (new Kyndryl-managed zone + cert) — moot
   for now since `trainingcamp.lhind.app.lufthansa.com` already covers this.
 
+### JupyterLite notebooks are a separate manual build — do not skip
+
+`site/jupyterlite/` (the embedded notebook viewer under `/jupyterlite/...` on
+every lesson page) is **not** derived from `phases/` at Docker-build time.
+It's built locally by `ide/jupyterlite/build.sh` (converts
+`phases/**/code/notebook*.py` → executed `.ipynb`, bundles the JupyterLite
+static app) and only picked up because `openshift/Dockerfile`'s `COPY site
+./site` copies whatever is on disk in `site/jupyterlite/` at build time.
+`site/jupyterlite/` is gitignored (build output, not source) — **it must
+also not be in `.dockerignore`**, or `oc start-build --from-dir=.` silently
+drops it from the build context and the deployed pod ends up with no
+`site/jupyterlite/` directory at all (`/jupyterlite/...` 404s everywhere,
+not just stale — confirmed via `oc exec ... find /opt/app-root/src/site/jupyterlite`
+returning "No such file or directory"). This happened in production once:
+`.dockerignore` had `site/jupyterlite` copy-pasted in alongside `site/phases`
+(which correctly *should* be dockerignored, since the Dockerfile regenerates
+it itself) — nobody had rebuilt+redeployed since the GPT-5.4-mini migration,
+so it went unnoticed for a while. Fixed by removing that line.
+
+Any change to a `phases/**/code/notebook*.py` (model name, API base, prompt
+text, anything) requires **both** steps below, in order — running only the
+`oc start-build` step will deploy stale/no notebooks:
+
+```bash
+bash ide/jupyterlite/build.sh   # rebuilds site/jupyterlite/ from phases/**/code/notebook*.py
+```
+
 ### Redeploy after a code change
 
 ```bash
 oc start-build ase-site-gated --from-dir=. --follow   # rebuilds image
 oc rollout restart deployment/ase-site-gated          # picks up :latest
+```
+
+Verify a notebook actually updated:
+```bash
+curl -s https://$(oc get route ase-site-gated -o jsonpath='{.spec.host}')/jupyterlite/files/<phase>/<lesson>.ipynb | grep DEFAULT_MODEL
 ```
 
 ### Azure teardown

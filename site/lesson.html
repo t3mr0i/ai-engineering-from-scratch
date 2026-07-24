@@ -258,38 +258,6 @@
       min-width: 0;
     }
 
-    .lesson-headbar__meta {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-      text-align: right;
-    }
-
-    /* Quiet breadcrumb: full unit name · activity position (no codes). */
-    .lesson-headbar__crumb {
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--ink-mute);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .lesson-headbar__course {
-      font-family: var(--font-body);
-      font-size: 0.92rem;
-      font-weight: 500;
-      color: var(--ink);
-      line-height: 1.25;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
     .lesson-headbar__nav {
       display: flex;
       align-items: center;
@@ -316,7 +284,6 @@
        so it needs more room than the other pages — hide the wordmark text
        and tighten the nav gap from 640px down. */
     @media (max-width: 640px) {
-      .lesson-headbar__meta { display: none; }
       .nav-edge .wordmark > span:not(.wordmark__mark) { display: none; }
       .lesson-headbar__nav { gap: 12px; }
     }
@@ -2941,21 +2908,6 @@
         var slot = document.getElementById('lessonHeaderContext');
         if (!slot) return;
 
-        var meta = '';
-        if (lrnContext) {
-          var current = lrnContext.current;
-          // Full names only — no Pxx/Lxx/Uxx codes (see CLAUDE.md LRN rules).
-          // Crumb: unit name · activity position. Title: full course name.
-          meta =
-            '<div class="lesson-headbar__meta">' +
-            '<div class="lesson-headbar__crumb">' +
-              escapeHtml(current.groupTitle) + ' &middot; ' +
-              (lrnContext.currentIndex + 1) + ' / ' + lrnContext.total +
-            '</div>' +
-            '<div class="lesson-headbar__task-title">' + escapeHtml(current.title) + '</div>' +
-            '</div>';
-        }
-
         var nav = '<nav class="lesson-headbar__nav" aria-label="Lesson navigation">';
         if (lrnContext && lrnContext.prev) {
           nav += '<a href="' + lrnLessonHref(lrnContext.prev.path) + '" title="Previous activity" aria-label="Previous activity">&larr;</a>';
@@ -2968,7 +2920,7 @@
         nav += '<a href="#" id="langToggle" class="lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title"><span id="langIcon" class="theme-icon">EN</span></a>';
         nav += '</nav>';
 
-        slot.innerHTML = meta + nav;
+        slot.innerHTML = nav;
         if (window.SiteLang) window.SiteLang.translate();
       }
 
@@ -3357,7 +3309,7 @@
             out += flushList();
             out += flushLabChallenge();
             var slug = slugify(h1[1]);
-            out += '<h1 id="' + slug + '">' + inlineFormat(h1[1]) + '</h1>';
+            out += '<h1 id="' + slug + '">' + inlineFormat(h1[1], { noGloss: true }) + '</h1>';
             continue;
           }
 
@@ -3399,7 +3351,7 @@
               continue;
             }
             out += flushLabChallenge();
-            out += '<h2 id="' + slug2 + '" class="' + sectionClass + '">' + inlineFormat(h2[1]) + '</h2>';
+            out += '<h2 id="' + slug2 + '" class="' + sectionClass + '">' + inlineFormat(h2[1], { noGloss: true }) + '</h2>';
             continue;
           }
 
@@ -3407,7 +3359,7 @@
           if (h3) {
             out += flushList();
             var slug3 = slugify(h3[1]);
-            out += '<h3 id="' + slug3 + '">' + inlineFormat(h3[1]) + '</h3>';
+            out += '<h3 id="' + slug3 + '">' + inlineFormat(h3[1], { noGloss: true }) + '</h3>';
             continue;
           }
 
@@ -3519,7 +3471,7 @@
         return cells.map(function (c) { return c.trim(); });
       }
 
-      function inlineFormat(text) {
+      function inlineFormat(text, opts) {
         text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         text = text.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
         text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
@@ -3541,20 +3493,42 @@
           }
           return label;
         });
-        text = glossifyText(text);
+        if (!opts || !opts.noGloss) text = glossifyText(text);
         return text;
       }
 
       // Wikipedia-style hover/click definitions: glossary terms and "Phase N"
       // mentions in lesson prose get a tooltip (definition / real phase name).
-      // Single pass per inlineFormat() call, first occurrence per term per
-      // lesson only (state reset in parseMd()) — cheap, load-time only.
-      var _glossSeen = null;     // Set of lowercased terms already annotated this lesson
+      // Every occurrence is annotated until the learner actually opens the
+      // popover once — that checks the term off persistently (localStorage,
+      // across lessons) and removes the annotation.
+      var _glossSeen = null;     // non-null = state was reset for this render (sentinel)
+      var _glossChecked = null;  // Set of lowercased terms the learner has checked off
       var _glossRegex = null;    // built lazily from GLOSSARY, cached across lessons
       var _glossByLower = null;
 
+      var GLOSS_CHECKED_KEY = 'aifs:glossChecked:v1';
+
       function resetGlossaryState() {
         _glossSeen = new Set();
+        _glossChecked = new Set();
+        try {
+          var raw = localStorage.getItem(GLOSS_CHECKED_KEY);
+          if (raw) JSON.parse(raw).forEach(function (t) { _glossChecked.add(t); });
+        } catch (e) { /* corrupt storage — treat as nothing checked off */ }
+      }
+
+      function checkOffGlossTerm(lower) {
+        if (!lower || (_glossChecked && _glossChecked.has(lower))) return;
+        if (_glossChecked) _glossChecked.add(lower);
+        try {
+          var raw = localStorage.getItem(GLOSS_CHECKED_KEY);
+          var list = raw ? JSON.parse(raw) : [];
+          if (list.indexOf(lower) < 0) {
+            list.push(lower);
+            localStorage.setItem(GLOSS_CHECKED_KEY, JSON.stringify(list));
+          }
+        } catch (e) { /* storage unavailable — check-off just won't persist */ }
       }
 
       function escapeRegexLiteral(s) {
@@ -3611,14 +3585,13 @@
           text = text.replace(_glossRegex, function (m, pre, term) {
             var lower = term.toLowerCase();
             var entry = _glossByLower[lower];
-            if (!entry || _glossSeen.has(lower)) return m;
+            if (!entry || (_glossChecked && _glossChecked.has(lower))) return m;
             if (entry.isAcronym && term !== entry.term) return m;
-            _glossSeen.add(lower);
             var def = entry.means || entry.says || '';
             if (!def) return m;
             var isHidden = localStorage.getItem('hideGlossUnderline') === 'true';
             var glossClass = 'gloss-term' + (isHidden ? ' hide-underline' : '');
-            return pre + '<span class="' + glossClass + '" tabindex="0">' + term +
+            return pre + '<span class="' + glossClass + '" data-gloss="' + lower + '" tabindex="0">' + term +
               '<span class="gloss-popover" role="tooltip">' + mdToHtml(def) + '</span></span>';
           });
         }
@@ -3900,10 +3873,38 @@
         else { el.setAttribute('data-show', 'false'); }
       }
 
+      // Once the popover was actually opened (hover dwell / focus / tap), the
+      // term counts as read: persist the check-off and strip the annotation
+      // from its other occurrences on the page. The element just interacted
+      // with keeps working until the next lesson render.
+      function markGlossRead(term) {
+        var lower = term.getAttribute && term.getAttribute('data-gloss');
+        if (!lower) return; // phase links etc. never check off
+        checkOffGlossTerm(lower);
+        document.querySelectorAll('.gloss-term[data-gloss="' + lower + '"]').forEach(function (t) {
+          if (t === term) return;
+          var pop = t.querySelector('.gloss-popover');
+          if (pop) pop.remove();
+          t.replaceWith(document.createTextNode(t.textContent));
+        });
+      }
+
       // Touch/click devices have no real :hover — toggle the popover on tap
       // instead, and close it when tapping elsewhere.
       function initGlossTooltips() {
         document.querySelectorAll('.gloss-term').forEach(function (term) {
+          // Hover/focus opens the popover via CSS; count it as read only
+          // after a short dwell so brushing the mouse past doesn't check off.
+          var dwellTimer = null;
+          function armDwell() {
+            clearTimeout(dwellTimer);
+            dwellTimer = setTimeout(function () { markGlossRead(term); }, 700);
+          }
+          function disarmDwell() { clearTimeout(dwellTimer); }
+          term.addEventListener('mouseenter', armDwell);
+          term.addEventListener('mouseleave', disarmDwell);
+          term.addEventListener('focus', armDwell);
+          term.addEventListener('blur', disarmDwell);
           term.addEventListener('click', function (e) {
             if (term.tagName === 'A' && !term.classList.contains('gloss-open')) {
               // First tap on a phase link opens the tooltip instead of
@@ -3915,6 +3916,7 @@
               if (t !== term) t.classList.remove('gloss-open');
             });
             term.classList.toggle('gloss-open', !wasOpen);
+            if (!wasOpen) markGlossRead(term);
           });
         });
         document.addEventListener('click', function (e) {

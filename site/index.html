@@ -40,10 +40,9 @@
   <main class="page page--home">
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
-        <h1 id="heroTitle" data-i18n="hero_title">What are you learning?</h1>
-        <p id="lastLessonName" class="last-lesson-name"></p>
-        <a id="resumeButton" href="#" class="resume-button" data-i18n-title="resume_button">
-          <span class="button-text" data-i18n="resume_button">Continue with this lesson</span>
+        <h1 id="heroTitle">Ready to continue?</h1>
+        <a id="resumeButton" href="#" class="resume-button">
+          <span class="button-text" id="resumeButtonText">Continue</span>
         </a>
       </div>
     </section>
@@ -91,25 +90,13 @@
   <!-- Resume from last lesson (localStorage) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Time-of-day header — a bit more agile / personal (morning / afternoon / evening)
-      const now = new Date();
-      const hour = now.getHours();
-      let heroText;
-      if (hour < 6 || hour >= 18) {
-        heroText = "Guten Abend! Was lernst du gerade?";
-      } else if (hour < 12) {
-        heroText = "Guten Morgen! Was lernst du gerade?";
-      } else {
-        heroText = "Guten Nachmittag! Was lernst du gerade?";
-      }
-      document.getElementById('heroTitle').textContent = heroText;
+      const heroTitle = document.getElementById('heroTitle');
+      const resumeButton = document.getElementById('resumeButton');
+      const resumeButtonText = document.getElementById('resumeButtonText');
 
       // Dynamic last lesson name — reads the most recently visited lesson
       // from the LRN/progress storage (locus Dovage / aifs:progress:v1)
-      const lastLessonNameEl = document.getElementById('lastLessonName');
-      const resumeButton = document.getElementById('resumeButton');
-
-      let lastLessonNameText = 'No lesson opened yet';
+      let lessonName = '';
       let resumeHref = '#';
       try {
         const progressRaw = localStorage.getItem('aifs:progress:v1');
@@ -128,7 +115,7 @@
             if (lastPath) {
               // Short pretty name e.g. "05-jupyter-notebooks" -> "Jupyter Notebooks"
               const slug = lastPath.split('/').pop();
-              lastLessonNameText = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+              lessonName = slug.replace(/^\d+[-_]?/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
               resumeHref = `lesson.html?path=${lastPath}`;
             }
           }
@@ -137,13 +124,32 @@
         // silent fail
       }
 
-      lastLessonNameEl.textContent = lastLessonNameText;
-      resumeButton.href = resumeHref;
-      if (lastLessonNameText === 'No lesson opened yet') {
-        resumeButton.style.display = 'none';
-      } else {
-        resumeButton.style.display = '';
+      function render() {
+        const de = (window.SiteLang ? window.SiteLang.get() : 'en') === 'de';
+        // Time-of-day greeting (morning / afternoon / evening)
+        const hour = new Date().getHours();
+        let greeting;
+        if (hour < 6 || hour >= 18) {
+          greeting = de ? 'Guten Abend!' : 'Good evening!';
+        } else if (hour < 12) {
+          greeting = de ? 'Guten Morgen!' : 'Good morning!';
+        } else {
+          greeting = de ? 'Guten Nachmittag!' : 'Good afternoon!';
+        }
+        if (lessonName) {
+          heroTitle.textContent = greeting + (de ? ' Bereit weiterzumachen?' : ' Ready to continue?');
+          resumeButtonText.textContent = de ? `${lessonName} fortsetzen` : `Continue ${lessonName}`;
+          resumeButton.title = resumeButtonText.textContent;
+          resumeButton.setAttribute('aria-label', resumeButtonText.textContent);
+        } else {
+          heroTitle.textContent = greeting + (de ? ' Was möchtest du lernen?' : ' What do you want to learn?');
+        }
       }
+
+      resumeButton.href = resumeHref;
+      resumeButton.style.display = lessonName ? '' : 'none';
+      render();
+      document.addEventListener('sitelang:change', render);
     });
   </script>
 </body>

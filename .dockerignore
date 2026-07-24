@@ -4,7 +4,6 @@ node_modules
 .swa-deploy
 deploy.zip
 *.zip
-site/jupyterlite
 site/phases
 .jupyterlite.doit.db
 .DS_Store
