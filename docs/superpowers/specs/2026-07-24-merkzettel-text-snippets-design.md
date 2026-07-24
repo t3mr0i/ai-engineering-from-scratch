@@ -1,6 +1,6 @@
 # Merkzettel: Freitext-Snippets per Markierung
 
-Status: approved (design), not yet planned/implemented.
+Status: implemented and committed (8407e345).
 
 ## Problem
 
