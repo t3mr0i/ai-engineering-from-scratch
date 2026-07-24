@@ -178,7 +178,7 @@ print(f"\nEngineered output:")
 print(f"  - Lines: {engineered_lines}")
 print(f"  - Word count: {len(engineered_output.split())}")
 print(f"  - Structure: labeled fields (Pain Point, Evidence, Impact, Recommendation)")
-print(f"  - Specific recommendations: {engineered_output.lower().count('recommendation')}")
+print(f"  - Specific recommendations: {engineered_output.lower().count('recommend')}")
 
 print(f"\n✅ The engineered prompt produced more structured, actionable output.")
 print(f"   Same model, same interviews, better instructions → better results.")

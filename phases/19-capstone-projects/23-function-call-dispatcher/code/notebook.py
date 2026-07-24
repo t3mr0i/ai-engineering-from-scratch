@@ -262,6 +262,7 @@ class MiniDispatcher:
         retries regardless, because raising it is the handler asserting "nothing
         committed yet".
         """
+        fut = None
         if idempotency_key is not None:
             cached = self._cached(idempotency_key)
             if cached is not None:
@@ -272,10 +273,21 @@ class MiniDispatcher:
             fut = asyncio.get_running_loop().create_future()
             self._inflight[idempotency_key] = fut
 
-        result = await self._run_with_retries(handler_factory, timeout_s or self.timeout_s, idempotent)
+        try:
+            result = await self._run_with_retries(handler_factory, timeout_s or self.timeout_s, idempotent)
+        except Exception as e:
+            # Anything _run_with_retries doesn't already turn into a DispatchError
+            # (i.e. not TransientError/SchemaError/NotFoundError/asyncio.TimeoutError)
+            # is a genuine bug — resolve the future with it instead of leaving any
+            # concurrent joiner on this idempotency_key hanging forever.
+            if fut is not None:
+                fut.set_exception(e)
+            raise
+        finally:
+            if fut is not None:
+                del self._inflight[idempotency_key]
 
-        if idempotency_key is not None:
-            del self._inflight[idempotency_key]
+        if fut is not None:
             self._completed[idempotency_key] = (time.monotonic(), result)
             fut.set_result(result)
         return result

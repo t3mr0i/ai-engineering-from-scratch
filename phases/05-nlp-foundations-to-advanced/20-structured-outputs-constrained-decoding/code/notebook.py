@@ -181,6 +181,15 @@ good_schema = {
 
 print("Demonstrating field order effect on schema design...")
 print(f"Review: '{review_text}'")
+
+print("\nWith BAD schema (answer before reasoning):")
+prompt_bad = f"""Classify the review with schema: {json_lib.dumps(bad_schema)}
+Review: '{review_text}'
+Return only the JSON:"""
+r_bad = await lrn_llm.call([{"role": "user", "content": prompt_bad}], max_tokens=200)
+response_bad = lrn_llm.text(r_bad)
+print(response_bad)
+
 print("\nWith GOOD schema (reasoning first):")
 prompt_good = f"""Classify the review with schema: {json_lib.dumps(good_schema)}
 Review: '{review_text}'
@@ -188,6 +197,29 @@ Return only the JSON:"""
 r = await lrn_llm.call([{"role": "user", "content": prompt_good}], max_tokens=200)
 response = lrn_llm.text(r)
 print(response)
+
+# Soft self-check: does the bad-schema output actually show the failure mode?
+# (LLM output varies, so this is a print-based nudge, not a hard assert.)
+print("\n--- Self-check: compare the two outputs above ---")
+try:
+    obj_bad = json_lib.loads(response_bad)
+    reasoning_bad = obj_bad.get("reasoning", "")
+    sentiment_bad = obj_bad.get("sentiment", "")
+    if reasoning_bad and sentiment_bad.lower() not in reasoning_bad.lower():
+        print("⚠️  BAD schema: 'reasoning' doesn't clearly support 'sentiment' —")
+        print("    look for a mismatch between the committed answer and the reasoning that follows it.")
+    else:
+        print("ℹ️  BAD schema output looks consistent this run — the failure mode isn't always visible,")
+        print("    since the model may still 'plan ahead' internally before emitting the answer token.")
+except json_lib.JSONDecodeError:
+    print("⚠️  BAD schema output didn't even parse as JSON — that's the failure mode in action.")
+
+try:
+    obj_good = json_lib.loads(response)
+    print("✅ GOOD schema output parsed cleanly, reasoning was generated before the answer:")
+    print(f"   sentiment={obj_good.get('sentiment')!r}, reasoning={obj_good.get('reasoning', '')[:80]!r}")
+except json_lib.JSONDecodeError:
+    print("❌ GOOD schema output failed to parse — unexpected, re-run to check for a fluke.")
 
 # %% [markdown]
 # ## Step 6 — Multiple Examples: Sentiment Classification in Batch

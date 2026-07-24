@@ -286,7 +286,7 @@ for err in result1.errors:
     print(f"  {err}")
 
 # %%
-# Test 2: Schema violation (lowercase SKU, extra field, missing required)
+# Test 2: Schema violation (lowercase SKU, extra field)
 print("\n" + "="*60)
 print("Test 2: Schema violation (SKU pattern fails, extra field)")
 print("="*60)

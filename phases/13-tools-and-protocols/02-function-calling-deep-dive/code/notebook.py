@@ -310,27 +310,59 @@ print(f"  - Arguments were OBJECT (like Anthropic)")
 # %% [markdown]
 # ## Step 9 — Equivalence: Same Semantics Across Providers
 #
-# Despite different wire formats, all three calls carry the same semantic payload: the tool name, arguments, and a correlation id.
+# Despite different wire formats, all three calls *should* carry the same semantic payload: the tool name, arguments, and a correlation id. But "should" isn't "does" — a real equivalence check needs to actually catch it when they don't. We run the check twice: once on three fixtures that genuinely agree (Case A, should PASS), and once on a fixture set where Gemini's call has been deliberately corrupted to return Fahrenheit instead of Celsius (Case B, should FAIL).
 
 # %%
-print("📊 Three providers, one meaning:")
-print(f"  OpenAI call:    {openai_call}")
-print(f"  Anthropic call: {anthropic_call}")
-print(f"  Gemini call:    {gemini_call}")
-print()
-print("✅ Same tool name?")
-all_names = {openai_call.name, anthropic_call.name, gemini_call.name}
-print(f"   {all_names} → unique: {len(all_names) == 1}")
-print()
-print("✅ Same arguments?")
-openai_args_json = json.dumps(openai_call.args, sort_keys=True)
-anthropic_args_json = json.dumps(anthropic_call.args, sort_keys=True)
-gemini_args_json = json.dumps(gemini_call.args, sort_keys=True)
-print(f"   OpenAI:    {openai_args_json}")
-print(f"   Anthropic: {anthropic_args_json}")
-print(f"   Gemini:    {gemini_args_json}")
-all_args = {openai_args_json, anthropic_args_json, gemini_args_json}
-print(f"   → unique: {len(all_args) == 1}")
+def check_equivalence(label, calls):
+    print(f"🔎 {label}")
+    for c in calls:
+        print(f"   {c}")
+    names = {c.name for c in calls}
+    print(f"   Same tool name?  {names} → unique: {len(names) == 1}")
+    args_json = [json.dumps(c.args, sort_keys=True) for c in calls]
+    for c, aj in zip(calls, args_json):
+        print(f"     {c.id}: {aj}")
+    args_unique = len(set(args_json)) == 1
+    print(f"   Same arguments?  → unique: {args_unique}")
+    return len(names) == 1 and args_unique
+
+# Case A: OpenAI, Anthropic, and Gemini fixtures from Steps 6-8 — genuinely agree
+agree_ok = check_equivalence(
+    "Case A — three providers, same request (expected: agree)",
+    [openai_call, anthropic_call, gemini_call],
+)
+assert agree_ok, "Expected all three providers to agree on this request"
+print("   ✅ PASS: equivalence check correctly confirms matching semantics\n")
+
+# Hand-crafted Gemini response, deliberately corrupted: Fahrenheit instead of Celsius
+GEMINI_RESPONSE_MISMATCH = {
+    "candidates": [
+        {
+            "content": {
+                "role": "model",
+                "parts": [
+                    {
+                        "functionCall": {
+                            "id": "fc-77bad",
+                            "name": "get_weather",
+                            "args": {"city": "Bengaluru", "units": "fahrenheit"},
+                        }
+                    }
+                ],
+            },
+            "finishReason": "STOP",
+        }
+    ]
+}
+gemini_call_mismatch = parse_gemini(GEMINI_RESPONSE_MISMATCH)[0]
+
+# Case B: same OpenAI/Anthropic fixtures, but Gemini's units disagree
+mismatch_ok = check_equivalence(
+    "Case B — three providers, Gemini's units disagree (expected: FAIL)",
+    [openai_call, anthropic_call, gemini_call_mismatch],
+)
+assert not mismatch_ok, "Equivalence check failed to catch a genuine mismatch"
+print("   ❌ FAIL (as expected): equivalence check correctly catches the mismatch")
 
 # %% [markdown]
 # ## Step 10 — `tool_choice`: Forcing, Forbidding, Auto-picking

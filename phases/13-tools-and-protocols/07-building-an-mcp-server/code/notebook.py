@@ -263,35 +263,79 @@ print(f"notes_search('MCP') → {result['content'][0]['text']}")
 # Now let's ask the LLM to interact with the notes server by calling tools. The LLM will see the tool definitions and decide which tool to invoke.
 
 # %%
-# Ask LLM to list notes
-messages = [{"role": "user", "content": "What notes are currently in the system?"}]
+# Ask LLM to decide on a new note to create
+messages = [{"role": "user", "content": (
+    "We just finished setting up an MCP notes server. Create a note that captures "
+    "what MCP servers are for, so future readers have a quick reference. Decide on "
+    "a good title and body yourself, and call notes_create with your chosen values."
+)}]
 system = f"""You are a helpful assistant. You have access to an MCP server with these tools:
-{json.dumps([{'name': t['name'], 'description': t['description']} for t in TOOLS], indent=2)}
+{json.dumps([{'name': t['name'], 'description': t['description'], 'inputSchema': t['inputSchema']} for t in TOOLS], indent=2)}
 
-Respond naturally, and if asked, use the tools available."""
+When you want to call a tool, respond with ONLY a JSON object of the form:
+{{"name": "<tool_name>", "arguments": {{...}}}}
+Do not include any other text."""
 
 r = await lrn_llm.call(messages, system=system, max_tokens=150)
 response = lrn_llm.text(r)
 print(f"LLM: {response}")
 
+def parse_tool_call(model_reply):
+    """Parse a model's freeform reply into an MCP tools/call params dict
+    ({"name": ..., "arguments": {...}}), or None if it can't be parsed.
+
+    Reused by the "Try It Yourself" cell below — keep this the single source
+    of truth for parsing rather than re-implementing it there.
+    """
+    try:
+        data = json.loads(model_reply)
+        if isinstance(data, dict) and "name" in data and "arguments" in data:
+            return data
+    except Exception:
+        pass
+    return None
+
+tool_call = parse_tool_call(response)
+if tool_call:
+    print(f"✅ Parsed tool call: name={tool_call['name']}, arguments={tool_call['arguments']}")
+else:
+    print("⚠️  Could not parse a tool call from the LLM response")
+
 # %% [markdown]
 # ## Step 9 — Test tools/call: notes_create
 #
-# Create a new note through the server, which the LLM helped us decide on.
+# Create a new note through the server, using the tool call the LLM actually
+# decided on in Step 8 — falling back to a clearly-labeled default if parsing
+# failed or the model didn't call `notes_create`.
 
 # %%
-# Create a note
+# Create a note using the LLM's parsed decision (or a labeled fallback)
+DEFAULT_NOTE_ARGS = {
+    "title": "LLM Integration",
+    "body": "Connecting language models to tool-calling servers enables dynamic reasoning.",
+    "tag": "llm",
+}
+
+if (
+    tool_call
+    and tool_call.get("name") == "notes_create"
+    and isinstance(tool_call.get("arguments"), dict)
+    and "title" in tool_call["arguments"]
+    and "body" in tool_call["arguments"]
+):
+    create_args = tool_call["arguments"]
+    print("✅ Using the LLM's parsed notes_create arguments")
+else:
+    create_args = DEFAULT_NOTE_ARGS
+    print("⚠️  Could not parse a valid notes_create tool call from the LLM — falling back to a clearly-labeled default note")
+
 msg = {
     "jsonrpc": "2.0",
     "id": 4,
     "method": "tools/call",
     "params": {
         "name": "notes_create",
-        "arguments": {
-            "title": "LLM Integration",
-            "body": "Connecting language models to tool-calling servers enables dynamic reasoning.",
-            "tag": "llm",
-        },
+        "arguments": create_args,
     },
 }
 result = HANDLERS["tools/call"](msg.get("params", {}))
@@ -455,13 +499,33 @@ print(f"Total tools: {len(TOOLS)}")
 
 # Step 4: Ask LLM to use it
 messages = [{"role": "user", "content": "Rename the 'api' tag to 'function-calling' in all notes. Show me the result."}]
-system = f"You have access to tools: {json.dumps([{'name': t['name']} for t in TOOLS], indent=2)}"
+system = f"""You have access to tools: {json.dumps([{'name': t['name'], 'description': t['description'], 'inputSchema': t['inputSchema']} for t in TOOLS], indent=2)}
+
+When you want to call a tool, respond with ONLY a JSON object of the form:
+{{"name": "<tool_name>", "arguments": {{...}}}}
+Do not include any other text."""
 
 r = await lrn_llm.call(messages, system=system, max_tokens=150)
 response = lrn_llm.text(r)
 print(f"\nLLM Response: {response}")
 
-# Step 5: Verify the change
-result = TOOL_EXECUTORS["notes_tag_rename"]({"old_tag": "api", "new_tag": "function-calling"})
+# Step 5: Parse the tool call the LLM actually chose (reuses parse_tool_call from Step 8)
+DEFAULT_RENAME_ARGS = {"old_tag": "api", "new_tag": "function-calling"}
+rename_call = parse_tool_call(response)
+if (
+    rename_call
+    and rename_call.get("name") == "notes_tag_rename"
+    and isinstance(rename_call.get("arguments"), dict)
+    and "old_tag" in rename_call["arguments"]
+    and "new_tag" in rename_call["arguments"]
+):
+    rename_args = rename_call["arguments"]
+    print("✅ Using the LLM's parsed notes_tag_rename arguments")
+else:
+    rename_args = DEFAULT_RENAME_ARGS
+    print("⚠️  Could not parse a valid notes_tag_rename tool call from the LLM — falling back to a clearly-labeled default")
+
+# Step 6: Execute using the parsed (or default) arguments
+result = TOOL_EXECUTORS["notes_tag_rename"](rename_args)
 print(f"Execute: {result[0]['text']}")
 print(f"Updated notes: {json.dumps({nid: n['tag'] for nid, n in NOTES.items()}, indent=2)}")

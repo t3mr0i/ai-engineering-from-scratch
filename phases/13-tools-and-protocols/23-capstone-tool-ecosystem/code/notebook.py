@@ -305,7 +305,9 @@ try:
         tool_calls_obj = json.loads(json_match.group())
     else:
         tool_calls_obj = {"tool_calls": []}
-except:
+except json.JSONDecodeError as e:
+    print(f"⚠️ Could not parse tool_calls JSON from the LLM output: {e}")
+    print(f"Raw LLM output was:\n{llm_output}")
     tool_calls_obj = {"tool_calls": []}
 
 print(f"Parsed tool calls: {tool_calls_obj}")
@@ -418,7 +420,7 @@ root = emit_span(
 
 llm1 = emit_span(
     "llm.chat", "CLIENT", root["spanId"],
-    {"gen_ai.operation.name": "chat", "gen_ai.provider.name": "openai", "gen_ai.request.model": "gpt-4o"}
+    {"gen_ai.operation.name": "chat", "gen_ai.provider.name": "openai", "gen_ai.request.model": lrn_llm.DEFAULT_MODEL}
 )
 
 search_span = emit_span(
@@ -433,7 +435,7 @@ report_span = emit_span(
 
 llm2 = emit_span(
     "llm.chat", "CLIENT", root["spanId"],
-    {"gen_ai.operation.name": "chat", "gen_ai.provider.name": "openai", "gen_ai.request.model": "gpt-4o"}
+    {"gen_ai.operation.name": "chat", "gen_ai.provider.name": "openai", "gen_ai.request.model": lrn_llm.DEFAULT_MODEL}
 )
 
 print(f"Trace ID: {trace_id}\n")
@@ -475,7 +477,9 @@ try:
         tool_calls_obj = json.loads(json_match.group())
     else:
         tool_calls_obj = {"tool_calls": []}
-except:
+except json.JSONDecodeError as e:
+    print(f"⚠️ Could not parse tool_calls JSON from the LLM output: {e}")
+    print(f"Raw LLM output was:\n{llm_output}")
     tool_calls_obj = {"tool_calls": []}
 
 print(f"LLM decided to call: {[c.get('tool') for c in tool_calls_obj.get('tool_calls', [])]}\n")

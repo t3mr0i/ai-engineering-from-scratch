@@ -158,29 +158,59 @@ print(f"\nFirst chunk preview:\n{recursive_chunks[0][:200]}...")
 #
 # Now the key question: **for the query "What is the severance clause?", which strategy retrieves better chunks?**
 #
-# We'll use the LLM to score how well each chunk set addresses the query:
+# Instead of asking the LLM to guess in prose, let's actually retrieve: score every chunk from both strategies against the query with simple keyword overlap, then compare the top-scoring chunk from each.
 
 # %%
-# For fixed chunks, find which ones are most relevant to "severance clause"
+# Score each chunk against the query using simple keyword overlap (no embeddings/LLM call needed)
 query = "What is the severance clause?"
+query_terms = [w.lower() for w in query.split() if len(w) > 3]  # ["what", "severance", "clause"]
 
-evaluation_prompt = f"""Given this employment contract query: \"{query}\"
+def score_chunk(chunk, terms):
+    """Relevance score: how many times the query's keywords appear in the chunk (case-insensitive)."""
+    chunk_lower = chunk.lower()
+    return sum(chunk_lower.count(term) for term in terms)
 
-Rank these two chunking approaches by how well they would help retrieve the answer:
-1. Fixed chunking (512 chars): typically breaks mid-sentence, tends to scatter related text
-2. Recursive chunking (512 chars): respects sentence and paragraph boundaries
+fixed_scores = [score_chunk(c, query_terms) for c in fixed_chunks]
+recursive_scores = [score_chunk(c, query_terms) for c in recursive_chunks]
 
-Which is better for finding a specific legal clause? Explain in 2-3 sentences."""
+fixed_top_idx = max(range(len(fixed_chunks)), key=lambda i: fixed_scores[i])
+recursive_top_idx = max(range(len(recursive_chunks)), key=lambda i: recursive_scores[i])
 
-r = await lrn_llm.call([{"role": "user", "content": evaluation_prompt}], max_tokens=150)
-evaluation_text = lrn_llm.text(r)
-print("Chunking Strategy Comparison:\n")
-print(evaluation_text)
+fixed_top_chunk = fixed_chunks[fixed_top_idx]
+recursive_top_chunk = recursive_chunks[recursive_top_idx]
+
+print(f"Fixed chunking: top chunk is #{fixed_top_idx} (score {fixed_scores[fixed_top_idx]})")
+print(fixed_top_chunk[:300] + "...\n")
+print(f"Recursive chunking: top chunk is #{recursive_top_idx} (score {recursive_scores[recursive_top_idx]})")
+print(recursive_top_chunk[:300] + "...")
+
+# %% [markdown]
+# ### Self-Check — does the top-scoring chunk actually contain the full severance clause?
+#
+# A high keyword score isn't enough on its own — the chunk also needs to contain the *complete* clause, not just a fragment cut off at a hard chunk boundary.
+
+# %%
+# Ground truth: the paragraph in the source text that actually mentions "severance"
+severance_para = next((p for p in contract_text.split("\n\n") if "severance" in p.lower()), "").strip()
+
+fixed_has_full_clause = bool(severance_para) and severance_para in fixed_top_chunk
+recursive_has_full_clause = bool(severance_para) and severance_para in recursive_top_chunk
+
+print("Ground-truth severance clause paragraph:\n" + severance_para + "\n")
+print(f"Fixed chunking top chunk contains the FULL clause: {fixed_has_full_clause}")
+print(f"Recursive chunking top chunk contains the FULL clause: {recursive_has_full_clause}")
+
+if recursive_has_full_clause and not fixed_has_full_clause:
+    print("\n✅ Confirms the lesson's claim: recursive chunking preserved the clause boundary, fixed chunking split it.")
+elif fixed_has_full_clause and not recursive_has_full_clause:
+    print("\n⚠️ In this run, fixed chunking happened to keep the clause intact — chunk boundaries depend on the generated text, rerun to see the effect vary.")
+else:
+    print("\nBoth strategies produced the same result for this generated contract.")
 
 # %% [markdown]
 # ## Step 6 — Contextual Retrieval Pattern
 #
-# Anthropicís 2024 pattern: prepend each chunk with an LLM-generated summary of its position in the document. This gives the retriever extra signal.
+# Anthropic's 2024 pattern: prepend each chunk with an LLM-generated summary of its position in the document. This gives the retriever extra signal.
 
 # %%
 # Take the first recursive chunk and generate contextual metadata for it

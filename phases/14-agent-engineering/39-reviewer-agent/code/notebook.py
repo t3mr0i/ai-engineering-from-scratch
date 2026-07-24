@@ -234,7 +234,9 @@ Assumptions recorded: {assumptions_text}
 Are assumptions properly documented?
 If ≥2 assumptions are recorded and specific: score 2.
 If some assumptions recorded but sparse: score 1.
-If no assumptions recorded: score 1 (either trivial or undocumented).
+If no assumptions recorded, judge whether the task genuinely required disambiguation (which fields, which rules, which edge cases — most non-trivial feature/behavior changes do):
+  - If the task was truly mechanical/unambiguous and no judgment calls were possible: score 2 (nothing to document).
+  - If the task required judgment calls and none were surfaced: score 0 (assumptions were needed but never recorded).
 
 Reply with ONLY a JSON object: {{"score": <int>, "note": "<reason>"}}"""
 

@@ -58,7 +58,7 @@ print("✅ notebook ready · endpoint:", lrn_llm.API_BASE)
 # ## Step 0a — Endpoint & Key
 #
 # The API key is handled transparently by the server-side proxy (no manual key needed for LHIND network).
-# Default model is GPT-4o via Azure gateway.
+# Default model is GPT-5.4-mini via Azure gateway.
 
 print("Endpoint:", lrn_llm.API_BASE)
 print("Model:", lrn_llm.DEFAULT_MODEL)
@@ -185,12 +185,44 @@ print("-" * 60)
 # Score both outputs on clarity, correctness, and format compliance. The engineered prompt should steer toward a cleaner, more focused response.
 
 # %%
+def _extract_fizzbuzz_fn(text):
+    """Pull the `def fizzbuzz(...)` block out of an LLM response, if present."""
+    lines = text.split("\n")
+    start = None
+    for i, line in enumerate(lines):
+        if line.strip().startswith("def fizzbuzz"):
+            start = i
+            break
+    if start is None:
+        return None
+    fn_lines = [lines[start]]
+    for line in lines[start + 1:]:
+        if line.strip() == "" or line.startswith((" ", "\t")):
+            fn_lines.append(line)
+        else:
+            break
+    return "\n".join(fn_lines)
+
+def _check_fix(text):
+    """Functional check: extract the candidate fizzbuzz function and verify it
+    actually produces the corrected output for n=5, rather than relying on a
+    single exact spelling of the fix (e.g. 'range(1, n+1)')."""
+    code = _extract_fizzbuzz_fn(text)
+    if not code:
+        return False
+    ns = {}
+    try:
+        exec(code, ns)
+        return ns["fizzbuzz"](5) == ["1", "2", "Fizz", "4", "Buzz"]
+    except Exception:
+        return False
+
 def eval_response(text, variant_name):
     """Evaluate a response for correctness and clarity."""
     criteria = {}
-    
-    # Check if response contains 'range(1, n+1)' (the fix)
-    criteria["has_fix"] = "range(1, n+1)" in text or "range(1,n+1)" in text
+
+    # Check whether the fixed function actually returns the correct output
+    criteria["has_fix"] = _check_fix(text)
     
     # Check if it's mostly code (engineered variant should be concise)
     code_lines = len([l for l in text.split('\n') if l.strip().startswith('def') or l.strip().startswith('for') or l.strip().startswith('if')])
@@ -207,7 +239,7 @@ def eval_response(text, variant_name):
     criteria["minimal_explanation"] = not has_explanation
     
     print(f"\n{variant_name}:")
-    print(f"  ✓ Contains fix (range(1, n+1)): {criteria['has_fix']}")
+    print(f"  ✓ Fix produces correct output: {criteria['has_fix']}")
     print(f"  ✓ Contains code: {criteria['has_code']}")
     print(f"  ✓ Word count: {criteria['word_count']} words")
     print(f"  ✓ Concise (< 100 words): {criteria['concise']}")

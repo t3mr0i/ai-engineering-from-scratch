@@ -234,13 +234,16 @@ class Runner:
             
             # Merge update into state
             state = {**state, **update}
-            
+
+            # Check for pause signal and clear it before checkpointing, so a
+            # resumed run that reloads this checkpoint doesn't see a stale
+            # _pause_reason and immediately re-pause on the next node.
+            paused = state.pop("_pause_reason", None)
+
             # Checkpoint after node
             self.checkpointer.save(session_id, node_name, state)
-            
-            # Check for pause signal
-            if state.get("_pause_reason"):
-                reason = state.pop("_pause_reason")
+
+            if paused:
                 raise PausedAtNode(node_name, state)
         
         return state
@@ -297,18 +300,17 @@ print("\nHuman approves the refund ticket. Running the final step...")
 print("=" * 70)
 
 # Resume must start from the *checkpointed* state, not the original initial_state —
-# runner.run(resume_from=...) alone wouldn't carry the human's approval into the next
-# node, since that approval only exists in the checkpoint we're about to load.
+# the Runner doesn't reload checkpoints itself, so we load(session_id) to get the
+# state as of the pause, then hand it back to the Runner to continue the pipeline.
 latest_node, paused_state = ckpt.load_latest(session_id)
 print(f"Last checkpoint was at: {latest_node}")
 
 approved_state = copy.deepcopy(paused_state)
 approved_state["human_approved"] = True
 
-# Run the final send node directly against the approved state, then checkpoint it.
-send_update = send_node(approved_state)
-approved_state.update(send_update)
-ckpt.save(session_id, "send", approved_state)
+# Resume through the Runner itself: resume_from="send" tells it to continue the
+# pipeline at the node right after human_gate, instead of restarting from classify.
+approved_state = await runner.run(session_id, approved_state, resume_from="send")
 
 print(f"\n✅ Final output: {approved_state.get('output')}")
 print(f"\nFinal state summary:")

@@ -242,6 +242,47 @@ print(f"Case: {cases[2]['id']}")
 print(f"Context Precision: {cp_score:.2f}")
 print(cp_reason)
 
+# %%
+async def context_recall_judge(context_chunks, expected_output, case_id):
+    """Score context recall: fraction of ground-truth claims that are backed by the retrieved context."""
+    # Step 1: LLM breaks the expected (ground-truth) output into atomic claims
+    claims_response = await lrn_llm.call(
+        [{"role": "user", "content": f"Break this ground-truth answer into simple factual claims (one per line, no numbering):\n{expected_output}"}],
+        system="You are a fact analyzer. Decompose text into simple, atomic claims.",
+        max_tokens=200
+    )
+    claims_text = lrn_llm.text(claims_response).strip()
+    claims = [c.strip() for c in claims_text.split('\n') if c.strip()]
+
+    if not claims:
+        return 0.0, "No claims extracted"
+
+    # Step 2: Check each ground-truth claim against the retrieved context with LLM judge
+    context_text = " ".join(context_chunks) if isinstance(context_chunks, list) else context_chunks
+    supported = 0
+    reasons = []
+
+    for claim in claims:
+        judge_response = await lrn_llm.call(
+            [{"role": "user", "content": f"Context: {context_text}\n\nGround-truth claim: {claim}\n\nIs this claim backed by the context? Answer 'yes' or 'no'."}],
+            system="You are a fact verification system. Answer only 'yes' or 'no'.",
+            max_tokens=5
+        )
+        is_supported = lrn_llm.text(judge_response).strip().lower().startswith('yes')
+        if is_supported:
+            supported += 1
+        reasons.append(f"  - '{claim}': {'✓' if is_supported else '✗'}")
+
+    score = supported / len(claims) if claims else 0.0
+    reason_str = "\n".join(reasons[:3])  # Show first 3 for brevity
+    return score, f"{supported}/{len(claims)} ground-truth claims backed by context\n{reason_str}"
+
+# Evaluate context recall for the correct case (ground truth should be fully covered)
+cr_score, cr_reason = await context_recall_judge(cases[0]["context"], cases[0]["expected"], cases[0]["id"])
+print(f"Case: {cases[0]['id']}")
+print(f"Context Recall: {cr_score:.2f}")
+print(cr_reason)
+
 # %% [markdown]
 # ## Step 6 — G-Eval Custom Metric
 #
@@ -302,14 +343,15 @@ for case in cases:
     faith, _ = await faithfulness_judge(case["answer"], case["context"], case["id"])
     rel, _ = await answer_relevance_judge(case["question"], case["answer"], case["id"])
     cp, _ = await context_precision_judge(case["context"], case["question"], case["id"])
+    cr, _ = await context_recall_judge(case["context"], case["expected"], case["id"])
     g, _ = await g_eval_correctness(case["answer"], case["expected"], case["id"])
-    results.append({"id": case["id"], "faith": faith, "rel": rel, "cp": cp, "g": g})
+    results.append({"id": case["id"], "faith": faith, "rel": rel, "cp": cp, "cr": cr, "g": g})
 
-print("\n" + "="*70)
-print(f"{'Case':<20} {'Faithfulness':<15} {'Relevance':<15} {'Ctx Precision':<15} {'G-Eval':<10}")
-print("="*70)
+print("\n" + "="*80)
+print(f"{'Case':<20} {'Faithfulness':<15} {'Relevance':<15} {'Ctx Precision':<15} {'Ctx Recall':<12} {'G-Eval':<10}")
+print("="*80)
 for r in results:
-    print(f"{r['id']:<20} {r['faith']:.2f}            {r['rel']:.2f}            {r['cp']:.2f}             {r['g']:.2f}")
+    print(f"{r['id']:<20} {r['faith']:.2f}            {r['rel']:.2f}            {r['cp']:.2f}             {r['cr']:.2f}         {r['g']:.2f}")
 print("\nInterpretation:")
 print("  - 'correct': all metrics high (faithful answer, relevant, correct chunks)")
 print("  - 'hallucinated_date': G-Eval & faithfulness drop (wrong date)")
@@ -318,26 +360,33 @@ print("  - 'off_topic': relevance & G-Eval collapse (doesn't answer the question
 # %% [markdown]
 # ## Step 8 — Key Pitfall: Judge Bias
 #
-# LLM judges have systematic biases. Let's demonstrate judge preference for longer answers.
+# LLM judges have systematic biases — length bias (preferring longer answers) is a known
+# pattern in practice, but it doesn't show up on every single run. Let's check whether it
+# shows up here.
 
 # %%
 async def demo_judge_bias():
-    """Show that judges prefer longer answers (real bias in practice)."""
+    """Check for judge length bias: does the longer (but unsupported-opinion-padded) answer score higher?"""
     question = "When was the first iPhone released?"
     context = "The first iPhone was released on June 29, 2007."
-    
+
     short_answer = "June 29, 2007."
     long_answer = "The first iPhone was released by Apple on June 29, 2007. This date marks a pivotal moment in mobile computing history."
-    
+
     print("Testing judge bias with the same fact in two answer lengths:\n")
-    
+
     short_faith, _ = await faithfulness_judge(short_answer, context, "short")
     long_faith, _ = await faithfulness_judge(long_answer, context, "long")
-    
+
     print(f"Short answer: 'June 29, 2007.' → Faithfulness = {short_faith:.2f}")
     print(f"Long answer: '{long_answer}' → Faithfulness = {long_faith:.2f}")
     print(f"\nDifference: {abs(long_faith - short_faith):.2f}")
-    print("Note: Judges often prefer longer answers even when both are correct.")
+    if long_faith > short_faith:
+        print("In this run, the longer answer scored higher — consistent with the known length-bias pattern (its extra, unsupported clause didn't hurt it).")
+    elif short_faith > long_faith:
+        print("In this run, the shorter answer scored higher — length bias didn't show up here; the judge penalized the long answer's unsupported extra clause.")
+    else:
+        print("In this run, both answers scored the same — no length bias observed here.")
 
 await demo_judge_bias()
 
@@ -366,10 +415,12 @@ print(f"\nRunning all metrics...\n")
 faith, faith_r = await faithfulness_judge(custom_case["answer"], custom_case["context"], "custom")
 rel, rel_r = await answer_relevance_judge(custom_case["question"], custom_case["answer"], "custom")
 cp, cp_r = await context_precision_judge(custom_case["context"], custom_case["question"], "custom")
+cr, cr_r = await context_recall_judge(custom_case["context"], custom_case["expected"], "custom")
 g, g_r = await g_eval_correctness(custom_case["answer"], custom_case["expected"], "custom")
 
 print(f"Faithfulness: {faith:.2f}")
 print(f"Answer Relevance: {rel:.2f}")
 print(f"Context Precision: {cp:.2f}")
+print(f"Context Recall: {cr:.2f}")
 print(f"G-Eval Correctness: {g:.2f}")
-print(f"\nAverage: {(faith + rel + cp + g) / 4:.2f}")
+print(f"\nAverage: {(faith + rel + cp + cr + g) / 5:.2f}")

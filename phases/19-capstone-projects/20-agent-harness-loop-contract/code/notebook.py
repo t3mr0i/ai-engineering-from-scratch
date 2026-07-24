@@ -485,6 +485,28 @@ async def _harness_resume(self, payload: dict) -> "PullRequest | SessionResult":
     self._transition(State.REFLECTING)
     self._history.append(step)
     self._cursor += 1
+
+    if step.error is not None:
+        # Reflection decided to replan: the failed step is already in
+        # self._history (appended above), so the planner sees it. Rebuild
+        # the remaining plan the same way run() builds the initial one.
+        # No separate replan counter is needed: every processed step
+        # (replanned or not) still costs a turn in _advance()'s budget
+        # check, so a tool that keeps failing still yields a
+        # budget_exceeded PullRequest instead of looping forever.
+        self._transition(State.PLANNING)
+        self.hooks.fire("before_plan", {"goal": self._goal})
+        plan = self._planner(self._goal, self._history)
+        if inspect.isawaitable(plan):
+            plan = await plan
+        self._plan = plan or []
+        self._cursor = 0
+        self._emit("plan.draft", {"steps": len(self._plan)})
+        self.hooks.fire("after_plan", {"plan": self._plan})
+        self._emit("plan.commit", {"steps": len(self._plan)})
+        self._transition(State.EXECUTING)
+        return await self._advance()
+
     self._transition(State.EXECUTING)
     return await self._advance()
 
