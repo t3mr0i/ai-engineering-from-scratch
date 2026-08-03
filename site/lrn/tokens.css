@@ -117,6 +117,11 @@
 
   --action-primary:         var(--lhg-core-blue);
   --action-primary-hover:   var(--lhg-blue-600);
+  /* Text/icon colour to place on top of an --action-primary fill. Equals
+     --lhg-white in light mode (today's behaviour, unchanged); in dark mode
+     --action-primary itself becomes a light blue, so this flips to a dark
+     ink instead of staying white — see the two dark blocks below. */
+  --action-primary-ink:     var(--lhg-white);
   --action-accent:          var(--lhg-blue-500);
   --action-accent-hover:    var(--lhg-blue-600);
 
@@ -298,6 +303,34 @@
     --border-subtle:     #234168;
     --border-strong:     #335279;
 
+    /* --color-bg has no independent role from --color-paper — same LHG
+       Grey 100 value in light mode (tokens.css:103) — but body's background
+       rule (lrn.css) reads --color-bg specifically. Without this override
+       the page background stayed light-mode grey while --text-primary
+       above flipped to its near-white dark value, making every heading on
+       lrn/course.html unreadable under system dark mode. */
+    --color-bg:          #0a1b3d;
+
+    /* Same gap, same root cause, rest of the "Semantic aliases" group
+       (tokens.css:102-124): --color-surface/-sunken, --text-link,
+       --border-focus, --action-primary/-hover and --header-bg had real
+       consumers (card backgrounds, links, focus rings, the primary CTA
+       button, the sticky header) but no dark-mode branch anywhere, so they
+       stayed on their light-mode value while sibling tokens in the same
+       component context went dark — cards stayed white-on-dark-page, and
+       .primary-cta's raw --lhg-core-blue fill nearly disappeared into the
+       now near-equal-luminance page background (~1.01:1). Values reuse the
+       LRN-legacy dark tokens already defined below rather than inventing
+       new ones: --color-surface takes --color-card's value, etc. */
+    --color-surface:        #132b54;
+    --color-surface-sunken: #0f2348;
+    --text-link:            #7ba6dc;
+    --border-focus:         #a9c7e8;
+    --action-primary:       #7ba6dc;
+    --action-primary-hover: #a9c7e8;
+    --action-primary-ink:   #0a1b3d;
+    --header-bg:            rgba(10, 27, 61, 0.9);
+
     --color-paper:       #0a1b3d;
     --color-paper-2:     #0f2348;
     --color-paper-3:     #16305c;
@@ -341,6 +374,25 @@
   --text-muted:        #93a8c7;
   --border-subtle:     #234168;
   --border-strong:     #335279;
+
+  /* Same gap as the prefers-color-scheme block above: --color-bg was never
+     given a dark-mode value, so a manual dark-mode toggle left the page
+     background on light-mode grey while --text-primary above went to its
+     near-white dark value. */
+  --color-bg:          #0a1b3d;
+
+  /* Same gap, same LRN-legacy-value reuse as the prefers-color-scheme block
+     above: --color-surface/-sunken, --text-link, --border-focus and
+     --action-primary/-hover had real consumers (card backgrounds, links,
+     focus rings, the primary CTA button) with no dark-mode branch here
+     either. --header-bg already had one just below — untouched. */
+  --color-surface:        #132b54;
+  --color-surface-sunken: #0f2348;
+  --text-link:            #7ba6dc;
+  --border-focus:         #a9c7e8;
+  --action-primary:       #7ba6dc;
+  --action-primary-hover: #a9c7e8;
+  --action-primary-ink:   #0a1b3d;
 
   --color-paper:       #0a1b3d;
   --color-paper-2:     #0f2348;
@@ -413,6 +465,22 @@
   object-fit: contain;
 }
 
+/* The navy logo PNG (lhind-logo-blue.png) reads as nearly invisible once
+   the header goes dark. A white variant already ships in
+   assets/logo/lhind-logo-white.png but was never wired up anywhere — swap
+   to it here so every one of the ten pages using .wordmark__logo gets it
+   for free, no per-page HTML change needed. Path is relative to this
+   stylesheet (site/lrn/tokens.css), not the consuming page. */
+@media (prefers-color-scheme: dark) {
+  .nav-edge .wordmark__logo {
+    content: url("../assets/logo/lhind-logo-white.png");
+  }
+}
+
+[data-theme="dark"] .nav-edge .wordmark__logo {
+  content: url("../assets/logo/lhind-logo-white.png");
+}
+
 /* Flexible spacer that pushes header controls to the right edge. Most
    pages set this inline (style="flex:1"); declaring it here too covers
    any page whose spacer has no inline style. */
@@ -429,7 +497,7 @@
   height: 1.6rem;
   border-radius: 6px;
   background: var(--action-primary);
-  color: var(--lhg-white);
+  color: var(--action-primary-ink);
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 700;

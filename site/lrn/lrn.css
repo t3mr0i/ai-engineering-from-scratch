@@ -93,8 +93,8 @@ button {
   transform: translateY(-160%);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
-  background: var(--lhg-core-blue);
-  color: var(--lhg-white);
+  background: var(--action-primary);
+  color: var(--action-primary-ink);
   transition: transform var(--dur-base) var(--ease-standard);
 }
 
@@ -350,10 +350,10 @@ i[class^="ph "] {
   gap: var(--space-2);
   min-height: 48px;
   padding: 0 var(--space-5);
-  border: 1px solid var(--lhg-core-blue);
+  border: 1px solid var(--action-primary);
   border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--lhg-core-blue);
+  color: var(--action-primary);
   font-family: var(--font-text);
   font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
@@ -418,8 +418,8 @@ i[class^="ph "] {
 }
 
 .seg-btn[aria-pressed="true"] {
-  background: var(--lhg-core-blue);
-  color: var(--lhg-white);
+  background: var(--action-primary);
+  color: var(--action-primary-ink);
   font-weight: var(--weight-regular);
 }
 
@@ -644,9 +644,9 @@ i[class^="ph "] {
 
 @media (hover: hover) and (pointer: fine) {
   .course-card:hover .course-card__open {
-    background: var(--lhg-core-blue);
-    color: var(--lhg-white);
-    border-color: var(--lhg-core-blue);
+    background: var(--action-primary);
+    color: var(--action-primary-ink);
+    border-color: var(--action-primary);
     transform: translateX(2px);
   }
 }
@@ -816,10 +816,10 @@ i[class^="ph "] {
   min-height: 48px;
   margin-block-start: var(--space-3);
   padding: 0 var(--space-5);
-  border: 1px solid var(--lhg-core-blue);
+  border: 1px solid var(--action-primary);
   border-radius: var(--radius-pill);
-  background: var(--lhg-core-blue);
-  color: var(--lhg-white);
+  background: var(--action-primary);
+  color: var(--action-primary-ink);
   font-family: var(--font-text);
   font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
@@ -846,7 +846,7 @@ i[class^="ph "] {
 
 @media (hover: hover) and (pointer: fine) {
   .primary-cta:hover:not([aria-disabled="true"]) {
-    background: var(--lhg-blue-600);
+    background: var(--action-primary-hover);
     box-shadow: var(--shadow-sm);
     text-decoration: none;
   }
@@ -880,7 +880,7 @@ i[class^="ph "] {
 
 .unit-block__icon {
   flex: none;
-  color: var(--lhg-core-blue);
+  color: var(--action-primary);
   font-size: 1.25rem;
   line-height: 1;
 }
