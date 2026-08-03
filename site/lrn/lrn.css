@@ -38,7 +38,7 @@ html {
 body {
   margin: 0;
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body);
   line-height: var(--lh-normal);
   color: var(--text-primary);
@@ -110,7 +110,7 @@ button {
   background: var(--lhg-blue-100);
   color: var(--lhg-core-blue);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
 }
 
@@ -265,6 +265,10 @@ i[class^="ph "] {
   color: var(--lhg-white);
   font-family: var(--font-head);
   font-size: clamp(1.875rem, 3.2vw, 3rem);
+  /* Stays light per DESIGN.md §3 (Display/Headline = 300). The weight bump
+     applied to the other headings is a light-on-light legibility fix; this
+     one is white on Core Blue, where a thin stroke reads heavier, not
+     fainter. */
   font-weight: var(--weight-light);
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-display);
@@ -323,7 +327,7 @@ i[class^="ph "] {
   background: var(--color-surface);
   color: var(--text-primary);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body);
   cursor: pointer;
   transition: border-color var(--dur-base) var(--ease-standard);
@@ -460,7 +464,7 @@ i[class^="ph "] {
   background: var(--color-surface);
   color: var(--text-primary);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
   white-space: nowrap;
   cursor: pointer;
@@ -508,7 +512,7 @@ i[class^="ph "] {
   margin: 0;
   color: var(--text-muted);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
 }
 
@@ -588,7 +592,7 @@ i[class^="ph "] {
   margin: 0;
   color: var(--text-primary);
   font-family: var(--font-head);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   font-size: 1.0625rem;
   line-height: 1.22;
   letter-spacing: var(--ls-heading);
@@ -601,7 +605,7 @@ i[class^="ph "] {
   margin: 0;
   color: var(--text-muted);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
 }
 
@@ -672,7 +676,7 @@ i[class^="ph "] {
   background: var(--color-surface);
   color: var(--text-secondary);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   text-align: center;
 }
 
@@ -747,7 +751,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: var(--fs-h3);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-snug);
   letter-spacing: var(--ls-heading);
   overflow-wrap: anywhere;
@@ -758,7 +762,7 @@ i[class^="ph "] {
   max-width: 64ch;
   color: var(--text-secondary);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-lead);
   line-height: var(--lh-relaxed);
 }
@@ -782,7 +786,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: var(--fs-h4);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--ls-heading);
 }
 
@@ -794,7 +798,7 @@ i[class^="ph "] {
   max-width: 64ch;
   color: var(--text-secondary);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body);
   line-height: var(--lh-normal);
 }
@@ -852,7 +856,7 @@ i[class^="ph "] {
   margin: var(--space-7) 0 0;
   color: var(--text-primary);
   font-family: var(--font-head);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   font-size: var(--fs-h3);
   letter-spacing: var(--ls-heading);
 }
@@ -903,7 +907,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: var(--fs-h4);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-snug);
   overflow-wrap: anywhere;
 }
@@ -1011,15 +1015,29 @@ i[class^="ph "] {
   font-weight: var(--weight-medium);
 }
 
+/* Ink is a darkened form of the brand signal colour, not --lhg-warning /
+   --lhg-success themselves: those sit at ~2.2:1 and ~3.9:1 on their own
+   16%-tint background, i.e. below WCAG AA for 13px text. The tint stays,
+   only the glyph colour is pushed down. */
 .activity-link em[data-state="visited"] {
   background: rgba(226, 151, 75, 0.16);
-  color: var(--lhg-warning);
+  color: #8a5310;
 }
 
 .activity-link em[data-state="completed"] {
   background: rgba(27, 138, 90, 0.16);
-  color: var(--lhg-success);
+  color: #0f6b45;
 }
+
+/* On a dark surface the darkened inks invert the problem — go back to the
+   light dark-mode signal aliases, which already carry AA there. */
+@media (prefers-color-scheme: dark) {
+  .activity-link em[data-state="visited"] { color: var(--color-warn); }
+  .activity-link em[data-state="completed"] { color: var(--color-ok); }
+}
+
+[data-theme="dark"] .activity-link em[data-state="visited"] { color: var(--color-warn); }
+[data-theme="dark"] .activity-link em[data-state="completed"] { color: var(--color-ok); }
 
 /* ── Footer + sr ─────────────────────────────────────────────── */
 .foot-line {
@@ -1028,7 +1046,7 @@ i[class^="ph "] {
   border-top: 1px solid var(--border-subtle);
   color: var(--text-muted);
   font-family: var(--font-text);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
 }
 
