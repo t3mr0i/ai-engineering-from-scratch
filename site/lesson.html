@@ -2469,6 +2469,10 @@
 
       function buildLrnContext(courseId, path) {
         if (!courseId || !path || !window.LrnData || !window.LrnCurriculumMap) return null;
+        // Rollout gate — see curriculum-map.js:visibleCourseIds. A hidden course
+        // reached by hand-typed URL renders without LRN course chrome.
+        var visibleCourseIds = window.LrnCurriculumMap.visibleCourseIds;
+        if (visibleCourseIds && visibleCourseIds.length && visibleCourseIds.indexOf(courseId) === -1) return null;
         var course = null;
         for (var i = 0; i < window.LrnData.courses.length; i++) {
           if (window.LrnData.courses[i].id === courseId) {

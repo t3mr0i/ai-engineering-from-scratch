@@ -300,7 +300,10 @@
         // (site/lrn/data.js), so no further profile filtering is needed here.
         var tcLessonPaths = {};
         if (window.LrnCurriculumMap && window.LrnCurriculumMap.courseMaps) {
+          // Rollout gate — see curriculum-map.js:visibleCourseIds.
+          var visibleCourseIds = window.LrnCurriculumMap.visibleCourseIds;
           Object.keys(window.LrnCurriculumMap.courseMaps).forEach(function (courseId) {
+            if (visibleCourseIds && visibleCourseIds.length && visibleCourseIds.indexOf(courseId) === -1) return;
             window.LrnCurriculumMap.courseMaps[courseId].forEach(function (unit) {
               unit.lessons.forEach(function (lesson) {
                 tcLessonPaths[lesson.path] = true;

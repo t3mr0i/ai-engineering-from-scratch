@@ -1,6 +1,13 @@
 window.LrnCurriculumMap = {
   source: "LHIND AI Learning Catalog curriculum",
   note: "Curated subset: use the lessons that fit LHIND LRN role courses, combine overlapping lessons into subcourses, omit deep model-training or modality-specific material unless it directly supports the role course.",
+  // Rollout gate: when this is a non-empty array, only these course ids are
+  // surfaced in the UI — the LRN cockpit (lrn.js), the course detail page
+  // (course.js) and the lesson catalog (catalog.html) all filter against it.
+  // The underlying data below stays complete; set this to null to show
+  // everything again. Lives here rather than in data.js because catalog.html
+  // loads only curriculum-map.js.
+  visibleCourseIds: ["PRIMER-01"],
   courseMaps: {
     "PRIMER-01": [
       {

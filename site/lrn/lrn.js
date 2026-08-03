@@ -5,6 +5,13 @@
   var data = window.LrnData;
   var curriculum = window.LrnCurriculumMap || { courseMaps: {}, omittedGroups: [] };
   var progressApi = window.AIFSProgress || null;
+  // Rollout gate — see curriculum-map.js:visibleCourseIds. Track stages keep
+  // referencing hidden ids; those simply stop matching a course here.
+  if (curriculum.visibleCourseIds && curriculum.visibleCourseIds.length) {
+    data.courses = data.courses.filter(function (course) {
+      return curriculum.visibleCourseIds.indexOf(course.id) !== -1;
+    });
+  }
   var profileById = indexBy(data.profiles, "id");
   var state = loadState();
 

@@ -5,6 +5,13 @@
   var data = window.LrnData;
   var curriculum = window.LrnCurriculumMap || { courseMaps: {}, omittedGroups: [] };
   var progressApi = window.AIFSProgress || null;
+  // Rollout gate — see curriculum-map.js:visibleCourseIds. A hidden course id
+  // in the URL falls through to the existing "Course not found" empty state.
+  if (curriculum.visibleCourseIds && curriculum.visibleCourseIds.length) {
+    data.courses = data.courses.filter(function (course) {
+      return curriculum.visibleCourseIds.indexOf(course.id) !== -1;
+    });
+  }
   var courseById = indexBy(data.courses, "id");
 
   var root = document.getElementById("courseRoot");
