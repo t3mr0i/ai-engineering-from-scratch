@@ -1430,19 +1430,19 @@
                 "pairs": [
                     {
                         "left": "Calculator",
-                        "right": "“What is 47 times 823?”"
+                        "right": "What is 47 times 823?"
                     },
                     {
                         "left": "Web search",
-                        "right": "“What's today's news about company X?”"
+                        "right": "What's today's news about company X?"
                     },
                     {
                         "left": "Calendar API",
-                        "right": "“Add the meeting tomorrow at 2pm.”"
+                        "right": "Add the meeting tomorrow at 2pm."
                     },
                     {
                         "left": "Database query",
-                        "right": "“How many open tickets does client Y currently have?”"
+                        "right": "How many open tickets does client Y currently have?"
                     }
                 ]
             },

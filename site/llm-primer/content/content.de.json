@@ -1434,19 +1434,19 @@
                 "pairs": [
                     {
                         "left": "Taschenrechner",
-                        "right": "„Was ist 47 mal 823?“"
+                        "right": "Was ist 47 mal 823?"
                     },
                     {
                         "left": "Websuche",
-                        "right": "„Was ist die aktuelle Nachricht zu Firma X von heute?“"
+                        "right": "Was ist die aktuelle Nachricht zu Firma X von heute?"
                     },
                     {
                         "left": "Kalender-API",
-                        "right": "„Trage das Meeting morgen um 14 Uhr ein.“"
+                        "right": "Trage das Meeting morgen um 14 Uhr ein."
                     },
                     {
                         "left": "Datenbank-Abfrage",
-                        "right": "„Wie viele offene Tickets hat Kunde Y aktuell?“"
+                        "right": "Wie viele offene Tickets hat Kunde Y aktuell?"
                     }
                 ]
             },

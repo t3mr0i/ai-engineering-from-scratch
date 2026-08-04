@@ -86,7 +86,8 @@
 
     var meta = document.createElement("p");
     meta.className = "course-head__meta";
-    meta.textContent = stats.subcourseCount + " units · " + stats.lessonCount + " activities · "
+    meta.textContent = (stats.subcourseCount === 1 ? "1 unit" : stats.subcourseCount + " units") + " · "
+      + (stats.lessonCount === 1 ? "1 activity" : stats.lessonCount + " activities") + " · "
       + stats.percent + "% shipped";
 
     var action = document.createElement("a");

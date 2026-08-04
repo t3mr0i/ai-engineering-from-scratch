@@ -161,7 +161,12 @@
       chapter: chapter,
       completed: Object.keys(state.doneChapters).length,
       total: D.chapters.length,
-      doneChapters: D.chapters.map(function (c, i) { return i; }).filter(function (i) { return !!state.doneChapters[D.chapters[i].id]; })
+      doneChapters: D.chapters.map(function (c, i) { return i; }).filter(function (i) { return !!state.doneChapters[D.chapters[i].id]; }),
+      // completed===total only covers the lecture/game chapters — the quiz
+      // and results screen come after those in `flow` and aren't counted.
+      // "results" is the one step reachable only by finishing the quiz too,
+      // so it's the actual full-primer-done signal for the host page.
+      finished: step.v === "results"
     }, window.location.origin);
   }
 
@@ -710,7 +715,12 @@
     var mc = q("#mc", root);
     pairs.forEach(function (pair) {
       var card = document.createElement("div"); card.className = "match-card";
-      card.innerHTML = '<div class="ml">' + qt(esc(pair.right)) + '</div><div class="match-opts"></div>';
+      // Match-game "right" text already carries its own quote marks in every
+      // authored pair (content.*.json), including cases like "…" (no
+      // examples) where a parenthetical sits outside the quoted part —
+      // qt() used to wrap the whole string in a second pair on top of that,
+      // producing """doubled""" quotes.
+      card.innerHTML = '<div class="ml">' + esc(pair.right) + '</div><div class="match-opts"></div>';
       var opts = card.querySelector(".match-opts");
       shuffle(labels.slice()).forEach(function (lab) {
         var b = document.createElement("button"); b.className = "match-opt"; b.textContent = lab;

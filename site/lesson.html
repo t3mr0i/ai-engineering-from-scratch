@@ -2437,6 +2437,14 @@
             primerChapters.forEach(function (ch, i) { ch.doneFlag = msg.doneChapters.indexOf(i) !== -1; });
           }
           renderPrimerSidebar();
+          // The primer runs inside an iframe, so the normal quiz-section
+          // completion check in maybeMarkLessonComplete() never fires for it
+          // (it looks for .quiz-section in this document, not the iframe's).
+          // msg.finished is the primer's own "reached the results screen
+          // after the quiz" signal — the one point that actually means done.
+          if (msg.finished && window.AIFSProgress && window.AIFSProgress.markLessonComplete) {
+            window.AIFSProgress.markLessonComplete(lessonPath);
+          }
         });
 
         return;
