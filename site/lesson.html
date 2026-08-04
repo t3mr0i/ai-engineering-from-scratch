@@ -2,6 +2,27 @@
 <html lang="en" data-theme="light">
 <head>
   <script src="/gate-guard.js"></script>
+  <script>
+    /* Embedded lessons (llm-primer/index.html) resolve their theme from
+       localStorage 'theme'; this page only ever responded to the OS
+       prefers-color-scheme media query in lrn/tokens.css. An explicit dark
+       choice therefore darkened the iframe while header and chapter sidebar
+       stayed light — one page, two themes. Resolve the same key here, and
+       keep both sides in sync while the page is open. Only an explicit
+       stored value is applied: with nothing stored, the attribute stays as
+       authored and the media query keeps handling the OS preference. */
+    (function () {
+      function apply() {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        if (stored === 'dark' || stored === 'light') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      }
+      apply();
+      window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lesson · LHIND AI Learning Catalog</title>
@@ -2418,18 +2439,32 @@
         }
         function qa2(root, sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
 
-        fetch('/llm-primer/content/content.' + primerLangCookie() + '.json')
-          .then(function (r) { return r.json(); })
-          .then(function (data) {
-            primerChapters = (data.chapters || []).map(function (c) { return { title: c.title, doneFlag: false }; });
-            primerProgress.total = primerChapters.length;
-            renderPrimerSidebar();
-          })
-          .catch(function () { /* sidebar just stays on the loading state */ });
+        // Language the sidebar titles were fetched for. The primer reports its
+        // own language in every state message; switching it inside the iframe
+        // used to leave English titles next to a German lesson until a full
+        // page reload, because this fetch only ever ran once, at load.
+        var primerTitlesLang = null;
+        function loadPrimerTitles(lang) {
+          if (lang === primerTitlesLang) return;
+          primerTitlesLang = lang;
+          fetch('/llm-primer/content/content.' + lang + '.json')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              var prev = primerChapters || [];
+              primerChapters = (data.chapters || []).map(function (c, i) {
+                return { title: c.title, doneFlag: prev[i] ? prev[i].doneFlag : false };
+              });
+              primerProgress.total = primerChapters.length;
+              renderPrimerSidebar();
+            })
+            .catch(function () { /* sidebar just stays on the loading state */ });
+        }
+        loadPrimerTitles(primerLangCookie());
 
         window.addEventListener('message', function (event) {
           if (event.origin !== location.origin || !event.data || event.data.type !== 'aifs-primer-state') return;
           var msg = event.data;
+          if (msg.lang === 'en' || msg.lang === 'de') loadPrimerTitles(msg.lang);
           primerActive = (typeof msg.chapter === 'number') ? msg.chapter : null;
           primerProgress.completed = msg.completed || 0;
           if (msg.total) primerProgress.total = msg.total;

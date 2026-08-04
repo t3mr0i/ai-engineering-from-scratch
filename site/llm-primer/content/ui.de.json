@@ -101,6 +101,7 @@
     "predict_hint": "Welches Wort kommt wohl als Nächstes? (Runde {r}/{total})",
     "predict_correct": "Genau! Das Modell wählt das wahrscheinlichste Token. Du denkst wie ein LLM!",
     "predict_wrong": "Nicht falsch! {chosen} passt durchaus. Aber {best} kam in den Trainingsdaten häufiger in diesem Zusammenhang vor und ist darum wahrscheinlicher. Das Modell wählt das Wahrscheinlichste, nicht das einzig Richtige.",
+    "predict_unlikely": "Eher unwahrscheinlich: {chosen} kam in den Trainingsdaten selten in diesem Zusammenhang vor. {best} ist hier die wahrscheinlichste Wahl des Modells.",
     "predict_next": "Nächstes Beispiel →",
     "tok_hint": "Tippe Text. Ein echter GPT-Tokenizer zerlegt ihn live in Tokens:",
     "tok_note": "Ein führendes „·“ heißt: Das Leerzeichen gehört zum Token – Leerzeichen stehen nie allein. Häufige Wörter sind ein Token; längere oder seltenere Wörter zerfallen in Teile.",
@@ -212,5 +213,6 @@
     "egg_close_btn": "Cool!",
     "egg_found_title": "Easter Egg gefunden!",
     "egg_found_hint": "→ eine kleine Erinnerung an deine Tour",
-    "egg_code": "STOCHASTISCHER PAPAGEI"
+    "egg_code": "STOCHASTISCHER PAPAGEI",
+    "game_cta_ondevice_static": "Beispiel ansehen →"
 }

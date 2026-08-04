@@ -158,6 +158,11 @@
     var chapter = (step.v === "lecture" || step.v === "game") ? step.i : null;
     window.parent.postMessage({
       type: "aifs-primer-state",
+      // The host sidebar renders chapter titles from its own fetch of
+      // content.<lang>.json. Without this it never learned about an
+      // in-iframe language switch and kept showing English titles next to a
+      // German lesson until the whole page was reloaded.
+      lang: LANG,
       chapter: chapter,
       completed: Object.keys(state.doneChapters).length,
       total: D.chapters.length,
@@ -262,6 +267,17 @@
     return '<button class="btn" id="startBtn">' + esc(T.cta_start) + "</button>";
   }
 
+  // The on-device chapter promises "Try it live →", but with the live model
+  // disabled (AI_LIVE_ENABLED, see below) the chapter only ever shows the
+  // worked example — and the lecture text above the button says so. Label
+  // the button for what it actually does.
+  function gameCta(ch) {
+    if (ch.game === "ondevice" && !AI_LIVE_ENABLED && T.game_cta_ondevice_static) {
+      return T.game_cta_ondevice_static;
+    }
+    return (T.game_cta && T.game_cta[ch.game]) || T.next;
+  }
+
   // ---- LECTURE PAGE (explanation, no game) ----
   function renderLecture(ch) {
     var c = catOf(ch.cat);
@@ -271,12 +287,12 @@
       topbar(true) +
       '<div class="content fadein">' +
         '<div class="kicker"><span class="dot" style="background:' + c.color + '"></span>' + esc(c.label) + "</div>" +
-        '<h2 class="h2">' + esc(ch.title) + "</h2>" +
+        '<h1 class="h2">' + esc(ch.title) + "</h1>" +
         '<div class="lecture-body" id="chIntro">' + ch.lecture + "</div>" +
       "</div>" +
       actionbar(
         '<button class="btn secondary" id="backBtn">' + esc(T.back) + "</button>" +
-        nextBtnHtml((T.game_cta && T.game_cta[ch.game]) || T.next)
+        nextBtnHtml(gameCta(ch))
       );
     wireCommon();
     q("#backBtn").onclick = function () { go(-1); };
@@ -303,7 +319,7 @@
     APP.innerHTML =
       topbar(true) +
       '<div class="content fadein">' +
-        '<div class="game-head"><span class="dot" style="background:' + c.color + '"></span>' + esc(ch.title) + "</div>" +
+        '<h1 class="game-head"><span class="dot" style="background:' + c.color + '"></span>' + esc(ch.title) + "</h1>" +
         '<div class="game card" id="game"></div>' +
         '<div id="takeawayWrap">' + (done ? takeawayHtml(ch) : "") + "</div>" +
       "</div>" +
@@ -392,7 +408,7 @@
     APP.innerHTML =
       topbar(false) +
       '<div class="content fadein">' +
-        '<h2 class="h2">' + esc(T.glossary_title) + "</h2>" +
+        '<h1 class="h2">' + esc(T.glossary_title) + "</h1>" +
         '<p class="muted small">' + fmt(T.glossary_sub, { n: D.glossary.length }) + "</p>" +
         '<div class="cat-filter">' + pills + "</div>" +
         '<div class="glossary-list" id="glist"></div>' +
@@ -481,7 +497,7 @@
         '<p class="hint">' + fmt(T.predict_hint, { r: r + 1, total: gd.rounds.length }) + "</p>" +
         '<div class="predict-sentence">' + esc(round.sentence.replace("___", "")) + '<span class="blank">?</span></div>' +
         '<div id="opts"></div>' +
-        '<div id="pfeedback" class="muted small"></div>';
+        '<div id="pfeedback" class="muted small" aria-live="polite"></div>';
       var opts = q("#opts", root);
       round.options.forEach(function (o) {
         var b = document.createElement("button");
@@ -502,9 +518,14 @@
         if (b === btn && o !== best) b.classList.add("wrong");
       });
       var fb = q("#pfeedback", root);
+      // "Not wrong! X fits fine" reads as hollow praise for the deliberately
+      // absurd 1 % distractors, so anything the model rates below 5 % gets a
+      // truthful wording instead.
+      var praiseOk = chosen.p >= 0.05;
       fb.innerHTML = chosen === best
         ? T.predict_correct
-        : fmt(T.predict_wrong, { chosen: qt(esc(chosen.word)), best: qt(esc(best.word)) });
+        : fmt(praiseOk || !T.predict_unlikely ? T.predict_wrong : T.predict_unlikely,
+              { chosen: qt(esc(chosen.word)), best: qt(esc(best.word)) });
       if (r < gd.rounds.length - 1) {
         // Intermediate round: button leads to the next round.
         fb.insertAdjacentHTML("afterend", '<button class="btn" style="margin-top:12px" id="pnext">' + esc(T.predict_next) + "</button>");
@@ -747,7 +768,7 @@
     root.innerHTML =
       '<p class="hint">' + esc(T.agent_hint) + "</p>" +
       '<div class="agent-list" id="al"></div>' +
-      '<div id="afbwrap"></div>' +
+      '<div id="afbwrap" aria-live="polite"></div>' +
       '<button class="btn" id="checkA" style="margin-top:10px;display:none">' + esc(T.check_btn) + "</button>" +
       '<button class="btn ghost" id="resetA" style="margin-top:8px">' + esc(T.reset_btn) + "</button>";
     var al = q("#al", root);
@@ -807,13 +828,19 @@
     gd.items.forEach(function (item) {
       var card = document.createElement("button");
       card.className = "reveal-card";
+      // Hint and answer are stacked in the same grid cell so the card is
+      // already as tall as its revealed state. Revealing used to grow the
+      // card, pushing the neighbouring cards and the Continue button down —
+      // so the next tap landed somewhere else than the user aimed for.
       card.innerHTML =
         '<div class="rv-text">' + esc(item.text) + "</div>" +
-        '<div class="rv-hint muted small">' + esc(T.classify_tap) + "</div>" +
-        '<div class="rv-body">' +
-          '<span class="rv-badge ' + (item.risk ? "warn" : "ok") + '">' +
-            esc(item.risk ? trueLabel : falseLabel) + "</span>" +
-          '<span class="rv-why">' + esc(item.why) + "</span>" +
+        '<div class="rv-stack">' +
+          '<div class="rv-hint muted small">' + esc(T.classify_tap) + "</div>" +
+          '<div class="rv-body">' +
+            '<span class="rv-badge ' + (item.risk ? "warn" : "ok") + '">' +
+              esc(item.risk ? trueLabel : falseLabel) + "</span>" +
+            '<span class="rv-why">' + esc(item.why) + "</span>" +
+          "</div>" +
         "</div>";
       card.onclick = function () {
         if (card.classList.contains("open")) return;
@@ -859,7 +886,7 @@
       '<p class="hint">' + esc(gd.question) + "</p>" +
       '<div class="emap-wrap"><svg class="emap" viewBox="0 0 ' + W + ' ' + H + '" width="100%"></svg></div>' +
       '<div class="emap-panel" id="evec"></div>' +
-      '<div id="efb" class="cl-feedback" style="display:none"></div>';
+      '<div id="efb" class="cl-feedback" style="display:none" aria-live="polite"></div>';
 
     var svg = q(".emap", root);
     var sx = function (x) { return pad + x * (W - 2 * pad); };
@@ -919,7 +946,7 @@
       '<div class="ss-legend" id="ssleg"></div>' +
       '<div id="sscount" class="muted small" style="margin-top:8px"></div>' +
       '<button class="btn secondary" id="ssReveal" style="margin-top:10px;display:none">' + esc(T.ss_reveal) + "</button>" +
-      '<div id="ssfb" class="cl-feedback" style="margin-top:10px;display:none"></div>';
+      '<div id="ssfb" class="cl-feedback" style="margin-top:10px;display:none" aria-live="polite"></div>';
     var svg = q(".emap", root);
     var sx = function (x) { return pad + x * (W - 2 * pad); };
     var sy = function (y) { return H - pad - y * (H - 2 * pad); };
@@ -1148,7 +1175,7 @@
   function gameInjection(root, gd, onComplete) {
     var done = false;
     root.innerHTML = '<p class="hint">' + esc(gd.intro) + '</p><div class="inj-doc" id="idoc"></div>' +
-      '<div id="ifb" class="cl-feedback" style="display:none"></div>';
+      '<div id="ifb" class="cl-feedback" style="display:none" aria-live="polite"></div>';
     var doc = q("#idoc", root);
     gd.lines.forEach(function (ln) {
       var b = document.createElement("button"); b.className = "inj-line"; b.textContent = ln.t;
@@ -1357,7 +1384,7 @@
       topbar(true) +
       '<div class="content fadein center">' +
         '<div class="emoji-big"><i class="ph-light ph-clipboard-text" aria-hidden="true"></i></div>' +
-        '<h2 class="h2">' + esc(T.quiz_intro_title) + "</h2>" +
+        '<h1 class="h2">' + esc(T.quiz_intro_title) + "</h1>" +
         '<p class="lead">' + fmt(T.quiz_intro_lead, { n: D.quiz.length }) + "</p>" +
         '<p class="muted small">' + esc(T.quiz_intro_sub) + "</p>" +
       "</div>" +
@@ -1376,7 +1403,7 @@
         '<div class="quiz-count">' + fmt(T.quiz_count, { n: i + 1, total: D.quiz.length }) + "</div>" +
         '<div class="quiz-q">' + esc(item.q) + "</div>" +
         '<div id="qopts"></div>' +
-        '<div id="qexpl"></div>' +
+        '<div id="qexpl" aria-live="polite"></div>' +
       "</div>" +
       actionbar(
         '<button class="btn secondary" id="backBtn">' + esc(T.back) + "</button>" +
@@ -1464,7 +1491,7 @@
       topbar(true) +
       '<div class="content fadein center results">' +
         '<div class="emoji-big"><i class="ph-light ph-flag-checkered" aria-hidden="true"></i></div>' +
-        '<h2 class="h2">' + headline + "</h2>" +
+        '<h1 class="h2">' + headline + "</h1>" +
         '<div class="score-ring"><div class="num">' + pct + '%<small> ' + esc(T.res_correct_label) + '</small></div></div>' +
         '<p class="muted">' + fmt(T.res_score, { correct: correct, total: total }) + "</p>" +
         '<p class="lead" style="text-align:center">' + esc(sub) + "</p>" +

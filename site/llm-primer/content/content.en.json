@@ -94,7 +94,7 @@
             "id": "vokabular",
             "term": "Vocabulary",
             "cat": "eingabe",
-            "def": "The fixed list of all tokens a model knows (often ~50,000–100,000). Every text is assembled from these building blocks."
+            "def": "The fixed list of all tokens a model knows (often ~50,000–200,000). Every text is assembled from these building blocks."
         },
         {
             "id": "embedding",
@@ -142,7 +142,7 @@
             "id": "temperature",
             "term": "Temperature",
             "cat": "verarbeitung",
-            "def": "A dial for randomness and creativity. Low means predictable and faithful to facts, high means more creative but also riskier. Typically between 0 and 1."
+            "def": "A dial for randomness and creativity. Low means predictable and faithful to facts, high means more creative but also riskier. Typically between 0 and 2."
         },
         {
             "id": "kontextfenster",
@@ -719,7 +719,7 @@
             "id": "grundlagen",
             "cat": "grundlagen",
             "title": "What actually is an LLM?",
-            "lecture": "<p>A <b data-g=\"llm\">large language model (LLM)</b> is at its core a <b>prediction machine</b>. From huge amounts of text it has learned which words typically follow one another. With that, it keeps predicting the <b>most likely next word</b>.</p><p>It looks nothing up and \"understands\" nothing the way a human does. It computes with learned statistics. That explains both: why the answers sound so fluent and human, and why a model can be convincingly wrong. It aims for <i>plausible</i>, not <i>true</i>.</p><p class=\"lecture-next\">In the mini-game you step into this role yourself and guess the next word.</p>",
+            "lecture": "<p>A <b data-g=\"llm\">large language model (LLM)</b> is at its core a <b>prediction machine</b>. From huge amounts of text it has learned which words typically follow one another. With that, it keeps predicting the <b>most likely next word</b>. ChatGPT, Claude and Copilot, by the way, are the <i>applications</i> around it — the LLM is the engine running inside them.</p><p>It doesn't look anything up and \"understands\" nothing the way a human does. It computes with learned statistics. That explains both: why the answers sound so fluent and human, and why a model can be convincingly wrong. It aims for <i>plausible</i>, not <i>true</i>.</p><p class=\"lecture-next\">In the mini-game you step into this role yourself and guess the next word.</p>",
             "game": "predict",
             "gameData": {
                 "rounds": [
@@ -773,7 +773,7 @@
             "id": "tokens",
             "cat": "eingabe",
             "title": "From text to tokens",
-            "lecture": "<p>Before the model even sees your <b data-g=\"prompt\">prompt</b>, it is broken into <b data-g=\"token\">tokens</b>: small building blocks, often just word fragments. So the model does not read letters, but numbers that stand for these blocks.</p><p>This is not a side detail. <b>Billing is per token</b>, and the <b data-g=\"kontextfenster\">context window</b> is measured in tokens too. Long or clumsy inputs therefore cost more money and fill up memory faster. An important lever in product design.</p><p class=\"lecture-next\">Type your own text in the mini-game and watch live how it breaks into tokens.</p>",
+            "lecture": "<p>Before the model even sees your <b data-g=\"prompt\">prompt</b>, it is broken into <b data-g=\"token\">tokens</b>: small building blocks, often just word fragments. So the model does not read letters, but numbers that stand for these blocks.</p><p>This is not a side detail. <b>Billing is per token</b>, and the <b data-g=\"kontextfenster\">context window</b> — the model’s “working memory”, more on that in the “Context &amp; memory” chapter — is measured in tokens too. Long or clumsy inputs therefore cost more money and fill up the context window faster. An important lever in product design.</p><p class=\"lecture-next\">Type your own text in the mini-game and watch live how it breaks into tokens.</p>",
             "game": "tokenizer",
             "gameData": {
                 "samples": [
@@ -787,7 +787,7 @@
             "id": "embedding",
             "cat": "verarbeitung",
             "title": "Embeddings: words become numbers",
-            "lecture": "<p>A model only computes with numbers. So each <b data-g=\"token\">token</b> is translated into a long list of numbers, its <b data-g=\"embedding\">embedding</b> (a <b data-g=\"vektor\">vector</b>). The clever part: similar meaning leads to similar numbers.</p><p>This creates a map of meaning. \"Dog\" and \"Cat\" sit close together, \"Coffee\" is far away. This <b data-g=\"aehnlichkeit\">similarity</b> is the basis for search, recommendations and <b data-g=\"rag\">RAG</b>.</p><p class=\"lecture-next\">Tap words in the mini-game, see their numbers and find the most similar one.</p>",
+            "lecture": "<p>A model only computes with numbers. So each <b data-g=\"token\">token</b> is translated into a long list of numbers, its <b data-g=\"embedding\">embedding</b> (a <b data-g=\"vektor\">vector</b>). The clever part: similar meaning leads to similar numbers.</p><p>This creates a map of meaning. \"Dog\" and \"Cat\" sit close together, \"Coffee\" is far away. This <b data-g=\"aehnlichkeit\">similarity</b> is the basis for search, recommendations and <b data-g=\"rag\">RAG</b> (a technique that gets its own chapter later).</p><p>A reminder: you can tap underlined terms at any time — a short explanation, without leaving the page.</p><p class=\"lecture-next\">Tap words in the mini-game, see their numbers and find the most similar one.</p>",
             "game": "embedding",
             "gameData": {
                 "question": "Which word is closest in meaning to \"Dog\"?",
@@ -938,7 +938,7 @@
                     {
                         "key": "output",
                         "label": "Output",
-                        "desc": "Word by word the answer takes shape. Inference complete."
+                        "desc": "Word by word the answer takes shape. This process — using the finished model — is called inference."
                     }
                 ]
             },
@@ -1028,7 +1028,7 @@
             "id": "temperature",
             "cat": "verarbeitung",
             "title": "Probability & temperature",
-            "lecture": "<p>For the next token the model does not compute <i>one</i> answer, but a whole ranking with <b data-g=\"wahrscheinlichkeit\">probabilities</b>. Which word is actually picked from it is controlled by the <b data-g=\"temperature\">temperature</b> dial.</p><p>Low means: almost always the most likely one, so predictable and faithful to facts. High means: even less likely words get a chance, so more creative but riskier. The same prompt can therefore sound different depending on the setting. Low for facts, higher for brainstorming.</p><p class=\"lecture-next\">Slide the dial in the mini-game and watch the distribution shift.</p>",
+            "lecture": "<p>For the next token the model does not compute <i>one</i> answer, but a whole ranking with <b data-g=\"wahrscheinlichkeit\">probabilities</b>. Which word is actually picked from it is controlled by the <b data-g=\"temperature\">temperature</b> dial.</p><p>Low means: almost always the most likely one, so predictable and faithful to facts. High means: even less likely words get a chance, so more creative but riskier. The same prompt can therefore sound different depending on the setting. Low for facts, higher for brainstorming. In chat apps this dial is usually fixed. You get to turn it yourself once you build your own applications — or here in the mini-game.</p><p class=\"lecture-next\">Slide the dial in the mini-game and watch the distribution shift.</p>",
             "game": "temperature",
             "gameData": {
                 "prompt": "Write the beginning of a story: \"The old lighthouse was ___\"",
@@ -1061,7 +1061,7 @@
             "id": "context",
             "cat": "kontext",
             "title": "Context & memory",
-            "lecture": "<p>An LLM has <b>no memory</b>. With every new message the entire <b data-g=\"chatverlauf\">history</b> so far is sent along again in full. \"Memory\" is therefore nothing but text sent along once more.</p><p>This text has to fit completely into the <b data-g=\"kontextfenster\">context window</b>. Once it is full, the oldest content falls out the back and counts as forgotten. So when a chatbot \"forgets\" what was said above, it usually just fell out of the window. Important things therefore belong up front, or have to be repeated.</p><p class=\"lecture-next\">In the mini-game you fill the window until it overflows.</p>",
+            "lecture": "<p>An LLM has <b>no memory</b>. With every new message the entire <b data-g=\"chatverlauf\">history</b> so far is sent along again in full. \"Memory\" is therefore nothing but text sent along once more.</p><p>This text has to fit completely into the <b data-g=\"kontextfenster\">context window</b>. Once it is full, the oldest content falls out the back and counts as forgotten. So when a chatbot \"forgets\" what was said above, it usually just fell out of the window. Important things therefore belong up front, or have to be repeated.</p><p>By the way: when chat products offer a “memory” feature, they store notes about you — and invisibly send them along with every message. That, too, is just text sent along.</p><p class=\"lecture-next\">In the mini-game you fill the window until it overflows.</p>",
             "game": "context",
             "gameData": {
                 "windowSize": 4,
@@ -1231,7 +1231,7 @@
             "lecture": "<p>You pay per <b data-g=\"token\">token</b>, for input <i>and</i> output. A long <b data-g=\"system-prompt\">system prompt</b>, lots of <b data-g=\"kontextfenster\">context</b> or many calls add up fast.</p><p>More tokens also cost time: <b data-g=\"latenz\">latency</b> rises. In product design it pays to keep an eye on both.</p><p class=\"lecture-next\">Turn the dials and see the cost live.</p>",
             "game": "cost",
             "gameData": {
-                "note": "Example prices ($ per 1M tokens). Real prices vary by provider.",
+                "note": "Example prices (€ per 1M tokens). Real prices vary by provider. This mainly concerns teams building applications: on a personal subscription you pay a flat fee — paying per token applies to anyone using the model through an interface (API).",
                 "defaults": {
                     "in": 800,
                     "out": 400,
@@ -1332,7 +1332,7 @@
             "id": "ondevice",
             "cat": "erweiterungen",
             "title": "AI on your device",
-            "lecture": "<p>The idea: instead of calling a server, the model runs directly on your device (phone, laptop). What makes that possible is <b data-g=\"quantisierung\">quantization</b> &mdash; it shrinks the model far enough to even fit on a phone. Once it is downloaded, every <b data-g=\"inferenz\">inference</b> stays <b data-g=\"on-device\">on-device</b> and even works in airplane mode.</p><p>Small models like this are great at <b>rewriting</b> text and weak at facts. That is exactly the rule of thumb from \"Limits &amp; Risks\": lean on them to reshape what you give them, and double-check anything factual.</p><p>Downloading the model needs a first connection, though &mdash; and on this network, that download is blocked. So below is a worked example instead of a live one: the same sentence, rewritten a few different ways by that pirate-loving text magician.</p><p class=\"lecture-next\">Have a look at the worked example below.</p>",
+            "lecture": "<p>The idea: instead of calling a server, the model runs directly on your device (phone, laptop). What makes that possible is <b data-g=\"quantisierung\">quantization</b> &mdash; it shrinks the model far enough to even fit on a phone. Once it is downloaded, every <b data-g=\"inferenz\">inference</b> stays <b data-g=\"on-device\">on-device</b> and even works in airplane mode.</p><p>Small models like this are great at <b>rewriting</b> text and weak at facts. That is exactly the rule of thumb from \"Limits &amp; Risks\": lean on them to reshape what you give them, and double-check anything factual.</p><p>Below, a small demo is waiting: the <b>text magician</b>. It rewrites a sentence on command — formal, casual, or as a pirate.</p><p>Downloading the model needs a first connection, though &mdash; and on this network, that download is blocked. So below is a worked example instead of a live one: the same sentence, rewritten a few different ways by that pirate-loving text magician.</p><p class=\"lecture-next\">Have a look at the worked example below.</p>",
             "game": "ondevice",
             "gameData": {
                 "sample": "Can you help me move some furniture tomorrow afternoon?",
@@ -1367,16 +1367,24 @@
                     "input": "Can you help me move some furniture tomorrow afternoon?",
                     "out": [
                         {
-                            "label": "förmlich",
+                            "label": "formal",
                             "text": "Could you kindly assist me with moving some furniture tomorrow afternoon?"
                         },
                         {
-                            "label": "Pirat",
+                            "label": "casual",
+                            "text": "Hey, could you give me a hand moving some furniture tomorrow afternoon?"
+                        },
+                        {
+                            "label": "pirate",
                             "text": "Ahoy! Lend me a hand to haul some furniture tomorrow afternoon, matey!"
                         },
                         {
-                            "label": "Emoji",
-                            "text": "Can you help me move some furniture tomorrow afternoon?"
+                            "label": "emoji",
+                            "text": "Can you help me move some furniture 🛋️ tomorrow afternoon? 🙏"
+                        },
+                        {
+                            "label": "shorter",
+                            "text": "Help moving furniture tomorrow afternoon?"
                         }
                     ]
                 }
@@ -1402,7 +1410,7 @@
                         "why": "A very precise number plus a specific study — a classic pattern for a fabricated source. Verify it."
                     },
                     {
-                        "text": "“In Python, a code block line isn't terminated with a semicolon.”",
+                        "text": "“In Python, statements aren't terminated with semicolons.”",
                         "risk": false,
                         "why": "Stable, frequently repeated technical facts are reliable."
                     },
@@ -1487,7 +1495,7 @@
             "id": "modelsize",
             "cat": "grundlagen",
             "title": "Small or Large? Comparing Model Sizes",
-            "lecture": "<p>Not every task needs the biggest available model. Large models are more versatile and stronger at complex <b data-g=\"reasoning\">reasoning</b>, but cost more, are slower, and need more resources (see <b data-g=\"quantisierung\">quantization</b> and on-device from the last chapter).</p><p>Small models are fast, cheap, and can even run locally — but often aren't enough for layered, multi-step tasks. The trick is picking the smallest model that still works reliably for a given task.</p><p class=\"lecture-next\">Go through typical tasks in the mini-game: does this call for a small or a large model?</p>",
+            "lecture": "<p>Not every task needs the biggest available model. Large models are more versatile and stronger at complex <b data-g=\"reasoning\">reasoning</b>, but cost more, are slower, and need more resources (see <b data-g=\"quantisierung\">quantization</b> in the “AI on your device” chapter).</p><p>Small models are fast, cheap, and can even run locally — but often aren't enough for layered, multi-step tasks. The trick is picking the smallest model that still works reliably for a given task.</p><p class=\"lecture-next\">Go through typical tasks in the mini-game: does this call for a small or a large model?</p>",
             "game": "classify",
             "gameData": {
                 "trueLabel": "Large model",
@@ -1739,7 +1747,7 @@
     ],
     "reflection": {
         "grundlagen": {
-            "aha": "An LLM looks nothing up. It predicts the most likely thing word by word.",
+            "aha": "An LLM doesn't look anything up. It predicts the most likely next word, word by word.",
             "frage": "Where in our products do users mistake \"sounds confident\" for \"is correct\"?"
         },
         "eingabe": {

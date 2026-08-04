@@ -21,7 +21,7 @@
   --bg:#f9f8f8; --bg-2:#f1f0ef;
   --card:#ffffff; --card-br:#e3e1de;
   --text:#05164d; --muted:#52617c;
-  --accent:#05164d; --accent-2:#243f9b;
+  --accent:#05164d; --accent-2:#243f9b; --accent-ink:#ffffff;
   --good:#1b8a5a; --bad:#b00020; --warn:#b08a4a;
   --radius:14px; --shadow:0 2px 8px rgba(5,22,77,.06);
   --btn-shadow:0 8px 20px -6px rgba(5,22,77,.35);
@@ -37,7 +37,11 @@
   --bg:#0a1b3d; --bg-2:#0f2348;
   --card:#132b54; --card-br:#234168;
   --text:#eaf1fb; --muted:#93a8c7;
-  --accent:#7ba6dc; --accent-2:#a9c7e8;
+  /* Dark-mode accent is a light blue, so white ink on it lands at 2.52:1 —
+     below WCAG AA. Every accent-filled control reads its foreground from
+     --accent-ink instead of a hardcoded #fff; in dark that flips to the
+     page navy (6.7:1). Mirrors --action-primary-ink in lrn/tokens.css. */
+  --accent:#7ba6dc; --accent-2:#a9c7e8; --accent-ink:#0a1b3d;
   --good:#6fc79c; --bad:#e08a8a; --warn:#d9c5a0;
   --shadow:0 12px 32px rgba(2,8,36,.45);
   --btn-shadow:0 8px 20px -6px rgba(0,0,0,.5);
@@ -85,7 +89,9 @@ body {
 .card + .card { margin-top:12px; }
 .kicker { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; font-family:var(--font-body); }
 .kicker .dot { width:9px; height:9px; border-radius:50%; background:var(--accent); }
-.game-head { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700; color:var(--muted); margin-bottom:6px; line-height:1.25; }
+/* An <h1> since the game screen has no other heading — the UA's default h1
+   sizing/margins are reset here so it keeps its original kicker look. */
+.game-head { display:flex; align-items:center; gap:8px; font-family:var(--font-body); font-size:15px; font-weight:700; color:var(--muted); margin:0 0 6px; line-height:1.25; }
 .game-head .dot { width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
 
 /* ---- Buttons ---- */
@@ -93,7 +99,7 @@ body {
    selector-cta): fully rounded, accent-filled, a confident lift on hover
    instead of a flat brightness flicker. Sized to content, not stretched —
    a primary action reads as a considered choice, not a mobile app bar. */
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; width:auto; border:none; cursor:pointer; padding:14px 28px; border-radius:999px; font-family:var(--font-body); font-size:16px; font-weight:700; color:#fff; background:var(--accent); box-shadow:var(--btn-shadow); transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease, filter .18s ease; }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; width:auto; border:none; cursor:pointer; padding:14px 28px; border-radius:999px; font-family:var(--font-body); font-size:16px; font-weight:700; color:var(--accent-ink); background:var(--accent); box-shadow:var(--btn-shadow); transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease, filter .18s ease; }
 .btn:active { transform:translateY(0) scale(.97); box-shadow:var(--btn-shadow); }
 .btn:hover { filter:brightness(1.08); transform:translateY(-2px); box-shadow:var(--btn-shadow-hover); }
 .btn.secondary { background:var(--card); border:1px solid var(--card-br); box-shadow:none; color:var(--text); }
@@ -113,7 +119,7 @@ body {
 .lang-cap { font-size:13px; color:var(--muted); font-weight:600; }
 .lang-btn { padding:6px 14px; border-radius:999px; border:1px solid var(--card-br); background:var(--card); color:var(--muted); font-size:13.5px; font-weight:700; cursor:pointer; }
 .lang-btn:active { transform:scale(.96); }
-.lang-btn.on { background:var(--accent); border-color:transparent; color:#fff; }
+.lang-btn.on { background:var(--accent); border-color:transparent; color:var(--accent-ink); }
 
 /* ---- Lecture / game / takeaway ---- */
 .lecture-body { font-size:16px; line-height:1.6; }
@@ -129,7 +135,7 @@ body {
 /* ---- Term chips / term stack / glossary ---- */
 .chip { font-size:14px; font-weight:600; background:rgba(46,107,214,.12); color:var(--accent-2); border:1px solid var(--card-br); padding:7px 12px; border-radius:999px; cursor:pointer; }
 .chip:active { transform:scale(.96); }
-.chip.on { background:var(--accent); color:#fff; border-color:transparent; }
+.chip.on { background:var(--accent); color:var(--accent-ink); border-color:transparent; }
 /* A centered dialog, not a mobile "bottom sheet" — matches the .ai-consent
    dialog's visual language so the primer has one modal pattern, not two. */
 .term-stack { position:absolute; inset:0; z-index:50; background:rgba(5,22,77,.6); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -146,7 +152,7 @@ body {
 .cat-filter { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:12px; -webkit-overflow-scrolling:touch; }
 .cat-filter::-webkit-scrollbar { display:none; }
 .cat-pill { flex:0 0 auto; font-size:13px; font-weight:600; white-space:nowrap; padding:7px 13px; border-radius:999px; cursor:pointer; background:var(--card); border:1px solid var(--card-br); color:var(--muted); }
-.cat-pill.active { background:var(--accent); color:#fff; border-color:transparent; }
+.cat-pill.active { background:var(--accent); color:var(--accent-ink); border-color:transparent; }
 
 /* ---- Extensions comparison (CLI loop / MCP / Skill), static block shown
    under the Extensions glossary filter only ---- */
@@ -207,8 +213,13 @@ body {
 .pipe-stage { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--card-br); border-radius:13px; padding:10px 14px; opacity:.35; transition:all .4s ease; }
 .pipe-stage.active { opacity:1; border-color:var(--accent); transform:translateX(2px); box-shadow:0 6px 20px rgba(46,107,214,.25); }
 .pipe-stage.done { opacity:.8; }
-.pipe-stage .num { flex:0 0 32px; height:32px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:14px; background:rgba(46,107,214,.2); color:#cfe0f7; }
-.pipe-stage.active .num { background:var(--accent); color:#fff; }
+/* The badge fades on the same 400ms curve as the card it sits in — otherwise
+   the number flips instantly while the previous card is still visibly
+   highlighted, which reads as "badge and highlight are on different steps".
+   Steps already walked through keep their filled badge, so at the end of a
+   run all six are numbered instead of just the active one. */
+.pipe-stage .num { flex:0 0 32px; height:32px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:14px; background:rgba(46,107,214,.2); color:#cfe0f7; transition:background .4s ease, color .4s ease; }
+.pipe-stage.active .num, .pipe-stage.done .num { background:var(--accent); color:var(--accent-ink); }
 .pipe-stage .t { font-weight:700; font-size:16px; }
 .pipe-stage .d { font-size:13.5px; color:var(--muted); margin-top:2px; }
 .pipe-arrow { text-align:center; color:var(--muted); font-size:12px; line-height:.4; }
@@ -252,7 +263,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:26px; h
 .agent-list { display:flex; flex-direction:column; gap:9px; margin-top:6px; }
 .agent-step { display:flex; align-items:center; gap:12px; cursor:pointer; background:var(--card); border:1px solid var(--card-br); border-radius:13px; padding:12px 14px; }
 .agent-step .pick { flex:0 0 30px; height:30px; border-radius:9px; display:grid; place-items:center; border:2px solid var(--card-br); font-weight:800; color:var(--muted); font-size:14px; }
-.agent-step.picked .pick { background:var(--accent); border-color:var(--accent); color:#fff; }
+.agent-step.picked .pick { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
 .agent-step.correct { border-color:var(--good); }
 .agent-step.correct .pick { background:var(--good); border-color:var(--good); color:#fff; }
 .agent-step.wrong { border-color:var(--bad); }
@@ -264,10 +275,14 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:26px; h
 .reveal-card { width:100%; text-align:left; cursor:pointer; font-family:inherit; background:var(--card); border:1px solid var(--card-br); color:var(--text); border-radius:13px; padding:14px 15px; transition:border-color .2s; }
 .reveal-card:active { transform:scale(.99); }
 .reveal-card .rv-text { font-size:16px; font-weight:650; line-height:1.35; }
-.reveal-card .rv-hint { margin-top:8px; }
-.reveal-card .rv-body { display:none; margin-top:11px; }
-.reveal-card.open .rv-hint { display:none; }
-.reveal-card.open .rv-body { display:block; animation:fade .3s ease both; }
+/* Hint and answer share one grid cell, so the card reserves its revealed
+   height from the start — revealing no longer pushes the cards below it
+   (and the Continue button) out from under the user's finger. */
+.reveal-card .rv-stack { display:grid; margin-top:8px; }
+.reveal-card .rv-hint, .reveal-card .rv-body { grid-area:1 / 1; }
+.reveal-card .rv-body { visibility:hidden; opacity:0; transition:opacity .3s ease; }
+.reveal-card.open .rv-hint { visibility:hidden; }
+.reveal-card.open .rv-body { visibility:visible; opacity:1; }
 .reveal-card.is-ok { border-color:var(--good); }
 .reveal-card.is-warn { border-color:var(--warn); }
 .rv-badge { display:inline-block; font-size:12.5px; font-weight:800; padding:4px 10px; border-radius:999px; margin-bottom:8px; }
@@ -328,10 +343,10 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:26px; h
 /* ---- Attention (Heatmap) ---- */
 .attn-tabs { display:flex; gap:8px; margin-bottom:12px; }
 .attn-tab { font-size:13px; padding:6px 12px; border-radius:999px; background:var(--card); border:1px solid var(--card-br); color:var(--muted); cursor:pointer; }
-.attn-tab.on { background:var(--accent); color:#fff; border-color:transparent; }
+.attn-tab.on { background:var(--accent); color:var(--accent-ink); border-color:transparent; }
 .attn-sent { display:flex; flex-wrap:wrap; gap:6px 4px; font-size:17px; line-height:1.7; }
 .attn-tok { padding:3px 6px; border-radius:7px; transition:background .3s; }
-.attn-tok.focus { background:var(--accent); color:#fff; cursor:pointer; font-weight:700; box-shadow:0 0 0 0 rgba(46,107,214,.6); animation:lobbyPulse 1.8s infinite; }
+.attn-tok.focus { background:var(--accent); color:var(--accent-ink); cursor:pointer; font-weight:700; box-shadow:0 0 0 0 rgba(46,107,214,.6); animation:lobbyPulse 1.8s infinite; }
 .attn-tok.attn-top { outline:2px solid var(--accent-2); font-weight:700; }
 .attn-note { margin-top:14px; min-height:20px; font-size:14.5px; }
 @keyframes lobbyPulse { 0% { box-shadow:0 0 0 0 rgba(46,107,214,.5); } 70% { box-shadow:0 0 0 10px rgba(46,107,214,0); } 100% { box-shadow:0 0 0 0 rgba(46,107,214,0); } }
@@ -368,7 +383,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:26px; h
 /* ---- Cost calculator ---- */
 .cost-models { display:flex; gap:8px; margin:8px 0 14px; flex-wrap:wrap; }
 .cost-model { flex:1; min-width:90px; font-size:13.5px; font-weight:600; padding:9px 8px; border-radius:10px; background:var(--card); border:1px solid var(--card-br); color:var(--muted); cursor:pointer; }
-.cost-model.on { background:var(--accent); color:#fff; border-color:transparent; }
+.cost-model.on { background:var(--accent); color:var(--accent-ink); border-color:transparent; }
 .cost-row { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin:12px 0 2px; }
 .cost-row label { flex:1; font-size:13.5px; }
 .cost-val { font-variant-numeric:tabular-nums; font-weight:700; min-width:48px; text-align:right; }
@@ -456,3 +471,44 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:26px; h
 }
 
 
+
+/* ---- Accessibility ------------------------------------------------------
+   The primer relied on the browser's default focus ring. On the dark navy
+   surfaces that ring is barely visible, so keyboard users lost track of
+   where they were. Keyboard-only (:focus-visible), so mouse clicks stay
+   ring-free. ---- */
+.btn:focus-visible,
+.iconbtn:focus-visible,
+.opt:focus-visible,
+.match-opt:focus-visible,
+.chip:focus-visible,
+.cat-pill:focus-visible,
+.lang-btn:focus-visible,
+.attn-tab:focus-visible,
+.cost-model:focus-visible,
+.reveal-card:focus-visible,
+.gl-item:focus-visible,
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline:2px solid var(--accent-2);
+  outline-offset:2px;
+  border-radius:6px;
+}
+
+/* Motion is decorative here — the pipeline/RAG walkthroughs and every reveal
+   also read fine as static state. Honour the OS setting the way the catalog
+   CSS already does. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  /* Endless attention/lobby pulse would otherwise freeze mid-glow. */
+  .attn-tok.focus { animation:none; box-shadow:0 0 0 3px rgba(46,107,214,.5); }
+}

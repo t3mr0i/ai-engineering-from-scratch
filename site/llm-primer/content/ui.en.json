@@ -101,6 +101,7 @@
     "predict_hint": "Which word comes next? (Round {r}/{total})",
     "predict_correct": "Exactly! The model picks the most likely token. You're thinking like an LLM!",
     "predict_wrong": "Not wrong! {chosen} fits fine. But {best} appeared more often in this context in the training data, so it's more likely. The model picks the most likely, not the one right answer.",
+    "predict_unlikely": "Unlikely: {chosen} rarely appeared in this context in the training data. {best} is the model's most likely pick here.",
     "predict_next": "Next example →",
     "tok_hint": "Type text. A real GPT tokenizer splits it into tokens live:",
     "tok_note": "A leading “·” means the space belongs to that token — spaces are never separate. Common words are a single token; longer or rarer words break into fragments.",
@@ -212,5 +213,6 @@
     "egg_close_btn": "Cool!",
     "egg_found_title": "Easter egg found!",
     "egg_found_hint": "→ a little memento from your tour",
-    "egg_code": "STOCHASTIC PARROT"
+    "egg_code": "STOCHASTIC PARROT",
+    "game_cta_ondevice_static": "See the example →"
 }

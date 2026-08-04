@@ -94,7 +94,7 @@
             "id": "vokabular",
             "term": "Vokabular",
             "cat": "eingabe",
-            "def": "Die feste Liste aller Tokens, die ein Modell kennt (oft ~50.000–100.000). Jeder Text wird aus diesen Bausteinen zusammengesetzt."
+            "def": "Die feste Liste aller Tokens, die ein Modell kennt (oft ~50.000–200.000). Jeder Text wird aus diesen Bausteinen zusammengesetzt."
         },
         {
             "id": "embedding",
@@ -142,7 +142,7 @@
             "id": "temperature",
             "term": "Temperature",
             "cat": "verarbeitung",
-            "def": "Ein Regler für Zufall und Kreativität. Niedrig heißt vorhersehbar und faktentreu, hoch heißt kreativer, aber auch riskanter. Typisch zwischen 0 und 1."
+            "def": "Ein Regler für Zufall und Kreativität. Niedrig heißt vorhersehbar und faktentreu, hoch heißt kreativer, aber auch riskanter. Typisch zwischen 0 und 2."
         },
         {
             "id": "kontextfenster",
@@ -719,7 +719,7 @@
             "id": "grundlagen",
             "cat": "grundlagen",
             "title": "Was ist ein LLM eigentlich?",
-            "lecture": "<p>Ein <b data-g=\"llm\">großes Sprachmodell (LLM)</b> ist im Kern eine <b>Vorhersage-Maschine</b>. Es hat aus riesigen Textmengen gelernt, welche Wörter typischerweise aufeinanderfolgen. Damit sagt es immer wieder das <b>wahrscheinlichste nächste Wort</b> voraus.</p><p>Es schlägt nichts nach und „versteht“ nichts wie ein Mensch. Es rechnet mit gelernter Statistik. Das erklärt beides: warum die Antworten so flüssig und menschlich klingen, und warum ein Modell auch überzeugend danebenliegen kann. Es zielt auf <i>plausibel</i>, nicht auf <i>wahr</i>.</p><p class=\"lecture-next\">Im Mini-Spiel schlüpfst du selbst in diese Rolle und rätst das nächste Wort.</p>",
+            "lecture": "<p>Ein <b data-g=\"llm\">großes Sprachmodell (LLM)</b> ist im Kern eine <b>Vorhersage-Maschine</b>. Es hat aus riesigen Textmengen gelernt, welche Wörter typischerweise aufeinanderfolgen. Damit sagt es immer wieder das <b>wahrscheinlichste nächste Wort</b> voraus. ChatGPT, Claude oder Copilot sind übrigens die <i>Anwendungen</i> drumherum — das LLM ist der Motor, der darin arbeitet.</p><p>Es schlägt nichts nach und „versteht“ nichts wie ein Mensch. Es rechnet mit gelernter Statistik. Das erklärt beides: warum die Antworten so flüssig und menschlich klingen, und warum ein Modell auch überzeugend danebenliegen kann. Es zielt auf <i>plausibel</i>, nicht auf <i>wahr</i>.</p><p class=\"lecture-next\">Im Mini-Spiel schlüpfst du selbst in diese Rolle und rätst das nächste Wort.</p>",
             "game": "predict",
             "gameData": {
                 "rounds": [
@@ -773,7 +773,7 @@
             "id": "tokens",
             "cat": "eingabe",
             "title": "Vom Text zu Tokens",
-            "lecture": "<p>Bevor das Modell deinen <b data-g=\"prompt\">Prompt</b> überhaupt sieht, wird er in <b data-g=\"token\">Tokens</b> zerlegt: kleine Bausteine, oft nur Wortteile. Das Modell liest also keine Buchstaben, sondern Zahlen, die für diese Bausteine stehen.</p><p>Das ist kein Detail am Rande. <b>Abgerechnet wird pro Token</b>, und auch das <b data-g=\"kontextfenster\">Kontextfenster</b> misst in Tokens. Lange oder umständliche Eingaben kosten also mehr Geld und füllen den Speicher schneller. Ein wichtiger Hebel beim Produktdesign.</p><p class=\"lecture-next\">Tippe im Mini-Spiel eigenen Text und sieh live, wie er in Tokens zerfällt.</p>",
+            "lecture": "<p>Bevor das Modell deinen <b data-g=\"prompt\">Prompt</b> überhaupt sieht, wird er in <b data-g=\"token\">Tokens</b> zerlegt: kleine Bausteine, oft nur Wortteile. Das Modell liest also keine Buchstaben, sondern Zahlen, die für diese Bausteine stehen.</p><p>Das ist kein Detail am Rande. <b>Abgerechnet wird pro Token</b>, und auch das <b data-g=\"kontextfenster\">Kontextfenster</b> — das „Arbeitsgedächtnis“ des Modells, dazu im Kapitel „Kontext &amp; Gedächtnis“ mehr — misst in Tokens. Lange oder umständliche Eingaben kosten also mehr Geld und füllen das Kontextfenster schneller. Ein wichtiger Hebel beim Produktdesign.</p><p class=\"lecture-next\">Tippe im Mini-Spiel eigenen Text und sieh live, wie er in Tokens zerfällt.</p>",
             "game": "tokenizer",
             "gameData": {
                 "samples": [
@@ -781,13 +781,13 @@
                     "Tokenisierung ist unglaublich wichtig!"
                 ]
             },
-            "takeaway": "Ein Token ist ungefähr ¾ eines deutschen Wortes. Lange Prompts = viele Tokens = mehr Kosten und mehr Kontextverbrauch."
+            "takeaway": "Deutsch braucht oft deutlich mehr Tokens pro Wort als Englisch – lange Wörter zerfallen in mehrere Teile. Lange Prompts = viele Tokens = mehr Kosten und mehr Kontextverbrauch."
         },
         {
             "id": "embedding",
             "cat": "verarbeitung",
             "title": "Embeddings: Wörter werden Zahlen",
-            "lecture": "<p>Ein Modell rechnet nur mit Zahlen. Also wird jedes <b data-g=\"token\">Token</b> in eine lange Zahlenliste übersetzt, sein <b data-g=\"embedding\">Embedding</b> (ein <b data-g=\"vektor\">Vektor</b>). Der Clou: ähnliche Bedeutung → ähnliche Zahlen.</p><p>So entsteht eine Landkarte der Bedeutung. „Hund“ und „Katze“ liegen nah beieinander, „Kaffee“ liegt weit weg. Diese <b data-g=\"aehnlichkeit\">Ähnlichkeit</b> ist die Grundlage für Suche, Empfehlungen und <b data-g=\"rag\">RAG</b>.</p><p class=\"lecture-next\">Tippe im Mini-Spiel Wörter an, sieh ihre Zahlen und finde das ähnlichste.</p>",
+            "lecture": "<p>Ein Modell rechnet nur mit Zahlen. Also wird jedes <b data-g=\"token\">Token</b> in eine lange Zahlenliste übersetzt, sein <b data-g=\"embedding\">Embedding</b> (ein <b data-g=\"vektor\">Vektor</b>). Der Clou: ähnliche Bedeutung → ähnliche Zahlen.</p><p>So entsteht eine Landkarte der Bedeutung. „Hund“ und „Katze“ liegen nah beieinander, „Kaffee“ liegt weit weg. Diese <b data-g=\"aehnlichkeit\">Ähnlichkeit</b> ist die Grundlage für Suche, Empfehlungen und <b data-g=\"rag\">RAG</b> (ein Verfahren, das später ein eigenes Kapitel bekommt).</p><p>Erinnerung: Unterstrichene Begriffe kannst du jederzeit antippen — kurze Erklärung, ohne die Seite zu verlassen.</p><p class=\"lecture-next\">Tippe im Mini-Spiel Wörter an, sieh ihre Zahlen und finde das ähnlichste.</p>",
             "game": "embedding",
             "gameData": {
                 "question": "Welches Wort liegt der Bedeutung von „Hund“ am nächsten?",
@@ -846,7 +846,7 @@
             "id": "semanticsearch",
             "cat": "erweiterungen",
             "title": "Bedeutungs-Landkarte: semantische Suche",
-            "lecture": "<p>Wenn Texte als <b data-g=\"vektor\">Vektoren</b> auf einer Bedeutungs-Landkarte liegen, wird <b>Suche zur Geometrie</b>: Zu einer Frage suchst du einfach die <b>nächstgelegenen</b> Punkte. Das ist <b data-g=\"semantische-suche\">semantische Suche</b>.</p><p>Sie findet Treffer nach <i>Bedeutung</i>, nicht nach exakten Wörtern. „Wann habt ihr auf?“ findet „Öffnungszeiten“. Genau das macht eine <b data-g=\"vektordatenbank\">Vektordatenbank</b>. In Wirklichkeit in hunderten <b data-g=\"dimensionen\">Dimensionen</b>, hier als 2D-Schatten.</p><p class=\"lecture-next\">Wähl eine Frage und finde die 3 nächsten Dokumente.</p>",
+            "lecture": "<p>Wenn Texte als <b data-g=\"vektor\">Vektoren</b> auf einer Bedeutungs-Landkarte liegen, wird <b>Suche zur Geometrie</b>: Zu einer Frage suchst du einfach die <b>nächstgelegenen</b> Punkte. Das ist <b data-g=\"semantische-suche\">semantische Suche</b>.</p><p>Sie findet Treffer nach <i>Bedeutung</i>, nicht nach exakten Wörtern. „Wann habt ihr geöffnet?“ findet „Öffnungszeiten“. Genau das macht eine <b data-g=\"vektordatenbank\">Vektordatenbank</b>. In Wirklichkeit in hunderten <b data-g=\"dimensionen\">Dimensionen</b>, hier als 2D-Schatten.</p><p class=\"lecture-next\">Wähl eine Frage und finde die 3 nächsten Dokumente.</p>",
             "game": "semanticsearch",
             "gameData": {
                 "k": 3,
@@ -938,7 +938,7 @@
                     {
                         "key": "output",
                         "label": "Ausgabe",
-                        "desc": "Wort für Wort entsteht die Antwort. Inferenz abgeschlossen."
+                        "desc": "Wort für Wort entsteht die Antwort. Diesen Vorgang — das Benutzen des fertigen Modells — nennt man Inferenz."
                     }
                 ]
             },
@@ -1032,7 +1032,7 @@
             "id": "temperature",
             "cat": "verarbeitung",
             "title": "Wahrscheinlichkeit & Temperature",
-            "lecture": "<p>Für das nächste Token berechnet das Modell nicht <i>eine</i> Antwort, sondern eine ganze Rangliste mit <b data-g=\"wahrscheinlichkeit\">Wahrscheinlichkeiten</b>. Welches Wort daraus tatsächlich genommen wird, steuert der Regler <b data-g=\"temperature\">Temperature</b>.</p><p>Niedrig heißt: fast immer das Wahrscheinlichste, also vorhersehbar und faktentreu. Hoch heißt: auch unwahrscheinlichere Wörter bekommen eine Chance, also kreativer, aber riskanter. Derselbe Prompt kann je nach Einstellung also unterschiedlich klingen. Für Fakten niedrig, fürs Brainstorming höher.</p><p class=\"lecture-next\">Schieb im Mini-Spiel den Regler und beobachte, wie sich die Verteilung verschiebt.</p>",
+            "lecture": "<p>Für das nächste Token berechnet das Modell nicht <i>eine</i> Antwort, sondern eine ganze Rangliste mit <b data-g=\"wahrscheinlichkeit\">Wahrscheinlichkeiten</b>. Welches Wort daraus tatsächlich genommen wird, steuert der Regler <b data-g=\"temperature\">Temperature</b>.</p><p>Niedrig heißt: fast immer das Wahrscheinlichste, also vorhersehbar und faktentreu. Hoch heißt: auch unwahrscheinlichere Wörter bekommen eine Chance, also kreativer, aber riskanter. Derselbe Prompt kann je nach Einstellung also unterschiedlich klingen. Für Fakten niedrig, fürs Brainstorming höher. In Chat-Apps ist dieser Regler meist fest voreingestellt. Selbst drehen kannst du ihn, sobald du eigene Anwendungen baust — oder hier im Mini-Spiel.</p><p class=\"lecture-next\">Schieb im Mini-Spiel den Regler und beobachte, wie sich die Verteilung verschiebt.</p>",
             "game": "temperature",
             "gameData": {
                 "prompt": "Schreibe den Anfang einer Geschichte: „Der alte Leuchtturm war ___“",
@@ -1065,7 +1065,7 @@
             "id": "context",
             "cat": "kontext",
             "title": "Kontext & Gedächtnis",
-            "lecture": "<p>Ein LLM hat <b>kein Gedächtnis</b>. Bei jeder neuen Nachricht wird der gesamte bisherige <b data-g=\"chatverlauf\">Verlauf</b> erneut komplett mitgeschickt. „Erinnerung“ ist also nichts anderes als wieder mitgesendeter Text.</p><p>Dieser Text muss vollständig ins <b data-g=\"kontextfenster\">Kontextfenster</b> passen. Ist es voll, fällt das Älteste hinten heraus und gilt als vergessen. Wenn ein Chatbot also „vergisst“, was oben stand, ist es meist aus dem Fenster gefallen. Wichtiges gehört darum nach vorn oder muss wiederholt werden.</p><p class=\"lecture-next\">Im Mini-Spiel füllst du das Fenster, bis es überläuft.</p>",
+            "lecture": "<p>Ein LLM hat <b>kein Gedächtnis</b>. Bei jeder neuen Nachricht wird der gesamte bisherige <b data-g=\"chatverlauf\">Verlauf</b> erneut komplett mitgeschickt. „Erinnerung“ ist also nichts anderes als wieder mitgesendeter Text.</p><p>Dieser Text muss vollständig ins <b data-g=\"kontextfenster\">Kontextfenster</b> passen. Ist es voll, fällt das Älteste hinten heraus und gilt als vergessen. Wenn ein Chatbot also „vergisst“, was oben stand, ist es meist aus dem Fenster gefallen. Wichtiges gehört darum nach vorn oder muss wiederholt werden.</p><p>Übrigens: Wenn Chat-Produkte eine „Erinnerungs“-Funktion anbieten, speichern sie Notizen über dich — und schicken sie bei jeder Nachricht unsichtbar mit. Auch das ist nur mitgesendeter Text.</p><p class=\"lecture-next\">Im Mini-Spiel füllst du das Fenster, bis es überläuft.</p>",
             "game": "context",
             "gameData": {
                 "windowSize": 4,
@@ -1103,7 +1103,7 @@
                         "right": "„Denke Schritt für Schritt und zeige deinen Rechenweg.“"
                     },
                     {
-                        "left": "Instruction",
+                        "left": "Instruktion",
                         "right": "„Antworte als Stichpunktliste, maximal 3 Punkte, auf Deutsch.“"
                     }
                 ]
@@ -1235,7 +1235,7 @@
             "lecture": "<p>Bezahlt wird pro <b data-g=\"token\">Token</b>, für Eingabe <i>und</i> Ausgabe. Ein langer <b data-g=\"system-prompt\">System-Prompt</b>, viel <b data-g=\"kontextfenster\">Kontext</b> oder viele Aufrufe summieren sich schnell.</p><p>Mehr Tokens kosten außerdem Zeit: die <b data-g=\"latenz\">Latenz</b> steigt. Im Produktdesign lohnt es sich, beides im Blick zu behalten.</p><p class=\"lecture-next\">Dreh an den Reglern und sieh die Kosten live.</p>",
             "game": "cost",
             "gameData": {
-                "note": "Beispielpreise (€ pro 1 Mio. Tokens). Echte Preise sind je nach Anbieter unterschiedlich.",
+                "note": "Beispielpreise (€ pro 1 Mio. Tokens). Echte Preise sind je nach Anbieter unterschiedlich. Das betrifft vor allem Teams, die Anwendungen bauen: Im Privat-Abo zahlst du pauschal — pro Token zahlt, wer das Modell über eine Schnittstelle (API) nutzt.",
                 "defaults": {
                     "in": 800,
                     "out": 400,
@@ -1336,7 +1336,7 @@
             "id": "ondevice",
             "cat": "erweiterungen",
             "title": "KI auf deinem Gerät",
-            "lecture": "<p>Die Idee: Statt einen Server zu rufen, rechnet das Modell direkt auf deinem Gerät. Möglich macht das die <b data-g=\"quantisierung\">Quantisierung</b> &ndash; sie schrumpft das Modell so weit, dass es überhaupt ins Handy passt. Einmal geladen, läuft jede <b data-g=\"inferenz\">Inferenz</b> <b data-g=\"on-device\">auf dem Gerät</b> und funktioniert sogar im Flugmodus.</p><p><b>Der Magier spricht Englisch.</b> Warum eigentlich? Ein richtig gutes „Deutsch“-Modell kann meistens viele Sprachen auf einmal. Das macht es groß. Zu groß für den knappen <b>Arbeitsspeicher (RAM)</b> im Handy, sodass es nicht mehr gut antwortet. Was klein genug fürs Handy ist, kann dafür am besten Englisch. Mit mehr Speicher gingen auch mehr Sprachen. Bis es so weit ist, heißt es hier: <i>English, please</i>.</p><p>Zum Herunterladen braucht es aber eine erste Verbindung &ndash; und die ist in diesem Netz blockiert. Deshalb siehst du hier kein Live-Beispiel, sondern ein vorgerechnetes: denselben Satz, ein paar Mal anders umgeschrieben, unter anderem als Pirat.</p><p class=\"lecture-next\">Schau dir das Beispiel unten an.</p>",
+            "lecture": "<p>Die Idee: Statt einen Server zu rufen, rechnet das Modell direkt auf deinem Gerät. Möglich macht das die <b data-g=\"quantisierung\">Quantisierung</b> &ndash; sie schrumpft das Modell so weit, dass es überhaupt ins Handy passt. Einmal geladen, läuft jede <b data-g=\"inferenz\">Inferenz</b> <b data-g=\"on-device\">auf dem Gerät</b> und funktioniert sogar im Flugmodus.</p><p>Unten wartet eine kleine Demo: der <b>Text-Magier</b>. Er schreibt einen Satz auf Zuruf um — förmlich, lässig oder als Pirat.</p><p><b>Der Magier spricht Englisch.</b> Warum eigentlich? Ein richtig gutes „Deutsch“-Modell kann meistens viele Sprachen auf einmal. Das macht es groß. Zu groß für den knappen <b>Arbeitsspeicher (RAM)</b> im Handy, sodass es nicht mehr gut antwortet. Was klein genug fürs Handy ist, kann dafür am besten Englisch. Mit mehr Speicher gingen auch mehr Sprachen. Bis es so weit ist, heißt es hier: <i>English, please</i>.</p><p>Zum Herunterladen braucht es aber eine erste Verbindung &ndash; und die ist in diesem Netz blockiert. Deshalb siehst du hier kein Live-Beispiel, sondern ein vorgerechnetes: denselben Satz, ein paar Mal anders umgeschrieben, unter anderem als Pirat.</p><p class=\"lecture-next\">Schau dir das Beispiel unten an.</p>",
             "game": "ondevice",
             "gameData": {
                 "sample": "Can you help me move some furniture tomorrow afternoon?",
@@ -1375,17 +1375,25 @@
                             "text": "Could you kindly assist me with moving some furniture tomorrow afternoon?"
                         },
                         {
+                            "label": "lässig",
+                            "text": "Hey, could you give me a hand moving some furniture tomorrow afternoon?"
+                        },
+                        {
                             "label": "Pirat",
                             "text": "Ahoy! Lend me a hand to haul some furniture tomorrow afternoon, matey!"
                         },
                         {
                             "label": "Emoji",
-                            "text": "Can you help me move some furniture tomorrow afternoon?"
+                            "text": "Can you help me move some furniture 🛋️ tomorrow afternoon? 🙏"
+                        },
+                        {
+                            "label": "kürzer",
+                            "text": "Help moving furniture tomorrow afternoon?"
                         }
                     ]
                 }
             },
-            "takeaway": "Moderne Geräte können kleine Modelle selbst ausführen, offline und ohne Server &ndash; sobald sie einmal geladen sind. Sie können Text gut umformen, am besten auf Englisch. Bei Fakten sind sie schwach."
+            "takeaway": "Moderne Geräte können kleine Modelle selbst ausführen, offline und ohne Server – sobald sie einmal geladen sind. Sie können Text gut umformen, am besten auf Englisch. Bei Fakten sind sie schwach."
         },
         {
             "id": "hallucination",
@@ -1406,7 +1414,7 @@
                         "why": "Sehr genaue Zahl plus konkrete Studie — klassisches Muster erfundener Belege. Quelle prüfen."
                     },
                     {
-                        "text": "„In Python schließt man eine Codeblock-Zeile nicht mit Semikolon ab.“",
+                        "text": "„Anweisungen schließt man in Python nicht mit Semikolon ab.“",
                         "risk": false,
                         "why": "Stabile, oft wiederholte technische Fakten sind zuverlässig."
                     },
@@ -1418,7 +1426,7 @@
                     {
                         "text": "„Der aktuelle CEO unseres Kunden ist seit letztem Monat XY.“",
                         "risk": true,
-                        "why": "Aktuelle, sich ändernde Fakten liegen oft nach dem Trainingsstichtag — hohe Hallucination-Gefahr."
+                        "why": "Aktuelle, sich ändernde Fakten liegen oft nach dem Trainingsstichtag — hohe Halluzinations-Gefahr."
                     }
                 ]
             },
@@ -1491,7 +1499,7 @@
             "id": "modelsize",
             "cat": "grundlagen",
             "title": "Klein oder groß? Modelle im Vergleich",
-            "lecture": "<p>Nicht jede Aufgabe braucht das größte verfügbare Modell. Große Modelle sind vielseitiger und stärker bei komplexem <b data-g=\"reasoning\">Reasoning</b>, kosten aber mehr, sind langsamer und brauchen mehr Ressourcen (siehe <b data-g=\"quantisierung\">Quantisierung</b> und On-Device aus dem letzten Kapitel).</p><p>Kleine Modelle sind schnell, günstig und laufen teils sogar lokal — reichen aber oft nicht für vielschichtige, mehrstufige Aufgaben. Die Kunst ist, für jede Aufgabe die kleinste Größe zu wählen, die noch zuverlässig funktioniert.</p><p class=\"lecture-next\">Geh im Mini-Spiel typische Aufgaben durch: passt hier eher ein kleines oder ein großes Modell?</p>",
+            "lecture": "<p>Nicht jede Aufgabe braucht das größte verfügbare Modell. Große Modelle sind vielseitiger und stärker bei komplexem <b data-g=\"reasoning\">Reasoning</b>, kosten aber mehr, sind langsamer und brauchen mehr Ressourcen (siehe <b data-g=\"quantisierung\">Quantisierung</b> im Kapitel „KI auf deinem Gerät“).</p><p>Kleine Modelle sind schnell, günstig und laufen teils sogar lokal — reichen aber oft nicht für vielschichtige, mehrstufige Aufgaben. Die Kunst ist, für jede Aufgabe die kleinste Größe zu wählen, die noch zuverlässig funktioniert.</p><p class=\"lecture-next\">Geh im Mini-Spiel typische Aufgaben durch: passt hier eher ein kleines oder ein großes Modell?</p>",
             "game": "classify",
             "gameData": {
                 "trueLabel": "Großes Modell",
@@ -1784,7 +1792,7 @@
                 "name": "CLI (Agentic Loop)",
                 "what": "Ein Agent, der direkt in deinem Terminal oder Editor läuft und die Plan-Handeln-Prüfen-Schleife selbst durchführt.",
                 "problem": "Schnell und direkt etwas erledigen lassen, ohne zusätzliche Infrastruktur.",
-                "when": "Für schnelle, ad-hoc Aufgaben direkt in der Entwicklungsumgebung."
+                "when": "Für schnelle Ad-hoc-Aufgaben direkt in der Entwicklungsumgebung."
             },
             {
                 "name": "MCP",
