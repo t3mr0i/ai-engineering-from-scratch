@@ -86,3 +86,4 @@ site/jupyterlite/
 /outputs/lrn-audit
 /outputs/plan-tc-notebooks.md
 docs/argumentation-api-key-vorkonfiguriert.md
+deploy.sh
