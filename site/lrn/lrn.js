@@ -27,12 +27,14 @@
   // labels, status tabs, CTA, empty-state, announcements) translate with the
   // rest of the site. Guarded for load order even though index.html loads
   // i18n.js/lang.js before lrn.js.
-  function i18n(key) {
+  function i18n(key, fallback) {
     var dict = window.SITE_I18N || {};
     var lang = window.SiteLang ? window.SiteLang.get() : "en";
     var entry = dict[key];
-    if (!entry) return key;
-    return entry[lang] || entry.en || key;
+    if (!entry) return fallback == null ? key : fallback;
+    if (entry[lang] != null) return entry[lang];
+    if (entry.en != null) return entry.en;
+    return fallback == null ? key : fallback;
   }
 
   // Max courses shown as "Recommended". Beyond this, level- and interest-relevant
@@ -282,7 +284,9 @@
       els.searchClear.addEventListener("click", clearSearch);
     }
     if (els.topicClearBtn) {
-      els.topicClearBtn.addEventListener("click", clearTopic);
+      els.topicClearBtn.addEventListener("click", function () {
+        clearTopic(true);
+      });
     }
     var searchForm = document.getElementById("searchForm");
     if (searchForm) {
@@ -322,19 +326,20 @@
     });
   }
 
-  // Controls (profile/level selects + interest chips) only need a full rebuild
-  // when the underlying selection set changes — not on every progress tick.
+  // Controls (profile/level selects + interest/topic chips) only need a full
+  // rebuild when the underlying selection set or language changes — not on
+  // every progress tick.
   function renderControls() {
     renderProfileSelect();
     renderLevelSelect();
     renderInterestChips();
+    renderTopicChips();
   }
 
   function render() {
     var computed = compute();
     syncSelects();
-    renderInterestChips();
-    renderTopicChips();
+    syncTopicChipState();
     syncTopicUi();
     renderFilters();
     renderCourses(computed);
@@ -403,6 +408,7 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "chip topic-chip" + (topic.id ? "" : " topic-chip--all");
+      btn.setAttribute("data-topic", topic.id || "");
       btn.setAttribute("aria-pressed", String(selected));
       btn.textContent = topic.label;
       if (topic.hint) btn.title = topic.hint;
@@ -420,11 +426,28 @@
   }
 
   function topicLabel(id, fallback) {
-    return i18n("topic_" + id, fallback || id || i18n("topic_filter_all"));
+    var interest = data.interests.find(function (item) { return item.id === id; });
+    return i18n("topic_" + id, fallback || (interest && interest.label) || id || i18n("topic_filter_all"));
   }
 
   function topicHint(id, fallback) {
-    return i18n("topic_" + id + "_hint", fallback || "");
+    var interest = data.interests.find(function (item) { return item.id === id; });
+    return i18n("topic_" + id + "_hint", fallback || (interest && interest.hint) || "");
+  }
+
+  function syncTopicChipState() {
+    if (!els.topicChips) return;
+    var selected = state.searchTopic || "";
+    var chips = els.topicChips.querySelectorAll("[data-topic]");
+    for (var i = 0; i < chips.length; i += 1) {
+      chips[i].setAttribute("aria-pressed", String(chips[i].getAttribute("data-topic") === selected));
+    }
+  }
+
+  function focusAllTopicChip() {
+    if (!els.topicChips) return;
+    var allTopic = els.topicChips.querySelector('[data-topic=""]');
+    if (allTopic && typeof allTopic.focus === "function") allTopic.focus();
   }
 
   function renderFilters() {
@@ -513,7 +536,9 @@
           clearTopicButton.type = "button";
           clearTopicButton.className = "text-btn";
           clearTopicButton.textContent = i18n("topic_filter_clear");
-          clearTopicButton.addEventListener("click", clearTopic);
+          clearTopicButton.addEventListener("click", function () {
+            clearTopic(true);
+          });
           empty.appendChild(clearTopicButton);
         }
       } else if (state.filter === "recommended" && hasOptional) {
@@ -590,12 +615,13 @@
     els.searchInput.focus();
   }
 
-  function clearTopic() {
+  function clearTopic(restoreFocus) {
     if (!state.searchTopic) return;
     state.searchTopic = null;
     syncTopicUi();
     saveState();
     render();
+    if (restoreFocus) focusAllTopicChip();
     announce(i18n("lrn_announce_topic_clear"));
   }
 

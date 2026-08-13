@@ -1,5 +1,5 @@
 {
-  "lesson": "prompt-only-vs-rules-first",
+  "lesson": "45-prompt-only-vs-rules-first",
   "title": "Prompt-Only vs Rules-First",
   "questions": [
     {"stage": "pre", "question": "What should decide whether a task is complete?", "options": ["The worker's confidence", "The task's evidence contract", "The amount of prose produced", "The number of files changed"], "correct": 1, "explanation": "Completion belongs to independently checked evidence."},

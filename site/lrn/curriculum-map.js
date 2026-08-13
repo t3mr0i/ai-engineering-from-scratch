@@ -308,7 +308,7 @@ window.LrnCurriculumMap = {
         note: "Turns policy expectations into a repeatable intake workflow.",
         lessons: [
           { path: "phases/11-llm-engineering/80-corporate-ethics-and-compliance-for-ai", title: "AI Use-Case Intake: From Idea to Approved Deployment" },
-          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
           { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks" }
         ]
@@ -733,7 +733,7 @@ window.LrnCurriculumMap = {
         decision: "optional",
         note: "For teams moving from security awareness into production readiness.",
         lessons: [
-          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
         ]
       }
@@ -746,7 +746,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/94-internal-knowledge-assistants-with-rag", title: "Planning an Internal Knowledge Assistant: Source Accountability, Permissions, and Fallbacks" },
           { path: "phases/11-llm-engineering/06-rag", title: "RAG (Retrieval-Augmented Generation)" },
-          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" }
+          { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" }
         ]
       },
       {
@@ -909,7 +909,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Connects reports to data literacy, source snapshots and evaluation habits.",
         lessons: [
-          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
+          { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" },
           { path: "phases/11-llm-engineering/21-ai-assisted-documentation", title: "AI-Assisted Documentation" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
         ]
@@ -931,7 +931,7 @@ window.LrnCurriculumMap = {
         note: "Prevents AI workflows from scaling duplicated, stale or undefined data.",
         lessons: [
           { path: "phases/11-llm-engineering/100-ai-data-quality-and-master-data", title: "Diagnosing Data Quality Before AI Workflows Scale" },
-          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" },
+          { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" },
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" }
         ]
       },
@@ -940,7 +940,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Connects data ownership, definitions and compliance evidence.",
         lessons: [
-          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/18-ethics-safety-alignment/27-data-provenance-training-governance", title: "Data Provenance and Training-Data Governance" },
           { path: "phases/18-ethics-safety-alignment/26-model-system-dataset-cards", title: "Model, System, and Dataset Cards" }
         ]
@@ -994,7 +994,7 @@ window.LrnCurriculumMap = {
         note: "Turns AI governance principles into owners, controls and audit evidence.",
         lessons: [
           { path: "phases/11-llm-engineering/102-ai-risk-management-and-internal-controls", title: "AI Risk Management: Owners, Controls, and Audit Evidence" },
-          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
         ]
       },
@@ -1026,7 +1026,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/103-ai-knowledge-management-and-content-governance", title: "Source Quality Gates Before Retrieval" },
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
-          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" }
+          { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" }
         ]
       },
       {
@@ -1192,7 +1192,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
           { path: "phases/11-llm-engineering/06-rag", title: "RAG: Retrieval-Augmented Generation" },
-          { path: "phases/11-llm-engineering/30-data-literacy-for-ai-projects", title: "Data Literacy for AI Projects" }
+          { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" }
         ]
       },
       {
@@ -1213,7 +1213,7 @@ window.LrnCurriculumMap = {
         note: "Designs explicit review roles, approval gates and escalation paths for AI-supported work.",
         lessons: [
           { path: "phases/11-llm-engineering/109-ai-human-review-and-approval-workflow", title: "Designing Human-in-the-Loop Review and Approval Gates for AI Workflows" },
-          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" }
         ]
       },
@@ -1309,7 +1309,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/112-ai-security-review-and-threat-triage", title: "AI Security Threat Triage for Business Proposals" },
           { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
-          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" }
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" }
         ]
       },
       {
@@ -1339,7 +1339,7 @@ window.LrnCurriculumMap = {
         note: "Makes prompt libraries reusable without turning them into stale copy-paste repositories.",
         lessons: [
           { path: "phases/11-llm-engineering/113-ai-prompt-library-governance-and-reuse", title: "Prompt Library Governance: Versioning, Ownership, and Retirement" },
-          { path: "phases/11-llm-engineering/31-hands-on-prompt-clinic", title: "Hands-on Prompt Clinic" },
+          { path: "phases/11-llm-engineering/76-hands-on-prompt-engineering-workshop", title: "Prompt Patterns That Scale: From One-Shots to Output Contracts" },
           { path: "phases/11-llm-engineering/52-ai-knowledge-management-content-governance", title: "AI Knowledge Management and Content Governance" }
         ]
       },
@@ -1359,7 +1359,7 @@ window.LrnCurriculumMap = {
         note: "For shared prompts that affect compliance, quality or safety-sensitive work.",
         lessons: [
           { path: "phases/11-llm-engineering/12-guardrails", title: "Guardrails, Safety & Content Filtering" },
-          { path: "phases/11-llm-engineering/18-responsible-ai-compliance-workflow", title: "Responsible AI Compliance Workflow" },
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
         ]
       }

@@ -1,5 +1,5 @@
 {
-  "lesson": "runtime-feedback-scope",
+  "lesson": "48-runtime-feedback-scope",
   "title": "Runtime Feedback and Scope",
   "questions": [
     {"stage": "pre", "question": "What is runtime feedback?", "options": ["A polished completion sentence", "Observed command evidence", "A hidden model thought", "A future task"], "correct": 1, "explanation": "Exit status and captured streams describe what actually happened."},

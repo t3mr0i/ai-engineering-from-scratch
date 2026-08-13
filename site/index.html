@@ -49,14 +49,14 @@
 
     <!-- Original cockpit / course view stays intact -->
     <section class="cockpit" id="cockpit" aria-label="AI course catalog">
-      <div class="selector-card" aria-label="Choose profile and level">
+      <div class="selector-card" role="group" aria-label="Choose profile and level" data-i18n-aria-label="selector_group_label">
         <label class="selector-field">
           <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="profile_label">Profile</span></span>
-          <select id="profileSelect" aria-label="Choose profile"></select>
+          <select id="profileSelect" aria-label="Choose profile" data-i18n-aria-label="profile_select_label"></select>
         </label>
         <label class="selector-field">
           <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> <span data-i18n="level_label">Level</span></span>
-          <select id="levelSelect" aria-label="Choose level"></select>
+          <select id="levelSelect" aria-label="Choose level" data-i18n-aria-label="level_select_label"></select>
         </label>
       </div>
 
@@ -85,23 +85,24 @@
         <p class="course-search__hint" id="searchHint" data-i18n="lrn_search_hint">Matches titles, topics, related terms, and common typos in German and English.</p>
       </form>
 
-      <div class="catalog-bar" aria-label="Course filters">
+      <div class="catalog-bar" role="group" aria-label="Course filters" data-i18n-aria-label="course_filters_label">
         <div class="topic-filter" id="topicFilter">
           <div class="filter-group">
             <span class="filter-group__label" id="topicLabel"><i class="ph-light ph-tag" aria-hidden="true"></i> <span data-i18n="topic_filter_label">Browse by topic</span></span>
-            <div class="chip-row" id="topicChips" role="group" aria-labelledby="topicLabel"></div>
-            <p class="topic-filter__hint" data-i18n="topic_filter_hint">Choose one topic; text search stays inside it.</p>
+            <div class="chip-row" id="topicChips" role="group" aria-labelledby="topicLabel" aria-describedby="topicHint"></div>
+            <p class="topic-filter__hint" id="topicHint" data-i18n="topic_filter_hint">Choose one topic to scope results; text search stays inside it.</p>
           </div>
           <button class="text-btn topic-filter__clear" type="button" id="topicClearBtn" hidden data-i18n="topic_filter_clear" data-i18n-aria-label="topic_filter_clear">Clear topic</button>
         </div>
         <div class="filter-group">
-          <span class="filter-group__label" id="interestLabel" title="Foundations and Productivity are selected by default — adjust or reset anytime"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="interests_label">Interests</span></span>
-          <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel"></div>
+          <span class="filter-group__label" id="interestLabel"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="interests_label">Interests</span></span>
+          <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel" aria-describedby="interestHint"></div>
+          <p class="filter-group__hint" id="interestHint" data-i18n="interests_hint">Choose several interests to shape which courses are recommended.</p>
         </div>
-        <button class="text-btn" type="button" id="resetBtn" data-i18n="reset_btn" aria-label="Reset all filters and selections" title="Reset all filters and selections">Reset</button>
+        <button class="text-btn" type="button" id="resetBtn" data-i18n="reset_btn" aria-label="Reset all filters and selections" data-i18n-aria-label="reset_filters_label" title="Reset all filters and selections" data-i18n-title="reset_filters_label">Reset</button>
       </div>
 
-      <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status"></div>
+      <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status" data-i18n-aria-label="course_status_filters_label"></div>
 
       <p class="result-line" id="resultLine" aria-live="polite"></p>
       <div class="course-grid" id="courseGrid"></div>

@@ -1,5 +1,5 @@
 {
-  "lesson": "agent-readable-workspace",
+  "lesson": "46-agent-readable-workspace",
   "title": "Agent-Readable Workspace",
   "questions": [
     {"stage": "pre", "question": "What is progressive disclosure for a repository?", "options": ["Load every file immediately", "Show a map and open detail when relevant", "Hide all documentation", "Replace tests with summaries"], "correct": 1, "explanation": "A map-first read set controls context while preserving access to detail."},

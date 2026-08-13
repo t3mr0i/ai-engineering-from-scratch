@@ -1,5 +1,5 @@
 {
-  "lesson": "automated-loop",
+  "lesson": "51-automated-loop",
   "title": "Automated Loop",
   "questions": [
     {"stage": "pre", "question": "What does a trigger decide?", "options": ["When work may begin", "Whether code is correct", "Which model is smartest", "Who owns review"], "correct": 0, "explanation": "Trigger semantics are separate from loop completion."},

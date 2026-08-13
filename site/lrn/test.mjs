@@ -4,8 +4,8 @@
 //
 // These tests assert structural invariants between data.js (window.LrnData)
 // and curriculum-map.js (window.LrnCurriculumMap). They are pure: no
-// network, no DOM, no localStorage. Failures block the SWA deploy job in
-// .gitlab-ci.yml.
+// network, no DOM, no localStorage. Failures block the SWA deploy job in the
+// GitHub Actions workflow.
 //
 // Why node:vm: data.js and curriculum-map.js are browser-only assignments
 // (window.LrnData = ...). The simplest way to evaluate them server-side is
@@ -14,6 +14,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync, statSync } from "node:fs";
+import { basename } from "node:path";
 import vm from "node:vm";
 
 function loadData() {
@@ -221,18 +222,41 @@ test("Harness Engineering map preserves 8 units and 22 activities", () => {
   }
 });
 
+test("HARNESS-TC-01 quiz lesson ids match activity directory basenames", () => {
+  const units = cmap.courseMaps["HARNESS-TC-01"];
+  assert.ok(Array.isArray(units), "HARNESS-TC-01 course map missing");
+  const activities = units.flatMap((unit) => unit.lessons || []);
+  assert.equal(activities.length, 22, "HARNESS-TC-01 must keep 22 activities");
+  for (const lesson of activities) {
+    const quizPath = `${lesson.path}/quiz.json`;
+    if (!existsSync(quizPath)) continue;
+    const quiz = JSON.parse(readFileSync(quizPath, "utf8"));
+    assert.equal(quiz.lesson, basename(lesson.path),
+      `quiz.lesson mismatch for ${lesson.path}`);
+  }
+});
+
 // ───────────────────────────────────────────────────────────────────────────
 // Curriculum files actually exist on disk
 // ───────────────────────────────────────────────────────────────────────────
 
-test("every lesson.path under curriculum-map points to a real phase directory", () => {
+test("every lesson.path under curriculum-map points to a real lesson source", () => {
+  // The interactive primer is intentionally outside phases/: lesson.html
+  // recognizes this exact path and embeds site/llm-primer/index.html.
+  const interactiveSources = { "llm-primer": "site/llm-primer/index.html" };
   for (const [cid, units] of Object.entries(cmap.courseMaps)) {
     for (const u of units) {
       for (const lesson of u.lessons || []) {
+        const interactiveSource = interactiveSources[lesson.path];
+        if (interactiveSource) {
+          assert.ok(existsSync(interactiveSource),
+            `courseMap ${cid} interactive lesson source does not exist: ${interactiveSource}`);
+          continue;
+        }
         assert.ok(typeof lesson.path === "string" && lesson.path.startsWith("phases/"),
           `courseMap ${cid} lesson has invalid path: ${JSON.stringify(lesson)}`);
-        assert.ok(existsSync(lesson.path),
-          `courseMap ${cid} lesson path does not exist on disk: ${lesson.path}`);
+        assert.ok(existsSync(lesson.path) && statSync(lesson.path).isDirectory(),
+          `courseMap ${cid} lesson path does not exist as a directory: ${lesson.path}`);
       }
     }
   }
@@ -248,9 +272,12 @@ test("package.json depends on pyodide (browser IDE requirement)", () => {
     "package.json must declare pyodide dependency for site/jupyterlite/ to load");
 });
 
-test(".gitlab-ci.yml exists and references the SWA deploy", () => {
-  assert.ok(existsSync(".gitlab-ci.yml"), ".gitlab-ci.yml missing");
-  const yml = readFileSync(".gitlab-ci.yml", "utf8");
-  assert.ok(/static-web-apps-cli/i.test(yml) || /SWA/i.test(yml),
-    ".gitlab-ci.yml does not reference the Static Web Apps deploy");
+test("GitHub Actions workflow deploys the site to Azure Static Web Apps", () => {
+  const workflowPath = ".github/workflows/azure-static-web-apps.yml";
+  assert.ok(existsSync(workflowPath), `${workflowPath} missing`);
+  const yml = readFileSync(workflowPath, "utf8");
+  assert.match(yml, /Azure\/static-web-apps-deploy@v1/i,
+    `${workflowPath} does not use the Azure Static Web Apps deploy action`);
+  assert.match(yml, /app_location:\s*["']site["']/i,
+    `${workflowPath} must deploy the site/ directory`);
 });

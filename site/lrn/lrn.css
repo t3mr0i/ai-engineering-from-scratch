@@ -538,6 +538,15 @@ i[class^="ph "] {
   line-height: var(--lh-normal);
 }
 
+.filter-group__hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-text);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-normal);
+}
+
 .topic-filter__clear {
   min-height: 44px;
   white-space: nowrap;

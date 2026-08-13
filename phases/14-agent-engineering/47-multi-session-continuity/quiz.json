@@ -1,5 +1,5 @@
 {
-  "lesson": "multi-session-continuity",
+  "lesson": "47-multi-session-continuity",
   "title": "Multi-Session Continuity",
   "questions": [
     {"stage": "pre", "question": "Why is chat history a weak state store?", "options": ["It is always too short", "It can be missing or detached from the task", "It cannot contain prose", "It is a JSON schema"], "correct": 1, "explanation": "Repository state must survive transcript boundaries."},

@@ -143,6 +143,7 @@ window.LrnData = {
       levels: ["Acquire"],
       format: "Interactive mini-games, real GPT tokenizer, glossary, quiz",
       summary: "~75-minute hands-on primer on how large language models work: tokens, context, prompting, tool use, RAG, and limits, through 20 mini-games and a quiz.",
+      outcomes: [],
       modules: ["Interactive LLM Primer"]
     },
     {
@@ -156,6 +157,12 @@ window.LrnData = {
       levels: ["Acquire"],
       format: "Self-paced online, text-based LRN module plus knowledge checks",
       summary: "Foundations of AI, generative AI, realistic limitations, business use cases, and responsible AI.",
+      outcomes: [
+        "Explain how AI, machine learning, and generative models differ in practice",
+        "Identify realistic AI use cases and limitations before committing resources",
+        "Assess AI outputs for evidence, quality, bias, and uncertainty",
+        "Apply a responsible-AI baseline to everyday workplace decisions"
+      ],
       modules: ["AI for Everyone", "Generative AI for Everyone"]
     },
     {
@@ -169,6 +176,12 @@ window.LrnData = {
       levels: ["Acquire", "Deepen"],
       format: "Text lesson, interactive prompt lab, LHIND tool checklist",
       summary: "Productive everyday use of approved AI tools: writing, summarizing, analysis, ideation, and safe tool selection.",
+      outcomes: [
+        "Select approved AI tools for writing, analysis, ideation, and research",
+        "Structure prompts that preserve task context, constraints, and desired format",
+        "Iterate on AI outputs with a repeatable quality-review routine",
+        "Protect sensitive information when using AI in daily work"
+      ],
       modules: ["Microsoft AI Fluency", "Google AI Fundamentals", "LHIND tools and best practices"]
     },
     {
@@ -182,6 +195,12 @@ window.LrnData = {
       levels: ["Acquire", "Deepen"],
       format: "Compliance scenario, risk checklist, certificate quiz",
       summary: "GDPR, ethics guardrails, IT security, bias, fairness, and responsible AI use.",
+      outcomes: [
+        "Apply GDPR, security, and policy guardrails to AI use cases",
+        "Identify bias, fairness, and accountability risks in AI-supported work",
+        "Decide when human review or escalation is required before acting",
+        "Document responsible-AI controls and evidence for later review"
+      ],
       modules: ["GDPR decision tree", "Responsible AI risk cases"]
     },
     {
@@ -195,6 +214,12 @@ window.LrnData = {
       levels: ["Deepen"],
       format: "Prompt clinic, before/after exercises, peer review rubric",
       summary: "Prompt strategies, iterative improvement, quality review of AI outputs, and tool-specific best practices.",
+      outcomes: [
+        "Design prompts with clear roles, context, constraints, and success criteria",
+        "Improve weak prompts through deliberate, testable iterations",
+        "Specify structured output contracts that downstream tools can validate",
+        "Review generated answers for accuracy, gaps, and unsupported claims"
+      ],
       modules: ["Prompt patterns", "Output critique", "Role-based prompt cases"]
     },
     {
@@ -208,6 +233,12 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Interactive prioritization board and ROI worksheet",
       summary: "Use case identification, business value, prioritization, quick wins, and strategic projects.",
+      outcomes: [
+        "Discover AI opportunities from real process pain and user needs",
+        "Compare use cases by business value, feasibility, risk, and data readiness",
+        "Prioritize a defensible backlog of quick wins and strategic bets",
+        "Define pilot measures and decision gates for scaling successful work"
+      ],
       modules: ["Use case canvas", "Value/risk matrix", "Pilot-to-scale checklist"]
     },
     {
@@ -221,6 +252,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen"],
       format: "Code task lab, review checklist, guided tool practice",
       summary: "AI in daily development work, pair programming, AI app basics, architecture context, and responsible code use.",
+      outcomes: [],
       modules: ["Generative AI for Software Development", "Get started with AI apps and agents on Azure", "Integrating AI into the Product Architecture"]
     },
     {
@@ -234,6 +266,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Architecture cards, trade-off cases, integration worksheet",
       summary: "AI system architecture, Azure, generative AI application design, LLM architecture, data preparation, and scaling.",
+      outcomes: [],
       modules: ["Artificial Intelligence on Microsoft Azure", "Generative AI Architecture and Application Development", "Architecture of AI Solutions"]
     },
     {
@@ -247,6 +280,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Agent workflow lab, verification rubric, sandboxed implementation task",
       summary: "Agentic AI, tool use, orchestration, reflection, agentic workflows, and engineering verification.",
+      outcomes: [],
       modules: ["Building AI Agents and Agentic Workflows", "Agentic AI Engineering", "Building Agentic AI Systems for Developers"]
     },
     {
@@ -260,6 +294,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Policy scenario, risk triage, escalation checklist",
       summary: "Review AI use against GDPR, internal policies, security guardrails, and documented approvals.",
+      outcomes: [],
       modules: ["Policy intake", "Risk register", "Compliance decision record"]
     },
     {
@@ -273,6 +308,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "QA lab, eval rubric, regression checklist",
       summary: "AI-supported test ideas, evaluation sets, QA gates, and review loops for LLM features.",
+      outcomes: [],
       modules: ["Eval design", "Test generation", "Release gate"]
     },
     {
@@ -286,6 +322,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Legacy case, modernization plan, review checklist",
       summary: "Use AI to analyze legacy code, define refactoring slices, control risks, and prepare reviews.",
+      outcomes: [],
       modules: ["Legacy intake", "Modernization backlog", "Risk-controlled refactor"]
     },
     {
@@ -299,6 +336,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Documentation sprint, source-grounding checklist, quality review",
       summary: "Use AI for architecture, operations, compliance, and handover documentation without losing sources or accountability.",
+      outcomes: [],
       modules: ["Source-grounded docs", "Review rubric", "Reusable doc pack"]
     },
     {
@@ -312,6 +350,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen"],
       format: "Efficiency case, metric worksheet, architecture trade-off",
       summary: "Review AI and software decisions for efficiency, cost, emissions, and measurable operational impact.",
+      outcomes: [],
       modules: ["Efficiency metrics", "Model-routing trade-offs", "Green release checklist"]
     },
     {
@@ -325,6 +364,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Research synthesis, persona check, insight review",
       summary: "Use AI to cluster user research, structure hypotheses, check bias, and prepare validatable product decisions.",
+      outcomes: [],
       modules: ["Research intake", "Insight synthesis", "Validation plan"]
     },
     {
@@ -338,6 +378,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Process walk-through, opportunity canvas, prioritization board",
       summary: "Identify automation and AI opportunities in processes, sort them by value and risk, and formulate pilots.",
+      outcomes: [],
       modules: ["Opportunity scan", "Value-risk scoring", "Pilot brief"]
     },
     {
@@ -351,6 +392,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Cost model, value case, operating metric review",
       summary: "Evaluate token, model, platform, and operating costs against value, risk, and scalability.",
+      outcomes: [],
       modules: ["Unit economics", "Value hypothesis", "FinOps controls"]
     },
     {
@@ -364,6 +406,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Client-case prompt clinic, output critique, reusable prompt pack",
       summary: "Build prompts for consulting situations, stakeholder context, hypothesis work, and robust output review.",
+      outcomes: [],
       modules: ["Consulting brief", "Prompt iteration", "Client-ready output"]
     },
     {
@@ -377,6 +420,12 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Landscape map, vendor-fit checklist, architecture comparison",
       summary: "Classify AI platforms, agent frameworks, tool ecosystems, and vendor trade-offs for real decisions.",
+      outcomes: [
+        "Classify major model, platform, agent, and tool ecosystem options",
+        "Compare vendors against capability, integration, security, and cost needs",
+        "Match an AI architecture choice to organizational constraints and goals",
+        "Communicate vendor trade-offs in a decision-ready recommendation"
+      ],
       modules: ["Platform map", "Framework comparison", "Vendor decision brief"]
     },
     {
@@ -390,6 +439,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Role impact map, capability plan, adoption roadmap",
       summary: "Systematically plan roles, skills, responsibilities, and enablement measures for AI transformation.",
+      outcomes: [],
       modules: ["Role impact", "Skill matrix", "Enablement roadmap"]
     },
     {
@@ -403,6 +453,12 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Decision case, uncertainty review, accountability checklist",
       summary: "Translate AI recommendations into better decisions using metrics, uncertainty, bias checks, and human accountability.",
+      outcomes: [
+        "Frame AI-assisted decisions with explicit objectives and accountable owners",
+        "Interpret model recommendations alongside uncertainty and relevant evidence",
+        "Detect bias, automation bias, and weak assumptions before deciding",
+        "Document human approval, rationale, and follow-up for consequential decisions"
+      ],
       modules: ["Decision brief", "Uncertainty check", "Accountability review"]
     },
     {
@@ -416,6 +472,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen"],
       format: "Source inventory, quality triage, data-readiness worksheet",
       summary: "Check data sources, quality, freshness, sensitivity, and evaluation before an AI pilot starts.",
+      outcomes: [],
       modules: ["Source inventory", "Quality and freshness", "Evaluation sample"]
     },
     {
@@ -429,6 +486,12 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Threat triage, trust-boundary map, launch-gate checklist",
       summary: "Identify and control prompt injection, data leakage, tool risks, and audit gaps in AI workflows.",
+      outcomes: [
+        "Map trust boundaries across prompts, data, models, tools, and users",
+        "Detect prompt injection and data-exfiltration paths in AI workflows",
+        "Approve tools and permissions according to least-privilege controls",
+        "Define launch gates and audit evidence for secure AI delivery"
+      ],
       modules: ["Trust boundaries", "Tool approval", "Audit controls"]
     },
     {
@@ -442,6 +505,12 @@ window.LrnData = {
       levels: ["Acquire", "Deepen"],
       format: "Source inventory, RAG intake, answer-quality review",
       summary: "Plan internal knowledge assistants with source accountability, permissions, evaluation, and fallback paths.",
+      outcomes: [
+        "Assess source quality, permissions, freshness, and coverage for RAG",
+        "Design retrieval workflows with citations, fallbacks, and access boundaries",
+        "Evaluate assistant answers for grounding, relevance, and unsafe omissions",
+        "Plan an internal knowledge assistant that remains accountable to owners"
+      ],
       modules: ["Source readiness", "Access boundary", "Answer evaluation"]
     },
     {
@@ -455,6 +524,12 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Vendor scorecard, trial criteria, exit-plan review",
       summary: "Evaluate AI vendors by value, data handling, security, integration, lock-in, and operating costs.",
+      outcomes: [
+        "Build a vendor scorecard covering value, risk, security, and integration",
+        "Compare trials with measurable acceptance criteria and realistic workloads",
+        "Identify data, contract, lock-in, exit, and operating-cost risks",
+        "Recommend a procurement decision with evidence and explicit trade-offs"
+      ],
       modules: ["Vendor scorecard", "Trial criteria", "Exit plan"]
     },
     {
@@ -468,6 +543,12 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Incident runbook, escalation drill, postmortem update",
       summary: "Monitor AI features in production, triage incident signals, and maintain runbooks for quality, cost, tools, and safety.",
+      outcomes: [
+        "Monitor production AI features for quality, cost, latency, and safety signals",
+        "Triage incidents with clear severity, ownership, and escalation paths",
+        "Execute rollback and recovery steps without losing diagnostic evidence",
+        "Improve runbooks and release gates from postmortem findings"
+      ],
       modules: ["AI incident triage", "Rollback path", "Postmortem loop"]
     },
     {
@@ -481,6 +562,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Support triage, confidence threshold, escalation checklist",
       summary: "Use AI for ticket triage, knowledge articles, support responses, and incident handoffs with service controls.",
+      outcomes: [],
       modules: ["Service scope", "Confidence threshold", "Escalation path"]
     },
     {
@@ -494,6 +576,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Agenda contract, facilitation script, decision log, action tracker",
       summary: "Use AI for better meetings and workshops: clear outcomes, decisions, and follow-up instead of only summaries.",
+      outcomes: [],
       modules: ["Agenda contract", "Decision log", "Action tracker"]
     },
     {
@@ -507,6 +590,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Status evidence, RAG check, risk owner, steering question",
       summary: "Use AI for project status, steering packs, and decision materials with clear evidence and decision questions.",
+      outcomes: [],
       modules: ["Source snapshot", "RAG status", "Steering ask"]
     },
     {
@@ -520,6 +604,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Data owner, quality rule, sample check, issue backlog",
       summary: "Identify data quality and master data gaps before AI workflows scale poor sources.",
+      outcomes: [],
       modules: ["Data owner", "Quality rule", "Sample check"]
     },
     {
@@ -533,6 +618,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Process map, exception log, value check, human fallback",
       summary: "Evaluate AI automation ideas only after process understanding, exception analysis, and pilot controls.",
+      outcomes: [],
       modules: ["Process map", "Exception log", "Automation pilot"]
     },
     {
@@ -546,6 +632,12 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Risk register, control test, audit trail, approval owner",
       summary: "Make AI risks manageable with owners, controls, audit evidence, and policy exception review.",
+      outcomes: [
+        "Build an AI risk register with owners, controls, evidence, and review dates",
+        "Test whether controls actually reduce material AI risks in practice",
+        "Trace approvals, exceptions, and residual risk through an audit trail",
+        "Escalate policy gaps before they become unmanaged operational debt"
+      ],
       modules: ["Risk register", "Control test", "Audit evidence"]
     },
     {
@@ -559,6 +651,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Content owner, freshness check, source ranking, access rule",
       summary: "Curate knowledge sources for AI search and internal assistants before retrieval amplifies poor sources.",
+      outcomes: [],
       modules: ["Source owner", "Freshness check", "Access rule"]
     },
     {
@@ -572,6 +665,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "ADR, threat model, cost model, architecture review",
       summary: "Document AI architecture decisions for models, vendors, security boundaries, and costs in a traceable way.",
+      outcomes: [],
       modules: ["ADR", "Threat model", "Cost tradeoff"]
     },
     {
@@ -585,6 +679,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Evidence note, scoring rubric, dependency check, decision log",
       summary: "Use AI to structure backlog and roadmap decisions more transparently by value, effort, risk, and dependencies.",
+      outcomes: [],
       modules: ["Evidence note", "Scoring rubric", "Decision log"]
     },
     {
@@ -598,6 +693,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Data classification, coverage matrix, drift check, leakage test",
       summary: "Use synthetic and masked test data for AI and software tests with privacy, coverage, and leakage controls.",
+      outcomes: [],
       modules: ["Classification", "Coverage", "Leakage test"]
     },
     {
@@ -611,6 +707,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "System boundary, data owner, exception rule, integration note",
       summary: "Evaluate AI use cases in SAP, Salesforce, Microsoft business solutions, and ERP/CRM workflows with system boundaries, data ownership, and integration context.",
+      outcomes: [],
       modules: ["System boundary", "Data owner", "Integration note"]
     },
     {
@@ -624,6 +721,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Architecture sketch, data boundary, streaming fit, platform decision",
       summary: "Design AI use cases with cloud, data platform, and IoT context around data flows, latency, ownership, and platform boundaries.",
+      outcomes: [],
       modules: ["Architecture sketch", "Data boundary", "Platform decision"]
     },
     {
@@ -637,6 +735,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Review role, approval gate, quality checklist, appeal path",
       summary: "Design human-in-the-loop review, approval gates, escalation, and quality checklists for AI-supported decisions and content.",
+      outcomes: [],
       modules: ["Review role", "Approval gate", "Appeal path"]
     },
     {
@@ -650,6 +749,7 @@ window.LrnData = {
       levels: ["Create"],
       format: "Role charter, standards backlog, asset registry, governance cadence",
       summary: "Operationalize AI scaling through clear roles, standards, reusable assets, a champion network, and governance cadence.",
+      outcomes: [],
       modules: ["Role charter", "Asset registry", "Governance cadence"]
     },
     {
@@ -663,6 +763,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Ticket pattern, runbook step, source article, handoff trigger",
       summary: "Evaluate recurring service desk tickets, known fixes, runbooks, and knowledge base gaps for AI-supported support automation.",
+      outcomes: [],
       modules: ["Ticket pattern", "Runbook step", "Handoff trigger"]
     },
     {
@@ -676,6 +777,7 @@ window.LrnData = {
       levels: ["Acquire", "Deepen", "Create"],
       format: "Data boundary, tool approval, access check, abuse case",
       summary: "Triage business AI ideas for sensitive data, external tools, identity risks, and untrusted inputs before security review starts.",
+      outcomes: [],
       modules: ["Data boundary", "Tool approval", "Abuse case"]
     },
     {
@@ -689,6 +791,7 @@ window.LrnData = {
       levels: ["Deepen", "Create"],
       format: "Pattern owner, version note, evaluation example, retirement rule",
       summary: "Manage shared prompts as reusable patterns with an owner, version, evaluation example, and retirement rule.",
+      outcomes: [],
       modules: ["Pattern owner", "Version note", "Retirement rule"]
     },
     {
@@ -730,6 +833,7 @@ window.LrnData = {
       levels: ["Create"],
       format: "Mentoring plan, brown-bag kit, community contribution backlog",
       summary: "Multiplier role for knowledge transfer, brown bags, communities of practice, and piloting new AI approaches.",
+      outcomes: [],
       modules: ["Mentoring checklist", "Brown-bag template", "Community contribution rubric"]
     }
   ],

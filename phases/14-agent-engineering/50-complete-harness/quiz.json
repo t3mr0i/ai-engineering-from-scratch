@@ -1,5 +1,5 @@
 {
-  "lesson": "complete-harness",
+  "lesson": "50-complete-harness",
   "title": "Complete Harness",
   "questions": [
     {"stage": "pre", "question": "What is the purpose of composing seven surfaces?", "options": ["Hide all controls", "Make the full reliability contract explicit", "Remove review", "Automate deployment immediately"], "correct": 1, "explanation": "Composition connects the mechanisms while keeping ownership visible."},

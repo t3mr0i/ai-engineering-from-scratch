@@ -116,7 +116,7 @@ window.SITE_I18N = {
 
   // lrn/lrn.js — structured topic scope (labels come from LrnData ids)
   topic_filter_label: { en: "Browse by topic", de: "Nach Thema stöbern" },
-  topic_filter_hint: { en: "Choose one topic; text search stays inside it.", de: "Wähle ein Thema; die Textsuche bleibt darin." },
+  topic_filter_hint: { en: "Choose one topic to scope results; text search stays inside it.", de: "Wähle ein Thema für die Ergebnisse; die Textsuche bleibt darin." },
   topic_filter_all: { en: "All topics", de: "Alle Themen" },
   topic_filter_clear: { en: "Clear topic", de: "Thema löschen" },
   topic_foundation: { en: "Foundations", de: "Grundlagen" },
@@ -133,7 +133,14 @@ window.SITE_I18N = {
   topic_leadership_hint: { en: "Change, workforce, and strategy", de: "Veränderung, Workforce und Strategie" },
   profile_label: { en: "Profile", de: "Profil" },
   level_label: { en: "Level", de: "Level" },
+  selector_group_label: { en: "Choose profile and level", de: "Profil und Level auswählen" },
   interests_label: { en: "Interests", de: "Interessen" },
+  profile_select_label: { en: "Choose profile", de: "Profil auswählen" },
+  level_select_label: { en: "Choose level", de: "Level auswählen" },
+  course_filters_label: { en: "Course filters", de: "Kursfilter" },
+  course_status_filters_label: { en: "Filter course status", de: "Kursstatus filtern" },
+  reset_filters_label: { en: "Reset all filters and selections", de: "Alle Filter und Auswahl zurücksetzen" },
+  interests_hint: { en: "Choose several interests to shape which courses are recommended.", de: "Wähle mehrere Interessen, um die empfohlenen Kurse zu gewichten." },
   reset_btn: { en: "Reset", de: "Zurücksetzen" },
 
   // lrn/lrn.js — hybrid course search
@@ -147,12 +154,12 @@ window.SITE_I18N = {
   lrn_search_topic_many: { en: "{count} matches for “{query}” in {topic}", de: "{count} Treffer für „{query}“ in {topic}" },
   lrn_courses_one: { en: "1 course", de: "1 Kurs" },
   lrn_courses_many: { en: "{count} courses", de: "{count} Kurse" },
-  lrn_topic_one: { en: "1 course in {topic}", de: "1 Kurs in {topic}" },
-  lrn_topic_many: { en: "{count} courses in {topic}", de: "{count} Kurse in {topic}" },
+  lrn_topic_one: { en: "1 matching course in {topic}", de: "1 passender Kurs in {topic}" },
+  lrn_topic_many: { en: "{count} matching courses in {topic}", de: "{count} passende Kurse in {topic}" },
   lrn_search_empty_title: { en: "No matching courses", de: "Keine passenden Kurse" },
   lrn_search_empty_body: { en: "Try a broader topic, a German or English synonym, or clear the search.", de: "Versuche ein allgemeineres Thema, ein deutsches oder englisches Synonym – oder lösche die Suche." },
-  lrn_topic_empty_body: { en: "No course in this topic matches the current level or status. Try another topic or clear the topic.", de: "Kein Kurs in diesem Thema passt zu Level oder Status. Wähle ein anderes Thema oder lösche das Thema." },
-  lrn_search_topic_empty_body: { en: "No course in this topic matches the search. Try another term or clear the topic.", de: "Kein Kurs in diesem Thema passt zur Suche. Versuche einen anderen Begriff oder lösche das Thema." },
+  lrn_topic_empty_body: { en: "No course in this topic matches the current level, interests, or status. Try another topic, adjust interests, or clear the topic.", de: "Kein Kurs in diesem Thema passt zu aktuellem Level, Interessen oder Status. Wähle ein anderes Thema, passe Interessen an oder lösche das Thema." },
+  lrn_search_topic_empty_body: { en: "No course matches this search and the current filters. Try another term, adjust the filters, or clear the topic.", de: "Kein Kurs passt zu dieser Suche und den aktuellen Filtern. Versuche einen anderen Begriff, passe die Filter an oder lösche das Thema." },
 
   // lrn/lrn.js — empty-state copy
   lrn_empty_no_match: { en: "No match.", de: "Kein Treffer." },

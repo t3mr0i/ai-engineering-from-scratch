@@ -1,5 +1,5 @@
 {
-  "lesson": "self-verification",
+  "lesson": "49-self-verification",
   "title": "Self-Verification",
   "questions": [
     {"stage": "pre", "question": "Who should own the completion decision?", "options": ["The artifact maker alone", "Independent checks", "The longest response", "The last session only"], "correct": 1, "explanation": "Verification separates making from judging."},

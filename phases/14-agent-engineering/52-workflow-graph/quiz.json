@@ -1,5 +1,5 @@
 {
-  "lesson": "workflow-graph",
+  "lesson": "52-workflow-graph",
   "title": "Workflow Graph",
   "questions": [
     {"stage": "pre", "question": "What does a graph make explicit?", "options": ["Only the prompt", "Nodes, edges, state, and routing", "The model's hidden thoughts", "A deployment secret"], "correct": 1, "explanation": "Graph structure exposes control-flow decisions."},
