@@ -1,0 +1,12 @@
+{
+  "lesson": "prompt-only-vs-rules-first",
+  "title": "Prompt-Only vs Rules-First",
+  "questions": [
+    {"stage": "pre", "question": "What should decide whether a task is complete?", "options": ["The worker's confidence", "The task's evidence contract", "The amount of prose produced", "The number of files changed"], "correct": 1, "explanation": "Completion belongs to independently checked evidence."},
+    {"stage": "check", "question": "What does an allowed-file list constrain?", "options": ["Only the commit message", "Which paths the task may change", "The model's vocabulary", "The test runner's output"], "correct": 1, "explanation": "Scope is an authorization boundary for writes."},
+    {"stage": "check", "question": "Why run both fixture attempts through one validator?", "options": ["To make their prompts identical", "To compare their evidence under one contract", "To hide the baseline failure", "To avoid recording scope"], "correct": 1, "explanation": "A shared validator makes the comparison meaningful."},
+    {"stage": "check", "question": "What is a missing acceptance check?", "options": ["A harmless note", "A completion violation", "A style preference", "A successful fallback"], "correct": 1, "explanation": "Required checks are part of the definition of done."},
+    {"stage": "post", "question": "Which receipt is most useful to a reviewer?", "options": ["Only a confidence score", "Changed paths, checks, and machine verdict", "A longer prompt", "A screenshot without commands"], "correct": 1, "explanation": "The receipt exposes the evidence boundary."},
+    {"stage": "post", "question": "What should a rules-first worker do when scope fails?", "options": ["Merge anyway", "Repair or escalate with the violation", "Delete the task", "Treat the note as proof"], "correct": 1, "explanation": "A failure should stay visible and actionable."}
+  ]
+}

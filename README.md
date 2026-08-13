@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a1a1a?style=flat-square&labelColor=fafaf5" alt="MIT License"></a>
-  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-478-3553ff?style=flat-square&labelColor=fafaf5" alt="478 lessons"></a>
+  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-496-3553ff?style=flat-square&labelColor=fafaf5" alt="496 lessons"></a>
   <a href="#contents"><img src="https://img.shields.io/badge/phases-20-3553ff?style=flat-square&labelColor=fafaf5" alt="20 phases"></a>
   <a href="https://github.com/rohitg00/ai-engineering-from-scratch/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/ai-engineering-from-scratch?style=flat-square&labelColor=fafaf5&color=3553ff" alt="GitHub stars"></a>
   <a href="https://aiengineeringfromscratch.com"><img src="https://img.shields.io/badge/web-aiengineeringfromscratch.com-3553ff?style=flat-square&labelColor=fafaf5" alt="Website"></a>
@@ -695,7 +695,7 @@ folder under `phases/`.
 </details>
 
 <details id="phase-14">
-<summary><b>Phase 14 — Agent Engineering</b> &nbsp;<code>42 lessons</code>&nbsp; <em>Build agents from first principles — loop, memory, planning, frameworks, benchmarks, production, workbench.</em></summary>
+<summary><b>Phase 14 — Agent Engineering</b> &nbsp;<code>52 lessons</code>&nbsp; <em>Build agents from first principles — loop, memory, planning, frameworks, benchmarks, production, workbench.</em></summary>
 <br/>
 
 | # | Lesson | Type | Lang |
@@ -742,8 +742,18 @@ folder under `phases/`.
 | 40 | [Multi-Session Handoff](phases/14-agent-engineering/40-multi-session-handoff/) | Build | Python |
 | 41 | [The Workbench on a Real Repo](phases/14-agent-engineering/41-workbench-for-real-repos/) | Build | Python |
 | 42 | [Capstone: Ship a Reusable Agent Workbench Pack](phases/14-agent-engineering/42-agent-workbench-capstone/) | Build | Python |
+| 43 | [Loop Engineering: From Prompts to Bounded Autonomy](phases/14-agent-engineering/43-loop-engineering/) | Build | Python |
+| 44 | [Graph Engineering: Make Agent Structure Explicit](phases/14-agent-engineering/44-graph-engineering/) | Build | Python |
+| 45 | [Prompt-Only vs Rules-First](phases/14-agent-engineering/45-prompt-only-vs-rules-first/) | Build | Python |
+| 46 | [Agent-Readable Workspace](phases/14-agent-engineering/46-agent-readable-workspace/) | Build | Python |
+| 47 | [Multi-Session Continuity](phases/14-agent-engineering/47-multi-session-continuity/) | Build | Python |
+| 48 | [Runtime Feedback and Scope](phases/14-agent-engineering/48-runtime-feedback-scope/) | Build | Python |
+| 49 | [Self-Verification](phases/14-agent-engineering/49-self-verification/) | Build | Python |
+| 50 | [Complete Harness](phases/14-agent-engineering/50-complete-harness/) | Build | Python |
+| 51 | [Automated Loop](phases/14-agent-engineering/51-automated-loop/) | Build | Python |
+| 52 | [Workflow Graph](phases/14-agent-engineering/52-workflow-graph/) | Build | Python |
 
-Each Phase 14 workbench lesson (31-42) ships a `mission.md` briefing the agent before it opens the full lesson docs.
+Lessons 31-52 form the cohesive Phase 14 `Harness Engineering for Reliable Agent Delivery` course; each ships a `mission.md` briefing the agent before it opens the full lesson docs.
 
 </details>
 

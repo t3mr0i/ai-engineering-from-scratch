@@ -63,7 +63,6 @@ const PUBLIC_PATHS = new Set(['/gate.html']);
 // even with a valid gate cookie. Keep in sync if the hidden set ever changes.
 const HIDDEN_PHASE_DIRS = [
   '01-math-foundations',
-  '02-ml-fundamentals',
   '03-deep-learning-core',
   '04-computer-vision',
   '06-speech-and-audio',

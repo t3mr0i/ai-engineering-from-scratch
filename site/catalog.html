@@ -19,7 +19,7 @@
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preload" href="lrn/assets/fonts/LHGHeadWEB-Light.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="lrn/assets/fonts/LHGTextWEB-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=20260525a">
+  <link rel="stylesheet" href="style.css?v=20260813a">
   <style>
     .catalog-page {
       padding: 100px 0 80px;
@@ -46,49 +46,131 @@
       gap: 12px;
       margin-bottom: 24px;
       flex-wrap: wrap;
+      align-items: start;
+    }
+
+    .catalog-search-group {
+      display: grid;
+      gap: 6px;
+      flex: 1 1 420px;
+      min-width: 260px;
+    }
+
+    .catalog-control-label {
+      display: block;
+      color: var(--ink-soft);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .catalog-search-shell {
+      position: relative;
+      display: flex;
       align-items: center;
+      min-height: 52px;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      background: var(--bg-surface);
+      box-shadow: var(--shadow-xs);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .catalog-search-shell:focus-within {
+      border-color: var(--blueprint);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .catalog-search-icon {
+      position: absolute;
+      left: 16px;
+      width: 18px;
+      height: 18px;
+      color: var(--ink-soft);
+      pointer-events: none;
     }
 
     .catalog-search {
-      flex: 1;
-      min-width: 200px;
+      width: 100%;
+      min-width: 0;
+      min-height: 50px;
       font-family: var(--font-body);
       font-size: 1rem;
-      padding: 12px 16px;
-      background: var(--bg-surface);
-      border: 2px solid var(--border);
-      border-radius: 0;
+      padding: 0 52px 0 46px;
+      background: transparent;
+      border: 0;
+      border-radius: 9px;
       color: var(--text);
       outline: none;
-      transition: border-color 0.2s;
     }
 
     .catalog-search::placeholder {
       color: var(--text-muted);
     }
 
-    .catalog-search:focus {
-      border-color: var(--accent);
+    .catalog-search::-webkit-search-cancel-button {
+      display: none;
     }
 
-    .catalog-search:focus-visible,
-    .catalog-filter:focus-visible {
-      outline: 2px solid var(--blueprint);
-      outline-offset: 2px;
+    .catalog-search-clear {
+      position: absolute;
+      right: 4px;
+      display: inline-grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .catalog-search-clear[hidden] {
+      display: none;
+    }
+
+    .catalog-search-clear:hover {
+      background: var(--bg-surface-hover);
+      color: var(--ink);
+    }
+
+    .catalog-search-clear:focus-visible {
+      outline: 0;
+      box-shadow: var(--shadow-focus);
+    }
+
+    .catalog-search-hint {
+      color: var(--ink-mute);
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .catalog-filter-group {
+      display: grid;
+      gap: 6px;
     }
 
     .catalog-filter {
+      min-height: 52px;
       font-family: var(--font-body);
       font-size: 1rem;
       padding: 12px 16px;
       background: var(--bg-surface);
-      border: 2px solid var(--border);
-      border-radius: 0;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
       color: var(--text);
       outline: none;
       cursor: pointer;
       -webkit-appearance: none;
       appearance: none;
+    }
+
+    .catalog-filter:focus-visible {
+      border-color: var(--blueprint);
+      box-shadow: var(--shadow-focus);
     }
 
     .catalog-count {
@@ -192,6 +274,41 @@
       font-size: 1.1rem;
     }
 
+    .catalog-empty strong,
+    .catalog-empty span {
+      display: block;
+    }
+
+    .catalog-empty strong {
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    .catalog-empty span {
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+    }
+
+    .catalog-empty button {
+      min-height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--bg-surface);
+      color: var(--blueprint);
+      font: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .catalog-empty button:focus-visible {
+      outline: 0;
+      box-shadow: var(--shadow-focus);
+    }
+
     @media (max-width: 768px) {
       .catalog-page {
         padding: 80px 0 48px;
@@ -202,6 +319,11 @@
       }
 
       .catalog-filter {
+        width: 100%;
+      }
+
+      .catalog-search-group,
+      .catalog-filter-group {
         width: 100%;
       }
 
@@ -246,17 +368,39 @@
         <p style="margin-top:14px"><a href="lesson.html?path=llm-primer" style="display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--accent);text-decoration:none;border:1px solid var(--border);background:var(--bg-surface);padding:9px 14px;border-radius:999px;font-size:.95rem" data-i18n="catalog_primer_link">Interactive LLM Primer — ~75 min, 20 mini-games →</a></p>
       </div>
       <div class="catalog-controls">
-        <input type="text" class="catalog-search" id="catalogSearch" placeholder="Search lessons..." data-i18n-placeholder="catalog_search_ph">
-        <select class="catalog-filter" id="catalogPhase">
-          <option value="" data-i18n="catalog_all_phases">All Phases</option>
-        </select>
-        <select class="catalog-filter" id="catalogStatus">
-          <option value="" data-i18n="catalog_all_status">All Status</option>
-          <option value="complete" data-i18n="catalog_complete">Complete</option>
-          <option value="planned" data-i18n="catalog_planned">Planned</option>
-        </select>
+        <div class="catalog-search-group">
+          <label class="catalog-control-label" for="catalogSearch" data-i18n="catalog_search_label">Search the curriculum</label>
+          <div class="catalog-search-shell">
+            <svg class="catalog-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="search" class="catalog-search" id="catalogSearch" name="q" placeholder="Try “data protection”, “test agents”, or “RAG”…" data-i18n-placeholder="global_search_placeholder" aria-describedby="catalogSearchHint" autocomplete="off" enterkeyhint="search">
+            <button class="catalog-search-clear" id="catalogSearchClear" type="button" hidden aria-label="Clear search" data-i18n-aria-label="lrn_search_clear">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <span class="catalog-search-hint" id="catalogSearchHint" data-i18n="lrn_search_hint">Matches titles, topics, related terms, and common typos in German and English.</span>
+        </div>
+        <label class="catalog-filter-group">
+          <span class="catalog-control-label" data-i18n="th_phase">Phase</span>
+          <select class="catalog-filter" id="catalogPhase">
+            <option value="" data-i18n="catalog_all_phases">All Phases</option>
+          </select>
+        </label>
+        <label class="catalog-filter-group">
+          <span class="catalog-control-label" data-i18n="th_status">Status</span>
+          <select class="catalog-filter" id="catalogStatus">
+            <option value="" data-i18n="catalog_all_status">All Status</option>
+            <option value="complete" data-i18n="catalog_complete">Complete</option>
+            <option value="planned" data-i18n="catalog_planned">Planned</option>
+          </select>
+        </label>
+        <label class="catalog-filter-group">
+          <span class="catalog-control-label" data-i18n="catalog_topic_label">Topic</span>
+          <select class="catalog-filter" id="catalogTopic" aria-describedby="catalogSearchHint">
+            <option value="" data-i18n="topic_filter_all">All topics</option>
+          </select>
+        </label>
       </div>
-      <div class="catalog-count" id="catalogCount"></div>
+      <div class="catalog-count" id="catalogCount" aria-live="polite"></div>
       <div class="catalog-table-wrap">
         <table class="catalog-table" id="catalogTable">
           <thead>
@@ -288,9 +432,11 @@
   </footer>
 
   <script src="data.js?v=20260525a"></script>
+  <script src="lrn/data.js?v=20260813a"></script>
   <script src="lrn/curriculum-map.js?v=20260702a"></script>
   <script src="progress.js?v=20260724a"></script>
-  <script src="cmdpalette.js?v=20260525a" defer></script>
+  <script src="search.js?v=20260813a" defer></script>
+  <script src="cmdpalette.js?v=20260813a" defer></script>
   <script>
     (function () {
       document.addEventListener('DOMContentLoaded', function () {
@@ -318,6 +464,36 @@
 
         var allRows = [];
         var phaseSelect = document.getElementById('catalogPhase');
+        var topicSelect = document.getElementById('catalogTopic');
+        var topicsByLessonPath = {};
+        var topicIdsPresent = {};
+
+        // Derive lesson topics from the same course interests that drive the
+        // cockpit. The catalog has no second hand-maintained lesson taxonomy:
+        // course -> curriculum map -> lesson path is the source of truth.
+        if (window.LrnData && Array.isArray(window.LrnData.courses) && window.LrnCurriculumMap && window.LrnCurriculumMap.courseMaps) {
+          var coursesById = window.LrnData.courses.reduce(function (byId, course) {
+            byId[course.id] = course;
+            return byId;
+          }, {});
+          Object.keys(window.LrnCurriculumMap.courseMaps).forEach(function (courseId) {
+            var visibleCourseIds = window.LrnCurriculumMap.visibleCourseIds;
+            if (visibleCourseIds && visibleCourseIds.length && visibleCourseIds.indexOf(courseId) === -1) return;
+            var course = coursesById[courseId];
+            if (!course) return;
+            var interests = Array.isArray(course.interests) ? course.interests : [];
+            window.LrnCurriculumMap.courseMaps[courseId].forEach(function (unit) {
+              (unit.lessons || []).forEach(function (lesson) {
+                var existing = topicsByLessonPath[lesson.path] || [];
+                interests.forEach(function (interestId) {
+                  if (existing.indexOf(interestId) === -1) existing.push(interestId);
+                  topicIdsPresent[interestId] = true;
+                });
+                topicsByLessonPath[lesson.path] = existing;
+              });
+            });
+          });
+        }
 
         for (var i = 0; i < PHASES.length; i++) {
           var p = PHASES[i];
@@ -332,6 +508,9 @@
               phase: p.id,
               phaseName: p.name,
               name: l.name,
+              summary: l.summary || '',
+              keywords: l.keywords || '',
+              topics: topicsByLessonPath[path] || [],
               type: l.type,
               lang: l.lang,
               status: l.status,
@@ -347,12 +526,45 @@
           allRows = allRows.concat(phaseRows);
         }
 
+        function uiText(key, fallback) {
+          var entry = window.SITE_I18N && window.SITE_I18N[key];
+          var lang = window.SiteLang ? window.SiteLang.get() : 'en';
+          return entry ? (entry[lang] || entry.en || fallback) : fallback;
+        }
+
+        function topicLabel(topicId) {
+          return uiText('topic_' + topicId, topicId);
+        }
+
+        function renderTopicOptions() {
+          if (!topicSelect) return;
+          var selected = topicSelect.value;
+          topicSelect.textContent = '';
+          var allOption = document.createElement('option');
+          allOption.value = '';
+          allOption.textContent = uiText('topic_filter_all', 'All topics');
+          topicSelect.appendChild(allOption);
+          if (window.LrnData && Array.isArray(window.LrnData.interests)) {
+            window.LrnData.interests.forEach(function (interest) {
+              if (!topicIdsPresent[interest.id]) return;
+              var option = document.createElement('option');
+              option.value = interest.id;
+              option.textContent = topicLabel(interest.id);
+              topicSelect.appendChild(option);
+            });
+          }
+          topicSelect.value = selected;
+          if (topicSelect.value !== selected) topicSelect.value = '';
+        }
+
         var searchInput = document.getElementById('catalogSearch');
         var statusSelect = document.getElementById('catalogStatus');
+        var searchClear = document.getElementById('catalogSearchClear');
         var bodyEl = document.getElementById('catalogBody');
         var countEl = document.getElementById('catalogCount');
         var sortCol = 'phase';
         var sortDir = 1;
+        var manualSort = false;
 
         function escapeHtml(str) {
           var div = document.createElement('div');
@@ -361,23 +573,34 @@
         }
 
         function render() {
-          var query = (searchInput.value || '').toLowerCase().trim();
+          var query = (searchInput.value || '').trim();
           var phaseFilter = phaseSelect.value;
           var statusFilter = statusSelect.value;
+          var topicFilter = topicSelect ? topicSelect.value : '';
 
           var rows = allRows.filter(function (r) {
             if (phaseFilter && String(r.phase) !== phaseFilter) return false;
             if (statusFilter && r.status !== statusFilter) return false;
-            if (query) {
-              return r.name.toLowerCase().indexOf(query) !== -1 ||
-                r.phaseName.toLowerCase().indexOf(query) !== -1 ||
-                r.type.toLowerCase().indexOf(query) !== -1 ||
-                r.lang.toLowerCase().indexOf(query) !== -1;
-            }
+            if (topicFilter && (!r.topics || r.topics.indexOf(topicFilter) === -1)) return false;
             return true;
           });
 
-          rows.sort(function (a, b) {
+          if (query && window.CurriculumSearch) {
+            rows = window.CurriculumSearch.rank(rows, query, {
+              fields: { name: 9, keywords: 6, topics: 5, summary: 4, phaseName: 3, type: 2, lang: 1 }
+            }).map(function (result) {
+              var row = Object.assign({}, result.item);
+              row.searchScore = result.score;
+              return row;
+            });
+          } else if (query) {
+            var lowerQuery = query.toLowerCase();
+            rows = rows.filter(function (r) {
+              return [r.name, r.summary, r.keywords, (r.topics || []).join(' '), r.phaseName, r.type, r.lang].join(' ').toLowerCase().indexOf(lowerQuery) !== -1;
+            });
+          }
+
+          if (!query || manualSort) rows.sort(function (a, b) {
             var va, vb;
             if (sortCol === 'phase') {
               va = a.phase;
@@ -400,10 +623,21 @@
             return 0;
           });
 
-          countEl.textContent = rows.length + ' of ' + allRows.length + ' lessons';
+          var de = window.SiteLang && window.SiteLang.get() === 'de';
+          var countKey = topicFilter ? 'catalog_count_topic' : 'catalog_count';
+          countEl.textContent = uiText(countKey, de
+            ? '{count} von {total} Lektionen' : '{count} of {total} lessons')
+            .replace('{count}', String(rows.length))
+            .replace('{total}', String(allRows.length))
+            .replace('{topic}', topicFilter ? topicLabel(topicFilter) : '');
+          searchClear.hidden = !query;
 
           if (rows.length === 0) {
-            bodyEl.innerHTML = '<tr><td colspan="5" class="catalog-empty">No lessons match your filters.</td></tr>';
+            bodyEl.innerHTML = '<tr><td colspan="5" class="catalog-empty">' +
+              '<strong>' + escapeHtml(de ? 'Keine passenden Lektionen' : 'No matching lessons') + '</strong>' +
+              '<span>' + escapeHtml(de ? 'Versuche einen allgemeineren Begriff oder lösche die Filter.' : 'Try a broader term or clear the filters.') + '</span>' +
+              '<button type="button" data-clear-catalog>' + escapeHtml(de ? 'Suche und Filter löschen' : 'Clear search and filters') + '</button>' +
+              '</td></tr>';
             return;
           }
 
@@ -425,6 +659,8 @@
           bodyEl.innerHTML = html;
         }
 
+        renderTopicOptions();
+
         var params = new URLSearchParams(window.location.search);
         var urlQuery = params.get('q');
         if (urlQuery) {
@@ -436,13 +672,38 @@
         if (urlPhase && [].some.call(phaseSelect.options, function (o) { return o.value === urlPhase; })) {
           phaseSelect.value = urlPhase;
         }
+        var urlTopic = params.get('topic') || params.get('theme');
+        if (topicSelect && urlTopic && [].some.call(topicSelect.options, function (o) { return o.value === urlTopic; })) {
+          topicSelect.value = urlTopic;
+        }
 
-        searchInput.addEventListener('input', render);
+        searchInput.addEventListener('input', function () {
+          manualSort = false;
+          render();
+        });
+        searchClear.addEventListener('click', function () {
+          searchInput.value = '';
+          manualSort = false;
+          render();
+          searchInput.focus();
+        });
+        bodyEl.addEventListener('click', function (event) {
+          if (!event.target.closest('[data-clear-catalog]')) return;
+          searchInput.value = '';
+          phaseSelect.value = '';
+          statusSelect.value = '';
+          if (topicSelect) topicSelect.value = '';
+          manualSort = false;
+          render();
+          searchInput.focus();
+        });
         phaseSelect.addEventListener('change', render);
         statusSelect.addEventListener('change', render);
+        if (topicSelect) topicSelect.addEventListener('change', render);
 
         document.querySelectorAll('.catalog-table th[data-sort]').forEach(function (th) {
           th.addEventListener('click', function () {
+            manualSort = true;
             var col = th.getAttribute('data-sort');
             if (sortCol === col) {
               sortDir = sortDir * -1;
@@ -457,6 +718,9 @@
             render();
           });
         });
+
+        document.addEventListener('sitelang:change', render);
+        document.addEventListener('sitelang:change', renderTopicOptions);
 
         render();
       });

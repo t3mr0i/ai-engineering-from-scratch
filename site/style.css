@@ -1105,6 +1105,53 @@ body.js-anim .toc-row.in-view {
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Search trigger button in the header ─────────────────────────────── */
+.nav-search-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 10px 0 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-xs);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard);
+}
+
+.nav-search-trigger kbd {
+  padding: 2px 5px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  background: var(--bg-surface-hover);
+  color: var(--ink-mute);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  line-height: 1.3;
+}
+
+.nav-search-trigger:focus-visible {
+  outline: 0;
+  box-shadow: var(--shadow-focus);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-search-trigger:hover {
+    border-color: var(--blueprint);
+    background: var(--blueprint-tint);
+    color: var(--ink);
+  }
+}
+
 /* ── Palette overlay wrapper ─────────────────────────────────────────── */
 #cmdPalette {
   position: fixed;
@@ -1140,7 +1187,7 @@ body.js-anim .toc-row.in-view {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 640px;
+  max-width: 680px;
   max-height: 70vh;
   display: flex;
   flex-direction: column;
@@ -1166,7 +1213,8 @@ body.js-anim .toc-row.in-view {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 16px;
+  min-height: 58px;
+  padding: 8px 12px 8px 18px;
   border-bottom: 1px solid var(--rule-soft);
   flex-shrink: 0;
 }
@@ -1178,8 +1226,9 @@ body.js-anim .toc-row.in-view {
 
 .cp-input {
   flex: 1;
-  font-family: var(--font-mono);
-  font-size: 1rem;
+  min-height: 44px;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
   color: var(--ink);
   background: transparent;
   border: none;
@@ -1206,7 +1255,10 @@ body.js-anim .toc-row.in-view {
   color: var(--ink-mute);
   background: var(--bg-surface);
   border: 1px solid var(--rule-soft);
-  padding: 2px 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 2px 8px;
+  border-radius: 6px;
   letter-spacing: 0.04em;
   flex-shrink: 0;
   cursor: pointer;
@@ -1233,9 +1285,9 @@ body.js-anim .toc-row.in-view {
 /* ── Empty / no-match state ──────────────────────────────────────────── */
 .cp-empty {
   display: block;
-  padding: 24px 20px;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
+  padding: 32px 24px;
+  font-family: var(--font-body);
+  font-size: 0.94rem;
   color: var(--ink-mute);
   text-align: center;
 }
@@ -1245,16 +1297,57 @@ body.js-anim .toc-row.in-view {
   color: var(--ink-soft);
 }
 
+.cp-empty-hint,
+.cp-suggestions-label {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-mute);
+  font-size: 0.82rem;
+}
+
+.cp-suggestions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.cp-suggestion {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: var(--bg-surface);
+  color: var(--blueprint);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
+}
+
+.cp-suggestion:hover {
+  border-color: var(--blueprint);
+  background: var(--blueprint-tint);
+}
+
+.cp-suggestion:focus-visible {
+  outline: 0;
+  box-shadow: var(--shadow-focus);
+}
+
 /* ── Result item ─────────────────────────────────────────────────────── */
 .cp-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  min-height: 64px;
+  padding: 11px 16px;
   cursor: pointer;
-  border-left: 3px solid transparent;
   list-style: none;
-  transition: background 0.08s, border-left-color 0.08s;
+  transition: background-color var(--dur-fast) var(--ease-standard);
 }
 
 .cp-item + .cp-item {
@@ -1264,7 +1357,6 @@ body.js-anim .toc-row.in-view {
 .cp-item:hover,
 .cp-item--active {
   background: var(--blueprint-tint);
-  border-left-color: var(--blueprint);
 }
 
 .cp-item-body {
@@ -1427,6 +1519,18 @@ body[data-palette-open] {
   .cp-footer-group:not(:first-child),
   .cp-footer-shortcut {
     display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .nav-search-trigger span,
+  .nav-search-trigger kbd {
+    display: none;
+  }
+
+  .nav-search-trigger {
+    width: 44px;
+    padding: 0;
   }
 }
 
@@ -1655,23 +1759,16 @@ a.gloss-term {
   transition: transform 400ms var(--ease-out) !important;
 }
 
-/* Command Palette items sliding and arrow highlight */
+/* Command Palette item state and arrow highlight */
 .cp-item {
-  transition: background var(--sota-duration) var(--ease-out),
-              border-left-color var(--sota-duration) var(--ease-out),
-              padding-left var(--sota-duration) var(--ease-out) !important;
-}
-.cp-item:hover,
-.cp-item--active {
-  padding-left: 20px !important;
+  transition: background-color var(--dur-fast) var(--ease-standard) !important;
 }
 .cp-item-arrow {
-  transform: translateX(-6px);
-  transition: opacity 200ms var(--ease-out), color 200ms var(--ease-out), transform 200ms var(--ease-out) !important;
+  transition: opacity var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard) !important;
 }
 .cp-item:hover .cp-item-arrow,
 .cp-item--active .cp-item-arrow {
-  transform: translateX(0);
+  transform: none;
 }
 
 /* Lesson list rows in the course view modals */
@@ -1712,4 +1809,3 @@ a.gloss-term {
     animation: none !important;
   }
 }
-

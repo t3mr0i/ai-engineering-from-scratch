@@ -692,6 +692,34 @@ window.LrnData = {
       modules: ["Pattern owner", "Version note", "Retirement rule"]
     },
     {
+      id: "HARNESS-TC-01",
+      title: "Harness Engineering for Reliable Agent Delivery",
+      status: "New curriculum course",
+      source: "Phase 14 agent workbench track",
+      profileIds: ["tc"],
+      dimensions: ["business", "prompting", "data"],
+      interests: ["consulting", "engineering"],
+      levels: ["Deepen", "Create"],
+      format: "14 lecture activities, 8 project labs, reusable workbench artifacts",
+      summary: "Design the repository, state, scope, feedback, verification, review, loops, and graphs that make AI-assisted delivery reliable across sessions.",
+      outcomes: [
+        "Design a task-scoped harness around an AI coding workflow",
+        "Persist state and runtime evidence across independent sessions",
+        "Verify agent artifacts with fail-closed checks and review gates",
+        "Choose bounded loops or explicit graphs for delivery coordination"
+      ],
+      modules: [
+        "See the reliability gap",
+        "Structure the repository",
+        "Connect sessions",
+        "Feedback and scope",
+        "Verification",
+        "Put the harness together",
+        "Automate the loop",
+        "Structure the system"
+      ]
+    },
+    {
       id: "CHAMP-01",
       title: "AI Champion / Community Lead",
       status: "Role format from DOCX",
@@ -734,8 +762,8 @@ window.LrnData = {
       profileIds: ["tc", "am"],
       stages: [
         { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
-        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-43", "AI-45", "AI-49", "AI-51", "AI-53", "AI-54", "AI-57"] },
-        { label: "Create", courses: ["AI-19", "AI-25", "AI-42", "AI-52", "AI-53", "CHAMP-01"] }
+        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-43", "AI-45", "AI-49", "AI-51", "AI-53", "AI-54", "AI-57", "HARNESS-TC-01"] },
+        { label: "Create", courses: ["AI-19", "AI-25", "AI-42", "AI-52", "AI-53", "CHAMP-01", "HARNESS-TC-01"] }
       ]
     },
     {

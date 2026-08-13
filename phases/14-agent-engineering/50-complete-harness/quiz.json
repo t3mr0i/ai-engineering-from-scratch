@@ -1,0 +1,12 @@
+{
+  "lesson": "complete-harness",
+  "title": "Complete Harness",
+  "questions": [
+    {"stage": "pre", "question": "What is the purpose of composing seven surfaces?", "options": ["Hide all controls", "Make the full reliability contract explicit", "Remove review", "Automate deployment immediately"], "correct": 1, "explanation": "Composition connects the mechanisms while keeping ownership visible."},
+    {"stage": "check", "question": "What does the harness control plane do?", "options": ["Write arbitrary production files", "Evaluate evidence and route readiness", "Replace the model", "Delete failed receipts"], "correct": 1, "explanation": "The control plane governs decisions around the model."},
+    {"stage": "check", "question": "When is a report ready in this project?", "options": ["When the note sounds confident", "When scope, feedback, checks, and review pass", "When one test passes", "When the diff is large"], "correct": 1, "explanation": "Readiness requires all evidence categories."},
+    {"stage": "check", "question": "What should a blocked handoff contain?", "options": ["No context", "The failed surface and next repair action", "A success claim", "A hidden exception"], "correct": 1, "explanation": "A blocked state must preserve actionable context."},
+    {"stage": "post", "question": "Why keep instructions as a separate field?", "options": ["To count words", "To prove which startup rules were loaded", "To avoid state", "To replace scope"], "correct": 1, "explanation": "Surface ownership remains reviewable when it is explicit."},
+    {"stage": "post", "question": "What should happen after a ready report?", "options": ["Irreversible deploy automatically", "Human approval or the configured next gate", "Erase the report", "Skip handoff"], "correct": 1, "explanation": "Readiness is evidence for the next gate, not permission for every side effect."}
+  ]
+}

@@ -26,7 +26,6 @@ const SITE_ORIGIN = 'https://aiengineeringfromscratch.com';
 // show/hide phases — it is the single source of truth for hiding.
 const HIDDEN_PHASES = new Set([
   1,  // Math Foundations
-  2,  // ML Fundamentals
   3,  // Deep Learning Core
   4,  // Computer Vision
   6,  // Speech & Audio

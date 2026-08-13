@@ -1,0 +1,12 @@
+{
+  "lesson": "automated-loop",
+  "title": "Automated Loop",
+  "questions": [
+    {"stage": "pre", "question": "What does a trigger decide?", "options": ["When work may begin", "Whether code is correct", "Which model is smartest", "Who owns review"], "correct": 0, "explanation": "Trigger semantics are separate from loop completion."},
+    {"stage": "check", "question": "What does the evaluator own?", "options": ["The maker's prompt", "The completion decision", "The deployment secret", "The task scope alone"], "correct": 1, "explanation": "The evaluator decides whether evidence meets the goal."},
+    {"stage": "check", "question": "Why record every loop round?", "options": ["To inflate logs", "To preserve evidence and feedback", "To avoid a stop policy", "To hide intervention count"], "correct": 1, "explanation": "Round receipts make the loop replayable and reviewable."},
+    {"stage": "check", "question": "What is a stalled stop?", "options": ["A passing artifact", "Repeated failure without artifact change", "A timer trigger", "A human approval"], "correct": 1, "explanation": "Stall detection prevents useless repetition."},
+    {"stage": "post", "question": "Which task fits a goal loop best?", "options": ["A feature with a verifiable acceptance command", "An undefined wish", "A clock-only poll", "An irreversible deploy without review"], "correct": 0, "explanation": "Goal loops need a machine-checkable finish line."},
+    {"stage": "post", "question": "What should manual versus automated comparisons measure?", "options": ["Only elapsed time", "Interventions, failures, and receipts", "Prompt length", "Model brand"], "correct": 1, "explanation": "Reliability improvement needs evidence beyond speed."}
+  ]
+}

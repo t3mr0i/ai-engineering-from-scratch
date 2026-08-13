@@ -7,7 +7,7 @@ window.LrnCurriculumMap = {
   // The underlying data below stays complete; set this to null to show
   // everything again. Lives here rather than in data.js because catalog.html
   // loads only curriculum-map.js.
-  visibleCourseIds: ["PRIMER-01"],
+  visibleCourseIds: null,
   courseMaps: {
     "PRIMER-01": [
       {
@@ -1387,6 +1387,86 @@ window.LrnCurriculumMap = {
           { path: "phases/13-tools-and-protocols/23-capstone-tool-ecosystem", title: "Capstone — Build a Complete Tool Ecosystem" },
           { path: "phases/19-capstone-projects/27-eval-harness-fixture-tasks", title: "Eval Harness with Fixture Tasks" },
           { path: "phases/19-capstone-projects/28-observability-otel-traces", title: "Observability with OTel GenAI Spans" }
+        ]
+      }
+    ],
+    "HARNESS-TC-01": [
+      {
+        title: "See the reliability gap",
+        decision: "core",
+        note: "Establishes why capable models need explicit delivery infrastructure before the deeper workbench mechanics.",
+        lessons: [
+          { path: "phases/14-agent-engineering/31-agent-workbench-why-models-fail", title: "Agent Workbench: Why Capable Models Still Fail" },
+          { path: "phases/14-agent-engineering/32-minimal-agent-workbench", title: "The Minimal Agent Workbench" },
+          { path: "phases/14-agent-engineering/45-prompt-only-vs-rules-first", title: "Prompt-Only vs Rules-First" }
+        ]
+      },
+      {
+        title: "Structure the repository",
+        decision: "core",
+        note: "Turns instructions and repository navigation into a progressive-disclosure workspace.",
+        lessons: [
+          { path: "phases/14-agent-engineering/33-instructions-as-executable-constraints", title: "Agent Instructions as Executable Constraints" },
+          { path: "phases/14-agent-engineering/34-repo-memory-and-state", title: "Repo Memory and Durable State" },
+          { path: "phases/14-agent-engineering/46-agent-readable-workspace", title: "Agent-Readable Workspace" }
+        ]
+      },
+      {
+        title: "Connect sessions",
+        decision: "core",
+        note: "Keeps work resumable with repository memory, initialization, and a validated handoff state.",
+        lessons: [
+          { path: "phases/14-agent-engineering/35-initialization-scripts", title: "Initialization Scripts for Agents" },
+          { path: "phases/14-agent-engineering/40-multi-session-handoff", title: "Multi-Session Handoff" },
+          { path: "phases/14-agent-engineering/47-multi-session-continuity", title: "Multi-Session Continuity" }
+        ]
+      },
+      {
+        title: "Feedback and scope",
+        decision: "core",
+        note: "Constrains the active task and preserves runtime evidence for the next repair decision.",
+        lessons: [
+          { path: "phases/14-agent-engineering/36-scope-contracts", title: "Scope Contracts and Task Boundaries" },
+          { path: "phases/14-agent-engineering/37-runtime-feedback-loops", title: "Runtime Feedback Loops" },
+          { path: "phases/14-agent-engineering/48-runtime-feedback-scope", title: "Runtime Feedback and Scope" }
+        ]
+      },
+      {
+        title: "Verification",
+        decision: "core",
+        note: "Makes completion evidence executable and adds an independent review boundary.",
+        lessons: [
+          { path: "phases/14-agent-engineering/38-verification-gates", title: "Verification Gates" },
+          { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent: Separate Builder from Marker" },
+          { path: "phases/14-agent-engineering/49-self-verification", title: "Self-Verification" }
+        ]
+      },
+      {
+        title: "Put the harness together",
+        decision: "core",
+        note: "Combines the workbench surfaces into a reusable, reviewable delivery report.",
+        lessons: [
+          { path: "phases/14-agent-engineering/41-workbench-for-real-repos", title: "The Workbench on a Real Repo" },
+          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Ship a Reusable Agent Workbench Pack" },
+          { path: "phases/14-agent-engineering/50-complete-harness", title: "Complete Harness" }
+        ]
+      },
+      {
+        title: "Automate the loop",
+        decision: "core",
+        note: "Moves from manual prompting to bounded trigger-driven progress with receipts.",
+        lessons: [
+          { path: "phases/14-agent-engineering/43-loop-engineering", title: "Loop Engineering: From Prompts to Bounded Autonomy" },
+          { path: "phases/14-agent-engineering/51-automated-loop", title: "Automated Loop" }
+        ]
+      },
+      {
+        title: "Structure the system",
+        decision: "core",
+        note: "Makes routing, checkpoints, fan-in, rollback, and approval explicit when one loop is no longer enough.",
+        lessons: [
+          { path: "phases/14-agent-engineering/44-graph-engineering", title: "Graph Engineering: Make Agent Structure Explicit" },
+          { path: "phases/14-agent-engineering/52-workflow-graph", title: "Workflow Graph" }
         ]
       }
     ]

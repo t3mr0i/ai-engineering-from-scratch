@@ -1,0 +1,12 @@
+{
+  "lesson": "self-verification",
+  "title": "Self-Verification",
+  "questions": [
+    {"stage": "pre", "question": "Who should own the completion decision?", "options": ["The artifact maker alone", "Independent checks", "The longest response", "The last session only"], "correct": 1, "explanation": "Verification separates making from judging."},
+    {"stage": "check", "question": "What should each check return?", "options": ["Only prose", "A boolean and evidence detail", "A new prompt", "A file deletion"], "correct": 1, "explanation": "Structured evidence makes the verdict inspectable."},
+    {"stage": "check", "question": "What should an empty check list do?", "options": ["Pass automatically", "Fail closed", "Ask the maker to self-approve", "Skip the task"], "correct": 1, "explanation": "No checks means no evidence of completion."},
+    {"stage": "check", "question": "How should a check exception be handled?", "options": ["Ignore it", "Record failed evidence", "Convert it to success", "Retry forever"], "correct": 1, "explanation": "An exception is evidence that verification did not complete."},
+    {"stage": "post", "question": "Why keep checks orthogonal?", "options": ["To make the report longer", "To route each failure to its owner", "To avoid names", "To hide dependencies"], "correct": 1, "explanation": "Separate checks make repair more targeted."},
+    {"stage": "post", "question": "Which is stronger evidence than artifact presence?", "options": ["A passing end-to-end acceptance command", "A confident note", "A larger diff", "A repeated prompt"], "correct": 0, "explanation": "Presence does not prove behavior; acceptance evidence does."}
+  ]
+}

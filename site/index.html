@@ -60,7 +60,40 @@
         </label>
       </div>
 
+      <form class="course-search" id="searchForm" role="search">
+        <label class="course-search__label" for="searchInput">
+          <i class="ph-light ph-magnifying-glass" aria-hidden="true"></i>
+          <span data-i18n="lrn_search_label">Search courses</span>
+        </label>
+        <div class="course-search__control">
+          <i class="ph-light ph-magnifying-glass course-search__icon" aria-hidden="true"></i>
+          <input
+            id="searchInput"
+            name="q"
+            type="search"
+            autocomplete="off"
+            enterkeyhint="search"
+            placeholder="Try “data protection”, “test agents”, or “RAG”…"
+            data-i18n-placeholder="lrn_search_placeholder"
+            aria-describedby="searchHint"
+            aria-controls="courseGrid"
+          >
+          <button class="course-search__clear" id="searchClear" type="button" hidden aria-label="Clear search" data-i18n-aria-label="lrn_search_clear">
+            <i class="ph-light ph-x" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="course-search__hint" id="searchHint" data-i18n="lrn_search_hint">Matches titles, topics, related terms, and common typos in German and English.</p>
+      </form>
+
       <div class="catalog-bar" aria-label="Course filters">
+        <div class="topic-filter" id="topicFilter">
+          <div class="filter-group">
+            <span class="filter-group__label" id="topicLabel"><i class="ph-light ph-tag" aria-hidden="true"></i> <span data-i18n="topic_filter_label">Browse by topic</span></span>
+            <div class="chip-row" id="topicChips" role="group" aria-labelledby="topicLabel"></div>
+            <p class="topic-filter__hint" data-i18n="topic_filter_hint">Choose one topic; text search stays inside it.</p>
+          </div>
+          <button class="text-btn topic-filter__clear" type="button" id="topicClearBtn" hidden data-i18n="topic_filter_clear" data-i18n-aria-label="topic_filter_clear">Clear topic</button>
+        </div>
         <div class="filter-group">
           <span class="filter-group__label" id="interestLabel" title="Foundations and Productivity are selected by default — adjust or reset anytime"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="interests_label">Interests</span></span>
           <div class="chip-row" id="interestChips" role="group" aria-labelledby="interestLabel"></div>
@@ -70,7 +103,7 @@
 
       <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status"></div>
 
-      <p class="result-line" id="resultLine"></p>
+      <p class="result-line" id="resultLine" aria-live="polite"></p>
       <div class="course-grid" id="courseGrid"></div>
     </section>
   </main>
@@ -81,6 +114,7 @@
   <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js"></script>
   <script src="lrn/curriculum-map.js"></script>
+  <script src="search.js?v=20260813a"></script>
   <script src="lrn/lrn.js"></script>
 
   <!-- Resume from last lesson (localStorage) -->

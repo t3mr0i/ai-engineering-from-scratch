@@ -150,6 +150,9 @@
     courseGrid: document.getElementById("courseGrid"),
     resultLine: document.getElementById("resultLine"),
     searchInput: document.getElementById("searchInput"),
+    searchClear: document.getElementById("searchClear"),
+    topicChips: document.getElementById("topicChips"),
+    topicClearBtn: document.getElementById("topicClearBtn"),
     resetBtn: document.getElementById("resetBtn"),
     srStatus: document.getElementById("srStatus")
   };
@@ -168,7 +171,8 @@
       externalLevel: 1,
       interests: ["foundation", "productivity"],
       filter: "recommended",
-      activeCourseId: null
+      activeCourseId: null,
+      searchTopic: null
     };
 
     try {
@@ -179,7 +183,8 @@
         externalLevel: validLevel(saved.externalLevel) ? Number(saved.externalLevel) : fallback.externalLevel,
         interests: validInterests(saved.interests) ? saved.interests : fallback.interests,
         filter: ["recommended", "optional", "inprogress", "completed", "all"].indexOf(saved.filter) !== -1 ? saved.filter : "recommended",
-        activeCourseId: saved.activeCourseId || null
+        activeCourseId: saved.activeCourseId || null,
+        searchTopic: validSearchTopic(saved.searchTopic) ? saved.searchTopic : fallback.searchTopic
       };
     } catch (error) {
       return fallback;
@@ -192,6 +197,12 @@
     var rawLevel = params.get("level") || params.get("score") || params.get("assessment");
     var rawProfile = params.get("profile") || params.get("role");
     var rawInterests = params.get("interests");
+    var rawTopic = params.get("topic") || params.get("theme");
+    var rawQuery = params.get("q");
+
+    if (rawQuery && els.searchInput) {
+      els.searchInput.value = rawQuery;
+    }
 
     if (validLevel(rawLevel)) {
       state.externalLevel = Number(rawLevel);
@@ -218,6 +229,14 @@
       }
     }
 
+    if (rawTopic) {
+      var topicId = resolveInterest(rawTopic);
+      if (topicId) {
+        state.searchTopic = topicId;
+        changed = true;
+      }
+    }
+
     if (changed) saveState();
   }
 
@@ -236,7 +255,10 @@
       state.interests = ["foundation", "productivity"];
       state.filter = "recommended";
       state.activeCourseId = null;
+      state.searchTopic = null;
       if (els.searchInput) els.searchInput.value = "";
+      syncSearchUi();
+      syncTopicUi();
       saveState();
       renderControls();
       render();
@@ -244,12 +266,37 @@
     });
 
     if (els.searchInput) {
-      els.searchInput.addEventListener("input", render);
+      els.searchInput.addEventListener("input", function () {
+        syncSearchUi();
+        render();
+      });
+      els.searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && searchTerm()) {
+          event.preventDefault();
+          clearSearch();
+        }
+      });
+      syncSearchUi();
+    }
+    if (els.searchClear) {
+      els.searchClear.addEventListener("click", clearSearch);
+    }
+    if (els.topicClearBtn) {
+      els.topicClearBtn.addEventListener("click", clearTopic);
     }
     var searchForm = document.getElementById("searchForm");
     if (searchForm) {
       searchForm.addEventListener("submit", function (event) { event.preventDefault(); });
     }
+
+    document.addEventListener("keydown", function (event) {
+      var target = event.target;
+      var editing = target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName);
+      if (event.key === "/" && !editing && !event.metaKey && !event.ctrlKey && !event.altKey && els.searchInput) {
+        event.preventDefault();
+        els.searchInput.focus();
+      }
+    });
 
     els.profileSelect.addEventListener("change", function () {
       var profile = profileById[els.profileSelect.value];
@@ -287,6 +334,8 @@
     var computed = compute();
     syncSelects();
     renderInterestChips();
+    renderTopicChips();
+    syncTopicUi();
     renderFilters();
     renderCourses(computed);
     refreshIcons();
@@ -324,8 +373,8 @@
       btn.type = "button";
       btn.className = "chip";
       btn.setAttribute("aria-pressed", String(selected));
-      btn.textContent = interest.label;
-      btn.title = interest.hint;
+      btn.textContent = topicLabel(interest.id, interest.label);
+      btn.title = topicHint(interest.id, interest.hint);
       btn.addEventListener("click", function () {
         toggleInterest(interest.id);
         saveState();
@@ -334,6 +383,48 @@
       });
       return btn;
     }));
+  }
+
+  // Search topic controls are deliberately separate from the multi-select
+  // recommendation interests above. Both lists come from LrnData.interests;
+  // the single topic scope gives search an unambiguous, resettable dimension.
+  function renderTopicChips() {
+    if (!els.topicChips) return;
+    var topics = [{ id: "", label: i18n("topic_filter_all") }].concat(data.interests.map(function (interest) {
+      return {
+        id: interest.id,
+        label: topicLabel(interest.id, interest.label),
+        hint: topicHint(interest.id, interest.hint)
+      };
+    }));
+
+    replaceChildren(els.topicChips, topics.map(function (topic) {
+      var selected = state.searchTopic === (topic.id || null);
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip topic-chip" + (topic.id ? "" : " topic-chip--all");
+      btn.setAttribute("aria-pressed", String(selected));
+      btn.textContent = topic.label;
+      if (topic.hint) btn.title = topic.hint;
+      btn.addEventListener("click", function () {
+        state.searchTopic = topic.id || null;
+        saveState();
+        syncTopicUi();
+        render();
+        announce(state.searchTopic
+          ? i18n("lrn_announce_topic_set").replace("{topic}", topicLabel(state.searchTopic))
+          : i18n("lrn_announce_topic_clear"));
+      });
+      return btn;
+    }));
+  }
+
+  function topicLabel(id, fallback) {
+    return i18n("topic_" + id, fallback || id || i18n("topic_filter_all"));
+  }
+
+  function topicHint(id, fallback) {
+    return i18n("topic_" + id + "_hint", fallback || "");
   }
 
   function renderFilters() {
@@ -364,10 +455,30 @@
 
   function renderCourses(computed) {
     var term = searchTerm();
-    var visible = term ? applySearch(globalCourseEntries()) : filterCourses(computed.entries);
+    var scoped = filterCourses(computed.entries);
+    if (state.searchTopic) {
+      scoped = filterTopicEntries(scoped, state.searchTopic);
+    }
+    var visible = term ? applySearch(scoped) : scoped;
+    var activeTopic = state.searchTopic ? topicLabel(state.searchTopic) : "";
 
     if (els.resultLine) {
-      els.resultLine.textContent = (visible.length === 1 ? "1 course" : visible.length + " courses");
+      if (term) {
+        var searchResultKey = state.searchTopic
+          ? (visible.length === 1 ? "lrn_search_topic_one" : "lrn_search_topic_many")
+          : (visible.length === 1 ? "lrn_search_one" : "lrn_search_many");
+        els.resultLine.textContent = i18n(searchResultKey)
+          .replace("{count}", String(visible.length))
+          .replace("{query}", term)
+          .replace("{topic}", activeTopic);
+      } else if (state.searchTopic) {
+        els.resultLine.textContent = i18n(visible.length === 1 ? "lrn_topic_one" : "lrn_topic_many")
+          .replace("{count}", String(visible.length))
+          .replace("{topic}", activeTopic);
+      } else {
+        els.resultLine.textContent = i18n(visible.length === 1 ? "lrn_courses_one" : "lrn_courses_many")
+          .replace("{count}", String(visible.length));
+      }
     }
 
     if (!visible.length) {
@@ -377,8 +488,34 @@
       // When "Recommended" is empty but optional courses exist, the level/interest
       // combination simply has no on-path match — point the user at Optional.
       var hasOptional = computed.entries.some(function (entry) { return entry.kind === "optional"; });
-      if (term) {
-        empty.textContent = i18n("lrn_empty_no_match");
+      if (term || state.searchTopic) {
+        var emptyIcon = document.createElement("span");
+        emptyIcon.className = "empty-state__icon";
+        emptyIcon.setAttribute("aria-hidden", "true");
+        emptyIcon.appendChild(lucideIcon("magnifying-glass"));
+        var emptyTitle = document.createElement("h3");
+        emptyTitle.textContent = i18n("lrn_search_empty_title");
+        var emptyBody = document.createElement("p");
+        emptyBody.textContent = term && state.searchTopic
+          ? i18n("lrn_search_topic_empty_body")
+          : (term ? i18n("lrn_search_empty_body") : i18n("lrn_topic_empty_body"));
+        empty.append(emptyIcon, emptyTitle, emptyBody);
+        if (term) {
+          var clearSearchButton = document.createElement("button");
+          clearSearchButton.type = "button";
+          clearSearchButton.className = "text-btn";
+          clearSearchButton.textContent = i18n("lrn_search_clear");
+          clearSearchButton.addEventListener("click", clearSearch);
+          empty.appendChild(clearSearchButton);
+        }
+        if (state.searchTopic) {
+          var clearTopicButton = document.createElement("button");
+          clearTopicButton.type = "button";
+          clearTopicButton.className = "text-btn";
+          clearTopicButton.textContent = i18n("topic_filter_clear");
+          clearTopicButton.addEventListener("click", clearTopic);
+          empty.appendChild(clearTopicButton);
+        }
       } else if (state.filter === "recommended" && hasOptional) {
         empty.textContent = i18n("lrn_empty_no_onpath");
       } else {
@@ -402,13 +539,64 @@
   function applySearch(entries) {
     var term = searchTerm();
     if (!term) return entries;
+    if (window.CurriculumSearch) {
+      var searchable = entries.map(function (entry) {
+        var course = entry.course;
+        return {
+          entry: entry,
+          title: course.title,
+          summary: course.summary,
+          topics: [].concat(
+            course.modules || [],
+            course.interests || [],
+            course.dimensions || [],
+            course.levels || []
+          ),
+          meta: [course.id, course.format, course.status, course.source].join(" ")
+        };
+      });
+      return window.CurriculumSearch.rank(searchable, term, {
+        fields: { title: 9, topics: 5, summary: 4, meta: 2 }
+      }).map(function (result) {
+        var copy = Object.assign({}, result.item.entry);
+        copy.searchMatch = result.match;
+        return copy;
+      });
+    }
     return entries.filter(function (entry) {
-      return courseSearchText(entry.course).indexOf(term) !== -1;
+      return courseSearchText(entry.course).indexOf(term.toLowerCase()) !== -1;
     });
   }
 
   function searchTerm() {
-    return els.searchInput ? els.searchInput.value.trim().toLowerCase() : "";
+    return els.searchInput ? els.searchInput.value.trim() : "";
+  }
+
+  function syncSearchUi() {
+    if (!els.searchClear) return;
+    els.searchClear.hidden = !searchTerm();
+  }
+
+  function syncTopicUi() {
+    if (!els.topicClearBtn) return;
+    els.topicClearBtn.hidden = !state.searchTopic;
+  }
+
+  function clearSearch() {
+    if (!els.searchInput) return;
+    els.searchInput.value = "";
+    syncSearchUi();
+    render();
+    els.searchInput.focus();
+  }
+
+  function clearTopic() {
+    if (!state.searchTopic) return;
+    state.searchTopic = null;
+    syncTopicUi();
+    saveState();
+    render();
+    announce(i18n("lrn_announce_topic_clear"));
   }
 
   function courseSearchText(course) {
@@ -419,19 +607,26 @@
       course.format,
       course.status,
       course.source,
-      (course.modules || []).join(" ")
+      (course.modules || []).join(" "),
+      (course.interests || []).join(" "),
+      (course.dimensions || []).join(" "),
+      (course.levels || []).join(" ")
     ].join(" ").toLowerCase();
   }
 
-  function globalCourseEntries() {
-    return data.courses.map(function (course) {
-      return {
-        course: course,
-        score: 0,
-        kind: "catalog",
-        interestMatch: false,
-        progress: courseProgress(course)
-      };
+  function filterTopicEntries(entries, topic) {
+    if (!topic) return entries;
+    if (window.CurriculumSearch && window.CurriculumSearch.filterByTopic) {
+      return window.CurriculumSearch.filterByTopic(entries.map(function (entry) {
+        return Object.assign({}, entry, { interests: entry.course.interests || [] });
+      }), topic).map(function (entry) {
+        var copy = Object.assign({}, entry);
+        delete copy.interests;
+        return copy;
+      });
+    }
+    return entries.filter(function (entry) {
+      return (entry.course.interests || []).indexOf(topic) !== -1;
     });
   }
 
@@ -490,6 +685,13 @@
       : entry.progress.lessonCount + " lessons";
     meta.appendChild(metaText);
 
+    var summary = null;
+    if (entry.searchMatch && course.summary) {
+      summary = document.createElement("p");
+      summary.className = "course-card__summary";
+      summary.textContent = course.summary;
+    }
+
     var foot = document.createElement("div");
     foot.className = "course-card__foot";
     foot.append(
@@ -501,7 +703,9 @@
     open.appendChild(lucideIcon("arrow-right"));
     foot.appendChild(open);
 
-    card.append(head, h, meta, foot);
+    card.append(head, h, meta);
+    if (summary) card.appendChild(summary);
+    card.appendChild(foot);
     return card;
   }
 
@@ -713,6 +917,27 @@
     return Array.isArray(interests) && interests.length && interests.every(function (id) {
       return data.interests.some(function (interest) { return interest.id === id; });
     });
+  }
+
+  function validSearchTopic(topic) {
+    return topic == null || topic === "" || data.interests.some(function (interest) {
+      return interest.id === topic;
+    });
+  }
+
+  function resolveInterest(rawInterest) {
+    var normalized = String(rawInterest == null ? "" : rawInterest).trim().toLowerCase();
+    if (!normalized) return null;
+    var direct = data.interests.find(function (interest) {
+      return interest.id === normalized;
+    });
+    if (direct) return direct.id;
+    var match = data.interests.find(function (interest) {
+      return interest.label.toLowerCase() === normalized ||
+        topicLabel(interest.id, interest.label).toLowerCase() === normalized ||
+        interest.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === normalized;
+    });
+    return match && match.id;
   }
 
   function resolveProfile(rawProfile) {

@@ -1,0 +1,12 @@
+{
+  "lesson": "workflow-graph",
+  "title": "Workflow Graph",
+  "questions": [
+    {"stage": "pre", "question": "What does a graph make explicit?", "options": ["Only the prompt", "Nodes, edges, state, and routing", "The model's hidden thoughts", "A deployment secret"], "correct": 1, "explanation": "Graph structure exposes control-flow decisions."},
+    {"stage": "check", "question": "What should an unknown route do?", "options": ["End successfully", "Fail closed before committing state", "Choose the first edge", "Skip verification"], "correct": 1, "explanation": "Silent route fallback is unsafe."},
+    {"stage": "check", "question": "Why pause at human approval?", "options": ["To treat missing consent as approval", "To require an explicit decision", "To erase the trace", "To restart every node"], "correct": 1, "explanation": "Approval is a real graph state, not an implicit default."},
+    {"stage": "check", "question": "What must fan-in define?", "options": ["A model brand", "Merge semantics for shared fields", "A longer prompt", "A random order"], "correct": 1, "explanation": "Parallel branches need explicit conflict and append rules."},
+    {"stage": "post", "question": "When is a graph worth the coordination cost?", "options": ["For every one-step script", "When specialization, branches, recovery, or approval matter", "Only when a framework demands it", "Never"], "correct": 1, "explanation": "Use a graph when implicit structure has become a reliability problem."},
+    {"stage": "post", "question": "What does a checkpoint carry?", "options": ["Only a screenshot", "Next node and durable state snapshot", "A success claim", "Only the original prompt"], "correct": 1, "explanation": "The next session needs both position and state."}
+  ]
+}

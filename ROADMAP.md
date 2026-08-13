@@ -385,7 +385,7 @@ parsed by `site/build.js` into the lesson catalog.
 | 22 | [Skills and Agent SDKs](phases/13-tools-and-protocols/22-skills-and-agent-sdks/) | ✅ | ~45 min |
 | 23 | [Capstone — Tool Ecosystem](phases/13-tools-and-protocols/23-capstone-tool-ecosystem/) | ✅ | ~120 min |
 
-## Phase 14: Agent Engineering — ✅ (~42 hours)
+## Phase 14: Agent Engineering — ✅ (~52 hours)
 
 | # | Lesson | Status | Est. |
 |---|--------|--------|------|
@@ -431,6 +431,16 @@ parsed by `site/build.js` into the lesson catalog.
 | 40 | Multi-Session Handoff | ✅ | ~50 min |
 | 41 | The Workbench on a Real Repo | ✅ | ~60 min |
 | 42 | Capstone: Ship a Reusable Agent Workbench Pack | ✅ | ~75 min |
+| 43 | [Loop Engineering: From Prompts to Bounded Autonomy](phases/14-agent-engineering/43-loop-engineering) | ✅ | ~60 min |
+| 44 | [Graph Engineering: Make Agent Structure Explicit](phases/14-agent-engineering/44-graph-engineering) | ✅ | ~75 min |
+| 45 | [Prompt-Only vs Rules-First](phases/14-agent-engineering/45-prompt-only-vs-rules-first) | ✅ | ~45 min |
+| 46 | [Agent-Readable Workspace](phases/14-agent-engineering/46-agent-readable-workspace) | ✅ | ~45 min |
+| 47 | [Multi-Session Continuity](phases/14-agent-engineering/47-multi-session-continuity) | ✅ | ~50 min |
+| 48 | [Runtime Feedback and Scope](phases/14-agent-engineering/48-runtime-feedback-scope) | ✅ | ~50 min |
+| 49 | [Self-Verification](phases/14-agent-engineering/49-self-verification) | ✅ | ~55 min |
+| 50 | [Complete Harness](phases/14-agent-engineering/50-complete-harness) | ✅ | ~75 min |
+| 51 | [Automated Loop](phases/14-agent-engineering/51-automated-loop) | ✅ | ~60 min |
+| 52 | [Workflow Graph](phases/14-agent-engineering/52-workflow-graph) | ✅ | ~75 min |
 
 ## Phase 15: Autonomous Systems — ✅ (~20 hours)
 

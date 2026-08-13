@@ -37,6 +37,10 @@
         el.setAttribute('aria-label', v);
       }
     });
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(function (el) {
+      var v = entry(el.getAttribute('data-i18n-aria-label'));
+      if (v != null) el.setAttribute('aria-label', v);
+    });
 
     var icon = document.getElementById('langIcon');
     if (icon) icon.textContent = lang.toUpperCase();

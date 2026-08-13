@@ -121,9 +121,21 @@ before any procurement or contract.
 - **What people say:** "AI that creates things"
 - **What it actually means:** AI that produces novel outputs (text, images, code, audio) rather than classifying or scoring. Every client engagement you're on is in this bucket.
 
+### Graph Engineering
+- **What people say:** "A fancier workflow diagram"
+- **What it actually means:** Making an agent system's nodes, edges, shared state, and routing rules explicit so branches, rollback, checkpoints, and approval boundaries can be tested and replayed. A graph may contain deterministic jobs, tools, human gates, and full agent loops.
+- **Ship it:** define state ownership and fan-in conflict semantics before adding parallel nodes. Unknown routes and conflicting scalar updates should fail closed.
+- **Watch out:** a graph does not remove orchestration or review cost. If the task is linear, a script or single bounded loop is usually easier to operate.
+
 ---
 
 ## H
+
+### Harness Engineering
+- **What people say:** "A better prompt for the coding agent"
+- **What it actually means:** Designing the repository environment around an agent so instructions, durable state, scope, runtime feedback, verification, review, and handoff make delivery repeatable across sessions.
+- **Ship it:** keep the surfaces explicit, machine-checkable, and framework-agnostic; the model proposes work, while the harness governs where, how, and when it can be accepted.
+- **Watch out:** a large instruction file is not a harness. Without state, scope, evidence, and a stop or review gate, the model can still declare plausible but incomplete work done.
 
 ### Hallucination
 - **What people say:** "The AI is lying" or "making things up"
@@ -152,6 +164,12 @@ before any procurement or contract.
 - **What people say:** "How fast the AI responds"
 - **What it actually means:** Two numbers that matter: **TTFT** (time to first token — perceived "snappiness") and **end-to-end** (last token out — total response time).
 - **Ship it targets (2026 practice):** TTFT P50 < 500 ms, TTFT P99 < 2 s, end-to-end P99 < 8 s. Above these, support load spikes.
+
+### Loop Engineering
+- **What people say:** "Let the agent run by itself"
+- **What it actually means:** Designing the trigger, durable state, maker/evaluator boundary, feedback path, and stop policy that let an agent make bounded progress without a person prompting every turn.
+- **Ship it:** require a machine-checkable evaluator and hard round/time/tool/stall limits. Emit a receipt for every round and escalate on missing evidence.
+- **Watch out:** a timer loop is not a goal loop. Timer and event work need idempotency and retry limits; goal work needs a verifiable finish line.
 
 ---
 
@@ -225,6 +243,11 @@ before any procurement or contract.
 
 ## S
 
+### Scope Contract
+- **What people say:** "The files the agent should touch"
+- **What it actually means:** A task-level authorization boundary listing allowed and forbidden paths plus the acceptance conditions for one feature or change.
+- **Ship it:** validate changed paths before trusting test results, let explicit forbidden patterns win over broad allow-lists, and leave a violation in the handoff for repair or escalation.
+
 ### Semantic Search
 - **What people say:** "Smart search that understands meaning"
 - **What it actually means:** Finding documents by meaning, not keywords. Embed the query and all documents, return the closest. This is the retrieval half of RAG.
@@ -265,6 +288,11 @@ before any procurement or contract.
 ---
 
 ## V
+
+### Verification Gate
+- **What people say:** "The agent says it works"
+- **What it actually means:** A deterministic or independently reviewed checkpoint that requires named acceptance checks and records pass/fail evidence before a task can advance.
+- **Ship it:** fail closed on missing checks, timeouts, or exceptions; preserve the exact command receipts and route failures to the owner of the condition.
 
 ### Vector Database
 - **What people say:** "A special database for AI"

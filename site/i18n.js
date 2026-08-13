@@ -21,6 +21,20 @@ window.SITE_I18N = {
   footer_about: { en: "About", de: "Über uns" },
   footer_report_short: { en: "Report", de: "Melden" },
 
+  // shared hybrid search / command palette
+  global_search_label: { en: "Search learning catalog", de: "Lernkatalog durchsuchen" },
+  global_search_short: { en: "Search", de: "Suche" },
+  global_search_dialog: { en: "Search lessons and glossary", de: "Lektionen und Glossar durchsuchen" },
+  global_search_placeholder: { en: "Try “data protection”, “test agents”, or “RAG”…", de: "Zum Beispiel „Datenschutz“, „Agenten testen“ oder „RAG“…" },
+  global_search_results: { en: "Search results", de: "Suchergebnisse" },
+  global_search_navigate: { en: "navigate", de: "navigieren" },
+  global_search_open: { en: "open", de: "öffnen" },
+  global_search_close: { en: "close", de: "schließen" },
+  global_search_intro: { en: "Search {lessons} lessons, {artifacts} reusable outputs, and glossary terms", de: "Durchsuche {lessons} Lektionen, {artifacts} wiederverwendbare Ergebnisse und Glossarbegriffe" },
+  global_search_empty: { en: "No results for", de: "Keine Treffer für" },
+  global_search_try: { en: "Try instead:", de: "Versuche stattdessen:" },
+  global_search_empty_hint: { en: "Try a broader German or English term.", de: "Versuche einen allgemeineren deutschen oder englischen Begriff." },
+
   // index.html — hero title + resume button are rendered dynamically
   // (time-of-day greeting + last lesson name) in index.html's inline script.
 
@@ -29,6 +43,10 @@ window.SITE_I18N = {
   catalog_sub: { en: "Every lesson backing a Technology Consulting course. Search, filter, sort.", de: "Jede Lektion hinter einem Technology-Consulting-Kurs. Suchen, filtern, sortieren." },
   catalog_primer_link: { en: "Interactive LLM Primer — ~75 min, 20 mini-games →", de: "Interaktiver LLM-Primer — ~75 Min, 20 Minispiele →" },
   catalog_search_ph: { en: "Search lessons...", de: "Lektionen suchen..." },
+  catalog_search_label: { en: "Search the curriculum", de: "Lehrplan durchsuchen" },
+  catalog_topic_label: { en: "Topic", de: "Thema" },
+  catalog_count: { en: "{count} of {total} lessons", de: "{count} von {total} Lektionen" },
+  catalog_count_topic: { en: "{count} of {total} lessons in {topic}", de: "{count} von {total} Lektionen in {topic}" },
   catalog_all_phases: { en: "All Phases", de: "Alle Phasen" },
   catalog_all_status: { en: "All Status", de: "Alle Status" },
   catalog_complete: { en: "Complete", de: "Abgeschlossen" },
@@ -96,6 +114,46 @@ window.SITE_I18N = {
   lrn_status_completed: { en: "Completed", de: "Abgeschlossen" },
   lrn_status_all: { en: "All", de: "Alle" },
 
+  // lrn/lrn.js — structured topic scope (labels come from LrnData ids)
+  topic_filter_label: { en: "Browse by topic", de: "Nach Thema stöbern" },
+  topic_filter_hint: { en: "Choose one topic; text search stays inside it.", de: "Wähle ein Thema; die Textsuche bleibt darin." },
+  topic_filter_all: { en: "All topics", de: "Alle Themen" },
+  topic_filter_clear: { en: "Clear topic", de: "Thema löschen" },
+  topic_foundation: { en: "Foundations", de: "Grundlagen" },
+  topic_foundation_hint: { en: "Core AI concepts and literacy", de: "KI-Grundlagen und Verständnis" },
+  topic_productivity: { en: "Productivity", de: "Produktivität" },
+  topic_productivity_hint: { en: "Prompts, assistants, and office work", de: "Prompts, Assistenten und Büroarbeit" },
+  topic_consulting: { en: "Consulting", de: "Consulting" },
+  topic_consulting_hint: { en: "Use cases, requirements, and value", de: "Use Cases, Anforderungen und Nutzen" },
+  topic_engineering: { en: "Engineering", de: "Engineering" },
+  topic_engineering_hint: { en: "Agents, architecture, and QA", de: "Agenten, Architektur und Qualitätssicherung" },
+  topic_governance: { en: "Governance", de: "Governance" },
+  topic_governance_hint: { en: "GDPR, responsible AI, and controls", de: "DSGVO, verantwortungsvolle KI und Kontrollen" },
+  topic_leadership: { en: "Leadership", de: "Leadership" },
+  topic_leadership_hint: { en: "Change, workforce, and strategy", de: "Veränderung, Workforce und Strategie" },
+  profile_label: { en: "Profile", de: "Profil" },
+  level_label: { en: "Level", de: "Level" },
+  interests_label: { en: "Interests", de: "Interessen" },
+  reset_btn: { en: "Reset", de: "Zurücksetzen" },
+
+  // lrn/lrn.js — hybrid course search
+  lrn_search_label: { en: "Search courses", de: "Kurse durchsuchen" },
+  lrn_search_placeholder: { en: "Try “data protection”, “test agents”, or “RAG”…", de: "Zum Beispiel „Datenschutz“, „Agenten testen“ oder „RAG“…" },
+  lrn_search_hint: { en: "Matches titles, topics, related terms, and common typos in German and English.", de: "Findet Titel, Themen, verwandte Begriffe und häufige Tippfehler auf Deutsch und Englisch." },
+  lrn_search_clear: { en: "Clear search", de: "Suche löschen" },
+  lrn_search_one: { en: "1 match for “{query}”", de: "1 Treffer für „{query}“" },
+  lrn_search_many: { en: "{count} matches for “{query}”", de: "{count} Treffer für „{query}“" },
+  lrn_search_topic_one: { en: "1 match for “{query}” in {topic}", de: "1 Treffer für „{query}“ in {topic}" },
+  lrn_search_topic_many: { en: "{count} matches for “{query}” in {topic}", de: "{count} Treffer für „{query}“ in {topic}" },
+  lrn_courses_one: { en: "1 course", de: "1 Kurs" },
+  lrn_courses_many: { en: "{count} courses", de: "{count} Kurse" },
+  lrn_topic_one: { en: "1 course in {topic}", de: "1 Kurs in {topic}" },
+  lrn_topic_many: { en: "{count} courses in {topic}", de: "{count} Kurse in {topic}" },
+  lrn_search_empty_title: { en: "No matching courses", de: "Keine passenden Kurse" },
+  lrn_search_empty_body: { en: "Try a broader topic, a German or English synonym, or clear the search.", de: "Versuche ein allgemeineres Thema, ein deutsches oder englisches Synonym – oder lösche die Suche." },
+  lrn_topic_empty_body: { en: "No course in this topic matches the current level or status. Try another topic or clear the topic.", de: "Kein Kurs in diesem Thema passt zu Level oder Status. Wähle ein anderes Thema oder lösche das Thema." },
+  lrn_search_topic_empty_body: { en: "No course in this topic matches the search. Try another term or clear the topic.", de: "Kein Kurs in diesem Thema passt zur Suche. Versuche einen anderen Begriff oder lösche das Thema." },
+
   // lrn/lrn.js — empty-state copy
   lrn_empty_no_match: { en: "No match.", de: "Kein Treffer." },
   lrn_empty_no_onpath: { en: "No on-path match. Try the All filter.", de: "Keine passenden Kurse im Lernpfad. Versuche den Filter „Alle“." },
@@ -104,5 +162,7 @@ window.SITE_I18N = {
   // lrn/lrn.js — aria-live announcements
   lrn_announce_profile_set: { en: "Profile set: {profile}.", de: "Profil festgelegt: {profile}." },
   lrn_announce_level_set: { en: "Level set: {level}.", de: "Level festgelegt: {level}." },
+  lrn_announce_topic_set: { en: "Topic filter set: {topic}.", de: "Themenfilter gesetzt: {topic}." },
+  lrn_announce_topic_clear: { en: "Topic filter cleared.", de: "Themenfilter gelöscht." },
   lrn_announce_reset: { en: "Selection reset. Activity progress is preserved in the activity tracker.", de: "Auswahl zurückgesetzt. Der Aktivitätsfortschritt bleibt im Aktivitäts-Tracker erhalten." }
 };

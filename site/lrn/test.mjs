@@ -113,6 +113,19 @@ test("every Course has an outcomes: field (empty array is allowed)", () => {
   }
 });
 
+test("Harness Engineering course is scoped to the Technology Consulting profile", () => {
+  const course = data.courses.find((c) => c.id === "HARNESS-TC-01");
+  assert.ok(course, "HARNESS-TC-01 missing from data.js");
+  assert.deepEqual([...course.profileIds], ["tc"]);
+  assert.ok(course.interests.includes("consulting"), "course must support the Consulting interest");
+  assert.ok(course.interests.includes("engineering"), "course may also support the Engineering interest");
+  assert.deepEqual([...course.levels], ["Deepen", "Create"]);
+  assert.equal(course.modules.length, 8, "course must expose eight course units as modules");
+  assert.equal(course.outcomes.length, 4, "course should have four authored outcomes");
+  const tc = data.profiles.find((profile) => profile.id === "tc");
+  assert.ok(tc && tc.code === "R03-TC", "Technology Consulting profile must retain code R03-TC");
+});
+
 // ───────────────────────────────────────────────────────────────────────────
 // tracks / paths shape
 // ───────────────────────────────────────────────────────────────────────────
@@ -142,6 +155,16 @@ test("every track has at least one Course across its stages", () => {
     const n = (track.stages || []).reduce((acc, s) => acc + (s.courses || []).length, 0);
     assert.ok(n >= 1, `track ${track.code} has no courses at all`);
   }
+});
+
+test("Harness Engineering is staged in LP03 and not broadened through LP02", () => {
+  const lp03 = data.tracks.find((track) => track.code === "LP03");
+  const lp02 = data.tracks.find((track) => track.code === "LP02");
+  assert.ok(lp03 && lp02, "LP02 and LP03 must exist");
+  const lp03Stages = lp03.stages.filter((stage) => stage.courses.includes("HARNESS-TC-01"));
+  assert.deepEqual([...lp03Stages.map((stage) => stage.label)], ["Deepen", "Create"]);
+  assert.equal(lp02.stages.some((stage) => stage.courses.includes("HARNESS-TC-01")), false);
+  assert.ok(lp03.profileIds.includes("tc"), "LP03 must serve Technology Consulting");
 });
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -176,6 +199,25 @@ test("every Course referenced by curriculum-map is visible in the active cockpit
   for (const cid of Object.keys(cmap.courseMaps)) {
     assert.ok(visibleIds.has(cid),
       `curriculum-map has course ${cid} but it is not visible in the active cockpit profile '${activeProfileId}'`);
+  }
+});
+
+test("Harness Engineering map preserves 8 units and 22 activities", () => {
+  const units = cmap.courseMaps["HARNESS-TC-01"];
+  assert.ok(Array.isArray(units), "HARNESS-TC-01 course map missing");
+  assert.equal(units.length, 8);
+  assert.deepEqual([...units.map((unit) => unit.lessons.length)], [3, 3, 3, 3, 3, 3, 2, 2]);
+  const activities = units.flatMap((unit) => unit.lessons);
+  assert.equal(activities.length, 22);
+  assert.equal(new Set(activities.map((lesson) => lesson.path)).size, 22, "activities must not duplicate paths");
+  const paths = new Set(activities.map((lesson) => lesson.path));
+  for (const lessonNumber of Array.from({ length: 14 }, (_, index) => index + 31)) {
+    assert.ok([...paths].some((path) => path.startsWith(`phases/14-agent-engineering/${String(lessonNumber).padStart(2, "0")}-`)),
+      `missing lecture activity ${lessonNumber}`);
+  }
+  for (const lessonNumber of Array.from({ length: 8 }, (_, index) => index + 45)) {
+    assert.ok([...paths].some((path) => path.startsWith(`phases/14-agent-engineering/${lessonNumber}-`)),
+      `missing project activity ${lessonNumber}`);
   }
 });
 
