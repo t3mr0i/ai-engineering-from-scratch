@@ -94,7 +94,7 @@ The monthly portfolio review is the governance moment most organizations skip. W
 
 ### Maturity levels and where most organizations actually are
 
-The AI CoE Maturity Model from Gartner (2025) and similar frameworks converge on five levels. Most LHIND client organizations entering an AI program sit at level 1–2:
+AI Center of Excellence maturity assessments — including Gartner's own five-level [AI Maturity Model](https://www.gartner.com/en/chief-information-officer/research/ai-maturity-model-toolkit) — converge on the same broad arc, from ad hoc pilots to a fully embedded operating model. Most LHIND client organizations entering an AI program sit at level 1–2 of that arc:
 
 | Level | Description | Typical signal |
 |---|---|---|

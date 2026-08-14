@@ -1,6 +1,6 @@
 # AI Use Case Triage: From Discovery to Prioritized Backlog (2026)
 
-> McKinsey's 2025 State of AI survey found that organizations with a structured triage process reached production roughly 2.4x faster than teams that went straight from "idea" to "build." The gap is not model capability — the commodity risk in 2026 is not picking the wrong model, it is investing six weeks of engineering time in a use case a back-of-envelope calculation would have ruled out in an afternoon. This lesson gives you that calculation, and the structured process around it that converts a raw idea list into a prioritized, sponsor-ready backlog you can defend in one meeting.
+> Organizations with a structured triage process reach production meaningfully faster than teams that go straight from "idea" to "build." The gap is not model capability — the commodity risk in 2026 is not picking the wrong model, it is investing six weeks of engineering time in a use case a back-of-envelope calculation would have ruled out in an afternoon. This lesson gives you that calculation, and the structured process around it that converts a raw idea list into a prioritized, sponsor-ready backlog you can defend in one meeting.
 
 **Type:** Learn
 **Languages:** Python (stdlib — use-case scoring and triage engine)

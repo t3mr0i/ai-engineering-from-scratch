@@ -1,6 +1,6 @@
 # Choosing and Using AI Tools for Personal Productivity (2026)
 
-> By 2026 the question is no longer "should I use AI" but "which tool, on which data, for which step in my workflow, and what verification step matches the consequence of being wrong." The 2026 approved toolset at most organizations spans at least four categories: chat assistants (Claude Opus/Sonnet 4.x, ChatGPT, Gemini 2.x), coding co-pilots (Copilot, Cursor, Claude Code), specialized document processors, and internal retrieval-augmented search. A 2025 McKinsey survey of knowledge workers found that practitioners who deliberately matched tasks to tools — rather than defaulting to whichever assistant they had open — reported two to three times the time savings of those who did not. The skill that separates the productive user from the frustrated one is the routing habit, not the prompt.
+> By 2026 the question is no longer "should I use AI" but "which tool, on which data, for which step in my workflow, and what verification step matches the consequence of being wrong." The 2026 approved toolset at most organizations spans at least four categories: chat assistants (Claude Opus/Sonnet 4.x, ChatGPT, Gemini 2.x), coding co-pilots (Copilot, Cursor, Claude Code), specialized document processors, and internal retrieval-augmented search. Practitioners who deliberately match tasks to tools — rather than defaulting to whichever assistant they have open — consistently report far larger time savings than those who do not. The skill that separates the productive user from the frustrated one is the routing habit, not the prompt.
 
 **Type:** Learn
 **Languages:** Python (stdlib — task-to-tool router + verification classifier with one demonstrated failure)
@@ -29,7 +29,7 @@ A second named failure shape, common enough to recognize on sight: **the prompt 
 
 ### The four functional categories
 
-| Category | Core capability | Typical approved tools (2026) | Approx cost (per 1K tokens, 2026) | Data risk |
+| Category | Core capability | Typical approved tools (2026) | Approx cost (per 1M tokens, 2026) | Data risk |
 |---|---|---|---|---|
 | **Chat and drafting** | Long-context reasoning, Q&A, first drafts, ideation | Claude Opus/Sonnet 4.x, ChatGPT (GPT-4o), Gemini 2.x | $3–$15 input / $15–$75 output (frontier); sub-$1 with smaller models | Text you paste goes to provider API; check data classification |
 | **Code assistance** | Inline completion, multi-file edit, code review | GitHub Copilot, Cursor, Claude Code | $0 (subscription) to ~$3–$10 per active hour (frontier agent) | Code context sent to provider; secret-scan before pasting |

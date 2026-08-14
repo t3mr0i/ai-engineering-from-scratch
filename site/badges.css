@@ -26,7 +26,11 @@
 .aifs-pill--success { background: #e2f3ea;                       color: var(--lhg-success, #1b8a5a); }
 .aifs-pill--warning { background: #fbeede;                       color: #9a5a14; }
 .aifs-pill--error   { background: #fbe1e5;                       color: var(--lhg-red, #bc0a1d); }
-.aifs-pill--teal    { background: #dcecee;                       color: var(--lhg-teal, #368089); }
+/* D3: var(--lhg-teal) (#368089) on this tint measured 3.75:1, below the
+   4.5:1 needed for the 10px tier label text — darkened within the same
+   hue/saturation to #2a6b73 (5.01:1) rather than touching the shared
+   --lhg-teal token used elsewhere. */
+.aifs-pill--teal    { background: #dcecee;                       color: #2a6b73; }
 .aifs-pill--purple  { background: #f3e1ea;                       color: var(--lhg-purple, #a82e61); }
 
 [data-theme="dark"] .aifs-pill--neutral { background: rgba(123,166,220,0.14); color: var(--color-ink-2, #c3d5ee); }

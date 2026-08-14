@@ -55,7 +55,7 @@ Prompt efficiency failures fall into three patterns:
 2. **Verbose instruction padding** — filler phrases ("Please carefully consider...", "As an expert in...") that consume tokens without improving output quality. Instructions should be declarative and minimal.
 3. **Unnecessary output length** — prompts that do not constrain output length invite long responses. Add explicit length constraints to structured generation tasks: `"Return a JSON object with keys: {status, reason}. No prose."`.
 
-A concrete benchmark: in a 2024 study comparing verbose versus minimal prompts on summarization tasks, minimal prompts achieved equivalent ROUGE scores at 40–60% of the token count. The delta compounds across millions of API calls.
+A concrete illustration: minimal prompts can achieve equivalent ROUGE scores at a fraction of the token count of verbose ones on summarization tasks. The delta compounds across millions of API calls.
 
 ### Caching and call volume
 

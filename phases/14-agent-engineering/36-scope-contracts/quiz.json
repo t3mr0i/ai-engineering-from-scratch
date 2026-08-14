@@ -40,51 +40,51 @@
     },
     {
       "stage": "check",
-      "question": "What does the 'violation budget' pattern do?",
+      "question": "Why does the lesson say a contract needs a rollback_plan?",
       "options": [
-        "Sets a monthly budget for the agent",
-        "Allows minor scope slips as warnings within a budget; only excess triggers a merge refusal — the difference between a gate that ships and one that gets disabled",
-        "Throttles model calls",
-        "Charges per violation"
+        "Rollback plans are required by the verification gate's schema validator",
+        "Without one, the checker cannot compute which files are in scope",
+        "Rollback plans let the agent skip acceptance criteria if something breaks",
+        "Writing it forces the author to think through what could go wrong first"
       ],
-      "correct": 1,
-      "explanation": "agent-guardrails uses violationBudget so the gate is usable in day-to-day flow."
+      "correct": 3,
+      "explanation": "The lesson says listing how to roll back forces the contract author to think about what could go wrong; a contract you cannot roll back from should not be approved."
     },
     {
       "stage": "check",
-      "question": "What did the specsmaxxing practitioner report?",
+      "question": "What does the scope checker compare against the diff, per the lesson?",
       "options": [
-        "Latency dropped 90%",
-        "Rabbit-hole rate dropped from 52% to 21% in three weeks without changing the agent; the contract did the work, not the model",
-        "Cost rose 5x",
-        "Tests slowed down"
+        "Only the commit message, checked against a required template",
+        "The task's estimated time budget against the actual wall-clock time",
+        "The allowed globs, forbidden globs, and any acceptance commands",
+        "The diff size in lines against a fixed per-task ceiling value"
       ],
-      "correct": 1,
-      "explanation": "Scope contracts in YAML before invoking the agent halved the rabbit-hole rate without model changes."
+      "correct": 2,
+      "explanation": "The lesson says the checker reads the diff, the allowed globs, the forbidden globs, and a list of any acceptance commands that ran; each violation is a tagged finding."
     },
     {
       "stage": "post",
-      "question": "What are the multi-contract merge semantics (least privilege)?",
+      "question": "What must be true of feature_list.json before a session may start, per the lesson?",
       "options": [
-        "Last contract wins",
-        "Intersect allowed_files; union forbidden_files; min time_budget; accumulate approvals; deny-all sticks; merge of None defers to the other side",
-        "First contract wins",
-        "Random tie-break"
+        "Every feature must already have a done_when line filled with output",
+        "At most one feature may carry status in_progress at any given time",
+        "The active feature must match the branch name exactly to proceed",
+        "At least one feature must be marked blocked before work may start"
       ],
       "correct": 1,
-      "explanation": "Least-privilege merge: intersection on allows, union on forbids, most-restrictive time, accumulate approvals."
+      "explanation": "The lesson says the invariant 'at most one in_progress' is itself a startup check: if the list shows two, the session refuses to start until a human resolves it."
     },
     {
       "stage": "post",
-      "question": "Why do time and network budgets belong in the contract too?",
+      "question": "How does an agent pick which feature to work on, per the lesson?",
       "options": [
-        "Wall clock and external-host access are scope dimensions; file globs alone are necessary but not sufficient",
-        "Providers require them",
-        "They make the JSON smaller",
-        "They are required by Apache 2.0"
+        "It asks the human operator to assign one at the start of every session",
+        "It works through features strictly in the order they appear in the file",
+        "It picks whichever feature has the shortest done_when description",
+        "It picks one todo feature and cannot start a second in that session"
       ],
-      "correct": 0,
-      "explanation": "time_budget_minutes and network_egress allowlists are scope dimensions on top of file globs."
+      "correct": 3,
+      "explanation": "The lesson says the agent picks exactly one feature whose status is todo, writes its id into the active scope contract, and is forbidden from starting a second feature in the same session."
     }
   ]
 }

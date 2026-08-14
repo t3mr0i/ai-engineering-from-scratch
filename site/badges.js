@@ -34,6 +34,7 @@
   var STR = {
     newBadgeUnlocked: { en: 'New badge unlocked', de: 'Neues Badge freigeschaltet' },
     daysInARow: { en: 'days in a row', de: 'Tage in Folge' },
+    dayInARow: { en: 'day in a row', de: 'Tag in Folge' },
     bestStreak: { en: 'Best streak', de: 'Best-Streak' },
     activeToday: { en: 'active today', de: 'heute aktiv' },
     notActiveToday: { en: 'not active today yet', de: 'heute noch nicht aktiv' },
@@ -343,7 +344,7 @@
     return '<div class="aifs-streak' + flame + '">' +
       '<div class="aifs-streak__icon"><i class="ph-light ph-fire" aria-hidden="true"></i></div>' +
       '<div class="aifs-streak__body">' +
-        '<div class="aifs-streak__current"><strong>' + st.current + '</strong> ' + pick(STR.daysInARow) + '</div>' +
+        '<div class="aifs-streak__current"><strong>' + st.current + '</strong> ' + pick(st.current === 1 ? STR.dayInARow : STR.daysInARow) + '</div>' +
         '<div class="aifs-streak__best">' + pick(STR.bestStreak) + ': ' + st.best + ' · ' + today + '</div>' +
       '</div></div>';
   }

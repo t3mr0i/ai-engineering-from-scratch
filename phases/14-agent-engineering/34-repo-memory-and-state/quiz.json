@@ -40,39 +40,39 @@
     },
     {
       "stage": "check",
-      "question": "Why are idempotency keys required for non-idempotent tool calls?",
+      "question": "Per the lesson's repo-memory table, which of these does NOT belong in repo memory?",
       "options": [
-        "For billing",
-        "If the agent crashes after a tool call but before checkpointing the result, retry safely; log call ID before execution and skip the call on retry",
-        "To deduplicate logs",
-        "To shorten output"
+        "The active task id, tracked so the next session knows where to resume",
+        "Raw chat transcripts, which stay in the conversation, not the repo",
+        "Any open blockers, tracked so nobody re-discovers a known problem",
+        "The next action, tracked so the next session has a concrete start"
       ],
       "correct": 1,
-      "explanation": "pending_calls.jsonl carries the call IDs; recovery checks and skips already-executed work."
+      "explanation": "The lesson's table lists raw chat transcripts under 'Does not belong'; active task id, open blockers, and next action all belong in repo memory."
     },
     {
       "stage": "check",
-      "question": "Where should large artifacts (CSVs, long transcripts, generated files) live relative to state?",
+      "question": "What does the lesson say schema-first state buys you?",
       "options": [
-        "Inline in agent_state.json",
-        "As separate files (or object storage) with only the path kept in state, so checkpoints stay small and fast",
-        "In environment variables",
-        "Concatenated into one giant log"
+        "It lets the agent skip validation once the schema has been defined once",
+        "It compresses the state file so checkpoints load faster across sessions",
+        "Without a schema, agents invent fields; with one, bad writes are refused",
+        "It replaces atomic writes, since the schema already guarantees durability"
       ],
-      "correct": 1,
-      "explanation": "Separate artifacts grow independently of state; checkpoints stay cheap to read and write."
+      "correct": 2,
+      "explanation": "The lesson says: without a schema, every agent invents new fields, every reviewer learns a new shape, and every CI script has to special-case past versions; with it, a bad write is a refused write."
     },
     {
       "stage": "post",
-      "question": "What does event sourcing for audit + snapshots for resume buy you?",
+      "question": "What four things does the schema constrain, per the lesson?",
       "options": [
-        "Lower disk usage",
-        "Replay agent decisions verbatim by reading the snapshot then replaying events after it; same shape as Postgres WAL",
-        "Faster inference",
-        "Native voice support"
+        "File size limits, text encoding, line endings, and commit message format",
+        "The model provider, token budget, temperature, and system prompt used",
+        "Branch name, commit author, timestamp format, and total diff size",
+        "Required keys, allowed statuses, forbidden values, and pattern rules"
       ],
-      "correct": 1,
-      "explanation": "Append to state.events.jsonl on every mutation; periodically snapshot to state.json; replay events after the snapshot timestamp."
+      "correct": 3,
+      "explanation": "The lesson lists what the schema covers: required keys, allowed status values, forbidden values (e.g. null for arrays), and pattern constraints (task ids match T-\\d{3,})."
     },
     {
       "stage": "post",

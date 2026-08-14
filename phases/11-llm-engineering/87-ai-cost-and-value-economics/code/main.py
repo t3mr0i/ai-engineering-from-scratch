@@ -37,7 +37,7 @@ SONNET  = ModelTier("claude-sonnet-4.6", input_price_per_m=3.00, output_price_pe
 OPUS    = ModelTier("claude-opus-4.7",  input_price_per_m=15.00, output_price_per_m=75.00)
 
 # Cache costs are fractions of the base input price (Anthropic structure)
-CACHE_WRITE_FRACTION = 0.25   # writing a cacheable block: 25% of input price
+CACHE_WRITE_FRACTION = 0.25   # writing a cacheable block: 25% premium over input price (125% total)
 CACHE_READ_FRACTION  = 0.10   # reading a cached block: 10% of input price
 
 

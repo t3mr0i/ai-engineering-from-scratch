@@ -1,6 +1,6 @@
 # AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)
 
-> Gartner estimates that by 2026 more than 60 percent of enterprise AI use cases span at least two distinct data environments: a cloud-hosted LLM, an on-premises data platform, and one or more IoT-generating edge locations. The boundary between those environments is where most AI projects fail — not because the model was wrong, but because the data never arrived at inference time in the right shape, with the right latency, and within the right ownership perimeter. Designing an AI use case in this context requires the same rigor as designing a distributed system: you map ownership, latency, and schema fidelity at every hop before you write a prompt. The missing discipline in 2026 is not "choosing the right model" — it is knowing which boundaries your use case actually crosses and making deliberate engineering decisions at each one.
+> Most enterprise AI use cases span at least two distinct data environments: a cloud-hosted LLM, an on-premises data platform, and one or more IoT-generating edge locations. The boundary between those environments is where most AI projects fail — not because the model was wrong, but because the data never arrived at inference time in the right shape, with the right latency, and within the right ownership perimeter. Designing an AI use case in this context requires the same rigor as designing a distributed system: you map ownership, latency, and schema fidelity at every hop before you write a prompt. The missing discipline in 2026 is not "choosing the right model" — it is knowing which boundaries your use case actually crosses and making deliberate engineering decisions at each one.
 
 **Type:** Learn
 **Languages:** Python (stdlib — data-boundary classifier + latency budget modeler)
@@ -69,7 +69,7 @@ For an IoT-enriched maintenance recommendation use case with a 5-second UI budge
 | Context assembly | 50–100 ms | Minimal |
 | LLM inference (Sonnet 4.6, ~2k tokens) | 800–1 500 ms | Partial — model choice, caching |
 | Post-processing + UI | 100–200 ms | No |
-| **Total** | ~1 650–2 500 ms | Well within 5 s budget |
+| **Total** | ~1 650–2 700 ms | Well within 5 s budget |
 
 When the decomposition reveals a budget overrun, the fix is architectural: move inference closer to data (edge or regional endpoint), reduce context size, or shift to asynchronous delivery. "Use a faster model" is rarely the right lever because the latency bottleneck is almost always retrieval or network, not model inference.
 

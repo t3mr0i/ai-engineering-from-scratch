@@ -111,7 +111,7 @@ Phase 15 · 16 covers checkpoint and rollback for agentic systems. For non-agent
 
 Rough 2026 ranges from our deployment work, accurate within a factor of two:
 
-- **Cost per 1K output tokens.** Closed-weight frontier (Opus 4.x class): ~$15. Sonnet 4.x class: ~$3. Open-weight served on your own GPU: $0.30-$1.00 fully loaded (GPU + electricity + ops). The gap is real but shrinkable with batching and prefix caching.
+- **Cost per 1M output tokens.** Closed-weight frontier (Opus 4.x class): ~$15. Sonnet 4.x class: ~$3. Open-weight served on your own GPU: $0.30-$1.00 fully loaded (GPU + electricity + ops). The gap is real but shrinkable with batching and prefix caching.
 - **Latency.** Sonnet 4.x class p50 ~600 ms, p99 ~2.5 s for 1K-token outputs. Opus 4.x roughly 2x. Open-weight served locally: ~80-200 ms p50, p99 highly dependent on your batching.
 - **Context windows.** Most frontier models support 200K-1M tokens. The cost lesson: a 500K context call is not 500x a 1K call — it is roughly 8-15x in our experience, and p99 latency moves more than cost does. Set context-length p95 alerts before you set cost alerts; latency is what users feel first.
 - **Silent regression rate.** Provider-side silent quality drift of 5-15 percent on a major alias, 1-2 times per year, is roughly what we have observed across multiple vendors since 2024. Pin your version.

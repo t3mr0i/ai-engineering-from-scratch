@@ -5,6 +5,38 @@
    Marke bleibt LHIND (kein Lufthansa-Crane/Wordmark). */
 @import url("tokens.css");
 
+/* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
+   --shadow-focus (tokens.css) is a single rgba(45,95,228,0.30) value with
+   no dark-mode variant, so the same low-alpha blue ring gets used against
+   dark surfaces too — 1.35:1 against the dark header, WCAG 2.1 1.4.11
+   requires 3:1. Re-derived from --color-focus's own dark value (#a9c7e8,
+   already correct in tokens.css but never wired into --shadow-focus) at a
+   higher alpha to clear 3:1 against every dark surface in use
+   (~3.35–3.85:1 measured). NOTE: no [data-theme="light"] counterpart is
+   added here on purpose — most pages loading lrn.css (badges.html) or
+   style.css elsewhere hardcode data-theme="light" in their <html> tag as
+   an inert default (no such selector exists in tokens.css today, confirmed
+   empirically), so adding one here would make lrn.css force permanent
+   light mode on pages this file doesn't own the HTML of — a bigger,
+   cross-cutting change than this pass covers. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --shadow-focus: 0 0 0 3px rgba(169, 199, 232, 0.55);
+  }
+}
+[data-theme="dark"] {
+  --shadow-focus: 0 0 0 3px rgba(169, 199, 232, 0.55);
+}
+
+/* D7 — wordmark and course-detail back-link measured at 23px tall, 1px
+   under the WCAG 2.2 SC 2.5.8 24x24 target-size minimum (most visible on
+   narrow viewports where .wordmark's text label is hidden and only the
+   22.4px-tall logo image remains as the link's content). */
+.nav-edge .wordmark,
+.back-link {
+  min-height: 24px;
+}
+
 *,
 *::before,
 *::after {

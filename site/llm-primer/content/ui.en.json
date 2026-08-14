@@ -106,6 +106,8 @@
     "tok_hint": "Type text. A real GPT tokenizer splits it into tokens live:",
     "tok_note": "A leading “·” means the space belongs to that token — spaces are never separate. Common words are a single token; longer or rarer words break into fragments.",
     "tok_tokens": "Tokens",
+    "tok_token_one": "Token",
+    "tok_loading": "Tokenizing…",
     "tok_chars": "Characters",
     "tok_ratio": "Chars/token",
     "pipe_hint": "From prompt to answer, step by step:",

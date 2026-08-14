@@ -549,7 +549,7 @@
       '<div class="samplebtns" id="samples"></div>' +
       '<div class="tok-out" id="tokOut"></div>' +
       '<div class="tok-note muted small">' + esc(T.tok_note) + "</div>" +
-      '<div class="tok-meta"><div class="stat"><b id="tokN">0</b>' + esc(T.tok_tokens) + '</div><div class="stat"><b id="charN">0</b>' + esc(T.tok_chars) + '</div><div class="stat"><b id="ratio">–</b>' + esc(T.tok_ratio) + "</div></div>";
+      '<div class="tok-meta"><div class="stat"><b id="tokN">0</b><span id="tokLabel">' + esc(T.tok_tokens) + '</span></div><div class="stat"><b id="charN">0</b>' + esc(T.tok_chars) + '</div><div class="stat"><b id="ratio">–</b>' + esc(T.tok_ratio) + "</div></div>";
     var input = q("#tokIn", root);
     gd.samples.forEach(function (s) {
       var b = document.createElement("button");
@@ -583,8 +583,12 @@
       }
       return tokens;
     }
-    function update() {
-      var text = input.value;
+    // P9: tokenizing very large input (~100,000 chars) takes ~2s
+    // synchronously with no feedback, so the page just looks frozen. Show a
+    // loading state first and defer the (still synchronous) heavy work by
+    // one tick so the browser has a chance to paint it.
+    var LARGE_INPUT_THRESHOLD = 20000;
+    function runTokenize(text) {
       var toks = tokenize(text);
       var out = q("#tokOut", root);
       out.innerHTML = "";
@@ -598,10 +602,22 @@
         span.textContent = t.replace(/ /g, "·");
         out.appendChild(span);
       });
+      // P8: was a static "Tokens" label regardless of count ("1 Tokens").
+      var tokLabel = q("#tokLabel", root);
+      if (tokLabel) tokLabel.textContent = toks.length === 1 ? T.tok_token_one : T.tok_tokens;
       q("#tokN", root).textContent = toks.length;
       q("#charN", root).textContent = text.length;
       q("#ratio", root).textContent = toks.length ? (text.length / toks.length).toFixed(1) : "–";
       if (toks.length > 0) onComplete();
+    }
+    function update() {
+      var text = input.value;
+      if (text.length > LARGE_INPUT_THRESHOLD) {
+        q("#tokOut", root).textContent = T.tok_loading;
+        setTimeout(function () { runTokenize(text); }, 0);
+      } else {
+        runTokenize(text);
+      }
     }
     input.addEventListener("input", update);
     input.value = gd.samples[0];

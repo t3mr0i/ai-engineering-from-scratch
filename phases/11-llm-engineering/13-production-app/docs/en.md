@@ -216,11 +216,11 @@ Before you ship, estimate your monthly cost. This spreadsheet decides if your bu
 | Effective daily queries | 32,500 | 50,000 * (1 - 0.35) |
 
 **Monthly LLM cost:**
-- Input: 32,500 queries/day x 1,500 tokens x 30 days / 1M x $2.50 = **$3,656**
-- Output: 32,500 queries/day x 400 tokens x 30 days / 1M x $10.00 = **$3,900**
-- **Total: $7,556/month** (with caching saving ~$4,070/month)
+- Input: 32,500 queries/day x 1,500 tokens x 30 days / 1M x $5.00 = **$7,313**
+- Output: 32,500 queries/day x 400 tokens x 30 days / 1M x $15.00 = **$5,850**
+- **Total: $13,163/month** (with caching saving ~$7,088/month)
 
-Without caching, the same traffic costs $11,625/month. A 35% cache hit rate saves 35% on LLM costs. This is why Lesson 11 exists.
+Without caching, the same traffic costs $20,250/month. A 35% cache hit rate saves 35% on LLM costs. This is why Lesson 11 exists.
 
 ### The Deployment Checklist
 

@@ -5,6 +5,37 @@
    pages that load lrn.css directly. */
 @import url("lrn/tokens.css");
 
+/* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
+   --shadow-focus (tokens.css) is a single rgba(45,95,228,0.30) value with
+   no dark-mode variant, so the same low-alpha blue ring gets used against
+   dark surfaces too — 1.35:1 against the dark header, WCAG 2.1 1.4.11
+   requires 3:1. Re-derived from --color-focus's own dark value (#a9c7e8,
+   already correct in tokens.css but never wired into --shadow-focus) at a
+   higher alpha to clear 3:1 against every dark surface in use
+   (~3.35–3.85:1 measured). NOTE: no [data-theme="light"] counterpart is
+   added here on purpose — most pages in this codebase hardcode
+   data-theme="light" in their <html> tag as an inert default (no such
+   selector exists in tokens.css today, confirmed empirically), so adding
+   one here would make style.css force permanent light mode on every page
+   that loads it, including ones outside this file's ownership (lesson.html
+   and others) — a much bigger, cross-cutting change than this pass covers. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --shadow-focus: 0 0 0 3px rgba(169, 199, 232, 0.55);
+  }
+}
+[data-theme="dark"] {
+  --shadow-focus: 0 0 0 3px rgba(169, 199, 232, 0.55);
+}
+
+/* D7 — wordmark measured at 23px tall, 1px under the WCAG 2.2 SC 2.5.8
+   24x24 target-size minimum (most visible on narrow viewports where
+   .wordmark's text label is hidden and only the 22.4px-tall logo image
+   remains as the link's content). */
+.nav-edge .wordmark {
+  min-height: 24px;
+}
+
 /* ── Lufthansa Group webfonts (shared with the LRN cockpit) ──────────
    Fonts live in lrn/assets/fonts/; paths here are relative to this CSS
    file (site/style.css). Declaring the faces here lets catalog.html,
@@ -196,7 +227,12 @@ body {
   top: 0;
   z-index: 9999;
   background: var(--blueprint);
-  color: #fff;
+  /* D2: was a hardcoded #fff — 2.52:1 against the dark-mode --blueprint
+     (a light sky blue in dark mode), needs 4.5:1. --action-primary-ink is
+     the existing token for text placed on an --action-primary/--blueprint
+     fill and already flips correctly per theme (white in light mode, dark
+     ink in dark mode) — lrn.css's own .skip-link already used it. */
+  color: var(--action-primary-ink);
   padding: 12px 18px;
   font-family: var(--font-mono);
   font-size: 0.9rem;

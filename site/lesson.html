@@ -2290,6 +2290,11 @@
       var lessonPath = params.get('path');
       var lrnCourseId = params.get('course') || params.get('lrnCourse') || params.get('courseId');
       var lrnContext = null;
+      // Language of the currently-rendered lesson content, derived from
+      // whichever docs/<lang>.md the page actually fetched (see fetchLesson).
+      // Only en.md exists today, but deriving this from the URL rather than
+      // hardcoding it means it tracks correctly once a de.md fallback ships.
+      var currentLessonLang = 'en';
 
       if (!lessonPath) {
         showError('No lesson path specified', 'Add ?path=phases/01-math-foundations/01-linear-algebra-intuition to the URL.');
@@ -2848,6 +2853,10 @@
             return res.text();
           })
           .then(function (md) {
+            // Derived from the URL rather than hardcoded so it keeps matching
+            // once a docs/de.md fallback exists (D5 — content lang attribute).
+            var langMatch = rawUrl.match(/\/docs\/([a-z]{2})\.md$/);
+            currentLessonLang = langMatch ? langMatch[1] : 'en';
             try {
               renderLesson(md);
             } catch (err) {
@@ -2987,7 +2996,10 @@
         html += parseMd(md);
         html += '<div class="ai-panels" id="aiPanels"></div>';
         html = addBottomNav(html);
-        el.innerHTML = '<article class="lesson-article">' + html + '</article>';
+        // D5: tag the content container with the language actually loaded
+        // (currentLessonLang, set in fetchLesson) rather than inheriting the
+        // page's <html lang>, which is fixed and may not match the content.
+        el.innerHTML = '<article class="lesson-article" lang="' + currentLessonLang + '">' + html + '</article>';
 
         document.title = extractTitle(md) + (lrnContext ? ' · ' + lrnContext.course.id + ' LRN' : ' - LHIND AI Learning Catalog');
         updateLessonSeo(extractTitle(md), md);
@@ -3793,7 +3805,28 @@
       }
 
       function isRunnablePython(code) {
-        return _runnableBlocks != null && _runnableBlocks.has(blockHash(code));
+        // scripts/test_runnable_blocks.mjs builds the manifest by regex-matching
+        // ```python\n...``` over the raw markdown file; that capture always
+        // includes the newline immediately before the closing fence. parseMd
+        // rebuilds a block's text by joining its split lines with '\n', which
+        // drops that trailing newline — so every hash computed here silently
+        // missed the manifest (0 Run buttons anywhere, regardless of how fresh
+        // the manifest was). Append it back so the hash input matches the
+        // build script's extraction exactly.
+        //
+        // This fix alone does NOT mean Run buttons are now correct everywhere.
+        // site/runnable-blocks.json is a snapshot, not derived at request time:
+        // every edit to a ```python block's text (even whitespace) changes its
+        // hash and drops it out of the manifest until someone re-runs
+        // `node scripts/test_runnable_blocks.mjs`. It drifts stale silently —
+        // no error, the block just quietly stops getting a Run button. As of
+        // 2026-08-14 the manifest holds 657 hashes against ~88 python blocks
+        // actually present in phases/**/docs/en.md, and only ~20 of those still
+        // match — most of the manifest predates this remediation project's
+        // content edits. Regenerate after content work that touches lesson
+        // Python blocks settles down; regenerating mid-edit just goes stale
+        // again immediately.
+        return _runnableBlocks != null && _runnableBlocks.has(blockHash(code + '\n'));
       }
 
       // Wrap a rendered code block in a collapsed <details> so all blocks start
@@ -4633,21 +4666,24 @@
           var q = questions[qi];
           var qid = id + '-q' + qi;
           html += '<div class="quiz-question" data-correct="' + q.correct + '" id="' + qid + '">';
-          html += '<div class="quiz-question-text">' + (qi + 1) + '. ' + escapeHtml(q.question) + '</div>';
-          html += '<div class="quiz-options">';
+          html += '<div class="quiz-question-text" id="' + qid + '-text">' + (qi + 1) + '. ' + escapeHtml(q.question) + '</div>';
+          html += '<div class="quiz-options" role="radiogroup" aria-labelledby="' + qid + '-text">';
           for (var oi = 0; oi < q.options.length; oi++) {
-            html += '<div class="quiz-option" data-index="' + oi + '" onclick="handleQuizClick(this)">';
+            // Roving tabindex: only the first option is in the tab order until
+            // arrow-key navigation moves it (see the quiz-option keydown
+            // handler below).
+            html += '<div class="quiz-option" data-index="' + oi + '" role="radio" aria-checked="false" tabindex="' + (oi === 0 ? '0' : '-1') + '" onclick="handleQuizClick(this)">';
             html += '<span class="quiz-marker"></span>';
             html += '<span>' + escapeHtml(q.options[oi]) + '</span>';
             html += '</div>';
           }
           html += '</div>';
           if (q.explanation) {
-            html += '<div class="quiz-explanation" id="' + qid + '-exp">' + escapeHtml(q.explanation) + '</div>';
+            html += '<div class="quiz-explanation" id="' + qid + '-exp" aria-live="polite">' + escapeHtml(q.explanation) + '</div>';
           }
           html += '</div>';
         }
-        html += '<div class="quiz-score" id="quiz-' + id + '-score"></div>';
+        html += '<div class="quiz-score" id="quiz-' + id + '-score" aria-live="polite"></div>';
         html += '</div>';
         return html;
       }
@@ -4658,6 +4694,35 @@
         applyQuizAnswer(questionDiv, parseInt(el.getAttribute('data-index')), true);
       };
 
+      // Keyboard support for the quiz-option radiogroup (role="radio" divs,
+      // not real <input type="radio">, so none of this is native): arrow
+      // keys move the roving tabindex within the group per the WAI-ARIA
+      // radiogroup pattern, Enter/Space picks the focused option. Delegated
+      // on document so it keeps working across every quiz re-render.
+      document.addEventListener('keydown', function (e) {
+        var opt = e.target.closest && e.target.closest('.quiz-option');
+        if (!opt) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.handleQuizClick(opt);
+          return;
+        }
+        var delta = 0;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') delta = 1;
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') delta = -1;
+        else return;
+        var group = opt.closest('.quiz-options');
+        var questionDiv = opt.closest('.quiz-question');
+        if (!group || (questionDiv && questionDiv.classList.contains('answered'))) return;
+        e.preventDefault();
+        var options = Array.prototype.slice.call(group.querySelectorAll('.quiz-option'));
+        var idx = options.indexOf(opt);
+        var next = options[(idx + delta + options.length) % options.length];
+        options.forEach(function (o) { o.setAttribute('tabindex', '-1'); });
+        next.setAttribute('tabindex', '0');
+        next.focus();
+      });
+
       function applyQuizAnswer(questionDiv, chosen, persist) {
         if (!questionDiv || isNaN(chosen)) return;
         questionDiv.classList.add('answered');
@@ -4667,6 +4732,12 @@
 
         for (var i = 0; i < options.length; i++) {
           options[i].classList.add('disabled');
+          // `disabled` isn't a real attribute on a <div> \u2014 mark it inert for
+          // assistive tech (aria-disabled) and pull it out of the tab order,
+          // since a real `disabled` attribute has no effect here.
+          options[i].setAttribute('aria-disabled', 'true');
+          options[i].setAttribute('tabindex', '-1');
+          options[i].setAttribute('aria-checked', i === chosen ? 'true' : 'false');
           if (i === correct) {
             options[i].classList.add('correct');
             var mc = options[i].querySelector('.quiz-marker');
@@ -4683,7 +4754,13 @@
         }
 
         var exp = questionDiv.querySelector('.quiz-explanation');
-        if (exp) exp.style.display = 'block';
+        if (exp) {
+          exp.style.display = 'block';
+          // Force a real text mutation (even to the same value) inside the
+          // aria-live region \u2014 a bare display:none -> block flip on already-
+          // present content isn't reliably announced by screen readers.
+          exp.textContent = exp.textContent;
+        }
 
         if (persist && window.AIFSProgress && lessonPath) {
           window.AIFSProgress.recordAnswer(lessonPath, questionDiv.id, chosen, chosen === correct);
@@ -5077,30 +5154,54 @@
         // JupyterLite single-notebook view, served from the same site under
         // jupyterlite/. Embedded in-page via iframe (same origin → no CORS,
         // no mixed-content, no login). Loaded on demand to keep the page fast.
-        var notebookUrl = 'jupyterlite/notebooks/index.html?path=' + lessonPath + '.ipynb';
-        var notebookFull = 'jupyterlite/lab/index.html?path=' + lessonPath + '.ipynb';
-        // The notebook content lives under jupyterlite/files/. Not every lesson
-        // has one — probe it so we never embed an iframe that 404s.
-        var notebookFile = 'jupyterlite/files/' + lessonPath + '.ipynb';
+        // notebookUrl/notebookFull/notebookFile are set once the actual base
+        // (plain or course-specific) is resolved below.
+        var notebookUrl, notebookFull, notebookFile;
+        function setNotebookBase(base) {
+          notebookUrl = 'jupyterlite/notebooks/index.html?path=' + base + '.ipynb';
+          notebookFull = 'jupyterlite/lab/index.html?path=' + base + '.ipynb';
+          notebookFile = 'jupyterlite/files/' + base + '.ipynb';
+        }
+
+        // Not every lesson has a shared <lessonPath>.ipynb — some only ship
+        // per-course notebooks (<lessonPath>.<course>.ipynb), the same
+        // mechanism renderLrnNotebookPanel uses. This panel has no
+        // guaranteed LRN context (it's also reached from the plain PHASES
+        // catalog), so resolve from the ?course= URL param when present and
+        // otherwise fall back to every course curated for this lesson in
+        // notebook-index.json, probing each with HEAD until one exists.
+        function resolveNotebookBase() {
+          var candidates = [lessonPath];
+          var urlCourse = (new URLSearchParams(location.search).get('course') || '').trim();
+          if (urlCourse) candidates.push(lessonPath + '.' + urlCourse);
+          var curated = (window.LrnNotebookIndex && window.LrnNotebookIndex.curated && window.LrnNotebookIndex.curated[lessonPath]) || [];
+          curated.forEach(function (c) {
+            if (c !== '*' && candidates.indexOf(lessonPath + '.' + c) < 0) candidates.push(lessonPath + '.' + c);
+          });
+          function tryNext(i) {
+            if (i >= candidates.length) return Promise.resolve(null);
+            return fetch('jupyterlite/files/' + candidates[i] + '.ipynb', { method: 'HEAD' })
+              .then(function (r) { return r.ok ? candidates[i] : tryNext(i + 1); })
+              .catch(function () { return tryNext(i + 1); });
+          }
+          return tryNext(0);
+        }
 
         Promise.all([
           fetch(codeUrl).then(function (r) { return r.ok ? r.text() : null; }).catch(function () { return null; }),
-          fetch(notebookFile, { method: 'HEAD' }).then(function (r) { return r.ok; }).catch(function () { return false; })
+          resolveNotebookBase()
         ]).then(function (res) { mountNotebook(res[0], res[1]); });
 
-        function mountNotebook(src, hasNotebook) {
+        function mountNotebook(src, base) {
           var el = document.getElementById('codeContent');
-          if (!hasNotebook) {
-            // No notebook for this lesson — offer the code + GitLab instead of
-            // an empty Jupyter shell.
-            el.innerHTML =
-              '<div class="nb-placeholder">' +
-              '<div class="nb-hint">No in-browser notebook for this lesson yet. View the code and run it locally:</div>' +
-              '<div class="code-card-actions">' +
-              '<a class="code-card-btn" href="' + gitlabUrl + '" target="_blank" rel="noopener">View on GitLab</a>' +
-              '</div></div>';
+          if (!base) {
+            // No notebook at all for this lesson (e.g. pure-theory content).
+            // Drop the whole panel rather than an empty "no notebook yet"
+            // placeholder — same choice renderLrnNotebookPanel makes.
+            panel.remove();
             return;
           }
+          setNotebookBase(base);
           var heavy = src && PY_NO_WASM.test(src);
           var note = heavy
             ? 'This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU. The notebook shows the saved output already — open it to read and edit; run it locally for live results.'

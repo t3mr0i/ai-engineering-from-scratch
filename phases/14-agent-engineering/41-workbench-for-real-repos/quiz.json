@@ -28,63 +28,63 @@
     },
     {
       "stage": "check",
-      "question": "What did LangChain's Anatomy of an Agent Harness measure on Terminal Bench 2.0?",
+      "question": "What role do README.md and scripts/release.sh play in the sample app, per the lesson?",
       "options": [
-        "Models all converged at top-3",
-        "Same model moved from outside top 30 to rank five by changing only the harness",
-        "Top model lost 25 places",
-        "Harness changes did not move the rank"
+        "They hold the acceptance criteria the verification gate checks",
+        "They are the two files the task explicitly asks the agent to edit",
+        "They are forbidden-zone bait, testing if a run stays in scope",
+        "They store the before/after report the lesson later generates"
       ],
-      "correct": 1,
-      "explanation": "Twenty-five-rank delta on the same model is the headline harness-vs-model receipt."
+      "correct": 2,
+      "explanation": "The lesson describes README.md and scripts/release.sh in the sample app as forbidden-zone bait."
     },
     {
       "stage": "check",
-      "question": "What does the preprints.org paper cite as the failure rate for enterprise agent projects?",
+      "question": "What does the prompt-only pipeline skip that the workbench-guided pipeline includes, per the lesson?",
       "options": [
-        "8%",
-        "About 88% fail to reach production, with failures clustering around runtime, not reasoning",
-        "About 50%",
-        "None fail"
+        "Reading the README before editing any files in the repo",
+        "Running the test suite at any point during the session",
+        "Editing app.py to add the validation the task requested",
+        "A scope contract, a verification gate, and a reviewer"
       ],
-      "correct": 1,
-      "explanation": "The Harness Engineering for Language Agents preprint traces failures to runtime issues (stale state, brittle retries, overgrown context)."
+      "correct": 3,
+      "explanation": "The lesson lists the prompt-only pipeline as read README, read app.py, edit files, claim done; the workbench-guided pipeline adds the scope contract, feedback runner, verification gate, reviewer, and handoff steps."
     },
     {
       "stage": "check",
-      "question": "What does WebAgent baseline accuracy do in long-context conditions?",
+      "question": "What is the task both pipelines run in the lesson?",
       "options": [
-        "Stays flat",
-        "Drops from 40-50% to under 10% mostly from infinite loops and goal loss",
-        "Goes up by 30%",
-        "Halves but stays above 30%"
+        "Add rate limiting to /signup and log every rejected attempt",
+        "Migrate /signup from synchronous to asynchronous request handling",
+        "Add a password-strength meter to the signup form's frontend",
+        "Validate /signup: reject short passwords, return a typed 422"
       ],
-      "correct": 1,
-      "explanation": "Long-context collapse is what the Ralph Loop and handoff packet exist to absorb."
+      "correct": 3,
+      "explanation": "The lesson states the task as: add input validation to /signup, reject passwords shorter than 8 characters, return 422 with a typed error envelope, and add a test that proves the new behavior."
     },
     {
       "stage": "post",
-      "question": "What does the lesson say about false negatives (cases where prompt-only is faster)?",
+      "question": "Why does the lesson measure tests_actually_run as one of the five outcomes?",
       "options": [
-        "They do not exist",
-        "Single-step factual tasks, one-line lints, formatter runs are faster prompt-only; enumerate them honestly so the workbench is not framed as overkill",
-        "They prove the workbench fails",
-        "They invalidate the harness thesis"
+        "Because CI billing is charged per test that actually runs",
+        "Because the reviewer agent only reads tests run more than once",
+        "Because handoff quality is scored solely on total test count",
+        "Because most 'tests passed' claims are otherwise unverifiable"
       ],
-      "correct": 1,
-      "explanation": "Honest enumeration of prompt-only-fastest cases keeps the harness argument credible."
+      "correct": 3,
+      "explanation": "The lesson's outcomes table gives the reason for tests_actually_run as: most 'tests passed' claims are unverifiable."
     },
     {
       "stage": "post",
-      "question": "Where do you cite the report from this lesson?",
+      "question": "Why does files_outside_scope matter as one of the five measured outcomes, per the lesson?",
       "options": [
-        "Internal HR review",
-        "When someone wants to drop the verification gate 'just for this sprint', or when a new agent product launches and needs a portable time-savings benchmark",
-        "Only in marketing decks",
-        "Only at hackathons"
+        "Because it is the only outcome the verification gate can compute",
+        "Because it directly sets the reviewer_total score by formula",
+        "Because it is the cheapest of the five outcomes to measure",
+        "Because scope creep is the dominant silent failure mode here"
       ],
-      "correct": 1,
-      "explanation": "The numbers travel further than the explanation; cite the report when pressure tries to short-circuit surfaces."
+      "correct": 3,
+      "explanation": "The lesson's outcomes table gives the reason for files_outside_scope as: scope creep is the dominant silent failure."
     }
   ]
 }

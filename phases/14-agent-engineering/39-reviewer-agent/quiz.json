@@ -40,39 +40,39 @@
     },
     {
       "stage": "check",
-      "question": "What does Cloudflare's 2026 review architecture look like?",
+      "question": "What score turns a reviewer run into a hard fail, per the lesson?",
       "options": [
-        "One big reviewer",
-        "Up to seven specialist reviewers in parallel under a Review Coordinator that deduplicates findings; top-tier model only for the coordinator, cheaper tiers for specialists",
-        "Round-robin two reviewers",
-        "Single sequential LLM"
+        "Any single rubric dimension scoring 0 is an automatic hard fail",
+        "A total under 5 of 10 is a hard fail; under 7 is a soft fail",
+        "A total below 8 out of 10 is a hard fail; below 9 is a soft fail",
+        "There is no fail threshold; every run needs a human tie-break"
       ],
       "correct": 1,
-      "explanation": "Cloudflare ran 131,246 review runs in 30 days using specialist + coordinator architecture."
+      "explanation": "The lesson says the rubric totals out of 10: a run below 7 is a soft fail, a run below 5 is a hard fail."
     },
     {
       "stage": "check",
-      "question": "Which of these is NOT one of the four LLM-judge biases the lesson lists?",
+      "question": "What is the reviewer forbidden from doing, per the lesson?",
       "options": [
-        "Position bias (A,B vs B,A ordering inconsistency)",
-        "Verbosity bias (longer outputs score higher)",
-        "Self-preference (same model family)",
-        "Vector locality"
+        "Reading the builder's feedback log before writing its report",
+        "Scoring more than one rubric dimension in a single review pass",
+        "Patching the diff; it only writes a report for the next turn",
+        "Running the acceptance command again to double-check the result"
       ],
-      "correct": 3,
-      "explanation": "The four are position, verbosity, self-preference, authority; vector locality is not one of them."
+      "correct": 2,
+      "explanation": "The lesson says the reviewer reads the diff, state, feedback, and verdict, and writes a report, but does not patch the diff; mixing roles defeats the gap."
     },
     {
       "stage": "post",
-      "question": "What is a calibration set?",
+      "question": "How does the lesson distinguish the verification gate from the reviewer?",
       "options": [
-        "A new training corpus",
-        "10-20 historical task close-outs with known correct verdicts; rerun on every prompt change; if reviewer agreement falls below 80%, fix the rubric before shipping",
-        "An A/B test fixture",
-        "A vector index"
+        "The gate runs before the builder starts; the reviewer only runs on request",
+        "The gate is optional; only the reviewer is required before a merge",
+        "The gate scores 0-2 per dimension; the reviewer only returns pass or fail",
+        "The gate checks deterministic facts; the reviewer makes qualitative calls"
       ],
-      "correct": 1,
-      "explanation": "Calibration sets keep the reviewer honest; if agreement drifts you fix the rubric, not the data."
+      "correct": 3,
+      "explanation": "The lesson says the gate checks deterministic facts (did acceptance run, did rules pass, did scope hold) while the reviewer makes qualitative judgments (was this the right work, is it documented, is the handoff usable)."
     },
     {
       "stage": "post",

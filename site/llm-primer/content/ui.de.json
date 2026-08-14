@@ -106,6 +106,8 @@
     "tok_hint": "Tippe Text. Ein echter GPT-Tokenizer zerlegt ihn live in Tokens:",
     "tok_note": "Ein führendes „·“ heißt: Das Leerzeichen gehört zum Token – Leerzeichen stehen nie allein. Häufige Wörter sind ein Token; längere oder seltenere Wörter zerfallen in Teile.",
     "tok_tokens": "Tokens",
+    "tok_token_one": "Token",
+    "tok_loading": "Tokenisierung läuft…",
     "tok_chars": "Zeichen",
     "tok_ratio": "Zeichen/Token",
     "pipe_hint": "Vom Prompt zur Antwort, Schritt für Schritt:",

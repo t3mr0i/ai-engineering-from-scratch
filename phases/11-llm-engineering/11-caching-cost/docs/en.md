@@ -58,7 +58,7 @@ graph LR
     F --> G[Output Cost<br/>$10.00/1M tokens]
 ```
 
-System prompts are the silent killer. A 1,500-token system prompt sent with every request costs $3.75 per million requests just for that prefix. At 100K requests per day, that is $375/day -- $11,250/month -- for text that never changes.
+System prompts are the silent killer. A 1,500-token system prompt sent with every request costs $3,750 per million requests just for that prefix (1,500 tokens x $2.50/1M input rate). At 100K requests per day, that is $375/day -- $11,250/month -- for text that never changes.
 
 ### Provider Caching: Built-in Discounts
 

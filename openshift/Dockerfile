@@ -18,9 +18,18 @@ COPY README.md ROADMAP.md ./
 COPY glossary ./glossary
 COPY site ./site
 COPY phases ./phases
-# Same selection as the rsync command in .gitlab-ci.yml's deploy_azure job
-# (docs/en.md, quiz.json, code/main.py per phase/lesson), reimplemented in
-# plain Node so the build doesn't depend on rsync being present in the image.
+# Same selection as serve.sh's rsync staging (docs/en.md, quiz.json,
+# code/main.py, assets/ per phase/lesson) — the equivalent .gitlab-ci.yml
+# deploy_azure job this used to mirror was removed when Azure was
+# decommissioned (see CLAUDE.md §1), so serve.sh is now the only other
+# copy of this selection; keep the two in sync. Reimplemented in plain Node
+# here so the build doesn't depend on rsync being present in the image.
+# assets/ (lesson SVGs referenced by markdown ![]() images, resolved at
+# request time by resolveLessonAssetSrc() in lesson.html) is a whole
+# directory per lesson rather than a fixed filename, so it's copied with
+# fs.cpSync's recursive mode instead of being added to FILES — that also
+# covers assets/ ever gaining subdirectories later (flat today: 298
+# lesson-assets dirs, 298 .svg files, ~2.1MB total across the repo).
 RUN node site/build.js && node -e " \
   const fs = require('fs'); \
   const path = require('path'); \
@@ -38,6 +47,10 @@ RUN node site/build.js && node -e " \
           fs.mkdirSync(path.dirname(dst), { recursive: true }); \
           fs.copyFileSync(src, dst); \
         } \
+      } \
+      const assetsSrc = path.join(lessonDir, 'assets'); \
+      if (fs.existsSync(assetsSrc) && fs.statSync(assetsSrc).isDirectory()) { \
+        fs.cpSync(assetsSrc, path.join('site/phases', phase, lesson, 'assets'), { recursive: true }); \
       } \
     } \
   } \

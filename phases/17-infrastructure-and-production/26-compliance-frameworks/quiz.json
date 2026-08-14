@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When does EU AI Act enforcement for high-risk systems begin?",
+      "question": "Regulation (EU) 2026/1744 postponed the EU AI Act's high-risk deadlines. When do obligations for Annex III high-risk systems begin?",
       "options": [
-        "February 2, 2025",
-        "August 2, 2026",
-        "Already fully enforced in 2024",
-        "January 1, 2030"
+        "August 2, 2026, the date originally set before the postponement",
+        "December 2, 2027, the postponed deadline for Annex III systems",
+        "August 2, 2028, the postponed deadline for Annex I systems",
+        "February 2, 2025, the date prohibited AI practices took effect"
       ],
       "correct": 1,
-      "explanation": "The lesson's timeline puts the AI Act in force since August 1, 2024, with prohibited practices enforced from February 2, 2025, and most high-risk-system requirements enforcing from August 2, 2026."
+      "explanation": "The lesson notes that Regulation (EU) 2026/1744 postponed the original August 2026/2027 dates: high-risk obligations now apply from December 2, 2027 for Annex III systems and August 2, 2028 for Annex I systems."
     },
     {
       "stage": "check",

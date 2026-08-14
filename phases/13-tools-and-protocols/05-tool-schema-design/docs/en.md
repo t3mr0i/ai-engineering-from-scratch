@@ -22,7 +22,7 @@ Imagine an agent with 30 tools. Every user query triggers tool selection: the mo
 
 **No tool picked when one fits.** The user asks for a stock price; the model replies with a plausible but hallucinated number. Cause: the description says "retrieve financial data" but the model did not map "stock price" to that.
 
-Composio's 2025 field guide measured 10 to 20 percentage-point accuracy swings on internal benchmarks purely from renaming and rewriting descriptions. Anthropic's Agent SDK documentation claims similar. Databricks' agent patterns doc goes further: on a registry of 50 tools with ambiguous descriptions, selection accuracy dropped to 62 percent; after a description rewrite, the same registry hit 89 percent.
+Composio's 2025 field guide measured 10 to 20 percentage-point accuracy swings on internal benchmarks purely from renaming and rewriting descriptions. Anthropic's Agent SDK documentation claims similar. Databricks' agent patterns doc reaches the same conclusion from the design side: keep a registry small and prune ambiguous descriptions rather than exposing an unbounded set of tools, because every extra tool with a vague description is another chance for the model to pick the wrong one.
 
 Description and name quality is the cheapest lever you have.
 

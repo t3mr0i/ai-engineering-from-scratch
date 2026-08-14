@@ -19,7 +19,21 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 
 cd "$ROOT"
 
-# Build + Lesson-Content-Staging wie in .gitlab-ci.yml
+# Build + Lesson-Content-Staging — same file selection as
+# openshift/Dockerfile's build stage (the .gitlab-ci.yml deploy_azure job
+# this used to mirror was removed when Azure was decommissioned; keep this
+# script and the Dockerfile in sync instead). The assets/ include was
+# missing here too until this fix — lesson markdown images 404'd both
+# locally and in the deployed container.
+# NOTE: `assets/*` (one path segment), not `assets/**` — this box's rsync
+# is openrsync (macOS/BSD, protocol 29), and its `**` does not match across
+# the phase/lesson directory boundary the way GNU rsync's does (verified:
+# `assets/**` silently staged zero files from more than one level up,
+# `assets/*` staged all of them). `assets/*` only reaches directly-inside
+# files, which matches every current lesson (298 assets/ dirs, each with
+# exactly one flat .svg file, no subdirectories) — if a lesson ever nests
+# assets in a subfolder, both this pattern and the site's image resolver
+# would need revisiting together.
 node site/build.js
 mkdir -p site/phases
 rsync -a --prune-empty-dirs \
@@ -27,6 +41,7 @@ rsync -a --prune-empty-dirs \
   --include='docs/en.md' \
   --include='quiz.json' \
   --include='code/main.py' \
+  --include='assets/*' \
   --exclude='*' \
   phases/ site/phases/
 

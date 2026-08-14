@@ -2,6 +2,24 @@
 <html lang="en" data-theme="light">
 <head>
   <script src="/gate-guard.js"></script>
+  <script>
+    /* D1 — resolve an explicit stored dark-mode choice before first paint,
+       same mechanism as lesson.html/llm-primer. Only an explicit stored
+       value is applied; with nothing stored the attribute stays as
+       authored and the prefers-color-scheme media query in lrn/tokens.css
+       keeps handling the OS preference. */
+    (function () {
+      function apply() {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        if (stored === 'dark' || stored === 'light') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      }
+      apply();
+      window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LHIND · AI-Literacy Self-Assessment</title>
@@ -122,17 +140,55 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <button type="button" id="darkModeToggle" class="nav-settings theme-toggle" title="Switch color theme" aria-label="Switch color theme">
+      <i class="ph-light ph-moon" aria-hidden="true" id="darkModeIcon"></i>
+    </button>
     <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
   <script src="i18n.js"></script>
   <script src="lang.js"></script>
+  <script>
+    /* D1 — dark-mode toggle button. Wires the button in the header above
+       to the same localStorage 'theme' key lesson.html/llm-primer already
+       read, so the choice is shared and persisted across the whole site. */
+    (function () {
+      var btn = document.getElementById('darkModeToggle');
+      var icon = document.getElementById('darkModeIcon');
+      if (!btn) return;
+      function stored() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
+      function osDark() { return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); }
+      function current() {
+        var s = stored();
+        return (s === 'dark' || s === 'light') ? s : (osDark() ? 'dark' : 'light');
+      }
+      function render() {
+        var theme = current();
+        icon.className = 'ph-light ' + (theme === 'dark' ? 'ph-sun' : 'ph-moon');
+        var de = (window.SiteLang ? window.SiteLang.get() : 'en') === 'de';
+        var label = theme === 'dark'
+          ? (de ? 'Zu hellem Farbschema wechseln' : 'Switch to light color theme')
+          : (de ? 'Zu dunklem Farbschema wechseln' : 'Switch to dark color theme');
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+      render();
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        document.documentElement.setAttribute('data-theme', next);
+        render();
+      });
+      if (window.SiteLang) document.addEventListener('sitelang:change', render);
+    })();
+  </script>
 
   <main id="main" class="container assess-page">
     <div class="assess-header">
       <h1 data-i18n="assess_title">AI-Literacy Self-Assessment</h1>
-      <p>Pick your role, rate yourself across the 19 capabilities, and get an
+      <p id="assessIntro">Pick your role, rate yourself, and get an
          AI-Literacy score plus a learning path built from the lessons you actually need.</p>
     </div>
 
@@ -197,6 +253,27 @@
       var phaseById = {};
       if (typeof PHASES !== 'undefined') PHASES.forEach(function (p) { phaseById[p.id] = p; });
 
+      // B7: the intro copy hardcoded "19 capabilities" instead of reading
+      // it from the data (capabilities.js currently has exactly 19, but
+      // that number drifts whenever the sheet capabilities.js is generated
+      // from changes) — derive it so the two can never disagree again.
+      var introEl = document.getElementById('assessIntro');
+      if (introEl) {
+        introEl.textContent = 'Pick your role, rate yourself across the ' + CAPABILITIES.length +
+          ' capabilities, and get an AI-Literacy score plus a learning path built from the lessons you actually need.';
+      }
+
+      // B6: descriptions were cut at a hard 160-char slice, landing
+      // mid-word. Cut back to the last full word within the limit instead.
+      function truncateDesc(str, maxLen) {
+        str = str || '';
+        if (str.length <= maxLen) return str;
+        var cut = str.slice(0, maxLen);
+        var lastSpace = cut.lastIndexOf(' ');
+        if (lastSpace > 0) cut = cut.slice(0, lastSpace);
+        return cut.replace(/[\s.,;:!?]+$/, '') + '…';
+      }
+
       var state = { role: '', ratings: {} }; // ratings: capId -> 'None'|'Basic'|'Advanced'|'Expert'
       try { var s = JSON.parse(localStorage.getItem(STORE)); if (s) state = s; } catch (e) {}
       function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
@@ -244,7 +321,7 @@
           var left = document.createElement('div');
           left.innerHTML =
             '<div class="cap-name">' + cap.title + '</div>' +
-            '<div class="cap-desc">' + (cap.description || '').slice(0, 160) + '</div>' +
+            '<div class="cap-desc">' + truncateDesc(cap.description, 160) + '</div>' +
             (target ? '<div class="cap-target">Target for your role: ' + target + '</div>'
                     : '<div class="cap-no-match">Not required for your role</div>') +
             (cap.phases.length ? '' : '<div class="cap-no-match">No in-curriculum lessons yet</div>');

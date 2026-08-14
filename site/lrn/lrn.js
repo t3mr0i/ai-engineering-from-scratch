@@ -544,7 +544,12 @@
       } else if (state.filter === "recommended" && hasOptional) {
         empty.textContent = i18n("lrn_empty_no_onpath");
       } else {
-        empty.textContent = i18n("lrn_empty_no_matches");
+        // B10: lrn_empty_no_matches told users to "clear the search" even
+        // though no search term or topic is active in this branch (both
+        // are handled above) — there is nothing to clear. Reuse the
+        // on-path empty copy instead: it already only points at the "All"
+        // filter, an action that always exists on this page.
+        empty.textContent = i18n("lrn_empty_no_onpath");
       }
       replaceChildren(els.courseGrid, [empty]);
       return;
@@ -833,7 +838,12 @@
     return entries.filter(function (entry) {
       if (state.filter === "all") return true;
       if (state.filter === "recommended" || state.filter === "optional") return entry.kind === state.filter;
-      if (state.filter === "inprogress") return entry.progress.completedLessons > 0 && entry.progress.completedLessons < entry.progress.lessonCount;
+      // B5: was keyed on completedLessons, so a course with a visited-but-
+      // not-yet-completed lesson (the same signal the homepage "resume"
+      // CTA uses) never counted as "Begonnen" here — the tab showed 0
+      // while the hero still offered to continue. Key on visitedLessons
+      // instead, matching what "started" actually means.
+      if (state.filter === "inprogress") return entry.progress.visitedLessons > 0 && entry.progress.completedLessons < entry.progress.lessonCount;
       if (state.filter === "completed") return entry.progress.lessonCount > 0 && entry.progress.completedLessons === entry.progress.lessonCount;
       return true;
     });

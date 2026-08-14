@@ -25,7 +25,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Shortens broad AI foundations into a business-readable entry path.",
         lessons: [
-          { path: "phases/11-llm-engineering/73-ai-fundamentals", title: "How AI Systems Actually Work: A Practitioner's Map" },
+          { path: "phases/11-llm-engineering/73-ai-fundamentals", title: "How AI Systems Actually Work: A Consultant's Map of the Four Layers" },
           { path: "phases/02-ml-fundamentals/01-what-is-machine-learning", title: "What Is Machine Learning" },
           { path: "phases/08-generative-ai/01-generative-models-taxonomy-history", title: "Generative Models — Taxonomy & History" },
           { path: "phases/07-transformers-deep-dive/01-why-transformers", title: "Why Transformers" },
@@ -92,7 +92,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Relevant for every role using enterprise AI tools.",
         lessons: [
-          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in Practice: GDPR Compliance, Bias Auditing, and Guardrail Design" },
+          { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/11-llm-engineering/12-guardrails", title: "Guardrails, Safety & Content Filtering" },
           { path: "phases/18-ethics-safety-alignment/15-indirect-prompt-injection", title: "Indirect Prompt Injection" },
           { path: "phases/14-agent-engineering/27-prompt-injection-defense", title: "Prompt Injection and the PVE Defense" }
@@ -104,7 +104,7 @@ window.LrnCurriculumMap = {
         note: "Maps GDPR, auditability and enterprise control language into the LRN course.",
         lessons: [
           { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security — Secrets, API Key Rotation, Audit Logs, Guardrails" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001" },
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
           { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks — EU, US, UK, Korea" }
         ]
       },
@@ -310,7 +310,7 @@ window.LrnCurriculumMap = {
           { path: "phases/11-llm-engineering/80-corporate-ethics-and-compliance-for-ai", title: "AI Use-Case Intake: From Idea to Approved Deployment" },
           { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
           { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
-          { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks" }
+          { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks — EU, US, UK, Korea" }
         ]
       },
       {
@@ -587,7 +587,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Maps the main AI platform choices to enterprise architecture questions.",
         lessons: [
-          { path: "phases/11-llm-engineering/89-ai-ecosystem-and-vendor-landscape", title: "AI Ecosystem Map: Models, Platforms, and Vendor Trade-offs" },
+          { path: "phases/11-llm-engineering/89-ai-ecosystem-and-vendor-landscape", title: "AI Ecosystem Map: Vendor Decisions With Exit Costs in View" },
           { path: "phases/17-infrastructure-and-production/01-managed-llm-platforms", title: "Managed LLM Platforms" },
           { path: "phases/17-infrastructure-and-production/19-ai-gateways", title: "AI Gateways" }
         ]
@@ -650,7 +650,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Frames AI-supported decisions around evidence and measurement.",
         lessons: [
-          { path: "phases/11-llm-engineering/91-decision-making-with-ai", title: "AI Recommendations to Accountable Decisions: A Decision-Quality Framework" },
+          { path: "phases/11-llm-engineering/91-decision-making-with-ai", title: "From AI Recommendation to Accountable Decision: A Decision-Quality Framework" },
           { path: "phases/02-ml-fundamentals/09-model-evaluation", title: "Model Evaluation" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
         ]
@@ -713,7 +713,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Introduces trust-boundary thinking for AI workflows.",
         lessons: [
-          { path: "phases/11-llm-engineering/93-ai-security-and-prompt-injection-defense", title: "Prompt Injection and AI Security: Attack Surface Triage" },
+          { path: "phases/11-llm-engineering/93-ai-security-and-prompt-injection-defense", title: "Prompt Injection and AI Security: Failure Shapes and Defense Triage" },
           { path: "phases/11-llm-engineering/12-guardrails", title: "Guardrails, Safety & Content Filtering" },
           { path: "phases/14-agent-engineering/27-prompt-injection-defense", title: "Prompt Injection and the PVE Defense" }
         ]
@@ -744,7 +744,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Frames internal knowledge assistants around source ownership and permissions.",
         lessons: [
-          { path: "phases/11-llm-engineering/94-internal-knowledge-assistants-with-rag", title: "Planning an Internal Knowledge Assistant: Source Accountability, Permissions, and Fallbacks" },
+          { path: "phases/11-llm-engineering/94-internal-knowledge-assistants-with-rag", title: "Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence" },
           { path: "phases/11-llm-engineering/06-rag", title: "RAG (Retrieval-Augmented Generation)" },
           { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" }
         ]
@@ -775,7 +775,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Turns vendor selection into an explicit fit and risk comparison.",
         lessons: [
-          { path: "phases/11-llm-engineering/95-ai-vendor-and-procurement-evaluation", title: "AI Vendor Evaluation: A Scoring Framework for Procurement Decisions" },
+          { path: "phases/11-llm-engineering/95-ai-vendor-and-procurement-evaluation", title: "AI Vendor Evaluation: Procurement Evidence That Bites" },
           { path: "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape", title: "AI Ecosystem and Vendor Landscape" },
           { path: "phases/17-infrastructure-and-production/01-managed-llm-platforms", title: "Managed LLM Platforms" }
         ]
@@ -787,7 +787,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
           { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
-          { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks" }
+          { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks — EU, US, UK, Korea" }
         ]
       },
       {
@@ -827,7 +827,7 @@ window.LrnCurriculumMap = {
         note: "Shows how incidents update evals, prompts, tools and runbooks.",
         lessons: [
           { path: "phases/11-llm-engineering/19-ai-driven-testing-qa", title: "AI-Driven Testing and QA" },
-          { path: "phases/19-capstone-projects/28-observability-otel-traces", title: "Observability with OTel GenAI Spans" }
+          { path: "phases/19-capstone-projects/28-observability-otel-traces", title: "Observability with OTel GenAI Spans and Prometheus Metrics" }
         ]
       }
     ],
@@ -1034,7 +1034,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Connects governance to chunking, retrieval quality and answer trust.",
         lessons: [
-          { path: "phases/11-llm-engineering/06-rag", title: "RAG — Retrieval-Augmented Generation" },
+          { path: "phases/11-llm-engineering/06-rag", title: "RAG (Retrieval-Augmented Generation)" },
           { path: "phases/05-nlp-foundations-to-advanced/23-chunking-strategies-rag", title: "Chunking Strategies for RAG" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" }
         ]
@@ -1191,7 +1191,7 @@ window.LrnCurriculumMap = {
         note: "Connects platform use cases to knowledge assistants, RAG and data literacy.",
         lessons: [
           { path: "phases/11-llm-engineering/36-internal-knowledge-assistants-rag", title: "Internal Knowledge Assistants with RAG" },
-          { path: "phases/11-llm-engineering/06-rag", title: "RAG: Retrieval-Augmented Generation" },
+          { path: "phases/11-llm-engineering/06-rag", title: "RAG (Retrieval-Augmented Generation)" },
           { path: "phases/11-llm-engineering/92-data-literacy-for-ai-projects", title: "Data Readiness for AI Projects: Assess Before You Build" }
         ]
       },
@@ -1319,7 +1319,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/51-ai-risk-management-internal-controls", title: "AI Risk Management and Internal Controls" },
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" },
-          { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security, Secrets and Audit" }
+          { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security — Secrets, API Key Rotation, Audit Logs, Guardrails" }
         ]
       },
       {
@@ -1386,7 +1386,7 @@ window.LrnCurriculumMap = {
           { path: "phases/13-tools-and-protocols/22-skills-and-agent-sdks", title: "Skills and Agent SDKs" },
           { path: "phases/13-tools-and-protocols/23-capstone-tool-ecosystem", title: "Capstone — Build a Complete Tool Ecosystem" },
           { path: "phases/19-capstone-projects/27-eval-harness-fixture-tasks", title: "Eval Harness with Fixture Tasks" },
-          { path: "phases/19-capstone-projects/28-observability-otel-traces", title: "Observability with OTel GenAI Spans" }
+          { path: "phases/19-capstone-projects/28-observability-otel-traces", title: "Observability with OTel GenAI Spans and Prometheus Metrics" }
         ]
       }
     ],
@@ -1396,7 +1396,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Establishes why capable models need explicit delivery infrastructure before the deeper workbench mechanics.",
         lessons: [
-          { path: "phases/14-agent-engineering/31-agent-workbench-why-models-fail", title: "Agent Workbench: Why Capable Models Still Fail" },
+          { path: "phases/14-agent-engineering/31-agent-workbench-why-models-fail", title: "Agent Workbench Engineering" },
           { path: "phases/14-agent-engineering/32-minimal-agent-workbench", title: "The Minimal Agent Workbench" },
           { path: "phases/14-agent-engineering/45-prompt-only-vs-rules-first", title: "Prompt-Only vs Rules-First" }
         ]
@@ -1437,7 +1437,7 @@ window.LrnCurriculumMap = {
         note: "Makes completion evidence executable and adds an independent review boundary.",
         lessons: [
           { path: "phases/14-agent-engineering/38-verification-gates", title: "Verification Gates" },
-          { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent: Separate Builder from Marker" },
+          { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent" },
           { path: "phases/14-agent-engineering/49-self-verification", title: "Self-Verification" }
         ]
       },
@@ -1447,7 +1447,7 @@ window.LrnCurriculumMap = {
         note: "Combines the workbench surfaces into a reusable, reviewable delivery report.",
         lessons: [
           { path: "phases/14-agent-engineering/41-workbench-for-real-repos", title: "The Workbench on a Real Repo" },
-          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Ship a Reusable Agent Workbench Pack" },
+          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Reusable Agent Workbench Pack" },
           { path: "phases/14-agent-engineering/50-complete-harness", title: "Complete Harness" }
         ]
       },

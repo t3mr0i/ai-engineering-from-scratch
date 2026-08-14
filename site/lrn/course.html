@@ -3,6 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <script src="../gate.js"></script>
+  <script>
+    /* D1 — resolve an explicit stored dark-mode choice before first paint,
+       same mechanism as lesson.html/llm-primer. Only an explicit stored
+       value is applied; with nothing stored the attribute stays unset and
+       the prefers-color-scheme media query in lrn/tokens.css keeps
+       handling the OS preference. */
+    (function () {
+      function apply() {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        if (stored === 'dark' || stored === 'light') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      }
+      apply();
+      window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Course · LHIND AI Learning Catalog</title>
   <meta name="description" content="Course detail and syllabus in the LHIND AI Learning Catalog.">
@@ -22,6 +40,9 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <button type="button" id="darkModeToggle" class="nav-settings theme-toggle" title="Switch color theme" aria-label="Switch color theme">
+      <i class="ph-light ph-moon" aria-hidden="true" id="darkModeIcon"></i>
+    </button>
     <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
@@ -45,5 +66,40 @@
   <script src="course.js"></script>
   <script src="../i18n.js"></script>
   <script src="../lang.js"></script>
+  <script>
+    /* D1 — dark-mode toggle button. Wires the button in the header above
+       to the same localStorage 'theme' key lesson.html/llm-primer already
+       read, so the choice is shared and persisted across the whole site. */
+    (function () {
+      var btn = document.getElementById('darkModeToggle');
+      var icon = document.getElementById('darkModeIcon');
+      if (!btn) return;
+      function stored() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
+      function osDark() { return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); }
+      function current() {
+        var s = stored();
+        return (s === 'dark' || s === 'light') ? s : (osDark() ? 'dark' : 'light');
+      }
+      function render() {
+        var theme = current();
+        icon.className = 'ph-light ' + (theme === 'dark' ? 'ph-sun' : 'ph-moon');
+        var de = (window.SiteLang ? window.SiteLang.get() : 'en') === 'de';
+        var label = theme === 'dark'
+          ? (de ? 'Zu hellem Farbschema wechseln' : 'Switch to light color theme')
+          : (de ? 'Zu dunklem Farbschema wechseln' : 'Switch to dark color theme');
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+      render();
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        document.documentElement.setAttribute('data-theme', next);
+        render();
+      });
+      if (window.SiteLang) document.addEventListener('sitelang:change', render);
+    })();
+  </script>
 </body>
 </html>

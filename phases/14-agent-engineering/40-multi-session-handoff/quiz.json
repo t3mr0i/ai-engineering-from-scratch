@@ -40,27 +40,27 @@
     },
     {
       "stage": "check",
-      "question": "How does the lesson distinguish compaction from handoff?",
+      "question": "What does the open_risks field in a handoff packet answer, per the lesson?",
       "options": [
-        "They are the same",
-        "Compaction extends a session; handoff closes one cleanly and starts the next in fresh context. The packet is what makes that transition cheap",
-        "Compaction is paid, handoff is free",
-        "Handoff requires GPU"
+        "What model was used to generate the handoff packet itself",
+        "What could bite next session, plus a severity for each",
+        "How long the previous session ran before handing off",
+        "Which reviewer signed off on the previous session's work"
       ],
       "correct": 1,
-      "explanation": "Hermes Issue 20372 framing: write a compact handoff before in-place compression degrades quality, then resume in a fresh session."
+      "explanation": "The lesson's seven-field table lists open_risks as answering 'what could bite next session, with severity'."
     },
     {
       "stage": "check",
-      "question": "What does the lesson recommend about when to wrap up a session?",
+      "question": "What does the lesson say the cleanup phase emits before a handoff can be written?",
       "options": [
-        "At 100% context, then panic",
-        "Before 50-75% context budget, while context is intact; cheap to write before compression artifacts pollute state",
-        "Only at midnight",
-        "Only after a merge"
+        "A signed approval token issued by the verification gate",
+        "A full diff of every touched file, attached to handoff.json",
+        "A rollback script the next session can run automatically",
+        "An empty clean_state.json list required before a packet"
       ],
-      "correct": 1,
-      "explanation": "Wrapping up early keeps the generator's inputs clean."
+      "correct": 3,
+      "explanation": "The lesson says the cleanup phase emits a clean_state.json of blocking issues, and an empty list is the precondition the handoff generator asserts before it writes a packet."
     },
     {
       "stage": "post",
@@ -76,15 +76,15 @@
     },
     {
       "stage": "post",
-      "question": "What metadata makes coordination across multi-agent sessions work?",
+      "question": "Per the lesson's clean-state table, why does a stray branch block a handoff?",
       "options": [
-        "Top secret encryption",
-        "branch, last_known_good_commit, and status (active | superseded | archived); only one active handoff per branch and topic",
-        "A shared Slack channel",
-        "A central queue"
+        "Stray branches make handoff.json fail its JSON Schema validation",
+        "Git refuses to generate a diff across more than one branch",
+        "The reviewer agent cannot read state from a non-default branch",
+        "The next session's first commit would land on the wrong branch"
       ],
-      "correct": 1,
-      "explanation": "Stale handoffs are the dominant multi-agent failure; status + branch + LKG keep the active set small."
+      "correct": 3,
+      "explanation": "The lesson's table says a wrong branch means the next session's first commit lands in the wrong place, so the check requires the expected branch with no detached HEAD or orphan branches."
     }
   ]
 }
