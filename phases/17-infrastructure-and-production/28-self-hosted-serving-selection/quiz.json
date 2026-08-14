@@ -12,7 +12,7 @@
         "llama.cpp"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson positions Ollama as the dev-laptop one-command install for a single user, trading roughly 15-30% throughput versus llama.cpp for ease of setup -- it is not the pick for production scale."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "TGI entered maintenance mode on December 11, 2025 — only bug fixes going forward"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson states Hugging Face TGI entered maintenance mode on December 11, 2025 (bug fixes only), which makes it a risky long-term bet and biases new projects toward vLLM or SGLang instead."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "CPU only (no accelerator)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson's hardware-first decision tree states CPU-only deployments must use llama.cpp (Ollama also works but is slower) since vLLM and TRT-LLM require a GPU accelerator."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "TGI"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson names SGLang as the agentic multi-turn and prefix-heavy specialist, crediting its RadixAttention mechanism and citing 400,000+ GPUs in production at companies like xAI, LinkedIn, and Cursor."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "TGI everywhere"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's 2026 pipeline pattern is dev on Ollama, staging on llama.cpp, and production on vLLM (or SGLang for prefix-heavy workloads), all using the same GGUF or HF weights throughout."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "It cannot load GGUF"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's Ollama caveat is that its Go HTTP serialization adds overhead, its concurrency management is simpler than vLLM's, and its OpenTelemetry support lags -- fine for one user, not for shared production."
     }
   ]
 }

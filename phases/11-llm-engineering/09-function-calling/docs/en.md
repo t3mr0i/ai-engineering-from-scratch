@@ -93,7 +93,7 @@ Every major provider supports function calling, but the API surface differs.
 
 | Provider | API Parameter | Tool Call Format | Parallel Calls | Forced Calling |
 |----------|--------------|-----------------|---------------|----------------|
-| OpenAI (GPT-5, o4) | `tools` | `tool_calls[].function` | Yes (multiple per turn) | `tool_choice="required"` |
+| OpenAI (GPT-5) | `tools` | `tool_calls[].function` | Yes (multiple per turn) | `tool_choice="required"` |
 | Anthropic (Claude 4.6/4.7) | `tools` | `content[].type="tool_use"` | Yes (multiple blocks) | `tool_choice={"type":"any"}` |
 | Google (Gemini 3) | `function_declarations` | `functionCall` | Yes | `function_calling_config` |
 | Open-weight (Llama 4, Qwen3, DeepSeek-V3) | Native `tools` on Llama 4; Hermes or ChatML on others | Mixed | Model-dependent | Prompt-based or `tool_choice` if supported |

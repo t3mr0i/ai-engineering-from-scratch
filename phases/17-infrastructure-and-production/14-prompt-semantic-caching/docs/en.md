@@ -32,7 +32,7 @@ Provider stores the attention KV for a cacheable prefix and reuses it on the nex
 
 **Anthropic (Claude 3.5 / 3.7 / 4 series)**: explicit `cache_control` marker in the request. You tag which blocks are cacheable. TTL: 5-minute (write costs 1.25x base) or 1-hour (write costs 2x base). Cache reads: $0.30/M on Claude 3.5 Sonnet vs $3.00/M fresh — 10x cheaper (docs.anthropic.com, as of 2026-04). Rates differ per model (Opus/Haiku published separately); always cross-check the live pricing page.
 
-**OpenAI**: automatic caching for prompts ≥1024 tokens (platform.openai.com, 2026-04). No explicit flag. Cached input is roughly 10x cheaper than fresh on current gpt-4o/gpt-5 rate cards. Neither docs nor release notes publish an official hit-rate baseline; community reports cluster around 30–60% with careful prompt design. Monitor `usage.cached_tokens` to measure your own.
+**OpenAI**: automatic caching for prompts ≥1024 tokens (platform.openai.com, 2026-04). No explicit flag. The discount varies by model family: on gpt-4o, cached input is $1.25/M vs $2.50/M fresh — 2x cheaper. On the current GPT-5 family, cached input runs roughly 10x cheaper than fresh. Neither docs nor release notes publish an official hit-rate baseline; community reports cluster around 30–60% with careful prompt design. Monitor `usage.cached_tokens` to measure your own.
 
 **Google (Gemini)**: context caching via explicit API; 1M-token context means caching pays even more.
 
@@ -90,7 +90,7 @@ Pricing points are captured 2026-04 from the linked vendor docs and drift every 
 
 - Anthropic cached read: $0.30/M on Claude 3.5 Sonnet, roughly 10x cheaper than fresh input (docs.anthropic.com).
 - Anthropic cache write premium: 1.25x (5-min TTL) or 2x (1-hour TTL).
-- OpenAI auto-cache: applies to prompts ≥1024 tokens; cached input priced at roughly 10% of fresh input on current rate cards (platform.openai.com).
+- OpenAI auto-cache: applies to prompts ≥1024 tokens; cached input is priced at 50% of fresh input on gpt-4o, and roughly 10% of fresh input on the current GPT-5 family (platform.openai.com).
 - Semantic cache hit rate (community-reported): ~10% open chat; up to ~70% structured FAQ. Not a vendor-documented baseline.
 - ProjectDiscovery: 7% → 74% hit rate by moving dynamic out of prefix (project blog, 2025-11).
 - Parallelization anti-pattern: typical reports of 5–10x bill inflation when N parallel requests miss the first cache write.

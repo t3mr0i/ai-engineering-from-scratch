@@ -12,7 +12,7 @@
         "Once data enters model weights, surgical erasure is not possible; retraining from scratch is the only complete remediation and is prohibitively expensive"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson explains that cookie-consent frameworks were built for reversible tracking, but once data is baked into model weights surgical erasure is impossible -- only full retraining removes it, and that is prohibitively expensive -- so compliance has to happen at collection time, not after training."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "7"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson lists California AB 2013's Section 3111(a) as requiring 12 statutory items in the published dataset summary, from dataset sources through whether synthetic data generation is used."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Time period during which data was collected"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson notes item 12, whether the system uses or continuously uses synthetic data generation, is new relative to the Gebru et al. 2018 datasheet fields, while items like sources, processing, and collection period map onto the older datasheet structure."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Legitimate interest can justify training on publicly available first-party content with opt-out and appropriate safeguards; consent is not required"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson traces the Irish DPC, Cologne court, Hamburg DPA, and UK ICO rulings in 2025 to a convergent principle: legitimate interest can justify training on publicly available first-party content given opt-out and appropriate safeguards, without requiring explicit consent."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Fine-tune-suppression of outputs derived from the data"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson lists unlearning, influence-function-based localization, and fine-tune-suppression as the three partial remediations for the irreversibility problem; it explicitly states there is no practical GDPR right-to-erasure equivalent for trained neural networks, so GDPR-mandated automatic weight deletion is not one of them."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Robots.txt restrictions are decreasing year over year"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson cites the Data Provenance Initiative's 'Consent in Crisis' audit finding that publishers are adding robots.txt restrictions at an accelerating rate, with around 25% of top training sources adding some restriction between 2023 and 2024, rapidly contracting the openly-trainable-upon commons."
     }
   ]
 }

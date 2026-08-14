@@ -27,7 +27,7 @@ An agent reading a purchase-order email needs to turn free text into `{customer,
 Every 2026 frontier provider ships some form of approach three.
 
 - **OpenAI.** `response_format: {type: "json_schema", strict: true}` plus `refusal` in the response if the model declines.
-- **Anthropic.** Schema enforcement on `tool_use` inputs; `stop_reason: "refusal"` is not a thing, but `end_turn` with no tool call is the signal.
+- **Anthropic.** Schema enforcement on `tool_use` inputs; a decline surfaces as `stop_reason: "refusal"` (Claude 4+ models), with `stop_details` carrying the policy category.
 - **Gemini.** `responseSchema` at request level; in 2026 Gemini ships token-level grammar constraints for selected types.
 - **Pydantic AI.** `output_type=InvoiceModel` emits a structured `RunResult` typed to `InvoiceModel`.
 - **Zod (TypeScript).** Runtime parser that validates provider output against a Zod schema; pairs with OpenAI's `beta.chat.completions.parse`.
@@ -106,6 +106,7 @@ Constrained decoding works on small models. A 3B-parameter open model with gramm
 ## Further Reading
 
 - [OpenAI — Structured outputs](https://platform.openai.com/docs/guides/structured-outputs) — strict mode, refusals, and schema requirements
+- [Anthropic — Handle streaming refusals](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals) — `stop_reason: "refusal"` and the `stop_details` object (`category`, `explanation`)
 - [OpenAI — Introducing structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) — August 2024 launch post explaining the decoding guarantee
 - [Pydantic AI — Output](https://ai.pydantic.dev/output/) — typed output_type bindings that serialize to each provider
 - [JSON Schema — 2020-12 release notes](https://json-schema.org/draft/2020-12/release-notes) — the canonical spec

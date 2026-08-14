@@ -27,13 +27,13 @@ MCP is the default tool-and-context protocol across the big three (Anthropic, Op
 2. **Resources** — read-only content the model or user can request (files, database rows, API responses). Addressed by URI.
 3. **Prompts** — reusable templated prompts the user can invoke as shortcuts.
 
-**The wire format.** JSON-RPC 2.0 over stdio, WebSocket, or streamable HTTP. Every message is `{"jsonrpc": "2.0", "method": "...", "params": {...}, "id": N}`. Discovery methods are `tools/list`, `resources/list`, `prompts/list`. Invocation methods are `tools/call`, `resources/read`, `prompts/get`.
+**The wire format.** JSON-RPC 2.0 over stdio or streamable HTTP. Every message is `{"jsonrpc": "2.0", "method": "...", "params": {...}, "id": N}`. Discovery methods are `tools/list`, `resources/list`, `prompts/list`. Invocation methods are `tools/call`, `resources/read`, `prompts/get`.
 
 **Host vs client vs server.** The host is the LLM application (Claude Desktop). The client is a sub-component of the host that speaks to exactly one server. The server is your code. One host can mount many servers simultaneously.
 
 ### The handshake
 
-Every session opens with `initialize`. The client sends protocol version and its capabilities. The server responds with its version, name, and the capability set it supports (`tools`, `resources`, `prompts`, `logging`, `roots`). Everything after is negotiated against those capabilities.
+Every session opens with `initialize`. The client sends protocol version and its capabilities (which include `roots`, since roots are a client-side primitive). The server responds with its version, name, and the capability set it supports (`tools`, `resources`, `prompts`, `logging`). Everything after is negotiated against those capabilities.
 
 ### What MCP is not
 

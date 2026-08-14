@@ -48,7 +48,7 @@ A matrix alone is a diagnostic. The consulting deliverable is a prioritised enab
 
 Three forcing functions accelerate backlog prioritisation in 2026:
 
-1. **Regulatory timelines.** The EU AI Act's Article 4 obligations on AI literacy enter phased enforcement in 2025–2026 for high-risk system operators. Roles whose interaction points touch a high-risk AI system (ANNEX III list: biometric identification, critical infrastructure, employment decisions, creditworthiness, etc.) have a compliance-driven deadline. This is not optional prioritisation; it is a legal minimum.
+1. **Regulatory timelines.** The EU AI Act's Article 4 obligations on AI literacy have applied since 2 February 2025 to every provider and deployer of an AI system, regardless of risk tier — this is not a high-risk-only or phased-in obligation. Roles whose interaction points touch a high-risk AI system (ANNEX III list: biometric identification, critical infrastructure, employment decisions, creditworthiness, etc.) still warrant the deepest training investment, since that is where scrutiny concentrates. This is not optional prioritisation; it is a legal minimum that already applies today, across the whole workforce.
 
 2. **Model capability jumps.** Claude Sonnet 4.x and Fable 5 have extended context, stronger multi-step reasoning, and agentic tool use. When the model becomes more capable, the verification burden on the human reviewer increases, not decreases — a higher-quality output is harder to spot as wrong. Roles that were "adequate" when the model was weaker may have regressed to "gap" status after a model upgrade.
 
@@ -94,7 +94,7 @@ The role-capability matrix is the input to two downstream artefacts covered in o
 
 ## Further Reading
 
-- [EU AI Act — official text, Article 4 (AI literacy)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the binding literacy obligation for high-risk AI system operators.
+- [EU AI Act — official text, Article 4 (AI literacy)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the binding literacy obligation for all providers and deployers of AI systems, applicable since 2 February 2025 regardless of risk tier.
 - [McKinsey Global Institute — The State of AI 2025](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) — survey data on adoption, skills investment, and measurable capability growth.
 - [OECD AI Policy Observatory — AI skills and jobs](https://oecd.ai/en/work-innovation-productivity-skills) — cross-country analysis of AI skill demand shifts by occupation.
 - [NIST AI RMF Playbook — Govern function](https://airc.nist.gov/) — the US federal framework for AI governance roles and responsibilities; the Govern function maps directly to the accountability and audit competency categories.

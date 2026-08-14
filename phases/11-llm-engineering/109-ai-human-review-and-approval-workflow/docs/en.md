@@ -107,5 +107,5 @@ Minimum audit record fields:
 - [ISO/IEC 42001:2023 — AI Management Systems](https://www.iso.org/standard/81230.html) — the international standard for human oversight requirements in AI deployments; the compliance anchor for Tier 3/4 gates.
 - [EU AI Act — Official Text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Annex III defines high-risk AI systems; Articles 9 and 14 specify the human oversight obligations.
 - [Anthropic — Model Specification](https://www.anthropic.com/news/anthropics-responsible-scaling-policy) — Anthropic's published guidance on what the model is designed to defer to humans on; directly informs where gates are necessary.
-- [NIST AI RMF](https://airc.nist.gov/) — the US AI Risk Management Framework; Govern 1.7 and Measure 2.5 cover human review cadence and escalation.
+- [NIST AI RMF](https://airc.nist.gov/) — the voluntary US AI Risk Management Framework; Govern 3.2 and Manage 4.1 cover human oversight roles and human review cadence and escalation.
 - [Stanford HAI — AI Index Report 2025](https://aiindex.stanford.edu/report/) — annual data on AI deployment incidents, including the breakdown of quality failures by oversight category.

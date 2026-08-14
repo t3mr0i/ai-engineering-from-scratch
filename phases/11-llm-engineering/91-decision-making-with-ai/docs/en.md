@@ -102,7 +102,7 @@ Conformal prediction has moved from research into production tooling. The core i
 - The calibration set must not overlap the training set. A common mistake is using validation performance to calibrate and then applying the same data to evaluate calibration — this underestimates uncertainty. In one engagement, this single error led a team to believe their classifier was ECE 0.02 when it was actually ECE 0.07.
 - Prediction set width is a decision signal. A wide set (many candidate labels) means the model is uncertain; narrow set means confident. Automate gate 2 on set width. As a rule of thumb, set-width above 0.3 on a normalised scale is a "send to human" signal for high-risk decisions; below 0.1 is a "model is sure" signal.
 
-For practical implementation, `MAPIE` (scikit-learn compatible) and the `conformal-prediction` package handle the most common cases without custom code.
+For practical implementation, `MAPIE` (scikit-learn compatible) and `crepes` handle the most common cases without custom code.
 
 ### Audit trails and the accountability chain
 
@@ -120,7 +120,7 @@ Every decision that uses an AI output in any meaningful way must produce a struc
 | `override` | True/false + reason if overridden |
 | `timestamp` | Millisecond-precision UTC |
 
-This log is the artifact the EU AI Act's fundamental rights impact assessment refers to when it requires documentation of "the human oversight measures" (Article 14). It is also the only way to run a post-hoc audit when a decision is challenged. For high-risk systems, retention is at least 10 years (Article 12); for non-high-risk, follow your sectoral baseline.
+This log is the artifact the EU AI Act's fundamental rights impact assessment refers to when it requires documentation of "the human oversight measures" (Article 14). It is also the only way to run a post-hoc audit when a decision is challenged. For high-risk systems, the automatically generated logs must be kept for at least 6 months (Article 19(1)), while the underlying technical documentation is kept for 10 years (Article 18); for non-high-risk, follow your sectoral baseline.
 
 ### Connecting to sibling lessons
 

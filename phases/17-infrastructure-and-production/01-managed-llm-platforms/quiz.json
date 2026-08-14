@@ -12,7 +12,7 @@
         "Direct Anthropic API"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson describes AWS Bedrock as the marketplace strategy: Claude, Llama, Titan, Stability, Cohere, and Mistral behind one API, one IAM surface, and one CloudWatch export."
     },
     {
       "stage": "pre",
@@ -24,7 +24,7 @@
         "OCI Generative AI"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "Azure OpenAI Service is described as an exclusive OpenAI partnership: only OpenAI models (GPT-4/4o/5/o-series, DALL-E, Whisper) are in the catalog, betting that OpenAI remains the frontier and customers want enterprise controls on that one relationship."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "~25 ms"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson cites Artificial Analysis numbers: Azure OpenAI median TTFT around 50 ms (with PTUs) versus Bedrock on-demand around 75 ms, a gap of roughly 25 ms driven by dedicated versus shared capacity."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Bedrock Agents"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson names Application Inference Profiles, added in 2025, as the cleanest native attribution: tag a profile with team/product/feature and CloudWatch breaks out cost per profile without post-processing."
     },
     {
       "stage": "check",
@@ -60,7 +60,7 @@
         "40-60%"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson states PTUs are billed as a fixed hourly reservation regardless of traffic, and the break-even against on-demand pricing is usually around 40-60% sustained utilization."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Single-vendor pricing is always more expensive"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson argues that because frontier leadership rotates monthly across providers, single-hyperscaler lock-in shuts a product out of two-thirds of the frontier, so a two-provider minimum (e.g. Bedrock plus Azure OpenAI) with gateway failover is the working pattern."
     },
     {
       "stage": "post",
@@ -84,7 +84,7 @@
         "Bedrock is cleanest native, Vertex is most flexible via BigQuery, Azure is most opaque without instrumentation"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson's summary is explicit: Bedrock's Application Inference Profiles are cleanest native, Vertex's project-per-team plus BigQuery Billing Export is most flexible, and Azure's tag-inherited scopes are most opaque unless you add custom instrumentation."
     }
   ]
 }

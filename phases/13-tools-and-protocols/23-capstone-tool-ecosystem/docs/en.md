@@ -36,7 +36,7 @@ All the primitives from Phase 13 show up. This is not a toy — production resea
                                                       +- MCP prompt: /research_topic
                                                       +- MCP task: generate_report (long)
                                                       +- MCP Apps UI: ui://report/current
-                                                      +- A2A call: writer-agent (tasks/send)
+                                                      +- A2A call: writer-agent (SendMessage)
                                                       |
                                                       +- OTel GenAI spans
 ```
@@ -49,10 +49,10 @@ agent.invoke_agent
  ├── mcp.call -> tools/call arxiv_search
  ├── mcp.call -> resources/read notes://recent
  ├── mcp.call -> prompts/get research_topic
- ├── a2a.tasks/send -> writer-agent
+ ├── a2a.SendMessage -> writer-agent
  │    └── task transitions (opaque internals)
  ├── mcp.call -> tools/call generate_report (task-augmented)
- │    └── tasks/status polling
+ │    └── tasks/get polling
  │    └── tasks/result (completed, returns ui:// resource)
  └── llm.chat (final synthesis)
 ```

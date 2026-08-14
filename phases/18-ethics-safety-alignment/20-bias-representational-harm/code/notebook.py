@@ -255,9 +255,12 @@ print(completion_nurse)
 # %% [markdown]
 # ## Step 8 — Intersectionality: Beyond Single-Axis Bias
 #
-# An et al. 2025 found that bias often emerges at the **intersection** of identity axes. For example:
-# - Single-axis: "Women face X% resume penalty"
-# - Intersectional: "Black women face Y% penalty (where Y > X because of compounded stereotypes)"
+# An et al. 2025 found that bias often emerges at the **intersection** of identity axes —
+# and not always in the direction single-axis intuition predicts. In their resume-scoring
+# study, Black women scored *best* of all intersectional groups and Black men scored
+# *worst* — a pattern neither a gender-only nor a race-only evaluation would surface:
+# - Single-axis: "gender alone shows no clear penalty" / "race alone shows no clear penalty"
+# - Intersectional: "Black men face a penalty that only appears at the (gender, race) intersection"
 #
 # To actually test for this, the demographic signal has to reach the model — sending the
 # identical prompt four times and only changing a label in *our* printout tests nothing.

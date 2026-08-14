@@ -46,7 +46,7 @@ The concrete output of a freshness audit is a `max_lag_days` value per data sour
 
 ### Sensitivity: data classification before any model touches it
 
-The GDPR Art. 4 definition of personal data is broad enough to cover IP addresses, device IDs, pseudonymised health records, and behavioral sequences that are re-identifiable in combination. In 2026 EU AI Act Articles 10 and 53 add a separate requirement: training data for general-purpose AI models must document the source, the copyright status, and any opt-out claims filed before training.
+The GDPR Art. 4 definition of personal data is broad enough to cover IP addresses, device IDs, pseudonymised health records, and behavioral sequences that are re-identifiable in combination. In 2026 EU AI Act Article 53 adds a separate requirement for general-purpose AI models: providers must document the source, the copyright status, and any opt-out claims filed before training. (Article 10 sets the equivalent data-governance requirement for high-risk AI systems, not for GPAI models.)
 
 A sensitivity audit for an AI project uses three passes:
 
@@ -92,7 +92,7 @@ The scoring function in `code/main.py` makes this gate explicit and runnable.
 
 ## Further Reading
 
-- [EU AI Act — Article 10 (Training, validation and testing data)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the binding data governance requirements for general-purpose AI models under EU law.
+- [EU AI Act — Article 53 (Obligations for providers of general-purpose AI models)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the binding training-data documentation requirements for general-purpose AI models under EU law.
 - [Microsoft Presidio](https://microsoft.github.io/presidio/) — open-source PII detection and anonymisation library; the practical tool for automated sensitivity scans.
 - [Google — Data Cards Playbook](https://sites.research.google/datacardsplaybook/) — structured methodology for documenting dataset provenance, intended use, and limitations; the closest thing to an industry standard for model cards.
 - [ACM FAccT — Datasheets for Datasets (Gebru et al., 2018)](https://dl.acm.org/doi/10.1145/3458723) — the foundational paper defining what provenance documentation should contain; still the reference most practitioners cite.

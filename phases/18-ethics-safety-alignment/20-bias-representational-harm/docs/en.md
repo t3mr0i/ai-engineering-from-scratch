@@ -1,6 +1,6 @@
 # Bias and Representational Harm in LLMs
 
-> Gallegos, Rossi, Barrow, Tanjim, Kim, Dernoncourt, Yu, Zhang, Ahmed (Computational Linguistics 2024, arXiv:2309.00770). Foundational 2024 survey distinguishing representational harms (stereotypes, erasure) from allocational harms (unequal resource distribution) and categorizing evaluation metrics as embedding-based, probability-based, or generated-text-based. 2024-2025 empirical: An et al. (PNAS Nexus, March 2025) measure intersectional gender x race bias across GPT-3.5 Turbo, GPT-4o, Gemini 1.5 Flash, Claude 3.5 Sonnet, Llama 3-70B on automated resume evaluation for 20 entry-level jobs. WinoIdentity (COLM 2025, arXiv:2508.07111) introduces uncertainty-based fairness evaluation for intersectional identities. Yu & Ananiadou 2025 identify gender neurons in MLP layers; Ahsan & Wallace 2025 use SAEs to reveal clinical racial bias; Zhou et al. 2024 (UniBias) manipulates attention heads for debiasing. Meta-critique (arXiv:2508.11067): 10-year literature disproportionately focuses on binary-gender bias.
+> Gallegos, Rossi, Barrow, Tanjim, Kim, Dernoncourt, Yu, Zhang, Ahmed (Computational Linguistics 2024, arXiv:2309.00770). Foundational 2024 survey distinguishing representational harms (stereotypes, erasure) from allocational harms (unequal resource distribution) and categorizing evaluation metrics as embedding-based, probability-based, or generated-text-based. 2024-2025 empirical: An et al. (PNAS Nexus 4(3):pgaf089, March 2025) measure intersectional gender x race bias across GPT-3.5 Turbo, GPT-4o, Gemini 1.5 Flash, Claude 3.5 Sonnet, Llama 3-70B on automated resume evaluation for 20 entry-level jobs, finding Black women scored best and Black men worst. WinoIdentity (COLM 2025, arXiv:2508.07111) extends coreference-resolution bias evaluation to intersectional identities with an uncertainty-based fairness measure. Yu & Ananiadou 2025 identify gender-correlated neurons in FFN-value, FFN-query, and attention-value layers; Ahsan & Wallace 2025 use SAEs to reveal clinical racial bias. Meta-critique (arXiv:2508.11067): 10-year literature disproportionately focuses on binary-gender bias.
 
 **Type:** Build
 **Languages:** Python (stdlib, toy embedding-based bias probe)
@@ -11,8 +11,8 @@
 
 - Define representational vs allocational harm and give one example of each in an LLM deployment.
 - Name the three evaluation-metric categories from Gallegos et al. 2024 and describe one metric from each.
-- Describe intersectionality and why WinoIdentity's uncertainty-based fairness measurement addresses gaps in single-axis bias evaluation.
-- Describe two mechanistic-interpretability approaches to bias (gender neurons, SAE features, attention-head manipulation).
+- Describe intersectionality and why WinoIdentity's uncertainty-based coreference-resolution fairness measurement addresses gaps in single-axis bias evaluation.
+- Describe two mechanistic-interpretability approaches to bias (gender-correlated neurons, SAE features).
 
 ## The Problem
 
@@ -35,17 +35,16 @@ These are not the same. A model can be "representationally unbiased" (produces d
 
 ### Intersectionality
 
-Bias evaluation on "gender" misses the bias that only fires on (gender, race) pairs. An et al. 2025 find GPT-4o penalizes Black women in resume scoring more than Black men and more than white women separately. Single-axis evaluation cannot capture this.
+Bias evaluation on "gender" misses the bias that only fires on (gender, race) pairs. An et al. 2025 measure intersectional gender x race bias in automated resume scoring and find the opposite of the naive expectation: Black women score *best* of all intersectional groups (+0.379 points, +1.7 percentage points hiring probability), while Black men score *worst* (−0.303 points). The authors emphasise this as a disadvantage specifically for Black men — a result single-axis (gender-only or race-only) evaluation would not surface, since it only appears at the intersection.
 
-WinoIdentity (COLM 2025) introduces uncertainty-based intersectional fairness. It measures whether the model's uncertainty over outcomes differs across intersectional identity tuples — not just the point prediction. This catches cases where the model is equally wrong across groups but more uncertain for some, which produces different downstream allocation behaviour.
+WinoIdentity (COLM 2025) extends the Winogender/WinoBias tradition of coreference-resolution bias evaluation to intersectional identities, using an uncertainty-based fairness measure. It tests whether the model's uncertainty over which entity a pronoun refers to differs across intersectional identity tuples — not just the point prediction. This catches cases where the model resolves coreference correctly on average but with systematically different confidence for some intersectional groups.
 
 ### Mechanistic approaches
 
 2024-2025 interpretability work opens bias to mechanistic intervention:
 
-- **Gender neurons (Yu & Ananiadou 2025).** Specific MLP neurons correlate with gender-specific behaviours. Ablating these neurons reduces gender-gap metrics with limited capability cost.
+- **Gender neurons (Yu & Ananiadou 2025).** Specific FFN-value, FFN-query, and attention-value neurons correlate with gender-specific behaviours. Ablating these neurons reduces gender-gap metrics with limited capability cost.
 - **Clinical racial bias via SAEs (Ahsan & Wallace 2025).** Sparse autoencoder features decompose the internal representation into interpretable dimensions; race-correlated features can be identified and suppressed.
-- **UniBias (Zhou et al. 2024).** Attention-head manipulation for zero-shot debiasing. Specific heads amplify identity-class sensitivity; zeroing or re-weighting these heads reduces bias with no fine-tuning.
 
 ### The meta-critique
 
@@ -61,5 +60,4 @@ Lessons 20-21 cover bias and fairness formally. Lesson 22 covers privacy. Lesson
 
 - [Gallegos et al. — Bias and Fairness in LLMs: A Survey (arXiv:2309.00770, Computational Linguistics 2024)](https://arxiv.org/abs/2309.00770) — canonical survey
 - [An et al. — Intersectional resume-evaluation bias (PNAS Nexus, March 2025)](https://academic.oup.com/pnasnexus/article/4/3/pgaf089/8111343) — five-model intersectional study
-- [WinoIdentity — uncertainty-based intersectional fairness (arXiv:2508.07111, COLM 2025)](https://arxiv.org/abs/2508.07111) — new benchmark
-- [UniBias — attention-head manipulation (Zhou et al. 2024, ACL)](https://arxiv.org/abs/2405.20612) — zero-shot debiasing
+- [WinoIdentity — uncertainty-based intersectional coreference-resolution fairness (arXiv:2508.07111, COLM 2025)](https://arxiv.org/abs/2508.07111) — new benchmark

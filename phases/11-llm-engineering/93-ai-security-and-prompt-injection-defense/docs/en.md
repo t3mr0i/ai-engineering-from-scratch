@@ -125,7 +125,7 @@ The steps below translate the lesson into a 60-90 minute security review session
 
 ## Further Reading
 
-- [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) — the canonical reference; LLM01 (prompt injection) and LLM06 (sensitive information disclosure) are the two surfaces this lesson covers most directly.
+- [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) — the canonical reference; in the 2025 edition, LLM01 (prompt injection) and LLM02 (sensitive information disclosure) are the two surfaces this lesson covers most directly, alongside LLM06 (excessive agency) for the tool-misuse shape above.
 - [Anthropic — Multi-agent security guidance](https://docs.claude.com/en/docs/build-with-claude/agents) — trust boundaries, tool scoping, and the operator/user trust model in Claude-based pipelines.
 - [NIST AI RMF (AI 600-1)](https://airc.nist.gov/) — the U.S. federal AI risk management framework; Appendix B covers adversarial ML and injection risks.
 - [Simon Willison — Prompt injection explained](https://simonwillison.net/2022/Sep/12/prompt-injection/) — the clearest public explanation of why structural defenses alone cannot fully solve indirect injection; updated commentary through 2025.

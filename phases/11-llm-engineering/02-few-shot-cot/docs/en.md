@@ -94,7 +94,7 @@ Why does this work mechanically? Each token a transformer generates becomes cont
 | o4-mini (reasoning) | 97% | — | — |
 | Claude Opus 4.7 | 93% | 97% | 98% |
 | Gemini 3 Pro | 92% | 96% | 98% |
-| Llama 4 70B | 80% | 89% | 94% |
+| Llama 4 Maverick | 80% | 89% | 94% |
 | DeepSeek-V3.1 | 89% | 94% | 96% |
 
 **Note on reasoning models.** Models like OpenAI's o-series (o3, o4-mini) and DeepSeek-R1 run chain-of-thought internally before emitting their answer. Adding "Let's think step by step" to a reasoning model is redundant and sometimes counterproductive — they have already done it.

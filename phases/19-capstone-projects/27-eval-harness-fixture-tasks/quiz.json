@@ -1,5 +1,5 @@
 {
-  "lesson": "phase-19/27-eval-harness-fixture-tasks",
+  "lesson": "27-eval-harness-fixture-tasks",
   "title": "Eval Harness with Fixture Tasks",
   "questions": [
     {
@@ -24,7 +24,7 @@
         "1.00"
       ],
       "correct": 1,
-      "explanation": "pass@k = 1 - (1 - p)^k = 1 - (1 - 0.6)^5 = 1 - 0.4^5 = 1 - 0.01024 = 0.98976, which rounds to 0.99. The raw per-sample rate (0.6) is the value option (a) names, but the formula amplifies it across k samples."
+      "explanation": "pass@k = 1 - (1 - p)^k = 1 - (1 - 0.6)^5 = 1 - 0.4^5 = 1 - 0.01024 = 0.98976, which rounds to 0.99. This is the lesson's simplified formula, treating each sample as an independent Bernoulli trial with pass probability p; it approximates but is not identical to the unbiased estimator from Chen et al. 2021 (pass@k = 1 - C(n-c,k)/C(n,k), computed exactly from n total samples and c correct ones). The raw per-sample rate (0.6) is the value option (a) names, but the formula amplifies it across k samples."
     },
     {
       "stage": "check",

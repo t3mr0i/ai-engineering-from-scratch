@@ -212,7 +212,7 @@ class Counter:
 
 @dataclass
 class Histogram:
-    """A histogram with explicit buckets, in line with OTel's default ms set."""
+    """A histogram with explicit buckets, a general-purpose ms latency ladder (not an OTel-mandated default)."""
 
     name: str
     help: str = ""

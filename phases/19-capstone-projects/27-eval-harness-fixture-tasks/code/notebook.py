@@ -241,6 +241,8 @@ print(f"Sample passed: {passed}")
 # ## Step 7 — pass@k: Multiple Samples
 #
 # Real LLM agents are stochastic. We measure pass@k: the probability of at least one correct answer in k independent samples. The formula is: **pass@k = 1 - (1 - p)^k** where p is the empirical pass rate.
+#
+# This is the simplified i.i.d.-Bernoulli approximation used here for teaching, not the canonical unbiased estimator: Chen et al. 2021 ("Evaluating Large Language Models Trained on Code", arXiv:2107.03374) define **pass@k = 1 - C(n-c, k) / C(n, k)** from n samples of which c pass.
 
 # %%
 def pass_at_k(empirical_pass_rate: float, k: int) -> float:

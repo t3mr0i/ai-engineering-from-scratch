@@ -12,7 +12,7 @@
         "Allocational harm only occurs offline"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson defines representational harm as stereotypes, erasure, or demeaning portrayal (e.g. depicting nurses as exclusively female), while allocational harm is unequal material outcomes for a group (e.g. scoring one group's resumes systematically lower) -- a model can be biased on one axis without the other."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Embedding-based, probability-based, generated-text-based"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "Gallegos et al. 2024, as the lesson describes it, categorize bias-evaluation metrics into embedding-based (WEAT-style association tests), probability-based (stereotype-confirming vs violating completion likelihoods), and generated-text-based (downstream-task measurement on generated output)."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Bias that only emerges at intersections (e.g., gender x race) is missed by evaluations that look at one axis at a time"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson's An et al. 2025 example shows Black women scoring best and Black men scoring worst on automated resume evaluation -- a pattern invisible to gender-only or race-only evaluation and detectable only by looking at the gender x race intersection."
     },
     {
       "stage": "check",
@@ -45,22 +45,22 @@
         "An adversarial attack on demographic classifiers",
         "A new tokenizer for identity terms",
         "A replacement for WEAT in embedding space",
-        "Uncertainty-based intersectional fairness evaluation that compares the model's uncertainty over outcomes across intersectional identity tuples, not just point predictions"
+        "Uncertainty-based intersectional fairness evaluation for coreference resolution, comparing the model's uncertainty over pronoun-referent choices across intersectional identity tuples, not just point predictions"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson describes WinoIdentity as extending Winogender/WinoBias-style coreference-resolution bias evaluation to intersectional identities with an uncertainty-based fairness measure, testing whether the model's confidence over pronoun-referent choices differs across intersectional identity tuples, not just whether it gets the point prediction right."
     },
     {
       "stage": "post",
       "question": "Which of these is a mechanistic-interpretability approach to bias?",
       "options": [
         "Switching to DPO from PPO",
-        "Identifying gender neurons in MLP layers, using SAEs to surface race-correlated features, or manipulating specific attention heads (UniBias)",
+        "Identifying gender-correlated FFN-value/FFN-query/attention-value neurons, or using SAEs to surface race-correlated features",
         "Adding more KL regularization",
         "Re-labeling the training set"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson cites Yu & Ananiadou 2025 identifying gender-correlated neurons in FFN-value, FFN-query, and attention-value layers, and Ahsan & Wallace 2025 using sparse autoencoders (SAEs) to surface race-correlated features -- both mechanistic interventions on the model's internals rather than training-process changes."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "It is balanced across all identity axes"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson summarizes the meta-critique as finding that a decade of bias literature disproportionately focuses on binary-gender bias, while axes like disability, religion, migration status, and multi-lingual identity receive far less attention -- risking harm to those groups through neglect."
     }
   ]
 }

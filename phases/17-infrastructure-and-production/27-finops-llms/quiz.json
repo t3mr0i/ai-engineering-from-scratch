@@ -12,7 +12,7 @@
         "Costs are token-transactions rather than resource-uptime; tags don't auto-propagate from API calls and you must stamp user/task/tenant at the call site"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson states LLM costs are token-transactions rather than resource-uptime, so cloud-style tags do not auto-propagate from an API call the way they do for EC2 or S3 -- you must stamp user/task/tenant metadata at the call site yourself."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "GPU, CPU, RAM"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson's three attribution dimensions are per-user (user_id, for seat pricing and expansion), per-task (task_id + route, for product-surface cost), and per-tenant (tenant_id, for unit economics and renewal) -- instrumented at the call site from day one."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "GPU, CPU, RAM, storage"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson breaks token spend into prompt, tool, memory, and response layers, noting that bucketing all four together makes cost optimization blind to which layer is actually driving spend."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Spend over $1 in a minute"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson's third rung of the enforcement ladder triggers when a tenant's spend z-score exceeds 4 relative to its own baseline, auto-pausing the tenant and paging on-call, escalating to ops and customer success."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Cost per product outcome (e.g. cost per resolved support ticket, cost per generated article, cost per successful agent task)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson calls $/M tokens 'vendor speak' and recommends tying cost to a product outcome instead -- cost per resolved support ticket, cost per generated article, cost per successful agent task -- so optimization has an anchor."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Telemetry joiner — join traces to billing via trace IDs"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson names the telemetry-joiner pattern -- joining traces to billing via trace IDs -- as the highest-accuracy attribution pattern and what mature teams do, versus the simpler and rougher tag-and-aggregate approach."
     }
   ]
 }

@@ -63,7 +63,7 @@ Use case: a notes server whose resources are files on disk; a file watcher trigg
 
 `prompts/list` returns `{prompts: [{name, description, arguments?}]}`. `prompts/get` takes `{name, arguments}` and returns `{description, messages: [{role, content}]}`.
 
-A prompt is a template that fills to a list of messages the host feeds its model. For example, a `code_review` prompt takes a `file_path` argument and returns a three-message sequence: a system message, a user message with the file body, and an assistant kickoff with a reasoning template.
+A prompt is a template that fills to a list of messages the host feeds its model. `PromptMessage.role` is `user` or `assistant` only — there is no `system` role in `prompts/get` responses. For example, a `code_review` prompt takes a `file_path` argument and returns a two-message sequence: a user message with the file body, and an assistant kickoff with a reasoning template.
 
 ### Hosts and prompts
 
@@ -73,7 +73,7 @@ Not every client supports prompts yet — check capability negotiation. A server
 
 ### The "list changed" notification
 
-Both resources and prompts emit `notifications/list_changed` when the set mutates. A notes server that just imported 20 new notes emits `notifications/resources/list_changed`; the client re-calls `resources/list` to pick up the additions.
+Both resources and prompts emit their own "list changed" notification when their set mutates — `notifications/resources/list_changed` and `notifications/prompts/list_changed` respectively, not a single shared method name. A notes server that just imported 20 new notes emits `notifications/resources/list_changed`; the client re-calls `resources/list` to pick up the additions.
 
 ### Content type conventions
 

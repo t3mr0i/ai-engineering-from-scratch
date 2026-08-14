@@ -12,7 +12,7 @@
         "IPI only works on multimodal models"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson defines IPI as embedding instructions inside external content (a web page, email, or tool output) that the agent consumes during normal operation, so the attacker never touches the user's prompt directly -- unlike direct injection."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Inbox / document workflows"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson's three delivery vectors are RAG (poisoned retrieval), inbox/document workflows, and tool output; a user directly editing the system prompt is not IPI at all since IPI specifically bypasses the user-facing input."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Filters only run after the model responds"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson explains that a filter gated on user input never sees the IPI payload, since it lives in the retrieved document or tool output that gets concatenated into the prompt after the user's turn."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Label content by source as trusted or untrusted; actions triggered by untrusted content must be ratified by trusted input before execution"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson describes IFC as labeling the user's query trusted and retrieved content untrusted, then requiring that any action triggered by untrusted content be ratified by trusted input before it executes -- borrowed from classical OS security."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Adaptive attacks (gradient, RL, random search, human red-team) broke >90% of them despite their original near-zero ASR claims"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson cites Nasr et al.'s finding that adaptive attacks -- gradient search, RL policies, random search, and a 72-hour human red-team -- broke every one of 12 published defenses to over 90% attack success rate, despite their originally reported near-zero ASR."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "LLM10 (lowest)"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson states OWASP's 2025 LLM Top 10 ranks prompt injection (direct and indirect) as LLM01, the number-one application-layer threat."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # AI-Driven Testing and QA: From Eval Sets to Regression Gates (2026)
 
-> A 2025 survey of teams shipping LLM features found that 68 % of production regressions were caught not by automated tests but by users — because the teams had no systematic eval before deployment. By 2026 the tooling gap has closed: Anthropic, OpenAI, and Google ship hosted eval runners; NIST AI RMF 1.0 and ISO/IEC 42001 name evaluation as a required control; and model providers publish standardized test harness APIs. What has not caught up is engineering practice. Most teams still treat LLM features like deterministic code, writing assertion-heavy unit tests that shatter on every model update and missing the class of failures those tests cannot see — coherence regressions, tone drift, silent context truncation, and adversarial prompt injection.
+> A 2025 survey of teams shipping LLM features found that 68 % of production regressions were caught not by automated tests but by users — because the teams had no systematic eval before deployment. By 2026 the tooling gap has closed: Anthropic, OpenAI, and Google ship hosted eval runners; NIST AI RMF 1.0 (voluntary) and ISO/IEC 42001 (mandatory only for organizations pursuing certification) both name evaluation as a core control; and model providers publish standardized test harness APIs. What has not caught up is engineering practice. Most teams still treat LLM features like deterministic code, writing assertion-heavy unit tests that shatter on every model update and missing the class of failures those tests cannot see — coherence regressions, tone drift, silent context truncation, and adversarial prompt injection.
 
 **Type:** Learn
 **Languages:** Python (stdlib — eval-set classifier + regression gate simulator)
@@ -101,5 +101,5 @@ Similarly, eval scores are a sample from a distribution. A 0.1-point drop in a 5
 - [RAGAS documentation](https://docs.ragas.io) — faithfulness, answer relevance, context precision metrics for RAG evaluation.
 - [Anthropic — Model evaluation guide](https://docs.claude.com/en/docs/test-and-evaluate/eval-your-prompts) — hosted evals, rubric design, and baseline management on the Anthropic platform.
 - [PromptFoo documentation](https://promptfoo.dev/docs) — CLI-driven eval harness with red-team modes and multi-model comparison.
-- [NIST AI Risk Management Framework 1.0](https://airc.nist.gov/Home) — the governance standard that names evaluation as a required control; Chapter 4 covers MEASURE.
+- [NIST AI Risk Management Framework 1.0](https://airc.nist.gov/Home) — a voluntary governance framework that names evaluation as a core control (the MEASURE function); Chapter 4 covers MEASURE.
 - [Braintrust — Evaluations guide](https://www.braintrust.dev/docs/guides/evals) — dataset management, experiment tracking, and scoring; useful reference for hosted eval architecture patterns.

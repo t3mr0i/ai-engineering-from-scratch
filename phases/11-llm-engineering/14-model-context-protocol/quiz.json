@@ -12,7 +12,7 @@
         "Agents, skills, workflows"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson defines an MCP server as exposing exactly three primitives: tools (functions the model calls), resources (read-only content addressed by URI), and prompts (reusable templated prompts)."
     },
     {
       "stage": "post",
@@ -24,19 +24,19 @@
         "REST with OpenAPI"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson states MCP messages are JSON-RPC 2.0 over stdio, WebSocket, or streamable HTTP, with the format `{\"jsonrpc\": \"2.0\", \"method\": \"...\", \"params\": {...}, \"id\": N}`."
     },
     {
       "stage": "post",
-      "question": "Which metadata field signals a tool mutates state and should require human approval?",
+      "question": "In MCP terminology, what is the relationship between host, client, and server?",
       "options": [
-        "readonly: false",
-        "mutating: true",
-        "destructiveHint: true",
-        "requiresAuth: true"
+        "The host is the LLM application; the client is a sub-component of the host that speaks to exactly one server; the server is your code exposing tools, resources, and prompts",
+        "The host and client are the same thing; the server is the LLM itself",
+        "The server is the LLM application; the host exposes tools to it",
+        "The client is the protocol version; host and server are interchangeable terms for the same process"
       ],
-      "correct": 2,
-      "explanation": ""
+      "correct": 0,
+      "explanation": "The lesson defines the host as the LLM application (e.g. Claude Desktop), the client as a sub-component of the host that speaks to exactly one server, and the server as the code exposing tools, resources, and prompts. One host can mount many servers, each through its own client."
     },
     {
       "stage": "post",
@@ -48,7 +48,7 @@
         "gRPC bidi"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson's wire-format section lists streamable HTTP, alongside stdio and WebSocket, as a transport for MCP's JSON-RPC 2.0 messages; of the four options, it is the only one the lesson names."
     },
     {
       "stage": "post",

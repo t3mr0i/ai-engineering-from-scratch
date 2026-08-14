@@ -39,9 +39,9 @@ flowchart TD
   Metrics --> Prom[/metrics text/]
 ```
 
-Every operation in the harness produces a span. A span has a trace id (the whole agent invocation), a span id (this one operation), a name (e.g. `gen_ai.chat`, `gen_ai.tool.execution`), attributes that follow the GenAI conventions, a start and end time, and a status.
+Every operation in the harness produces a span. A span has a trace id (the whole agent invocation), a span id (this one operation), a name — this lesson uses fixed literal names (`gen_ai.chat`, `gen_ai.tool.execution`) for simplicity; the GenAI conventions actually recommend `{gen_ai.operation.name} {gen_ai.request.model}`, e.g. `chat claude-opus-4` — attributes that follow the GenAI conventions, a start and end time, and a status.
 
-The GenAI conventions standardise these attribute keys: `gen_ai.system` (which provider, e.g. `anthropic`, `openai`), `gen_ai.request.model` (the model id), `gen_ai.request.max_tokens`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `gen_ai.response.model`, `gen_ai.response.id`, `gen_ai.operation.name`, plus tool-specific keys `gen_ai.tool.name` and `gen_ai.tool.call.id`.
+The GenAI conventions standardise these attribute keys: `gen_ai.provider.name` (which provider, e.g. `anthropic`, `openai` — this attribute was `gen_ai.system` before semantic-conventions v1.37.0, which deprecated that name in favor of `gen_ai.provider.name`), `gen_ai.request.model` (the model id), `gen_ai.request.max_tokens`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `gen_ai.response.model`, `gen_ai.response.id`, `gen_ai.operation.name`, plus tool-specific keys `gen_ai.tool.name` and `gen_ai.tool.call.id`.
 
 The exporter writes JSONL. One JSON object per line. This is the simplest possible format that downstream tooling can stream, grep, and import. A real OTel exporter would speak OTLP gRPC; the lesson's JSONL exporter is the offline equivalent and exits zero on every workstation.
 
@@ -73,15 +73,15 @@ The metrics registry is two dicts. Counters are `{(name, frozen_labels): int}`. 
 6. `wrap_tool_call(name)` decorator that emits a span and updates metrics.
 7. Demo: synthesises a complete agent invocation (gen_ai.chat span around tool spans), writes traces.jsonl, prints the Prometheus exposition, exits zero.
 
-The span id and trace id are 16-byte hex strings, generated from `os.urandom`. That matches OTel's W3C trace context. The exporter never throws; IO errors are surfaced but the harness keeps running.
+The trace id is a 16-byte hex string (32 hex chars) and the span id is an 8-byte hex string (16 hex chars), both generated from `uuid4()`. That matches the W3C Trace Context spec's `trace-id`/`parent-id` sizes. The exporter never throws; IO errors are surfaced but the harness keeps running.
 
-The histogram has a fixed bucket set (the OTel default for latency in milliseconds: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf). Samples are stored as a list; exposition computes per-bucket counts on demand.
+The histogram has a fixed bucket set in milliseconds (5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf) — a general-purpose latency ladder, not an OTel-mandated default. The GenAI semantic conventions' own recommended boundaries for `gen_ai.client.operation.duration` are in seconds and much coarser (1, 5, 10, 30, 60, 120, 300, 600, 1800, 3600, 7200), sized for whole model/agent calls rather than sub-second tool steps. Samples are stored as a list; exposition computes per-bucket counts on demand.
 
 ## Why hand-rolled instead of opentelemetry-sdk
 
 The OTel Python SDK is a real dependency. It is also several thousand lines of code, multiple processes for the OTLP exporter, and a runtime cost that swamps a lesson budget. The hand-rolled version teaches the wire format. In production you wire the same attributes into the real SDK and get the OTLP exporter, batching, and resource detection for free.
 
-The conventions are stable. The wire format the lesson emits will keep parsing in 2030 because OTel never breaks GenAI attribute names; they only add new ones.
+The JSONL wire format itself (one JSON object per line) will keep parsing indefinitely — that shape doesn't depend on OTel at all. The GenAI attribute names on top of it are not immune to change, though: `gen_ai.system` was deprecated and renamed to `gen_ai.provider.name` in semantic-conventions v1.37.0, and the individual `gen_ai.prompt`/`gen_ai.completion` attributes have been deprecated too. Treat the conventions as versioned, not frozen.
 
 ## How this composes with the rest of Track A
 

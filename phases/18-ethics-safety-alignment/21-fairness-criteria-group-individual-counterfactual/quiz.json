@@ -12,7 +12,7 @@
         "Equal acceptance rates: P(Y=1 | A=a) = P(Y=1 | A=a')"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson defines demographic parity as equal acceptance rates across groups: P(Y=1 | A=a) = P(Y=1 | A=a') for all groups a, a'."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Individual fairness implies counterfactual fairness for any DAG"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson states the 2017 impossibility result: under unequal base rates between groups, demographic parity, equalized odds, and conditional use accuracy equality cannot all be satisfied simultaneously."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "A causal DAG with a sensitive-attribute intervention"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson defines individual fairness (Dwork et al. 2012) as a Lipschitz condition |f(x) - f(x')| <= L * d(x, x') on the decision map relative to a task-specific similarity metric d, meaning similar individuals must get similar decisions."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "A causal DAG; the decision is unchanged when the individual's sensitive attribute is counterfactually altered"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson defines counterfactual fairness (Kusner et al. 2017) as requiring a causal DAG under which a decision is unchanged when the individual's sensitive attribute is counterfactually altered -- the decision is only as justified as the DAG."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "They prove the impossibility theorem is wrong"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson explains that traditional counterfactuals require intervening on a legally protected attribute, which classification law treats as problematic; backtracking counterfactuals instead ask which combination of the individual's actual features would have produced the counterfactual outcome, sidestepping that objection."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Only individual fairness is justifiable"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson summarizes the ICLR Blogposts 2024 reconciliation as showing that, given an explicit causal graph, satisfying certain group-fairness measures entails counterfactual fairness -- the apparent opposition between the fairness families is partly an artifact of leaving the causal model implicit, though it does not resolve the base-rate impossibility theorems."
     }
   ]
 }

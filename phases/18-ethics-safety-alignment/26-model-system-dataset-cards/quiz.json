@@ -12,7 +12,7 @@
         "A regulatory legal contract"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson describes the Mitchell et al. 2019 Model Card as a 'nutrition label' for models, covering training data, intended use, factors, metrics, evaluation data, quantitative disaggregated analyses, ethical considerations, and caveats."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "All model cards document them"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson cites Oreamuno et al. 2023's audit finding that only about 0.3% of Hugging Face model cards document ethical considerations, illustrating the adoption gap the lesson calls the documentation problem."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "A privacy-preserving query interface"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson describes Data Cards' three zoom levels -- telescopic (non-expert summary), periscopic (ML-practitioner overview), and microscopic (auditor-level detail) -- as a boundary-object design where the same document serves different readers."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Only the tokenizer"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson scopes System Cards to the end-to-end AI system -- model plus safety stack plus deployment context -- covering security capabilities, prompt-injection protection, data-exfiltration detection, alignment with stated values, and incident response, beyond what a Model Card documents."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Detail decreased download rates"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson reports that Liang et al. 2024 found detailed model cards correlate with up to a 29% higher download rate on Hugging Face, framing this as evidence that adoption pressure for good documentation is now market-driven, not only compliance-driven."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "An LLM-based summary generator"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson describes Laminator (Duddu et al. 2024) as contributing verifiable attestations via hardware TEE and cryptographic signatures, so a model card can carry a proof-of-claim rather than just an unverified claim."
     }
   ]
 }

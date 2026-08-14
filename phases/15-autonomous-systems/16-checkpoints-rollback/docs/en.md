@@ -31,7 +31,7 @@ When a worker crashes, the workflow is not lost; the lease (a short-lived claim 
 
 ### Idempotency plus preconditions
 
-Idempotency alone is not enough. Consider: a workflow is approved to "transfer $100 from A to B when balance > $1000." The workflow is committed, crashes mid-execution, and resumes. If only the idempotency key is checked, and the execution resumes, the transfer runs once (correct). But consider that between crash and resume, A's balance drops to $500 via a different workflow. The idempotency check still passes; the precondition does not. Without a precondition check, we ship an overdraft.
+Idempotency alone is not enough. Consider: a workflow is approved to "transfer $100 from A to B when balance > $1000." The workflow is committed, crashes mid-execution, and resumes. If only the idempotency key is checked, and the execution resumes, the transfer runs once (correct). But consider that between crash and resume, A's balance drops to $80 via a different workflow. The idempotency check still passes; the precondition does not. Without a precondition check, we ship an overdraft.
 
 Every consequential action needs both:
 

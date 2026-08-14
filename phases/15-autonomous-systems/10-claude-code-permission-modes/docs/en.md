@@ -1,6 +1,6 @@
 # Claude Code as an Autonomous Agent: Permission Modes and Auto Mode
 
-> Claude Code exposes seven permission modes. "plan" asks before every action, "default" asks only for risky ones, "acceptEdits" auto-approves file writes but still confirms shell execution, and "bypassPermissions" approves everything. Auto Mode (March 24, 2026) replaces per-action approval with a two-stage parallel safety classifier: a single-token fast check runs on every action; flagged actions kick off a chain-of-thought deep review. Action budgets are enforced via `max_turns` and `max_budget_usd`. Auto Mode shipped as a research preview — Anthropic has stated explicitly that the classifier is not sufficient alone.
+> Claude Code exposes six permission modes. "plan" asks before every action, "default" asks only for risky ones, "acceptEdits" auto-approves file writes but still confirms shell execution, "dontAsk" denies everything not explicitly allowed, and "bypassPermissions" approves everything. Auto Mode (March 24, 2026) replaces per-action approval with a two-stage parallel safety classifier: a single-token fast check runs on every action; flagged actions kick off a chain-of-thought deep review. Action budgets are enforced via `max_turns` and `max_budget_usd`. Auto Mode shipped as a research preview — Anthropic has stated explicitly that the classifier is not sufficient alone.
 
 **Type:** Learn
 **Languages:** Python (stdlib, two-stage classifier simulator)
@@ -11,25 +11,24 @@
 
 An autonomous coding agent on your machine is a distinct security category. The attack surface is everything the agent can reach — file system, network, credentials, clipboard, any browser tab, any open terminal. Bruce Schneier and others have flagged this publicly: computer-use agents are not a "feature update" of chatbots, they are a new kind of tool with a new kind of risk profile.
 
-Claude Code's permission system is Anthropic's answer. Rather than one "autonomous / not autonomous" switch, there are seven modes spanning a capability ladder: plan → default → acceptEdits → … → bypassPermissions. Each mode is a different trade-off between speed and review-per-action. Auto Mode (March 2026) adds a two-stage classifier that moves approval off the user's critical path for actions the classifier judges safe, while preserving a review layer for actions the classifier flags.
+Claude Code's permission system is Anthropic's answer. Rather than one "autonomous / not autonomous" switch, there are six modes spanning a capability ladder: plan → default → acceptEdits → … → bypassPermissions, plus `dontAsk` and Auto Mode as opt-in modes outside that cycle. Each mode is a different trade-off between speed and review-per-action. Auto Mode (March 2026) adds a two-stage classifier that moves approval off the user's critical path for actions the classifier judges safe, while preserving a review layer for actions the classifier flags.
 
 The engineering question: what does this system catch, what does it miss, and which mode does a given task actually warrant?
 
 ## The Concept
 
-### The seven permission modes
+### The six permission modes
 
 | Mode | Behavior | When to use |
 |---|---|---|
 | `plan` | Agent proposes a plan; user approves the whole plan; every action is reviewed before execution | Unfamiliar task; prod-adjacent code; first time using the agent on a repo |
 | `default` | Agent runs actions; prompts user for any "risky" action (shell exec, destructive operations, network calls) | Most interactive coding sessions |
 | `acceptEdits` | File writes auto-approve; shell exec and network calls still prompt | Refactoring pass across many files |
-| `acceptExec` | Shell commands auto-approve within a curated allowlist; writes auto-approve | Tight inner loops where every shell command is `npm test` or similar |
-| `autoMode` | Two-stage safety classifier; flagged actions elevate to review | Long-horizon unattended runs in a constrained workspace |
-| `yolo` | Skips most prompts; still runs tool allowlist / denylist | Ephemeral sandboxes, CI jobs, research scripts |
+| `auto` (Auto Mode) | Two-stage safety classifier; flagged actions elevate to review | Long-horizon unattended runs in a constrained workspace |
+| `dontAsk` | Inverse of bypass: denies everything not explicitly allowed, instead of approving everything unlisted | Scripted runs where an unexpected tool call should fail loudly |
 | `bypassPermissions` | Approves everything | Documented as "only inside ephemeral containers you are willing to throw away" |
 
-(Names above match public Claude Code docs; "yolo" is the informal shorthand for the permissive middle ground.)
+(`plan`, `acceptEdits`, and `bypassPermissions` cycle with Shift+Tab; `auto` joins the cycle when the account qualifies for it; `dontAsk` never appears in the cycle and is set only via `--permission-mode dontAsk`.)
 
 ### Auto Mode in one page
 
@@ -64,8 +63,8 @@ Anthropic shipped Auto Mode as a research preview. The documentation is explicit
 
 - Unfamiliar task: start in `plan`. Reading the plan is cheaper than rolling back a bad run.
 - Known refactor: `acceptEdits` saves a lot of confirmation clicks.
-- Unattended background run: `autoMode` only inside a workspace whose blast radius you have measured (no credentials, no production mounts, no egress you did not opt into).
-- Ephemeral containers: `yolo` / `bypassPermissions` is acceptable if and only if the container and its credentials are disposable.
+- Unattended background run: `auto` only inside a workspace whose blast radius you have measured (no credentials, no production mounts, no egress you did not opt into).
+- Ephemeral containers: `bypassPermissions` is acceptable if and only if the container and its credentials are disposable.
 
 
 

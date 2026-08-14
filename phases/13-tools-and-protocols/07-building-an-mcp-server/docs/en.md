@@ -100,7 +100,7 @@ Each tool can carry `annotations` describing safety properties:
 
 - `readOnlyHint: true` — pure read, safe to retry.
 - `destructiveHint: true` — irreversible side effects; client should confirm.
-- `idempotentHint: true` — same inputs produce same outputs.
+- `idempotentHint: true` — calling the tool repeatedly with the same arguments has no additional effect on the environment beyond the first call; safe to retry.
 - `openWorldHint: true` — interacts with external systems.
 
 The client uses these to decide UX (confirmation dialogs, status indicators) and routing (Phase 13 · 17).

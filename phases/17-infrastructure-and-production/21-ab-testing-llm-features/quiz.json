@@ -12,7 +12,7 @@
         "They are interchangeable"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson draws the line precisely: evals are offline against a labeled set and answer whether the model can do the task; A/B tests are online with randomized live traffic and answer whether users actually care about the change."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Increases sample size by hiring more users"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson describes CUPED (Controlled-experiments Using Pre-Experiment Data) as regressing out pre-period variance before comparing the post-period, typically cutting variance 30-70% and raising effective sample size for free."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "They speed up experiments"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson notes that running 20 A/B tests at 95% confidence produces roughly one false positive by chance alone, and Bonferroni (tightening per-test alpha) or Benjamini-Hochberg (controlling false-discovery rate) correct for that."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "PII leakage"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson describes SRM checks as flagging when the assignment hash delivers a split that diverges from the intended one (e.g. 47/53 instead of the targeted 50/50), signaling a broken randomization."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "It only matters offline"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson explains that traditional power calculations assume IID observations, but LLM non-determinism means effective sample size is lower than nominal, so the required sample size should be multiplied by roughly 1.3-1.5x as a safety margin."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Statsig is all-in-one SaaS (acquired by OpenAI Sept 2025, $1.1B); GrowthBook is open-source MIT, warehouse-native, with Bayesian/Frequentist/Sequential engines and CUPED/SRM/BH"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson contrasts Statsig -- hosted, all-in-one SaaS, acquired by OpenAI for $1.1B in September 2025 -- with GrowthBook, which is open-source MIT, warehouse-native, and ships Bayesian/Frequentist/Sequential engines plus CUPED, SRM checks, and Bonferroni/Benjamini-Hochberg corrections."
     }
   ]
 }

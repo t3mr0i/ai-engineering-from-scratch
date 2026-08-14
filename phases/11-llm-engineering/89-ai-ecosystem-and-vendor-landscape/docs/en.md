@@ -47,8 +47,8 @@ Benchmarks mislead when used as the primary selection signal. The decision tree 
 | Band | Representative models | Blended $/1M tokens | Appropriate workloads |
 |---|---|---|---|
 | Flagship | Claude Fable 5, GPT-4o, Gemini 2.0 Pro | $15–$40 | Complex reasoning, code generation, multi-modal synthesis |
-| Balanced | Claude Sonnet 4.x, Gemini 2.0 Flash, Llama 4 70B hosted | $1–$6 | Most production workloads: RAG, summarization, structured extraction |
-| Commodity | Haiku 4.x, Gemini 2.0 Flash Lite, Llama 4 8B hosted | $0.10–$0.50 | High-volume triage, extraction, routing, simple QA |
+| Balanced | Claude Sonnet 4.x, Gemini 2.0 Flash, Llama 4 Scout hosted | $1–$6 | Most production workloads: RAG, summarization, structured extraction |
+| Commodity | Haiku 4.x, Gemini 2.0 Flash Lite, Llama 3.1 8B hosted | $0.10–$0.50 | High-volume triage, extraction, routing, simple QA |
 
 A flagship-tier misroute at 50M tokens/month costs approximately $1,500–$2,000/month more than the same workload on the commodity tier. At enterprise scale the annual delta is the cost of a junior engineer. The exit cost: a team that has built its prompts and evals around the flagship model cannot trivially drop down a tier without re-running the eval suite. *The tier you pick is the tier you stay on for at least the next two quarters.*
 

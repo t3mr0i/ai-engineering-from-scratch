@@ -84,7 +84,7 @@ A tracer or UI can render this as a strikethrough on the removed steps and a hig
 
 ## Two budgets, both hard
 
-`max_steps` caps total step executions across the whole session, including replans. Default is twelve. A linear five-step plan that replans twice and adds three steps each time hits sixteen executions and would exceed the budget. The executor will refuse the replan and return FAILED.
+`max_steps` caps total step executions across the whole session, including replans. Default is twelve. A linear five-step plan that replans twice and adds three steps each time hits eleven executions — one step short of the ceiling. A third replan would push it over, and the executor would refuse it and return FAILED.
 
 `max_replans` caps the number of times the planner is called after the first plan. Default is five. This is the more important limit. A planner that returns the same broken plan five times in a row would otherwise loop until the step budget catches it. Capping replans makes the failure faster and the reason clearer.
 

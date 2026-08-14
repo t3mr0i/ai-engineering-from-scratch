@@ -121,7 +121,7 @@ The responsible AI conversation shifted significantly between 2024 and 2026. The
 - **Transparency obligations** apply to generative AI at limited risk: users must know when content is AI-generated. This is no longer optional, and "users could probably tell" is not a sufficient answer.
 - **Technical documentation and logging** are required for high-risk systems; this is not optional and cannot be retrofitted cheaply. The cost of documenting after the fact is roughly 3–5x the cost of documenting during development, in our experience.
 
-Phase 11 · 18 and Phase 18 · 24 cover the regulatory detail. The point here is that the AI Act makes system-type classification a legal act, not just a design decision. A consultant who classifies a high-risk system as limited risk exposes the client to enforcement risk. A consultant who classifies a limited-risk system as high risk costs the client unnecessary compliance overhead. The classification has to be right.
+Phase 11 · 75 and Phase 18 · 24 cover the regulatory detail. The point here is that the AI Act makes system-type classification a legal act, not just a design decision. A consultant who classifies a high-risk system as limited risk exposes the client to enforcement risk. A consultant who classifies a limited-risk system as high risk costs the client unnecessary compliance overhead. The classification has to be right.
 
 ### The three questions a consultant must answer first
 

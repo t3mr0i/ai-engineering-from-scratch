@@ -11,7 +11,7 @@
 
 - Explain the difference between the Anthropic Client SDK (raw API) and the Claude Agent SDK (harness shape).
 - Describe subagents — parallelization and context isolation — and when to reach for them.
-- Name the Python SDK's session store surface (`append`, `load`, `list_sessions`, `delete`, `list_subkeys`) and the role of `--session-mirror`.
+- Name the Python SDK's session store surface (`append`, `load`, `list_sessions`, `delete`, `list_subkeys`) and how to capture a session transcript to a file for debugging.
 - Implement a stdlib harness with built-in tools, subagent spawning with isolated context, lifecycle hooks, and a session store.
 
 ## The Problem
@@ -48,7 +48,7 @@ Protocol parity with TypeScript:
 - `delete(session_id)` — with cascade to subagent sessions.
 - `list_subkeys(session_id)` — list subagent keys.
 
-`--session-mirror` (CLI flag) mirrors the transcript to an external file as it streams, for debugging.
+There is no dedicated "mirror transcript" flag; `--output-format stream-json` redirected to a file captures the transcript as it streams, and `--debug-file` writes diagnostic logs to a file.
 
 ### Hooks
 

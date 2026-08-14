@@ -12,7 +12,7 @@
         "Python versus TypeScript"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson's opening frames the 2026 market as splitting into development platforms that bundle monitoring with evals, prompt management, and session replay (LangSmith, Langfuse, Comet Opik) versus gateway/telemetry tools that focus on traces and metrics only (Helicone, SigNoz, OpenLLMetry, Phoenix)."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Langfuse"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson describes Langfuse as core Apache/MIT licensed with easy Docker self-hosting and a 50K-events/month free cloud tier -- the 'OSS balance' pick for teams that must self-host or stay on an OSS license."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Instrumenting at the HTTP/OpenAI-SDK layer"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson calls out instrumenting inside your agent framework (e.g. adding LangSmith traces directly) as the trap because it couples you to that framework; instrumenting at the HTTP/OpenAI-SDK layer via OpenLLMetry or a gateway is the portable choice."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "OTel HTTP semantic conventions"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson names OpenTelemetry's GenAI semantic conventions (gen_ai.system, gen_ai.request.model, gen_ai.usage.input_tokens), published late 2025, as the glue that lets a gateway, an eval platform, and a data-lake archive all consume the same trace stream."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Phoenix only supports 1M traces"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson states that at more than 1M requests/day, full-trace retention costs more than the LLM calls themselves, so teams sample by rule -- 100% of errors, 100% of high-cost calls, and only about 5% of plain successes -- while keeping aggregates always."
     }
   ]
 }

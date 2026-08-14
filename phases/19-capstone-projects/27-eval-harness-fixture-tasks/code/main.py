@@ -4,6 +4,10 @@ Eval harness for an agent: fixture tasks, scored samples, pass@k.
 See: phases/19-capstone-projects/27-eval-harness-fixture-tasks/docs/en.md
 Concept refs:
   - pass@k = 1 - (1 - p)^k where p is the empirical per-sample pass rate.
+    This is the simplified i.i.d.-Bernoulli approximation used for teaching,
+    not the canonical unbiased estimator: Chen et al. 2021 ("Evaluating Large
+    Language Models Trained on Code", arXiv:2107.03374) define
+    pass@k = 1 - C(n-c, k) / C(n, k) from n samples of which c pass.
   - Deterministic verifiers: file_equals, regex_match, shell_exit_zero.
 The demo at the bottom runs the bundled fixtures against the reference candidate.
 """

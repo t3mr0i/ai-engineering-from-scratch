@@ -12,7 +12,7 @@
         "L1 and L2 are the same"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson defines L1 semantic caching as skipping the LLM entirely on an embedding-similarity hit, while L2 prompt/prefix caching reuses the attention KV at the provider for a repeated prefix."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "An implicit prompt-length threshold"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson states Anthropic requires an explicit `cache_control` marker on the request blocks you want cached, with a 5-minute TTL (1.25x write cost) or 1-hour TTL (2x write cost) option -- unlike OpenAI's automatic caching."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "N parallel requests with the same prefix arrive before the first cache write completes, so each pays a write premium and gets zero discount"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson's worked example has 10 parallel tool calls sharing the same system prompt arrive within the same millisecond window, before the first cache write (~300 ms) completes, so each of the 10 pays a write premium and none gets a read discount."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Using too short a system prompt"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's example system prompt embeds the current time and a request ID inside the cacheable block, so every request is unique and every request writes a fresh cache entry instead of hitting -- the fix is moving that dynamic content after the cache boundary."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Caching disables batch eligibility"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson states Batch APIs give a 50% discount at 24-hour turnaround, cached input adds roughly another 10x on top, and stacking both can drop overnight classification/labeling/report pipelines to about 10% of synchronous-uncached cost."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "95% means you should expect 95% cache hits"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson is explicit that vendor 'accuracy' figures describe how often a returned cached response is semantically correct, not how often you hit the cache; actual production hit rates it reports range from 10-15% for open-ended chat up to 40-70% for structured FAQ."
     }
   ]
 }

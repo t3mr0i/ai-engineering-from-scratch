@@ -12,7 +12,7 @@
         "Run a cheap model first, escalate to a frontier model only on low confidence or refusal"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson defines model cascading as sending a request to a cheap model first and escalating to a frontier model only when confidence is low or the cheap model refuses -- the opposite of always using the most expensive model."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "GPU temperature, fan speed, room humidity, time of day"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson enumerates exactly these four routing signals: task classification, prompt length, embedding similarity to a known-hard bucket, and self-confidence (log-probs, refusals, hedging) from a first cheap-model pass."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Always faster than pre-route"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson states cascade routing costs about 1.2x median latency (the cheap run plus a confidence check) and about 2x on the roughly 10% of traffic that escalates to the frontier model."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Random round-robin"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson lists pre-route (a classifier deciding the route before any model call) as adding only ~5-10ms of latency up front, making it the fastest overall pattern versus cascade or ensemble routing."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "A latency drift in the cheap model"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's drift scenario: the task distribution shifts over months (users ask harder questions) but the router's classifier, trained on old data, keeps sending the same share to the cheap model, so quality drops silently until someone notices."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Online quality metrics — thumbs-up/down per route, LLM-judge on held-out samples, escalation rate, refusal rate"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson recommends gating routes with online quality metrics rather than only offline eval sets: per-route thumbs-up/down, an automated LLM-judge on a held-out sample, escalation rate, and refusal rate per route."
     }
   ]
 }

@@ -18,7 +18,7 @@
 
 Agents and workflows share a problem: when a 40-step run fails at step 38, you want to resume from step 38, not start over. Second-class state models leave operators hacking retries around a library that assumes fresh runs.
 
-LangGraph's design answer: state is a first-class typed object, mutations are explicit, and checkpoints persist after every node. Resume is a `load_state(session_id)` call.
+LangGraph's design answer: state is a first-class typed object, mutations are explicit, and checkpoints persist after every node. Resume means re-invoking the graph with the same `thread_id` in its config; the checkpointer loads the last snapshot for that thread and `graph.get_state(config)` reads it back.
 
 ## The Concept
 
@@ -35,7 +35,7 @@ Example: an agent with `classify`, `refund`, `bug`, `sales`, `done` nodes — a 
 
 ### Durable execution
 
-After each node returns, the runtime serializes the state and writes it to a checkpointer (SQLite, Postgres, Redis, custom). On failure at step N, the runtime can `resume(session_id)` and pick up from step N+1 with exact state.
+After each node returns, the runtime serializes the state and writes it to a checkpointer (SQLite, Postgres, Redis, custom). On failure at step N, invoking the graph again with the same `thread_id` picks up from step N+1 with exact state.
 
 The LangGraph docs explicitly highlight production users where this matters: Klarna, Uber, J.P. Morgan. The claim isn't the graph shape; it's that the graph shape plus checkpointing makes recovery cheap.
 

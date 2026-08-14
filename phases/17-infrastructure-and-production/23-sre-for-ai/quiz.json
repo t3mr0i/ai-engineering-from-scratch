@@ -12,7 +12,7 @@
         "Supervisor agent that breaks the incident into sub-queries for specialized log, metric, and runbook agents, then synthesizes and presents to a human"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson's architecture is a supervisor that breaks an incident into sub-queries for specialized log, metric, and runbook agents with tool access, which then synthesizes their findings into a hypothesis and presents it to a human for approval."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Restart pod, revert a specific deploy, scale a pool within pre-approved bounds, enable a pre-approved feature flag"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson draws the line explicitly: restart pod, revert a specific deploy, scale a pool within pre-approved bounds, and enable a pre-approved feature flag are the safe/narrow set; changing topology, IAM, or databases is not safe."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Runs the same model twice on the same input"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson describes NeuBird Hawkeye's adversarial evaluation as two models independently analyzing the same incident: agreement signals high confidence, and disagreement escalates to a human with both hypotheses visible."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Token cost attribution"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson frames team turnover as the silent killer of traditional SRE, and operational memory addresses it by storing runbooks and post-mortems in a vector DB that agents retrieve on every new incident, so new engineers inherit the full history."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Predictions are always accurate"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's reality check is that predictions without actuation are dashboards, not SRE -- the operational question is what specific action (pre-emptive drain, page, auto-scale) a prediction triggers, and that answer is policy-specific."
     }
   ]
 }

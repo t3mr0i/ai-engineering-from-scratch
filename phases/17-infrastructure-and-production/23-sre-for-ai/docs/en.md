@@ -77,7 +77,7 @@ Reality check: predictions without actuation are dashboards. The operational que
 - **Azure SRE Agent** — Azure-native.
 - **NeuBird Hawkeye** — adversarial eval + operational memory.
 - **PagerDuty AIOps** — triage + deduplication.
-- **Incident.io Autopilot** — incident commander + coordination.
+- **Incident.io Investigations** — root-cause hypothesis generation, powered by its Nexus system model.
 
 ### Runbooks as code
 

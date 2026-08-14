@@ -90,6 +90,5 @@ These are engineering constraints, not general model limitations. They are addre
 
 - [Anthropic — Prompt engineering overview](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) — canonical guidance on structured extraction and output validation prompts.
 - [DORA — Accelerate State of DevOps Report](https://dora.dev/research/) — the source for T1 delivery metrics (lead time, change failure rate, MTTR); citable as evidence standards in steering packs.
-- [PMI — Practice Standard for Project Reporting](https://www.pmi.org/pmbok-guide-standards) — the profession's formal framework for what project status communication must contain.
 - [Google — SRE Book, Chapter 4 (Service Level Objectives)](https://sre.google/sre-book/service-level-objectives/) — how to define and cite measurable outcomes as T1 evidence.
 - [BARC — AI in Business Intelligence and Analytics](https://barc-research.com/) — recent practitioner survey on AI-assisted reporting quality and where human review remains necessary.

@@ -1,10 +1,10 @@
 # AI Use-Case Intake: From Idea to Approved Deployment (2026)
 
-> The EU AI Act entered full enforcement in August 2025: prohibited-use rules apply immediately, high-risk system obligations (conformity assessment, human oversight, logging) carry fines up to 3% of global revenue, and general-purpose model providers must now publish capability evaluations. At the same time, GDPR enforcement on AI-generated personal data has accelerated — six significant decisions landed in 2024–25, including a 250 M EUR fine for a generative model that reproduced training data verbatim. For a technology consultant, this means every new AI use case arrives with two distinct compliance clocks running simultaneously: the client's internal approval gate and the regulator's. Missing either is a project-stopper, not a paperwork problem. The skill this lesson builds is an intake process that turns a vague "let's use AI for this" into a documented, risk-classified, approval-ready proposal before any model is called.
+> The EU AI Act is phasing in on a rolling schedule, not a single go-live date: prohibited-use rules have applied since February 2025 and general-purpose model providers have had to publish capability evaluations since August 2025, but — after Regulation (EU) 2026/1744 postponed the original 2026/2027 dates — high-risk system obligations (conformity assessment, human oversight, logging), which carry fines up to 3% of global revenue, only start applying on 2 December 2027 (Annex III systems) and 2 August 2028 (Annex I systems). At the same time, GDPR enforcement on AI-generated personal data has accelerated — six significant decisions landed in 2024–25, including a 250 M EUR fine for a generative model that reproduced training data verbatim. For a technology consultant, this means every new AI use case arrives with two distinct compliance clocks running simultaneously: the client's internal approval gate and the regulator's. Missing either is a project-stopper, not a paperwork problem. The skill this lesson builds is an intake process that turns a vague "let's use AI for this" into a documented, risk-classified, approval-ready proposal before any model is called.
 
 **Type:** Learn
 **Languages:** Python (stdlib — AI use-case risk classifier and approval gate simulator)
-**Prerequisites:** Phase 11 · 18 (Responsible AI compliance workflow), Phase 11 · 12 (Guardrails, safety and content filtering)
+**Prerequisites:** Phase 11 · 75 (Responsible AI in practice), Phase 11 · 12 (Guardrails, safety and content filtering)
 **Time:** ~45 minutes
 
 ## The Problem
@@ -19,7 +19,7 @@ The failure is structural and repeatable. Teams evaluate AI on capability and ti
 
 | Clock | Standard | Key trigger for consulting work | Penalty range |
 |---|---|---|---|
-| EU AI Act | Regulation 2024/1689, full effect Aug 2025 | Deploying a "high-risk AI system" or a GPAI model | 1–3% global revenue; up to 7% for prohibited uses |
+| EU AI Act | Regulation 2024/1689, phased in through 2 Dec 2027 (Annex III) / 2 Aug 2028 (Annex I) per Regulation (EU) 2026/1744 | Deploying a "high-risk AI system" or a GPAI model | 1–3% global revenue; up to 7% for prohibited uses |
 | GDPR / nFADP | GDPR 2016/679, CH nFADP 2023 | Processing personal data with AI; automated individual decisions | Up to 4% global revenue per violation |
 | Internal governance | Company AI policy + InfoSec baseline | Any AI touching classified data, production systems, or customer data | Project halt, contract breach, reputational |
 
@@ -27,16 +27,18 @@ The clocks run in parallel. A use case can clear GDPR (no personal data, no auto
 
 ### Risk classification: the EU AI Act pyramid
 
-The Act stratifies AI systems into four tiers. Your first task on any new use case is to place it.
+The Act stratifies AI systems into risk tiers under Article 6, plus a transparency layer that applies regardless of tier. Your first task on any new use case is to place it.
 
 | Tier | Examples in consulting | Obligation |
 |---|---|---|
-| **Prohibited** | Social scoring of individuals; real-time biometric surveillance in public; subliminal manipulation | Do not build. Full stop. |
-| **High-risk** | CV screening / hiring tools; credit scoring; medical diagnosis support; critical infrastructure management; law enforcement; education assessment | Conformity assessment, human oversight, explainability, logging, registration in EU database before deployment |
-| **GPAI (general-purpose)** | Deploying Claude, GPT-4o, Gemini as a service component | Capability evaluations, copyright summaries, systemic-risk mitigations if above 10^25 FLOP training compute |
-| **Minimal-risk** | Customer FAQ chatbot; internal knowledge search; code completion | Self-declaration of conformity; voluntary code of practice |
+| **Prohibited** (Art. 5) | Social scoring of individuals; real-time biometric surveillance in public; subliminal manipulation | Do not build. Full stop. |
+| **High-risk** (Art. 6, via Annex I or Annex III) | CV screening / hiring tools; credit scoring; medical diagnosis support; critical infrastructure management; law enforcement; education assessment | Conformity assessment and EU declaration of conformity (Art. 43, 47), human oversight, explainability, logging, registration in EU database before deployment |
+| **Transparency obligations** (Art. 50) | Chatbots and virtual assistants (Art. 50(1)); deepfakes and synthetic content (Art. 50(4)) | Disclose that the person is interacting with an AI system; label AI-generated or manipulated content |
+| **Minimal-risk** | Customer FAQ chatbot; internal knowledge search; code completion | No mandatory AI Act obligation beyond Art. 50 where it applies; voluntary code of practice |
 
-The practical consulting heuristic: if the AI output can affect a legal right, a safety outcome, or an employment/credit/education decision, assume high-risk and validate. If unsure, check Annex III of the AI Act directly — it lists the high-risk categories exhaustively.
+GPAI models (Claude, GPT-4o, Gemini, and similar) sit outside this deployment-risk pyramid: Chapter V (Art. 51–56) regulates them per model, not per use case — capability evaluations, copyright summaries, and systemic-risk mitigations for models trained above 10^25 FLOP.
+
+The practical consulting heuristic: if the AI output can affect a legal right, a safety outcome, or an employment/credit/education decision, assume high-risk and validate. If unsure, check both Annex I and Annex III of the AI Act — together they define the high-risk categories (Annex I: AI as a safety component of products already covered by EU harmonisation legislation; Annex III: the stand-alone list of use cases such as biometrics, employment, and law enforcement).
 
 ### GDPR triggers that the AI Act does not cover
 
@@ -62,7 +64,7 @@ LHIND's AI governance baseline (and most large enterprise AI policies) adds thre
 
 ### The intake checklist in practice
 
-Phase 11 · 18 describes the full compliance workflow. This lesson adds the front-end classification step that determines which compliance path to take. The sequence:
+Phase 11 · 75 describes the full compliance workflow. This lesson adds the front-end classification step that determines which compliance path to take. The sequence:
 
 1. **Describe the use case** in one paragraph: who, what data, what decision, what output, what human action follows.
 2. **Classify against the AI Act pyramid.** Use `code/main.py` to get the tier and the resulting obligation list.

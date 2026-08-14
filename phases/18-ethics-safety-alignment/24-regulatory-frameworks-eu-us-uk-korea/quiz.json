@@ -12,19 +12,19 @@
         "January 2024; high-risk systems applied that day"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The AI Act entered into force 1 August 2024, but its obligations apply on a staggered timeline: prohibited practices and AI literacy requirements were the first category to apply, from 2 February 2025."
     },
     {
       "stage": "check",
-      "question": "What is the maximum monetary penalty under the EU AI Act applicable from 2 August 2026?",
+      "question": "What is the maximum monetary penalty under the EU AI Act, and which violations trigger it?",
       "options": [
-        "Unlimited",
-        "Up to 1M EUR or 0.1% of global turnover",
-        "Up to 15M EUR or 3% of global turnover",
-        "Up to 5M EUR or 1% of global turnover"
+        "Up to 35M EUR or 7% of worldwide annual turnover, for violations of prohibited AI practices (Article 5)",
+        "Up to 15M EUR or 3% of worldwide annual turnover, for non-compliance with other obligations under the Act",
+        "Up to 7.5M EUR or 1% of worldwide annual turnover, for supplying incorrect information to authorities",
+        "Unlimited, since the AI Act sets no cap on fines"
       ],
-      "correct": 2,
-      "explanation": ""
+      "correct": 0,
+      "explanation": "Article 99(3) sets the highest penalty tier at up to 35M EUR or 7% of worldwide annual turnover, whichever is higher, for violations of the prohibited practices in Article 5. Lower tiers apply to other violations: 15M EUR / 3% under Article 99(4) for other non-compliance, and 7.5M EUR / 1% under Article 99(5) for supplying incorrect information to authorities."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Transparency, Copyright, Safety and Security"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The GPAI Code of Practice (10 July 2025) has three chapters: Transparency (binding all GPAI providers), Copyright (all GPAI providers), and Safety and Security (binding only systemic-risk GPAI providers, an estimated 5-15 companies)."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Expansion into algorithmic bias"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The rebrand from 'AI Safety Institute' to 'AI Security Institute' narrows the body's scope: it drops the earlier algorithmic-bias and free-speech framings and focuses on frontier-capability security, while continuing to run its open-sourced Inspect evaluation tool."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Mandatory open-source release of frontier models"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The Trump administration renamed NIST's AI Safety Institute to the Center for AI Standards and Innovation (CAISI) in June 2025, shifting toward 'pro-growth AI policies' with more emphasis on standards and innovation support and less on pre-deployment evaluation, acting as a domestic counterweight to the EU AI Act's stricter posture."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Article 12 establishes an AISI under MSIT and mandates local representatives, risk assessment, and safety measures for high-impact and generative AI"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "Korea's AI Framework Act, effective January 2026, establishes an AI Safety Institute under the Ministry of Science and ICT (Article 12) and requires local representatives for foreign AI companies, risk assessment for high-impact systems, and safety measures for generative and high-impact AI."
     }
   ]
 }

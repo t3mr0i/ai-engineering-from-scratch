@@ -117,5 +117,5 @@ Phase 13 · 22 covered the technical layer: how skills, tool definitions, and ag
 - [Gartner — AI Center of Excellence research](https://www.gartner.com/en/information-technology/insights/artificial-intelligence) — maturity models and organizational benchmarks.
 - [McKinsey Global Institute — The State of AI](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) — annual survey data on scaling rates, pilot-to-production ratios, and operating model patterns.
 - [Anthropic — Building with Claude (platform docs)](https://platform.claude.com/docs) — the model tier and API surface the CoE's routing policy must cover.
-- [NIST AI Risk Management Framework (AI RMF 1.0)](https://www.nist.gov/artificial-intelligence) — the US federal governance standard most enterprises reference when writing their AI security baseline.
+- [NIST AI Risk Management Framework (AI RMF 1.0)](https://www.nist.gov/artificial-intelligence) — a voluntary framework, not a binding federal standard, but the one most enterprises reference when writing their AI security baseline.
 - [Linux Foundation — MLOps Maturity Model](https://github.com/cdfoundation/sig-mlops/blob/main/roadmap/2020/MLOpsRoadmap2020.md) — the engineering-side maturity reference that complements the organizational CoE model.

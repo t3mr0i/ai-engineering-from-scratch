@@ -12,7 +12,7 @@
         "Open-source, commercial, hybrid"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson organizes the 2026 market into custom silicon (Groq, Cerebras, SambaNova), GPU platforms (Baseten, Together, Fireworks, Modal, Anyscale), and API-first marketplaces (Replicate, DeepInfra, OpenRouter, Fal)."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "5%"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's rule of thumb is that above roughly 30% sustained utilization of a dedicated GPU, per-minute billing starts to beat per-token; below that, per-token wins because you avoid paying for idle capacity."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Anyscale"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "Modal is described as true Python serverless: decorate a function with `@modal.function(gpu=\"A100\")`, per-second billing, and 2-4s cold starts with pre-warming (under 1s for small models)."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "LoRA-served requests are charged at the base model's per-token rate"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson notes Fireworks serves a fine-tuned (LoRA) model at the same per-token rate as the base model, calling out that other providers typically charge a premium for LoRA-served requests."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Replicate"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson describes Baseten as enterprise-polish-optimized: SOC 2 Type II and HIPAA-ready, dedicated GPU range from T4 through B200, and calls it the common fintech and healthcare pick."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Custom engines never outperform vLLM"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson states vLLM and SGLang represent about 80% of production open-source inference, so despite every platform touting a custom engine (FireAttention, RayTurbo, etc.), the real differentiation is DX, attribution, and SLAs rather than the engine itself."
     }
   ]
 }

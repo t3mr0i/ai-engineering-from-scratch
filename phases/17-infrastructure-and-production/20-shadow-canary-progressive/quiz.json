@@ -12,7 +12,7 @@
         "A/B first, then shadow, then canary"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson's sequence is shadow mode first (zero-impact comparison against production), then canary rollout (progressive live traffic with gates), then A/B testing for distinct alternatives once stability is confirmed."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Just throughput"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson lists exactly these five canary gates: latency percentiles (P50/P95/P99), cost per request, error/refusal rate, output length distribution, and user-feedback rate."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Up to about 15%, due to GPU FP non-associativity plus batch-size variance"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson states measured accuracy variation of up to 15% run-to-run on identical eval sets, caused by GPU floating-point non-associativity and batch-size variance, which is why 'stable' means within expected variance rather than identical to baseline."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "A smoke test catching cost blow-ups, length regressions, refusal changes, and hard errors — not a quality guarantee"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson is explicit that shadow mode catches cost blow-ups, length regressions, obvious refusal changes, and hard errors with zero user impact, but does not catch the quality delta users would perceive -- it is a smoke test, not a quality test."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Manual SSH to each pod"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's rollback design keeps policy in config/flags and the model in a registry with pinned digests, so rollback is flipping the policy flag and reverting the pinned digest in seconds, not a multi-hour redeploy."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Cost is the same across providers"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson notes cost is a variable, not a constant: a 20% better model can be 3x more expensive per call, so shipping it without a cost gate (breach threshold: >20% above baseline) can break unit economics even though offline accuracy improved."
     }
   ]
 }

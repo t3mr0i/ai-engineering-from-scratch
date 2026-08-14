@@ -197,7 +197,7 @@ Activations dominate training memory above a few billion parameters. The rule of
 activation_mem ~ batch_size * seq_len * hidden_size * num_layers * bytes_per_element
 ```
 
-For Llama 3 8B at batch 1, seq 8192, BF16, 32 layers, hidden 4096: roughly 8 GB just for activations with checkpointing, 40 GB without. This is why flash-attention and ring-attention matter -- they rewrite the attention computation so activations fit.
+For Llama 3 8B at batch 1, seq 8192, BF16, 32 layers, hidden 4096: `1 * 8192 * 4096 * 32 * 2 bytes` = roughly 2.0 GiB (2.1 GB) just for activations with checkpointing, 40 GB without. This is why flash-attention and ring-attention matter -- they rewrite the attention computation so activations fit.
 
 ### KV Cache budget
 

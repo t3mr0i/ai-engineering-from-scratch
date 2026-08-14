@@ -47,7 +47,7 @@ The second is `regex_match`. The named file's contents are matched against a reg
 
 The third is `shell_exit_zero`. The harness runs a shell command (through the sandbox from lesson 26) and passes the task only if the command exits zero. This catches "the tests must pass" tasks.
 
-The harness runs each task `k` times. Pass@k is `1 - (1 - p)^k` where p is the empirical pass rate; the harness also reports raw counts so you can spot variance. Latency is wall-clock per sample. Cost is whatever the agent self-reports (token count, USD, or both); the harness sums it across samples and presents the per-task and aggregate numbers.
+The harness runs each task `k` times. Pass@k is `1 - (1 - p)^k` where p is the empirical pass rate; the harness also reports raw counts so you can spot variance. This is the simplified i.i.d.-Bernoulli approximation used here for teaching, not the canonical unbiased estimator: Chen et al. 2021 ("Evaluating Large Language Models Trained on Code", arXiv:2107.03374) define `pass@k = 1 - C(n-c, k) / C(n, k)` from `n` samples of which `c` pass, which avoids the bias this formula has when `p` itself is estimated from a small `k`. Latency is wall-clock per sample. Cost is whatever the agent self-reports (token count, USD, or both); the harness sums it across samples and presents the per-task and aggregate numbers.
 
 ## Architecture
 

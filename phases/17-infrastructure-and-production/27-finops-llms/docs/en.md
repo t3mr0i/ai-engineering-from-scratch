@@ -88,7 +88,7 @@ trace_id: abc123
     tool_tokens: 600
     memory_tokens: 400
     response_tokens: 150
-  cost_usd: 0.0135
+  cost_usd: 0.00103
   cached_input: true
   batch: false
 ```

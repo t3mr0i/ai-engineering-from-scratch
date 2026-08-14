@@ -1,6 +1,6 @@
 # Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)
 
-> The EU AI Act (Articles 10 and 53) and Germany's BDSG require organisations to document the provenance and representativeness of every dataset used to develop or evaluate a conformance-listed AI system. At the same time, the most common reason AI test suites miss production bugs is not bad logic — it is training-data leakage: the model has already seen the test cases during pre-training or fine-tuning. By 2026 the standard engineering response is a two-layer strategy: replace or mask any personally-identifiable test data with synthetic equivalents, then run explicit leakage checks before publishing evaluation results. Both layers have known failure modes that a practitioner must handle deliberately.
+> The EU AI Act (Articles 10 and 11) and the GDPR (Art. 5(2) accountability principle and Art. 30 records of processing) require organisations to document the provenance and representativeness of every dataset used to develop or evaluate a conformance-listed AI system. At the same time, the most common reason AI test suites miss production bugs is not bad logic — it is training-data leakage: the model has already seen the test cases during pre-training or fine-tuning. By 2026 the standard engineering response is a two-layer strategy: replace or mask any personally-identifiable test data with synthetic equivalents, then run explicit leakage checks before publishing evaluation results. Both layers have known failure modes that a practitioner must handle deliberately.
 
 **Type:** Learn
 **Languages:** Python (stdlib — synthetic data generator + leakage classifier)
@@ -29,7 +29,7 @@ The levers are independent. You can have clean synthetic data that still leaks i
 
 Before any data touches a test pipeline:
 
-1. **Identify the legal basis.** For EU entities the options are consent, legitimate interest, or necessity for a public task. Evaluating a language model is not a legitimate interest that overrides data subject rights; it requires either consent or genuine anonymisation first.
+1. **Identify the legal basis.** GDPR Art. 6(1) lists six legal bases (a-f): consent, contract, legal obligation, vital interests, public task, and legitimate interests. For AI evaluation work, the ones that typically apply are consent, legitimate interest, or necessity for a public task. Evaluating a language model is not a legitimate interest that overrides data subject rights; it requires either consent or genuine anonymisation first.
 2. **Classify sensitivity.** The ENISA "Data Pseudonymisation" guidelines (2022, updated 2025) define three tiers: direct identifiers (name, email, ID), quasi-identifiers (zip code + age + occupation), and sensitive attributes (health, political opinion). Each tier requires a different treatment before the data is usable for model evaluation.
 3. **Record the provenance chain.** The EU AI Act Annex IV (technical documentation) requires a description of training and evaluation datasets, their origin, and the measures taken to ensure representativeness. The same record satisfies ISO/IEC 42001:2023 clause 8.4.
 

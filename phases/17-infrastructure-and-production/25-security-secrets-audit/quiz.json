@@ -12,7 +12,7 @@
         "Hardcode API keys in config files for speed"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson describes the AI-gateway pattern as the 2026 standard: apps call a gateway, the gateway pulls credentials from a centralized vault at runtime via an IAM role, and rotating the key in the vault propagates to all apps within minutes, no redeploys needed."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Never"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson states a rotation policy of 90 days or less for API keys, vault root tokens, and CI/CD credentials, automated where possible, with manual rotations logged and tracked."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Same source value maps to the same placeholder, so the LLM preserves code and relationship semantics across the prompt"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson explains the Mesh approach maps the same source value to the same placeholder every time, so the LLM can still reason about relationships between entities in the prompt even though the actual PII values are masked."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Allow all outbound traffic"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson recommends putting LLM services in a dedicated subnet that whitelists only the provider APIs, vector DB, and vault endpoints, drops everything else, and uses an allowlist-only DNS resolver to prevent DNS-tunneling exfiltration."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Vercel was unaffected"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "The lesson cites compromised CI/CD credentials exfiltrating env vars across thousands of Vercel customer deployments as the lesson that CI/CD credentials are prod-equivalent and must be stored in vault, scoped narrowly, and rotated aggressively."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Only the cost"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's audit-log field list is exactly this: timestamp, user/tenant, prompt hash (not the raw prompt, for privacy), model and version, token counts, cost, response hash, and any guardrail trips."
     }
   ]
 }

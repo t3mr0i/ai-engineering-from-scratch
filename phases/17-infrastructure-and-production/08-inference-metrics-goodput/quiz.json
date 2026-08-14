@@ -12,7 +12,7 @@
         "Queue time, network request time, and prefill time"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "The lesson defines TTFT = queue_time + network_request + prefill_time, so all three of those components, not decode time, dominate it."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Mean ITL"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson is explicit that throughput is a fleet-efficiency metric, but goodput -- the fraction of requests meeting every SLO constraint (TTFT, TPOT, and E2E) simultaneously -- is the one that reflects whether the product actually worked for users."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Mean is not supported by GenAI-Perf"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "The lesson's example shows mean TPOT of 9 ms hiding a P99 TPOT of 65 ms, because a right-skewed distribution (a few requests sharing a batch with a long-prefill neighbor) means users regularly hit the tail that the mean averages away."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "They sample different requests"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson's worked example shows GenAI-Perf starting ITL from token 2 (excluding TTFT) while LLMPerf starts from token 1 (including TTFT), producing different numbers (7.07 ms vs 12.00 ms) for the identical run."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Network response time"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "E2E = TTFT + TPOT * output_tokens + network_response, and the lesson states that for long outputs (>500 tokens) E2E is TPOT-dominated -- TPOT times output length outweighs the fixed TTFT and network terms."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Mean TTFT 10 ms, mean TPOT 1 ms"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "The lesson gives exactly this SLO as the reasonable 2026 consumer-facing target: TTFT P99 <= 800 ms, TPOT P99 <= 25 ms, E2E P99 <= 3 s for <300-token outputs, and a goodput target >= 99%."
     }
   ]
 }

@@ -125,6 +125,19 @@
       const resumeButton = document.getElementById('resumeButton');
       const resumeButtonText = document.getElementById('resumeButtonText');
 
+      // Checks the last-visited lesson path against the known curriculum
+      // paths before it is used for the resume CTA (B3) — a stale
+      // localStorage entry (renamed/removed lesson) must not link to a dead
+      // lesson page.
+      function lessonPathExists(path) {
+        const maps = (window.LrnCurriculumMap && window.LrnCurriculumMap.courseMaps) || {};
+        return Object.keys(maps).some(courseId =>
+          maps[courseId].some(subcourse =>
+            (subcourse.lessons || []).some(lesson => lesson.path === path)
+          )
+        );
+      }
+
       // Dynamic last lesson name — reads the most recently visited lesson
       // from the LRN/progress storage (locus Dovage / aifs:progress:v1)
       let lessonName = '';
@@ -143,7 +156,7 @@
                 lastPath = path;
               }
             });
-            if (lastPath) {
+            if (lastPath && lessonPathExists(lastPath)) {
               // Short pretty name e.g. "05-jupyter-notebooks" -> "Jupyter Notebooks"
               const slug = lastPath.split('/').pop();
               lessonName = slug.replace(/^\d+[-_]?/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());

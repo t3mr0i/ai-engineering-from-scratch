@@ -46,6 +46,12 @@ flowchart LR
 - human decision owner
 - communication script
 
+### Legal Frame
+
+- Recruitment, evaluation, promotion, termination, and performance-monitoring use cases fall under Annex III, point 4 of the EU AI Act (employment and workers management is a high-risk category) — conformity assessment and human oversight apply.
+- An AI output that drives a decision with legal or similarly significant effect on an employee, made without meaningful human review, engages Art. 22 GDPR.
+- In Germany, introducing or using a technical system designed to monitor employee behaviour or performance requires prior co-determination with the works council under § 87 Abs. 1 Nr. 6 BetrVG — this covers AI-based monitoring and evaluation tools.
+
 ### Target Roles
 
 - Corporate Functions

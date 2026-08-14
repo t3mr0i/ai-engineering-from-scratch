@@ -44,7 +44,7 @@ The mapping is not the model's job. It is the product team's job, done once per 
 
 ### The four required control elements
 
-NIST AI RMF GOVERN 1.1 and ISO 42001 clause 6.1.2 share a common structure. For each AI use case, you need:
+NIST AI RMF GOVERN 2.1 and ISO 42001 clause 6.1.2 share a common structure. For each AI use case, you need:
 
 1. **Named risk owner** — a person (not a team, not a role, not "the AI team") accountable for the consequence level and the adequacy of the control. The owner signs policy exceptions. They are in the audit trail.
 2. **Stated control** — the specific gate that reduces the risk to accepted residual. Examples: "a certified analyst reviews every L2 output before it leaves the system," "100% of L3 outputs require written rationale in the ticket." Vague controls ("we have human oversight") do not satisfy ISO 42001 clause 8.4.
@@ -127,6 +127,6 @@ In our experience, features that pass all four checks are *rare*. Most features 
 
 - [NIST AI Risk Management Framework 1.0](https://airc.nist.gov/) — the GOVERN, MAP, MEASURE, MANAGE functions; profiles and playbooks.
 - [ISO 42001:2023 overview (ISO.org)](https://www.iso.org/standard/81230.html) — the AI management system standard; clause 6.1 and Annex B controls.
-- [EU AI Act — official text (EUR-Lex)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — GPAI obligations in Title VIII; high-risk system requirements in Title III.
+- [EU AI Act — official text (EUR-Lex)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — GPAI obligations in Chapter V (Art. 51-56); high-risk system requirements in Chapter III (Art. 6, Annexes I and III). The final text is organised into Chapters, not the "Titles" used in the 2021 Commission draft.
 - [Anthropic — Claude usage policies](https://www.anthropic.com/aup) — the model provider's own risk classification (prohibited, restricted, allowed with conditions); useful input to your consequence level mapping.
 - [ENISA — AI Cybersecurity Risks (2024)](https://www.enisa.europa.eu/) — threat landscape for AI systems; maps cleanly to the control-gap categories in this lesson.
