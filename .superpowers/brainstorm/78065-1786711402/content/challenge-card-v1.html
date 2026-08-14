@@ -1,0 +1,103 @@
+<style>
+  .lhg-wrap{font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;}
+  .lhg-card{background:#fff;border:1px solid #e3e1de;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(5,22,77,0.08);}
+  .lhg-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #e3e1de;}
+  .lhg-badge{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#05164d;display:flex;align-items:center;gap:6px;}
+  .lhg-badge .dot{width:6px;height:6px;border-radius:50%;background:#05164d;}
+  .lhg-run{background:#05164d;color:#fff;border:none;border-radius:999px;padding:6px 14px;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:inherit;}
+  .lhg-code{background:#f1f0ef;padding:14px 16px;font-size:.82rem;line-height:1.7;color:#05164d;white-space:pre;overflow-x:auto;}
+  .lhg-code .kw{color:#05164d;font-weight:600;}
+  .lhg-code .plain{color:#33394d;}
+  .lhg-blank{display:inline-block;min-width:52px;border:none;border-bottom:2px solid #05164d;background:rgba(5,22,77,.06);color:#05164d;padding:0 4px;border-radius:2px 2px 0 0;font:inherit;}
+  .lhg-blank.ok{border-bottom-color:#1b8a5a;background:rgba(27,138,90,.10);color:#1b8a5a;}
+  .lhg-console{padding:10px 16px;font-size:.76rem;border-top:1px solid #e3e1de;display:flex;align-items:center;gap:8px;}
+  .lhg-console.pass{background:rgba(27,138,90,.10);color:#1b8a5a;}
+  .lhg-console.fail{background:rgba(226,39,67,.06);color:#e22743;}
+  .lhg-console.idle{background:#fff;color:#6b6764;}
+  .lhg-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#6b6764;margin:22px 0 8px;font-family: ui-monospace, monospace;}
+</style>
+
+<h2>Challenge-Karte — 3 Richtungen</h2>
+<p class="subtitle">Alle drei nutzen dieselbe Pyodide-Run-Mechanik, die schon funktioniert. Unterschied ist nur die Optik. Klick eine an, oder sag im Terminal was dir gefällt / nicht gefällt.</p>
+
+<div class="cards" data-choice-group="style">
+
+  <div class="card" data-choice="a-native" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="lhg-wrap lhg-card">
+        <div class="lhg-head">
+          <span class="lhg-badge"><span class="dot"></span>Challenge · 2 blanks</span>
+          <button class="lhg-run">▶ Run</button>
+        </div>
+        <div class="lhg-code"><span class="kw">class</span> <span class="plain">Product(BaseModel):</span>
+    product: <input class="lhg-blank" value="str"/>
+    price: <input class="lhg-blank ok" value="float"/></div>
+        <div class="lhg-console pass">✓ &nbsp;PASS — all fields typed correctly</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — LHG-nativ</h3>
+      <p>Bleibt exakt im bestehenden Seiten-Look (Core Blue, warme Grautöne, gleiche Fonts). Nur ein klarer "Challenge"-Header statt generischem "Show code" + farbige Konsolenzeile.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b-dark-editor" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="lhg-wrap lhg-card">
+        <div class="lhg-head">
+          <span class="lhg-badge"><span class="dot"></span>Challenge · 2 blanks</span>
+          <button class="lhg-run">▶ Run</button>
+        </div>
+        <div style="background:#05164d;padding:14px 16px;font-size:.82rem;line-height:1.7;color:#c3d5ee;white-space:pre;overflow-x:auto;">
+<span style="color:#7ba6dc;font-weight:600">class</span> Product(BaseModel):
+    product: <input class="lhg-blank" style="background:rgba(123,166,220,.18);border-bottom-color:#7ba6dc;color:#eaf1fb" value="str"/>
+    price: <input class="lhg-blank ok" style="background:rgba(111,199,156,.18);border-bottom-color:#6fc79c;color:#6fc79c" value="float"/></div>
+        <div class="lhg-console pass">✓ &nbsp;PASS — all fields typed correctly</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Codecademy-artig (dunkler Editor)</h3>
+      <p>Card-Rahmen bleibt hell/LHG, aber die Code-Fläche selbst wird ein dunkles Editor-Panel wie bei Codecademy/VS Code — mehr Kontrast, wirkt "echter" als IDE, mehr visueller Bruch zur restlichen Lesson.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c-split" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="lhg-wrap lhg-card">
+        <div class="lhg-head">
+          <span class="lhg-badge"><span class="dot"></span>Challenge · 2 blanks</span>
+          <button class="lhg-run">▶ Run</button>
+        </div>
+        <div style="display:flex;">
+          <div style="flex:0 0 34%;padding:14px 14px;border-right:1px solid #e3e1de;font-family:'Lufthansa Text',sans-serif;font-size:.78rem;color:#52617c;line-height:1.5;">
+            <div style="font-weight:600;color:#05164d;margin-bottom:6px;">Deine Aufgabe</div>
+            Fülle die Typen so aus, dass Pydantic sie validiert.
+            <div style="margin-top:10px;text-decoration:underline;color:#05164d;cursor:pointer;">Hinweis anzeigen</div>
+          </div>
+          <div class="lhg-code" style="flex:1;">
+<span class="kw">class</span> <span class="plain">Product(BaseModel):</span>
+    product: <input class="lhg-blank" value="str"/>
+    price: <input class="lhg-blank ok" value="float"/></div>
+        </div>
+        <div class="lhg-console pass">✓ &nbsp;PASS — all fields typed correctly</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Scrimba-artig (Split)</h3>
+      <p>Eigene Spalte für die Aufgabenstellung/Hinweis neben dem Editor, statt Anleitung als Fließtext davor. Stärker pädagogisch gerahmt, braucht mehr Breite.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="label" style="margin-top:24px">Zum Vergleich — heutiger Zustand</p>
+<div class="mockup">
+  <div class="mockup-header">Ist-Zustand: kollabierter Fill-in-Block</div>
+  <div class="mockup-body">
+    <div class="lhg-wrap" style="border:1px solid #e3e1de;border-radius:10px;background:#fff;padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:.8rem;">
+      <span style="border-style:solid;border-width:5px 0 5px 7px;border-color:transparent transparent transparent #7a7673;display:inline-block;"></span>
+      <span style="text-transform:uppercase;font-size:.72rem;color:#6b6764;font-weight:600;">Python</span>
+      <span style="color:#52617c;">Show code · 3 lines</span>
+    </div>
+  </div>
+</div>

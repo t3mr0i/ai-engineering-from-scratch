@@ -1,0 +1,101 @@
+<style>
+  .lhg-wrap{font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;}
+  .lhg-card{background:#fff;border:1px solid #e3e1de;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(5,22,77,0.08);max-width:520px;}
+  .lhg-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #e3e1de;}
+  .lhg-badge{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#05164d;display:flex;align-items:center;gap:6px;}
+  .lhg-badge .dot{width:6px;height:6px;border-radius:50%;background:#05164d;}
+  .lhg-actions{display:flex;gap:6px;align-items:center;}
+  .lhg-btn{background:transparent;color:#6b6764;border:1px solid #e3e1de;border-radius:6px;padding:5px 9px;font-size:.66rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;font-family:inherit;}
+  .lhg-run{background:#05164d;color:#fff;border:none;border-radius:999px;padding:6px 14px;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:inherit;}
+  .lhg-editor{background:#05164d;display:flex;font-size:.82rem;line-height:1.75;}
+  .lhg-gutter{padding:14px 10px 14px 14px;color:#3a5590;text-align:right;user-select:none;}
+  .lhg-code{padding:14px 16px 14px 8px;color:#c3d5ee;white-space:pre;overflow-x:auto;flex:1;}
+  .kw{color:#7ba6dc;font-weight:600;}
+  .str{color:#a8d5b8;}
+  .lhg-blank{display:inline-block;min-width:52px;border:none;border-bottom:2px solid #7ba6dc;background:rgba(123,166,220,.16);color:#eaf1fb;padding:0 4px;border-radius:2px 2px 0 0;font:inherit;}
+  .lhg-blank.ok{border-bottom-color:#6fc79c;background:rgba(111,199,156,.18);color:#6fc79c;}
+  .lhg-blank.bad{border-bottom-color:#e08a8a;background:rgba(224,138,138,.16);color:#e08a8a;}
+  .lhg-console{padding:10px 16px;font-size:.76rem;display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,.08);}
+  .lhg-console.pass{background:rgba(27,138,90,.10);color:#1b8a5a;}
+  .lhg-console.fail{background:rgba(226,39,67,.08);color:#e22743;}
+  .lhg-console.idle{background:#f1f0ef;color:#6b6764;}
+  .state-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#6b6764;margin:0 0 8px;font-weight:600;}
+  .row{display:flex;flex-wrap:wrap;gap:28px;margin-top:10px;}
+</style>
+
+<h2>Variante B — drei Zustände</h2>
+<p class="subtitle">So sieht dieselbe Challenge-Karte in ihren drei Zuständen aus. Reagiere im Terminal auf die offenen Punkte darunter — hier gibt es nichts anzuklicken.</p>
+
+<div class="row">
+
+  <div>
+    <div class="state-label">1 — Idle (noch nicht ausgefüllt)</div>
+    <div class="lhg-wrap lhg-card">
+      <div class="lhg-head">
+        <span class="lhg-badge"><span class="dot"></span>Challenge · 2 blanks</span>
+        <div class="lhg-actions">
+          <button class="lhg-btn">Fill for me</button>
+          <button class="lhg-btn">↺</button>
+          <button class="lhg-run">▶ Run</button>
+        </div>
+      </div>
+      <div class="lhg-editor">
+        <div class="lhg-gutter">1<br>2<br>3</div>
+        <div class="lhg-code"><span class="kw">class</span> Product(BaseModel):
+    product: <input class="lhg-blank" placeholder="…"/>
+    price: <input class="lhg-blank" placeholder="…"/></div>
+      </div>
+      <div class="lhg-console idle">Run, sobald beide Lücken gefüllt sind</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="state-label">2 — PASS</div>
+    <div class="lhg-wrap lhg-card">
+      <div class="lhg-head">
+        <span class="lhg-badge"><span class="dot"></span>Challenge · 2 blanks</span>
+        <div class="lhg-actions">
+          <button class="lhg-btn">Fill for me</button>
+          <button class="lhg-btn">↺</button>
+          <button class="lhg-run">▶ Run</button>
+        </div>
+      </div>
+      <div class="lhg-editor">
+        <div class="lhg-gutter">1<br>2<br>3</div>
+        <div class="lhg-code"><span class="kw">class</span> Product(BaseModel):
+    product: <input class="lhg-blank ok" value="str"/>
+    price: <input class="lhg-blank ok" value="float"/></div>
+      </div>
+      <div class="lhg-console pass">✓ &nbsp;PASS — all fields typed correctly</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="state-label">3 — WRONG</div>
+    <div class="lhg-wrap lhg-card">
+      <div class="lhg-head">
+        <span class="lhg-badge"><span class="dot"></span>Challenge · 2 blanks</span>
+        <div class="lhg-actions">
+          <button class="lhg-btn">Fill for me</button>
+          <button class="lhg-btn">↺</button>
+          <button class="lhg-run">▶ Run</button>
+        </div>
+      </div>
+      <div class="lhg-editor">
+        <div class="lhg-gutter">1<br>2<br>3</div>
+        <div class="lhg-code"><span class="kw">class</span> Product(BaseModel):
+    product: <input class="lhg-blank bad" value="text"/>
+    price: <input class="lhg-blank ok" value="float"/></div>
+      </div>
+      <div class="lhg-console fail">✗ &nbsp;WRONG — product should be a plain str, not a custom type</div>
+    </div>
+  </div>
+
+</div>
+
+<p class="label" style="margin-top:28px">Offene Punkte — bitte im Terminal beantworten</p>
+<ul style="font-family:'Lufthansa Text',sans-serif;font-size:.95rem;line-height:1.7;color:#33394d;max-width:640px;">
+  <li><b>Zeilennummern:</b> drin lassen (wie oben) oder weglassen (schlanker, aber weniger "echte IDE")?</li>
+  <li><b>Dunkler Editor immer dunkel</b> — auch wenn der Rest der Seite im Light-Theme ist? Oder nur im Dark-Theme der Seite dunkel, im Light-Theme bleibt Variante A (hell)?</li>
+  <li><b>Fill-in-input-Breite:</b> feste Mindestbreite wie oben, oder wie bisher an die Lösungslänge angepasst (size-Attribut)?</li>
+</ul>
