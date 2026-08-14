@@ -62,7 +62,7 @@ The gate (Phase 14 · 38) checks deterministic facts: did acceptance run, did ru
 
 ## Further Reading
 
-- [OpenAI Agents SDK handoffs](https://platform.openai.com/docs/guides/agents-sdk/handoffs)
+- [OpenAI Agents SDK, Orchestration and handoffs](https://developers.openai.com/api/docs/guides/agents/orchestration)
 - [Anthropic Claude Code subagents](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/sub-agents)
 - [Cloudflare, Orchestrating AI Code Review at Scale](https://blog.cloudflare.com/ai-code-review/) — 7-specialist + coordinator architecture, 131k runs / 30 days
 - [Agent-as-a-Judge: Evaluating Agents with Agents (OpenReview / ICLR)](https://openreview.net/forum?id=DeVm3YUnpj) — DevAI benchmark, 365 hierarchical solution requirements

@@ -6,58 +6,58 @@
       "stage": "pre",
       "question": "What are the three evaluation layers the lesson names?",
       "options": [
+        "Unit tests, integration tests, and end-to-end acceptance test suites",
         "Static benchmarks, custom offline evals, online production evals",
-        "Unit, integration, end-to-end",
-        "Smoke, regression, acceptance",
-        "Pre, check, post"
+        "Smoke tests, regression tests, and manual acceptance sign-off checks",
+        "Pre-stage, check-stage, and post-stage quiz question tags used in this course"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Static (SWE-bench, GAIA), custom offline (LLM-judge, exec, trajectory), online (replays, alerts, cost/latency)."
     },
     {
       "stage": "pre",
       "question": "What is Anthropic's recommended starting point?",
       "options": [
-        "Start with multi-agent debate",
+        "Start with multi-agent debate among several specialized subagents before ever writing a single simple baseline prompt to compare",
+        "Start with hierarchical orchestration and a planner-executor split before evaluating any single prompt",
         "Start with simple prompts, optimize them with comprehensive evaluation, and add multi-step agentic systems only when needed",
-        "Start with hierarchical orchestration",
-        "Start with a frontier model only"
+        "Start with a frontier model only and skip evaluation until the agent is already deployed to production"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Anthropic explicitly says evaluation is the outer loop that drives every other choice."
     },
     {
       "stage": "check",
       "question": "What is the evaluator-optimizer tight loop?",
       "options": [
-        "Train, evaluate, deploy",
-        "Proposer generates output, evaluator judges, refine until evaluator passes (Self-Refine generalized)",
-        "Sample, sort, deduplicate",
-        "Cache, retry, fail"
+        "Train the model, evaluate on a held-out benchmark, then deploy directly to production traffic",
+        "Sample many candidate outputs, sort by score, and deduplicate near-identical responses before returning",
+        "Cache the first response, retry on any failure, and fail silently after three attempts",
+        "Proposer generates output, evaluator judges, refine until evaluator passes (Self-Refine generalized)"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "It is Self-Refine generalized: any flow can wrap in propose-judge-refine."
     },
     {
       "stage": "check",
       "question": "What is the 2026 best practice for where evals live?",
       "options": [
-        "In a separate vendor dashboard only",
         "Next to code, run in CI on every PR, gate merges on eval scores",
-        "Only run quarterly",
-        "Owned exclusively by the QA team"
+        "In a separate vendor dashboard only, reviewed manually once a release ships",
+        "Only run quarterly during a scheduled review cycle separate from the CI pipeline",
+        "Owned exclusively by the QA team, never touched by agent engineers"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Co-located with code, CI-gated, regression-tracked is the standard."
     },
     {
       "stage": "check",
       "question": "Why does the lesson warn against an LLM-judge without grounding?",
       "options": [
-        "It is too slow",
+        "It is too slow to run inside a CI pipeline gating merges on every pull request",
         "Judges hallucinate too; pair with the CRITIC pattern so judgment grounds on external tools",
-        "It violates Apache 2.0",
-        "It only works on GPUs"
+        "It violates the Apache 2.0 open-source license terms attached to most evaluation frameworks used here",
+        "It only works on GPU-backed inference endpoints, not CPU-only judge deployments"
       ],
       "correct": 1,
       "explanation": "CRITIC (Lesson 5) applies: tool-grounded verification keeps the judge honest."
@@ -66,24 +66,24 @@
       "stage": "post",
       "question": "What is the danger of over-fitting to evals?",
       "options": [
-        "Compute cost rises",
-        "Optimizing for the eval set diverges from production usefulness; rotate cases",
-        "Vector indices fragment",
-        "Latency drops too far"
+        "Compute cost rises sharply because every eval run re-invokes the full agent loop and judge model",
+        "Vector index fragmentation increases and retrieval latency in the RAG pipeline slowly climbs",
+        "Latency drops too far below production SLAs once evals are removed from the CI pipeline",
+        "Optimizing for the eval set diverges from production usefulness; rotate cases"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Eval set rotation keeps the optimization aligned with production reality."
     },
     {
       "stage": "post",
       "question": "Why do flaky evals cause problems?",
       "options": [
-        "They double inference cost",
         "Non-deterministic cases produce false alarms; pin seeds and snapshot state",
-        "They cannot reach the database",
-        "They exceed the context window"
+        "They double inference cost because every flaky case gets retried automatically three times",
+        "They cannot reach the database that stores baseline scores for regression comparison",
+        "They exceed the context window once trace history from prior runs is appended to the prompt"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Flake makes regressions unreadable; determinism (seeds, state snapshots) is required."
     }
   ]

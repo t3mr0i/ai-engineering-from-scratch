@@ -6,60 +6,60 @@
       "question": "Which framework is the right first pick for a workflow that must resume after a crash, accept a human approval mid-run, and fan out to three retrievers in parallel?",
       "options": [
         "CrewAI",
-        "AutoGen",
         "LangGraph",
+        "AutoGen",
         "Agno"
       ],
-      "correct": 2,
-      "explanation": ""
+      "correct": 1,
+      "explanation": "LangGraph is the only one of the four with a first-class checkpointer, `interrupt_before`/`interrupt_after` for human approval, and `Send` for parallel fanout with reducer-based merging."
     },
     {
       "stage": "post",
       "question": "Why does LLM-selected routing cost more tokens per turn than explicit routing?",
       "options": [
-        "It pre-fetches the next node in parallel to hedge latency.",
+        "It pre-fetches the next node's tool results in parallel purely to hedge against network latency spikes.",
+        "It duplicates the full tool list and system prompt for every single agent in the crew on each turn.",
         "A planner LLM call picks the next step each turn, adding prompt and completion tokens for every decision.",
-        "It duplicates the tool list for every agent in the crew.",
-        "It sends the whole conversation history to a verifier model."
+        "It sends the whole conversation history to a separate verifier model before accepting the next step."
       ],
-      "correct": 1,
-      "explanation": ""
+      "correct": 2,
+      "explanation": "CrewAI's hierarchical manager and AutoGen's GroupChatManager both spend an LLM call deciding who goes next. LangGraph and Agno only spend tokens where you explicitly write `llm.invoke`."
     },
     {
       "stage": "post",
       "question": "Proposer-critic dialogue in code review naturally maps to which framework's core abstraction?",
       "options": [
-        "CrewAI's sequential Crew",
-        "LangGraph's StateGraph",
-        "AutoGen's GroupChat / ConversableAgent pair",
-        "Agno's single Agent with tools"
+        "AutoGen's GroupChat / ConversableAgent pair for multi-agent dialogue",
+        "CrewAI's sequential Crew with roles, tasks, and a linear process",
+        "LangGraph's StateGraph with typed state and conditional edges",
+        "Agno's single Agent abstraction composed with tools and memory"
       ],
-      "correct": 2,
-      "explanation": ""
+      "correct": 0,
+      "explanation": "AutoGen's core abstraction is two or more agents speaking in turns until an exit condition -- the native shape for a proposer-critic or teacher-student dialogue."
     },
     {
       "stage": "post",
       "question": "Which framework has built-in storage drivers (SQLite, Postgres, Redis, Mongo, DynamoDB) attached directly to the Agent class for session and memory persistence?",
       "options": [
-        "LangGraph",
-        "CrewAI",
-        "AutoGen",
-        "Agno"
+        "LangGraph, via its Postgres/Redis/SQLite checkpointer classes",
+        "Agno, via storage drivers attached directly to the Agent class",
+        "CrewAI, via the `context` field passed between sequential tasks",
+        "AutoGen, via chat history and user-defined context objects"
       ],
-      "correct": 3,
-      "explanation": ""
+      "correct": 1,
+      "explanation": "Agno attaches storage drivers (SQLite, Postgres, Mongo, Redis, DynamoDB) directly to an `Agent` via `storage=` -- conversation sessions and user memories persist automatically as a session store, not a full graph checkpointer."
     },
     {
       "stage": "post",
       "question": "You have a two-call summarizer: fetch text, summarize. Which option is the right framework choice?",
       "options": [
-        "LangGraph StateGraph \u2014 always use a framework for reliability.",
-        "CrewAI with researcher + summarizer roles \u2014 roles make it clearer.",
+        "LangGraph StateGraph \u2014 always reach for a framework first, since reliability requires checkpointing.",
+        "CrewAI with researcher + summarizer roles \u2014 separate roles make a two-step pipeline easier to reason about.",
         "Plain Python with the provider SDK \u2014 no framework is the fastest framework for tiny pipelines.",
-        "AutoGen GroupChat \u2014 two agents can argue about the best summary."
+        "AutoGen GroupChat \u2014 let two agents argue about the best summary until they converge on one answer."
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "Every framework is another dependency. If the task is two LLM calls and a tool, plain Python is cheaper than any framework's setup cost -- no framework is the fastest framework."
     }
   ]
 }

@@ -6,82 +6,82 @@
       "stage": "pre",
       "question": "What is indirect prompt injection?",
       "options": [
-        "A user typing 'ignore all rules' directly",
-        "Instructions embedded in data the agent retrieves (a page, PDF, email, memory note) that override the developer prompt on ingest",
-        "A model misclick",
-        "A typo in the system prompt"
+        "A user typing 'ignore all rules' directly into the chat box during an actively ongoing conversation turn",
+        "A model misclick where the agent selects the wrong tool from an otherwise entirely correct list of options",
+        "A typo in the system prompt that accidentally disables one of the developer's key safety instructions",
+        "Instructions embedded in data the agent retrieves (a page, PDF, email, memory note) that override the developer prompt on ingest"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Greshake et al. coined indirect prompt injection: attacker-controlled retrieved content carries instructions."
     },
     {
       "stage": "pre",
       "question": "What does the lesson say processing retrieved prompts is equivalent to?",
       "options": [
-        "Free speech",
-        "Arbitrary code execution on the agent's tool-use surface",
-        "A static analysis pass",
-        "A pure function call"
+        "Arbitrary code execution on the agent's own tool-use surface, per Greshake et al.",
+        "Free speech, which carries no security implications for the agent's tool-use surface",
+        "A static analysis pass that only reads code without ever executing it",
+        "A pure function call with no side effects on the agent's environment"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Greshake's framing: retrieved instructions can hit any tool the agent has access to."
     },
     {
       "stage": "check",
       "question": "Which is NOT one of the five demonstrated exploit classes?",
       "options": [
-        "Data theft",
-        "Worming",
-        "Persistent memory poisoning",
-        "Cache invalidation"
+        "Data theft, where the agent exfiltrates conversation history to an attacker-controlled URL",
+        "Cache invalidation, which the lesson never lists among the five exploit classes",
+        "Worming, where injected content instructs the agent to embed the exploit in its next output",
+        "Persistent memory poisoning, where the agent re-poisons itself on the next session"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The five are data theft, worming, persistent memory poisoning, ecosystem contamination, arbitrary tool use."
     },
     {
       "stage": "check",
       "question": "What does PVE stand for?",
       "options": [
+        "Provider-Verifier-Encoder: a routing layer that re-encodes tool arguments before every provider API call",
+        "Plan-Verify-Execute, a hierarchical task network dialect used for offline multi-step planning",
         "Prompt-Validator-Executor: a cheap fast validator runs on each tool call before the expensive main model commits",
-        "Provider-Verifier-Encoder",
-        "Plan-Verify-Execute, an HTN dialect",
-        "Pre-Vectorize-Embed"
+        "Pre-Vectorize-Embed, a preprocessing stage that embeds retrieved documents before indexing"
       ],
-      "correct": 0,
+      "correct": 2,
       "explanation": "PVE wraps every tool invocation with a cheap validator before main-model commit."
     },
     {
       "stage": "check",
       "question": "Why is 'system prompt says ignore untrusted instructions' insufficient?",
       "options": [
-        "It is too short",
-        "It is instruction-following, not enforcement; the model can still be overridden by sufficiently persuasive injected content",
-        "Providers strip it",
-        "It is encrypted"
+        "It is too short a string to satisfy most model providers' minimum system-prompt length requirement",
+        "Providers strip any sentence containing the word 'untrusted' from the system prompt automatically",
+        "It is encrypted by the provider's API gateway, so the model never actually reads that instruction",
+        "It is instruction-following, not enforcement; the model can still be overridden by sufficiently persuasive injected content"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Real defense needs source tagging, allowlists, per-step safety, and PVE-style validation, not just prompting."
     },
     {
       "stage": "post",
       "question": "What is overtrust of retrieved memory?",
       "options": [
-        "Caching too aggressively",
         "Yesterday's agent wrote a poisoned memory note; today's agent reads it and re-executes the injection",
-        "Loading the wrong model",
-        "Forgetting to vacuum the index"
+        "Caching tool responses too aggressively so the agent replays stale but harmless results",
+        "Loading the wrong model version after a provider silently rotates its own default API endpoint overnight",
+        "Forgetting to vacuum the vector index, which slowly degrades retrieval relevancy scores"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Persistent memory poisoning means injections survive across sessions if memory is treated as trusted."
     },
     {
       "stage": "post",
       "question": "What metadata does the lesson recommend attaching to every piece of content?",
       "options": [
-        "An encryption key",
+        "An encryption key derived per-session so retrieved content cannot be replayed across sessions",
         "A source tag: user_message vs tool_output vs retrieved; validator refuses directives in retrieved content",
-        "A timestamp only",
-        "A token count"
+        "A timestamp only, with no indication of whether the content came from the user or a tool",
+        "A token count only, used purely to enforce the model's fixed context window budget limit"
       ],
       "correct": 1,
       "explanation": "Provenance tagging lets the validator treat content according to its trust level."

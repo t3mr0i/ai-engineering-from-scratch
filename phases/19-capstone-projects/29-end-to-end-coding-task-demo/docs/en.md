@@ -1,4 +1,4 @@
-# Capstone Lesson 29: End-to-End Coding Agent on the Harness
+# End-to-End Coding Agent on the Harness
 
 > Track A's payoff. This lesson stitches the gate chain, the sandbox, the eval harness, and the OTel spans into one working coding agent that fixes a real (small, fixture-scale) bug in a multi-file Python project. The agent is a deterministic policy, not an LLM; the substitution makes the lesson reproducible and shows that the harness was the interesting part all along. The contract is identical: a real model plugs in at the policy seam.
 

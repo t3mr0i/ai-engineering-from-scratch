@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What is the main risk of AI-generated customer-facing material?",
       "options": [
-        "It can invent context, overstate value, or weaken trust if unchecked",
-        "It is always too short",
-        "It never needs sources",
-        "It removes stakeholder review"
+        "It shifts preparation work from the account team over to the product consultant",
+        "It keeps proposal drafts internal so they never reach the stakeholder review step",
+        "It can invent customer context, overstate value, and weaken trust when unchecked",
+        "It slows discovery preparation because every competitive note has to be rewritten"
       ],
-      "correct": 0,
-      "explanation": "Customer-facing outputs need source checks and review."
+      "correct": 2,
+      "explanation": "The lesson's problem statement is that a polished output invents context, overstates value, or weakens trust. Customer-facing material therefore needs an evidence check and a review before it is shared."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": ["customer signal", "CPU cache", "font size", "audio codec"],
-      "correct": 0,
-      "explanation": "Customer signal is a preparation and evidence signal."
+      "question": "A proposal draft reads well, but nobody can say where its customer numbers came from. Which control of this lesson addresses that?",
+      "options": [
+        "The follow-up plan, which records the customer action expected after the meeting",
+        "The source check, which confirms every customer claim traces back to real context",
+        "The value story, which shapes how the benefit is framed for the customer audience during the pitch",
+        "The stakeholder review, which puts a second reader on the draft before it is sent"
+      ],
+      "correct": 1,
+      "explanation": "Unattributed numbers are an evidence problem, and the source check is the control that ties each claim back to actual customer context. Value story, stakeholder review, and follow-up plan are the other three controls the lesson teaches."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked sales/product consulting AI plan with controls and rationale",
-        "An automatic contract",
-        "A final customer promise",
-        "A CRM replacement"
+        "A finished customer proposal that can be sent externally without further review",
+        "A competitive analysis that replaces the team's own customer discovery interviews",
+        "A CRM record set that tracks every follow-up action assigned during the meeting",
+        "A ranked sales and product consulting AI plan with controls and a rationale each"
       ],
-      "correct": 0,
-      "explanation": "The artifact helps choose controls before customer material is used."
+      "correct": 3,
+      "explanation": "The artifact triages customer context and maps signals such as proposal risk to control levels, so teams can choose the controls before AI-assisted material is shared."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["stakeholder review", "invent customer facts", "skip source check", "hide proposal risk"],
-      "correct": 0,
-      "explanation": "Stakeholder review protects customer trust."
+      "options": [
+        "A proposal claim that skips the source check so the draft can go out the same day",
+        "A value story written from the model's assumptions rather than customer context",
+        "A follow-up list kept private to the author, so the customer only sees the proposal",
+        "A stakeholder review that puts a second reader on material before it is shared"
+      ],
+      "correct": 3,
+      "explanation": "Stakeholder review protects customer trust. Source check, value story, and follow-up plan are the other three controls this lesson teaches."
     },
     {
       "stage": "post",
       "question": "When should customer-facing AI material require stronger controls?",
       "options": [
-        "When proposal risk, weak customer evidence, or high impact is present",
-        "Only when the document is internal",
-        "Only when no customer is involved",
-        "Never; polished text is enough"
+        "Only when the draft stays internal and no customer will read the final version",
+        "Only when the follow-up plan is already written down and assigned to a named owner",
+        "Never, because a polished draft with a clear value story is evidence enough already",
+        "When proposal risk is high, customer evidence is weak, or the impact is large"
       ],
-      "correct": 0,
-      "explanation": "Customer-facing material needs stronger controls when risk or impact is high."
+      "correct": 3,
+      "explanation": "Proposal risk and weak customer signal are exactly the inputs the triage artifact maps to a stronger control level, and high-impact external material carries the most trust at stake."
     },
     {
       "stage": "post",
       "question": "What should AI improve in sales and product consulting?",
       "options": [
-        "Preparation, value-story clarity, and follow-up discipline",
-        "Fact invention",
-        "Unreviewed proposal promises",
-        "Source-free claims"
+        "The number of customer claims a proposal makes without a source check behind them",
+        "The speed of sending material externally by dropping the stakeholder review step",
+        "Preparation quality, the clarity of the value story, and follow-up discipline",
+        "The volume of competitive notes produced, whatever customer context is available"
       ],
-      "correct": 0,
-      "explanation": "The lesson focuses on better preparation and trusted follow-up."
+      "correct": 2,
+      "explanation": "The lesson positions AI as support for preparation: sharper customer context, a clearer value hypothesis, and follow-up discipline that turns preparation into better customer action."
     }
   ]
 }

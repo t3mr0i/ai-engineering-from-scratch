@@ -3,60 +3,60 @@
     {
       "question": "What is the core insight behind LoRA (Low-Rank Adaptation)?",
       "options": [
-        "Most weights don't matter",
-        "Weight updates during fine-tuning have low intrinsic rank, so they can be approximated by two small matrices instead of updating the full weight matrix",
-        "Fine-tuning only needs the last layer",
-        "Smaller models are always better"
+        "Weight updates during fine-tuning have low intrinsic rank, so two small matrices can approximate them instead of the full matrix",
+        "Only the query and value projections carry task-specific information, so every other layer can be dropped from the model",
+        "Quantizing the base weights to four bits frees up enough memory that the full gradient now fits on one consumer GPU",
+        "Freezing the early layers and training only the final one avoids catastrophic forgetting while keeping quality intact"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Aghajanyan et al. showed that fine-tuning updates occupy a low-dimensional subspace. LoRA exploits this by representing the update as W + BA where B (d x r) and A (r x d) have small rank r, typically 8-64.",
       "stage": "pre"
     },
     {
       "question": "How much memory does LoRA save compared to full fine-tuning of an 8B model?",
       "options": [
-        "No savings",
+        "No saving in GPU memory at all; LoRA only shrinks the checkpoint file you store on disk afterwards",
+        "Roughly a 50% cut, since gradients are dropped but the Adam optimizer states are still kept in full",
         "From ~56GB down to ~6GB by training <1% of parameters while keeping base weights frozen",
-        "50% reduction",
-        "Only saves disk space"
+        "From ~56GB down to ~14GB, which is the memory needed to hold the base weights in fp16"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Full fine-tuning needs gradients and optimizer states for all 8B parameters (~56GB). LoRA freezes base weights and only trains adapter matrices (~80M parameters at rank 16), needing ~6GB total.",
       "stage": "pre"
     },
     {
       "question": "What is QLoRA?",
       "options": [
-        "Quantized LoRA: the base model is loaded in 4-bit precision while LoRA adapters train in 16-bit, combining memory savings from both techniques",
-        "A faster version of LoRA",
-        "LoRA applied to quantized activations",
-        "A different fine-tuning algorithm"
+        "A LoRA variant that quantizes the adapter matrices to 4-bit while the base model stays in fp16 throughout training",
+        "A merging method that trims small-magnitude adapter weights and resolves sign conflicts before combining adapters",
+        "Quantized LoRA: the base model is loaded in 4-bit while the adapters train in 16-bit, combining the memory savings of both",
+        "A kernel rewrite of the forward and backward pass that doubles throughput and halves VRAM with no accuracy loss"
       ],
-      "correct": 0,
+      "correct": 2,
       "explanation": "QLoRA (Dettmers et al.) loads the frozen base model in 4-bit (NF4 quantization) while training LoRA adapters in FP16/BF16. This allows fine-tuning a 7B model on a single consumer GPU with 6GB VRAM.",
       "stage": "post"
     },
     {
       "question": "What does the 'rank' parameter (r) in LoRA control?",
       "options": [
-        "The number of training epochs",
         "The capacity of the adapter: higher rank captures more complex adaptations but uses more parameters and memory",
-        "The learning rate",
-        "The number of layers to fine-tune"
+        "How strongly the adapter path is scaled into the output, with the common default doubling the update size",
+        "How many projections receive adapters, with higher values adding the MLP layers on top of attention",
+        "The number of bits used to store the frozen base weights while the adapters keep training in higher precision throughout"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Rank r determines the size of adapter matrices A (r x d) and B (d x r). Rank 4 trains very few parameters (fast, cheap). Rank 64 trains more parameters (more expressive). Most tasks work well with rank 8-32.",
       "stage": "post"
     },
     {
       "question": "What happens when you merge LoRA weights back into the base model?",
       "options": [
-        "The model becomes larger",
+        "The base weights are re-quantized to NF4, so the merged checkpoint ends up roughly as small as the adapter file was",
+        "The adapters remain separate at inference time and are swapped in per request, which is the whole point of merging",
         "The adapter matrices are added to the base weights (W_merged = W_base + B*A), producing a standard model with no inference overhead",
-        "The model needs to be retrained",
-        "Merging is not possible"
+        "The merged model has to run one more training epoch, because the zero-initialized B matrix is reset during the merge"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Since LoRA adds W_base + B*A, you can compute B*A once and add it to W_base permanently. The merged model has the same architecture and inference speed as the original, with no adapter overhead.",
       "stage": "post"
     }

@@ -3,22 +3,22 @@
     {
       "question": "Why do AI startups often fail from cost issues rather than model quality?",
       "options": [
-        "Models are always good enough",
-        "Per-call costs compound rapidly: 10K users making 10 calls/day costs $250/day in tokens before charging a single dollar",
-        "Cost optimization is easy",
-        "API providers offer unlimited free tiers"
+        "Models are always good enough that startups can skip evaluation and cost tracking once the demo looks convincing",
+        "Cost optimization is easy because provider prompt caching alone cuts most bills by 90% with zero code changes",
+        "API providers offer unlimited free tiers for production traffic once a startup passes a few thousand daily users",
+        "Per-call costs compound rapidly: 10K users making 10 calls/day costs $250/day in tokens before charging a single dollar"
       ],
-      "correct": 1,
-      "explanation": "LLM API costs scale linearly with usage. A feature that costs $0.003 per call seems cheap until it's called 100K times/day ($300/day, $9K/month). Without cost optimization, many AI products are unprofitable at scale.",
+      "correct": 3,
+      "explanation": "LLM API costs scale linearly with usage. A feature that costs fractions of a cent per call seems cheap until it's called hundreds of thousands of times a day. Without cost optimization, many AI products are unprofitable at scale.",
       "stage": "pre"
     },
     {
       "question": "What is semantic caching for LLM applications?",
       "options": [
-        "Caching model weights",
+        "Caching the model's weights in memory between requests so the same GPU doesn't reload them for every call",
         "Storing responses for previous queries and serving cached responses when a new query is semantically similar (not just exactly matching)",
-        "Caching embeddings only",
-        "Pre-generating all possible responses"
+        "Caching only the query embeddings themselves, without ever storing or reusing the LLM's generated response",
+        "Pre-generating every possible response ahead of time and serving from that fixed table instead of calling the API"
       ],
       "correct": 1,
       "explanation": "Exact-match caching only helps with identical queries. Semantic caching embeds queries and serves cached responses when cosine similarity exceeds a threshold. 'What's the weather in NYC?' matches 'NYC weather today?'.",
@@ -27,36 +27,36 @@
     {
       "question": "What is model routing as a cost optimization strategy?",
       "options": [
-        "Load balancing across servers",
+        "Load balancing identical requests across multiple servers running the same model to reduce latency under traffic",
         "Sending simple queries to cheap/fast models and complex queries to expensive/powerful models based on query classification",
-        "Routing between different API providers",
-        "Caching responses from multiple models"
+        "Routing every request between different API providers at random purely to average out each vendor's per-token pricing",
+        "Caching responses from multiple models and returning whichever cached answer arrives first regardless of quality"
       ],
       "correct": 1,
-      "explanation": "Not every query needs GPT-4. A classifier routes simple questions (FAQ, greetings) to a cheap model (GPT-3.5, Haiku) and complex questions (reasoning, analysis) to an expensive model. This can cut costs 50-80%.",
+      "explanation": "Not every query needs the most expensive model. A classifier routes simple questions (FAQ, greetings) to a cheap model and complex questions (reasoning, analysis) to an expensive model. This can cut costs 40-70%.",
       "stage": "post"
     },
     {
       "question": "What is prompt compression and how does it reduce costs?",
       "options": [
-        "Making prompts shorter by removing words",
-        "Removing redundant tokens, summarizing long contexts, and eliminating boilerplate to reduce input token count while preserving essential information",
-        "Compressing prompts with gzip",
-        "Using shorter variable names"
+        "Making prompts shorter by deleting words at random until the token count falls under a fixed per-request budget, without regard to meaning",
+        "Compressing the prompt text with a binary algorithm like gzip before sending it as the request payload, the same way you would compress a file",
+        "Using shorter variable and function names in the application code that builds the prompt, which has no effect on the billed input tokens",
+        "Removing redundant tokens, summarizing long contexts, and eliminating boilerplate to reduce input token count while preserving essential information"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Input tokens dominate cost in RAG applications (large retrieved contexts). Prompt compression removes filler words, summarizes verbose passages, and trims low-relevance chunks to reduce token count without losing key information.",
       "stage": "post"
     },
     {
       "question": "What is prefix caching and which provider feature enables it?",
       "options": [
-        "Caching the first word of each response",
-        "Reusing KV-cache computation for shared prompt prefixes (system prompt + tool definitions), reducing latency and cost for repeated patterns",
-        "Caching DNS lookups",
-        "Browser caching of API responses"
+        "Caching only the first generated word of each response so the model can start streaming the rest of the answer faster next time",
+        "Caching DNS lookups for the provider's API endpoint so every request skips domain name resolution before it even starts",
+        "Browser-side caching of API responses so a user's second identical request never reaches the provider's servers at all",
+        "Reusing KV-cache computation for shared prompt prefixes (system prompt + tool definitions), reducing latency and cost for repeated patterns"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "If your system prompt + tool definitions are 5000 tokens and identical across requests, prefix caching computes the KV-cache once and reuses it. Anthropic's prompt caching and OpenAI's cached tokens both support this.",
       "stage": "post"
     }

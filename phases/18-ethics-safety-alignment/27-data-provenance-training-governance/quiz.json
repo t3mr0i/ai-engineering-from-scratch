@@ -6,34 +6,34 @@
       "stage": "pre",
       "question": "Why is the compliance window for training-data governance at collection time, not after training?",
       "options": [
-        "Because regulators do not audit deployed models",
-        "Because cookie-consent frameworks ban post-collection use",
-        "Because GDPR right-to-erasure does not apply to AI",
-        "Once data enters model weights, surgical erasure is not possible; retraining from scratch is the only complete remediation and is prohibitively expensive"
+        "Because regulators lack the legal authority to audit models after they've already been deployed into production",
+        "Because cookie-consent frameworks explicitly prohibit any use of data after the initial collection event has already occurred",
+        "Because GDPR's right-to-erasure provision was explicitly drafted to exclude AI models and neural network weights from its scope entirely",
+        "Once data enters model weights, surgical erasure isn't possible; only full retraining removes it, and that's prohibitively expensive"
       ],
       "correct": 3,
-      "explanation": "The lesson explains that cookie-consent frameworks were built for reversible tracking, but once data is baked into model weights surgical erasure is impossible -- only full retraining removes it, and that is prohibitively expensive -- so compliance has to happen at collection time, not after training."
+      "explanation": "The lesson explains that cookie-consent frameworks were built for reversible tracking, but once data is baked into model weights surgical erasure is impossible -- only full retraining removes it, and that is prohibitively expensive -- so compliance has to happen at collection time, not after training, and not because of an audit gap or an explicit GDPR carve-out."
     },
     {
       "stage": "check",
       "question": "Roughly how many statutory items does California AB 2013 require developers to publish in a dataset summary?",
       "options": [
-        "3",
-        "30",
-        "12",
-        "7"
+        "3 statutory items -- just the dataset sources, description of purpose, and copyright status, far short of the full disclosure list",
+        "30 statutory items -- one for every field a comprehensive internal technical audit report would typically include",
+        "12 statutory items -- enumerated in Section 3111(a), from dataset sources through whether the system uses synthetic data",
+        "7 statutory items -- sources, composition, licensing, personal information, aggregate information, processing, and collection period"
       ],
       "correct": 2,
-      "explanation": "The lesson lists California AB 2013's Section 3111(a) as requiring 12 statutory items in the published dataset summary, from dataset sources through whether synthetic data generation is used."
+      "explanation": "The lesson lists California AB 2013's Section 3111(a) as requiring 12 statutory items in the published dataset summary, from dataset sources through whether synthetic data generation is used -- not 3, 7, or 30."
     },
     {
       "stage": "check",
       "question": "Which AB 2013 item is new relative to the Gebru et al. 2018 datasheet structure?",
       "options": [
-        "Sources or owners of datasets",
-        "Whether the system uses or continuously uses synthetic data generation",
-        "Cleaning, processing, or other modifications",
-        "Time period during which data was collected"
+        "Sources or owners of the datasets -- already covered by the Datasheets 'motivation' and 'composition' sections",
+        "Whether the system uses or continuously uses synthetic data generation -- absent from the original 2018 datasheet fields",
+        "Cleaning, processing, or other modifications by the developer -- already covered by the Datasheets 'collection process' section",
+        "Time period during which the data was collected -- already covered by the Datasheets 'collection process' section"
       ],
       "correct": 1,
       "explanation": "The lesson notes item 12, whether the system uses or continuously uses synthetic data generation, is new relative to the Gebru et al. 2018 datasheet fields, while items like sources, processing, and collection period map onto the older datasheet structure."
@@ -42,22 +42,22 @@
       "stage": "check",
       "question": "What is the convergent 2025 DPA principle for LLM training on publicly available first-party content?",
       "options": [
-        "Training is prohibited under all circumstances",
-        "Only synthetic data may be used",
-        "Explicit user consent is always required",
-        "Legitimate interest can justify training on publicly available first-party content with opt-out and appropriate safeguards; consent is not required"
+        "Training on publicly available first-party content is prohibited under all circumstances without a signed data-processing agreement",
+        "Only synthetic, LLM-generated data may be used for training once any human-authored public content has been opted out",
+        "Explicit, opt-in user consent is always required before any publicly available first-party content can be used for training",
+        "Legitimate interest can justify training on public first-party content with opt-out and safeguards; consent is not required"
       ],
       "correct": 3,
-      "explanation": "The lesson traces the Irish DPC, Cologne court, Hamburg DPA, and UK ICO rulings in 2025 to a convergent principle: legitimate interest can justify training on publicly available first-party content given opt-out and appropriate safeguards, without requiring explicit consent."
+      "explanation": "The lesson traces the Irish DPC, Cologne court, Hamburg DPA, and UK ICO rulings in 2025 to a convergent principle: legitimate interest can justify training on publicly available first-party content given opt-out and appropriate safeguards, without requiring explicit consent -- not an outright ban, a synthetic-only rule, or a consent mandate."
     },
     {
       "stage": "post",
       "question": "Which of these is NOT a partial remediation for the irreversibility problem listed in the lesson?",
       "options": [
-        "Unlearning (approximate removal measured by MIA)",
-        "Influence-function-based localization and selective update",
-        "GDPR-mandated automatic weight deletion",
-        "Fine-tune-suppression of outputs derived from the data"
+        "Unlearning -- an approximate removal technique whose success is measured via membership-inference-attack (MIA) audits",
+        "Influence-function-based localization -- identifying which weights a data point most influenced, then selectively updating them",
+        "GDPR-mandated automatic weight deletion -- not listed, since no practical right-to-erasure equivalent exists for trained neural networks",
+        "Fine-tune-suppression -- training the model on refusal examples so it declines to reproduce outputs derived from the disputed data"
       ],
       "correct": 2,
       "explanation": "The lesson lists unlearning, influence-function-based localization, and fine-tune-suppression as the three partial remediations for the irreversibility problem; it explicitly states there is no practical GDPR right-to-erasure equivalent for trained neural networks, so GDPR-mandated automatic weight deletion is not one of them."
@@ -66,13 +66,13 @@
       "stage": "post",
       "question": "What does the Data Provenance Initiative's 'Consent in Crisis' (July 2024) find?",
       "options": [
-        "Publishers are adding robots.txt restrictions at an accelerating rate; the openly-trainable-upon commons is contracting rapidly, with around 25% of top training sources adding restrictions 2023 to 2024",
-        "Synthetic data has fully replaced web data",
-        "Consent rates are stable across all sources",
-        "Robots.txt restrictions are decreasing year over year"
+        "Publishers are adding robots.txt restrictions at an accelerating rate; about 25% of top training sources added restrictions between 2023 and 2024",
+        "Synthetic data has fully replaced web-scraped data as the dominant source for training frontier language models at scale",
+        "Consent rates are stable across all sources, with no measurable change in publisher opt-out behavior between 2023 and 2024",
+        "Robots.txt restrictions are decreasing year over year as publishers relax access after initial AI-training concerns fade"
       ],
       "correct": 0,
-      "explanation": "The lesson cites the Data Provenance Initiative's 'Consent in Crisis' audit finding that publishers are adding robots.txt restrictions at an accelerating rate, with around 25% of top training sources adding some restriction between 2023 and 2024, rapidly contracting the openly-trainable-upon commons."
+      "explanation": "The lesson cites the Data Provenance Initiative's 'Consent in Crisis' audit finding that publishers are adding robots.txt restrictions at an accelerating rate, with around 25% of top training sources adding some restriction between 2023 and 2024, rapidly contracting the openly-trainable-upon commons -- not a synthetic-data takeover, stable consent, or a relaxing trend."
     }
   ]
 }

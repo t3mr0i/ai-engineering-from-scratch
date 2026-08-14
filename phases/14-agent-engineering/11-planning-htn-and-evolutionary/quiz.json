@@ -6,36 +6,36 @@
       "stage": "pre",
       "question": "What does an HTN add over a free-form LLM plan?",
       "options": [
+        "Shorter prompts, since the planner skips few-shot worked examples",
         "Provable correctness when operator preconditions and effects are enforced",
-        "Cheaper inference",
-        "Shorter prompts",
-        "Better embeddings"
+        "Better embeddings for retrieving semantically similar past plans",
+        "Cheaper inference because the plan skips redundant LLM calls at every step"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "HTN's symbolic operators with preconditions and effects guarantee soundness by construction."
     },
     {
       "stage": "pre",
       "question": "Which problem class is AlphaEvolve built for?",
       "options": [
-        "Free-form prose generation",
+        "Multi-turn chat memory management across very long conversations",
+        "Vector search ranking over dense semantic embedding spaces",
         "Optimizations with a machine-checkable, deterministic fitness function",
-        "Multi-turn chat memory",
-        "Vector search ranking"
+        "Free-form prose generation tasks with no objective scoring function at all"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Evolutionary search needs a deterministic evaluator; AlphaEvolve targets domains where one exists."
     },
     {
       "stage": "check",
       "question": "How does ChatHTN preserve plan soundness while using an LLM?",
       "options": [
-        "It does not; soundness is best-effort",
-        "LLM suggestions only enter as candidate decompositions, validated against the operator schema; the symbolic layer owns correctness",
-        "It fine-tunes the LLM on HTN traces",
-        "It uses a vector database"
+        "It fine-tunes the LLM directly on recorded HTN planning traces until its suggestions become reliable",
+        "It uses a vector database to retrieve the closest previously-validated plan and reuses it verbatim",
+        "It does not guarantee soundness at all; ChatHTN treats plan correctness as a best-effort heuristic to be refined through repeated user feedback",
+        "LLM suggestions only enter as candidate decompositions, validated against the operator schema; the symbolic layer owns correctness"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "The LLM expands the method library but cannot bypass operator preconditions and effects."
     },
     {
@@ -43,9 +43,9 @@
       "question": "Which AlphaEvolve result does the lesson cite?",
       "options": [
         "First improvement over Strassen for 4x4 complex matrix multiplication in 56 years",
-        "10x speedup of inference on Gemini",
-        "Beating GPT-4 on HumanEval",
-        "First proof of P=NP"
+        "A 10x inference speedup on Gemini achieved purely through evolutionary prompt search",
+        "Beating GPT-4's score on the HumanEval code-generation benchmark",
+        "The first widely accepted computer-verified proof that P equals NP"
       ],
       "correct": 0,
       "explanation": "AlphaEvolve found 48 scalar multiplications for 4x4 complex matmul, the first improvement on Strassen in 56 years."
@@ -54,36 +54,36 @@
       "stage": "check",
       "question": "Which element of an HTN is a primitive directly-executable action with preconditions and effects?",
       "options": [
-        "Task",
-        "Method",
-        "Operator",
-        "State"
+        "A task — compound (to be decomposed) or primitive",
+        "An operator — a primitive action with preconditions and effects",
+        "A state — a set of facts describing the world at a point in planning",
+        "A method — one of several ways to decompose a compound task into subtasks"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "Operators are the primitives; methods decompose compound tasks; state is a set of facts."
     },
     {
       "stage": "post",
       "question": "What is the lesson's warning about AlphaEvolve without a real evaluator?",
       "options": [
-        "It is slow",
+        "Running AlphaEvolve without a machine-checkable evaluator violates the Apache 2.0 license terms",
+        "Without a dedicated evaluator, AlphaEvolve cannot execute candidate mutations on GPU hardware",
         "Asking an LLM whether the code is better is not a fitness function; the evaluator must be deterministic and fast",
-        "It violates Apache 2.0",
-        "It cannot run on GPUs"
+        "AlphaEvolve without a real evaluator simply runs somewhat slower than with one, but the search still converges to a correct answer eventually"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Without a deterministic evaluator the search has no signal to converge on."
     },
     {
       "stage": "post",
       "question": "When should you reach for ReAct or ReWOO instead of HTN or AlphaEvolve?",
       "options": [
-        "Never; HTN is strictly better",
-        "When you do not need formal soundness or a machine-checkable fitness; most agent tasks land here",
-        "When you have a GPU cluster available",
-        "When latency is below 100 ms"
+        "Whenever you have a large GPU cluster available to run the search in parallel",
+        "Whenever end-to-end latency needs to stay below a fixed 100 millisecond budget",
+        "Never; HTN and AlphaEvolve are strictly better than ReAct or ReWOO for every kind of agent task, without exception",
+        "When you do not need formal soundness or a machine-checkable fitness; most agent tasks land here"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "The lesson explicitly warns against over-engineering: most tasks do not need formal planning or evolutionary search."
     }
   ]

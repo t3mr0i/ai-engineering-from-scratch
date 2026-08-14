@@ -5,12 +5,12 @@
       "stage": "pre",
       "question": "A linear model is used to fit a clearly curved (quadratic) relationship. Which error component dominates?",
       "options": [
-        "Variance: the model changes too much with different training data",
-        "Bias: the model is too rigid to capture the true nonlinear pattern",
-        "Irreducible noise: the data is too noisy",
-        "None: the model should fit perfectly"
+        "Irreducible noise: the underlying data is simply too noisy for any model to fit well",
+        "None: a linear model should fit a quadratic relationship perfectly once enough data is collected",
+        "Bias: the model's linear assumption is too rigid to capture the true nonlinear pattern",
+        "Variance: the model's predictions change too much depending on which training data it sees"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "A linear model cannot capture a quadratic curve no matter how much data it sees. This systematic error from wrong model assumptions is bias. The model underfits."
     },
     {
@@ -18,12 +18,12 @@
       "stage": "pre",
       "question": "The bias-variance decomposition of expected error has three terms. Which one cannot be reduced by any model?",
       "options": [
-        "Bias squared",
-        "Variance",
-        "Irreducible noise (sigma squared)",
-        "All three can be reduced to zero"
+        "Bias squared, since a sufficiently flexible and well-tuned model always eliminates systematic error entirely",
+        "Irreducible noise (sigma squared), which comes from randomness in the data itself and no model can predict away",
+        "Variance, since it always drops to zero once the training set is made large enough for the model",
+        "All three terms can be driven to zero given enough model capacity and enough training data"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "Irreducible noise comes from randomness in the data itself (measurement error, missing variables). No model can predict noise. Expected error = bias^2 + variance + irreducible noise."
     },
     {
@@ -31,12 +31,12 @@
       "stage": "post",
       "question": "Adding L2 regularization to a model increases bias and decreases variance. Why is this useful?",
       "options": [
-        "It always improves both training and test accuracy",
-        "The reduction in variance can outweigh the increase in bias, lowering total error",
-        "L2 regularization eliminates irreducible noise",
-        "It makes the model faster to train"
+        "It always improves both training accuracy and test accuracy at the same time, with no tradeoff",
+        "L2 regularization eliminates irreducible noise by shrinking the weights that amplify measurement error",
+        "It makes the model noticeably faster to train, since smaller weights converge in fewer gradient steps",
+        "The reduction in variance can outweigh the increase in bias, lowering the model's total expected error"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Regularization trades a small increase in bias for a larger decrease in variance. When a model is overfitting (high variance), this tradeoff reduces total error even though bias goes up slightly."
     },
     {
@@ -44,12 +44,12 @@
       "stage": "post",
       "question": "A model has training error = 2% and test error = 25%. What is the most likely diagnosis?",
       "options": [
-        "High bias (underfitting): the model is too simple",
-        "High variance (overfitting): the model memorized training data and fails to generalize",
-        "High irreducible noise: the data is too noisy",
-        "The model is perfectly calibrated"
+        "High bias (underfitting): the model architecture is too simple to capture the underlying patterns in this data",
+        "High irreducible noise: the target variable itself is too random for any model to ever predict well",
+        "High variance (overfitting): the model memorized training data and fails to generalize to new examples",
+        "The model is perfectly calibrated and this size of error gap is normal, expected behavior"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Low training error + high test error + large gap = high variance (overfitting). The model fits training-specific noise. Remedies: regularize, reduce complexity, get more data."
     },
     {
@@ -57,12 +57,12 @@
       "stage": "post",
       "question": "You train the same model architecture on 50 different random training subsets and observe that predictions vary wildly between them. What does this indicate?",
       "options": [
-        "High bias: the model consistently misses the true pattern",
-        "High variance: the model is sensitive to which specific training data it sees",
-        "High irreducible noise: the target variable is random",
-        "The learning rate is too high"
+        "High variance: the model's predictions are highly sensitive to exactly which training subset it happens to see",
+        "High bias: the model consistently misses the true underlying pattern no matter which training subset it happens to see",
+        "High irreducible noise: the target variable itself is random and no model could predict it consistently",
+        "The learning rate is set too high, causing the optimizer to overshoot a stable solution each time"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Variance measures how much predictions change when trained on different data subsets. Wildly different predictions across subsets is the definition of high variance."
     }
   ]

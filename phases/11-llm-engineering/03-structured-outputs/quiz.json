@@ -3,22 +3,22 @@
     {
       "question": "Why is getting structured JSON output from LLMs challenging?",
       "options": [
-        "LLMs can't generate JSON",
+        "JSON Schema cannot express enums, nested objects, or typed array items, so most real output shapes cannot be described",
+        "Markdown code fences are appended by the API after generation, so the returned string is always wrapped and unparseable",
         "LLMs generate free-form text token by token and can produce invalid JSON (missing brackets, wrong types, extra text) at any point",
-        "JSON is too complex for LLMs",
-        "LLMs only output plain text"
+        "Providers emit JSON only through tool use, so a plain completion call can never return an object however you prompt it"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "LLMs generate tokens autoregressively. They might add a trailing comma, forget a closing bracket, include markdown formatting around JSON, or hallucinate extra fields. Each token is independent, so structural validity isn't guaranteed.",
       "stage": "pre"
     },
     {
       "question": "What is constrained decoding?",
       "options": [
-        "Limiting the model's vocabulary size",
+        "Validating the finished response against a Pydantic model and retrying with the error message when parsing fails",
         "Restricting which tokens the model can generate at each step to ensure the output conforms to a grammar or schema",
-        "Using a smaller model",
-        "Compressing the output"
+        "Stripping markdown fences and preamble text out of the response before handing the remaining string to a JSON parser",
+        "Passing the JSON Schema inside the prompt text so the model can read the required keys and types before it answers"
       ],
       "correct": 1,
       "explanation": "Constrained decoding masks out invalid tokens at each generation step. After an opening brace, only valid JSON keys are allowed. After a colon, only valid value tokens. This guarantees structural validity at the token level.",
@@ -27,36 +27,36 @@
     {
       "question": "What is the benefit of using Pydantic models for LLM output validation?",
       "options": [
-        "They make API calls faster",
         "They define typed schemas that automatically validate, parse, and reject malformed LLM outputs with clear error messages",
-        "They reduce token usage",
-        "They improve model accuracy"
+        "They mask invalid tokens during generation, so the model is physically unable to emit a value of the wrong type",
+        "They catch hallucinated values by checking each extracted field against the source text before returning the object",
+        "They let the model pick which extraction function to call when several different schemas could apply to one input"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Pydantic enforces types, required fields, value constraints, and nested structures. When the LLM produces invalid output, Pydantic gives specific error messages that can be fed back to the model for self-correction.",
       "stage": "post"
     },
     {
       "question": "What should you do when the LLM returns invalid JSON despite instructions?",
       "options": [
-        "Switch to a different model",
-        "Implement a retry loop that sends the validation error back to the model as context for a corrected attempt",
-        "Manually fix the JSON",
-        "Increase the temperature"
+        "Raise the temperature on the retry so the model samples a different, less truncated continuation of the object",
+        "Flatten the schema to a single level and drop every required field so that any output the model produces validates",
+        "Repair the string with a regex that closes unbalanced brackets and strips the preamble text before parsing again",
+        "Implement a retry loop that sends the validation error back to the model as context for a corrected attempt"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "A retry loop with error feedback works well: parse the output, catch validation errors, send the error message back as context ('Your output had this error: ... Please fix it'). Most models self-correct on the second attempt.",
       "stage": "post"
     },
     {
       "question": "When should you use the API's native JSON mode vs prompt-based JSON extraction?",
       "options": [
-        "Always use native JSON mode",
-        "Use native mode for guaranteed structure; use prompt-based for complex extraction where you need the model to reason about what to extract",
-        "Always use prompt-based extraction",
-        "They produce identical results"
+        "Use native mode when valid structure must be guaranteed; use prompt-based when the model has to reason about what to extract",
+        "Use native JSON mode only for arrays and prompt-based for objects, since token masking cannot enforce item counts",
+        "Use prompt-based extraction for high-volume jobs, because native mode adds a second validation call and doubles cost",
+        "Both paths end up equivalent once a Pydantic model validates the result, so pick whichever reads better in the code"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Native JSON mode (OpenAI's response_format, Anthropic's tool_use) guarantees valid JSON structure. Prompt-based extraction is more flexible for complex reasoning about which fields to populate. Use native mode when structure matters most.",
       "stage": "post"
     }

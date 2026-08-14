@@ -22,7 +22,7 @@
   <text x="480" y="86" text-anchor="middle" class="small">plan + subtasks + interfaces</text>
 
   <rect x="40" y="130" width="180" height="70" class="cool"/>
-  <text x="130" y="150" text-anchor="middle" class="step">Coder A (Sonnet 4.7)</text>
+  <text x="130" y="150" text-anchor="middle" class="step">Coder A (Sonnet 4.6)</text>
   <text x="130" y="168" text-anchor="middle" class="small">worktree A + Daytona</text>
   <text x="130" y="186" text-anchor="middle" class="small">subtask: parser</text>
 

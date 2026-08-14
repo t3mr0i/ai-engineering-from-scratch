@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
   <script>
@@ -3042,12 +3042,50 @@
         if (lrnContext && lrnContext.next) {
           nav += '<a href="' + lrnLessonHref(lrnContext.next.path) + '" title="Next activity" aria-label="Next activity">&rarr;</a>';
         }
+        nav += '<button type="button" id="darkModeToggle" class="nav-settings theme-toggle" title="Switch color theme" aria-label="Switch color theme"><i class="ph-light ph-moon" aria-hidden="true" id="darkModeIcon"></i></button>';
         nav += '<a href="#" id="langToggle" class="lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title"><span id="langIcon" class="theme-icon">EN</span></a>';
         nav += '</nav>';
 
         slot.innerHTML = nav;
         if (window.SiteLang) window.SiteLang.translate();
+        syncDarkModeToggle();
       }
+
+      // D1 — dark-mode toggle. The header (including this button) is
+      // rebuilt on every lesson render via renderLessonHeaderContext(), so
+      // the click handler is delegated on document (same pattern lang.js
+      // already uses for #langToggle) instead of bound once to an element
+      // that gets replaced. syncDarkModeToggle() re-applies the current
+      // icon/label each time the header is rebuilt.
+      function darkModeStored() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
+      function darkModeOsDark() { return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); }
+      function darkModeCurrent() {
+        var s = darkModeStored();
+        return (s === 'dark' || s === 'light') ? s : (darkModeOsDark() ? 'dark' : 'light');
+      }
+      function syncDarkModeToggle() {
+        var btn = document.getElementById('darkModeToggle');
+        var icon = document.getElementById('darkModeIcon');
+        if (!btn || !icon) return;
+        var theme = darkModeCurrent();
+        icon.className = 'ph-light ' + (theme === 'dark' ? 'ph-sun' : 'ph-moon');
+        var de = (window.SiteLang ? window.SiteLang.get() : 'en') === 'de';
+        var label = theme === 'dark'
+          ? (de ? 'Zu hellem Farbschema wechseln' : 'Switch to light color theme')
+          : (de ? 'Zu dunklem Farbschema wechseln' : 'Switch to dark color theme');
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest && e.target.closest('#darkModeToggle');
+        if (!btn) return;
+        var next = darkModeCurrent() === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('theme', next); } catch (err) {}
+        document.documentElement.setAttribute('data-theme', next);
+        syncDarkModeToggle();
+      });
+      document.addEventListener('sitelang:change', syncDarkModeToggle);
 
       function buildTOC() {
         var sidebar = document.getElementById('tocSidebar');
@@ -4350,7 +4388,17 @@
       }
 
       function mermaidTheme() {
-        return document.documentElement.getAttribute('data-theme') === 'light' ? 'default' : 'dark';
+        // D1: data-theme is only set on <html> once a choice is made
+        // (explicit toggle, or the pre-paint head script reading a stored
+        // choice) — it used to be hardcoded to "light" in the markup, so
+        // "anything other than light" safely meant dark. Now that the
+        // vestigial hardcoded attribute is gone, an unset attribute means
+        // "no explicit choice", which must fall back to the OS preference
+        // instead of always reading as dark.
+        var explicit = document.documentElement.getAttribute('data-theme');
+        if (explicit === 'light' || explicit === 'dark') return explicit === 'light' ? 'default' : 'dark';
+        var osDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return osDark ? 'dark' : 'default';
       }
 
       // Lessons hard-code node fills (light pastels that vanish on the dark

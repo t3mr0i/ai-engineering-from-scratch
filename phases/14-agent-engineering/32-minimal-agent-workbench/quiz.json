@@ -6,34 +6,34 @@
       "stage": "pre",
       "question": "What three files form the smallest useful workbench?",
       "options": [
-        "AGENTS.md (router), agent_state.json (state), task_board.json (queue)",
-        "README.md, CHANGELOG.md, LICENSE",
-        "model.py, prompts.py, tools.py",
-        "Dockerfile, Makefile, .gitignore"
+        "README.md for onboarding, CHANGELOG.md for history, and LICENSE for legal terms",
+        "model.py for the model client, prompts.py for templates, and tools.py for function defs",
+        "Dockerfile for the build, Makefile for commands, and .gitignore for excluded paths",
+        "AGENTS.md (router), agent_state.json (state), task_board.json (queue)"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "A short router, durable state, and a task queue are the floor."
     },
     {
       "stage": "pre",
       "question": "What is the lesson's framing of AGENTS.md?",
       "options": [
-        "A 3000-line onboarding manual",
         "A short router that points at deeper docs and the state and board",
-        "A pure prompt-cache key",
-        "A secret kept out of the repo"
+        "A 3000-line onboarding manual covering every edge case the agent could hit",
+        "A pure prompt-cache key used only to reduce token cost on repeated calls",
+        "A secret kept out of the repo and injected only at deployment time"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "AGENTS.md is a router, not a manual; long manuals get ignored."
     },
     {
       "stage": "check",
       "question": "What does Augment Code's data say about a good AGENTS.md?",
       "options": [
-        "It has no measurable effect",
+        "It has no measurable effect on task success once the underlying model is already capable enough for the task",
         "A good AGENTS.md gives a quality jump equivalent to upgrading from Haiku to Opus; a bad one is worse than no file",
-        "Length always helps",
-        "Only Claude reads it"
+        "Length always helps; the longer and more exhaustive the AGENTS.md file, the better the agent performs on every task",
+        "Only Claude reads it; other coding agents like Codex, Cursor, and Copilot ignore the file entirely"
       ],
       "correct": 1,
       "explanation": "Augment Code's measurement: best files are model-upgrade-shaped, worst are worse than nothing."
@@ -42,12 +42,12 @@
       "stage": "check",
       "question": "Why does the lesson recommend file-backed state over chat-history state?",
       "options": [
-        "Disk is cheaper",
+        "Disk is cheaper than paying for extra context tokens on every single model call inside the agent loop",
+        "Files are smaller than the equivalent chat transcript once compressed with gzip",
         "Chat history is volatile; the file survives session death, conversation trimming, and tool resets",
-        "Files are smaller",
-        "It is required by SOC 2"
+        "It is required by SOC 2 compliance audits for every production agent deployment"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Sessions die and chat gets trimmed; the file is the durable system of record."
     },
     {
@@ -66,22 +66,22 @@
       "stage": "post",
       "question": "Why does the lesson recommend cross-tool symlinks like CLAUDE.md -> AGENTS.md?",
       "options": [
-        "To save bytes",
         "So a single source of truth fans out to every coding agent without forking",
-        "To pass auditing",
-        "To satisfy MIT"
+        "To save bytes by avoiding duplicate copies of the same instructions across tool directories",
+        "To pass auditing requirements that mandate a single canonical instructions file per repo",
+        "To satisfy the MIT license terms attached to the agents.md open specification"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Symlinks (or Nx-style generators) keep one canonical source across Claude Code, Codex, Cursor, Copilot, etc."
     },
     {
       "stage": "post",
       "question": "What pattern do nested AGENTS.md files follow?",
       "options": [
-        "Only the root file is read",
+        "Only the root-level AGENTS.md file is read by any tool; files placed in subdirectories are silently ignored altogether",
         "Walk from the working file toward the repo root, concatenate every AGENTS.md found on the way (nearest wins; sub-directories extend root)",
-        "Random selection",
-        "Alphabetical merge"
+        "Files are selected at random from whichever directories happen to contain an AGENTS.md when the agent starts a session",
+        "Every AGENTS.md found anywhere in the repository is merged in strict alphabetical order by directory path, regardless of nesting or proximity to the file"
       ],
       "correct": 1,
       "explanation": "OpenAI ships 88 AGENTS.md files across its main repo; tools concatenate nearest-up-tree."

@@ -6,84 +6,84 @@
       "stage": "pre",
       "question": "What are Letta's three memory tiers?",
       "options": [
-        "Cache, KV, archival",
         "Core, recall, archival",
-        "RAM, swap, disk",
-        "Working, episodic, semantic"
+        "Working, episodic, semantic",
+        "RAM, swap, and virtual memory",
+        "Cache, KV store, archival"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Letta uses core (always visible), recall (conversation history), and archival (external) tiers."
     },
     {
       "stage": "pre",
       "question": "Which production problem does sleep-time compute target?",
       "options": [
+        "Block bloat from unlimited block_append calls hitting the character limit",
         "Tail latency from doing memory consolidation on the critical path",
-        "Higher accuracy on math problems",
-        "Lower embedding cost",
-        "Faster JSON parsing"
+        "Poisoned consolidation from attacker-reachable content entering core memory",
+        "Silent drift where the primary agent never sees a rewritten block underneath it"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Sleep-time moves prune/summarize/reconcile off the user-facing path, so primary responses stay fast."
     },
     {
       "stage": "check",
       "question": "Which property is NOT a memory block field in Letta?",
       "options": [
-        "label",
-        "value",
-        "limit",
-        "embedding_model_version"
+        "label (short identifier)",
+        "value (block content)",
+        "embedding_model_version",
+        "limit (character cap)"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "Blocks carry id, label, value, limit, description; embedding model version is not part of the block schema."
     },
     {
       "stage": "check",
       "question": "Why can the sleep-time agent run a stronger model than the primary?",
       "options": [
-        "It receives a private API key",
-        "It is off the critical path, so it is not latency-constrained",
-        "It is exempt from rate limits",
-        "Memory ops cost half tokens"
+        "It receives a private API key that bypasses the primary agent's rate limits",
+        "It is exempt from the per-request rate limits the primary model faces",
+        "Memory consolidation writes cost roughly half the tokens of a normal turn",
+        "It is off the critical path, so it is not latency-constrained"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Because it does not block user responses, the sleep-time agent can be slower and more expensive."
     },
     {
       "stage": "check",
       "question": "What pattern do the Human and Persona blocks generalize to?",
       "options": [
-        "Vector embeddings",
         "Arbitrary user-defined typed editable blocks (Task, Project, Safety, ...)",
-        "JSON-RPC channels",
-        "OS processes"
+        "Vector embeddings stored alongside the core block for semantic retrieval",
+        "JSON-RPC channels used to synchronize state between the primary and sleep-time agents",
+        "OS-style processes, each with its own memory space and scheduler priority"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Letta generalizes the two MemGPT blocks to any user-defined block with id, label, value, limit, description."
     },
     {
       "stage": "post",
       "question": "What is silent drift in this pattern?",
       "options": [
+        "The sleep-time agent silently exhausting the disk quota reserved for archival storage before the primary agent's very next turn",
         "A primary agent never seeing that the sleep-time agent rewrote a block underneath it; fix with versioning and visible diffs",
-        "Slow disk writes",
-        "Embedding model upgrades",
-        "Rate-limit jitter"
+        "An upgraded embedding model changing vector similarity scores between sessions without flagging the change",
+        "Rate-limit jitter causing sleep-time consolidation to run on an unpredictable schedule"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Versioning blocks and surfacing diffs in the trace makes sleep-time rewrites visible to the primary loop."
     },
     {
       "stage": "post",
       "question": "What replaced inline `Thought:` tokens and the send_message/heartbeat pattern in Letta V1?",
       "options": [
+        "A second LLM dedicated solely to producing thoughts before the primary model responds",
+        "A larger system prompt that instructs the model to reason before answering",
         "Native reasoning emitted on a separate channel and passed through turns",
-        "A second LLM dedicated to thoughts",
-        "A bigger system prompt",
-        "Manual user-typed thoughts"
+        "The user manually typing out reasoning steps for the agent to follow"
       ],
-      "correct": 0,
+      "correct": 2,
       "explanation": "Letta V1 (letta_v1_agent) uses provider-level native reasoning, not prompt-shaped thoughts."
     }
   ]

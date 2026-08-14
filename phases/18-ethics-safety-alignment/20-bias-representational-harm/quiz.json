@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "How does the lesson distinguish representational harm from allocational harm?",
       "options": [
-        "Representational harm only matters for vision models",
-        "Representational harm is stereotypes / erasure / demeaning portrayal; allocational harm is unequal material outcomes for a group",
-        "Representational is computational; allocational is statistical",
-        "Allocational harm only occurs offline"
+        "Representational harm only shows up in vision-language models that generate images, while allocational harm is limited to purely text-based LLMs",
+        "Representational harm is measured with embedding-based metrics only, while allocational harm is measured with probability-based metrics only",
+        "Representational harm is stereotypes, erasure, or demeaning portrayal (like depicting nurses as exclusively female); allocational harm is unequal material outcomes for a group",
+        "Allocational harm only occurs in offline batch scoring, such as resume screening, and never appears in a live conversational deployment"
       ],
-      "correct": 1,
-      "explanation": "The lesson defines representational harm as stereotypes, erasure, or demeaning portrayal (e.g. depicting nurses as exclusively female), while allocational harm is unequal material outcomes for a group (e.g. scoring one group's resumes systematically lower) -- a model can be biased on one axis without the other."
+      "correct": 2,
+      "explanation": "The lesson defines representational harm as stereotypes, erasure, or demeaning portrayal (e.g. depicting nurses as exclusively female), while allocational harm is unequal material outcomes for a group (e.g. scoring one group's resumes systematically lower) -- these are distinct from the evaluation-metric categories and from deployment context."
     },
     {
       "stage": "check",
       "question": "Which of these are the three evaluation-metric categories from Gallegos et al. 2024?",
       "options": [
-        "Pre-RLHF, mid-RLHF, post-RLHF",
-        "Vision, audio, text",
-        "WEAT, BLEU, ROUGE",
-        "Embedding-based, probability-based, generated-text-based"
+        "Embedding-based (WEAT-style association tests), probability-based (stereotype completion likelihoods), and generated-text-based (downstream-task measurement)",
+        "Pre-RLHF, mid-RLHF, and post-RLHF measurement stages, tracking how the same bias metric changes at each step of the alignment and fine-tuning pipeline",
+        "Vision-based, audio-based, and text-based metrics, split according to which input modality the model under evaluation accepts",
+        "WEAT, BLEU, and ROUGE scores, borrowed directly from the embedding-association and machine-translation evaluation literature"
       ],
-      "correct": 3,
-      "explanation": "Gallegos et al. 2024, as the lesson describes it, categorize bias-evaluation metrics into embedding-based (WEAT-style association tests), probability-based (stereotype-confirming vs violating completion likelihoods), and generated-text-based (downstream-task measurement on generated output)."
+      "correct": 0,
+      "explanation": "Gallegos et al. 2024, as the lesson describes it, categorize bias-evaluation metrics into embedding-based (WEAT-style association tests), probability-based (stereotype-confirming vs violating completion likelihoods), and generated-text-based (downstream-task measurement on generated output) -- not by RLHF stage, modality, or borrowed MT metrics."
     },
     {
       "stage": "check",
       "question": "Why is intersectional fairness evaluation needed in addition to single-axis evaluation?",
       "options": [
-        "Intersectionality is the same as cross-validation",
-        "Single-axis measures are computationally cheaper",
-        "Single-axis is the only legally allowed approach",
-        "Bias that only emerges at intersections (e.g., gender x race) is missed by evaluations that look at one axis at a time"
+        "Intersectionality is just another term for k-fold cross-validation applied to demographic subgroups instead of random splits",
+        "Bias that only emerges at intersections, like gender x race, is missed by evaluations that look at just one axis at a time",
+        "Single-axis measures are computationally cheaper to run, so intersectional evaluation is only a cost-saving shortcut, not a coverage fix",
+        "Single-axis evaluation is the only approach permitted under current data-protection regulations, so intersectional analysis is legally restricted"
       ],
-      "correct": 3,
-      "explanation": "The lesson's An et al. 2025 example shows Black women scoring best and Black men scoring worst on automated resume evaluation -- a pattern invisible to gender-only or race-only evaluation and detectable only by looking at the gender x race intersection."
+      "correct": 1,
+      "explanation": "The lesson's An et al. 2025 example shows Black women scoring best and Black men scoring worst on automated resume evaluation -- a pattern invisible to gender-only or race-only evaluation and detectable only by looking at the gender x race intersection, not a cost or legal question."
     },
     {
       "stage": "check",
       "question": "What does WinoIdentity (COLM 2025) introduce?",
       "options": [
-        "An adversarial attack on demographic classifiers",
-        "A new tokenizer for identity terms",
-        "A replacement for WEAT in embedding space",
-        "Uncertainty-based intersectional fairness evaluation for coreference resolution, comparing the model's uncertainty over pronoun-referent choices across intersectional identity tuples, not just point predictions"
+        "An adversarial attack framework designed to fool automated demographic classifiers into misreading a speaker's protected attributes during moderation",
+        "A new subword tokenizer optimized to represent identity terms and named entities more efficiently than standard BPE vocabularies",
+        "A drop-in replacement for WEAT that runs the same embedding-association test directly against generated text instead of static embeddings",
+        "An uncertainty-based fairness measure for coreference resolution across intersectional identity tuples, not just point predictions"
       ],
       "correct": 3,
-      "explanation": "The lesson describes WinoIdentity as extending Winogender/WinoBias-style coreference-resolution bias evaluation to intersectional identities with an uncertainty-based fairness measure, testing whether the model's confidence over pronoun-referent choices differs across intersectional identity tuples, not just whether it gets the point prediction right."
+      "explanation": "The lesson describes WinoIdentity as extending Winogender/WinoBias-style coreference-resolution bias evaluation to intersectional identities with an uncertainty-based fairness measure, testing whether the model's confidence over pronoun-referent choices differs across intersectional identity tuples -- not an attack tool, tokenizer, or WEAT variant."
     },
     {
       "stage": "post",
       "question": "Which of these is a mechanistic-interpretability approach to bias?",
       "options": [
-        "Switching to DPO from PPO",
-        "Identifying gender-correlated FFN-value/FFN-query/attention-value neurons, or using SAEs to surface race-correlated features",
-        "Adding more KL regularization",
-        "Re-labeling the training set"
+        "Switching the alignment algorithm from PPO-based RLHF to DPO, which changes preference optimization but doesn't inspect internal representations",
+        "Increasing the KL-divergence regularization coefficient during fine-tuning to keep the aligned model closer to its pretrained reference",
+        "Identifying gender-correlated neurons in FFN-value, FFN-query, and attention-value layers, or using sparse autoencoders to surface race-correlated features",
+        "Re-labeling the training dataset with more balanced demographic annotations and rerunning the same fine-tuning pipeline from scratch"
       ],
-      "correct": 1,
-      "explanation": "The lesson cites Yu & Ananiadou 2025 identifying gender-correlated neurons in FFN-value, FFN-query, and attention-value layers, and Ahsan & Wallace 2025 using sparse autoencoders (SAEs) to surface race-correlated features -- both mechanistic interventions on the model's internals rather than training-process changes."
+      "correct": 2,
+      "explanation": "The lesson cites Yu & Ananiadou 2025 identifying gender-correlated neurons in FFN-value, FFN-query, and attention-value layers, and Ahsan & Wallace 2025 using sparse autoencoders (SAEs) to surface race-correlated features -- both mechanistic interventions on the model's internals, unlike algorithm swaps, regularization tweaks, or relabeling."
     },
     {
       "stage": "post",
       "question": "What does the 10-year meta-critique (arXiv:2508.11067) argue about the bias literature?",
       "options": [
-        "It disproportionately focuses on binary-gender bias, neglecting other axes (disability, religion, migration status, multi-lingual identity) that may harm marginalized groups by neglect",
-        "It avoids quantitative methods",
-        "It overemphasizes intersectionality",
-        "It is balanced across all identity axes"
+        "It disproportionately focuses on binary-gender bias, leaving axes like disability, religion, and migration status under-examined",
+        "It avoids quantitative methods entirely, relying only on qualitative case studies and reader testimonials to make its argument",
+        "It overemphasizes intersectionality at the expense of simpler, more actionable single-axis bias metrics that practitioners can readily apply",
+        "It is balanced across all identity axes, giving disability, religion, and migration status the same amount of attention as gender"
       ],
       "correct": 0,
-      "explanation": "The lesson summarizes the meta-critique as finding that a decade of bias literature disproportionately focuses on binary-gender bias, while axes like disability, religion, migration status, and multi-lingual identity receive far less attention -- risking harm to those groups through neglect."
+      "explanation": "The lesson summarizes the meta-critique as finding that a decade of bias literature disproportionately focuses on binary-gender bias, while axes like disability, religion, migration status, and multi-lingual identity receive far less attention -- risking harm to those groups through neglect, not through excess quantification or excess intersectional focus."
     }
   ]
 }

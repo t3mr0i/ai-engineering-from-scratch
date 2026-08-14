@@ -3,10 +3,10 @@
     {
       "question": "What is the biggest gap between an LLM demo and a production LLM application?",
       "options": [
-        "The model quality",
+        "The model quality, since GPT-5-class models already handle timeouts and rate limits without any application code",
         "Infrastructure: error handling, streaming, cost tracking, rate limiting, fallbacks, observability, and graceful degradation under load",
-        "The prompt quality",
-        "The choice of API provider"
+        "The prompt quality, because a well-tuned system prompt automatically produces retries, streaming, and cost tracking",
+        "The choice of API provider, since switching from OpenAI to Anthropic alone resolves most production reliability issues"
       ],
       "correct": 1,
       "explanation": "A demo calls an API and prints the response. Production must handle timeouts, provider outages, concurrent users, cost budgets, streaming delivery, logging, and graceful degradation. The model is the easy part.",
@@ -15,48 +15,48 @@
     {
       "question": "Why is streaming token delivery important in production LLM applications?",
       "options": [
-        "It reduces cost",
+        "It reduces cost, since Server-Sent Events are billed by providers at a lower per-token rate than a single non-streamed response",
         "Users perceive the first token arriving quickly as faster, even if total generation time is the same -- reducing perceived latency from seconds to milliseconds",
-        "It uses less memory",
-        "It improves model accuracy"
+        "It uses less server memory, because streamed tokens are discarded immediately instead of being buffered for the full response",
+        "It improves model accuracy, since streaming lets the model revise and correct earlier tokens once more context becomes available later"
       ],
       "correct": 1,
-      "explanation": "Without streaming, users wait 3-10 seconds seeing nothing before the full response appears. With streaming, the first token arrives in ~200ms and text flows continuously, making the experience feel responsive.",
+      "explanation": "Without streaming, users wait 3-8 seconds seeing nothing before the full response appears. With streaming, the first token arrives in 200-500ms and text flows continuously, making the experience feel responsive.",
       "stage": "pre"
     },
     {
       "question": "What should happen when your LLM API provider has an outage?",
       "options": [
-        "Show users an error page",
         "The application should automatically fall back to an alternative provider or return a graceful degraded response",
-        "Retry indefinitely until the provider recovers",
-        "Switch to a local model"
+        "Show users a generic error page and wait for the on-call engineer to manually restart the affected service",
+        "Retry the failing request indefinitely with no backoff or limit until the provider's API eventually recovers",
+        "Switch every request to a locally-hosted model automatically, without any fallback chain or cost consideration"
       ],
-      "correct": 1,
-      "explanation": "Production systems need fallback strategies: try Provider B if Provider A fails, serve cached responses for common queries, or return a helpful 'temporarily unavailable' message. Never let a provider outage crash your application.",
+      "correct": 0,
+      "explanation": "Production systems need fallback strategies: a chain like sonnet -> gpt-4o -> gpt-4o-mini -> cached response -> a helpful 'temporarily unavailable' message. Never let a provider outage crash your application.",
       "stage": "post"
     },
     {
       "question": "What observability metrics should a production LLM application track?",
       "options": [
-        "Only error counts",
         "Request latency (P50/P95/P99), cost per request, error rates, token usage, cache hit rates, and quality scores from automated evals",
-        "Only model accuracy",
-        "Only monthly cost"
+        "Only error counts, treating latency, cost per request, cache hit rate, and eval quality scores as unnecessary detail",
+        "Only model accuracy scores from automated evals, ignoring latency percentiles, cache hit rate, and per-request cost",
+        "Only the aggregate monthly cost total, without breaking it down by request, latency, or which feature caused it"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Comprehensive observability covers: latency percentiles (for SLA compliance), cost tracking (for budget management), error rates (for reliability), token usage (for optimization), and quality metrics (for regression detection).",
       "stage": "post"
     },
     {
       "question": "Why should you implement rate limiting in your LLM application?",
       "options": [
-        "To make the application seem exclusive",
-        "To prevent individual users from exhausting your API budget, protect against abuse, and ensure fair access during high traffic",
-        "To reduce model accuracy",
-        "Rate limiting is only needed for free tiers"
+        "To make the application feel more exclusive to users, the same way a waitlist creates demand for a premium product",
+        "To reduce model accuracy deliberately for free-tier users so they upgrade to a paid plan with a stronger model",
+        "Rate limiting is only needed for free tiers, since paying enterprise customers can never exhaust an API budget",
+        "To prevent individual users from exhausting your API budget, protect against abuse, and ensure fair access during high traffic"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Without rate limiting, a single user (or bot) can exhaust your daily API budget in minutes. Rate limiting protects your costs, prevents abuse, and ensures all users get reasonable response times during peak load.",
       "stage": "post"
     }

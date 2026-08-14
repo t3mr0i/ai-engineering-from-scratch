@@ -7,83 +7,83 @@
       "question": "What input does Claude computer use take, and what does it emit?",
       "options": [
         "Accessibility tree in, keyboard/mouse commands out",
+        "DOM XML parsed from the live page in, raw JavaScript out",
         "Screenshots in (vision-based), keyboard/mouse commands out",
-        "DOM XML in, JavaScript out",
-        "JSON in, SQL out"
+        "Structured JSON in, a generated SQL query against the page out"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Claude reads pixels and emits keyboard/mouse actions; no OS accessibility API is used."
     },
     {
       "stage": "pre",
       "question": "What is Gemini 2.5 Computer Use's distinguishing safety feature?",
       "options": [
-        "A per-step safety service that assesses each action before execution and rejects unsafe ones",
-        "Hard-coded WAF rules",
-        "Mandatory CAPTCHAs",
-        "Read-only mode by default"
+        "Hard-coded WAF rules that block a fixed list of known-bad domains only, always",
+        "Mandatory CAPTCHA challenges inserted before every sensitive action taken",
+        "A read-only mode that is the model's default operating configuration always",
+        "A per-step safety service that assesses each action before execution and rejects unsafe ones"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "Gemini 2.5 Computer Use ships a per-step safety classifier as a defining feature."
     },
     {
       "stage": "check",
       "question": "What does the lesson identify as untrusted input across all three models?",
       "options": [
-        "Only HTTPS responses",
         "Screenshots, DOM text, tool outputs, PDF content, anything retrieved",
-        "Only PDF content",
-        "Nothing; everything is trusted"
+        "Only responses received over a plain, unencrypted HTTP connection today",
+        "Only the raw text content extracted from a PDF attachment specifically",
+        "Nothing; every input source is treated as fully trusted by default"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Only direct user instructions count as permission; everything else is untrusted."
     },
     {
       "stage": "check",
       "question": "Which OSWorld / WebArena numbers does the lesson cite for OpenAI CUA at launch?",
       "options": [
-        "OSWorld 38.1%, WebArena 58.1%, WebVoyager 87%",
-        "OSWorld 0%, WebArena 0%",
-        "OSWorld 99%, WebArena 99%",
-        "Numbers not reported"
+        "OSWorld success rate of exactly 0%, WebArena also at exactly 0% flat rate",
+        "Launch numbers cited were OSWorld 38.1%, WebArena 58.1%, WebVoyager 87%",
+        "OSWorld success rate of 99%, WebArena success rate also at exactly 99%",
+        "The launch announcement did not report any benchmark numbers at all"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Those were the launch numbers cited."
     },
     {
       "stage": "check",
       "question": "Which defense pattern is NOT in the 2026 convergence list?",
       "options": [
-        "Per-step safety classifier",
-        "Allowlist/blocklist of navigation targets",
-        "Human-in-the-loop for sensitive actions",
-        "Auto-clicking through dialogs to save time"
+        "A per-step safety classifier that reviews each action first",
+        "An allowlist/blocklist restricting which navigation targets are reachable",
+        "Auto-clicking through confirmation dialogs to save time on each run",
+        "Human-in-the-loop confirmation required for sensitive actions"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "Auto-clicking dialogs is the opposite of safe; the lesson recommends explicit confirmation."
     },
     {
       "stage": "post",
       "question": "What is the principal attack the lesson highlights against computer-use agents?",
       "options": [
-        "Network outages",
-        "A malicious page or PDF embedding instructions in retrieved content that the model treats as user intent",
-        "Slow rendering",
-        "OS update lag"
+        "A transient network outage that drops the agent's connection mid-action sequence",
+        "Rendering that runs slowly enough to desync the screenshot stream from real state",
+        "OS update lag that silently changes menu layouts between successive benchmark runs",
+        "A malicious page or PDF embedding instructions in retrieved content that the model treats as user intent"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Trusting screenshots or DOM text as permission is the canonical indirect-prompt-injection failure."
     },
     {
       "stage": "post",
       "question": "When is human-in-the-loop confirmation specifically recommended?",
       "options": [
-        "On read-only navigation",
         "On sensitive actions like login, purchase, file delete",
-        "Only when the model asks",
-        "Never"
+        "Only on navigation that is strictly read-only and changes nothing",
+        "Only whenever the model itself decides to ask for confirmation",
+        "Never; confirmation is not part of any of the three models' design"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Sensitive actions (money, data exposure, new logins) require explicit human confirmation."
     }
   ]

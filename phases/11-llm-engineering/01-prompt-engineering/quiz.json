@@ -3,22 +3,22 @@
     {
       "question": "What is the most common mistake people make when writing prompts for LLMs?",
       "options": [
-        "Using too many tokens",
+        "Over-constraining the prompt with so many rules that the model has little room left for the actual task",
+        "Assuming a technique that works in one model, like ChatGPT-specific formatting, transfers unchanged to every other model",
         "Writing vague, underspecified instructions that leave the model guessing about format, scope, and constraints",
-        "Using the wrong API",
-        "Not using enough examples"
+        "Giving contradictory instructions, such as demanding both extreme brevity and coverage of every edge case"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "LLMs follow instructions literally. 'Write me a marketing email' gives the model no constraints. Specifying tone, audience, length, format, and constraints produces dramatically better results.",
       "stage": "pre"
     },
     {
       "question": "What are the four core components of an effective prompt?",
       "options": [
-        "Input, output, model, temperature",
-        "Role, context, constraints, and output format",
-        "System, user, assistant, function",
-        "Query, document, answer, score"
+        "Temperature, top-p, max output tokens, and the stop sequence used to end generation",
+        "Role, context, constraints, and output format, the four pieces every effective prompt specifies",
+        "System message, user message, and assistant prefill, the three parts of a prompt anatomy",
+        "Positive constraints, negative constraints, few-shot examples, and a chain-of-thought instruction"
       ],
       "correct": 1,
       "explanation": "Effective prompts specify: who the model should be (role), what it should know (context), what it should and shouldn't do (constraints), and how to structure the response (output format).",
@@ -27,22 +27,22 @@
     {
       "question": "Why should you include output format instructions in your prompts?",
       "options": [
-        "It makes the prompt shorter",
-        "Without format instructions, the model chooses its own structure, which varies between calls and is hard to parse programmatically",
-        "It reduces API costs",
-        "It prevents hallucination"
+        "Without format instructions, the model's output structure varies between calls, making it hard to parse",
+        "Naming the format shortens the prompt, which frees more of the context window for the actual task content",
+        "It prevents the model from hallucinating facts that were never present in its training data",
+        "It substitutes for a system message, so the conversation no longer needs one at all to stay on track"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "LLMs are non-deterministic. Without explicit format instructions, one call might return bullet points, the next prose, the next markdown. Specifying format ensures consistent, parseable outputs.",
       "stage": "post"
     },
     {
       "question": "What is the purpose of a system prompt?",
       "options": [
-        "To authenticate the API call",
+        "To compress the conversation history so more of the context window is free for the user's task",
         "To set persistent behavioral rules, role, and constraints that apply to the entire conversation",
-        "To define the model's architecture",
-        "To compress the conversation history"
+        "To authenticate the API call, proving to the provider that the request comes from a paying account",
+        "To define which model architecture and parameter count the request should be routed to at runtime"
       ],
       "correct": 1,
       "explanation": "The system prompt establishes the model's persona, rules, and constraints for the entire session. It runs before every user turn and is the primary mechanism for controlling model behavior in production.",
@@ -51,12 +51,12 @@
     {
       "question": "How should you test whether a prompt change actually improved output quality?",
       "options": [
-        "Read a few outputs and make a judgment call",
-        "Run the prompt on a diverse test set and measure changes in defined metrics (accuracy, format compliance, relevance)",
-        "Ask the model if it's doing better",
-        "Check the API response time"
+        "Read a handful of outputs from the new prompt and make a subjective judgment call",
+        "Ask the model itself whether the new prompt is performing better than the old one",
+        "Run the prompt on a diverse test set and measure changes in defined metrics like accuracy",
+        "Compare the API response latency before and after the prompt change, treating speed as quality"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Evaluating prompt changes on a handful of examples is unreliable. A systematic evaluation harness with diverse test cases and defined metrics shows whether changes help across the distribution, not just cherry-picked examples.",
       "stage": "post"
     }

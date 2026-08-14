@@ -6,84 +6,84 @@
       "stage": "pre",
       "question": "What is the planner's responsibility in a plan-execute agent?",
       "options": [
-        "To call the dispatcher on each step",
         "To produce an ordered list of typed steps the executor will run",
-        "To enforce timeouts",
-        "To handle the JSON-RPC transport"
+        "To call the dispatcher directly on each step as soon as the step is produced",
+        "To enforce per-step and per-session timeouts before any step reaches the executor",
+        "To handle the JSON-RPC transport that carries steps between planner and executor"
       ],
-      "correct": 1,
-      "explanation": "Planner emits structured plans. The executor runs them. Mixing the two is the chain-of-thought trap this lesson is moving away from."
+      "correct": 0,
+      "explanation": "Planner emits structured plans. The executor runs them, enforces timeouts, and owns the transport. Mixing the two is the chain-of-thought trap this lesson is moving away from."
     },
     {
       "stage": "pre",
       "question": "Why is expected_outcome part of the Step shape even though the executor does not check it?",
       "options": [
-        "Because the dispatcher uses it as a cache key",
-        "Because it gives the replanner and tracers a stated success condition to read",
-        "Because the registry requires it",
-        "Because the model trains on it"
+        "Because the dispatcher uses the expected_outcome string as a cache key for idempotency",
+        "Because the tool registry requires every registered step to declare an expected outcome",
+        "Because the underlying model is fine-tuned on expected_outcome text during training",
+        "Because it gives the replanner and tracers a stated success condition to read"
       ],
-      "correct": 1,
-      "explanation": "The replanner reads it when revising. The tracer renders it on the timeline. It is a human-readable contract on the step."
+      "correct": 3,
+      "explanation": "The replanner reads it when revising. The tracer renders it on the timeline. It is a human-readable contract on the step, not a cache key or registry requirement."
     },
     {
       "stage": "check",
       "question": "When a step fails and the replanner returns a new plan, what does the executor emit on the event stream?",
       "options": [
-        "Nothing — replan is silent",
-        "session.complete with status=failed",
-        "plan.diff with removed/added/revised step ids",
-        "tool.error followed by session.start"
+        "Nothing is emitted — a replan is applied silently without any event on the stream",
+        "plan.diff, listing which step ids were removed, added, and revised in the new plan",
+        "session.complete with status=failed, ending the session instead of continuing",
+        "tool.error followed immediately by a fresh session.start for the revised plan"
       ],
-      "correct": 2,
-      "explanation": "plan.diff makes the revision visible. A silent rewrite is the bug we are avoiding."
+      "correct": 1,
+      "explanation": "plan.diff makes the revision visible. A silent rewrite is the bug we are avoiding, and the session does not end or restart on a replan."
     },
     {
       "stage": "check",
       "question": "Why have both max_steps and max_replans as separate budgets?",
       "options": [
-        "Because they measure different units. Steps cap total execution; replans cap how many times the planner is called.",
-        "Because asyncio requires both",
-        "Because the dispatcher rejects unbounded plans",
-        "Because the registry counts replans"
+        "Because the asyncio event loop needs two separate counters to schedule tasks correctly",
+        "Because the dispatcher rejects any plan that does not declare both budgets up front",
+        "Because they measure different units — steps cap total execution, replans cap planner calls",
+        "Because the tool registry keeps its own separate count of how many times each tool was replanned"
       ],
-      "correct": 0,
+      "correct": 2,
       "explanation": "max_replans catches a planner that keeps returning the same broken plan. max_steps catches a runaway plan that keeps growing."
     },
     {
       "stage": "check",
       "question": "Which reason is returned when the planner returns an empty list on the first call?",
       "options": [
-        "step_budget",
-        "replan_budget",
-        "goal_met",
-        "no_plan"
+        "no_plan — the planner returned zero steps on the very first call",
+        "step_budget — the plan grew past the maximum allowed number of total steps",
+        "replan_budget — the planner was called more times than allowed",
+        "goal_met — the executor decided the goal was already satisfied before any step ran"
       ],
-      "correct": 3,
+      "correct": 0,
       "explanation": "No plan, no execution. The session ends with reason=no_plan and status=failed."
     },
     {
       "stage": "post",
       "question": "What is in PlanDiff.revised?",
       "options": [
-        "Step ids that were in the old plan and are not in the new",
-        "Step ids in the new plan that were not in the old",
-        "Step ids whose tool_name or args changed between revisions",
-        "Step ids the planner asked to skip"
+        "Step ids whose tool_name or args changed between the old and new plan revisions",
+        "Step ids that were present in the old plan but are absent from the new plan",
+        "Step ids that appear in the new plan but did not exist anywhere in the old plan",
+        "Step ids the planner marked to be skipped without removing them from the plan"
       ],
-      "correct": 2,
-      "explanation": "revised is the set of ids whose (tool_name, args) signature changed across the revision."
+      "correct": 0,
+      "explanation": "revised is the set of ids whose (tool_name, args) signature changed across the revision — not the added, removed, or skipped sets."
     },
     {
       "stage": "post",
       "question": "When the executor exhausts max_replans, what is the resulting SessionResult.reason?",
       "options": [
-        "goal_met",
-        "step_budget",
-        "replan_budget",
-        "no_plan"
+        "step_budget — the plan exceeded the maximum number of total steps",
+        "replan_budget — the planner was invoked more times than max_replans allows",
+        "goal_met — the executor reached the stated goal before exhausting the replan budget",
+        "no_plan — the very first call to the planner returned an empty list of steps"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "replan_budget. The status is failed. History carries every step that ran, including the failures that triggered replans."
     }
   ]

@@ -3,60 +3,60 @@
     {
       "question": "What is the key difference between zero-shot and few-shot prompting?",
       "options": [
-        "Zero-shot is faster",
-        "Zero-shot gives only the instruction; few-shot includes example input-output demonstrations before the actual query",
-        "Few-shot uses a different model",
-        "Zero-shot doesn't use a system prompt"
+        "Zero-shot sends a single API call, while few-shot chains several calls and feeds each output into the next prompt",
+        "Zero-shot answers at temperature 0, while few-shot samples several reasoning paths and takes a majority vote",
+        "Zero-shot appends 'Let's think step by step', while few-shot has the model score and prune its own branches",
+        "Zero-shot gives only the instruction; few-shot includes example input-output demonstrations before the actual query"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Few-shot prompting includes worked examples (demonstrations) that show the model the expected pattern. This is like showing someone how to fill out a form before asking them to fill out their own.",
       "stage": "pre"
     },
     {
       "question": "What does 'Chain of Thought' prompting do?",
       "options": [
-        "It chains multiple API calls together",
-        "It instructs the model to show intermediate reasoning steps before giving the final answer, improving accuracy on multi-step problems",
-        "It connects multiple models in sequence",
-        "It generates longer responses"
+        "It samples several independent reasoning paths above temperature 0 and returns the answer that wins the vote",
+        "It splits a complex task into separate prompts, where each prompt's output becomes the input of the next one",
+        "It alternates thinking with tool actions, feeding each observation back before the model reasons about the next step",
+        "It has the model show intermediate reasoning steps before the final answer, which raises accuracy on multi-step problems"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "CoT prompting (e.g., 'Let's think step by step') gives the model 'scratch paper' to work through problems. On GSM8K math problems, this alone improved GPT-4o accuracy from 78% to 91%.",
       "stage": "pre"
     },
     {
       "question": "How does Tree-of-Thought differ from Chain-of-Thought?",
       "options": [
-        "It uses a tree data structure for storage",
+        "It samples several complete reasoning chains at once and returns the final answer that most of them agree on",
+        "It repeats one single reasoning chain with ever more detailed steps until the final answer stops changing",
         "It explores multiple reasoning paths in parallel and evaluates which path leads to the best answer",
-        "It's just a longer chain of thought",
-        "It uses a different model"
+        "It interleaves every reasoning step with a tool call so that observations can correct the path mid-run"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "CoT follows a single reasoning path. Tree-of-Thought generates multiple candidate paths, evaluates them (possibly with the LLM itself), and selects the best one. This helps on problems where the first reasoning path might be wrong.",
       "stage": "post"
     },
     {
       "question": "When selecting few-shot examples, what matters most?",
       "options": [
-        "Using as many examples as possible",
+        "Packing in as many examples as the context window allows, since more demonstrations always sharpen the pattern",
+        "Picking the shortest examples available so the reasoning overhead per query stays well under 200 extra tokens",
         "Choosing diverse examples that cover different cases and demonstrate the exact format and reasoning pattern you want",
-        "Using the shortest examples",
-        "Using examples from the test set"
+        "Drawing the examples straight from the test set you evaluate on, so the model sees the exact cases it is scored on"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Example quality trumps quantity. 3-5 diverse, well-formatted examples that cover different edge cases teach the model the pattern better than 20 repetitive examples that waste context window tokens.",
       "stage": "post"
     },
     {
       "question": "Why does CoT prompting improve accuracy even though the model has the same knowledge with or without it?",
       "options": [
-        "It activates hidden model capabilities",
-        "Generating intermediate tokens creates a larger effective context for the final answer, allowing the model to condition on its own reasoning",
-        "It uses more compute",
-        "It changes the model weights"
+        "Each intermediate token becomes context for the next one, so the model conditions its final answer on its own reasoning",
+        "The extra reasoning tokens are scored by a separate evaluator that prunes the weak branches before the answer",
+        "Reasoning text raises the sampling temperature for the answer tokens, widening the distribution the model draws from",
+        "The reasoning steps update the model's weights during the call, so it keeps what it worked out for later queries"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Without CoT, the model must jump directly to the answer in one token. With CoT, each intermediate step is a token the model conditions on for the next step. The model essentially 'thinks out loud,' building up to the answer.",
       "stage": "post"
     }

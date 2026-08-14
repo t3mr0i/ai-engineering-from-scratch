@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "What distinguishes indirect prompt injection (IPI) from direct prompt injection?",
       "options": [
-        "IPI requires fine-tuning the target model",
-        "IPI embeds instructions inside external content (web pages, emails, tool outputs) that the agent consumes during normal operation, without the attacker touching the user's prompt",
-        "IPI is a synonym for jailbreaking",
-        "IPI only works on multimodal models"
+        "IPI is simply another name for jailbreaking: both terms describe an attacker crafting a single adversarial prompt that the user submits directly to bypass the model's safety training",
+        "IPI only works against multimodal models, since the injected instructions must be hidden inside image pixels or audio waveforms rather than plain text content",
+        "IPI embeds instructions inside external content the agent consumes -- a web page, email, or tool output -- without the attacker ever touching the user's prompt directly",
+        "IPI requires the attacker to fine-tune the target model on a poisoned dataset first; without retraining the model's weights, no injected instruction in retrieved content can take effect"
       ],
-      "correct": 1,
-      "explanation": "The lesson defines IPI as embedding instructions inside external content (a web page, email, or tool output) that the agent consumes during normal operation, so the attacker never touches the user's prompt directly -- unlike direct injection."
+      "correct": 2,
+      "explanation": "The lesson defines IPI as embedding instructions inside external content (a web page, email, or tool output) that the agent consumes during normal operation, so the attacker never touches the user's prompt directly -- unlike direct injection, no fine-tuning or multimodal payload is required."
     },
     {
       "stage": "check",
       "question": "Which of these is NOT one of the three IPI delivery vectors listed in the lesson?",
       "options": [
-        "Retrieval-augmented generation (poisoned retrieval)",
-        "Direct system-prompt edits by the user",
-        "Tool output",
-        "Inbox / document workflows"
+        "The user directly editing the system prompt themselves, which is a configuration change rather than content the agent consumes during normal operation",
+        "Retrieval-augmented generation, where a poisoned document is fetched and concatenated into the prompt ahead of the user's question",
+        "Tool output, where a tool the agent calls -- such as a web search -- returns attacker-controlled content containing hidden instructions",
+        "Inbox or document workflows, where the agent reads an email or file whose body contains attacker-authored instructions"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The lesson's three delivery vectors are RAG (poisoned retrieval), inbox/document workflows, and tool output; a user directly editing the system prompt is not IPI at all since IPI specifically bypasses the user-facing input."
     },
     {
       "stage": "check",
       "question": "Why do user-input filters miss IPI?",
       "options": [
-        "Filters cannot read JSON",
-        "User-input filters are case-sensitive",
-        "The payload never appears in the user's input; it appears in retrieved or tool-supplied content",
-        "Filters only run after the model responds"
+        "Filters cannot parse structured formats like JSON or XML, so any injected instruction wrapped in one of those formats slips through undetected",
+        "The payload never appears in the user's input; it appears in retrieved documents or tool-supplied content concatenated into the prompt afterward",
+        "User-input filters are case-sensitive, so an attacker only needs to vary the capitalization of a couple of injected keywords to evade them",
+        "Filters only run after the model has already produced and sent its response, by which point the injected instructions have already executed"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "The lesson explains that a filter gated on user input never sees the IPI payload, since it lives in the retrieved document or tool output that gets concatenated into the prompt after the user's turn."
     },
     {
       "stage": "check",
       "question": "What is the central principle of Information Flow Control (IFC) for AI agents?",
       "options": [
-        "Encrypt all retrieved content",
-        "Use only single-turn prompts",
-        "Disable all tools by default",
-        "Label content by source as trusted or untrusted; actions triggered by untrusted content must be ratified by trusted input before execution"
+        "Encrypt all retrieved content before it enters the model's context window so an attacker cannot read what the agent processes",
+        "Restrict the agent to strictly single-turn prompts so there is no multi-turn context for injected instructions to persist across",
+        "Disable all external tools by default so the agent can never encounter attacker-controlled content from search, email, or file access in the first place",
+        "Label content by its source as trusted or untrusted, and require untrusted-triggered actions be ratified by trusted input first"
       ],
       "correct": 3,
-      "explanation": "The lesson describes IFC as labeling the user's query trusted and retrieved content untrusted, then requiring that any action triggered by untrusted content be ratified by trusted input before it executes -- borrowed from classical OS security."
+      "explanation": "The lesson describes IFC as labeling the user's query trusted and retrieved content untrusted, then requiring that any action triggered by untrusted content be ratified by trusted input before it executes -- borrowed from classical OS security, not encryption, tool bans, or single-turn limits."
     },
     {
       "stage": "post",
       "question": "What did Nasr et al. (October 2025, 'The Attacker Moves Second') find about 12 published IPI defenses with adaptive attacks?",
       "options": [
-        "Adaptive attacks were too expensive to evaluate",
-        "Their reported near-zero ASR held under adaptive attack",
-        "Only one defense was broken",
-        "Adaptive attacks (gradient, RL, random search, human red-team) broke >90% of them despite their original near-zero ASR claims"
+        "Adaptive attacks -- gradient search, RL, random search, human red-team -- broke over 90% of the defenses despite near-zero claims",
+        "Adaptive attacks were judged too computationally expensive to run against all twelve defenses, so the paper relied on static, non-adaptive benchmarks instead",
+        "Their originally reported near-zero attack success rate held up even after gradient-based and RL adaptive attacks were applied",
+        "Only one of the twelve published defenses was broken by adaptive attacks; the other eleven held their near-zero attack success rate"
       ],
-      "correct": 3,
+      "correct": 0,
       "explanation": "The lesson cites Nasr et al.'s finding that adaptive attacks -- gradient search, RL policies, random search, and a 72-hour human red-team -- broke every one of 12 published defenses to over 90% attack success rate, despite their originally reported near-zero ASR."
     },
     {
       "stage": "post",
       "question": "Where does prompt injection rank in the 2025 OWASP LLM Top 10?",
       "options": [
-        "Not listed",
-        "LLM01 (top, #1 application-layer threat)",
-        "LLM05",
-        "LLM10 (lowest)"
+        "It doesn't appear in the OWASP list at all, since OWASP's Top 10 covers infrastructure vulnerabilities rather than model-input attacks",
+        "LLM05, which OWASP reserves for supply-chain vulnerabilities in third-party models and plugins rather than input-based attacks",
+        "LLM01 -- the top-ranked, number-one application-layer threat in OWASP's 2025 list, ahead of every other vulnerability category",
+        "LLM10, the lowest-ranked entry, since OWASP considers it a niche risk compared to more common vulnerabilities like data leakage"
       ],
-      "correct": 1,
-      "explanation": "The lesson states OWASP's 2025 LLM Top 10 ranks prompt injection (direct and indirect) as LLM01, the number-one application-layer threat."
+      "correct": 2,
+      "explanation": "The lesson states OWASP's 2025 LLM Top 10 ranks prompt injection (direct and indirect) as LLM01, the number-one application-layer threat -- not an unranked, mid-tier, or low-tier entry."
     }
   ]
 }

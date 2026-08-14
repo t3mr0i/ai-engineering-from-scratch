@@ -18,10 +18,10 @@
       "stage": "check",
       "question": "What should happen when a verifier returns an unknown route label?",
       "options": [
-        "Fall back silently to merge",
-        "Treat it as a pass because the node completed",
+        "Fall back silently to the merge node",
+        "Treat the label as an automatic pass",
         "Fail closed and surface a graph error",
-        "Delete the verifier result"
+        "Delete the result and restart research"
       ],
       "correct": 2,
       "explanation": "Unknown routing is a graph-definition failure. Silent success would turn a malformed decision into an unsafe side effect."
@@ -30,12 +30,12 @@
       "stage": "check",
       "question": "Why does the reference graph deep-copy state before each fan-out branch?",
       "options": [
-        "To let branches mutate one another faster",
-        "To keep branch inputs isolated so their patches can be merged deliberately",
-        "To avoid recording branch outputs",
-        "To make all branches share a hidden transcript"
+        "To let branches mutate one another's state directly during fan-out",
+        "To avoid recording any of the branch outputs in the trace",
+        "To make every branch share one hidden transcript of the run",
+        "To keep branch inputs isolated so their patches can be merged deliberately"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Isolation prevents one branch from accidentally changing another branch's input before fan-in."
     },
     {
@@ -43,9 +43,9 @@
       "question": "What does the approval node do when no human decision is present?",
       "options": [
         "Pause and persist an approval request",
-        "Assume approval after one retry",
-        "Route directly to merge",
-        "Discard the state and restart at research"
+        "Assume approval after a single retry",
+        "Route the state directly to merge",
+        "Discard the state and restart research"
       ],
       "correct": 0,
       "explanation": "Missing approval is not consent. The graph pauses, checkpoints state, and resumes only after an explicit decision."
@@ -54,22 +54,22 @@
       "stage": "post",
       "question": "When should a failed verification route back to research instead of implementation?",
       "options": [
-        "Whenever implementation takes more than one round",
+        "Whenever the implementation node ends up needing more than one round to finish",
         "When the requirements or evidence needed to implement are insufficient",
-        "When the approval node is paused",
-        "When a branch produced a list"
+        "When the human approval node is currently paused for a decision",
+        "When a parallel branch produced a list instead of a scalar value"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Rollback should target the layer that owns the defect; missing requirements belong to research, not guesswork in implementation."
     },
     {
       "stage": "post",
       "question": "What is the safest fan-in behavior for conflicting scalar updates from parallel branches?",
       "options": [
-        "Use whichever branch finishes last",
-        "Concatenate the scalar values into a string",
+        "Use whichever parallel branch happens to finish last",
+        "Concatenate the conflicting scalar values into one string",
         "Raise a conflict and require an explicit merge decision",
-        "Drop both values and continue"
+        "Drop both conflicting values and continue the merge silently"
       ],
       "correct": 2,
       "explanation": "A silent overwrite destroys provenance. The runner rejects conflicting scalar updates so a human or merge rule can decide."

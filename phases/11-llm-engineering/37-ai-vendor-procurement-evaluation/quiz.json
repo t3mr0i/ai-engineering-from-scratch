@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "Why does AI procurement need more than feature comparison?",
       "options": [
+        "Because the vendor demo already covers every enterprise control a buyer needs to verify",
+        "Because contract terms are standardised across AI vendors, so only features distinguish them",
         "Because data handling, security, integration, lock-in, and operating cost affect long-term risk",
-        "Because vendor demos are always complete",
-        "Because contracts never matter",
-        "Because security evidence is optional"
+        "Because security evidence is supplied later by the vendor's compliance team on request"
       ],
-      "correct": 0,
-      "explanation": "AI vendor decisions create operating, security, and commercial consequences."
+      "correct": 2,
+      "explanation": "AI vendor decisions create operating, security, and commercial consequences. The comparison has to cover enterprise controls, integration, operating model, support, and cost behavior."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": ["data residency", "font color", "audio codec", "thread name"],
-      "correct": 0,
-      "explanation": "Data residency is one vendor evaluation signal."
+      "question": "A vendor demo went well and the team wants to move. What has the evaluation not yet covered?",
+      "options": [
+        "Model accuracy, response latency, prompt formatting, and supported output schema options",
+        "User interface design, onboarding effort, in-app help quality, and mobile app availability on every platform",
+        "Data residency, integration ownership, audit evidence, pricing behavior, and exit strategy",
+        "Training-data provenance, model size, fine-tuning support, and open-weight release policy"
+      ],
+      "correct": 2,
+      "explanation": "The lesson names exactly these gaps behind a strong demo: data residency, integration ownership, audit evidence, pricing behavior, and exit strategy. The decision feels fast but creates long-term risk."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked vendor-fit plan with controls and rationale",
-        "A signed contract",
-        "A procurement system",
-        "A guaranteed approval"
+        "A ranked vendor-fit plan with matched controls and rationale per option",
+        "A signed contract once the highest-scoring vendor clears the scorecard",
+        "A procurement system that routes approvals through the finance department",
+        "A guaranteed approval that the shortlisted vendor meets security policy"
       ],
       "correct": 0,
-      "explanation": "The artifact supports evaluation; it does not replace procurement."
+      "explanation": "The artifact supports evaluation by ranking vendor fit and matching controls. It does not replace procurement, security review, or the contract itself."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["vendor scorecard", "skip trial criteria", "ignore pricing", "remove exit planning"],
-      "correct": 0,
-      "explanation": "A vendor scorecard makes comparison explicit."
+      "options": [
+        "A trial that runs without pre-agreed criteria, so the team stays open to what it finds",
+        "A pricing assumption carried straight from the demo, since the list price rarely changes between renewals",
+        "A vendor scorecard that compares security, data handling, integration, cost, and lock-in",
+        "A decision record that names the winner but leaves the exit path to a later discussion"
+      ],
+      "correct": 2,
+      "explanation": "A vendor scorecard makes comparison explicit across security, data handling, integration, cost, and lock-in. Trial criteria, an exit plan, and an approval record are the other controls this lesson teaches."
     },
     {
       "stage": "post",
       "question": "When should a vendor decision require stronger controls?",
       "options": [
-        "When security, data, lock-in, or pricing uncertainty is high",
-        "Only when the demo is boring",
-        "Only when no integration is needed",
-        "Never; vendor selection is only commercial"
+        "When security, data handling, lock-in, or pricing uncertainty is high",
+        "Only when the vendor is a startup rather than an established supplier with a long track record",
+        "Only when the integration touches more than one system at go-live",
+        "Only when the contract value crosses the department's approval limit"
       ],
       "correct": 0,
-      "explanation": "High uncertainty and risk require stronger trial and approval controls."
+      "explanation": "High uncertainty and risk require stronger trial and approval controls. Vendor size and contract value are not the signals this lesson scores."
     },
     {
       "stage": "post",
       "question": "What is the purpose of an exit plan?",
       "options": [
-        "To reduce lock-in risk before committing to a vendor",
-        "To avoid comparing tools",
-        "To skip security review",
-        "To hide operating cost"
+        "To document how the trial will be scored once the proof of concept ends",
+        "To record which internal team owns the integration after the rollout",
+        "To capture the pricing scenarios the finance team asked to be compared",
+        "To make lock-in risk visible and reducible before committing to a vendor"
       ],
-      "correct": 0,
-      "explanation": "Exit planning makes lock-in visible before purchase."
+      "correct": 3,
+      "explanation": "Exit planning makes lock-in visible before purchase. The lesson asks that every vendor decision carry one."
     }
   ]
 }

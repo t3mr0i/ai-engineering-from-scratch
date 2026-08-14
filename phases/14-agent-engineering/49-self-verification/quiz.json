@@ -2,11 +2,11 @@
   "lesson": "49-self-verification",
   "title": "Self-Verification",
   "questions": [
-    {"stage": "pre", "question": "Who should own the completion decision?", "options": ["The artifact maker alone", "Independent checks", "The longest response", "The last session only"], "correct": 1, "explanation": "Verification separates making from judging."},
-    {"stage": "check", "question": "What should each check return?", "options": ["Only prose", "A boolean and evidence detail", "A new prompt", "A file deletion"], "correct": 1, "explanation": "Structured evidence makes the verdict inspectable."},
-    {"stage": "check", "question": "What should an empty check list do?", "options": ["Pass automatically", "Fail closed", "Ask the maker to self-approve", "Skip the task"], "correct": 1, "explanation": "No checks means no evidence of completion."},
-    {"stage": "check", "question": "How should a check exception be handled?", "options": ["Ignore it", "Record failed evidence", "Convert it to success", "Retry forever"], "correct": 1, "explanation": "An exception is evidence that verification did not complete."},
-    {"stage": "post", "question": "Why keep checks orthogonal?", "options": ["To make the report longer", "To route each failure to its owner", "To avoid names", "To hide dependencies"], "correct": 1, "explanation": "Separate checks make repair more targeted."},
-    {"stage": "post", "question": "Which is stronger evidence than artifact presence?", "options": ["A passing end-to-end acceptance command", "A confident note", "A larger diff", "A repeated prompt"], "correct": 0, "explanation": "Presence does not prove behavior; acceptance evidence does."}
+    {"stage": "pre", "question": "Who should own the completion decision?", "options": ["The artifact's maker", "The longest response", "The last session only", "Independent checks"], "correct": 3, "explanation": "Verification separates making from judging."},
+    {"stage": "check", "question": "What should each check return?", "options": ["Only a paragraph of prose", "A brand new prompt to retry", "A boolean and evidence detail", "An instruction to delete a file"], "correct": 2, "explanation": "Structured evidence makes the verdict inspectable."},
+    {"stage": "check", "question": "What should an empty check list do?", "options": ["Pass the task automatically", "Fail closed rather than pass", "Let the maker self-approve it", "Skip the task without a record"], "correct": 1, "explanation": "No checks means no evidence of completion."},
+    {"stage": "check", "question": "How should a check exception be handled?", "options": ["Ignore it and move on", "Convert it to a pass", "Retry the check forever", "Record failed evidence"], "correct": 3, "explanation": "An exception is evidence that verification did not complete."},
+    {"stage": "post", "question": "Why keep checks orthogonal?", "options": ["To make the final report longer", "To route each failure to its owner", "To avoid naming any check at all", "To hide dependencies between checks"], "correct": 1, "explanation": "Separate checks make repair more targeted."},
+    {"stage": "post", "question": "Which is stronger evidence than artifact presence?", "options": ["A passing end-to-end acceptance command", "A confident note from the maker", "A somewhat larger diff than the last one", "A prompt that has been repeated"], "correct": 0, "explanation": "Presence does not prove behavior; acceptance evidence does."}
   ]
 }

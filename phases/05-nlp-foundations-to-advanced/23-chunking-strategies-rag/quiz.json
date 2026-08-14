@@ -6,94 +6,94 @@
       "stage": "pre",
       "question": "Why is chunking strategy as important as the embedding model in RAG?",
       "options": [
-        "Chunk boundaries determine whether the answer is even retrievable; bad chunks defeat any embedding",
-        "Chunking shrinks the model",
-        "Smaller chunks train faster",
-        "Chunking is required by FAISS"
+        "Chunking shrinks the embedding model's own parameter count, which is why smaller chunks always run faster at inference time",
+        "Chunking is a hard requirement of vector index libraries like FAISS, not an optional quality lever",
+        "Smaller chunks always train faster, since the embedding model has fewer tokens to process per document",
+        "Chunk boundaries determine whether the answer is even retrievable at all; bad chunks defeat any embedding model"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "Vectara's 2025 study showed chunking quality matches or exceeds embedding-model impact on retrieval quality."
     },
     {
       "stage": "pre",
       "question": "What does LangChain's RecursiveCharacterTextSplitter try in order?",
       "options": [
-        "Always split on character N",
-        "Split on token IDs",
-        "Try splitting on paragraph breaks, then newlines, then sentence boundaries, then spaces",
-        "Split on whitespace only"
+        "Try splitting on paragraph breaks first, then newlines, then sentence boundaries, then spaces as a last resort",
+        "Always split at a fixed character position N, regardless of where sentences or paragraphs fall",
+        "Split directly on the tokenizer's own token IDs, ignoring character-level structure like punctuation marks entirely",
+        "Split on whitespace characters only, treating every other separator as part of the chunk content"
       ],
-      "correct": 2,
+      "correct": 0,
       "explanation": "Recursive splitting falls back through paragraph -> newline -> sentence -> space to preserve structure."
     },
     {
       "stage": "check",
       "question": "Why does the parent-document pattern improve answer quality?",
       "options": [
-        "Children give precise retrieval; returning the larger parent block preserves the surrounding context the reader needs",
-        "It removes embeddings",
-        "It avoids tokenization",
-        "It uses fewer GPU cycles"
+        "It removes the need for embeddings entirely by matching parent documents with keyword search alone",
+        "It avoids tokenization overhead by operating directly on raw document bytes instead of chunked text",
+        "Small child chunks give precise retrieval; the larger parent block returned instead preserves surrounding context",
+        "It uses noticeably fewer GPU cycles than single-level chunking because parent blocks skip re-embedding"
       ],
-      "correct": 0,
+      "correct": 2,
       "explanation": "Retrieve by small child chunks for precision, then expand to the parent for context."
     },
     {
       "stage": "check",
       "question": "What does Anthropic's 'contextual retrieval' add to each chunk before indexing?",
       "options": [
-        "A POS tag",
-        "A language code",
-        "An LLM-generated 50-100 word summary placing the chunk in the document's overall context",
-        "Random noise"
+        "A part-of-speech tag for the chunk's dominant grammatical structure, used to filter irrelevant matches",
+        "An LLM-generated summary placing the chunk in the document's overall context, such as which section it belongs to",
+        "A language code identifying which of several supported languages the chunk's text is written in",
+        "Randomly sampled noise tokens, used as a regularizer that prevents the retriever from overfitting to exact phrasing"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "Contextual retrieval prepends an LLM-written situating summary to each chunk; ~35-50% recall gain."
     },
     {
       "stage": "check",
       "question": "Which 2026 finding contradicts the conventional wisdom about chunk overlap?",
       "options": [
-        "Overlap is required for BM25",
-        "Empirical 2026 benchmarks show overlap often provides zero measurable benefit while doubling index cost",
-        "Overlap improves contextual retrieval only",
-        "Overlap should be 50%"
+        "Empirical 2026 benchmarks show overlap often provides zero measurable retrieval benefit while inflating index size",
+        "Chunk overlap is a hard architectural requirement for BM25 to score documents correctly, unlike dense retrieval",
+        "Overlap only improves results when combined with contextual retrieval, and does nothing on its own",
+        "The optimal overlap percentage was found to be exactly 50% of the chunk size across all query types"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Newer studies (SPLADE+Mistral on NQ) show chunk overlap rarely helps and inflates index size."
     },
     {
       "stage": "post",
       "question": "Which chunk size does NVIDIA's 2026 benchmark associate with factoid queries?",
       "options": [
-        "64 tokens",
-        "Roughly 256-512 tokens",
-        "2048-4096 tokens",
-        "8192 tokens"
+        "About 64 tokens, small enough that only a single sentence fragment ever fits in one chunk",
+        "1024-2048 tokens, the size the benchmark recommends for whole-section comprehension queries instead",
+        "512-1024 tokens, the size the benchmark recommends for analytical or multi-hop queries instead",
+        "Roughly 256-512 tokens, big enough to contain the answer plus local context without excess noise"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Factoid queries benefit from smaller chunks (256-512 tokens) that concentrate the answer signal."
     },
     {
       "stage": "post",
       "question": "Why is a min-token floor important when using semantic chunking?",
       "options": [
-        "Required by BERT",
-        "Without a floor, semantic chunking can produce tiny 40-token fragments that hurt retrieval",
-        "Floors speed up inference",
-        "Floors prevent overlap"
+        "It is a hard architectural requirement of BERT-family embedding models, not a chunking design choice",
+        "Setting a floor speeds up inference by letting the embedding model batch same-length chunks together",
+        "Without a floor, semantic chunking can over-segment and produce tiny 40-token fragments that hurt retrieval",
+        "Floors are what prevent adjacent chunks from ever overlapping with each other during the splitting process"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Semantic chunkers can over-segment; enforcing a min size prevents low-signal fragments."
     },
     {
       "stage": "post",
       "question": "What does 'late chunking' do differently from traditional chunking?",
       "options": [
-        "Skips chunking entirely",
-        "Embeds the whole document at the token level first, then pools token embeddings into chunk vectors to preserve cross-chunk context",
-        "Chunks after retrieval",
-        "Uses BM25 instead"
+        "Skips chunking entirely and indexes each full document as a single embedding vector regardless of length",
+        "Embeds the whole document first at the token level, then pools those embeddings into chunk vectors",
+        "Waits until after retrieval to split the returned document into chunks for the reader to review",
+        "Replaces dense embeddings with BM25 keyword scoring at query time instead of at indexing time"
       ],
       "correct": 1,
       "explanation": "Late chunking embeds first and pools second, preserving contextual interactions across chunk boundaries."

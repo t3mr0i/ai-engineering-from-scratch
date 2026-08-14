@@ -6,46 +6,46 @@
       "stage": "pre",
       "question": "What is the core idea of model cascading?",
       "options": [
-        "Run two models in parallel and average the outputs",
-        "Always route by random weight",
-        "Run every request on the most expensive model first",
-        "Run a cheap model first, escalate to a frontier model only on low confidence or refusal"
+        "Run two models in parallel and average the outputs, the ensemble pattern rather than cascading",
+        "Run a cheap model first, escalate to a frontier model only on low confidence or refusal",
+        "Always route by random weight, ignoring task difficulty or model confidence entirely",
+        "Run every request on the most expensive model first, then downgrade if it looks too easy"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The lesson defines model cascading as sending a request to a cheap model first and escalating to a frontier model only when confidence is low or the cheap model refuses -- the opposite of always using the most expensive model."
     },
     {
       "stage": "check",
       "question": "Which four signals does the lesson list for routing decisions?",
       "options": [
+        "Token count only, ignoring task type, embedding similarity, and model self-confidence entirely",
+        "User tier only, routing purely on the customer's subscription plan rather than the request itself",
         "Task classification, prompt length, embedding similarity to known-hard set, and self-confidence from a first-pass",
-        "Token count only",
-        "User tier only",
-        "GPU temperature, fan speed, room humidity, time of day"
+        "GPU temperature, fan speed, room humidity, and time of day — infrastructure signals, not routing signals"
       ],
-      "correct": 0,
+      "correct": 2,
       "explanation": "The lesson enumerates exactly these four routing signals: task classification, prompt length, embedding similarity to a known-hard bucket, and self-confidence (log-probs, refusals, hedging) from a first cheap-model pass."
     },
     {
       "stage": "check",
       "question": "What is the expected latency profile of a cascade router?",
       "options": [
-        "Always slower by 10x",
-        "Identical to the frontier model",
-        "About 1.2x median latency (cheap run plus verify), about 2x on escalated requests (~10% of traffic)",
-        "Always faster than pre-route"
+        "Always slower by 10x, regardless of how much traffic escalates to the frontier model",
+        "Identical to the frontier model, since the cheap-model pass adds no measurable overhead",
+        "Always faster than pre-route, since skipping the up-front classifier saves the most latency",
+        "About 1.2x median latency (cheap run plus verify), about 2x on escalated requests (~10% of traffic)"
       ],
-      "correct": 2,
+      "correct": 3,
       "explanation": "The lesson states cascade routing costs about 1.2x median latency (the cheap run plus a confidence check) and about 2x on the roughly 10% of traffic that escalates to the frontier model."
     },
     {
       "stage": "check",
       "question": "Which routing pattern adds 5-10ms latency up front and is fastest overall?",
       "options": [
-        "Pre-route with a classifier",
-        "Ensemble route",
-        "Cascade",
-        "Random round-robin"
+        "Pre-route with a classifier, adding only 5-10ms of latency up front before any model call",
+        "Ensemble route, running cheap and frontier models in parallel and picking with a reward model",
+        "Cascade, running the cheap model first and escalating only when confidence is low",
+        "Random round-robin, rotating traffic across models without regard to task difficulty"
       ],
       "correct": 0,
       "explanation": "The lesson lists pre-route (a classifier deciding the route before any model call) as adding only ~5-10ms of latency up front, making it the fastest overall pattern versus cascade or ensemble routing."
@@ -54,21 +54,21 @@
       "stage": "post",
       "question": "What is cheap-model drift in routing?",
       "options": [
-        "The cheap model becomes more expensive",
-        "Cascade falls through to frontier 100% of the time",
+        "The cheap model becomes more expensive over time on its own, eroding the cost savings routing was originally meant to capture",
         "Task distribution shifts but the trained router keeps sending requests to the cheap model, silently degrading quality",
-        "A latency drift in the cheap model"
+        "Cascade falls through to frontier 100% of the time, so no request ever gets the cheap model's discount",
+        "A latency drift in the cheap model, where response time grows even though quality holds steady"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "The lesson's drift scenario: the task distribution shifts over months (users ask harder questions) but the router's classifier, trained on old data, keeps sending the same share to the cheap model, so quality drops silently until someone notices."
     },
     {
       "stage": "post",
       "question": "Which guard does the lesson recommend to catch routing drift?",
       "options": [
-        "Only offline eval sets",
-        "Disable routing in production",
-        "Quarterly engineering review only",
+        "Only offline eval sets, run once per quarter, without any live production quality signal",
+        "Disable routing in production and send every request to the frontier model as a safety default",
+        "Quarterly engineering review only, with no automated online signal between reviews",
         "Online quality metrics — thumbs-up/down per route, LLM-judge on held-out samples, escalation rate, refusal rate"
       ],
       "correct": 3,

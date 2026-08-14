@@ -13,7 +13,7 @@ Build plan:
 
 1. Curriculum graph in Neo4j: 50-150 concept nodes with prerequisite edges and attached OER content (OpenStax, Open Textbook).
 2. Learner model: Bayesian knowledge tracing with priors for guess/slip/learn-rate per concept; per-learner persisted state.
-3. Tutor policy (LangGraph over Claude Sonnet 4.7 with prompt caching): read_signal -> select_concept (graph walk) -> scaffold (Socratic) -> update_mastery.
+3. Tutor policy (LangGraph over Claude Sonnet 4.6 with prompt caching): read_signal -> select_concept (graph walk) -> scaffold (Socratic) -> update_mastery.
 4. Memory: agentmemory-style persistent episodic + semantic store; COPPA-aware auto-delete after 1 year; parent-accessible deletion.
 5. Voice: LiveKit Agents worker with Whisper-v3-turbo ASR and Cartesia Sonic-2 TTS; reuse capstone 03 pipeline.
 6. Photo math: dots.ocr or PaliGemma 2 for equation recognition; feed structured input to the tutor.

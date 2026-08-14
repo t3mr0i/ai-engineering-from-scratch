@@ -5,12 +5,12 @@
       "stage": "pre",
       "question": "In supervised learning, what does the model receive during training?",
       "options": [
-        "Only input data with no labels",
-        "Input-output pairs where the correct answer is provided",
-        "A reward signal for each action taken",
-        "A set of rules written by a human expert"
+        "Only input data with no labels, so the model must discover structure entirely on its own",
+        "A reward signal for each action taken, which the model uses to adjust its behavior over time",
+        "Input-output pairs where the correct answer is provided for each example",
+        "A set of if-then rules written by a human expert that the model simply executes"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Supervised learning trains on input-output pairs (labeled data). The model learns to map inputs to known correct outputs."
     },
     {
@@ -18,12 +18,12 @@
       "stage": "pre",
       "question": "What is the purpose of splitting data into training and test sets?",
       "options": [
-        "To make training faster by using less data",
-        "To have backup data in case the training data is lost",
-        "To evaluate whether the model generalizes to data it has never seen during training",
-        "To balance the classes in the dataset"
+        "To make training run faster, since the model only has to process the smaller training portion",
+        "To evaluate whether the model generalizes to data it has never seen during training, rather than just memorized",
+        "To keep a backup copy of the data in case the training set is corrupted or accidentally lost",
+        "To balance the class distribution between the two sets so each has an equal number of examples"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "The test set measures generalization. If you evaluate on training data, you measure memorization, not learning."
     },
     {
@@ -31,12 +31,12 @@
       "stage": "post",
       "question": "A model gets 98% accuracy on training data but 55% on test data. What is this an example of?",
       "options": [
-        "Underfitting: the model is too simple",
-        "Overfitting: the model memorized training noise instead of learning general patterns",
-        "Data drift: the test distribution changed",
-        "Good generalization: the model learned the true patterns"
+        "Underfitting: the model is too simple to capture the patterns in either set",
+        "Data drift: the statistical distribution of the test set changed sometime after training finished",
+        "Overfitting: the model memorized training-set noise instead of learning general patterns",
+        "Good generalization: the model learned the true underlying patterns in the data"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "A large gap between training accuracy (high) and test accuracy (low) is the hallmark of overfitting. The model memorized the training data."
     },
     {
@@ -44,12 +44,12 @@
       "stage": "post",
       "question": "An e-commerce site wants to group customers into segments based on purchase behavior without any predefined labels. Which type of ML is this?",
       "options": [
-        "Supervised learning (classification)",
-        "Supervised learning (regression)",
-        "Unsupervised learning (clustering)",
-        "Reinforcement learning"
+        "Supervised learning (classification), since customers are being sorted into distinct categories",
+        "Unsupervised learning (clustering), since the model finds natural groupings without predefined labels",
+        "Supervised learning (regression), since purchase behavior is a continuous numeric signal",
+        "Reinforcement learning, since the site adjusts its recommendations based on customer responses"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "Finding natural groupings in data without predefined labels is clustering, which is a form of unsupervised learning."
     },
     {
@@ -57,12 +57,12 @@
       "stage": "post",
       "question": "Which scenario is NOT a good use case for machine learning?",
       "options": [
-        "Predicting customer churn from historical behavior data",
-        "Detecting fraudulent transactions in a stream of millions of payments",
-        "Converting temperatures from Celsius to Fahrenheit",
-        "Classifying images of skin lesions as benign or malignant"
+        "Converting temperatures from Celsius to Fahrenheit, a fixed formula that needs no learned model",
+        "Predicting customer churn from historical behavior data across many weakly-correlated signals over time",
+        "Detecting fraudulent transactions in a continuous stream of millions of payments in real time",
+        "Classifying images of skin lesions as benign or malignant from subtle pixel-level patterns"
       ],
-      "correct": 2,
+      "correct": 0,
       "explanation": "Celsius to Fahrenheit is a fixed formula (F = 9/5 * C + 32). Simple, well-defined rules do not need ML. ML adds complexity with no benefit."
     }
   ]

@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "Why should AI security be addressed before launch?",
       "options": [
-        "Because prompts, context, tools, and outputs create trust boundaries that need controls",
-        "Because model output is always safe",
-        "Because audit logs are unnecessary",
-        "Because tool calls cannot cause harm"
+        "Because model output is filtered by the provider before it ever reaches the application",
+        "Because retrieved documents are internal, and internal sources cannot carry hostile text",
+        "Because a tool call only returns data and cannot turn generated text into an action",
+        "Because prompts, context, tools, and outputs create trust boundaries that need controls"
       ],
-      "correct": 0,
-      "explanation": "AI workflows introduce trust boundaries that must be understood before production use."
+      "correct": 3,
+      "explanation": "AI workflows introduce trust boundaries - hostile prompts, hidden instructions in retrieved context, outputs that leak data, and tools that turn text into action - and these must be understood before production use."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": ["prompt injection", "font size", "video bitrate", "heap alignment"],
-      "correct": 0,
-      "explanation": "Prompt injection is one of the AI security signals."
+      "question": "An assistant retrieves an internal document containing the line \"ignore your previous instructions\". Which trust boundary failed?",
+      "options": [
+        "Output: the generated answer was returned to the user without a sensitive-data check",
+        "Tool call: an action was executed without an allowlist entry or a human approval step",
+        "Audit: the interaction was not logged, so the override could not be reconstructed later",
+        "Context: retrieved content was treated as trusted instruction rather than untrusted data"
+      ],
+      "correct": 3,
+      "explanation": "Prompt injection is a trust-boundary problem at the context stage: retrieved documents can carry hidden instructions, so context must be handled as untrusted data. Output checks, allowlists, and audit logs are separate controls at later boundaries."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked security triage plan with controls and rationale",
-        "An automatic penetration test",
-        "A production firewall",
-        "A replacement for security review"
+        "An automated penetration test that probes the assistant's tools for weaknesses",
+        "A production firewall configuration that blocks hostile traffic before the model",
+        "A signed security review that clears the assistant for internal data access",
+        "A ranked security triage plan with matched controls and rationale per finding"
       ],
-      "correct": 0,
-      "explanation": "The artifact supports triage; it does not replace security review."
+      "correct": 3,
+      "explanation": "The artifact supports triage - it ranks findings and matches controls - but the lesson is explicit that it does not replace security review."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["trust boundary map", "skip audit logs", "allow every tool", "ignore sensitive data"],
+      "options": [
+        "A trust boundary map that separates input, context, model, tool call, and output",
+        "An allowance for every registered tool, so the assistant is not blocked mid-workflow",
+        "A retention rule that drops audit logs quickly to limit sensitive-data exposure",
+        "A policy that sensitive fields are handled by the model rather than filtered upfront"
+      ],
       "correct": 0,
-      "explanation": "A trust boundary map makes the risk surface visible."
+      "explanation": "A trust boundary map makes the risk surface visible by separating input, context, model, tool call, and output. Allowlists, human approval, and audit logs are the controls applied on top of it."
     },
     {
       "stage": "post",
       "question": "When should an AI workflow require a launch gate?",
       "options": [
-        "When impact, uncertainty, and security signals are high",
-        "Only when there is no data",
-        "Only when no users are involved",
-        "Never; AI security is optional"
+        "Only when the assistant has no retrieval source and answers from the model alone",
+        "Only when external users, rather than internal colleagues, will send the prompts",
+        "When impact, uncertainty, and security signals are high enough to need review",
+        "Only when the workflow calls a tool that writes data rather than one that reads it"
       ],
-      "correct": 0,
-      "explanation": "High-risk AI workflows need explicit launch-gate review."
+      "correct": 2,
+      "explanation": "High-risk AI workflows need explicit launch-gate review. Controls should be proportional to impact and uncertainty, not tied to a single structural feature such as who sends the prompt."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the reusable checklist?",
       "options": [
-        "To surface risks and controls before an assistant receives data or tool access",
-        "To hide audit gaps",
-        "To approve all tool calls automatically",
-        "To remove human review"
+        "To document audit gaps after an incident so the postmortem has a starting point",
+        "To pre-approve tool calls in bulk, so the assistant is not interrupted at runtime",
+        "To replace the human review step once the team has run the checklist a few times",
+        "To surface risks and controls before an assistant receives data or tool access"
       ],
-      "correct": 0,
-      "explanation": "The checklist supports practical security review before access expands."
+      "correct": 3,
+      "explanation": "The checklist supports practical security review before access expands. The lesson places AI security work in the design phase, not only at go-live."
     }
   ]
 }

@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "Why is launch not the same as AI value realization?",
       "options": [
-        "Because value needs an owner, baseline, metric, cadence, and review",
-        "Because launch always proves value",
-        "Because adoption should not be measured",
-        "Because baselines are irrelevant"
+        "Because launch always proves that the expected value has been delivered",
+        "Because adoption should never be measured once a tool has gone live",
+        "Because baselines are irrelevant once a tool has been rolled out",
+        "Because value needs a named owner, a baseline, a metric, a cadence, and a review"
       ],
-      "correct": 0,
-      "explanation": "Benefits management tracks outcomes after launch."
+      "correct": 3,
+      "explanation": "Launch just means the tool exists — realizing value needs a named owner, a baseline, a metric, a cadence, and a review, not the assumption that launch proves value, that adoption shouldn't be measured, or that baselines don't matter."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["adoption lag", "font size", "GPU clock", "browser cache"],
-      "correct": 0,
-      "explanation": "Adoption lag can explain why expected value is not realized."
+      "question": "Three months after launch, usage of the new AI tool is still far below what was expected, and nobody has investigated why adoption is lagging. Which of the lesson's four signals does this match most directly?",
+      "options": [
+        "Benefit owner — no one has been named as accountable for the expected value",
+        "Baseline missing — there's no pre-launch measurement to compare current results against",
+        "Adoption lag — actual usage is trailing well behind the expected pace",
+        "Metric drift — the metric being tracked has quietly changed meaning over time"
+      ],
+      "correct": 2,
+      "explanation": "Usage staying far below expectations for months is the lesson's adoption-lag signal — distinct from a missing benefit owner, a missing baseline, or metric drift (the metric itself changing meaning)."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked benefits-tracking plan with controls and rationale",
-        "A final budget approval",
-        "A production model",
-        "A dashboard screenshot"
+        "A final budget approval signed off by finance before the initiative starts",
+        "A ranked benefits-tracking plan with controls and rationale for each gap",
+        "A production-ready model trained specifically to predict adoption lag",
+        "A single dashboard screenshot showing current usage for stakeholders"
       ],
-      "correct": 0,
-      "explanation": "The artifact recommends benefits tracking controls."
+      "correct": 1,
+      "explanation": "The artifact ranks scenarios into a benefits-tracking plan with controls and rationale — it doesn't approve budget, train a model, or produce a dashboard screenshot."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["baseline metric", "skip owner review", "hide adoption", "remove benefit hypothesis"],
-      "correct": 0,
-      "explanation": "Baseline metrics make value comparisons possible."
+      "options": [
+        "Skipping the owner review because the initiative already shipped on time",
+        "Hiding adoption numbers so the portfolio review looks more favorable",
+        "Baseline metric — a pre-launch measurement to compare outcomes against",
+        "Removing the benefit hypothesis once the tool has gone live"
+      ],
+      "correct": 2,
+      "explanation": "The lesson's controls are benefit hypothesis, baseline metric, tracking cadence, and owner review — a baseline metric gives something pre-launch to compare against, unlike skipping review, hiding adoption, or dropping the hypothesis."
     },
     {
       "stage": "post",
       "question": "When should an AI initiative enter a portfolio value review?",
       "options": [
         "When expected value is high but baselines, metrics, ownership, or adoption are weak",
-        "Only when all value is already proven",
-        "Only when no owner exists and no one cares",
-        "Never; delivery status is enough"
+        "Only when all of the expected value has already been fully proven and confirmed",
+        "Only when there is no owner at all and nobody is tracking the initiative",
+        "Never — reporting delivery status alone is always a sufficient value review"
       ],
       "correct": 0,
-      "explanation": "High-value initiatives need benefits evidence and review."
+      "explanation": "High expected value paired with weak baselines, metrics, ownership, or adoption is exactly when a portfolio value review is needed — not proven value, the total absence of an owner, or delivery status alone."
     },
     {
       "stage": "post",
       "question": "What should benefits tracking connect?",
       "options": [
-        "Benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision",
-        "Only launch date",
-        "Only tool usage without business context",
-        "No owner or cadence"
+        "Only the launch date on which the AI tool became available to users",
+        "The benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision",
+        "Only raw tool usage numbers, without connecting them to business context",
+        "No owner or review cadence, since tracking is assumed to happen automatically"
       ],
-      "correct": 0,
-      "explanation": "Benefits tracking links intent to observed outcomes."
+      "correct": 1,
+      "explanation": "Benefits tracking should connect the benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision — not just a launch date, raw usage without context, or tracking with no owner or cadence."
     }
   ]
 }

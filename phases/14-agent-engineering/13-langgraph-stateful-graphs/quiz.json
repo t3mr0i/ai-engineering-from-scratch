@@ -6,60 +6,60 @@
       "stage": "pre",
       "question": "What does LangGraph treat as the core unit of the agent?",
       "options": [
-        "A free-form LLM call",
-        "A state machine with typed state, function nodes, and conditional edges",
-        "A single tool registry",
-        "A vector index"
+        "A single shared tool registry that every node reads from",
+        "A vector index over the agent's past conversation turns",
+        "A free-form LLM call with no persisted structure or state carried between turns",
+        "A state machine with typed state, function nodes, and conditional edges"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "LangGraph models the agent as a state graph: nodes are pure functions, edges are transitions, state is typed and immutable."
     },
     {
       "stage": "pre",
       "question": "Which problem does durable execution solve?",
       "options": [
-        "Reducing inference cost",
         "Resuming a 40-step run from step 38 when it fails, with exact state, instead of starting over",
-        "Generating embeddings faster",
-        "Translating between providers"
+        "Reducing the per-token inference cost of every LLM call across the entire graph, regardless of node count",
+        "Generating embeddings faster by batching them across every node in the graph",
+        "Automatically translating tool calls between different model providers mid-run"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Checkpoints after every node let the runtime resume from the last successful step."
     },
     {
       "stage": "check",
       "question": "Which of these is NOT one of the three topologies LangGraph supports?",
       "options": [
-        "Supervisor",
-        "Swarm (peer-to-peer)",
-        "Hierarchical (nested subgraphs)",
-        "Gradient ring"
+        "Supervisor, a central router LLM that dispatches to specialist subagents",
+        "Gradient ring, where nodes pass partial gradients around a closed loop",
+        "Hierarchical, supervisors managing sub-supervisors as nested subgraphs",
+        "Swarm (peer-to-peer), where agents hand off directly via a shared tool surface"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "Topologies are supervisor, swarm, and hierarchical. Gradient ring is not a LangGraph topology."
     },
     {
       "stage": "check",
       "question": "Why must nodes be deterministic for resume to work cleanly?",
       "options": [
-        "Providers require determinism",
+        "Model providers contractually require deterministic nodes as a condition of API access",
+        "Python's GIL requires every node function to be completely side-effect free",
         "Resume assumes the same inputs produce the same state update; random seeds, wall-clock, and external APIs must be captured",
-        "Determinism reduces token cost",
-        "It is required by the GIL"
+        "Deterministic nodes reduce token cost because identical responses can be cached and reused across every subsequent run of the graph"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "If a node depends on uncaptured nondeterminism, resume cannot reconstruct the post-step state."
     },
     {
       "stage": "check",
       "question": "What is a conditional edge?",
       "options": [
-        "An edge weighted by training loss",
-        "An edge chosen by a function of state, used to branch the graph",
-        "An edge that runs only on GPUs",
-        "An edge with a TTL"
+        "An edge that only fires when the runtime is executing on a GPU",
+        "An edge with a time-to-live that expires after a fixed duration",
+        "An edge weighted by the training loss recorded during a fine-tuning run",
+        "An edge chosen by a function of state, used to branch the graph"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Conditional edges branch based on state; overusing them makes the graph hard to reason about."
     },
     {
@@ -67,9 +67,9 @@
       "question": "What goes wrong when checkpoints are too small?",
       "options": [
         "Tool state and memory writes are not recoverable; full state must serialize",
-        "The disk fills up",
-        "The graph cannot reach END",
-        "The model produces shorter answers"
+        "The disk backing the checkpointer silently fills up and writes start failing",
+        "The graph becomes structurally unable to ever reach the END node",
+        "The model starts producing noticeably shorter answers on every turn"
       ],
       "correct": 0,
       "explanation": "Only checkpointing conversation turns leaves tool state and memory writes outside resume's reach."
@@ -78,10 +78,10 @@
       "stage": "post",
       "question": "Where does human-in-the-loop fit into LangGraph's design?",
       "options": [
-        "It requires a fork of the runtime",
+        "It requires forking the LangGraph runtime itself, since the built-in checkpointer exposes no hooks for external human review at all",
         "Pause before a critical node, surface serialized state to a human, accept modifications, resume; the checkpointer makes this cheap",
-        "Only at START and END",
-        "Through a separate provider API"
+        "Only through a separate provider-hosted API that sits outside LangGraph's own checkpointing",
+        "Only at the very first START node and the very last END node"
       ],
       "correct": 1,
       "explanation": "Because state is already serialized between nodes, human review and edit is a natural pause-and-resume pattern."

@@ -7,62 +7,72 @@
       "question": "What is the main weakness of generic AI-generated training text?",
       "options": [
         "It can create content volume without role transfer or behavior change",
-        "It always contains too many tests",
-        "It cannot mention learning objectives",
-        "It removes the need for practice"
+        "It cannot be produced quickly enough to keep up with enablement demand",
+        "It uses vocabulary that most learners in the target role will not recognise",
+        "It leaves out the learning objectives that a course outline normally states"
       ],
       "correct": 0,
-      "explanation": "Learning design must target role outcomes and transfer."
+      "explanation": "Learning design must target role outcomes and transfer. Generic AI text creates training volume without behavior change."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["practice need", "cache miss", "thread lock", "audio channel"],
-      "correct": 0,
-      "explanation": "Practice need indicates that learners must perform a task, not just read content."
+      "question": "A team asks for \"an AI training\". What does this lesson say that request usually hides?",
+      "options": [
+        "A budget approval, a room booking, a trainer assignment, or a calendar slot",
+        "A tooling request, a licence purchase, an account setup, or an access ticket",
+        "A compliance deadline, an audit finding, a policy update, or a mandatory sign-off",
+        "A role skill gap, a guided practice format, a job aid, or a knowledge check"
+      ],
+      "correct": 3,
+      "explanation": "The lesson translates a generic training request into something specific: a role skill gap, a guided practice format, a job aid, or a knowledge check. Design starts from the role outcome, not from the wording of the request."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact recommend?",
       "options": [
+        "The HR policy that governs how training hours are recorded",
+        "The optimizer settings for a model trained on course material",
         "The right learning form and controls for an enablement scenario",
-        "A final HR policy",
-        "A neural network optimizer",
-        "A replacement for managers"
+        "The manager decisions that follow once a learner has finished"
       ],
-      "correct": 0,
-      "explanation": "The artifact maps learning signals to forms and controls."
+      "correct": 2,
+      "explanation": "The artifact maps learning signals - skill gap, role context, practice need, assessment need - to a learning form and its controls."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["knowledge check", "remove objectives", "skip practice", "hide learner role"],
+      "options": [
+        "A knowledge check that tests the target behavior, not just recall of the text",
+        "An objective written after the course content has already been drafted",
+        "A practice task replaced by a longer reading section to save session time",
+        "A manager handoff dropped once the learner has completed the material"
+      ],
       "correct": 0,
-      "explanation": "Knowledge checks provide evidence that learning happened."
+      "explanation": "Knowledge checks provide evidence that learning happened, and the lesson asks that they test the target behavior. Objective checks, practice tasks, and manager handoff are the other controls."
     },
     {
       "stage": "post",
       "question": "When is a workshop a better fit than a micro lesson?",
       "options": [
+        "When the topic is broad enough that a single short lesson cannot cover it",
         "When learners need guided practice, discussion, and role-specific transfer",
-        "When no practice is required",
-        "When the topic has no audience",
-        "When completion evidence must be avoided"
+        "When the material changes often and a live format is cheaper to update",
+        "When the audience is large enough to fill a scheduled session properly"
       ],
-      "correct": 0,
-      "explanation": "Workshops are useful when practice and discussion matter."
+      "correct": 1,
+      "explanation": "Workshops are useful when guided practice, discussion, and role-specific transfer matter, not simply when a topic is long."
     },
     {
       "stage": "post",
       "question": "What should AI learning design start with?",
       "options": [
         "Role outcome, target behavior, practice task, and transfer evidence",
-        "A long generic article",
-        "A random prompt",
-        "A list of tools without context"
+        "A content outline, a slide count, a session length, and a trainer note",
+        "A tool list, a vendor demo, an access request, and a licence assignment",
+        "A draft article, a summary prompt, a review pass, and a publish decision"
       ],
       "correct": 0,
-      "explanation": "Transfer-focused design keeps AI-generated training useful."
+      "explanation": "Transfer-focused design keeps AI-generated training useful: define the role, the behavior, the practice task, and the evidence that learning happened before drafting anything."
     }
   ]
 }

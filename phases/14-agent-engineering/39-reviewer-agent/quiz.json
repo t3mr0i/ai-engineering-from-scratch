@@ -6,36 +6,36 @@
       "stage": "pre",
       "question": "Why cannot the builder reliably grade its own work?",
       "options": [
-        "It runs out of tokens",
-        "Acceptance is necessary but not sufficient; problem-fit, scope discipline, documented assumptions, and handoff readiness need a different role with different inputs",
-        "It loses authentication",
-        "The model rejects self-grading"
+        "Acceptance is necessary but not sufficient; problem fit and handoff readiness need a different role",
+        "It simply runs out of tokens partway through the diff and cannot finish reading its own proposed changes",
+        "It loses its authentication session before it can read the verification report back",
+        "The underlying model refuses any request that asks it to grade its own prior output"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The gap between builder and reviewer is where reliability lives; acceptance only proves a weaker version."
     },
     {
       "stage": "pre",
       "question": "Which is NOT one of the five rubric dimensions?",
       "options": [
-        "Problem fit",
-        "Scope discipline",
-        "Verification quality",
-        "Inference latency"
+        "Problem fit, since the rubric asks whether the change solved the task as stated",
+        "Scope discipline, since the rubric asks whether edits stayed inside the contract",
+        "Inference latency, a cost the five scored rubric dimensions never mention at all",
+        "Verification quality, since the rubric asks whether acceptance proved the real goal"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "The five are problem fit, scope discipline, assumptions, verification quality, handoff readiness."
     },
     {
       "stage": "check",
       "question": "What does role separation require?",
       "options": [
-        "A different model",
-        "A different system prompt and different inputs; the same model can play both roles if posture changes and the reviewer has no write access to the diff",
-        "Different physical hardware",
-        "A new account"
+        "A different system prompt and different inputs; the same model can play both roles if posture changes",
+        "A completely different underlying model, since the builder and reviewer are never allowed to share one",
+        "Different physical hardware, since the reviewer must run on an isolated machine",
+        "A brand-new account, since role separation is enforced entirely at the account level"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Discipline is in posture and inputs, not in the model identity."
     },
     {
@@ -78,12 +78,12 @@
       "stage": "post",
       "question": "Where does the reviewer's report integrate with the rest of the workbench?",
       "options": [
-        "It replaces verification",
-        "It bundles into the handoff packet (Lesson 40); human review starts from the report, not from a blank page",
-        "It overrides the gate",
-        "It only goes to the manager"
+        "It bundles into the handoff packet; human review starts from the report, not a blank page",
+        "It fully and permanently replaces the verification gate once a reviewer report has been filed",
+        "It is discarded once the human signs off, since the gate already logged a verdict",
+        "It is stored only in chat history, since the workbench has no artifact for review reports"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The review report feeds the handoff so the next session and the human reviewer start from a written verdict."
     }
   ]

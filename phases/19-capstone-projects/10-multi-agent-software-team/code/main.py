@@ -185,7 +185,7 @@ def run_team(issue: str, n_coders: int = 4, rng: random.Random | None = None) ->
 # ---------------------------------------------------------------------------
 
 def single_agent_baseline(issue: str, rng: random.Random) -> dict:
-    """Stub: one Sonnet 4.7 in a single worktree does the whole thing."""
+    """Stub: one Sonnet 4.6 in a single worktree does the whole thing."""
     # slower but fewer handoffs; tokens roughly the whole budget minus role overhead
     return {
         "passed": rng.random() < 0.68,

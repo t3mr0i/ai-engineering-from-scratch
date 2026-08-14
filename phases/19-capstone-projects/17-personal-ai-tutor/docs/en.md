@@ -63,7 +63,7 @@ learner device
 ## Stack
 
 - Subject choice: K-12 algebra or intro Python (pick one for depth)
-- Tutor policy: LangGraph over Claude Sonnet 4.7 (with prompt caching)
+- Tutor policy: LangGraph over Claude Sonnet 4.6 (with prompt caching)
 - Learner model: Bayesian knowledge tracing (classic) or FSRS for spacing
 - Curriculum graph: Neo4j of concepts + prerequisite edges + OER content
 - Memory: agentmemory-style persistent vector + episodic + semantic store

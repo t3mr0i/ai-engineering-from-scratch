@@ -7,9 +7,9 @@
       "question": "What must a goal loop have before it can safely run without a person prompting every turn?",
       "options": [
         "A goal, an independent evaluator, and explicit stop conditions",
-        "A larger model and a longer prompt",
-        "A timer with no maximum duration",
-        "A second chat window that repeats the same request"
+        "A timer trigger set to the shortest available polling interval",
+        "A single model call allowed to grade its own output as complete",
+        "A longer system prompt combined with a larger, more capable model"
       ],
       "correct": 0,
       "explanation": "The loop contract is the goal, machine-checkable evidence from an evaluator, and bounded exits. More prompting does not create a stopping policy."
@@ -18,12 +18,12 @@
       "stage": "check",
       "question": "Which role owns the completion decision in the maker/evaluator design?",
       "options": [
-        "The maker, because it knows what it intended",
-        "The evaluator, using structured evidence against the goal",
+        "The maker, because it originally knew what it intended",
         "The timer, because elapsed time proves progress",
-        "The human only, even when the loop is unattended"
+        "The human only, even while the loop remains fully unattended",
+        "The evaluator, using structured evidence against the goal"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "The maker produces an artifact; the independent evaluator decides whether the artifact satisfies the contract."
     },
     {
@@ -31,9 +31,9 @@
       "question": "Why does the reference loop stop on a stalled artifact?",
       "options": [
         "Repeated unchanged failures are evidence that another round is unlikely to help",
-        "A loop may never inspect the same artifact twice",
-        "Stalls mean the evaluator has passed",
-        "The maker is allowed only one call"
+        "A loop is only permitted to inspect any single artifact exactly one time before stopping",
+        "A stalled artifact means the evaluator has already passed it for enough consecutive rounds",
+        "The maker is only allowed to be called one single time before the loop halts automatically"
       ],
       "correct": 0,
       "explanation": "A stall guard limits unattended waste and escalates when the maker is not changing a failing artifact."
@@ -42,22 +42,22 @@
       "stage": "check",
       "question": "Which trigger is the honest default for a check that has no natural finish line?",
       "options": [
-        "Goal trigger",
+        "Goal trigger, since every task can be phrased as a finish line",
+        "Manual trigger with retries hidden from the round receipts",
         "Timer or event trigger with idempotency and retry limits",
-        "Manual trigger with hidden retries",
-        "An infinite goal loop"
+        "An infinite goal loop that keeps evaluating until it eventually passes"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Timer and event loops handle recurring or reactive work; a goal loop needs a verifiable end state."
     },
     {
       "stage": "post",
       "question": "What should every non-success loop exit provide to the next session?",
       "options": [
-        "A claim that the agent nearly finished",
-        "Only the final artifact, without failed attempts",
+        "A confident claim from the maker that the work is essentially finished",
+        "Only the final artifact, with every failed round's receipt discarded",
         "A status, reason, round receipts, and an escalation or next action",
-        "A larger model selection"
+        "A recommendation to select a larger or more capable underlying model"
       ],
       "correct": 2,
       "explanation": "A bounded stop is useful only when its evidence can be reviewed and resumed, not when it disappears into chat."
@@ -66,10 +66,10 @@
       "stage": "post",
       "question": "What is the safest way to automate an irreversible production action?",
       "options": [
-        "Put it behind the maker and let the maker approve itself",
-        "Run it on a timer first and inspect only failures",
+        "Let the maker approve its own irreversible action once the artifact looks complete",
+        "Run the action on a timer trigger first and only ever inspect the rounds that later fail",
         "Define evaluator evidence, scope, approval, and rollback before enabling the side effect",
-        "Remove the round budget so it can retry until it works"
+        "Remove the round budget entirely so the loop can retry until the action succeeds"
       ],
       "correct": 2,
       "explanation": "Irreversible work needs an independent gate and an operator recovery path before autonomy is expanded."

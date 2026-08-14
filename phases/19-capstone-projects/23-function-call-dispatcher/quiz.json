@@ -6,82 +6,82 @@
       "stage": "pre",
       "question": "Why does timeout on a non-idempotent tool default to no retry?",
       "options": [
-        "Because the dispatcher cannot measure non-idempotent calls",
-        "Because the tool may have partially committed; retry can duplicate the effect",
-        "Because non-idempotent handlers run faster",
-        "Because idempotency keys are slow"
+        "Because the tool may have partially committed a side effect already; retrying it can duplicate the effect",
+        "Because the dispatcher has no reliable mechanism to measure elapsed wall-clock time on a non-idempotent call",
+        "Because non-idempotent handlers are implemented to run measurably faster than idempotent ones",
+        "Because generating and checking idempotency keys adds enough latency to make retries impractical"
       ],
-      "correct": 1,
-      "explanation": "Retrying a db.write that timed out at 4.9s can produce a second write. The dispatcher refuses unless the handler tells it the call is safe to repeat."
+      "correct": 0,
+      "explanation": "Retrying a db.write that timed out at 4.9s can produce a second write. The dispatcher refuses unless the handler tells it the call is safe to repeat — measurement, speed, and key latency are not the reason."
     },
     {
       "stage": "pre",
       "question": "What is the idempotency-key dedupe protecting against?",
       "options": [
-        "Slow networks",
-        "A retry that fires while the original call is still in flight",
-        "Schema validation errors",
-        "Process restarts"
+        "Slow network links between the dispatcher and the tool backend that add latency to every call",
+        "Schema validation errors that occur before a handler is ever invoked by the dispatcher",
+        "The dispatcher process restarting mid-call and losing track of which calls were in progress",
+        "A retry that fires and duplicates work while the original call to the same handler is still in flight"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Without dedupe, a retry at 5s races a slow original still pending. The cache collapses both into one handler invocation."
     },
     {
       "stage": "check",
       "question": "Which error kinds are eligible for retry in this dispatcher?",
       "options": [
-        "schema and not_found",
-        "internal and budget_exceeded",
-        "timeout (if idempotent) and transient",
-        "All of them"
+        "schema and not_found, since both indicate a deterministic mistake in what was requested",
+        "timeout, but only when the tool is idempotent, together with any explicit transient error",
+        "internal and budget_exceeded, since both can mask an unknown handler bug or exhausted resources",
+        "All error kinds are eligible, since the dispatcher always retries until max_attempts is reached"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "Schema and not_found are deterministic. Internal masks an unknown handler bug. Budget exceeded is a yield. Only timeout-on-idempotent and explicit TransientError retry."
     },
     {
       "stage": "check",
       "question": "What does the semaphore around _run_with_retries protect?",
       "options": [
-        "The handler from itself",
+        "The handler function from being re-entered by itself during a single retry attempt",
+        "The schema validator from receiving malformed input before a handler ever runs",
         "The backend from too many simultaneous calls fanned out by gather()",
-        "The validator",
-        "The retry counter"
+        "The retry counter from being incremented more than once per dispatch attempt"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "A gather of forty calls would open forty concurrent dispatches without the limit. The semaphore caps the wave."
     },
     {
       "stage": "check",
       "question": "Why is the idempotency key derived by the caller, not by the dispatcher?",
       "options": [
-        "Because Python hashes are unstable",
-        "Because deriving from args alone makes two semantically-different calls collide if they happen to share args",
-        "Because the registry would not have the key",
-        "Because the cache cannot store strings"
+        "Because Python's built-in hash function produces unstable values across process restarts",
+        "Because the tool registry does not expose the key needed to compute one for the dispatcher",
+        "Because the dedupe cache backing the dispatcher can only store integers, not string keys",
+        "Because deriving from args alone makes two semantically-different calls collide if they happen to share args"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "The caller knows the step id, the planner intent, the user. Args alone are not enough context to safely dedupe."
     },
     {
       "stage": "post",
       "question": "Which JSON-RPC error code maps to a schema failure on dispatch?",
       "options": [
-        "-32601",
-        "-32602",
-        "-32603",
-        "-32700"
+        "-32602 — Invalid params, returned when the arguments fail schema validation before dispatch",
+        "-32601 — Method not found, returned when the requested tool name is not in the registry",
+        "-32603 — Internal error, returned when a handler raises an unexpected exception during execution",
+        "-32700 — Parse error, returned when the request body is not valid JSON at all"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "-32602 Invalid params. The dispatcher returns it before any handler runs."
     },
     {
       "stage": "post",
       "question": "After max_attempts is reached with timeouts on an idempotent tool, what is returned?",
       "options": [
-        "An exception is raised",
-        "DispatchOk with no result",
-        "DispatchError with kind=timeout and attempts==max_attempts",
-        "DispatchError with kind=internal"
+        "An exception propagates up through the dispatcher instead of being returned as a typed result to the caller",
+        "DispatchOk is returned with no result payload, since the tool eventually stopped timing out",
+        "DispatchError with kind=timeout, where attempts reports how many tries the dispatcher actually made",
+        "DispatchError is returned with kind=internal, since repeated timeouts indicate a handler bug"
       ],
       "correct": 2,
       "explanation": "The dispatcher returns a typed error envelope. The kind reflects the last failure mode, attempts reflects how many tries it made."

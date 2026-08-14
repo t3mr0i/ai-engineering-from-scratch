@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What makes an internal knowledge assistant reliable?",
       "options": [
-        "Governed sources, permissions, evaluation, and fallback paths",
-        "Indexing every document without review",
-        "Ignoring source freshness",
-        "Removing answer evaluation"
+        "A polished chat interface that makes the assistant feel responsive and trustworthy",
+        "Governed sources, a permission model, an evaluation sample, and a fallback path",
+        "An index that covers every document in SharePoint so nothing is ever missing",
+        "A context window large enough that whole documents fit without being chunked"
       ],
-      "correct": 0,
-      "explanation": "Internal assistants need source governance and answer evaluation."
+      "correct": 1,
+      "explanation": "Internal assistants need source governance and answer evaluation. The lesson is explicit that source governance matters more than chatbot polish."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": ["source sprawl", "button color", "CPU brand", "font weight"],
-      "correct": 0,
-      "explanation": "Source sprawl is a common risk for internal knowledge assistants."
+      "question": "A team wants a Confluence assistant. Where does this lesson locate the hard part?",
+      "options": [
+        "Choosing an embedding model whose similarity scores match how colleagues phrase questions",
+        "Sizing the vector store so retrieval stays fast once the whole space has been indexed",
+        "Designing a chat interface that colleagues will prefer over searching Confluence directly",
+        "Knowing which sources are allowed, who owns them, what is stale, and how wrong answers get caught"
+      ],
+      "correct": 3,
+      "explanation": "The lesson puts the difficulty in source governance rather than in the chat box: allowed sources, named owners, freshness, and a way to catch wrong answers."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked source-readiness plan with controls and rationale",
-        "A production vector database",
-        "A permission bypass",
-        "A final chatbot UI"
+        "A ranked source-readiness plan with matched controls and rationale",
+        "A production vector database populated from the team's document store",
+        "A permission model derived automatically from the source system's ACLs",
+        "A finished chatbot interface wired to the retrieval and fallback paths"
       ],
       "correct": 0,
-      "explanation": "The artifact is a planning tool for source readiness."
+      "explanation": "The artifact is a planning tool for source readiness - it ranks sources and matches controls before anything is indexed."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["access boundary", "ignore permissions", "delete evaluation samples", "skip source owners"],
+      "options": [
+        "An access boundary that keeps retrieval inside the permissions a user already has",
+        "A retrieval scope that ignores permissions so answers stay complete for every user",
+        "An evaluation set that is discarded once the assistant passes its first review",
+        "A source inventory with no named owner, so cleanup is a shared team responsibility"
+      ],
       "correct": 0,
-      "explanation": "Access boundaries keep retrieval aligned with permissions."
+      "explanation": "Access boundaries keep retrieval aligned with permissions. Source owners, freshness rules, and answer evaluation are the other controls this lesson teaches."
     },
     {
       "stage": "post",
       "question": "When should a knowledge assistant require a launch gate?",
       "options": [
-        "When sensitive access, stale content, and missing evaluation create high risk",
-        "Only when the chat UI is complex",
-        "Only when no one owns the source",
-        "Never; RAG is always safe"
+        "Only when the chat interface has to support more than one language at launch",
+        "Only when the source system is external rather than an internal wiki or drive",
+        "Only when the assistant is expected to answer more than a few hundred questions",
+        "When sensitive access, stale content, and missing evaluation create high risk"
       ],
-      "correct": 0,
-      "explanation": "High-risk source conditions require explicit launch review."
+      "correct": 3,
+      "explanation": "High-risk source conditions - sensitive access, stale content, missing evaluation - require explicit launch review. Interface scope and query volume are not the risk signals here."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the intake template?",
       "options": [
-        "To decide which sources are ready before indexing them",
-        "To skip quality review",
-        "To bypass privacy checks",
-        "To hide stale sources"
+        "To record the assistant's answer quality after the first month of live use",
+        "To document the fallback path once uncertain answers start reaching support",
+        "To decide which sources are ready before any of them are indexed",
+        "To capture the user questions that the assistant was unable to answer correctly"
       ],
-      "correct": 0,
-      "explanation": "The intake template makes source readiness explicit."
+      "correct": 2,
+      "explanation": "The intake template makes source readiness explicit before indexing, covering ownership, freshness, permissions, and evaluation."
     }
   ]
 }

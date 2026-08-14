@@ -6,72 +6,72 @@
       "stage": "pre",
       "question": "What multi-agent shape does the lesson recommend for AI SRE?",
       "options": [
-        "Random selection of one of three agents",
-        "Two agents in series with no supervisor",
-        "One monolithic agent owning everything",
-        "Supervisor agent that breaks the incident into sub-queries for specialized log, metric, and runbook agents, then synthesizes and presents to a human"
+        "Random selection of one of three agents, with no supervisor synthesizing their findings",
+        "Supervisor agent that breaks the incident into sub-queries for specialized log, metric, and runbook agents, then synthesizes and presents to a human",
+        "Two agents in series with no supervisor, each handing off directly to the next without synthesis",
+        "One monolithic agent owning everything, from log search to PromQL to runbook retrieval to remediation"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The lesson's architecture is a supervisor that breaks an incident into sub-queries for specialized log, metric, and runbook agents with tool access, which then synthesizes their findings into a hypothesis and presents it to a human for approval."
     },
     {
       "stage": "check",
       "question": "Which auto-remediation set does the lesson call safe?",
       "options": [
-        "Re-architecting service topology",
-        "Altering databases",
-        "Modifying IAM policies",
-        "Restart pod, revert a specific deploy, scale a pool within pre-approved bounds, enable a pre-approved feature flag"
+        "Re-architecting service topology, one of the broad changes the lesson places outside the safe set",
+        "Altering databases, one of the broad changes the lesson places outside the safe set",
+        "Restart pod, revert a specific deploy, scale a pool within pre-approved bounds, enable a pre-approved feature flag",
+        "Modifying IAM policies, one of the broad changes the lesson places outside the safe set"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "The lesson draws the line explicitly: restart pod, revert a specific deploy, scale a pool within pre-approved bounds, and enable a pre-approved feature flag are the safe/narrow set; changing topology, IAM, or databases is not safe."
     },
     {
       "stage": "check",
       "question": "How does NeuBird Hawkeye use adversarial evaluation to filter hallucinated root causes?",
       "options": [
-        "Two models independently analyze the same incident; agreement = high confidence, disagreement = escalate to human with both hypotheses",
-        "Uses GAN-style training",
-        "Picks the higher-confidence model's answer always",
-        "Runs the same model twice on the same input"
+        "Uses GAN-style training, pitting a generator model against a discriminator during the incident review",
+        "Picks the higher-confidence model's answer always, without ever escalating disagreement to a human",
+        "Runs the same model twice on the same input, rather than two independent models",
+        "Two models independently analyze the same incident; agreement = high confidence, disagreement = escalate to human with both hypotheses"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "The lesson describes NeuBird Hawkeye's adversarial evaluation as two models independently analyzing the same incident: agreement signals high confidence, and disagreement escalates to a human with both hypotheses visible."
     },
     {
       "stage": "check",
       "question": "What does operational memory solve in AI SRE?",
       "options": [
-        "Cold start of inference pods",
-        "Network egress filtering",
+        "Cold start of inference pods, a serving-latency problem the lesson does not connect to operational memory",
         "Loss of tribal knowledge when teams turn over — runbooks and post-mortems live in a vector DB that agents retrieve on every incident",
-        "Token cost attribution"
+        "Network egress filtering, a security-posture problem the lesson does not connect to operational memory",
+        "Token cost attribution, a FinOps problem the lesson does not connect to operational memory"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "The lesson frames team turnover as the silent killer of traditional SRE, and operational memory addresses it by storing runbooks and post-mortems in a vector DB that agents retrieve on every new incident, so new engineers inherit the full history."
     },
     {
       "stage": "post",
       "question": "What MIT 2025 result does the lesson cite for pre-incident prediction?",
       "options": [
-        "100% prediction with 1-second lead",
+        "Predictions remain unsolved, since the lesson treats pre-incident prediction as not yet technically feasible",
+        "10% with no lead time, a figure the lesson does not attach to any prediction study it discusses",
         "89% of outages predicted 10-15 minutes early using logs + GPU temps + API error patterns",
-        "Predictions remain unsolved",
-        "10% with no lead time"
+        "100% prediction with 1-second lead, a perfect and instantaneous result the lesson does not claim"
       ],
-      "correct": 1,
-      "explanation": ""
+      "correct": 2,
+      "explanation": "The lesson reports 89%+ lead-time prediction accuracy (logs + GPU temps + API error patterns) as a figure that circulates in vendor blogs and conference talks, and explicitly cautions to treat any specific number as unverified until you re-measure it on your own data."
     },
     {
       "stage": "post",
       "question": "What operational constraint does the lesson stress about predictive detection?",
       "options": [
-        "Predictions replace runbooks",
-        "Predictions should never be wired to action",
         "Predictions without actuation are just dashboards — the operational question is what action (pre-drain, page, auto-scale) the prediction triggers",
-        "Predictions are always accurate"
+        "Predictions replace runbooks, since the lesson treats prediction as a substitute for documented response steps",
+        "Predictions should never be wired to action, since the lesson treats actuation as inherently unsafe",
+        "Predictions are always accurate, so the lesson treats the actuation question as unnecessary to answer"
       ],
-      "correct": 2,
+      "correct": 0,
       "explanation": "The lesson's reality check is that predictions without actuation are dashboards, not SRE -- the operational question is what specific action (pre-emptive drain, page, auto-scale) a prediction triggers, and that answer is policy-specific."
     }
   ]

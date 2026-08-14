@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "Why should AI Ecosystem and Vendor Landscape be taught as a workflow instead of only as tool awareness?",
       "options": [
-        "Because tools never change",
+        "Because the vendor with the most impressive demo is usually the right choice for the stack",
+        "Because a copilot and a vector database can be compared as direct alternatives to each other",
         "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because AI removes the need for review",
-        "Because training should avoid examples"
+        "Because brand familiarity is a reliable shortcut when a team lacks a map of the ecosystem"
       ],
-      "correct": 1,
-      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
+      "correct": 2,
+      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that the best demo wins, that a copilot and a vector database are alternatives, or that brand familiarity substitutes for an ecosystem map."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "In the lesson's opening example, why did the vendor discussion turn brand-driven?",
       "options": [
-        "data residency",
-        "GPU memory fragmentation",
-        "Image augmentation policy",
-        "Database sharding depth"
+        "Every shortlisted vendor refused to run a pilot test before a contract was signed, leaving no evidence",
+        "The evaluation criteria were drawn so narrowly that only a single supplier could ever satisfy them",
+        "Data residency requirements ruled out every vendor the team was most interested in evaluating first",
+        "The team had no shared map of the AI stack, so tools from different layers were compared as alternatives"
       ],
-      "correct": 0,
-      "explanation": "The lesson uses \"data residency\" as one of the concrete signals for deciding what action or control is needed."
+      "correct": 3,
+      "explanation": "The lesson's opening example has a team comparing a copilot, an agent platform, a vector database, and a workflow tool as if they were alternatives; without a shared map of the layered ecosystem the conversation defaults to brands — not because of a pilot refusal, over-narrow criteria, or a data residency exclusion."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce for AI Ecosystem and Vendor Landscape?",
       "options": [
-        "A trained neural network",
+        "A signed vendor contract ready for procurement to countersign",
         "A ranked plan with category, score, priority, controls, and rationale",
-        "A production SaaS backend",
-        "A browser extension"
+        "A live feature comparison scraped from each vendor's own website",
+        "A single winner per category, chosen without stated criteria"
       ],
       "correct": 1,
-      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a procurement-ready contract, a scraped feature comparison, or an unexplained per-category winner."
     },
     {
       "stage": "check",
       "question": "Which control belongs to the lesson design?",
       "options": [
-        "Ignoring uncertainty to move faster",
-        "evaluation criteria",
-        "Removing human accountability",
-        "Treating all AI outputs as facts"
+        "Letting a polished vendor demo stand in for the pilot test the team still owes itself",
+        "Skipping the security review because the vendor is already used elsewhere in the group",
+        "Evaluation criteria, written down before demos so the comparison rests on evidence not hype",
+        "Postponing the exit plan until lock-in risk has already shown up in a renewal negotiation"
       ],
-      "correct": 1,
-      "explanation": "The control \"evaluation criteria\" is part of the intended operating model for this topic."
+      "correct": 2,
+      "explanation": "The lesson's controls include evaluation criteria defined before demos, keeping the decision on evidence instead of hype — the opposite of treating a demo as a pilot, skipping the security review, or postponing the exit plan until lock-in bites."
     },
     {
       "stage": "post",
       "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
       "options": [
-        "When impact, uncertainty, and matched risk signals are high",
-        "Only when the model is open source",
-        "Only when the user interface is complex",
-        "Never; all AI topics should be handled informally"
+        "Only when the vendor's product happens to be hosted outside the European Union",
+        "Only when a vendor demo has revealed a feature that the architecture review did not anticipate",
+        "When impact, uncertainty, and matched risk signals such as lock-in risk are all running high",
+        "Never — a vendor choice can always be revisited at the next contract renewal window"
       ],
-      "correct": 0,
-      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+      "correct": 2,
+      "explanation": "High-impact, uncertain, lock-in-heavy vendor decisions need a launch gate regardless of hosting location, what a demo happened to surface, or whether a renewal window is coming."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the output template?",
       "options": [
-        "To replace project ownership",
-        "To create a reusable worksheet or prompt that teams can apply after the course",
-        "To hide assumptions from stakeholders",
-        "To generate certificates automatically"
+        "To formally replace procurement's authority over which vendor finally gets signed",
+        "To keep the known weaknesses of the preferred vendor out of the comparison entirely",
+        "To automatically generate completion certificates for participants once the workshop ends",
+        "To create a reusable matrix or prompt that teams can keep applying after the course ends"
       ],
-      "correct": 1,
-      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+      "correct": 3,
+      "explanation": "The output template is an ecosystem map and vendor evaluation matrix teams keep applying after the course — not a substitute for procurement authority, a way to hide a favored vendor's weaknesses, or an automatic certificate generator."
     }
   ]
 }

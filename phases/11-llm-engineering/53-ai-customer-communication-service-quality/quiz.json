@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What is the main risk of AI-assisted service replies?",
       "options": [
+        "They always include too much empathy, which makes replies feel insincere to customers",
         "They can sound professional while source confidence, empathy, or escalation is weak",
-        "They always include too much empathy",
-        "They remove every SLA",
-        "They cannot summarize a ticket"
+        "They automatically remove every SLA commitment from the customer's original ticket",
+        "They cannot summarize a support ticket without a human rewriting it first"
       ],
-      "correct": 0,
-      "explanation": "Service replies need evidence, tone, confidence, and escalation checks."
+      "correct": 1,
+      "explanation": "The risk is a reply that sounds professional while source confidence, empathy, or escalation is actually weak — not excess empathy, removed SLA commitments, or an inability to summarize."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["sla risk", "token cache", "screen reader", "image contrast"],
+      "question": "A customer has already contacted support three times about the same billing error, and their fourth message uses noticeably sharper language than the earlier ones. Which of the lesson's four signals does this match most directly?",
+      "options": [
+        "Customer frustration — repeated contact and escalating tone signal the customer is losing patience",
+        "Response uncertainty — the AI-drafted reply is not confident the proposed fix is correct",
+        "SLA risk — the response is at risk of missing a committed service-level deadline",
+        "Escalation need — the issue requires a human specialist the AI cannot substitute for"
+      ],
       "correct": 0,
-      "explanation": "SLA risk changes response priority and review level."
+      "explanation": "Repeated contact with escalating tone is the lesson's customer-frustration signal — distinct from response uncertainty (an unconfident draft), SLA risk (a deadline), or escalation need (needing a human specialist)."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked customer-response quality plan with controls",
-        "A final customer contract",
-        "A support database",
-        "An automatic refund"
+        "A final, legally binding customer contract ready for signature",
+        "A complete support ticketing database that replaces the existing CRM",
+        "A ranked customer-response quality plan with controls for each scenario",
+        "An automatic refund issued directly to the customer without review"
       ],
-      "correct": 0,
-      "explanation": "The artifact maps service signals to response controls."
+      "correct": 2,
+      "explanation": "The artifact ranks scenarios into a customer-response quality plan with controls — it doesn't generate a contract, replace the support database, or issue refunds automatically."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["escalation path", "hide uncertainty", "skip empathy check", "ignore SLA"],
+      "options": [
+        "Escalation path — a defined route to a human specialist when confidence is low",
+        "Hiding uncertainty from the customer so the reply reads as fully confident",
+        "Skipping the empathy check because the reply is factually accurate anyway",
+        "Ignoring SLA risk since the reply already answers the customer's question"
+      ],
       "correct": 0,
-      "explanation": "Escalation paths protect customers when confidence is low or impact is high."
+      "explanation": "The lesson's controls are response source, empathy check, confidence threshold, and escalation path — escalation path routes low-confidence cases to a human, unlike hiding uncertainty, skipping empathy, or ignoring SLA risk."
     },
     {
       "stage": "post",
       "question": "When should AI-assisted customer communication receive stronger review?",
       "options": [
-        "When customers are frustrated, response confidence is low, SLA is at risk, or escalation is needed",
-        "Only when no customer is affected",
-        "Only when the answer is fully certain",
-        "Never; tone is enough"
+        "Only when no customer is directly affected by the support interaction at all",
+        "Only when the AI-drafted answer is already fully certain and source-backed",
+        "Never — a warm, empathetic tone by itself is always a sufficient review",
+        "When customers are frustrated, confidence is low, SLA is at risk, or escalation is needed"
       ],
-      "correct": 0,
-      "explanation": "These signals indicate higher service quality risk."
+      "correct": 3,
+      "explanation": "Customer frustration, low response confidence, SLA risk, or a clear escalation need are exactly the signals that call for stronger review — not the absence of an affected customer, full certainty, or tone alone."
     },
     {
       "stage": "post",
       "question": "What should be checked before sending an AI-assisted service reply?",
       "options": [
-        "Source, empathy, confidence threshold, and escalation path",
-        "Only grammar",
-        "Only word count",
-        "No ticket context"
+        "Only grammar and spelling, since tone and accuracy are handled elsewhere",
+        "Source evidence, an empathy check, a confidence threshold, and an escalation path",
+        "Only the word count of the reply, to keep responses short and consistent",
+        "No ticket context at all, since the AI reply is expected to stand on its own"
       ],
-      "correct": 0,
-      "explanation": "These checks keep customer communication accurate and accountable."
+      "correct": 1,
+      "explanation": "Before sending, the lesson checks source evidence, an empathy check, a confidence threshold, and an escalation path — not just grammar, word count, or a reply written without ticket context."
     }
   ]
 }

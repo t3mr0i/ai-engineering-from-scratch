@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "Why freeze the task record schema before writing scoring code?",
       "options": [
-        "It makes the JSON parser run faster",
         "It locks the contract so metrics, runners, and post-processors agree on field names",
-        "It removes the need for a validator",
-        "It allows arbitrary new metric names without further changes"
+        "It makes the underlying JSON parser execute measurably faster on large task files",
+        "It removes the need for a separate validator step later in the pipeline",
+        "It allows task authors to add arbitrary new metric names without any further schema changes"
       ],
-      "correct": 1,
-      "explanation": "The schema is the contract every downstream consumer reads from. Locking it lets you change components independently without breaking the rest."
+      "correct": 0,
+      "explanation": "The schema is the contract every downstream consumer reads from. Locking it lets you change components independently without breaking the rest — it has nothing to do with parser speed or validator removal."
     },
     {
       "stage": "pre",
       "question": "What is the closed vocabulary that the metric_name field accepts?",
       "options": [
-        "Whatever the runner is configured to recognise",
-        "exact_match, f1, bleu_4, rouge_l, accuracy, code_exec",
-        "Any string the task author chooses",
-        "Only exact_match and f1"
+        "Whatever string the task runner happens to be configured to recognise at load time",
+        "Any string the task author chooses to write into the metric_name field freely",
+        "Only exact_match and f1; the other four metric names are reserved for a future lesson",
+        "The six pinned names: exact_match, f1, bleu_4, rouge_l, accuracy, and code_exec"
       ],
-      "correct": 1,
-      "explanation": "The lesson pins the metric vocabulary to six names. Adding one requires a new lesson and a new validator entry."
+      "correct": 3,
+      "explanation": "The lesson pins the metric vocabulary to six names. Adding one requires a new lesson and a new validator entry — it is not runner-configured or author-chosen freely."
     },
     {
       "stage": "check",
       "question": "What does the validator do when it sees an unknown top-level field on a record?",
       "options": [
-        "Strips it and continues",
-        "Logs a warning but accepts the record",
-        "Returns a validation error and rejects the record",
-        "Renames it to metadata.unknown"
+        "Strips the unrecognized field silently and continues processing the rest of the record",
+        "Returns a validation error and rejects the record outright, without silently accepting it",
+        "Logs a warning to stderr but still accepts and continues processing the record as fully valid",
+        "Renames the unknown field to metadata.unknown and keeps it as part of the record going forward"
       ],
-      "correct": 2,
-      "explanation": "Unknown fields are a forward-compatibility hazard. The validator rejects them so the schema stays the only source of truth."
+      "correct": 1,
+      "explanation": "Unknown fields are a forward-compatibility hazard. The validator rejects them so the schema stays the only source of truth — it does not strip, warn-and-accept, or rename."
     },
     {
       "stage": "check",
       "question": "Why are few-shot examples attached to the task record rather than computed by the runner?",
       "options": [
-        "The runner does not have file I/O",
-        "Author intent is part of the eval; binding examples to the task removes per-model variance in prompt construction",
-        "It saves disk space",
-        "Few-shot is only used during fine-tuning"
+        "Because the task runner in this lesson has no file I/O capability and cannot read example files",
+        "Attaching the examples directly to the record saves a small amount of disk space overall",
+        "Author intent is part of the eval; binding examples to the task removes per-model prompt variance",
+        "Few-shot examples are only ever used during a fine-tuning run, never during evaluation"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Few-shot composition is part of the eval definition, not the model interface. Putting it in the task means every model sees the same prompt."
     },
     {
       "stage": "check",
       "question": "Which category-metric pair is illegal under the validator?",
       "options": [
-        "summary + rouge_l",
-        "arithmetic + exact_match",
-        "mcq + bleu_4",
-        "code_exec + code_exec"
+        "summary + rouge_l, a pairing the validator accepts since ROUGE is meant for free-text summaries",
+        "arithmetic + exact_match, a pairing the validator accepts since arithmetic answers are exact strings",
+        "code_exec + code_exec, a pairing the validator accepts since it names the same thing twice",
+        "mcq + bleu_4, since scoring a single selected letter with a text-overlap metric is meaningless"
       ],
-      "correct": 2,
-      "explanation": "BLEU on a single letter is meaningless. The validator enforces that mcq tasks use exact_match or accuracy only."
+      "correct": 3,
+      "explanation": "BLEU on a single letter is meaningless. The validator enforces that mcq tasks use exact_match or accuracy only; the other three pairs are all accepted."
     },
     {
       "stage": "post",
       "question": "What does the post_process rule extract_letter return when the generation is `Answer: C is correct`?",
       "options": [
-        "The full string unchanged",
-        "C",
-        "Answer",
-        "An empty string"
+        "C — the validator's first character matching the pattern [A-E] found anywhere in the generation",
+        "Answer — the validator extracts the preceding word instead of the letter itself",
+        "An empty string — because no character in [A-E] appears anywhere in the generation",
+        "The full generation string unchanged, since extract_letter found no matching letter pattern"
       ],
-      "correct": 1,
-      "explanation": "extract_letter returns the first character matching [A-E] in the generation. The string has C at the start of the body."
+      "correct": 0,
+      "explanation": "extract_letter returns the first character matching [A-E] in the generation. The string has C at the start of the body, so it is neither empty nor left unchanged."
     }
   ]
 }

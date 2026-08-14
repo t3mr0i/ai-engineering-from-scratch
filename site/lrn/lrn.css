@@ -6,19 +6,24 @@
 @import url("tokens.css");
 
 /* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
-   --shadow-focus (tokens.css) is a single rgba(45,95,228,0.30) value with
-   no dark-mode variant, so the same low-alpha blue ring gets used against
-   dark surfaces too — 1.35:1 against the dark header, WCAG 2.1 1.4.11
-   requires 3:1. Re-derived from --color-focus's own dark value (#a9c7e8,
-   already correct in tokens.css but never wired into --shadow-focus) at a
-   higher alpha to clear 3:1 against every dark surface in use
-   (~3.35–3.85:1 measured). NOTE: no [data-theme="light"] counterpart is
-   added here on purpose — most pages loading lrn.css (badges.html) or
-   style.css elsewhere hardcode data-theme="light" in their <html> tag as
-   an inert default (no such selector exists in tokens.css today, confirmed
-   empirically), so adding one here would make lrn.css force permanent
-   light mode on pages this file doesn't own the HTML of — a bigger,
-   cross-cutting change than this pass covers. */
+   --shadow-focus (tokens.css) is rgba(45,95,228,0.30) in every theme.
+   Dark mode: 1.35:1 against the dark header, WCAG 2.1 1.4.11 requires 3:1.
+   Re-derived from --color-focus's own dark value (#a9c7e8, already correct
+   in tokens.css but never wired into --shadow-focus) at a higher alpha to
+   clear 3:1 against every dark surface in use (~3.35-3.85:1 measured).
+   Light mode: the same 0.30 alpha measured ~1.54-1.55:1 against white/near-
+   white surfaces — also below 3:1, just never reported because the plan's
+   author only measured the dark header. Re-derived from --color-focus's own
+   light value (--lhg-blue-500, the same rgb(45,95,228) already used) at a
+   higher alpha: 0.75 clears 3:1 against both #ffffff (3.40:1) and the
+   #f9f8f8 page/header background (3.29:1) with a safe margin; 0.70 is right
+   at the edge (3.00/3.10:1) so was rejected for headroom. This overrides
+   the unconditional value tokens.css sets in its own un-gated :root block,
+   so it becomes the new default for every theme; the dark-mode blocks below
+   override it further when dark applies. */
+:root {
+  --shadow-focus: 0 0 0 3px rgba(45, 95, 228, 0.75);
+}
 @media (prefers-color-scheme: dark) {
   :root {
     --shadow-focus: 0 0 0 3px rgba(169, 199, 232, 0.55);
@@ -26,6 +31,66 @@
 }
 [data-theme="dark"] {
   --shadow-focus: 0 0 0 3px rgba(169, 199, 232, 0.55);
+}
+
+/* D1 fix — explicit-light override for the OS-media-query dark block in
+   tokens.css. tokens.css only ever *adds* dark values (via the OS media
+   query and via [data-theme="dark"]); it never had a [data-theme="light"]
+   counterpart, since nothing in the product could set data-theme="light"
+   before this toggle existed. With the OS in dark mode, an explicit light
+   choice could not win: :root (inside the OS media query) and
+   [data-theme="light"] have equal selector specificity, so without this
+   rule the OS block kept applying regardless of the attribute (verified
+   empirically — reproduced live, --text-primary stayed on the dark value
+   even after setting data-theme="light"). Safe to add now that every page
+   shell's vestigial hardcoded data-theme="light" default has been removed
+   (it used to make this rule apply to every page unconditionally, even
+   with no real user choice — now the attribute is only ever present when
+   a stored choice or this session explicitly set it). Values below are
+   copied from tokens.css's own light :root block, one entry per property
+   the OS/[data-theme="dark"] blocks override. */
+@media (prefers-color-scheme: dark) {
+  [data-theme="light"] {
+    --text-primary: var(--lhg-core-blue);
+    --text-secondary: var(--lhg-slate-700);
+    --text-muted: #6b6764;
+    --border-subtle: var(--lhg-grey-300);
+    --border-strong: var(--lhg-grey-400);
+    --color-bg: var(--lhg-grey-100);
+    --color-surface: var(--lhg-white);
+    --color-surface-sunken: var(--lhg-grey-200);
+    --text-link: var(--lhg-blue-500);
+    --border-focus: var(--lhg-blue-500);
+    --action-primary: var(--lhg-core-blue);
+    --action-primary-hover: var(--lhg-blue-600);
+    --action-primary-ink: var(--lhg-white);
+    --color-paper: var(--lhg-grey-100);
+    --color-paper-2: var(--lhg-grey-200);
+    --color-paper-3: #e2eaf5;
+    --color-card: var(--lhg-white);
+    --color-ink: var(--lhg-core-blue);
+    --color-ink-2: #14366b;
+    --color-muted: var(--lhg-warm-grey);
+    --color-rule: var(--lhg-grey-300);
+    --color-rule-2: #bfd0e5;
+    --color-track: #dce4f0;
+    --color-accent: var(--lhg-core-blue);
+    --color-accent-2: var(--lhg-blue-500);
+    --color-accent-soft: #dce7f6;
+    --color-accent-ink: #ffffff;
+    --color-sand: var(--lhg-sand);
+    --color-sand-soft: #f0e7d6;
+    --color-warn: #b08a4a;
+    --color-warn-soft: #f0e7d6;
+    --color-ok: var(--lhg-success);
+    --color-ok-soft: #dcefe6;
+    --color-error: var(--lhg-error);
+    --color-error-soft: #f5dede;
+    --color-focus: var(--lhg-blue-500);
+    --shadow-whisper: 0 1px 2px rgba(5, 22, 77, 0.07);
+    --header-bg: rgba(249, 248, 248, 0.9);
+    --shadow-focus: 0 0 0 3px rgba(45, 95, 228, 0.75);
+  }
 }
 
 /* D7 — wordmark and course-detail back-link measured at 23px tall, 1px

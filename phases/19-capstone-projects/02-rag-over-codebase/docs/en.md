@@ -18,7 +18,7 @@ You learn this by indexing a real fleet — not one tutorial repo — and measur
 
 An AST-aware ingestion pipeline parses each file with tree-sitter, extracts function and class nodes, and chunks at node boundaries rather than fixed token windows. Each chunk gets three representations: a dense embedding (Voyage-code-3 or nomic-embed-code), sparse BM25 terms, and a short natural-language summary. The summary adds a third retrievable modality — users ask "how is X authorized" and the summary mentions "authz", even if the code only has `check_permission`.
 
-Retrieval is hybrid. A query fires both dense and BM25 searches, merges top-k, and hands the union to a cross-encoder re-ranker (Cohere rerank-3 or bge-reranker-v2-gemma-2b). The re-ranked list goes to a long-context synthesizer (Claude Sonnet 4.7 with prompt caching, or Llama 3.3 70B self-hosted) with instructions to cite every claim by file and line range. Answers without citations are rejected by a post-filter.
+Retrieval is hybrid. A query fires both dense and BM25 searches, merges top-k, and hands the union to a cross-encoder re-ranker (Cohere rerank-3 or bge-reranker-v2-gemma-2b). The re-ranked list goes to a long-context synthesizer (Claude Sonnet 4.6 with prompt caching, or Llama 3.3 70B self-hosted) with instructions to cite every claim by file and line range. Answers without citations are rejected by a post-filter.
 
 Incremental freshness is the infrastructure problem. Git push triggers a diff: which files changed, which symbols changed. Only affected chunks re-embed. Affected cross-file symbol edges (imports, method calls) get recomputed. The index stays consistent without reprocessing 2M lines each commit.
 
@@ -43,7 +43,7 @@ git push --> webhook --> ingest worker (LlamaIndex Workflow)
   query --> LangGraph agent (retrieve -> rerank -> synth)
                             |
                             v
-                 Claude Sonnet 4.7 1M context
+                 Claude Sonnet 4.6 1M context
                             |
                             v
                  answer + file:line citations
@@ -58,7 +58,7 @@ git push --> webhook --> ingest worker (LlamaIndex Workflow)
 - Chunk summary model: Claude Haiku 4.5 or Gemini 2.5 Flash, prompt-cached
 - Re-ranker: Cohere rerank-3 or bge-reranker-v2-gemma-2b self-hosted
 - Orchestration: LlamaIndex Workflows for ingestion, LangGraph for query agent
-- Synthesizer: Claude Sonnet 4.7 (1M context) with prompt caching
+- Synthesizer: Claude Sonnet 4.6 (1M context) with prompt caching
 - Symbol graph: Neo4j (managed) or kuzu (embedded) for import and call edges
 - Observability: Langfuse spans per retrieval + synthesis step
 

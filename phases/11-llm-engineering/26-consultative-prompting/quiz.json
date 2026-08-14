@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "Why should Consultative Prompting be taught as a workflow instead of only as tool awareness?",
       "options": [
-        "Because tools never change",
         "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because AI removes the need for review",
-        "Because training should avoid examples"
+        "Because a professional-looking workshop agenda is proof the prompt improved the consulting work",
+        "Because asking the model for more text is the reliable way to sharpen a weak hypothesis",
+        "Because client context only matters once the recommendation has already been drafted"
       ],
-      "correct": 1,
-      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
+      "correct": 0,
+      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that a polished agenda proves better consulting, that more generated text sharpens a hypothesis, or that client context can wait until after the recommendation."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "In the lesson's opening example, what was missing from the professional-looking workshop agenda the assistant drafted?",
       "options": [
-        "unclear decision",
-        "GPU memory fragmentation",
-        "Image augmentation policy",
-        "Database sharding depth"
+        "Stakeholder tension, decision criteria, risks, and the specific client context the work depended on",
+        "A source-grounded reading list, which the consultant had planned to attach to the agenda later",
+        "A summary of the six consulting moves: clarify, diagnose, structure, challenge, synthesize, recommend",
+        "An audience-fit rewrite for the steering committee, which was scheduled for the following week"
       ],
       "correct": 0,
-      "explanation": "The lesson uses \"unclear decision\" as one of the concrete signals for deciding what action or control is needed."
+      "explanation": "The lesson's opening example is an agenda that reads professionally but reflects none of the stakeholder tension, decision criteria, risks, or client context — the prompt produced output without improving the consulting work. A missing reading list, a list of consulting moves, or an audience rewrite are not what the example turns on."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce for Consultative Prompting?",
       "options": [
-        "A trained neural network",
         "A ranked plan with category, score, priority, controls, and rationale",
-        "A production SaaS backend",
-        "A browser extension"
+        "A finished workshop agenda that needs no further consultant review at all",
+        "A single quality score for a prompt, with no rationale attached",
+        "A transcript of the client meeting that the prompt prepared for"
       ],
-      "correct": 1,
-      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+      "correct": 0,
+      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a review-free workshop agenda, a bare prompt-quality score, or a meeting transcript."
     },
     {
       "stage": "check",
       "question": "Which control belongs to the lesson design?",
       "options": [
-        "Ignoring uncertainty to move faster",
-        "assumption check",
-        "Removing human accountability",
-        "Treating all AI outputs as facts"
+        "Skipping the counterargument step because the agenda already reads as balanced and professional",
+        "An assumption check, so the prompt forces the model to reveal what it took for granted",
+        "Dropping source grounding once the model's answer matches the consultant's own hypothesis",
+        "Writing every prompt for the same audience so the wording stays consistent across clients"
       ],
       "correct": 1,
-      "explanation": "The control \"assumption check\" is part of the intended operating model for this topic."
+      "explanation": "The lesson's controls include an assumption check that makes the model reveal what it took for granted — the opposite of skipping the counterargument, dropping source grounding when the answer is agreeable, or ignoring audience fit."
     },
     {
       "stage": "post",
       "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
       "options": [
-        "When impact, uncertainty, and matched risk signals are high",
-        "Only when the model is open source",
-        "Only when the user interface is complex",
-        "Never; all AI topics should be handled informally"
+        "Only when the client happens to be an external customer rather than an internal team",
+        "When impact, uncertainty, and matched risk signals such as stakeholder tension are all high",
+        "Only when the prompt pack is being used for a proposal rather than a regular meeting",
+        "Never — a generic AI-drafted agenda can always be fixed in the room during the workshop"
       ],
-      "correct": 0,
-      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+      "correct": 1,
+      "explanation": "High-impact, uncertain, tension-heavy consulting situations need a launch gate regardless of whether the client is external, which document the prompt pack feeds, or whether the facilitator expects to fix things live."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the output template?",
       "options": [
-        "To replace project ownership",
-        "To create a reusable worksheet or prompt that teams can apply after the course",
-        "To hide assumptions from stakeholders",
-        "To generate certificates automatically"
+        "To create a reusable prompt pack that teams can keep applying after the course ends",
+        "To formally replace the consultant's own judgment about the client recommendation",
+        "To keep the weakest assumptions in a hypothesis away from the steering committee",
+        "To automatically generate completion certificates once the workshop has finished"
       ],
-      "correct": 1,
-      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+      "correct": 0,
+      "explanation": "The output template is a consultative prompt pack for discovery, synthesis, and recommendation work that teams keep applying after the course — not a substitute for the consultant's judgment, a way to hide weak assumptions from steering, or an automatic certificate generator."
     }
   ]
 }

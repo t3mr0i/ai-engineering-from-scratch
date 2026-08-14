@@ -7,9 +7,9 @@
       "question": "What are the six runtime shapes the lesson lists?",
       "options": [
         "Request-response, streaming, durable execution, queue-based, event-driven, scheduled",
-        "Read, write, exec, fork, exit, wait",
-        "REST, gRPC, GraphQL, WebSocket, SSE, MQTT",
-        "Map, filter, reduce, fold, scan, group"
+        "Serverless, containerized, monolithic, microservice, edge-native, and hybrid deployment models",
+        "Celery, BullMQ, SQS plus Lambda, LangGraph, CrewAI Flows, and Claude Managed Agents stacks",
+        "Synchronous, asynchronous, batch, polling, webhook-triggered, and cron-triggered execution modes"
       ],
       "correct": 0,
       "explanation": "These are the six runtime shapes; pick a shape before picking a framework."
@@ -18,10 +18,10 @@
       "stage": "pre",
       "question": "When is request-response a poor fit?",
       "options": [
-        "On a 1-second classification",
+        "On a 1-second classification task served synchronously through a single Agno or Mastra process",
         "When the task takes longer than about 30 seconds and users hang up while workers pile up",
-        "On REST APIs",
-        "On internal services"
+        "On REST APIs that return within a single HTTP round trip without any streaming involved",
+        "On internal services where request and response happen inside the same process boundary"
       ],
       "correct": 1,
       "explanation": "Synchronous HTTP is only viable for short tasks; long tasks need queue/durable/event shapes."
@@ -30,60 +30,60 @@
       "stage": "check",
       "question": "What is durable execution's core property?",
       "options": [
-        "Faster inference",
+        "Faster inference achieved by batching multiple concurrent agent requests together onto shared GPU hardware pools",
+        "Lower token cost achieved by trimming the context window after each tool call in the agent loop",
         "State is checkpointed after every step so the runtime can resume from the last successful step on failure",
-        "Lower token cost",
-        "Native voice support"
+        "Native voice support delivered through WebRTC streaming for progressive low-latency audio output"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Checkpoint-and-resume is the differentiator; LangGraph is the lesson's reference."
     },
     {
       "stage": "check",
       "question": "Which Anthropic observation justifies queue-based runtimes for long-horizon agents?",
       "options": [
-        "Tasks always complete in 5 seconds",
-        "Computer use announcement: dozens-to-hundreds of steps per task is normal",
-        "Tasks must run synchronously",
-        "Cron solves everything"
+        "Tasks always complete in under five seconds via a synchronous request-response API call",
+        "Tasks must run synchronously so the caller can retry immediately after a timeout",
+        "Cron-shaped scheduling alone solves long-horizon step counts without durable state",
+        "Computer use announcement: dozens-to-hundreds of steps per task is normal"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Anthropic flagged dozens-to-hundreds of steps per task as normal; that workload needs queues or durable runtimes."
     },
     {
       "stage": "check",
       "question": "What does the lesson mean by 'observability is load-bearing'?",
       "options": [
-        "Logs are pretty",
         "Without OTel GenAI spans and a Langfuse/Phoenix/Opik backend you cannot debug a multi-step agent that failed at step 40",
-        "Disk gets full",
-        "Providers require it for billing"
+        "Logs simply look prettier in a dashboard once OTel GenAI spans are wired into a Langfuse, Phoenix, or Opik backend for viewing",
+        "Disk usage grows large because every OTel GenAI span gets written out to a local log file on the host machine",
+        "Providers require OTel spans and trace export data for billing accuracy and rate-limit enforcement across API calls"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Observability is not optional for multi-step agents; it is the difference between debugging and replaying from scratch."
     },
     {
       "stage": "post",
       "question": "Why must queue workers have a dead-letter queue (DLQ)?",
       "options": [
+        "DLQ is a mandatory feature required by AWS SQS",
+        "DLQ makes job processing run faster overall",
         "Without DLQ, failed jobs vanish silently",
-        "DLQ is required by AWS",
-        "DLQ makes jobs faster",
-        "DLQ is encrypted"
+        "DLQ encrypts job payloads at rest by default"
       ],
-      "correct": 0,
+      "correct": 2,
       "explanation": "Failed jobs without DLQ disappear; DLQ is the parking lot for failed jobs."
     },
     {
       "stage": "post",
       "question": "What does the lesson recommend pairing cron-shaped agents with?",
       "options": [
-        "GPU autoscalers",
-        "Durable execution so a failing nightly run resumes next tick",
-        "Streaming SSE",
-        "WebRTC"
+        "GPU autoscalers that add inference capacity during traffic spikes",
+        "Streaming SSE connections so users see progressive output as each step runs",
+        "WebRTC for low-latency voice and video during the scheduled agent run",
+        "Durable execution so a failing nightly run resumes next tick"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Cron + durable execution recovers cleanly from failed scheduled runs."
     }
   ]

@@ -6,34 +6,34 @@
       "stage": "pre",
       "question": "Which field is the load-bearing one in a handoff packet?",
       "options": [
-        "summary",
-        "next_action (without it, the document is a status report, not a handoff)",
-        "commands_run",
-        "verdict_pointer"
+        "commands_run, since the next session cannot start without a full command history",
+        "summary, since every other field in the packet is derived from that one paragraph",
+        "next_action; without it the document is a status report, not a handoff",
+        "verdict_pointer, since the next session cannot trust a packet without a verdict link"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "A handoff with everything except next_action is a status report; the next concrete step is what makes the next session productive."
     },
     {
       "stage": "pre",
       "question": "Why are handoffs generated, not written?",
       "options": [
-        "Generators are faster",
-        "Hand-written handoffs get skipped on a hard day; the generator reads workbench artifacts and emits the packet, so the agent just leaves the workbench in a state the generator can summarize",
-        "Generators encrypt better",
-        "Apache 2.0 requires it"
+        "Hand-written handoffs get skipped on a hard day; the generator reads workbench artifacts instead",
+        "Generated handoffs compress to a much smaller file size than an equivalent hand-written packet ever could",
+        "Generated handoffs are the only format the next session's loader is able to parse at all",
+        "Hand-written handoffs cannot legally be distributed under the project's open-source license"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Automation closes the gap between intention and consistency."
     },
     {
       "stage": "check",
       "question": "Which two forms does the packet ship in?",
       "options": [
-        "PDF and PNG",
-        "handoff.md (human-readable) and handoff.json (machine-readable, both from the same source artifacts; JSON wins on divergence)",
-        "Email and Slack",
-        "YAML and TOML"
+        "handoff.md rendered as a printable PDF and handoff.json compiled into one compressed archive file",
+        "handoff.md and handoff.json, both from the same source artifacts; JSON wins on divergence",
+        "An email sent to the next operator and a Slack message posted to the team channel",
+        "handoff.yaml for humans to read and handoff.toml for the next agent session to load"
       ],
       "correct": 1,
       "explanation": "Markdown for humans, JSON for the next agent; both come from the same generator."
@@ -66,12 +66,12 @@
       "stage": "post",
       "question": "What does the lesson recommend trimming the feedback log to in the packet?",
       "options": [
-        "First K entries only",
-        "Last K entries plus every entry with a non-zero exit, so the packet stays small while the failure history survives",
-        "Random N entries",
-        "Only the most recent entry"
+        "The first K entries only, since later entries matter less than how the run began",
+        "A random sample of N entries, so the packet stays representative without growing large",
+        "The last K entries plus every entry with a non-zero exit, so failures still survive",
+        "Only the single most recent entry, discarding every earlier command in the log"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Asymmetric trim: failures must survive; trivia at the tail is cheap to keep."
     },
     {

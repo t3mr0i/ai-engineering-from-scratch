@@ -18,34 +18,34 @@
       "stage": "check",
       "question": "Which two-tier fine ceiling does the EU AI Act define?",
       "options": [
-        "Up to €1M flat for any violation",
-        "Up to €100K for any violation",
-        "Up to €15M or 3% global annual turnover for high-risk-system obligations (Art. 99(4)); up to €35M or 7% for prohibited AI practices (Art. 99(3))",
-        "No financial penalties, only takedown orders"
+        "Up to €1M flat for any violation, a single fixed ceiling rather than the Act's turnover-linked structure",
+        "Up to €100K for any violation, an amount far below what Article 99 actually sets as the ceiling",
+        "No financial penalties, only takedown orders — the Act relies on removal orders rather than fines",
+        "Up to €15M or 3% global annual turnover for high-risk-system obligations (Art. 99(4)); up to €35M or 7% for prohibited AI practices (Art. 99(3))"
       ],
-      "correct": 2,
+      "correct": 3,
       "explanation": "The lesson states Article 99 sets up to €15M or 3% of global annual turnover for breaches of high-risk-system obligations (Art. 99(4)) and up to €35M or 7% for prohibited AI practices (Art. 99(3)), whichever is higher."
     },
     {
       "stage": "check",
       "question": "Why is post-processing PII cleanup not a defensible GDPR posture?",
       "options": [
-        "It is too slow at scale",
-        "GDPR forbids redaction entirely",
-        "Post-processing is identical to real-time",
-        "The model already saw the data, so real-time inference-layer redaction (before the LLM call) is the defensible 2026 standard"
+        "The model already saw the data, so real-time inference-layer redaction (before the LLM call) is the defensible 2026 standard",
+        "It is too slow at scale, a performance concern rather than the defensibility issue the lesson raises",
+        "GDPR forbids redaction entirely, treating any PII masking approach as non-compliant regardless of timing",
+        "Post-processing is identical to real-time in the lesson's framing, so timing does not affect defensibility"
       ],
-      "correct": 3,
+      "correct": 0,
       "explanation": "The lesson argues that redacting PII after the LLM has already seen it does not undo the exposure, so real-time inference-layer redaction -- entity recognition and tokenization before the LLM call -- is the defensible 2026 standard, and post-processing claims have failed at audit."
     },
     {
       "stage": "check",
       "question": "What is the practical difference between SOC 2 Type I and Type II?",
       "options": [
-        "Type I requires HIPAA BAA",
-        "Type I is more rigorous than Type II",
+        "Type I requires HIPAA BAA, a requirement the lesson does not attach to either SOC 2 tier",
+        "Type I is more rigorous than Type II, exactly backwards from how the lesson distinguishes the two SOC 2 report tiers",
         "Type I attests controls designed and documented; Type II attests controls operating effectively over 6-12 months",
-        "Type II is for startups only"
+        "Type II is for startups only, a customer-size distinction the lesson does not draw between the tiers"
       ],
       "correct": 2,
       "explanation": "The lesson defines Type I as attesting that controls are designed and documented, while Type II attests that those controls operated effectively over a 6-12 month window -- and states B2B procurement in 2026 defaults to requiring Type II."
@@ -54,24 +54,24 @@
       "stage": "post",
       "question": "What does cross-framework control mapping aim to deliver?",
       "options": [
+        "Eliminating audits entirely, since the lesson treats cross-framework mapping as a way to skip procurement review",
         "One control policy that satisfies multiple framework requirements (e.g. access logging maps to ISO 27001 A.5.15-5.18, GDPR Art. 32, HIPAA §164.312(a))",
-        "Eliminating audits",
-        "Replacing all frameworks with ISO 42001",
-        "More distinct controls per framework"
+        "Replacing all frameworks with ISO 42001, consolidating SOC 2, HIPAA, and GDPR into one single standard",
+        "More distinct controls per framework, adding overhead rather than reducing audit fatigue"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "The lesson's mapping table shows one control, like access logging, satisfying ISO 27001 A.5.15-5.18, GDPR Art. 32, and HIPAA §164.312(a) simultaneously, which reduces audit fatigue instead of maintaining a separate control per framework."
     },
     {
       "stage": "post",
       "question": "What does the lesson recommend for HIPAA + LLM workloads?",
       "options": [
-        "HIPAA does not apply to LLMs",
         "Never send PHI to an external AI service without a signed BAA; all three hyperscalers and major LLM API providers offer BAAs",
-        "Use only on-prem models, never managed",
-        "Ship PHI to any provider; BAA is optional"
+        "HIPAA does not apply to LLMs, since the lesson treats model inference as outside HIPAA's covered-entity scope",
+        "Use only on-prem models, never managed, since the lesson treats every managed platform as HIPAA-incompatible",
+        "Ship PHI to any provider; BAA is optional as long as the provider encrypts data in transit"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The lesson states PHI cannot be sent to an external AI service without a signed Business Associate Agreement, and notes that Bedrock, Azure OpenAI, Vertex, and the direct OpenAI and Anthropic APIs all offer BAAs -- so the requirement is confirming one, not avoiding managed services."
     }
   ]

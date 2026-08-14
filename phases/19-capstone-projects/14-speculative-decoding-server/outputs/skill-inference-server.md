@@ -19,7 +19,7 @@ Build plan:
 6. Run the benchmarks across distributions: ShareGPT, HumanEval, domain data. Publish acceptance-rate drift.
 7. Repeat on the second target model (MoE); identify routing-noise sensitivity in draft acceptance.
 8. Deploy on Kubernetes with HPA tracking `queue_wait_ms`. Demonstrate scale-out when load triples.
-9. Compare $/1M tokens vs Anthropic Claude Sonnet 4.7 and OpenAI GPT-5.4 on matched evals.
+9. Compare $/1M tokens vs Anthropic Claude Sonnet 4.6 and OpenAI GPT-5.4 on matched evals.
 
 Assessment rubric:
 

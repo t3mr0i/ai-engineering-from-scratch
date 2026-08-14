@@ -71,7 +71,7 @@
   <rect x="320" y="420" width="270" height="36" class="dsk"/>
   <text x="455" y="442" text-anchor="middle" class="step">rerank: cross-encoder top-5</text>
   <rect x="320" y="462" width="270" height="36" class="cold"/>
-  <text x="455" y="484" text-anchor="middle" class="step">synth: Claude Sonnet 4.7 1M</text>
+  <text x="455" y="484" text-anchor="middle" class="step">synth: Claude Sonnet 4.6 1M</text>
 
   <rect x="640" y="50" width="280" height="460" class="box"/>
   <text x="780" y="72" text-anchor="middle" class="head">answer gate</text>

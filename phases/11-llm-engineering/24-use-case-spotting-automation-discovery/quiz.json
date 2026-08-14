@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "Why should AI Use Case Spotting and Automation Discovery be taught as a workflow instead of only as tool awareness?",
       "options": [
-        "Because tools never change",
+        "Because brainstorming even more ideas always produces more shippable use cases",
+        "Because excitement in a workshop is by itself evidence that a use case will succeed",
         "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because AI removes the need for review",
-        "Because training should avoid examples"
+        "Because any workflow that happens to mention text is automatically a good candidate AI use case"
       ],
-      "correct": 1,
-      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
+      "correct": 2,
+      "explanation": "The lesson is built around reusable operating artifacts — not the idea that more brainstormed ideas ship themselves, that workshop excitement is evidence, or that mentioning text alone qualifies a use case."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "In the lesson's opening example, why did none of the sixty workshop ideas ship three months later?",
       "options": [
-        "repeatable workflow",
-        "GPU memory fragmentation",
-        "Image augmentation policy",
-        "Database sharding depth"
+        "The workshop simply ran out of time before every one of the sixty ideas could be scored",
+        "No one separated attractive-sounding ideas from viable use cases with real pain, data, and a value hypothesis",
+        "Leadership rejected the entire sixty-idea backlog outright, citing budget constraints for the whole program",
+        "The ideas were technically sound but the team lacked the API access needed to build any of them"
       ],
-      "correct": 0,
-      "explanation": "The lesson uses \"repeatable workflow\" as one of the concrete signals for deciding what action or control is needed."
+      "correct": 1,
+      "explanation": "The lesson's opening example ships nothing because the sixty ideas were never separated into viable use cases — ones with real pain, data, repeatability, and a value hypothesis — not because of a time crunch, a budget rejection, or missing API access."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce for AI Use Case Spotting and Automation Discovery?",
       "options": [
-        "A trained neural network",
         "A ranked plan with category, score, priority, controls, and rationale",
-        "A production SaaS backend",
-        "A browser extension"
+        "A finished automation script that is ready to deploy without a pilot",
+        "A single yes/no verdict on whether a given idea is worth pursuing at all",
+        "A slide summarizing every workshop idea for the steering committee"
       ],
-      "correct": 1,
-      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+      "correct": 0,
+      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a ready-to-deploy script, a flat yes/no verdict, or a steering-committee slide."
     },
     {
       "stage": "check",
       "question": "Which control belongs to the lesson design?",
       "options": [
-        "Ignoring uncertainty to move faster",
-        "pilot metric",
-        "Removing human accountability",
-        "Treating all AI outputs as facts"
+        "Assuming a repeatable-sounding workflow needs no data-readiness check before a pilot",
+        "Skipping the owner signoff because everyone in the workshop had already agreed on it",
+        "Treating the workshop's enthusiasm as the risk review that the idea still has not had",
+        "A pilot metric, so the team has a measurable value hypothesis before spending budget"
       ],
-      "correct": 1,
-      "explanation": "The control \"pilot metric\" is part of the intended operating model for this topic."
+      "correct": 3,
+      "explanation": "The lesson's controls include a pilot metric — a measurable value hypothesis before committing budget — the opposite of skipping the data-readiness check, the owner signoff, or the risk review."
     },
     {
       "stage": "post",
       "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
       "options": [
-        "When impact, uncertainty, and matched risk signals are high",
-        "Only when the model is open source",
-        "Only when the user interface is complex",
-        "Never; all AI topics should be handled informally"
+        "When impact, uncertainty, and matched risk signals such as measurable pain are all high",
+        "Only when the use case happens to involve a customer-facing chatbot interface of some kind",
+        "Only when more than sixty competing ideas came out of one and the same discovery workshop",
+        "Never — a promising use case can always wait until the next portfolio review comes around"
       ],
       "correct": 0,
-      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+      "explanation": "High-impact, uncertain, risk-heavy use cases need a launch gate regardless of the interface, how many ideas competed for attention, or whether a review is already scheduled."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the output template?",
       "options": [
-        "To replace project ownership",
-        "To create a reusable worksheet or prompt that teams can apply after the course",
-        "To hide assumptions from stakeholders",
-        "To generate certificates automatically"
+        "To formally replace the portfolio owner's decision about what gets funded next",
+        "To keep the workshop's low-scoring ideas hidden from the rest of the group entirely",
+        "To create a reusable worksheet or prompt teams keep applying after the course ends",
+        "To automatically generate completion certificates once the workshop has ended"
       ],
-      "correct": 1,
-      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+      "correct": 2,
+      "explanation": "The output template is meant to become a reusable worksheet or prompt teams keep applying — not a substitute for the portfolio owner's funding call, a way to hide low scores, or an automatic certificate generator."
     }
   ]
 }

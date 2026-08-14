@@ -6,46 +6,46 @@
       "stage": "pre",
       "question": "What does a perplexity of 1.0 imply about a language model on the test corpus?",
       "options": [
-        "The model assigns probability 1 to every actual token; it is a perfect model",
-        "The model is uniform over the vocabulary",
-        "The corpus is empty",
-        "The model is broken"
+        "The model's output distribution is exactly uniform over the entire vocabulary at every single position",
+        "The test corpus being scored contains zero tokens, making the perplexity calculation trivial",
+        "The model assigns probability 1 to every actual next token; on this corpus it is a perfect predictor",
+        "The model is broken and is producing invalid probability values outside the valid range"
       ],
-      "correct": 0,
-      "explanation": "Perplexity equals exp(avg negative log-likelihood). When every token gets probability 1, the NLL is zero, and exp(0) is 1."
+      "correct": 2,
+      "explanation": "Perplexity equals exp(avg negative log-likelihood). When every token gets probability 1, the NLL is zero, and exp(0) is 1 — not uniformity, an empty corpus, or a broken model."
     },
     {
       "stage": "pre",
       "question": "Why does the harness require non-negative log-probabilities from the adapter?",
       "options": [
-        "Perplexity is undefined for negative values",
-        "Negative log-probabilities are non-negative by definition; receiving a negative value means the adapter sent log p, not -log p",
-        "Numpy crashes on negatives",
-        "The bin edges in ECE assume positivity"
+        "A negative log-probability value means the adapter sent log p instead of the required -log p",
+        "Perplexity is mathematically undefined whenever any of the input values happen to be negative numbers",
+        "The underlying numpy library raises an exception whenever it encounters a negative floating-point value",
+        "The bin edges used inside the expected-calibration-error computation assume every input is positive"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "-log p of a probability is non-negative. A negative value is a contract violation that would silently give perplexity < 1, which is impossible."
     },
     {
       "stage": "check",
       "question": "What does expected calibration error measure?",
       "options": [
-        "The mean absolute distance between predicted and true labels",
-        "The average gap between bin-level confidence and bin-level accuracy, weighted by bin size",
-        "The variance of the softmax output",
-        "The cross-entropy of the predictions"
+        "The mean absolute distance between each individual predicted label and its true label",
+        "The variance of the softmax output distribution across all predictions in the evaluation set",
+        "The cross-entropy loss computed between the predicted distribution and the true label distribution",
+        "The average gap between bin-level confidence and bin-level accuracy, weighted by bin size"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "ECE bins predictions by confidence, measures the gap between average confidence and average accuracy per bin, weights by bin size."
     },
     {
       "stage": "check",
       "question": "Why does the implementation also return populated_bins alongside the ECE value?",
       "options": [
-        "It is required for reliability diagrams",
+        "Reliability diagrams require the populated_bins count in order to be rendered at all",
         "It signals when too few bins are populated for the single number to be trustworthy",
-        "It is the denominator of the Brier score",
-        "It is needed by numpy"
+        "populated_bins forms the denominator used when computing the separate Brier score value",
+        "The numpy library needs the populated_bins count internally to run its computations"
       ],
       "correct": 1,
       "explanation": "With few populated bins the ECE is dominated by noise. Reporting the populated count lets the runner refuse to publish a misleading single number."
@@ -54,24 +54,24 @@
       "stage": "check",
       "question": "What does Brier score capture that ECE does not?",
       "options": [
-        "It is faster to compute",
         "It penalises local miscalibration directly, since it is the per-prediction squared error",
-        "It does not need ground-truth labels",
-        "It works only on binary outcomes"
+        "Brier score is simply faster to compute than ECE across a large evaluation set",
+        "Brier score can be computed without any ground-truth labels ever being available at all for scoring",
+        "Brier score only produces a meaningful result on strictly binary classification outcomes"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "ECE only looks at averages per bin. Brier squares the error per prediction, so it catches the case where bins cancel out on average but are individually miscalibrated."
     },
     {
       "stage": "post",
       "question": "Why is calibration a per-model report rather than a per-task metric?",
       "options": [
-        "Tasks do not have probabilities",
-        "Single tasks have too few predictions to estimate bin statistics; the report aggregates across the whole eval",
-        "Calibration is too slow to compute per task",
-        "ECE requires the runner to know the model architecture"
+        "Individual tasks in this harness do not carry probability values attached to their predictions at all",
+        "Computing calibration statistics is simply too slow to run separately for every individual task",
+        "Expected calibration error requires the runner to know the internal architecture of the model being scored",
+        "Single tasks have too few predictions to estimate bin statistics; the eval aggregates across all tasks"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Per-task calibration is dominated by noise. The runner pools confidence/correctness pairs across all tasks before computing ECE, Brier, and the reliability diagram."
     }
   ]

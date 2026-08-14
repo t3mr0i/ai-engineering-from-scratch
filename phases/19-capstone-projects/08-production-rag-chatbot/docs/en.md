@@ -1,6 +1,6 @@
 # Capstone 08 — Production RAG Chatbot for a Regulated Vertical
 
-> Harvey, Glean, Mendable, and LlamaCloud all run the same production shape in 2026. Ingest with docling or Unstructured and ColPali for visuals. Hybrid search. Re-rank with bge-reranker-v2-gemma. Synthesize with Claude Sonnet 4.7 using prompt caching at 60-80% hit rate. Guard with Llama Guard 4 and NeMo Guardrails. Watch with Langfuse and Phoenix. Grade with RAGAS on a 200-question golden set. Build one in a regulated domain (legal, clinical, insurance), and the capstone is passing the golden set, the red team, and the drift dashboard.
+> Harvey, Glean, Mendable, and LlamaCloud all run the same production shape in 2026. Ingest with docling or Unstructured and ColPali for visuals. Hybrid search. Re-rank with bge-reranker-v2-gemma. Synthesize with Claude Sonnet 4.6 using prompt caching at 60-80% hit rate. Guard with Llama Guard 4 and NeMo Guardrails. Watch with Langfuse and Phoenix. Grade with RAGAS on a 200-question golden set. Build one in a regulated domain (legal, clinical, insurance), and the capstone is passing the golden set, the red team, and the drift dashboard.
 
 **Type:** Capstone
 **Languages:** Python (pipeline + API), TypeScript (chat UI)
@@ -16,7 +16,7 @@ The hard parts are not the model. They are jurisdiction-aware compliance (HIPAA,
 
 ## Concept
 
-The pipeline has two sides. **Ingestion**: docling or Unstructured parses structured documents; ColPali handles visually rich ones; chunks get summaries, tags, and role-based access labels. Vectors go into pgvector + pgvectorscale (under 50M vectors) or Qdrant Cloud; sparse BM25 runs alongside. **Conversation**: LangGraph handles memory and multi-turn; each query runs hybrid retrieval, reranks with bge-reranker-v2-gemma-2b, synthesizes with Claude Sonnet 4.7 (prompt-cached), passes output through Llama Guard 4 and NeMo Guardrails, and emits a citation-anchored response.
+The pipeline has two sides. **Ingestion**: docling or Unstructured parses structured documents; ColPali handles visually rich ones; chunks get summaries, tags, and role-based access labels. Vectors go into pgvector + pgvectorscale (under 50M vectors) or Qdrant Cloud; sparse BM25 runs alongside. **Conversation**: LangGraph handles memory and multi-turn; each query runs hybrid retrieval, reranks with bge-reranker-v2-gemma-2b, synthesizes with Claude Sonnet 4.6 (prompt-cached), passes output through Llama Guard 4 and NeMo Guardrails, and emits a citation-anchored response.
 
 The eval stack has four layers. **Golden set** (200 labeled Q/A with citations) for correctness. **Red team** (jailbreaks, PII extraction attempts, off-domain questions) for safety. **RAGAS** for faithfulness / answer relevance / context precision automatically per-turn. **Drift dashboard** (Arize Phoenix) watching retrieval quality and hallucination score weekly.
 
@@ -43,7 +43,7 @@ LangGraph conversational agent
    +--- retrieve (hybrid)
    +--- filter by role + jurisdiction
    +--- rerank (bge-reranker-v2-gemma-2b or Voyage rerank-2)
-   +--- synthesize (Claude Sonnet 4.7, prompt cached)
+   +--- synthesize (Claude Sonnet 4.6, prompt cached)
    +--- guard (Llama Guard 4 + NeMo Guardrails + Presidio output PII scrub)
    +--- cite + return
       |
@@ -62,7 +62,7 @@ eval:
 - Sparse: Tantivy BM25 with field weights
 - Orchestration: LlamaIndex Workflows (ingestion) + LangGraph (conversation)
 - Re-ranker: bge-reranker-v2-gemma-2b self-hosted or Voyage rerank-2 hosted
-- LLM: Claude Sonnet 4.7 with prompt caching; fallback Llama 3.3 70B self-hosted
+- LLM: Claude Sonnet 4.6 with prompt caching; fallback Llama 3.3 70B self-hosted
 - Eval: RAGAS 0.2 online, DeepEval for hallucination and jailbreak suites
 - Observability: Langfuse self-hosted with annotation queue; Arize Phoenix for drift
 - Guardrails: Llama Guard 4 input/output classifier, NeMo Guardrails v0.12 policy, Presidio PII scrub

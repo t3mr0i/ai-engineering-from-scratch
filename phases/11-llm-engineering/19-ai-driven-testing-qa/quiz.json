@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "Why should AI-Driven Testing and QA be taught as a workflow instead of only as tool awareness?",
       "options": [
-        "Because tools never change",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because AI removes the need for review",
-        "Because training should avoid examples"
+        "Because AI-generated unit tests are inherently more thorough than hand-written ones",
+        "Because the code coverage percentage is the most reliable signal that a release is safe to ship",
+        "Because a single golden-case suite can replace ongoing risk weighting once it exists",
+        "Because teams need shared signals, controls, and decision rules they can apply to real work"
       ],
-      "correct": 1,
-      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
+      "correct": 3,
+      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that generated tests are automatically thorough, that coverage percentage proves safety, or that a golden-case suite can replace human risk weighting."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "In the lesson's opening example, what actually let a claim-processing bug reach production despite all AI-generated tests passing?",
       "options": [
-        "state transition",
-        "GPU memory fragmentation",
-        "Image augmentation policy",
-        "Database sharding depth"
+        "A date-handling edge case slipped through, because the generated tests mostly covered happy paths, not risky logic",
+        "A race condition in concurrent claim submissions that the regression suite had never been configured to catch at all",
+        "A missing property test for money-impact scenarios, which the team had deliberately skipped that sprint",
+        "An external-dependency outage during the manual exploratory testing pass right before release"
       ],
       "correct": 0,
-      "explanation": "The lesson uses \"state transition\" as one of the concrete signals for deciding what action or control is needed."
+      "explanation": "The lesson's opening example is a claim-processing service where AI-generated tests were all green but missed a date-handling edge case, because the suite covered happy paths — not a race condition, a skipped property test, or a dependency outage."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce for AI-Driven Testing and QA?",
       "options": [
-        "A trained neural network",
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A production SaaS backend",
-        "A browser extension"
+        "A fully automated test suite that requires no human review before merging",
+        "A single pass/fail score with no breakdown of the underlying risk signals",
+        "A list of every unit test the AI generated, sorted by execution time",
+        "A ranked plan with category, score, priority, controls, and rationale"
       ],
-      "correct": 1,
-      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+      "correct": 3,
+      "explanation": "The lesson's Python artifact is a classroom planner that outputs a ranked plan — category, score, priority, controls, and rationale — not a self-approving test suite, a single opaque score, or a raw dump of generated tests."
     },
     {
       "stage": "check",
       "question": "Which control belongs to the lesson design?",
       "options": [
-        "Ignoring uncertainty to move faster",
-        "property tests",
-        "Removing human accountability",
-        "Treating all AI outputs as facts"
+        "Property tests that check invariants across many generated inputs, not just fixed examples",
+        "Skipping property tests and golden cases because the generated suite was already green",
+        "Letting the AI decide unilaterally which edge cases matter, without a human risk review",
+        "Treating high code coverage numbers as proof that a release is safe to ship"
       ],
-      "correct": 1,
-      "explanation": "The control \"property tests\" is part of the intended operating model for this topic."
+      "correct": 0,
+      "explanation": "The lesson's controls include property tests that check invariants across generated inputs — the opposite of trusting an all-green AI-generated suite, letting the model pick edge cases unsupervised, or treating coverage numbers as proof of safety."
     },
     {
       "stage": "post",
       "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
       "options": [
-        "When impact, uncertainty, and matched risk signals are high",
-        "Only when the model is open source",
-        "Only when the user interface is complex",
-        "Never; all AI topics should be handled informally"
+        "Only when the team happens to be running an open-source model instead of a hosted commercial API",
+        "Only when the feature has a visually complex or unusually polished user interface",
+        "Never — every AI-assisted testing scenario can stay an informal awareness exercise",
+        "When impact, uncertainty, and matched risk signals such as money impact are all running high"
       ],
-      "correct": 0,
-      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+      "correct": 3,
+      "explanation": "High-impact, uncertain, risk-heavy scenarios need a launch gate regardless of whether the model is open-source, the UI is polished, or the team would prefer to keep things informal."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the output template?",
       "options": [
-        "To replace project ownership",
-        "To create a reusable worksheet or prompt that teams can apply after the course",
-        "To hide assumptions from stakeholders",
-        "To generate certificates automatically"
+        "To formally replace the project owner's sign-off on every single release decision",
+        "To keep the underlying risk assumptions hidden from the non-technical stakeholders on the team",
+        "To create a reusable worksheet or prompt that teams can keep applying after the course ends",
+        "To automatically generate completion certificates for participants once the workshop ends"
       ],
-      "correct": 1,
-      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+      "correct": 2,
+      "explanation": "The output template is meant to become a reusable worksheet or prompt teams keep using after the course — not a substitute for the owner's sign-off, a way to hide assumptions, or an automatic certificate generator."
     }
   ]
 }

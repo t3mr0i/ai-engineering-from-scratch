@@ -13,7 +13,7 @@ Build plan:
 
 1. Task board: file-backed (or Redis) JSONL store of typed messages. Message kinds: plan_request, subtask, diff_ready, review_needed, review_feedback, approved, test_needed, test_passed, test_failed, replan_needed.
 2. Architect (Opus 4.7): reads the issue, writes a plan, emits a DAG of subtasks with explicit interfaces (files touched, public functions, test impact).
-3. N coders (Sonnet 4.7): each claims a subtask, spawns a fresh `git worktree add` + Daytona sandbox, implements independently.
+3. N coders (Sonnet 4.6): each claims a subtask, spawns a fresh `git worktree add` + Daytona sandbox, implements independently.
 4. Merge coordinator: three-way merge; LLM-mediated conflict resolution only on file-level overlap.
 5. Reviewer (GPT-5.4): reads merged diff; cannot approve diffs it authored; emits approved or review_feedback routed to the relevant coder.
 6. Tester (Gemini 2.5 Pro): runs the test suite in a clean sandbox; emits test_passed or test_failed with artifacts.

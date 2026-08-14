@@ -6,12 +6,12 @@
       "stage": "pre",
       "question": "Why does ReAct's prompt grow quadratically with depth?",
       "options": [
-        "The model re-tokenizes itself on every step",
-        "Each step carries the full prior context including every previous thought and observation",
-        "Tool schemas are duplicated per call",
-        "The provider charges per byte rather than per token"
+        "The model has to re-tokenize its own weights from scratch before every single step",
+        "Tool schemas get duplicated into the prompt once for every single tool call made",
+        "The provider bills per byte transmitted instead of per token, so long prompts cost far more",
+        "Each step carries the full prior context, including every previous thought and observation"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "ReAct re-includes prior thoughts and observations on each step, making total prompt length grow with the square of the depth."
     },
     {
@@ -30,10 +30,10 @@
       "stage": "check",
       "question": "What headline numbers does the paper report for ReWOO vs ReAct on HotpotQA?",
       "options": [
-        "~5x fewer tokens and +4 absolute accuracy",
-        "~2x more tokens and +10 accuracy",
-        "Same tokens and +1 accuracy",
-        "10x fewer tokens and -2 accuracy"
+        "About 5x fewer tokens and roughly +4 absolute accuracy points on HotpotQA versus ReAct",
+        "About 2x more tokens and roughly +10 accuracy points on HotpotQA versus ReAct",
+        "The same token count as ReAct, with only about +1 accuracy point of improvement overall",
+        "About 10x fewer tokens but roughly -2 accuracy points on HotpotQA versus ReAct"
       ],
       "correct": 0,
       "explanation": "ReWOO reports about a 5x token reduction and +4 absolute accuracy on HotpotQA compared to ReAct."
@@ -42,34 +42,34 @@
       "stage": "check",
       "question": "What does a placeholder like #E1 inside a ReWOO plan node mean?",
       "options": [
-        "An error code returned by worker 1",
+        "An error code that worker 1 returns to the runtime when its tool call fails",
+        "A retry counter that tracks how many times evidence fetching has failed so far already",
         "A reference substituted at dispatch time with the output of an earlier worker node",
-        "A retry counter for evidence fetching",
-        "A planner version identifier"
+        "A version identifier the Planner attaches to every DAG it emits for the Solver"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Plan nodes use evidence references like #E1, #E2 that the executor substitutes with the output of upstream workers."
     },
     {
       "stage": "check",
       "question": "Why does ReWOO localize failures better than ReAct?",
       "options": [
-        "Workers crash the run on any error",
         "An error in a worker becomes a string the Solver sees alongside the original plan, so degradation is per-node not per-step",
-        "ReWOO retries every failed call up to ten times",
-        "The Planner re-emits a fresh DAG after every error"
+        "Workers crash the entire run the moment any single tool call raises an error, unlike ReAct's interleaved loop",
+        "The Planner re-emits a brand-new DAG from scratch after every single worker error that ever occurs mid-run",
+        "Every failed worker call is automatically retried up to ten times before it ever counts as a failure"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Per-node failure with the original plan in context lets the Solver degrade gracefully rather than reasoning mid-stream out of an error."
     },
     {
       "stage": "post",
       "question": "Which task shape best fits Plan-and-Act over plain ReWOO?",
       "options": [
-        "A two-step factoid lookup",
-        "A 40-step web or mobile navigation trajectory",
-        "A single-turn classification",
-        "A pure arithmetic question"
+        "A two-step factoid lookup that a single ReAct call can already answer",
+        "A 40-step web or mobile navigation trajectory where a single ReAct run loses coherence",
+        "A single-turn classification task with no tool calls involved at all",
+        "A pure arithmetic question that a calculator tool can answer in one call"
       ],
       "correct": 1,
       "explanation": "Plan-and-Act is built for long-horizon (over 30 steps) web and mobile agents where a single ReAct trajectory loses coherence."
@@ -78,12 +78,12 @@
       "stage": "post",
       "question": "What does ReWOO's planner distillation result imply for production agents?",
       "options": [
-        "Frontier models must be used at every step",
+        "Frontier-scale models must still be used at every planning step for distillation to work",
+        "Planning quality collapses in practice once the planner drops below 7B parameters",
         "A small planner (around 7B) can match a large teacher because the planner never sees observations",
-        "Planning quality drops below 7B parameters",
-        "Distillation requires gradient-based RL data"
+        "Distillation only works if the training data comes from gradient-based RL rollouts"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Because the planner does not see observations, plan traces from a large teacher transfer cleanly to a small fine-tuned planner."
     }
   ]

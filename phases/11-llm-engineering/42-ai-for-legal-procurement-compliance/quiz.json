@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What boundary should legal and procurement AI workflows preserve?",
       "options": [
+        "AI can take the negotiation position once the clause register has been fully populated",
         "AI can prepare and structure work, but humans own interpretation, negotiation, and decisions",
-        "AI owns all obligations",
-        "Generated summaries never need review",
-        "Confidentiality checks are optional"
+        "AI can accept residual risk on routine contracts, escalating only the unusual clauses",
+        "AI can issue the final review note, provided the source document was internally approved"
       ],
-      "correct": 0,
-      "explanation": "AI support does not remove accountable legal or procurement review."
+      "correct": 1,
+      "explanation": "AI support does not remove accountable legal or procurement review. The model may structure information, but interpretation, risk acceptance, and negotiation positions stay with humans."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": ["vendor clause", "font contrast", "audio codec", "screen width"],
-      "correct": 0,
-      "explanation": "Vendor clause is one of the review signals."
+      "question": "What three risks does this lesson name for an AI-generated summary of a contract?",
+      "options": [
+        "It cites the wrong jurisdiction, misdates the term, or misstates the governing language",
+        "It runs too slowly, costs more per document, or cannot handle scanned contract formats",
+        "It drops the formatting, reorders the clauses, or loses the numbering of the annexes",
+        "It misses obligations, weakens the negotiation position, or exposes confidential material"
+      ],
+      "correct": 3,
+      "explanation": "The lesson names exactly these three risks. That is why confidentiality and obligation risk have to be checked before a generated summary is used."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked legal/procurement review plan with controls and rationale",
-        "A signed contract",
-        "A final legal opinion",
-        "A vendor approval"
+        "A signed contract once both parties have accepted the compared terms",
+        "A final legal opinion on the obligations found in the source document",
+        "A ranked legal and procurement review plan with controls and rationale",
+        "A vendor approval that clears the supplier for the procurement process without further review"
       ],
-      "correct": 0,
-      "explanation": "The artifact structures review preparation; it is not a legal decision."
+      "correct": 2,
+      "explanation": "The artifact structures review preparation. It is not a legal decision - human reviewers remain accountable for interpretation and approval."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["clause register", "ignore obligations", "skip legal reviewer", "remove evidence"],
-      "correct": 0,
-      "explanation": "A clause register keeps key terms traceable."
+      "options": [
+        "An obligation list generated once and reused across later vendor comparisons unchanged",
+        "A review step that is skipped for policies the compliance team already knows",
+        "A decision record that captures the outcome but not the evidence behind it",
+        "A clause register that keeps key terms traceable back to the source document"
+      ],
+      "correct": 3,
+      "explanation": "A clause register keeps key terms traceable. Confidentiality checks, a named legal reviewer, and a decision record with its evidence are the other controls this lesson teaches."
     },
     {
       "stage": "post",
       "question": "When should legal or procurement AI work require a launch gate?",
       "options": [
         "When obligation risk, confidential terms, or missing evidence create high impact",
-        "Only when the document is short",
-        "Only when no vendor is involved",
-        "Never; AI summaries are always safe"
+        "Only when the source document runs longer than the model's context window",
+        "Only when an external vendor rather than an internal policy is being reviewed",
+        "Only when the summary will be forwarded outside the legal team that made it"
       ],
       "correct": 0,
-      "explanation": "High-risk generated review work needs explicit human review."
+      "explanation": "High-risk generated review work needs explicit human review, triggered by obligation risk, confidentiality, and missing evidence rather than by document length."
     },
     {
       "stage": "post",
       "question": "What should vendor-term summaries remain linked to?",
       "options": [
-        "The source clauses and evidence used for the review",
-        "Only the model's wording",
-        "An unreviewed prompt",
-        "A generic template"
+        "The model's own wording, so the summary stays internally consistent",
+        "The source clauses and the evidence the review was actually based on",
+        "The prompt that produced it, so the same output can be regenerated",
+        "The standard template the procurement team uses for every supplier"
       ],
-      "correct": 0,
-      "explanation": "Traceability protects legal and procurement decisions."
+      "correct": 1,
+      "explanation": "Traceability protects legal and procurement decisions: vendor terms need evidence that leads back to the source clauses."
     }
   ]
 }

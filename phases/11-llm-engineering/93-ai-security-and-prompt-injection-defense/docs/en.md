@@ -97,7 +97,7 @@ The 2026 best practice from Anthropic's multi-agent guidance and the OWASP LLM T
 
 ### Where the audit trail goes
 
-Controls without audit are unverifiable. The minimum viable audit record for a production AI deployment includes: (a) the full prompt context hash (not the content — the hash, for privacy) at each inference, (b) all tool call argument payloads and return values, (c) the output classifier decision per response, and (d) any escalations to human review. Phase 17 · 25 extends this into a broader secrets and configuration audit. Without this trail, post-incident reconstruction is impossible — and regulators under the EU AI Act (in force for high-risk systems from August 2026) require it.
+Controls without audit are unverifiable. The minimum viable audit record for a production AI deployment includes: (a) the full prompt context hash (not the content — the hash, for privacy) at each inference, (b) all tool call argument payloads and return values, (c) the output classifier decision per response, and (d) any escalations to human review. Phase 17 · 25 extends this into a broader secrets and configuration audit. Without this trail, post-incident reconstruction is impossible — and regulators under the EU AI Act (in force for Annex III high-risk systems from 2 December 2027, and Annex I high-risk systems from 2 August 2028, per Regulation (EU) 2026/1744) require it.
 
 ### What the 2026 threat picture looks like
 
@@ -129,4 +129,4 @@ The steps below translate the lesson into a 60-90 minute security review session
 - [Anthropic — Multi-agent security guidance](https://docs.claude.com/en/docs/build-with-claude/agents) — trust boundaries, tool scoping, and the operator/user trust model in Claude-based pipelines.
 - [NIST AI RMF (AI 600-1)](https://airc.nist.gov/) — the U.S. federal AI risk management framework; Appendix B covers adversarial ML and injection risks.
 - [Simon Willison — Prompt injection explained](https://simonwillison.net/2022/Sep/12/prompt-injection/) — the clearest public explanation of why structural defenses alone cannot fully solve indirect injection; updated commentary through 2025.
-- [EU AI Act — Official text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Article 9 (risk management) and Annex III (high-risk systems) define the audit and logging obligations in force from August 2026.
+- [EU AI Act — Official text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Article 9 (risk management) and Annex III (high-risk systems) define the audit and logging obligations, in force from 2 December 2027 per Regulation (EU) 2026/1744.

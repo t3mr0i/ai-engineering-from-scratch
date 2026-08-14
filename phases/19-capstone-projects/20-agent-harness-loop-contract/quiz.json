@@ -6,34 +6,34 @@
       "stage": "pre",
       "question": "Why model the harness loop as an explicit state machine rather than a while loop with flags?",
       "options": [
+        "It runs measurably faster than an equivalent while loop because CPython optimizes named state transitions at the bytecode level",
+        "It removes the need for integration tests, since a state machine is correct by construction once the states are named",
         "It lets the harness reject illegal transitions in one place and replay sessions from the event log",
-        "It is faster on CPython",
-        "It avoids the need for tests",
-        "It is the only shape the model can call"
+        "It is required because a language model can only emit tool calls when the caller exposes a formal state machine"
       ],
-      "correct": 0,
-      "explanation": "A state machine puts the legality rules in one transition function. The same input sequence reproduces the same state, which is what makes session replay possible."
+      "correct": 2,
+      "explanation": "A state machine puts the legality rules in one transition function. The same input sequence reproduces the same state, which is what makes session replay possible. Speed, test coverage, and what a model can call are unrelated to why the shape was chosen."
     },
     {
       "stage": "pre",
       "question": "What does a pull point in the loop represent?",
       "options": [
-        "A point where the loop yields control and waits for the caller to provide an input",
-        "A model call that returns a tool name",
-        "A timer that fires every N seconds",
-        "A hook subscriber that mutates payload"
+        "A model call inside PLANNING that returns the name of the next tool to invoke without yielding control",
+        "A wall-clock timer that fires on a fixed interval and forces a transition back to IDLE",
+        "A hook subscriber in before_tool_call that mutates the payload before dispatch and returns control",
+        "A point where the loop yields control back to the caller and waits for an input to resume"
       ],
-      "correct": 0,
-      "explanation": "Pull points are returns, not exceptions. The caller fetches what the harness asked for and calls resume()."
+      "correct": 3,
+      "explanation": "Pull points are returns, not exceptions or timers. The caller fetches what the harness asked for and calls resume()."
     },
     {
       "stage": "check",
       "question": "Which state is the only legal pull point for a tool call?",
       "options": [
-        "EXECUTING",
-        "AWAITING_TOOL",
-        "REFLECTING",
-        "PLANNING"
+        "EXECUTING — while the current step is actively running",
+        "AWAITING_TOOL — while blocked on a tool result",
+        "REFLECTING — right after a step's result comes back",
+        "PLANNING — while the next step's plan is drafted"
       ],
       "correct": 1,
       "explanation": "Only AWAITING_TOOL yields a tool pull point. EXECUTING transitions into it when a step requires a tool."
@@ -42,49 +42,49 @@
       "stage": "check",
       "question": "What happens when a hook raises HookAbort in before_tool_call?",
       "options": [
-        "The session immediately transitions to DONE",
-        "The tool call is skipped, on_error fires, and the loop moves to REFLECTING",
-        "The hook is unregistered",
-        "The budget is reset"
+        "The tool call is skipped, on_error fires with the abort reason, and the loop moves to REFLECTING",
+        "The session immediately transitions to DONE without emitting a completion event, ending the run early",
+        "The hook that raised HookAbort is automatically unregistered so it cannot abort future tool calls",
+        "The budget envelope is reset to its initial turn, tool-call, and wall-clock limits so the run continues"
       ],
-      "correct": 1,
-      "explanation": "HookAbort cancels the in-flight tool dispatch, fires on_error with the abort reason, and continues."
+      "correct": 0,
+      "explanation": "HookAbort cancels the in-flight tool dispatch, fires on_error with the abort reason, and continues into REFLECTING. It does not end the session, unregister the hook, or touch the budget."
     },
     {
       "stage": "check",
       "question": "Why are hooks and events kept as separate concerns?",
       "options": [
-        "Because event types are bytes and hooks are strings",
-        "Hooks are imperative and can mutate or abort. Events are observational and append-only.",
-        "Because the audit script forbids subscribers",
-        "Because the event log cannot store dicts"
+        "Because event types are serialized as raw bytes on disk while hooks are addressed by string names in the registry",
+        "Because a separate audit script forbids registering more than one subscriber per hook topic",
+        "Because the append-only event log cannot store Python dict payloads, only flat scalar values",
+        "Hooks are imperative and can mutate or abort execution. Events are observational and append-only."
       ],
-      "correct": 1,
-      "explanation": "Hooks change behavior. Events describe behavior. Mixing them couples policy and telemetry, which is the bug we are avoiding."
+      "correct": 3,
+      "explanation": "Hooks change behavior. Events describe behavior. Mixing them couples policy and telemetry, which is the bug we are avoiding — it has nothing to do with serialization format or subscriber counts."
     },
     {
       "stage": "post",
       "question": "When the wall-clock budget is exceeded, what is the next state?",
       "options": [
-        "DONE — the session is terminated",
-        "EXECUTING — the loop retries",
-        "IDLE — a pull point is returned with a budget_exceeded reason",
-        "PLANNING — a fresh plan is drafted"
+        "DONE — the session is terminated immediately, no further resume calls accepted",
+        "IDLE — a pull point returns with a budget_exceeded reason for the caller",
+        "EXECUTING — the loop silently retries the current step until the check passes",
+        "PLANNING — a fresh plan is drafted automatically using the remaining budget headroom"
       ],
-      "correct": 2,
-      "explanation": "Budget exhaustion is a yield. The harness transitions to IDLE, fires on_budget_exceeded, and returns a PullRequest so the caller can decide whether to extend or close."
+      "correct": 1,
+      "explanation": "Budget exhaustion is a yield, not a kill switch. The harness transitions to IDLE, fires on_budget_exceeded, and returns a PullRequest so the caller can decide whether to extend or close."
     },
     {
       "stage": "post",
       "question": "Why does this lesson stub out the planner instead of calling a model?",
       "options": [
-        "Because models are slow to call locally",
-        "To keep the loop contract testable and deterministic before any model is bound",
-        "Because models cannot return tool calls",
-        "To save tokens"
+        "To keep the loop contract testable and deterministic before any model or real planner is bound to it",
+        "Because local model calls add enough latency that the test suite would time out on typical CI hardware",
+        "Because a language model is structurally incapable of returning a tool-call payload from an API response",
+        "To save on token spend while iterating on the harness's internal state machine during development"
       ],
-      "correct": 1,
-      "explanation": "Pinning the loop contract first lets later lessons swap in real planners, registries, and dispatchers without renegotiating the state machine."
+      "correct": 0,
+      "explanation": "Pinning the loop contract first lets later lessons swap in real planners, registries, and dispatchers without renegotiating the state machine. Models return tool calls just fine — that is not the reason."
     }
   ]
 }

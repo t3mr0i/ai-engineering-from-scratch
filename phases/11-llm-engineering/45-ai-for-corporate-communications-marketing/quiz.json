@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "Why do AI-assisted communication drafts need explicit review controls?",
       "options": [
-        "Because polished text can hide weak sources, tone risk, or missing approval",
-        "Because AI drafts are always ready to publish",
-        "Because communication work never involves stakeholders",
-        "Because source material should be removed"
+        "Because AI drafts use longer sentences than the corporate style guide allows",
+        "Because campaign copy must be translated before it reaches internal channels",
+        "Because the communications team writes faster than the model does in practice",
+        "Because polished text can hide weak sources, tone risk, or missing approval"
       ],
-      "correct": 0,
-      "explanation": "Review controls protect source quality, tone, claims, and approval ownership."
+      "correct": 3,
+      "explanation": "Review controls protect source quality, tone, claims, and approval ownership. Tone quality is not the same as factual reliability."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["brand claim", "GPU memory", "token bucket", "image resolution"],
+      "question": "Before AI-assisted copy is used, which four things does this lesson say to check?",
+      "options": [
+        "The audience, the claim being made, the sensitivity of the topic, and the owner",
+        "The headline length, the keyword density, the call to action, and the send time",
+        "The channel, the campaign budget, the target reach, and the expected click rate",
+        "The translation quality, the image rights, the file format, and the archive path"
+      ],
       "correct": 0,
-      "explanation": "A brand claim needs evidence and approval before publication."
+      "explanation": "The review gate checks audience, claim, sensitivity, and owner, and the artifact turns those four signals into a review priority. The channel plan then decides how much review is required."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
         "A ranked communications review plan with controls and rationale",
-        "A published press release",
-        "A social media account",
-        "A translation model"
+        "A published press release routed to the agreed external channels",
+        "A social media schedule built from the approved campaign messages",
+        "A translation of the approved copy into each market's local language"
       ],
       "correct": 0,
-      "explanation": "The artifact ranks scenarios and recommends review controls."
+      "explanation": "The artifact ranks scenarios and recommends review controls. Publishing stays a human decision with a named owner."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["approval owner", "skip tone check", "remove sources", "publish automatically"],
-      "correct": 0,
-      "explanation": "A named approval owner is a key communications control."
+      "options": [
+        "A tone check skipped when the draft already matches the house style",
+        "A named approval owner who signs off before a sensitive message goes out",
+        "A source pack assembled after publication, in case questions come back",
+        "A channel plan chosen by whoever happens to publish the message first"
+      ],
+      "correct": 1,
+      "explanation": "A named approval owner is a key communications control, and sensitive messages need one. The source pack, tone check, and channel plan are the others this lesson teaches."
     },
     {
       "stage": "post",
       "question": "When should AI-assisted communication require stronger review?",
       "options": [
+        "Only when the draft is longer than the channel's usual published format allows",
+        "Only when the campaign runs in more than one language across several markets",
         "When the message has external reach, sensitive content, a brand claim, or an approval gap",
-        "Only when no one will read it",
-        "Only when it is already approved",
-        "Never; AI tone is enough"
+        "Only when the message will be published rather than sent to a mailing list"
       ],
-      "correct": 0,
-      "explanation": "Risk signals decide how much review is needed."
+      "correct": 2,
+      "explanation": "Risk signals decide how much review is needed: audience risk, brand claim, sensitive topic, and approval gap."
     },
     {
       "stage": "post",
       "question": "What should AI improve in communications work?",
       "options": [
-        "Drafting speed plus source, tone, and approval discipline",
-        "Unapproved publication",
-        "Evidence-free claims",
-        "Hidden ownership"
+        "Drafting speed, together with source, tone, and approval discipline",
+        "The number of channels a single message can be published across",
+        "The turnaround time, by publishing before the approval owner replies",
+        "The consistency of house style, so the tone check becomes unnecessary"
       ],
       "correct": 0,
-      "explanation": "AI should support quality and review discipline, not bypass it."
+      "explanation": "AI should support quality and review discipline, not bypass it. Speed is only useful alongside source, tone, and approval checks."
     }
   ]
 }

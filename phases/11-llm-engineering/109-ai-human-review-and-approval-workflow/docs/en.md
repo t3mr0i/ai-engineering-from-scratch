@@ -90,7 +90,7 @@ For agentic workflows specifically:
 
 ### Checklist frameworks and standards
 
-The ISO 9001 and ISO/IEC 42001 (AI Management Systems) frameworks both require documented review procedures with named owners and audit trails for consequential AI decisions. The EU AI Act (in force from 2025) mandates human oversight mechanisms for high-risk AI systems as defined in Annex III. These regulatory requirements are structural: the gate must produce an auditable record that includes the reviewer identity, the review timestamp, the version of the AI output reviewed, and the decision made.
+The ISO 9001 and ISO/IEC 42001 (AI Management Systems) frameworks both require documented review procedures with named owners and audit trails for consequential AI decisions. The EU AI Act (in force since August 2024) mandates human oversight mechanisms for high-risk AI systems as defined in Annex III, applying from 2 December 2027 per Regulation (EU) 2026/1744. These regulatory requirements are structural: the gate must produce an auditable record that includes the reviewer identity, the review timestamp, the version of the AI output reviewed, and the decision made.
 
 Minimum audit record fields:
 - `output_id` — unique identifier tied to the specific AI output artifact

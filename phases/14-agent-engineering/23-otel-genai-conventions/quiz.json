@@ -6,22 +6,22 @@
       "stage": "pre",
       "question": "Which span name represents an agent run in the GenAI conventions?",
       "options": [
-        "agent.start",
-        "invoke_agent (optionally suffixed by gen_ai.agent.name)",
-        "run_chain",
-        "agent_loop"
+        "agent.start, emitted once when create_agent constructs the agent instance",
+        "run_chain, the span name emitted by the model/client category for raw LLM calls",
+        "agent_loop, the span name used for tool spans linked by parent-child relation",
+        "invoke_agent, optionally suffixed by gen_ai.agent.name when the agent is named"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "invoke_agent is the canonical name; the agent's name attribute appears in the span name when set."
     },
     {
       "stage": "pre",
       "question": "Which three span categories does the GenAI SIG define?",
       "options": [
-        "Model/client, agent, tool",
-        "Frontend, backend, db",
-        "Read, write, exec",
-        "Latency, error, throughput"
+        "Model/client, agent, and tool spans",
+        "Frontend, backend, and database spans",
+        "Read, write, and execute spans",
+        "Latency, error, and throughput spans"
       ],
       "correct": 0,
       "explanation": "Model/client (LLM calls), agent (create/invoke), tool (per invocation) are the categories."
@@ -30,10 +30,10 @@
       "stage": "check",
       "question": "When does an invoke_agent span use kind CLIENT vs INTERNAL?",
       "options": [
-        "Always INTERNAL",
+        "Always INTERNAL, because span kind is fixed by the SIG regardless of whether the service is remote or in-process",
         "CLIENT for remote agent services (OpenAI Assistants, Bedrock Agents); INTERNAL for in-process frameworks (LangChain, CrewAI, local ReAct)",
-        "CLIENT for HTTPS only",
-        "Always CLIENT"
+        "CLIENT only when the transport is HTTPS, and INTERNAL whenever the connection falls back to plain HTTP without TLS",
+        "Always CLIENT, since every invoke_agent span represents a network call to a model provider's API endpoint directly"
       ],
       "correct": 1,
       "explanation": "Remote agent calls are CLIENT; in-process agent runs are INTERNAL."
@@ -42,46 +42,46 @@
       "stage": "check",
       "question": "What is the default rule for content capture (inputs and outputs)?",
       "options": [
-        "Capture everything by default",
+        "Capture everything by default so ops teams have full request and response bodies for every span",
+        "Capture only output text by default, while input prompts stay redacted unless requested",
         "Instrumentations SHOULD NOT capture by default; capture is opt-in via gen_ai.* attributes",
-        "Capture only output, never input",
-        "Capture only on errors"
+        "Capture only on error spans by default, skipping successful calls to reduce storage costs"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Default-off content capture protects PII and secrets; opt-in is explicit."
     },
     {
       "stage": "check",
       "question": "Which attribute identifies the corpus or store consulted for a retrieval?",
       "options": [
+        "gen_ai.response.model",
+        "gen_ai.operation.name",
         "gen_ai.provider.name",
-        "gen_ai.request.model",
-        "gen_ai.data_source.id",
-        "gen_ai.agent.name"
+        "gen_ai.data_source.id"
       ],
-      "correct": 2,
+      "correct": 3,
       "explanation": "gen_ai.data_source.id labels the RAG corpus or store hit by retrieval."
     },
     {
       "stage": "post",
       "question": "What does the lesson recommend for storing prompt content in production?",
       "options": [
-        "Capture full prompts on every span as plain text",
         "Store content externally (S3, log store) and record reference IDs on the span instead",
-        "Never store any content",
-        "Encrypt prompts in span attributes"
+        "Capture full prompts on every span as plain text so ops can read exact requests directly",
+        "Never store any content at all, even as external references, to avoid legal discovery",
+        "Encrypt prompts directly inside span attributes using a key managed by the collector"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "External storage with pointer IDs avoids PII leaking into traces that ops can read."
     },
     {
       "stage": "post",
       "question": "How do you opt into the experimental stable preview of GenAI conventions?",
       "options": [
-        "Edit the OTel collector config",
-        "Set OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental",
-        "Rebuild the SDK from source",
-        "Pay for a license"
+        "Edit the OTel collector config to add a gen_ai_stability: true processor block",
+        "Set OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental as an env var",
+        "Rebuild the SDK from source with the --enable-genai-semconv flag set at compile time",
+        "Pay for a license upgrade that unlocks the stable GenAI attribute set"
       ],
       "correct": 1,
       "explanation": "The env var pins the experimental conventions so attributes are not silently renamed."

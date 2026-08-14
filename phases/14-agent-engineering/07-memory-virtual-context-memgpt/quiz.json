@@ -6,10 +6,10 @@
       "stage": "pre",
       "question": "What OS analogy does MemGPT build on?",
       "options": [
-        "Processes and threads",
+        "Processes and threads, where each memory tool call spawns a new OS-level thread",
         "Virtual memory: main context as RAM, external store as disk, memory tools as page in and out",
-        "Network sockets",
-        "File descriptors"
+        "Network sockets, where the agent opens a persistent connection to its memory store",
+        "File descriptors, where every memory read consumes a slot until it is closed"
       ],
       "correct": 1,
       "explanation": "MemGPT maps prompt to RAM, external store to disk, and memory tools to page-fault-style transfers."
@@ -18,22 +18,22 @@
       "stage": "pre",
       "question": "Why do bigger context windows not fully solve memory?",
       "options": [
-        "Providers cap them at 4k tokens",
+        "Because most providers cap the effective window at 4k tokens regardless of the sticker limit",
+        "Because sending a longer context costs nothing extra in latency or dollars to the caller",
         "Overflow, dilution of attention, and lack of cross-session persistence still bite even with 128k windows",
-        "Long context costs nothing",
-        "The model refuses long input"
+        "Because the model refuses to process any input longer than a few thousand tokens"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Mem0 measured 128k-window baselines still missing facts a 4k agent with external memory catches; overflow, dilution, and persistence remain."
     },
     {
       "stage": "check",
       "question": "Which of these is NOT one of MemGPT's canonical memory tools?",
       "options": [
-        "core_memory_append",
-        "archival_memory_search",
-        "conversation_search",
-        "gradient_memory_update"
+        "core_memory_append, which writes to a persistent section of the prompt",
+        "archival_memory_search, which retrieves results from the searchable external store",
+        "conversation_search, which scans past turns for a matching fact",
+        "gradient_memory_update, which backpropagates a memory update into the weights"
       ],
       "correct": 3,
       "explanation": "There is no gradient memory tool; the surface is core/archival/conversation operations."
@@ -42,22 +42,22 @@
       "stage": "check",
       "question": "What does the interrupt pattern do in MemGPT?",
       "options": [
-        "It halts the entire agent run on any error",
-        "Mid-conversation the agent invokes a memory tool, the runtime executes it, and the result splices into the next turn",
-        "It bypasses the context window entirely",
-        "It triggers a model retrain"
+        "Mid-conversation the agent invokes a memory tool and the result splices into the next turn as an observation",
+        "It halts the entire agent run the moment any tool call anywhere raises an error at all",
+        "It bypasses the context window entirely and writes straight into the model's weights",
+        "It triggers a full retrain of the underlying model on the current conversation transcript"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Memory-as-interrupt: invoke memory tool, runtime fetches, result returns as a new observation on the next turn (like a Unix read())."
     },
     {
       "stage": "check",
       "question": "Which production system did MemGPT evolve into in 2024?",
       "options": [
-        "Mem0",
-        "Letta",
-        "Zep",
-        "Pinecone"
+        "Mem0, a hybrid memory library built independently on top of the same pattern",
+        "Letta, the company MemGPT's own team formed to productionize the design",
+        "Zep, a third-party memory service aimed at a similar problem space",
+        "Pinecone, a managed vector database product used by many memory systems"
       ],
       "correct": 1,
       "explanation": "MemGPT became Letta in September 2024; the research repo cpacker/MemGPT still exists as the origin."
@@ -66,24 +66,24 @@
       "stage": "post",
       "question": "What is memory poisoning in this context?",
       "options": [
-        "A bug that corrupts vector indices",
+        "A bug in the vector index that silently corrupts nearest-neighbor lookups on every single query",
+        "Reading from the disk-tier store even when the RAM-tier context still has plenty of room",
         "An attacker's content gets stored as a memory note and is re-ingested on future recalls",
-        "Reading from disk when RAM is available",
-        "Embedding model version drift"
+        "Drift between the embedding model version used to write a note and the one used to read it back"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "External memory is retrieved text; if attacker-reachable content lands in a memory note the agent re-ingests it next session."
     },
     {
       "stage": "post",
       "question": "Why does the lesson say production memory systems are MemGPT variants?",
       "options": [
-        "They use the same vector DB",
-        "Letta, Mem0, Assistants threads, and Claude Agent SDK all run the two-tier (or more) paged-memory pattern; differences are operational shape",
-        "MemGPT owns the trademark",
-        "They share weights"
+        "Because every one of them happens to run on the exact same vector database product line",
+        "Because the MemGPT paper's authors hold a trademark that all these systems must license first",
+        "Because all of them are fine-tuned from the exact same base model weights",
+        "Letta, Mem0, Assistants threads, and Claude Agent SDK all run the same paged-memory pattern"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Pick by operational shape, not pattern; all share the MemGPT page in/out skeleton."
     }
   ]

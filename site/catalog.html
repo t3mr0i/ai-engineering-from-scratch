@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
   <script>
@@ -22,7 +22,7 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson Catalog · LHIND AI Learning Catalog</title>
+  <title data-i18n="title_catalog">Lesson Catalog · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
   <meta name="description" content="Catalog of Technology Consulting AI engineering lessons. Search, filter, and sort every lesson backing a TC course.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/catalog.html">
@@ -709,7 +709,9 @@
             }
             html += '<td>' + escapeHtml(r.type) + '</td>';
             html += '<td><span class="catalog-lang">' + escapeHtml(r.lang) + '</span></td>';
-            html += '<td><span class="catalog-status-dot ' + r.status + '"></span>' + r.status + '</td>';
+            var statusKey = r.status === 'complete' ? 'catalog_complete' : 'catalog_planned';
+            var statusLabel = uiText(statusKey, r.status === 'complete' ? 'Complete' : 'Planned');
+            html += '<td><span class="catalog-status-dot ' + r.status + '"></span>' + escapeHtml(statusLabel) + '</td>';
             html += '</tr>';
           }
           bodyEl.innerHTML = html;

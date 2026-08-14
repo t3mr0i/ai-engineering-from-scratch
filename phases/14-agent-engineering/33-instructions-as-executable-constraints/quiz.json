@@ -6,24 +6,24 @@
       "stage": "pre",
       "question": "What is the difference between an aspirational rule and an operational rule?",
       "options": [
-        "Aspirational rules are paid; operational rules are free",
         "Aspirational rules have no check ('be careful'); operational rules carry a machine-checkable function the workbench can run",
-        "Operational rules are longer",
-        "Aspirational rules require a manager"
+        "Aspirational rules are paid features bundled with premium workbench tooling; operational rules are free",
+        "Operational rules are simply longer prose descriptions written for onboarding new team members who are joining the repository",
+        "Aspirational rules require a manager's sign-off before the agent is ever allowed to act on any of them"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Operational rules are testable; aspirational rules are wishes."
     },
     {
       "stage": "pre",
       "question": "What five categories does the lesson cover most rules with?",
       "options": [
-        "Startup, forbidden, definition of done, uncertainty, approval",
-        "Read, write, exec, fork, exit",
-        "Plan, act, reflect, refine, ship",
-        "Low, medium, high, critical, fatal"
+        "Read, write, exec, fork, and exit as five POSIX process primitives",
+        "Plan, act, reflect, refine, and ship as agent-loop stages",
+        "Low, medium, high, critical, and fatal as severity labels",
+        "Startup, forbidden, definition of done, uncertainty, approval"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "Startup, forbidden, definition of done, uncertainty handling, approval boundaries are the five."
     },
     {
@@ -78,10 +78,10 @@
       "stage": "post",
       "question": "How do rules relate to framework guardrails?",
       "options": [
-        "Rules replace guardrails",
+        "Rules replace guardrails entirely once the workbench has a complete, versioned rule set in place",
         "Guardrails enforce rules at runtime; the rule set is the human-readable contract those guardrails implement",
-        "Guardrails are an alternative to rules",
-        "Only one of them is required"
+        "Guardrails are an alternative to rules, chosen instead of a rule set for simpler single-agent repos",
+        "Only one of them is required; teams pick either runtime guardrails or a written rule set, but never rely on both together"
       ],
       "correct": 1,
       "explanation": "Both are needed: runtime catches violations; rule set proves the runtime is doing the right thing."

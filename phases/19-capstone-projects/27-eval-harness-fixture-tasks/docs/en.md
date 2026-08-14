@@ -1,4 +1,4 @@
-# Capstone Lesson 27: Eval Harness with Fixture Tasks
+# Eval Harness with Fixture Tasks
 
 > A coding agent is only as good as the suite of tasks you measure it against. This lesson builds an evaluation harness that takes a folder of fixture tasks, runs each through a candidate agent, scores pass or fail through a deterministic verifier, and aggregates the results into pass@1, pass@k, mean latency, and mean cost. The harness is the source of truth that lets you tell a regression from a refactor.
 

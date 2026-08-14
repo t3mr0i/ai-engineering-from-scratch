@@ -18,9 +18,33 @@
   var srStatus = document.getElementById("srStatus");
   var course = resolveCourse();
 
+  // Mirrors lang.js's entry() lookup, same as lrn.js's i18n() — course.js
+  // has its own dynamic (non data-i18n) render path so it needs the same
+  // helper. i18n.js/lang.js load before this script (see course.html), so
+  // window.SITE_I18N/window.SiteLang are already populated by the time
+  // render() runs below.
+  function i18n(key, fallback) {
+    var dict = window.SITE_I18N || {};
+    var lang = window.SiteLang ? window.SiteLang.get() : "en";
+    var entry = dict[key];
+    if (!entry) return fallback == null ? key : fallback;
+    if (entry[lang] != null) return entry[lang];
+    if (entry.en != null) return entry.en;
+    return fallback == null ? key : fallback;
+  }
+
+  function i18nFmt(key, vars, fallback) {
+    var str = i18n(key, fallback);
+    Object.keys(vars || {}).forEach(function (k) {
+      str = str.replace("{" + k + "}", String(vars[k]));
+    });
+    return str;
+  }
+
   setBackLinks();
   render();
   if (progressApi && progressApi.onChange) progressApi.onChange(render);
+  document.addEventListener("sitelang:change", render);
 
   function resolveCourse() {
     var params = new URLSearchParams(window.location.search);
@@ -62,7 +86,7 @@
     if (!course) {
       var empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.textContent = "Course not found. Return to the catalog.";
+      empty.textContent = i18n("course_not_found", "Course not found. Return to the catalog.");
       replaceChildren(root, [empty]);
       return;
     }
@@ -86,28 +110,28 @@
 
     var meta = document.createElement("p");
     meta.className = "course-head__meta";
-    meta.textContent = (stats.subcourseCount === 1 ? "1 unit" : stats.subcourseCount + " units") + " · "
-      + (stats.lessonCount === 1 ? "1 activity" : stats.lessonCount + " activities") + " · "
-      + stats.percent + "% shipped";
+    meta.textContent = (stats.subcourseCount === 1 ? i18n("course_units_one", "1 unit") : i18nFmt("course_units_many", { count: stats.subcourseCount }, "{count} units")) + " · "
+      + (stats.lessonCount === 1 ? i18n("course_activities_one", "1 activity") : i18nFmt("course_activities_many", { count: stats.lessonCount }, "{count} activities")) + " · "
+      + i18nFmt("course_percent_shipped", { percent: stats.percent }, "{percent}% shipped");
 
     var action = document.createElement("a");
     action.className = "primary-cta";
     if (nextLesson) {
       action.href = lessonHref(nextLesson.path, course.id);
       var ctaLabel = document.createElement("span");
-      ctaLabel.textContent = stats.visitedLessons > 0 ? "Resume" : "Open first task";
+      ctaLabel.textContent = stats.visitedLessons > 0 ? i18n("course_resume", "Resume") : i18n("course_open_first_task", "Open first task");
       action.append(ctaLabel, lucideIcon("arrow-right"));
     } else {
       action.appendChild(lucideIcon("check-circle"));
       var doneLabel = document.createElement("span");
-      doneLabel.textContent = "All shipped";
+      doneLabel.textContent = i18n("course_all_shipped", "All shipped");
       action.appendChild(doneLabel);
       action.href = "#";
       action.setAttribute("aria-disabled", "true");
       action.addEventListener("click", function (event) { event.preventDefault(); });
     }
 
-    head.append(title, summary, meta, progressMeter(stats.percent, "Progress " + course.title), action);
+    head.append(title, summary, meta, progressMeter(stats.percent, i18nFmt("course_progress_label", { title: course.title }, "Progress {title}")), action);
 
     var children = [head];
 
@@ -120,7 +144,7 @@
       var outcomesTitle = document.createElement("h2");
       outcomesTitle.id = "courseOutcomesTitle";
       outcomesTitle.className = "course-head__outcomes-title";
-      outcomesTitle.textContent = "After this, you can ship:";
+      outcomesTitle.textContent = i18n("course_outcomes_title", "After this, you can ship:");
 
       var outcomesList = document.createElement("ul");
       outcomesList.className = "course-head__outcomes-list";
@@ -137,13 +161,13 @@
 
     var syllabusTitle = document.createElement("h2");
     syllabusTitle.className = "syllabus-title";
-    syllabusTitle.textContent = "Tasks";
+    syllabusTitle.textContent = i18n("course_tasks_title", "Tasks");
     children.push(syllabusTitle);
 
     if (!map.length) {
       var emptyMap = document.createElement("div");
       emptyMap.className = "empty-state";
-      emptyMap.textContent = "No curriculum mapping has been maintained for this course yet.";
+      emptyMap.textContent = i18n("course_no_map", "No curriculum mapping has been maintained for this course yet.");
       children.push(emptyMap);
     } else {
       map.forEach(function (subcourse, subcourseIndex) {
@@ -244,14 +268,14 @@
 
     var meta = document.createElement("span");
     meta.className = "unit-block__meta";
-    meta.textContent = stats.completedLessons + " of " + stats.lessonCount + " completed";
+    meta.textContent = i18nFmt("course_unit_progress", { completed: stats.completedLessons, total: stats.lessonCount }, "{completed} of {total} completed");
 
     head.append(icon, code, title, meta);
     block.appendChild(head);
 
     var meter = progressMeter(
       stats.percent,
-      "Progress " + subcourse.title
+      i18nFmt("course_progress_label", { title: subcourse.title }, "Progress {title}")
     );
     meter.classList.add("unit-block__meter");
     block.appendChild(meter);
@@ -304,7 +328,9 @@
     // "Open" on every untouched row is noise, so only call out actual progress.
     if (progress.state !== "open") {
       var status = document.createElement("em");
-      status.textContent = progress.label;
+      status.textContent = progress.state === "completed"
+        ? i18n("course_activity_completed", "completed")
+        : i18n("course_activity_started", "started");
       status.dataset.state = progress.state;
       a.appendChild(status);
     }
@@ -315,8 +341,10 @@
   function activityType(lesson, subcourse) {
     var title = (lesson.title || "").toLowerCase();
     var unit = (subcourse && subcourse.title || "").toLowerCase();
+    // "Eval" stays untranslated — established jargon used identically in
+    // German AI-consulting usage (see glossary.html's "Eval Harness" entry).
     if (/eval|test|qa|verification|review|guardrail|compliance|risk|assessment/.test(title + " " + unit)) return "Eval";
-    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return "Lab";
+    if (/project|pilot|capstone|case|use case|strategy|workflow|builder|registry|canvas/.test(title + " " + unit)) return i18n("course_activity_type_lab", "Lab");
     return "";
   }
 

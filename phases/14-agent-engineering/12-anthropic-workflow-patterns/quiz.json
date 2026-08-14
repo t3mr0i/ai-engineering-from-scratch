@@ -6,70 +6,70 @@
       "stage": "pre",
       "question": "How does Anthropic distinguish a workflow from an agent?",
       "options": [
-        "Workflows use embeddings; agents use tools",
         "Workflows are engineer-owned predefined graphs; agents are model-owned dynamic tool direction",
-        "Workflows run on CPUs; agents need GPUs",
-        "Workflows are stateless; agents are stateful"
+        "Workflows always use embeddings for retrieval, while agents always call tools directly without any retrieval step",
+        "Workflows run only on CPU instances; agents require dedicated GPU inference hardware",
+        "Workflows are always stateless between calls; agents automatically persist state across every call"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Workflow = predefined code path the engineer owns; agent = the model owns the graph."
     },
     {
       "stage": "pre",
       "question": "What are the three capabilities of the augmented LLM that underpins all five patterns?",
       "options": [
+        "Embeddings, fine-tuning, and retrieval-augmented generation pipelines",
         "Search (retrieval), tools (actions), memory (persistence)",
-        "Embeddings, fine-tuning, RAG",
-        "Vector, KV, graph",
-        "Plan, execute, reflect"
+        "Vector, KV, and graph stores, wired together behind one retrieval interface",
+        "Plan, execute, and reflect, cycling through a fixed three-step loop each turn"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "The atomic unit is one LLM with retrieval, tools, and memory wired in."
     },
     {
       "stage": "check",
       "question": "Which is NOT one of the five Anthropic workflow patterns?",
       "options": [
-        "Prompt chaining",
-        "Routing",
-        "Evaluator-optimizer",
-        "Gradient distillation"
+        "Prompt chaining, where output of one call feeds the next",
+        "Routing, where a classifier LLM picks the downstream handler",
+        "Gradient distillation, a model-compression training technique",
+        "Evaluator-optimizer, where one LLM iteratively critiques another's draft"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "The five are prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer. Gradient distillation is a training concept."
     },
     {
       "stage": "check",
       "question": "Which two shapes does parallelization come in?",
       "options": [
-        "Sync and async",
+        "Sync and async calls, chosen based on whether the caller can block",
+        "Hot and cold paths, split by how frequently each branch executes",
         "Sectioning (different chunks) and voting (same prompt N times, aggregate)",
-        "Hot and cold",
-        "Stateful and stateless"
+        "Stateful and stateless workers, split by whether they persist between calls"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Parallelization is sectioning or voting; both fan out N calls and aggregate."
     },
     {
       "stage": "check",
       "question": "Which workflow pattern is Self-Refine generalized?",
       "options": [
-        "Prompt chaining",
-        "Routing",
-        "Orchestrator-workers",
-        "Evaluator-optimizer"
+        "Evaluator-optimizer, where one LLM proposes and another critiques",
+        "Prompt chaining, where each call's output feeds directly into the next",
+        "Routing, where a classifier decides which downstream handler runs",
+        "Orchestrator-workers, where one LLM dynamically assigns work to others"
       ],
-      "correct": 3,
+      "correct": 0,
       "explanation": "Evaluator-optimizer is the Anthropic name for the Self-Refine / CRITIC iterative pattern."
     },
     {
       "stage": "post",
       "question": "When do workflows beat agents according to the lesson?",
       "options": [
-        "Always",
+        "Always, since workflows strictly dominate agents in every situation, regardless of how unpredictable the task is",
         "On predictable, cost-bounded, or compliance-bounded tasks where the graph can be enumerated and audited",
-        "Only for chat",
-        "Only on GPUs"
+        "Only for simple, single-turn chat interfaces with no tool use",
+        "Only when the deployment runs entirely on dedicated GPU hardware"
       ],
       "correct": 1,
       "explanation": "Workflows are cheaper, easier to debug, and auditable; pick them when steps are knowable."
@@ -78,12 +78,12 @@
       "stage": "post",
       "question": "What is the lesson's recommended default starting point?",
       "options": [
-        "A multi-agent framework",
+        "Fine-tune the base model directly on examples of the desired workflow behavior",
+        "Build a custom Monte Carlo tree search planner completely from scratch",
         "Direct API calls; add frameworks only when durable state, actor concurrency, or role templating earns its cost",
-        "Fine-tune the model",
-        "Build a custom MCTS"
+        "Start with a multi-agent framework immediately, so scaling to more complex workflows later never requires a rewrite"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Schluntz and Zhang: start simple; add framework complexity only when justified."
     }
   ]

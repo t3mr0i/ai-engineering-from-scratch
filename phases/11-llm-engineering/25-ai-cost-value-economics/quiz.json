@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "Why should AI Cost and Value Economics be taught as a workflow instead of only as tool awareness?",
       "options": [
-        "Because tools never change",
+        "Because a low per-call model price is on its own enough proof that a business case holds",
         "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because AI removes the need for review",
-        "Because training should avoid examples"
+        "Because a claimed time saving per employee already counts as value before adoption is measured",
+        "Because integration, review, and support effort can be estimated once and never revisited"
       ],
       "correct": 1,
-      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
+      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that a low token price proves a case, that a claimed time saving is value before adoption, or that integration and review effort can be estimated once and left alone."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "In the lesson's opening example, why did the approved assistant's promised savings never show up in operations metrics?",
       "options": [
-        "token volume",
-        "GPU memory fragmentation",
-        "Image augmentation policy",
-        "Database sharding depth"
+        "The token bill for the assistant turned out to be far larger than the original estimate suggested",
+        "The license cost of the assistant was renegotiated upward halfway through the rollout period",
+        "Operations had no monitoring in place at all, so the gain did happen but stayed invisible in the metrics",
+        "Adoption stayed low, reviewers still checked every output, and integration work ran higher than planned"
       ],
-      "correct": 0,
-      "explanation": "The lesson uses \"token volume\" as one of the concrete signals for deciding what action or control is needed."
+      "correct": 3,
+      "explanation": "The lesson's opening example approves the project because model cost looks small, then value never materializes: adoption is low, reviewers still check every output, and integration work exceeds the estimate — not a token bill overrun, a renegotiated license, or a missing monitoring setup."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce for AI Cost and Value Economics?",
       "options": [
-        "A trained neural network",
+        "A finished business case ready to submit for funding without review",
         "A ranked plan with category, score, priority, controls, and rationale",
-        "A production SaaS backend",
-        "A browser extension"
+        "A single cost-of-ownership figure with no assumptions attached",
+        "An invoice reconciling token spend against the license budget"
       ],
       "correct": 1,
-      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a submit-ready business case, a bare cost-of-ownership figure, or a token-spend invoice."
     },
     {
       "stage": "check",
       "question": "Which control belongs to the lesson design?",
       "options": [
-        "Ignoring uncertainty to move faster",
-        "baseline metric",
-        "Removing human accountability",
-        "Treating all AI outputs as facts"
+        "Counting the promised time saving as realized value before any baseline is measured",
+        "A baseline metric, so the team can tell whether the operations number actually moved",
+        "Leaving the adoption-rate assumption out of the log because the pilot felt convincing",
+        "Treating a single low token price as the sensitivity range for the whole business case"
       ],
       "correct": 1,
-      "explanation": "The control \"baseline metric\" is part of the intended operating model for this topic."
+      "explanation": "The lesson's controls include a baseline metric — the reference point that shows whether the operations number actually moved — the opposite of counting promised savings as realized value, leaving adoption assumptions out of the log, or collapsing a sensitivity range into one token price."
     },
     {
       "stage": "post",
       "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
       "options": [
-        "When impact, uncertainty, and matched risk signals are high",
-        "Only when the model is open source",
-        "Only when the user interface is complex",
-        "Never; all AI topics should be handled informally"
+        "When impact, uncertainty, and matched risk signals such as adoption rate are all running high",
+        "Only when the license cost of the tool crosses a specific annual spending threshold agreed upfront",
+        "Only when the value case is presented to leadership rather than to the delivery team",
+        "Never — a weak value case can always be corrected at the next budget review round"
       ],
       "correct": 0,
-      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+      "explanation": "High-impact, uncertain, risk-heavy value cases need a launch gate regardless of the license spend, who the case is presented to, or whether another budget review is already scheduled."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the output template?",
       "options": [
-        "To replace project ownership",
-        "To create a reusable worksheet or prompt that teams can apply after the course",
-        "To hide assumptions from stakeholders",
-        "To generate certificates automatically"
+        "To formally replace the benefits owner's accountability for the value case after funding",
+        "To keep shaky cost assumptions out of sight of the people making the funding call",
+        "To create a reusable worksheet or prompt that teams can keep applying after the course ends",
+        "To automatically generate completion certificates for participants once the workshop ends"
       ],
-      "correct": 1,
-      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+      "correct": 2,
+      "explanation": "The output template is a value case calculator and assumption log teams keep applying after the course — not a substitute for the benefits owner's accountability, a way to hide cost assumptions, or an automatic certificate generator."
     }
   ]
 }

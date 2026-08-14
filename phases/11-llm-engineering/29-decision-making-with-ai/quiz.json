@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "Why should Decision Making with AI be taught as a workflow instead of only as tool awareness?",
       "options": [
-        "Because tools never change",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because AI removes the need for review",
-        "Because training should avoid examples"
+        "Because a confident, well-reasoned answer from the model is a sound basis for stopping a project",
+        "Because the model can carry accountability for a decision once it has compared the scenarios",
+        "Because political constraints stop mattering as soon as the evidence has been structured",
+        "Because teams need shared signals, controls, and decision rules they can apply to real work"
       ],
-      "correct": 1,
-      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
+      "correct": 3,
+      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that a confident answer justifies stopping a project, that the model can carry accountability, or that political constraints stop mattering once evidence is structured."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "In the lesson's opening example, why would treating the assistant's stop-the-project answer as a recommendation be a governance failure?",
       "options": [
-        "high uncertainty",
-        "GPU memory fragmentation",
-        "Image augmentation policy",
-        "Database sharding depth"
+        "Because the assistant's reasoning contradicted itself between the paragraphs the manager read",
+        "Because the model owns no budget, cannot see political constraints, and does not know which evidence is missing",
+        "Because the manager had not yet worked through the scenario review that the steering committee formally required",
+        "Because the decision was reversible, which puts it below the confidence threshold for escalation"
       ],
-      "correct": 0,
-      "explanation": "The lesson uses \"high uncertainty\" as one of the concrete signals for deciding what action or control is needed."
+      "correct": 1,
+      "explanation": "The lesson's opening example turns on accountability, not answer quality: the assistant sounds confident but owns no budget, cannot see the political constraints, and cannot tell which evidence is incomplete. A self-contradicting answer, a skipped scenario review, or reversibility are not the point being made."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce for Decision Making with AI?",
       "options": [
-        "A trained neural network",
+        "A final go/no-go verdict the steering committee can adopt unchanged",
         "A ranked plan with category, score, priority, controls, and rationale",
-        "A production SaaS backend",
-        "A browser extension"
+        "A confidence percentage for each option, with no evidence attached",
+        "A record of every decision the team made in the last quarter"
       ],
       "correct": 1,
-      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not an adoptable go/no-go verdict, a bare confidence percentage, or a decision log."
     },
     {
       "stage": "check",
       "question": "Which control belongs to the lesson design?",
       "options": [
-        "Ignoring uncertainty to move faster",
-        "decision owner",
-        "Removing human accountability",
-        "Treating all AI outputs as facts"
+        "Letting the model's stated confidence set the threshold for when the team is ready to act",
+        "Skipping the evidence gap log because the assistant's answer already listed several reasons",
+        "A named decision owner, so accountability for the call stays with a person, not the model",
+        "Running the scenario review only after the irreversible option has already been committed to"
       ],
-      "correct": 1,
-      "explanation": "The control \"decision owner\" is part of the intended operating model for this topic."
+      "correct": 2,
+      "explanation": "The lesson's controls include a named decision owner keeping accountability with a person — the opposite of letting the model set the confidence threshold, skipping the evidence gap log, or running the scenario review after the commitment is made."
     },
     {
       "stage": "post",
       "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
       "options": [
-        "When impact, uncertainty, and matched risk signals are high",
-        "Only when the model is open source",
-        "Only when the user interface is complex",
-        "Never; all AI topics should be handled informally"
+        "When impact, uncertainty, and matched risk signals such as an irreversible decision are all high",
+        "Only when the decision is escalated to leadership rather than settled inside the delivery team",
+        "Only when the assistant's answer disagrees with what the decision owner already believed",
+        "Never — a contested decision can always be revisited at the next steering committee meeting"
       ],
       "correct": 0,
-      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+      "explanation": "High-impact, uncertain, irreversible decisions need a launch gate regardless of who escalates them, whether the model agrees with the owner, or whether another steering meeting is scheduled."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the output template?",
       "options": [
-        "To replace project ownership",
-        "To create a reusable worksheet or prompt that teams can apply after the course",
-        "To hide assumptions from stakeholders",
-        "To generate certificates automatically"
+        "To formally replace the decision owner's accountability for making the final call",
+        "To keep the open evidence gaps out of view of the steering committee entirely",
+        "To automatically generate completion certificates for participants once the workshop ends and the debrief is filed",
+        "To create a reusable memo or checklist that teams can keep applying after the course ends"
       ],
-      "correct": 1,
-      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+      "correct": 3,
+      "explanation": "The output template is a decision memo and scenario checklist teams keep applying after the course — not a substitute for the decision owner's accountability, a way to hide evidence gaps from steering, or an automatic certificate generator."
     }
   ]
 }

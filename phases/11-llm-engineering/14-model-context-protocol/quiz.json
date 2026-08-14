@@ -7,23 +7,23 @@
       "question": "What three primitives does an MCP server expose?",
       "options": [
         "Functions, types, classes",
-        "Tools, resources, prompts",
         "Endpoints, webhooks, queues",
+        "Tools, resources, prompts",
         "Agents, skills, workflows"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The lesson defines an MCP server as exposing exactly three primitives: tools (functions the model calls), resources (read-only content addressed by URI), and prompts (reusable templated prompts)."
     },
     {
       "stage": "post",
       "question": "What wire format does MCP use?",
       "options": [
-        "GraphQL over HTTP",
-        "gRPC with protobuf",
-        "JSON-RPC 2.0",
-        "REST with OpenAPI"
+        "GraphQL queries over HTTP",
+        "JSON-RPC 2.0 over stdio or HTTP",
+        "gRPC with protobuf messages",
+        "REST with an OpenAPI schema"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": "The lesson states MCP messages are JSON-RPC 2.0 over stdio, WebSocket, or streamable HTTP, with the format `{\"jsonrpc\": \"2.0\", \"method\": \"...\", \"params\": {...}, \"id\": N}`."
     },
     {
@@ -31,9 +31,9 @@
       "question": "In MCP terminology, what is the relationship between host, client, and server?",
       "options": [
         "The host is the LLM application; the client is a sub-component of the host that speaks to exactly one server; the server is your code exposing tools, resources, and prompts",
-        "The host and client are the same thing; the server is the LLM itself",
-        "The server is the LLM application; the host exposes tools to it",
-        "The client is the protocol version; host and server are interchangeable terms for the same process"
+        "The host and the client are the same component inside the LLM application, and the server is just another name for the LLM's own reasoning process",
+        "The server is the LLM application itself, while the host is a thin wrapper process that exposes the model's own tools back to it for calling",
+        "The client refers only to the protocol version number negotiated at startup, and the host and server are interchangeable terms for one process"
       ],
       "correct": 0,
       "explanation": "The lesson defines the host as the LLM application (e.g. Claude Desktop), the client as a sub-component of the host that speaks to exactly one server, and the server as the code exposing tools, resources, and prompts. One host can mount many servers, each through its own client."
@@ -42,10 +42,10 @@
       "stage": "post",
       "question": "What is the 2025-06-18 transport that replaced the earlier SSE-only remote transport?",
       "options": [
-        "WebTransport",
-        "Streamable HTTP",
-        "WebSocket-only",
-        "gRPC bidi"
+        "WebTransport (QUIC-based)",
+        "Streamable HTTP transport",
+        "WebSocket-only transport",
+        "gRPC bidirectional streaming"
       ],
       "correct": 1,
       "explanation": "The lesson's wire-format section lists streamable HTTP, alongside stdio and WebSocket, as a transport for MCP's JSON-RPC 2.0 messages; of the four options, it is the only one the lesson names."
@@ -54,13 +54,13 @@
       "stage": "post",
       "question": "When should a tool be split into its own MCP server instead of staying inline?",
       "options": [
-        "When it is called fewer than 10 times per day",
-        "When it is called from two or more hosts and is read-only/cacheable",
-        "When it returns more than 1KB of data",
-        "Never; MCP is only for local dev"
+        "When it is called fewer than 10 times per day, since low-traffic tools are always safe to keep inline",
+        "When it returns more than 1KB of data, since payload size alone determines whether a server should be separate",
+        "Never; MCP is only useful for local development tools and cannot be exposed to more than one host",
+        "When the tool is called from two or more different hosts and is read-only/cacheable, making a shared server worth the overhead"
       ],
-      "correct": 1,
-      "explanation": ""
+      "correct": 3,
+      "explanation": "A tool used by only one host, or one with side effects that must stay tightly scoped, is usually simpler to keep inline; the shared-server overhead pays off once multiple hosts need the same read-only, cacheable capability."
     }
   ]
 }

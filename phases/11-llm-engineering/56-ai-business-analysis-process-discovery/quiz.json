@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What is the risk of AI-generated business analysis summaries?",
       "options": [
+        "They always ask too many clarifying questions before producing any summary at all",
         "They can create false confidence when stakeholders, variants, or evidence are missing",
-        "They always ask too many questions",
-        "They cannot mention process variants",
-        "They remove all assumptions"
+        "They cannot mention process variants even when multiple variants clearly exist",
+        "They automatically remove every assumption the analyst had made along the way"
       ],
-      "correct": 0,
-      "explanation": "Clean summaries can hide discovery gaps."
+      "correct": 1,
+      "explanation": "A clean AI summary can create false confidence when stakeholders, variants, or evidence are actually missing — it's not about asking too many questions, being unable to mention variants, or removing assumptions."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["requirement ambiguity", "cache TTL", "font family", "image alpha"],
-      "correct": 0,
-      "explanation": "Requirement ambiguity is a key discovery signal."
+      "question": "Interview notes describe how the approval process works in one region, but the analysis never checks whether other regions handle the same approval differently. Which of the lesson's four signals does this match most directly?",
+      "options": [
+        "Stakeholder gap — someone who could describe the process accurately was never interviewed",
+        "Process variant — the same process may work differently across teams or regions, unchecked",
+        "Requirement ambiguity — it's unclear what the approval process is actually supposed to require",
+        "Evidence missing — no source document backs up the described process steps"
+      ],
+      "correct": 1,
+      "explanation": "Never checking whether other regions handle the same process differently is the lesson's process-variant signal — distinct from a stakeholder gap, requirement ambiguity, or missing evidence."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked business-analysis discovery plan with controls",
-        "A final contract",
-        "A deployed workflow",
-        "A test runner"
+        "A final, signed contract ready to be sent to the client for approval",
+        "A fully deployed workflow running in the production process engine",
+        "A test runner that automatically validates the discovered requirements",
+        "A ranked business-analysis discovery plan with controls for each gap"
       ],
-      "correct": 0,
-      "explanation": "The artifact recommends interview, mapping, assumption, and evidence controls."
+      "correct": 3,
+      "explanation": "The artifact ranks discovery gaps into a business-analysis plan with controls such as interview guide or evidence register — it doesn't produce a contract, a deployed workflow, or a test runner."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["assumption log", "hide evidence", "skip stakeholders", "remove process variants"],
-      "correct": 0,
-      "explanation": "Assumption logs separate known facts from unresolved claims."
+      "options": [
+        "Hiding evidence gaps so the analysis reads as more complete than it is",
+        "Skipping stakeholder interviews because the process documentation already exists",
+        "Assumption log — separates confirmed facts from claims that still need checking",
+        "Removing process variants from the analysis to keep the write-up simple"
+      ],
+      "correct": 2,
+      "explanation": "The lesson's controls are interview guide, process variant map, assumption log, and evidence register — an assumption log separates confirmed facts from unresolved claims, unlike hiding evidence, skipping stakeholders, or dropping variants."
     },
     {
       "stage": "post",
       "question": "When should AI-assisted analysis move into a discovery workshop?",
       "options": [
-        "When impact and ambiguity are high and multiple discovery gaps exist",
-        "Only when every requirement is already clear",
-        "Only when no stakeholder exists",
-        "Never; summaries replace workshops"
+        "When impact and ambiguity are high and multiple discovery gaps still exist",
+        "Only when every requirement is already completely clear and confirmed",
+        "Only when there is no stakeholder available to interview at all",
+        "Never — a clean AI summary can substitute for a discovery workshop"
       ],
       "correct": 0,
-      "explanation": "High ambiguity and impact justify structured discovery."
+      "explanation": "High impact and ambiguity with multiple open discovery gaps is when analysis should move into a workshop — not when everything is already clear, no stakeholder exists, or a summary is treated as a substitute."
     },
     {
       "stage": "post",
       "question": "What should an evidence register capture?",
       "options": [
-        "Sources, examples, confirmations, and open evidence gaps",
-        "Only final solution ideas",
-        "Only AI-generated text",
-        "No source references"
+        "Only the final solution ideas that emerged from the discovery process",
+        "Only the raw AI-generated text summarizing the interview notes",
+        "Sources, examples, confirmations, and any open evidence gaps",
+        "No source references, since citations only slow down the analysis"
       ],
-      "correct": 0,
-      "explanation": "Evidence registers make analysis auditable."
+      "correct": 2,
+      "explanation": "An evidence register should capture sources, examples, confirmations, and open evidence gaps — not just solution ideas, raw AI text, or a register with no source references."
     }
   ]
 }

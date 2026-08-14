@@ -6,46 +6,46 @@
       "stage": "pre",
       "question": "What does Voyager treat as the action space?",
       "options": [
-        "Primitive Minecraft commands",
+        "Text prompts only, refined through repeated few-shot examples",
+        "Reinforcement learning Q-values updated after every environment step",
         "Executable code (JavaScript functions) stored, retrieved, and composed",
-        "Text prompts only",
-        "Reinforcement learning Q-values"
+        "Primitive Minecraft commands issued directly to the game's low-level control API"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Voyager's contribution is making code the action: skills are programs, not raw commands."
     },
     {
       "stage": "pre",
       "question": "What three components define a Voyager agent?",
       "options": [
-        "Encoder, decoder, value head",
-        "Automatic curriculum, skill library, iterative prompting",
-        "Planner, executor, judge",
-        "Retriever, generator, ranker"
+        "Encoder, decoder, and value head, borrowed from actor-critic RL",
+        "Planner, executor, and judge, each a separate LLM call",
+        "Retriever, generator, and ranker, the standard RAG pipeline",
+        "Automatic curriculum, skill library, iterative prompting"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Voyager structures the agent around curriculum, skill library, and iterative prompting."
     },
     {
       "stage": "check",
       "question": "What three signals can return from a skill execution attempt?",
       "options": [
-        "Pass, fail, retry",
         "Success, error (with stack trace), self-verification failure",
-        "Green, yellow, red",
-        "Heartbeat, ack, nack"
+        "Pass, fail, and retry after a short fixed cooldown period",
+        "Green, yellow, and red status flags shown on the monitoring dashboard",
+        "Heartbeat, ack, and nack messages exchanged between two cooperating actors"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Voyager's iterative prompting mechanism is driven by these three signals folded back into the next version."
     },
     {
       "stage": "check",
       "question": "How does the automatic curriculum pick the next task?",
       "options": [
-        "Random uniform over the action space",
+        "Always the single hardest available task, to force the fastest possible rate of learning",
         "Just above current capability, based on environment state and skill inventory (the exploration sweet spot)",
-        "Always the hardest available task",
-        "User-supplied list only"
+        "A fixed user-supplied list of tasks, replayed in exactly the same order every single episode",
+        "Random uniform sampling over the entire action space, with no regard at all for the agent's current skill level"
       ],
       "correct": 1,
       "explanation": "The proposer aims for tasks just above current capability so progress is steady."
@@ -54,36 +54,36 @@
       "stage": "check",
       "question": "Which 2026 product is the lesson's clearest match for the Voyager skill?",
       "options": [
-        "OpenAI fine-tuning",
+        "Pinecone's vector indices, used for nearest-neighbor similarity lookup at query time",
+        "AWS Lambda layers, shared binary dependencies attached to serverless functions",
         "Claude Agent SDK skills: named, retrievable code plus instructions loaded on demand",
-        "Pinecone indices",
-        "AWS Lambda layers"
+        "OpenAI's fine-tuning jobs, which bake new behavior into the model weights permanently"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Agent SDK skills match Voyager's named-retrievable-composable code pattern."
     },
     {
       "stage": "post",
       "question": "Why does the lesson recommend dedup on write for the skill library?",
       "options": [
-        "Disk is expensive",
+        "LLM providers reject function-calling schemas that contain duplicate tool names during registration",
+        "Git's content-addressable storage already blocks byte-identical duplicate commits from the skill repo",
         "Without dedup, the same skill gets added many times with slightly different descriptions; retrieval should return one canonical version",
-        "Providers reject duplicates",
-        "Git blocks duplicates"
+        "Disk storage for the skill library is expensive, so deduplication is primarily a cost-saving measure rather than a retrieval-quality one"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Near-duplicate descriptions collapse to a single canonical skill so retrieval stays clean."
     },
     {
       "stage": "post",
       "question": "What problem does composed-skill drift describe?",
       "options": [
-        "A skill stops compiling after a Python upgrade",
         "A parent skill silently picks up a refined child version it was never tested against; fix by pinning skill versions",
-        "Skills get encrypted in storage",
-        "Retrieval returns nothing"
+        "A skill stops compiling after a routine Python interpreter upgrade breaks its syntax",
+        "Skills get encrypted at rest in storage by default, which occasionally corrupts the stored source on write, forcing manual re-registration",
+        "Retrieval returns nothing because the vector index was never populated for that skill"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Without version pinning, a refinement to a child silently changes the parent's behavior."
     }
   ]

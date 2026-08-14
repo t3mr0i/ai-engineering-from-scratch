@@ -6,34 +6,34 @@
       "stage": "pre",
       "question": "What single question does the verification gate answer?",
       "options": [
-        "Is the model fast?",
-        "Is this task actually complete? (reading scope, rule, feedback, and diff artifacts)",
-        "Is the prompt optimal?",
-        "Is the token budget healthy?"
+        "Is the current prompt template the optimal one for this particular class of task?",
+        "Is the model's response fast enough to keep the agent loop under its latency budget?",
+        "Is this task actually complete? answered by reading scope, rule, feedback, and diff artifacts",
+        "Is the token budget for this whole session still healthy enough to finish all of the remaining work?"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The gate is a deterministic function over workbench artifacts producing a pass/fail verdict."
     },
     {
       "stage": "pre",
       "question": "Why must the gate be deterministic?",
       "options": [
-        "Determinism is free",
-        "The same artifact set must produce the same verdict every time; LLM judges belong in the reviewer (qualitative), not the gate (status)",
-        "Providers require it",
-        "It saves money"
+        "The same artifact set must produce the same verdict every time; LLM judges belong in the reviewer, not the gate",
+        "Determinism is required because the hosting provider bills extra for every nondeterministic call the gate ever makes",
+        "A probabilistic gate would need a much larger context window than the workbench currently budgets for",
+        "Nondeterministic gates cannot be represented at all inside the verification_report.json schema"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Mixing model judgment into the gate collapses the deterministic/qualitative split."
     },
     {
       "stage": "check",
       "question": "What is the gate's override discipline?",
       "options": [
-        "Anyone can override silently",
-        "Block-severity findings can only be overridden by a human with a recorded override_reason and overridden_by user id in a signed audit log",
-        "Override requires a manager email",
-        "Overrides are forbidden"
+        "Any team member can silently override a block finding as long as the merge succeeds afterward",
+        "Only a human can override a block finding, with a recorded override_reason and overridden_by id",
+        "The agent itself can override a block finding once it re-runs the failing acceptance command a second time",
+        "Overrides require only a manager's email address forwarded into the pull request thread"
       ],
       "correct": 1,
       "explanation": "Signed overrides land in outputs/verification/overrides.jsonl; agent cannot self-override."
@@ -42,12 +42,12 @@
       "stage": "check",
       "question": "What is the Hybrid Norm pairing the lesson cites?",
       "options": [
-        "Hot/cold prompts",
-        "Verifiable rewards (tests, schemas, exit codes) answer 'did it solve the problem?'; LLM rubrics answer 'is it readable, secure, on-style?'",
-        "GPU and CPU split",
-        "Cache vs no-cache"
+        "Verifiable rewards like tests and exit codes answer whether it solved the problem; rubrics judge style",
+        "Hot prompts run on GPUs while cold prompts fall back to CPU inference for the same request",
+        "One pass checks correctness twice; a second identical pass just confirms the first pass was not a fluke",
+        "The gate caches results while the reviewer always runs a fresh, uncached pass over the diff"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Anthropic 2026 guidance: gate runs the first class; reviewer (Lesson 39) runs the second."
     },
     {
@@ -66,10 +66,10 @@
       "stage": "post",
       "question": "What does a coverage_floor check protect against?",
       "options": [
-        "Hot-path latency",
-        "Agents quietly deleting tests that fail; the gate fails if measured coverage drops below the floor or last merge by more than 1 percentage point",
-        "Cold starts",
-        "Outdated lockfiles"
+        "Cold starts on the CI runner, a cost the gate has no way to measure from the artifacts it is given to read",
+        "Agents quietly deleting failing tests; the gate blocks if coverage drops below the floor or regresses",
+        "Outdated lockfiles, which the gate flags separately from any coverage-related finding",
+        "Hot-path latency, which the coverage_floor check reports as a warn-severity finding"
       ],
       "correct": 1,
       "explanation": "Without a floor, agents can silently lower coverage to keep the verdict green."
@@ -78,12 +78,12 @@
       "stage": "post",
       "question": "When should --strict mode promote every warn to block?",
       "options": [
-        "Always",
-        "Release branches, ship-blocking PRs, post-incident triage; not the daily default because strict-on-everything corrodes flow",
-        "Never",
-        "Only on Sundays"
+        "Always, since --strict is meant to be the permanent default posture for every branch",
+        "Never, since promoting warnings to blocks would make the gate impossible to pass",
+        "Release branches, ship-blocking PRs, and post-incident triage, not the daily default",
+        "Only on branches whose name matches a regex configured in the gate's own settings file"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "--strict is opt-in by branch; reserve for high-stakes moments."
     }
   ]

@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What must AI support automation preserve?",
       "options": [
-        "Service ownership, escalation criteria, and support quality",
-        "Hidden uncertainty",
-        "Unreviewed ticket closure",
-        "No knowledge updates"
+        "The first-response time, even when the answer is still unverified",
+        "Service ownership, explicit escalation criteria, and support quality",
+        "The existing ticket categories, left unchanged by the new workflow",
+        "The agent headcount, so knowledge articles keep being written"
       ],
-      "correct": 0,
-      "explanation": "AI support should reduce friction without hiding accountability or service risk."
+      "correct": 1,
+      "explanation": "AI support should reduce friction without hiding accountability or service risk. Ownership and escalation criteria have to survive the automation."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": ["SLA pressure", "font weight", "GPU vendor", "audio sample rate"],
-      "correct": 0,
-      "explanation": "SLA pressure is a service-management signal."
+      "question": "A service AI drafts good responses but corrected answers never feed back anywhere. What is missing?",
+      "options": [
+        "The service scope - the workflow has not defined which ticket types it may handle",
+        "The confidence rule - uncertain drafts reach agents without being flagged first",
+        "The escalation path - there is no defined route for tickets the model cannot answer",
+        "The learning loop - corrections have to update the knowledge source for the next ticket"
+      ],
+      "correct": 3,
+      "explanation": "The lesson closes its workflow with a learning loop and lists knowledge updates as one of its four controls. Without it, corrections never reach the knowledge source and the same gap reappears on the next ticket."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
         "A ranked support AI readiness plan with controls and rationale",
-        "A production ticketing system",
-        "An automatic incident closure",
-        "A service contract"
+        "A production ticketing system that routes incoming service requests",
+        "An automatic closure for tickets answered with high confidence",
+        "A service contract fixing the response times support commits to"
       ],
       "correct": 0,
-      "explanation": "The artifact helps choose controls for support workflows."
+      "explanation": "The artifact helps choose controls for support workflows before AI is introduced into them."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["escalation path", "hide SLA risk", "skip knowledge updates", "remove service scope"],
-      "correct": 0,
-      "explanation": "Escalation paths preserve accountability."
+      "options": [
+        "An SLA display that hides the breach risk so agents are not distracted",
+        "A knowledge base frozen at go-live so answers stay consistent over time",
+        "An escalation path that names where a ticket goes when the model is unsure",
+        "A service scope left open, so the assistant can attempt any incoming ticket"
+      ],
+      "correct": 2,
+      "explanation": "Escalation paths preserve accountability. Service scope, a confidence threshold, and knowledge updates are the other controls this lesson teaches."
     },
     {
       "stage": "post",
       "question": "When should service AI require stronger controls?",
       "options": [
-        "When ticket volume, SLA pressure, or escalation risk is high",
-        "Only when the ticket text is short",
-        "Only when no users are affected",
-        "Never; support automation is always safe"
+        "When ticket volume, SLA pressure, or escalation risk is running high",
+        "Only when tickets arrive in a language the support team cannot read",
+        "Only when the assistant drafts replies rather than classifying them",
+        "Only when the service desk runs outside normal business hours"
       ],
       "correct": 0,
-      "explanation": "High-impact service workflows need stronger readiness controls."
+      "explanation": "High-impact service workflows need stronger readiness controls. The signals are ticket volume, SLA pressure, knowledge gaps, and escalation risk."
     },
     {
       "stage": "post",
       "question": "Why are confidence thresholds useful?",
       "options": [
+        "They let the assistant close low-risk tickets without any agent involvement",
         "They prevent silent automation failure and trigger review or escalation",
-        "They remove all human support",
-        "They approve every response",
-        "They hide uncertainty from agents"
+        "They rank knowledge articles so the most-used answer is suggested first",
+        "They set the SLA target that the automated responses are measured against"
       ],
-      "correct": 0,
-      "explanation": "Confidence thresholds keep uncertain cases in controlled paths."
+      "correct": 1,
+      "explanation": "Confidence thresholds keep uncertain cases in controlled paths and prevent silent automation failure."
     }
   ]
 }

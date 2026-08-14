@@ -6,46 +6,46 @@
       "stage": "pre",
       "question": "What does the lesson identify as the root cause of agent failures on real tasks?",
       "options": [
-        "Insufficient model parameters",
+        "Insufficient model parameters compared to a larger frontier checkpoint from the same vendor",
+        "Slow network latency between the agent runtime and the model provider's API endpoint",
         "Workbench failures: missing surfaces around the model, not LLM limitations",
-        "Slow network",
-        "Outdated training data"
+        "Outdated training data that predates the repository's current dependency versions"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The model is not wrong about Python; it is wrong about the work. Surfaces around the model are missing."
     },
     {
       "stage": "pre",
       "question": "What are the seven workbench surfaces the lesson names?",
       "options": [
-        "Instructions, state, scope, feedback, verification, review, handoff",
-        "Train, eval, deploy, monitor, retrain, scale, retire",
-        "Plan, act, reflect, refine, debate, vote, ship",
-        "Read, write, exec, fork, exit, wait, kill"
+        "Train, eval, deploy, monitor, retrain, scale, and retire model versions across releases",
+        "Plan, act, reflect, refine, debate, vote, and ship as a multi-agent consensus loop",
+        "Read, write, exec, fork, exit, wait, and kill as POSIX process primitives",
+        "Instructions, state, scope, feedback, verification, review, handoff"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "The seven surfaces are instructions, state, scope, feedback, verification, review, handoff."
     },
     {
       "stage": "check",
       "question": "Which is NOT one of the eight distributed-systems primitives the lesson maps surfaces to?",
       "options": [
-        "Function",
-        "Worker",
-        "Trigger",
-        "Backpropagation"
+        "Backpropagation",
+        "Function primitive",
+        "Worker primitive",
+        "Trigger primitive"
       ],
-      "correct": 3,
+      "correct": 0,
       "explanation": "The eight primitives are function, worker, trigger, runtime, HTTP/RPC, queue, session persistence, authorization policy."
     },
     {
       "stage": "check",
       "question": "What did Vercel's reported harness change move success rate from and to?",
       "options": [
-        "20% to 60%",
+        "20% to 60%, by adding a second reviewer worker to the pipeline",
         "80% to 100%, by deleting 80% of the agent's tools",
-        "0% to 100%, by switching models",
-        "50% to 70%, by adding RAG"
+        "0% to 100%, by switching to Claude Opus with more parameters",
+        "50% to 70%, by adding retrieval-augmented generation"
       ],
       "correct": 1,
       "explanation": "Deleting 80% of tools moved Vercel's agent from 80% to 100% success."
@@ -54,36 +54,36 @@
       "stage": "check",
       "question": "What does Terminal Bench 2.0 demonstrate about model vs harness?",
       "options": [
-        "Models alone determine ranking",
+        "Models alone determine ranking regardless of tool count or harness configuration used",
+        "Harness changes do not matter once the underlying model has enough training data",
         "Same model moved from outside top 30 to rank five by changing only the harness",
-        "Harness changes do not matter",
-        "Only GPUs matter"
+        "Only GPU throughput and inference speed determine an agent's benchmark ranking"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "LangChain's Anatomy of an Agent Harness: same model, harness change, 25+ rank jump."
     },
     {
       "stage": "post",
       "question": "What does the lesson recommend doing when you hear new harness vocabulary?",
       "options": [
-        "Adopt the vocabulary verbatim",
-        "Translate back to primitives (function, worker, trigger, runtime, HTTP/RPC, queue, persistence, policy) before adopting",
-        "Reject it",
-        "Wait for OpenAI to standardize it"
+        "Adopt the vocabulary verbatim from whichever vendor, blog post, or conference talk introduced the new harness term this quarter",
+        "Reject any new vocabulary outright and continue using only the original agent-loop terminology forever",
+        "Wait for OpenAI to standardize the vocabulary across every vendor before using any harness term at all",
+        "Translate back to primitives (function, worker, trigger, runtime, HTTP/RPC, queue, persistence, policy) before adopting"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Reason from primitives, not vendor taxonomies; the vocabulary changes but the engineering does not."
     },
     {
       "stage": "post",
       "question": "Where does chat history sit relative to the workbench?",
       "options": [
-        "Chat is the system of record",
         "Chat is volatile; the repo is the system of record",
-        "Both are equivalent",
-        "Neither matters"
+        "Chat is the system of record; the repo just mirrors it",
+        "Both are equivalent; the repo regenerates from chat",
+        "Neither matters; the model re-derives context alone"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The loop closes on the state file, not on chat history."
     }
   ]

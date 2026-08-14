@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What is the main risk of AI-written reporting narratives?",
       "options": [
-        "They can overstate ambiguous metrics, misleading charts, or weak causality",
-        "They always include too many metric definitions",
-        "They cannot summarize dashboards",
-        "They remove all decisions"
+        "They always add so many metric definitions that the reporting narrative becomes unreadable",
+        "They can turn ambiguous metrics, misleading charts, or weak correlations into confident claims",
+        "They cannot summarize a dashboard at all without an analyst writing the narrative text first",
+        "They automatically strip the decision context out of every management report narrative"
       ],
-      "correct": 0,
-      "explanation": "AI reporting narratives need evidence and interpretation controls."
+      "correct": 1,
+      "explanation": "AI can quickly draft dashboard summaries; the risk is that ambiguous metrics, misleading charts, or weak correlations become confident business explanations — not unreadable definition lists, an inability to summarize, or decision context being removed."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["causality claim", "screen zoom", "CSS border", "audio latency"],
-      "correct": 0,
-      "explanation": "Causality claims need careful review before being written into reporting narratives."
+      "question": "A draft dashboard summary states that the new self-service portal \"drove\" the drop in support tickets, although the two trends were only observed in the same quarter. Which of the lesson's four signals does this match most directly?",
+      "options": [
+        "Metric ambiguity — it is unclear how the support-ticket metric is actually defined",
+        "Visualization risk — the chart's axis or scale makes the change look larger than it is",
+        "Causality claim — a correlation between two trends is written up as a cause",
+        "Audience decision — the narrative is aimed at a decision the audience has to make"
+      ],
+      "correct": 2,
+      "explanation": "Writing a same-quarter correlation as \"drove\" is the lesson's causality-claim signal, handled with a causality warning — distinct from metric ambiguity (an unclear definition), visualization risk (a misleading chart), or an audience decision."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked reporting narrative review plan with controls",
-        "A full BI dashboard",
-        "A database migration",
-        "A charting library"
+        "A complete BI dashboard with every KPI chart already built for the audience in advance",
+        "A database migration script that reshapes the underlying reporting tables",
+        "A ranked reporting-narrative review plan with a control for each risk found",
+        "A charting library used to render the visualizations behind the narrative"
       ],
-      "correct": 0,
-      "explanation": "The artifact maps reporting risks to review controls."
+      "correct": 2,
+      "explanation": "The artifact ranks reporting scenarios and maps risks such as causality claims to controls like metric definition or chart check — it does not build a dashboard, migrate a database, or render charts."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["metric definition", "hide chart risk", "skip decision context", "state correlation as causation"],
+      "options": [
+        "Metric definition — stating exactly what the number in the narrative measures",
+        "Hiding the chart risk so the visualization supports the intended story better",
+        "Skipping decision context so the narrative reads as neutral background reading",
+        "Writing a correlation as a cause so the report gives a clearer recommendation"
+      ],
       "correct": 0,
-      "explanation": "Metric definitions make AI-written data stories reviewable."
+      "explanation": "The lesson's controls are metric definition, chart check, causality warning, and decision context — a metric definition states what the number actually measures, unlike hiding chart risk, dropping decision context, or presenting correlation as cause."
     },
     {
       "stage": "post",
       "question": "When should a reporting narrative require review?",
       "options": [
+        "Only when nobody is expected to read or act on the report the narrative appears in",
+        "Only when every metric in the report is already obvious and needs no definition",
         "When decision impact is high or metrics, charts, causality, or audience context are risky",
-        "Only when nobody will use the report",
-        "Only when all metrics are obvious",
-        "Never; AI summaries are enough"
+        "Never — an AI-written summary is trustworthy enough to share without a review gate"
       ],
-      "correct": 0,
-      "explanation": "High-impact reporting narratives need controls."
+      "correct": 2,
+      "explanation": "High decision impact, or risk in the metrics, charts, causality, or audience context, is exactly when a narrative needs the review gate — not an unread report, obvious metrics, or trusting an AI summary as it stands."
     },
     {
       "stage": "post",
       "question": "What should be clear before sharing AI-generated BI text?",
       "options": [
-        "Metric definition, chart check, causality warning, and decision context",
-        "Only title and date",
-        "Only color palette",
-        "No audience context"
+        "Only the report title and the date on which the underlying data was last refreshed",
+        "Only the color palette used in the dashboard's charts and its headline figures",
+        "Nothing about the audience, since the same narrative suits every reader equally",
+        "Metric definition, chart check, causality warning, and decision context"
       ],
-      "correct": 0,
-      "explanation": "These controls prevent misleading reporting narratives."
+      "correct": 3,
+      "explanation": "Before sharing, the metric definition, chart check, causality warning, and decision context should all be clear — not just a title and refresh date, the color palette, or a narrative written without regard for its audience."
     }
   ]
 }

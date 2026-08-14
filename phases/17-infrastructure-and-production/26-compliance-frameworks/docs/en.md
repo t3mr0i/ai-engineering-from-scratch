@@ -10,7 +10,7 @@
 ## Learning Objectives
 
 - Enumerate the seven 2026 frameworks relevant to LLM products and match each to a customer segment.
-- Cite the EU AI Act enforcement timeline (in force August 2024; high-risk enforcement August 2026) and the two-tier fine ceiling (€15M / 3% for high-risk obligations, €35M / 7% for prohibited practices).
+- Cite the EU AI Act enforcement timeline (in force August 2024; high-risk enforcement 2 December 2027 for Annex III / 2 August 2028 for Annex I, per Regulation (EU) 2026/1744) and the two-tier fine ceiling (€15M / 3% for high-risk obligations, €35M / 7% for prohibited practices).
 - Explain why post-processing PII cleanup is not enough for GDPR and name real-time inference-layer redaction as the defensible standard.
 - Describe cross-framework control mapping (e.g., access control maps to ISO 27001 A.5.15-5.18 + GDPR Art. 32 + HIPAA §164.312(a)).
 
@@ -38,8 +38,9 @@ Multi-framework coverage is not an LLM problem — it's an enterprise-SaaS probl
 
 - August 1, 2024: in force.
 - February 2, 2025: prohibited-AI practices enforced.
-- August 2, 2026: high-risk systems enforced (conformity assessment, documentation, logging).
-- August 2027: high-risk systems in products under harmonized legislation.
+- August 2, 2026: Article 50 transparency obligations enforced (unchanged by Regulation (EU) 2026/1744).
+- December 2, 2027: Annex III high-risk systems enforced (conformity assessment, documentation, logging) — postponed from the original August 2, 2026 by Regulation (EU) 2026/1744.
+- August 2, 2028: Annex I high-risk systems (in products under harmonized legislation) enforced — postponed from the original August 2027 by Regulation (EU) 2026/1744.
 
 Risk tiers: Unacceptable (banned), High-risk (conformity + logging), Limited-risk (transparency), Minimal-risk (no constraint). Most B2B LLM SaaS is limited-risk; high-risk kicks in for employment, credit, education, law enforcement, migration, essential services.
 
@@ -92,7 +93,7 @@ OpenAI maintains SOC 2 Type 2, ISO/IEC 27001:2022, ISO/IEC 27701:2019, GDPR/CCPA
 ### Numbers you should remember
 
 - EU AI Act fines: up to €15M / 3% (high-risk obligations, Art. 99(4)); up to €35M / 7% (prohibited practices, Art. 99(3)).
-- EU AI Act high-risk enforcement: August 2, 2026.
+- EU AI Act high-risk enforcement: December 2, 2027 (Annex III) / August 2, 2028 (Annex I), per Regulation (EU) 2026/1744.
 - Largest documented AI-specific GDPR fine: €30.5M, Clearview AI (Dutch DPA, Sept 2024).
 - Largest LLM-specific GDPR fine: €15M, OpenAI (Italy's Garante, Dec 2024; overturned on appeal March 2026).
 - SOC 2 Type II window: 6-12 months of operated controls.

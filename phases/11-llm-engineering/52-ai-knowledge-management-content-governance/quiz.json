@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "Why do AI assistants need governed knowledge sources?",
       "options": [
-        "Because retrieval can make stale or wrong sources look authoritative",
-        "Because content owners are never needed",
-        "Because access rules should be ignored",
-        "Because duplicate answers improve trust"
+        "Because content owners are never needed once a document is uploaded to the assistant",
+        "Because retrieval can make stale or wrong sources look authoritative and trustworthy",
+        "Because access rules should be ignored so retrieval can search everything freely",
+        "Because duplicate answers across sources actually improve user trust in the assistant"
       ],
-      "correct": 0,
-      "explanation": "Source governance protects trust in AI-assisted answers."
+      "correct": 1,
+      "explanation": "Retrieval can surface a stale or wrong source and present it as authoritative — content owners still matter, access rules still apply, and duplicate answers undermine trust rather than improving it."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["stale content", "GPU thread", "audio bitrate", "font baseline"],
+      "question": "Two SharePoint pages give contradictory instructions for the same expense-approval process, and the assistant sometimes cites one page and sometimes the other. Which of the lesson's four signals does this match most directly?",
+      "options": [
+        "Duplicate answer — conflicting versions of the same content exist and haven't been reconciled",
+        "Stale content — the page hasn't been updated even though the process it describes has changed recently",
+        "Unclear source — no one can tell which document is the authoritative one to cite",
+        "Access risk — the page is visible to people who shouldn't be able to read it"
+      ],
       "correct": 0,
-      "explanation": "Stale content is a core knowledge-source risk."
+      "explanation": "Two contradictory pages describing the same process is the lesson's duplicate-answer signal — distinct from stale content (outdated but singular), unclear source (no clear authoritative origin), or access risk (wrong visibility)."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked content-governance readiness plan",
-        "A complete knowledge base",
-        "An access-control server",
-        "A final policy"
+        "A ranked content-governance readiness plan with controls for each source",
+        "A complete, fully populated knowledge base ready to connect to an assistant",
+        "An access-control server that manages permissions across every content source",
+        "A finalized governance policy document ready for executive sign-off"
       ],
       "correct": 0,
-      "explanation": "The artifact ranks source risks and recommends controls."
+      "explanation": "The artifact ranks source risks into a content-governance readiness plan with controls — it doesn't build a knowledge base, stand up an access-control server, or finalize a policy."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["freshness check", "ignore source rank", "remove owners", "skip access review"],
-      "correct": 0,
-      "explanation": "Freshness checks help decide whether content is AI-ready."
+      "options": [
+        "Ignoring source rank so every document is treated as equally authoritative",
+        "Freshness check — confirming a source still reflects the current process",
+        "Removing content owners once a document has been indexed for retrieval",
+        "Skipping the access review so retrieval can reach every document by default"
+      ],
+      "correct": 1,
+      "explanation": "The lesson's controls are content owner, freshness check, source rank, and access rule — freshness check confirms a source still matches the current process, unlike ignoring rank, removing owners, or skipping access review."
     },
     {
       "stage": "post",
       "question": "When should content be cleaned up before AI use?",
       "options": [
-        "When content is stale, duplicated, ownerless, or access-sensitive",
-        "Only when no one uses it",
-        "Only when it is already reviewed",
-        "Never; retrieval solves source quality"
+        "Only when nobody in the organization is actively using the content anymore",
+        "When content is stale, duplicated, ownerless, or sensitive from an access standpoint",
+        "Only when the content has already passed a full editorial and legal review",
+        "Never — retrieval quality alone is enough to fix source-quality problems"
       ],
-      "correct": 0,
-      "explanation": "These signals can make AI answers unreliable or unsafe."
+      "correct": 1,
+      "explanation": "Stale, duplicated, ownerless, or access-sensitive content is exactly when cleanup is needed before AI use — not only unused content, already-reviewed content, or trusting retrieval to fix source quality."
     },
     {
       "stage": "post",
       "question": "What should every important knowledge source have?",
       "options": [
-        "Owner, freshness check, source rank, and access rule",
-        "No review date",
-        "Unlimited access",
-        "Conflicting duplicates"
+        "A named owner, a freshness check, a source rank, and a clear access rule",
+        "No review date, since freshness matters less than completeness for AI sources",
+        "Unlimited access for every employee, since access rules slow retrieval down",
+        "Conflicting duplicates left unresolved, since AI can pick the better version itself"
       ],
       "correct": 0,
-      "explanation": "These controls make knowledge sources ready for AI assistants."
+      "explanation": "Every important source needs a named owner, a freshness check, a source rank, and an access rule — not an absent review date, unlimited access, or unresolved duplicates left for AI to sort out."
     }
   ]
 }

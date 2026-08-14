@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "What makes AI risk management actionable?",
       "options": [
-        "A named owner, control, and evidence for the risk",
-        "A broad principle with no evidence",
-        "A hidden policy exception",
-        "A use case with no owner"
+        "A broad governance principle stated without any supporting control evidence",
+        "A policy exception that gets approved quietly without visible review",
+        "An AI use case that moves to production without any named control owner",
+        "A named owner, a specific control, and evidence tied to that risk"
       ],
-      "correct": 0,
-      "explanation": "Governance requires ownership, controls, and evidence."
+      "correct": 3,
+      "explanation": "Governance becomes actionable with a named owner, a control, and evidence — not a principle with no evidence, a policy exception approved without review, or a use case with no owner at all."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["policy exception", "CSS selector", "frame rate", "screen size"],
+      "question": "A team is granted a one-off exemption from the standard model-review process to hit a launch date, and the exemption is never logged or reviewed by anyone else. Which of the lesson's four signals does this match most directly?",
+      "options": [
+        "Policy exception — a deviation from standard governance that hasn't gone through visible review",
+        "Control owner — no one is named as accountable for maintaining this control",
+        "Audit evidence — the records needed to prove a control ran are missing or incomplete",
+        "High impact — the use case affects a large number of people or a lot of money"
+      ],
       "correct": 0,
-      "explanation": "Policy exceptions need visible review and approval."
+      "explanation": "An unlogged, unreviewed exemption from standard review is the lesson's policy-exception signal — distinct from a missing control owner, missing audit evidence, or a use case simply being high impact."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked risk and control plan with governance next steps",
-        "A legal waiver",
-        "A complete audit report",
-        "A neural network"
+        "A signed legal waiver that removes the need for further governance review",
+        "A ranked risk and control plan with governance next steps for each scenario",
+        "A complete, ready-to-file audit report covering the full use case",
+        "A neural network trained to automatically approve or reject risk exceptions unattended"
       ],
-      "correct": 0,
-      "explanation": "The artifact maps risk signals to controls and priorities."
+      "correct": 1,
+      "explanation": "The artifact ranks scenarios into a risk-and-control plan with governance next steps — it doesn't issue a legal waiver, produce a finished audit report, or train a model to approve risks."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["audit trail", "hide evidence", "skip control tests", "remove owner"],
-      "correct": 0,
-      "explanation": "Audit trails make controls inspectable."
+      "options": [
+        "Hiding control evidence so a later audit can't find gaps in the process",
+        "Skipping control tests because the use case seemed low risk at the time",
+        "Removing the approval owner once the risk register entry is closed",
+        "Audit trail — a record that lets someone later verify a control actually ran"
+      ],
+      "correct": 3,
+      "explanation": "The lesson's controls are risk register, control test, audit trail, and approval owner — an audit trail lets someone verify later that a control ran, unlike hiding evidence, skipping tests, or removing the owner."
     },
     {
       "stage": "post",
       "question": "When should an AI use case be escalated for governance review?",
       "options": [
-        "When impact is high, control maturity is low, or policy exceptions exist",
-        "Only when there is no risk",
-        "Only when evidence is complete",
-        "Never; risk registers are optional"
+        "Only when there is no identifiable risk in the use case at all",
+        "Only after all control evidence has already been fully collected",
+        "When impact is high, control maturity is low, or a policy exception exists",
+        "Never — keeping a risk register is entirely optional for AI use cases"
       ],
-      "correct": 0,
-      "explanation": "High risk or weak controls require stronger review."
+      "correct": 2,
+      "explanation": "High impact, weak control maturity, or a live policy exception are exactly when governance review should escalate — not the absence of risk, complete evidence, or treating the risk register as optional."
     },
     {
       "stage": "post",
       "question": "What should be captured during delivery, not after launch?",
       "options": [
-        "Control evidence and audit trail",
-        "Only informal comments",
-        "Only a launch announcement",
-        "No approvals"
+        "Only informal chat comments exchanged during the sprint, with no record kept",
+        "Only a launch announcement sent to stakeholders once the feature is live",
+        "Control evidence and an audit trail that a reviewer can check later",
+        "No approvals, since the delivery team can self-certify the release"
       ],
-      "correct": 0,
-      "explanation": "Evidence is easier and safer to collect during delivery."
+      "correct": 2,
+      "explanation": "Control evidence and an audit trail are easier and safer to capture during delivery than after launch — not informal comments, a launch announcement, or skipping approvals."
     }
   ]
 }

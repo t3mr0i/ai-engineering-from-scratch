@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Glossary · LHIND AI Learning Catalog</title>
+  <title data-i18n="title_glossary">AI Glossary · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
   <meta name="description" content="AI glossary: what people say vs what things actually mean. Every term explained without hand-waving.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/glossary.html">
@@ -185,7 +185,7 @@
 </head>
 <body>
 
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n="skip_content">Skip to content</a>
 
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
@@ -204,7 +204,7 @@
     <div class="container">
       <div class="glossary-header">
         <h1 data-i18n="glossary_title">AI Glossary</h1>
-        <p>What people <em>say</em> vs what things actually <em>mean</em></p>
+        <p data-i18n-html="glossary_sub_html">What people <em>say</em> vs what things actually <em>mean</em></p>
       </div>
       <div class="glossary-search-wrap">
         <input type="text" class="glossary-search" id="glossarySearch" placeholder="Search terms..." data-i18n-placeholder="glossary_search_ph">
@@ -212,9 +212,9 @@
       <div class="glossary-sort" style="text-align: center; margin-bottom: 24px;">
         <label for="glossarySort" data-i18n="sort_label">Sort by</label>
         <select id="glossarySort">
-          <option value="term">Term</option>
-          <option value="says">What people say</option>
-          <option value="means">What it means</option>
+          <option value="term" data-i18n="glossary_sort_term">Term</option>
+          <option value="says" data-i18n="glossary_sort_says">What people say</option>
+          <option value="means" data-i18n="glossary_sort_means">What it means</option>
         </select>
       </div>
       <div class="glossary-toggle" style="text-align: center; margin-bottom: 16px;">

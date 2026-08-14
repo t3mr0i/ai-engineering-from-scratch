@@ -6,22 +6,22 @@
       "stage": "pre",
       "question": "Why is scope creep called the most under-monitored failure mode?",
       "options": [
-        "It crashes the agent loudly",
         "Each touch had a plausible reason in the moment; together they form a different change than was reviewed",
-        "It is too rare to monitor",
-        "Tests catch it automatically"
+        "It only happens when a scope contract on disk is missing its forbidden_files glob field entirely",
+        "The verification gate silently downgrades every block-severity finding into a mere warning note",
+        "It occurs only when two separate agents happen to edit the same repository during one shared working session"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Agents narrate each step in good faith; the silent total is the creep."
     },
     {
       "stage": "pre",
       "question": "Which contract field does the lesson call half the contract?",
       "options": [
-        "goal",
-        "forbidden_files (the negative space)",
-        "task_id",
-        "approvals_required"
+        "task_id, since it links the contract back to the board entry the human filed",
+        "forbidden_files (the negative space); a contract without it is incomplete",
+        "approvals_required, since every field above it depends on this one being set",
+        "rollback_plan, since the checker cannot run without a paragraph describing it"
       ],
       "correct": 1,
       "explanation": "A contract without forbidden_files is incomplete; the negative space is half the contract."
@@ -30,10 +30,10 @@
       "stage": "check",
       "question": "Why pin allowed/forbidden to globs rather than raw paths?",
       "options": [
-        "Globs are faster",
-        "Real repos move files; globs survive refactors between sessions",
-        "Globs encrypt better",
-        "Raw paths are not JSON-serializable"
+        "Because raw paths cannot be stored as valid JSON string values in a contract",
+        "Real repos move files between sessions; globs like app/**/*.py survive refactors",
+        "Because glob patterns compress smaller than an equivalent list of raw paths",
+        "Because the scope checker only accepts glob syntax and rejects literal paths outright"
       ],
       "correct": 1,
       "explanation": "Globs (app/**/*.py) keep the contract valid through refactors."

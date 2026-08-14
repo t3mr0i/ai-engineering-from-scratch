@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "What makes an AI idea a useful use case candidate?",
       "options": [
+        "It arrives with a vendor demo that already impressed several people in the room",
         "It has a workflow, evidence, value, risk, ownership, and a way to measure impact",
-        "It mentions AI in the title",
-        "It avoids all metrics",
-        "It has no owner"
+        "It promises a broad transformation story that leadership can quote in a townhall meeting",
+        "It sits highest in the backlog because it was submitted before the other ideas"
       ],
-      "correct": 0,
-      "explanation": "A use case must be tied to a workflow and measurable outcome."
+      "correct": 1,
+      "explanation": "A use case must be tied to a workflow and a measurable outcome. Discovery starts with the workflow, not with a tool, and the output is a short pilot brief rather than a transformation promise."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "A backlog holds twenty AI ideas. Why are they hard to prioritize as they stand?",
       "options": [
-        "manual work",
-        "GPU temperature",
-        "CSS specificity",
-        "Audio sample rate"
+        "They are not comparable: one saves minutes, one reduces risk, one improves quality, one is a demo",
+        "They were written by different teams, so the wording and level of detail vary across the entries each time",
+        "There are too many of them for one workshop, so the list has to be cut before scoring begins",
+        "They lack technical detail about model choice, context window size, and expected token cost"
       ],
       "correct": 0,
-      "explanation": "Manual work is a common signal for automation or AI opportunity discovery."
+      "explanation": "The lesson's problem statement is comparability. Without a shared scoring method that weighs value, risk, volume, variance, and ownership on the same scale, prioritization becomes opinion-driven."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
+        "A finished product roadmap with committed delivery dates per quarter",
+        "A retrieval index over the team's documents for semantic search",
         "A ranked use-case plan with priority, controls, and rationale",
-        "An automatic product roadmap",
-        "A neural search index",
-        "A legal approval"
+        "A signed compliance approval that clears the use case for launch"
       ],
-      "correct": 0,
-      "explanation": "The artifact helps teams compare use cases and choose the next control level."
+      "correct": 2,
+      "explanation": "The artifact helps teams compare use cases against each other and choose the next control level for each one."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
       "options": [
-        "use case canvas",
-        "Ignoring ownership",
-        "Skipping pilot metrics",
-        "Approving every idea"
+        "A vendor shortlist that names the AI products each idea would be built on",
+        "A transformation narrative that describes the end state three years out",
+        "A backlog ordering rule that promotes whichever idea was submitted first",
+        "A use case canvas that captures value, risk, owner, data, metric, and next step"
       ],
-      "correct": 0,
-      "explanation": "The use case canvas captures the information needed for prioritization."
+      "correct": 3,
+      "explanation": "The use case canvas captures the information needed for prioritization - value, risk, owner, data, metric, and next step - so ideas can be compared on the same terms."
     },
     {
       "stage": "post",
       "question": "When should a use case move toward a guided pilot?",
       "options": [
+        "When the idea is popular enough that several teams have asked for it by name",
         "When the value is plausible, the workflow is clear, and the risks are controllable",
-        "When no metric exists",
-        "When the owner is unknown",
-        "When the data cannot be accessed"
+        "When no owner has been named yet, so a pilot can be used to find one",
+        "When the data is inaccessible, since a pilot is the cheapest way to test access"
       ],
-      "correct": 0,
-      "explanation": "A guided pilot needs enough structure to test the hypothesis safely."
+      "correct": 1,
+      "explanation": "A guided pilot needs enough structure to test the hypothesis safely. Ideas without a clear workflow, an accountable owner, or usable data are not ready for one."
     },
     {
       "stage": "post",
       "question": "What is the main purpose of the pilot brief?",
       "options": [
-        "To make the next experiment specific enough to test",
-        "To replace stakeholder alignment",
-        "To hide risks",
-        "To remove measurement"
+        "To secure budget approval before the workflow has been described",
+        "To make the next experiment specific enough to test against a named metric",
+        "To replace the stakeholder alignment conversation with a written document",
+        "To promise a broad transformation that leadership can announce externally"
       ],
-      "correct": 0,
-      "explanation": "The pilot brief turns an idea into a measurable next step."
+      "correct": 1,
+      "explanation": "The pilot brief turns an idea into a measurable next step. The lesson asks for a short, testable brief rather than a broad transformation promise."
     }
   ]
 }

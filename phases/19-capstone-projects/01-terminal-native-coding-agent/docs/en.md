@@ -26,7 +26,7 @@ The sandbox is E2B or Daytona. Each task runs in a fresh devcontainer with a git
   user CLI  ->  harness (Bun + Ink TUI)
                   |
                   v
-           plan / act / observe loop  <--->  Claude Sonnet 4.7 / GPT-5.4-Codex / Gemini 3 Pro
+           plan / act / observe loop  <--->  Claude Sonnet 4.6 / GPT-5.4-Codex / Gemini 3 Pro
                   |                          (via OpenRouter, model-agnostic)
                   v
            tool dispatcher (MCP StreamableHTTP client)
@@ -53,7 +53,7 @@ The sandbox is E2B or Daytona. Each task runs in a fresh devcontainer with a git
 ## Stack
 
 - Harness runtime: Bun 1.2 + Ink 5 (React-in-terminal)
-- Model access: OpenRouter unified API with Claude Sonnet 4.7, GPT-5.4-Codex, Gemini 3 Pro, Opus 4.5 (for hardest tasks)
+- Model access: OpenRouter unified API with Claude Sonnet 4.6, GPT-5.4-Codex, Gemini 3 Pro, Opus 4.5 (for hardest tasks)
 - Tool transport: Model Context Protocol StreamableHTTP (MCP 2026 revision)
 - Sandbox: E2B sandboxes (JS SDK) or Daytona devcontainers
 - Code search: ripgrep subprocess, tree-sitter parsers for 17 languages (pre-compiled)

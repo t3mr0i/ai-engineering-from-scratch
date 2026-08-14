@@ -6,72 +6,72 @@
       "stage": "pre",
       "question": "What is the core role of an AI gateway in the lesson?",
       "options": [
-        "A model fine-tuning service",
-        "A vector database for retrieval",
-        "A logging-only sidecar",
-        "A process sitting between apps and model providers that consolidates routing, fallback, retries, rate limits, secret references, observability, and guardrails behind one API"
+        "A model fine-tuning service that trains custom LoRA adapters on top of a base model",
+        "A process sitting between apps and model providers that consolidates routing, fallback, retries, rate limits, secret references, observability, and guardrails behind one API",
+        "A vector database for retrieval that stores embeddings for RAG pipelines",
+        "A logging-only sidecar that records requests and responses without touching routing or fallback"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The lesson defines an AI gateway as a process sitting between apps and model providers that consolidates provider routing, fallback, retries, rate limits, secret references, observability, and guardrails behind one typically OpenAI-compatible API."
     },
     {
       "stage": "check",
       "question": "What scale ceiling does Kong's benchmark report for LiteLLM?",
       "options": [
-        "It tops out at 50 RPS",
+        "It tops out at 50 RPS, far below the figure the lesson attributes to Kong's published benchmark",
+        "It scales linearly past 10k RPS with no reported memory or failure issues at that volume",
         "It breaks down around ~2000 RPS with 8 GB memory and cascading failures under sustained load",
-        "It scales linearly past 10k RPS",
-        "LiteLLM cannot be benchmarked"
+        "LiteLLM cannot be benchmarked because it has no fixed request-per-second ceiling to measure"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The lesson reports that in published benchmarks LiteLLM breaks down around ~2000 RPS, with an 8 GB memory footprint and cascading failures under sustained load, making it best suited to Python apps under 500 RPS rather than large-scale production."
     },
     {
       "stage": "check",
       "question": "Per the Kong benchmark on equivalent CPU, how much faster is Kong AI Gateway than Portkey and LiteLLM?",
       "options": [
-        "228% faster than Portkey and 859% faster than LiteLLM",
-        "About 10% and 20% faster",
-        "Identical",
-        "Slower than both"
+        "About 10% and 20% faster, a modest edge rather than the multiple Kong's benchmark actually claims",
+        "Identical performance to both Portkey and LiteLLM on Kong's own published benchmark numbers",
+        "Slower than both Portkey and LiteLLM, according to Kong's own published benchmark numbers",
+        "228% faster than Portkey and 859% faster than LiteLLM"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "The lesson cites Kong's own benchmark claiming 228% faster than Portkey and 859% faster than LiteLLM on equivalent CPU -- while also flagging that vendor self-benchmarks are marketing material and should be re-measured on your own traffic."
     },
     {
       "stage": "check",
       "question": "Which gateway does the lesson position with 20-40 ms latency overhead and guardrails / PII redaction / jailbreak detection focus?",
       "options": [
-        "Kong AI Gateway",
-        "LiteLLM",
-        "Cloudflare AI Gateway",
-        "Portkey"
+        "Portkey — MIT-licensed control plane with guardrails, PII redaction, and jailbreak detection",
+        "Kong AI Gateway — built on Kong Gateway, priced per model per month, the scale play",
+        "LiteLLM — MIT OSS router for 100+ providers, breaks down near 2000 RPS in published benchmarks",
+        "Cloudflare AI Gateway — managed, zero-ops, basic retry and observability at the edge"
       ],
-      "correct": 3,
-      "explanation": "The lesson positions Portkey as a control-plane product focused on guardrails, PII redaction, jailbreak detection, and audit trails, with a 20-40 ms per-request latency overhead -- best fit for regulated industries."
+      "correct": 0,
+      "explanation": "The lesson positions Portkey as a control-plane product focused on guardrails, PII redaction, jailbreak detection, and audit trails, with a 20-40 ms per-request latency overhead -- best fit for regulated industries. Portkey is MIT-licensed open source since 2024."
     },
     {
       "stage": "post",
       "question": "What does the lesson say is the forcing function for self-hosted vs managed gateway decisions?",
       "options": [
-        "Whether the gateway is open source",
-        "Number of supported providers",
-        "Cost per request",
-        "Data residency requirements"
+        "Whether the gateway is open source, since the lesson treats license alone as the deciding factor",
+        "Data residency requirements — healthcare and finance default to self-host, consumer products default managed",
+        "Number of supported providers, since more provider coverage always favors a self-hosted deployment",
+        "Cost per request, since the lesson ranks gateways purely by per-call pricing rather than by deployment model at all"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The lesson states data residency is the forcing function: healthcare and finance default to self-host (LiteLLM, Portkey OSS, or Kong), consumer products default to managed or middle-tier options, and regulated tenants can be split hybrid."
     },
     {
       "stage": "post",
       "question": "Which gateways stay within budget when the SLA is TTFT P99 < 100 ms?",
       "options": [
-        "Any gateway",
-        "Only Portkey",
-        "Only LiteLLM",
-        "Kong (~3-8 ms) or Cloudflare/Vercel edge gateways (~1-3 ms); Portkey at 20-40 ms is too heavy"
+        "Any gateway, since the lesson treats all four latency-overhead figures as interchangeable at that SLA",
+        "Only Portkey, whose 20-40 ms overhead the lesson treats as the tightest budget fit for that SLA",
+        "Kong (~3-8 ms) or Cloudflare/Vercel edge gateways (~1-3 ms); Portkey at 20-40 ms is too heavy",
+        "Only LiteLLM, whose 5-15 ms overhead the lesson treats as the sole fit for that SLA"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "The lesson's latency budget table gives Kong ~3-8 ms and Cloudflare/Vercel ~1-3 ms overhead versus Portkey's 20-40 ms, and states that for a TTFT P99 < 100 ms SLA, Kong or Cloudflare/Vercel fit while Portkey is too heavy."
     }
   ]

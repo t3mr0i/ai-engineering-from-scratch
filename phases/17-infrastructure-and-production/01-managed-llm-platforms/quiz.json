@@ -6,24 +6,24 @@
       "stage": "pre",
       "question": "Before this lesson, which platform would you reach for first if a customer needed Claude, Llama, and Cohere behind one API?",
       "options": [
-        "Vertex AI",
-        "AWS Bedrock",
-        "Azure OpenAI Service",
-        "Direct Anthropic API"
+        "AWS Bedrock, the marketplace bet that puts Claude, Llama, Titan, Cohere, and more behind one API and one IAM surface",
+        "Vertex AI, the Gemini-first bet that puts Google's own models ahead of the Model Garden third-party catalog and its 1M-token context",
+        "Azure OpenAI Service, the exclusive OpenAI partnership limited to GPT, DALL·E, and Whisper in the catalog",
+        "Direct Anthropic API, the single-vendor route with no marketplace, no PTUs, and no cross-model failover"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The lesson describes AWS Bedrock as the marketplace strategy: Claude, Llama, Titan, Stability, Cohere, and Mistral behind one API, one IAM surface, and one CloudWatch export."
     },
     {
       "stage": "pre",
       "question": "Which hyperscaler's bet is described as exclusive partnership rather than marketplace?",
       "options": [
-        "Azure OpenAI",
-        "Vertex AI",
-        "AWS Bedrock",
-        "OCI Generative AI"
+        "Vertex AI, betting on Gemini first with Model Garden as a secondary catalog",
+        "Azure OpenAI Service, betting only on OpenAI's own model family across GPT, DALL·E, and Whisper",
+        "AWS Bedrock, betting on breadth across Claude, Llama, Titan, Stability, Cohere, and Mistral in one marketplace",
+        "OCI Generative AI, a bet the lesson does not size up against the other three hyperscalers"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Azure OpenAI Service is described as an exclusive OpenAI partnership: only OpenAI models (GPT-4/4o/5/o-series, DALL-E, Whisper) are in the catalog, betting that OpenAI remains the frontier and customers want enterprise controls on that one relationship."
     },
     {
@@ -31,21 +31,21 @@
       "question": "Roughly what is the measured median TTFT gap between Azure OpenAI (with PTUs) and Bedrock on-demand on Llama 3.1 405B equivalents?",
       "options": [
         "~100 ms",
-        "~5 ms",
         "~250 ms",
-        "~25 ms"
+        "~25 ms",
+        "~5 ms"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "The lesson cites Artificial Analysis numbers: Azure OpenAI median TTFT around 50 ms (with PTUs) versus Bedrock on-demand around 75 ms, a gap of roughly 25 ms driven by dedicated versus shared capacity."
     },
     {
       "stage": "check",
       "question": "Which Bedrock 2025 feature gives the cleanest per-product cost attribution natively in CloudWatch?",
       "options": [
-        "Bedrock Knowledge Bases",
-        "Application Inference Profiles",
-        "Bedrock Guardrails",
-        "Bedrock Agents"
+        "Bedrock Knowledge Bases, a retrieval-augmentation feature the lesson does not credit with any cost-attribution or CloudWatch-native role",
+        "Application Inference Profiles, added in 2025, tagged with team/product/feature so CloudWatch breaks out cost per profile natively",
+        "Bedrock Guardrails, a safety-filtering feature the lesson does not credit with any cost-attribution role",
+        "Bedrock Agents, an orchestration feature the lesson does not credit with any cost-attribution role"
       ],
       "correct": 1,
       "explanation": "The lesson names Application Inference Profiles, added in 2025, as the cleanest native attribution: tag a profile with team/product/feature and CloudWatch breaks out cost per profile without post-processing."
@@ -54,22 +54,22 @@
       "stage": "check",
       "question": "Azure PTUs typically break even versus on-demand at what sustained utilization band?",
       "options": [
+        "40-60%",
         "5-10%",
         "80-95%",
-        "20-30%",
-        "40-60%"
+        "20-30%"
       ],
-      "correct": 3,
+      "correct": 0,
       "explanation": "The lesson states PTUs are billed as a fixed hourly reservation regardless of traffic, and the break-even against on-demand pricing is usually around 40-60% sustained utilization."
     },
     {
       "stage": "post",
       "question": "Why is the lesson's recommended 2026 policy a two-provider minimum for product-critical LLM calls?",
       "options": [
-        "It is required by SOC 2 Type II",
+        "Hyperscalers refuse to sign BAAs unless you also use a competitor, so a second vendor is needed just to get compliance sign-off",
         "Frontier model leadership rotates monthly, so single-vendor lock-in shuts you out of two-thirds of the frontier",
-        "Hyperscalers refuse to sign BAAs unless you also use a competitor",
-        "Single-vendor pricing is always more expensive"
+        "It is required by SOC 2 Type II, which audits refuse to certify for a single-vendor LLM deployment",
+        "Single-vendor pricing is always more expensive than splitting spend across two competing hyperscalers"
       ],
       "correct": 1,
       "explanation": "The lesson argues that because frontier leadership rotates monthly across providers, single-hyperscaler lock-in shuts a product out of two-thirds of the frontier, so a two-provider minimum (e.g. Bedrock plus Azure OpenAI) with gateway failover is the working pattern."
@@ -78,12 +78,12 @@
       "stage": "post",
       "question": "Which statement best describes the FinOps surface across the three platforms?",
       "options": [
-        "Azure is cleanest native, Bedrock is opaque",
-        "Vertex has no attribution surface at all",
-        "All three expose identical per-request attribution",
-        "Bedrock is cleanest native, Vertex is most flexible via BigQuery, Azure is most opaque without instrumentation"
+        "Azure is cleanest native via inherited tags, and Bedrock's Application Inference Profiles are the most opaque of the three",
+        "Bedrock is cleanest native, Vertex is most flexible via BigQuery, Azure is most opaque without instrumentation",
+        "Vertex has no attribution surface at all, since Google Cloud does not expose per-project billing labels",
+        "All three hyperscalers expose identical per-request cost attribution out of the box, with no extra instrumentation"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The lesson's summary is explicit: Bedrock's Application Inference Profiles are cleanest native, Vertex's project-per-team plus BigQuery Billing Export is most flexible, and Azure's tag-inherited scopes are most opaque unless you add custom instrumentation."
     }
   ]

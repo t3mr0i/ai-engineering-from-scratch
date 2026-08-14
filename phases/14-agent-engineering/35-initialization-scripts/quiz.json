@@ -6,33 +6,33 @@
       "stage": "pre",
       "question": "What does an init script eliminate?",
       "options": [
-        "Latency from inference",
         "The per-session setup tax: probing runtime, listing the repo, retrying the same checks each new session",
-        "Provider rate limits",
-        "Authn tokens"
+        "Latency from inference calls made directly against the model provider's own completion endpoint each turn",
+        "Provider rate limits imposed on concurrent requests during a busy production traffic period",
+        "Authentication tokens that expire partway through a long-running multi-hour agent session"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The script pays the tax once and writes the answers into init_report.json the agent reads."
     },
     {
       "stage": "pre",
       "question": "What is the init script's failure-mode contract?",
       "options": [
-        "Fail soft and continue",
+        "Fail soft and continue working around whatever probe came back unhealthy or incomplete",
+        "Always succeed by falling back to sensible defaults whenever a probe cannot complete",
         "Fail loud, fail fast, fail in one place; refuse to start when the workbench is broken",
-        "Always succeed",
-        "Retry forever"
+        "Retry forever with exponential backoff until every probe eventually reports healthy"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The whole point is to refuse to start when the workbench is broken; silent fallback defeats the purpose."
     },
     {
       "stage": "check",
       "question": "Which is NOT one of the probes the lesson lists?",
       "options": [
-        "Runtime versions",
-        "Dependency availability",
-        "Test command resolvability",
+        "Runtime versions and interpreter checks",
+        "Dependency availability checks",
+        "Test command resolvability check",
         "Token-by-token sampling temperature"
       ],
       "correct": 3,
@@ -42,10 +42,10 @@
       "stage": "check",
       "question": "Why does the lesson say init must be idempotent?",
       "options": [
-        "It satisfies SOC 2",
+        "It satisfies SOC 2 audit requirements for reproducible, auditable build and deployment pipelines across every environment the team ships to",
         "Running it twice should be a no-op except for a fresh timestamp, so it can be wired into CI, hooks, or a pre-task slash command",
-        "Idempotence saves money",
-        "It is required by JSON Schema"
+        "Idempotence saves money by reducing the number of billable model calls made during each agent session significantly",
+        "It is required by the JSON Schema specification for any state file that the workbench manager validates on every load"
       ],
       "correct": 1,
       "explanation": "Idempotence makes init safe to call from many entry points (hooks, CI, slash command)."

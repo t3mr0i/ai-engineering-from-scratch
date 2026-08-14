@@ -5,61 +5,61 @@
       "stage": "post",
       "question": "Why does the `messages` field in a LangGraph State TypedDict need `Annotated[list, add_messages]`?",
       "options": [
-        "It enables streaming of token deltas from the model.",
+        "It enables streaming of token deltas from the model as they're generated, rather than merging or appending anything.",
+        "It compresses the message list when checkpoints are written to disk, trimming older turns to save storage space.",
         "Without the reducer, node updates overwrite the list instead of appending, so every turn loses the prior history.",
-        "It compresses the message list when checkpoints are written to disk.",
-        "It converts plain dicts into LangChain message objects at runtime."
+        "It converts plain dicts into LangChain message objects at runtime, independent of how list updates get merged."
       ],
-      "correct": 1,
-      "explanation": ""
+      "correct": 2,
+      "explanation": "Every state field has a reducer; the default is overwrite. `add_messages` makes the message list accumulate instead. Forgetting it is the most common LangGraph bug -- the second node to update `messages` silently wins and prior turns vanish."
     },
     {
       "stage": "post",
       "question": "What is the difference between `interrupt_before=['tools']` and `interrupt_after=['tools']`?",
       "options": [
-        "No difference; they are aliases.",
+        "No difference; they are aliases for the same hook, and both pause execution at exactly the same point in the graph's node boundary.",
+        "`interrupt_before` is meant for unit tests where you mock tool calls; `interrupt_after` is meant only for production traffic.",
         "`interrupt_before` pauses after the model emits tool_calls but before the tools execute; `interrupt_after` pauses after the tools have already run.",
-        "`interrupt_before` runs the tool in a sandbox first; `interrupt_after` runs it in production.",
-        "`interrupt_before` is for unit tests; `interrupt_after` is for production."
+        "`interrupt_before` runs the tool in an isolated sandbox first; `interrupt_after` always runs the same tool in production."
       ],
-      "correct": 1,
-      "explanation": ""
+      "correct": 2,
+      "explanation": "Interrupts stop execution at a node boundary. `interrupt_before` catches the proposed tool call before any side effect happens, which is why approvals belong on the edge into a side-effecting node."
     },
     {
       "stage": "post",
       "question": "Given a thread's checkpoint history, how do you time-travel to a prior state and explore a different branch?",
       "options": [
-        "Call `graph.reset(thread_id)` then `graph.invoke(new_input, config)`.",
-        "Delete the checkpoint directory and reinvoke with the same thread_id.",
+        "Call a `graph.reset(thread_id)` method to clear history, then `graph.invoke(new_input, config)` with a completely fresh input and no prior context",
+        "Delete the checkpoint directory on disk entirely, then reinvoke the graph fresh with the same thread_id, expecting it to rebuild history automatically",
         "Invoke the graph with the desired prior `checkpoint_id` in the config; passing `None` as input replays from that checkpoint, passing a new value appends to it before resuming.",
-        "Set `graph.rewind = True` and reinvoke."
+        "Set an undocumented `graph.rewind = True` flag on the compiled graph object and reinvoke with the original input, expecting it to jump backward"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "`get_state_history` returns the full checkpoint log; passing an old `checkpoint_id` in the config forks execution from that point, either replaying it (`None` input) or appending a new update before resuming."
     },
     {
       "stage": "post",
       "question": "In a four-node ReAct graph (agent, tools, conditional edge, static edge back to agent), where does the conditional edge live?",
       "options": [
-        "From `tools` back to `agent`, routing on whether tool output was empty.",
         "From `agent`, routing to `tools` if the last message has tool_calls and to `END` otherwise.",
-        "From `START`, routing to either `agent` or `END` based on input length.",
-        "There is no conditional edge; both are static."
+        "From `tools` back to `agent`, routing on whether the tool output was empty or contained an error.",
+        "From `START`, routing to either `agent` or `END` based on the length of the initial input message.",
+        "There is no conditional edge in this graph at all; both transitions between nodes are static edges."
       ],
-      "correct": 1,
-      "explanation": ""
+      "correct": 0,
+      "explanation": "The conditional edge from `agent` decides whether to loop into `tools` or finish; the edge from `tools` back to `agent` is always static, since a tool result always goes back to the model."
     },
     {
       "stage": "post",
       "question": "When should you use `Send(node_name, state)` instead of a plain edge?",
       "options": [
-        "To retry a node after a failure.",
-        "To defer a node until a timer expires.",
         "To dispatch N parallel executions of a target node whose outputs merge back through the state reducer.",
-        "To invoke a node in a different process for isolation."
+        "To retry a node after a failure, replaying the same state until the node succeeds or a max-attempts limit is hit.",
+        "To defer a node's execution until a timer expires, pausing the graph without persisting an interrupt checkpoint.",
+        "To invoke a node in a separate operating-system process for isolation, independent of the state reducer."
       ],
-      "correct": 2,
-      "explanation": ""
+      "correct": 0,
+      "explanation": "`Send` lets a node fan out to N parallel executions of a target node -- e.g. querying three retrievers at once -- whose outputs merge back through the state reducer, the orchestrator-workers pattern without manual threading."
     }
   ]
 }

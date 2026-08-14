@@ -81,7 +81,7 @@ A use case with all five "yes" answers is a quick win. A use case with three "no
 
 ### Stage 4 — Risk screen
 
-The EU AI Act (effective August 2026) classifies AI systems into four risk tiers. Any use case that touches a high-risk category (recruitment, credit scoring, critical infrastructure, law enforcement, medical devices, biometrics) requires a conformity assessment and is not a quick win regardless of ROI.
+The EU AI Act (in force since August 2024; high-risk conformity-assessment obligations apply from 2 December 2027 for Annex III systems and 2 August 2028 for Annex I systems, per Regulation (EU) 2026/1744) classifies AI systems into four risk tiers. Any use case that touches a high-risk category (recruitment, credit scoring, critical infrastructure, law enforcement, medical devices, biometrics) requires a conformity assessment and is not a quick win regardless of ROI.
 
 | EU AI Act tier | Examples | Minimum compliance action |
 |---|---|---|

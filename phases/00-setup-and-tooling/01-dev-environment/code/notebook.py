@@ -12,7 +12,7 @@ Full interactive setup for Python, Node, Rust, Julia environments.
 
 Check your system and install the basics.
 
-# %% 
+# %% [markdown]
 
 ```bash
 # macOS
@@ -31,7 +31,7 @@ wsl --install -d Ubuntu-24.04
 
 We use `uv` — it's 10-100x faster than pip and handles virtual environments automatically.
 
-# %% 
+# %% [markdown]
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -47,7 +47,7 @@ uv pip install numpy matplotlib jupyter
 # %% [markdown]
 Verify Python setup:
 
-# %% 
+# %% [markdown]
 
 ```python
 import sys
@@ -64,7 +64,7 @@ print(f"Vector: {a}, dot product with itself: {np.dot(a, a)}")
 
 For TypeScript lessons (agents, MCP servers, web apps).
 
-# %% 
+# %% [markdown]
 
 ```bash
 curl -fsSL https://fnm.vercel.app/install | bash
@@ -81,7 +81,7 @@ node -e "console.log('Node', process.version)"
 
 For performance-critical lessons (inference, systems).
 
-# %% 
+# %% [markdown]
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -95,7 +95,7 @@ cargo --version
 
 For math-heavy lessons where Julia shines.
 
-# %% 
+# %% [markdown]
 
 ```bash
 curl -fsSL https://install.julialang.org | sh
@@ -106,7 +106,7 @@ julia -e 'println("Julia ", VERSION)'
 # %% [markdown]
 ## Step 6: GPU Setup (If You Have One)
 
-# %% 
+# %% [markdown]
 
 ```bash
 # NVIDIA
@@ -116,7 +116,7 @@ nvidia-smi
 uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 ```
 
-# %% 
+# %% [markdown]
 
 ```python
 import torch
@@ -132,7 +132,7 @@ No GPU? No problem. Most lessons work on CPU. For training-heavy lessons, use Go
 
 Run the verification script:
 
-# %% 
+# %% [markdown]
 
 ```bash
 python phases/00-setup-and-tooling/01-dev-environment/code/verify.py

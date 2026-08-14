@@ -18,10 +18,10 @@
       "stage": "pre",
       "question": "What is the recommended production starting point per the CrewAI docs?",
       "options": [
-        "Crew",
-        "Flow",
-        "Sequential process",
-        "Hierarchical process"
+        "Crew, because LLM-driven autonomy is easiest to audit in production",
+        "Flow, because Crews are folded in only once autonomy earns its cost",
+        "Sequential process, because task order is fixed and predictable",
+        "Hierarchical process, because a manager Agent decides everything"
       ],
       "correct": 1,
       "explanation": "The docs say start production apps with Flows; fold Crews in as sub-steps when autonomy earns its cost."
@@ -30,22 +30,22 @@
       "stage": "check",
       "question": "What is the difference between a Crew and a Flow?",
       "options": [
-        "Crew is paid, Flow is free",
+        "Crew requires a paid CrewAI Enterprise license; Flow ships free in the open-source package",
+        "Crew requires GPU-backed inference for the manager Agent's routing calls; Flow runs on CPU only",
         "Crew is autonomous and LLM-driven; Flow is event-driven, code-owned, deterministic and testable",
-        "Crew runs on GPUs only",
-        "Flow has no agents"
+        "Flow contains no Agents at all; only a Crew may define agents or call an LLM directly"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Crew is autonomy-first; Flow is determinism-first."
     },
     {
       "stage": "check",
       "question": "Which of these is NOT one of the four memory types CrewAI ships?",
       "options": [
-        "Short-term",
-        "Long-term",
-        "Entity",
-        "Quantized"
+        "Short-term memory, a conversation buffer wiped at the end of the run",
+        "Long-term memory, persisted across runs in a vector DB",
+        "Entity memory, per-entity facts keyed by entity, not by similarity",
+        "Quantized memory, bit-packed embeddings compressed for storage"
       ],
       "correct": 3,
       "explanation": "Short-term, long-term, entity, and contextual are the four. Quantized memory is not a CrewAI concept."
@@ -54,22 +54,22 @@
       "stage": "check",
       "question": "What is backstory bloat and how does the lesson recommend handling it?",
       "options": [
-        "Storing too many crews; archive old ones",
-        "2000-word agent backstories push out context budget; keep them tight",
-        "Too many tools; delete some",
-        "Slow Bedrock calls; switch regions"
+        "2000-word agent backstories push out the context budget; keep backstories under 200 words",
+        "Storing too many finished Crew definitions in one project file; archive the completed ones",
+        "Registering too many BaseTool subclasses on a single Agent; delete the unused tools",
+        "Bedrock inference calls running slow under sustained load; switch to a closer AWS region"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Backstories shape tone and judgment but eat context if oversized."
     },
     {
       "stage": "post",
       "question": "When is Hierarchical process worth picking over Sequential?",
       "options": [
-        "Always",
+        "Always, since Hierarchical is CrewAI's documented default process for every Crew",
         "When you have 4+ specialists that need a manager Agent to route between them",
-        "When you have one task",
-        "When you do not have any tools"
+        "When you have exactly one task and no need for any routing at all",
+        "When you do not have any tools registered on the specialist agents"
       ],
       "correct": 1,
       "explanation": "Hierarchical adds a manager Agent; only worthwhile when several specialists need dynamic routing."
@@ -78,12 +78,12 @@
       "stage": "post",
       "question": "Why does the lesson caution against using a free-form Crew in production?",
       "options": [
-        "Crews are unsupported",
+        "Crews are an unsupported legacy API slated for removal in CrewAI 1.0",
+        "Crews always consume far more LLM tokens per run than an equivalent Flow does",
         "Output variability is high and debugging is painful without a Flow wrapper",
-        "Crews cost more than Flows",
-        "Crews lack memory"
+        "Crews cannot enable any of the four memory types that Flows support"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Crew autonomy makes prod replay and audit painful; wrap with a Flow when shipping."
     }
   ]

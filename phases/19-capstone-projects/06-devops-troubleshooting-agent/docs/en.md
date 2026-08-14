@@ -59,7 +59,7 @@ PagerDuty / Alertmanager webhook
 - Knowledge graph: Neo4j (managed) or kuzu (embedded) of K8s objects + telemetry edges
 - Agent: LangGraph with per-tool allow-list, read-only by default
 - Tool transport: FastMCP over StreamableHTTP; separate server for destructive tools behind approval gate
-- Models: Claude Sonnet 4.7 for root-cause reasoning, Gemini 2.5 Flash for log summarization
+- Models: Claude Sonnet 4.6 for root-cause reasoning, Gemini 2.5 Flash for log summarization
 - Remediation: ArgoCD rollback webhook, PagerDuty escalate, Slack approval card
 - Audit: append-only structured log (considered, executed, approved, outcome)
 - Deployment: K8s deployment with its own narrow RBAC role; separate namespace

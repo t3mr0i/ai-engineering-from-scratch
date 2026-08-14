@@ -6,73 +6,73 @@
       "stage": "pre",
       "question": "What is the primary value of an AI champion?",
       "options": [
+        "Becoming the single approver so every AI use case passes through one consistent reviewer",
         "Turning scattered experiments into reusable assets, shared standards, and better team habits",
-        "Approving every AI use case alone",
-        "Replacing governance teams",
-        "Keeping all prompts private"
+        "Taking over the governance team's mandate for policy, compliance sign-off, and risk decisions",
+        "Keeping the team's best prompts in a private library so quality stays under one person's control"
       ],
-      "correct": 0,
-      "explanation": "Champions scale learning and reuse without becoming the only decision point."
+      "correct": 1,
+      "explanation": "Champions scale learning and reuse without becoming the only decision point. The lesson is explicit that a champion helps the team reuse what works rather than owning every AI decision."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "Three people ask the same prompt question in meetings this month. What does the enablement loop do with that?",
       "options": [
-        "recurring question",
-        "GPU temperature",
-        "Database collation",
-        "Video bitrate"
+        "It is answered individually each time, keeping the champion close to the team's daily work",
+        "It is escalated to governance, since repeated confusion signals a policy gap to be closed",
+        "It is logged as a training request and passed to the vendor's own enablement programme",
+        "It becomes a backlog item, so the answer is built once as a reviewed, shareable asset"
       ],
-      "correct": 0,
-      "explanation": "Recurring questions indicate a need for champion enablement or reusable assets."
+      "correct": 3,
+      "explanation": "The enablement loop starts at recurring questions and turns them into backlog items, so learning becomes a reusable asset instead of staying local and fragile. Escalation is reserved for risks, not for repetition."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked champion backlog with priority, controls, and rationale",
-        "An automatic certificate engine",
-        "A new AI model",
-        "A cloud deployment"
+        "A certificate engine that issues completion badges to session attendees",
+        "A fine-tuned model trained on the team's collected prompts and answers",
+        "A cloud deployment of the shared prompt library as an internal service",
+        "A ranked champion backlog with priority, controls, and rationale"
       ],
-      "correct": 0,
-      "explanation": "The artifact prioritizes champion activities."
+      "correct": 3,
+      "explanation": "The artifact prioritizes champion activities - office hours, reusable assets, brown bags, and escalation support - and returns priority, controls, and rationale for each."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
       "options": [
-        "office hours plan",
-        "Ignoring repeated questions",
-        "Removing quality review",
-        "Skipping escalation"
+        "An office hours plan that gives the team a regular, predictable slot to bring questions",
+        "An open channel where every request is answered ad hoc, whenever it happens to arrive",
+        "A rule that shared assets are published immediately, so review does not slow reuse down",
+        "A standing agreement that the champion absorbs risky questions instead of passing them on"
       ],
       "correct": 0,
-      "explanation": "Office hours are one practical champion enablement control."
+      "explanation": "Office hours are one practical champion enablement control. The backlog and the quality rubric exist so enablement does not decay into random support work or unreviewed publishing."
     },
     {
       "stage": "post",
       "question": "When should champion work escalate rather than stay as informal support?",
       "options": [
-        "When impact, uncertainty, or risk signals are high",
-        "Only when no one asks for help",
-        "Only when the prompt is short",
-        "Never; champions should solve every issue alone"
+        "When impact, uncertainty, or risk signals are high enough to need the right owner",
+        "When the same question has already been answered in a previous office hours session",
+        "When the request comes from outside the champion's own team and department",
+        "When the reusable asset has not yet passed its quality review with the community"
       ],
       "correct": 0,
-      "explanation": "Champions should escalate high-risk or unclear issues to the right owners."
+      "explanation": "Champions should escalate high-risk or unclear issues to the right owners rather than silently absorbing them."
     },
     {
       "stage": "post",
       "question": "Why does the course use a champion backlog?",
       "options": [
-        "To focus enablement on repeated team needs and reusable assets",
-        "To hide requests from the community",
-        "To avoid quality review",
-        "To stop office hours"
+        "To focus enablement on repeated team needs and turn them into reusable assets",
+        "To keep incoming requests out of the community channel so the queue stays short",
+        "To let assets be shared before quality review, since speed matters more than polish",
+        "To replace office hours with a written queue that the champion works through alone"
       ],
       "correct": 0,
-      "explanation": "The backlog keeps champion work focused and reusable."
+      "explanation": "The backlog keeps champion work focused and reusable, which prevents enablement from becoming random support work."
     }
   ]
 }

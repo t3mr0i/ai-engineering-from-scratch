@@ -6,24 +6,24 @@
       "stage": "pre",
       "question": "What is the only legal way actors interact in AutoGen v0.4?",
       "options": [
-        "Direct access to a shared dict",
+        "Shared SQL transactions coordinated through a central database",
+        "Mutating each other's system prompts directly at runtime",
         "Asynchronous messages exchanged through inboxes; no shared memory",
-        "Shared SQL transactions",
-        "Mutating each other's prompts"
+        "Direct access to a shared dict that every actor can read and write"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Actors have private state and an inbox; messages are the only interaction."
     },
     {
       "stage": "pre",
       "question": "What are the three API layers of AutoGen v0.4?",
       "options": [
-        "Core, AgentChat, Extensions",
-        "Frontend, Backend, Database",
-        "Tools, Models, Memory",
-        "Plan, Act, Reflect"
+        "Frontend, Backend, and Database layers",
+        "Tools, Models, and Memory subsystems",
+        "Plan, Act, and Reflect in a fixed loop",
+        "Core, AgentChat, and Extensions"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "Core is the low-level actor framework, AgentChat is the task-driven high-level API, Extensions are integrations."
     },
     {
@@ -31,9 +31,9 @@
       "question": "Why does decoupling delivery from handling give fault isolation?",
       "options": [
         "The runtime catches handler failures in B without crashing A; A's send() returned immediately and never blocked",
-        "Each actor runs on a separate machine",
-        "The runtime restarts the OS on failure",
-        "Handlers are pure functions"
+        "Each actor runs on a physically separate machine by default, isolating every failure at the hardware level rather than in software",
+        "The runtime automatically restarts the entire operating system whenever a handler raises an exception",
+        "Every handler is written as a pure function with no side effects, so failures cannot propagate"
       ],
       "correct": 0,
       "explanation": "send() puts the message in the recipient's inbox and returns; a handler crash is local to that actor."
@@ -42,10 +42,10 @@
       "stage": "check",
       "question": "Which AgentChat topology rotates agents in a fixed order?",
       "options": [
-        "SelectorGroupChat",
-        "RoundRobinGroupChat",
-        "Magentic-One",
-        "Supervisor"
+        "SelectorGroupChat, which uses a selector agent to pick who goes next",
+        "RoundRobinGroupChat, which rotates agents in a fixed order",
+        "Magentic-One, the reference team for web browsing and code execution",
+        "Supervisor, a central router that dispatches to specialist subagents"
       ],
       "correct": 1,
       "explanation": "RoundRobinGroupChat is fixed rotation; SelectorGroupChat uses a selector to pick next."
@@ -54,36 +54,36 @@
       "stage": "check",
       "question": "What is Magentic-One in this lesson?",
       "options": [
-        "A new LLM model",
+        "A serialization format used for persisting actor state between separate runs",
+        "An OpenTelemetry exporter that ships spans directly to a tracing backend",
         "A reference multi-agent team for web browsing, code execution, and file handling built on AgentChat",
-        "A serialization format",
-        "An OTel exporter"
+        "A new frontier LLM model released alongside AutoGen v0.4 specifically for benchmarking multi-agent performance at scale"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Magentic-One is Microsoft's reference team that demonstrates the AgentChat API."
     },
     {
       "stage": "post",
       "question": "What is the lesson's stated status of AutoGen v0.4 in early 2026?",
       "options": [
-        "Deprecated and removed",
-        "Stable but in maintenance mode; Microsoft Agent Framework is the forward path",
-        "Just announced",
-        "Replaced by LangGraph"
+        "Deprecated and fully removed from Microsoft's GitHub organization",
+        "Replaced entirely by LangGraph as Microsoft's recommended framework",
+        "Just announced at a research preview event this quarter, with no production users yet",
+        "Stable but in maintenance mode; Microsoft Agent Framework is the forward path"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "AutoGen v0.7.x is stable for research; active development has shifted to Microsoft Agent Framework."
     },
     {
       "stage": "post",
       "question": "Which observability standard does AutoGen v0.4 emit by default?",
       "options": [
-        "Prometheus metrics only",
         "OpenTelemetry spans with gen_ai.* attributes per the OTel GenAI semantic conventions",
-        "StatsD",
-        "Datadog APM"
+        "Prometheus metrics only, scraped on a fixed polling interval from every actor in the runtime",
+        "StatsD counters and gauges pushed over UDP to a local metrics agent",
+        "Datadog APM traces tied specifically to a Datadog-hosted agent process"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Every message emits a span; tool calls carry gen_ai.* attributes per OTel GenAI conventions."
     }
   ]

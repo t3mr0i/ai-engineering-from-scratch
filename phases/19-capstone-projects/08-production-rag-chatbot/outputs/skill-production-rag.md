@@ -13,7 +13,7 @@ Build plan:
 
 1. Parse the corpus with docling or Unstructured; route visually rich documents through ColPali. Emit chunks with role and jurisdiction labels.
 2. Index dense (Voyage-3 or Nomic-embed-v2) into pgvector + pgvectorscale; sparse BM25 via Tantivy.
-3. Wire LangGraph conversational agent: retrieve (filter by role + jurisdiction, hybrid dense+BM25, reciprocal rank fusion), rerank (bge-reranker-v2-gemma-2b or Voyage rerank-2), synth (Claude Sonnet 4.7 with prompt caching).
+3. Wire LangGraph conversational agent: retrieve (filter by role + jurisdiction, hybrid dense+BM25, reciprocal rank fusion), rerank (bge-reranker-v2-gemma-2b or Voyage rerank-2), synth (Claude Sonnet 4.6 with prompt caching).
 4. Assemble prompts with stable prefixes: system preamble -> policy block -> reranked context -> user query. Target 60-80% prompt-cache hit rate.
 5. Guardrails: Llama Guard 4 on input and output, NeMo Guardrails v0.12 rails for off-domain and policy-forbidden questions, Presidio PII scrub on output, citation enforcement post-filter.
 6. Build a 200-question expert-labeled golden set with (answer, citations). Score on exact-citation match, answer correctness, RAGAS faithfulness.

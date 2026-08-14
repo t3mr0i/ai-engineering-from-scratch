@@ -7,21 +7,21 @@
       "question": "Which query class does a KV store handle best?",
       "options": [
         "Semantic similarity over long conversations",
-        "Direct fact lookup keyed by (user, type, entity)",
         "Reachability across customers sharing a billing entity",
-        "Temporal queries valid-at-time"
+        "Temporal queries about what was true at a past time",
+        "Direct fact lookup keyed by (user, type, entity)"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "KV is O(1) on exact keys; vector is for similarity, graph is for relationships."
     },
     {
       "stage": "pre",
       "question": "What are the three stores Mem0 writes in parallel on each add()?",
       "options": [
-        "Vector, KV, graph",
-        "Cache, queue, log",
-        "Postgres, Redis, ClickHouse",
-        "Embedding, attention, FFN"
+        "Vector, KV, and graph stores",
+        "Cache, queue, and log stores",
+        "Postgres, Redis, and ClickHouse",
+        "Embedding, attention, and FFN layers"
       ],
       "correct": 0,
       "explanation": "Mem0 fans every write out to vector, KV, and graph stores."
@@ -30,58 +30,58 @@
       "stage": "check",
       "question": "What three dimensions feed Mem0's fusion score?",
       "options": [
-        "Relevance, importance, recency",
-        "Precision, recall, F1",
-        "Latency, throughput, cost",
-        "Confidence, perplexity, BLEU"
+        "Precision, recall, and F1 score",
+        "Relevance, importance, and recency",
+        "Latency, throughput, and dollar cost",
+        "Confidence, perplexity, and BLEU score"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Score is a weighted sum of relevance, importance, and recency; weights tune per product."
     },
     {
       "stage": "check",
       "question": "What does Mem0g do when an incoming fact contradicts an existing edge?",
       "options": [
-        "Deletes the edge",
+        "Raises an exception and aborts the write until a human resolves the conflict",
+        "Rewrites the user_id on the edge to match the incoming fact's source",
         "Marks the existing edge invalid but does not delete it, so temporal queries can still traverse",
-        "Raises an exception",
-        "Rewrites the user_id"
+        "Deletes the edge immediately, so no record of the earlier fact remains for temporal queries to traverse"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Soft invalidation preserves history for temporal (valid-at-time) queries."
     },
     {
       "stage": "check",
       "question": "Why does the lesson recommend tuning fusion weights per product?",
       "options": [
-        "Providers require it",
-        "Recency dominates for chat agents while importance dominates for compliance agents and relevance dominates for retrieval agents",
-        "Vector libraries reject equal weights",
-        "It is required by Apache 2.0"
+        "Vector libraries reject fusion scores that mix cosine similarity with non-normalized signals",
+        "The Apache 2.0 license requires every deployment to expose configurable scoring weights",
+        "Every product should use equal fixed weights across relevance, importance, and recency so retrieval stays unbiased across every use case",
+        "Recency dominates for chat agents while importance dominates for compliance agents and relevance dominates for retrieval agents"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Different products want different bias on relevance/importance/recency; one set of weights does not fit all."
     },
     {
       "stage": "post",
       "question": "What is the scope taxonomy Mem0 uses?",
       "options": [
-        "Public, private, secret",
-        "User, session, agent",
-        "Local, regional, global",
-        "Read, write, admin"
+        "User, session, and agent scope",
+        "Public, private, and secret scope",
+        "Local, regional, and global scope",
+        "Read, write, and admin scope"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Scopes are user (cross-session), session (one thread), agent (per-instance state)."
     },
     {
       "stage": "post",
       "question": "What is embedding drift in this pattern, and how does the lesson recommend mitigating it?",
       "options": [
-        "Vectors get encrypted; rotate keys",
+        "Vectors get encrypted at rest by default, so periodic key rotation is what keeps retrieval accurate",
         "Vector retrieval quality degrades as the corpus grows; periodically re-embed the top-N most used records",
-        "Embeddings overflow integers; switch to float64",
-        "The embedding API changes URL; pin a domain"
+        "Embeddings silently overflow their integer range as the corpus grows, so the fix is switching to float64 storage",
+        "The embedding API's URL changes between provider versions, so pinning a fixed domain keeps retrieval stable"
       ],
       "correct": 1,
       "explanation": "Periodic re-embedding of hot records keeps retrieval quality steady as the corpus grows."

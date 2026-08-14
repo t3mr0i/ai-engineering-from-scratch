@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "Why should AI architecture decisions be recorded?",
       "options": [
-        "Because model, vendor, security, and cost choices can become expensive defaults",
-        "Because tradeoffs should be hidden",
-        "Because reversibility never matters",
-        "Because ADRs replace security review"
+        "Because tradeoffs should be hidden from future teams who inherit the decision",
+        "Because reversibility never matters once an architecture decision has shipped",
+        "Because an ADR record replaces the need for a separate security review and approval entirely",
+        "Because model, vendor, security, and cost choices can become expensive defaults"
       ],
-      "correct": 0,
-      "explanation": "Recorded decisions preserve context and tradeoffs."
+      "correct": 3,
+      "explanation": "Recorded decisions preserve context so model, vendor, security, and cost choices don't quietly become expensive defaults — tradeoffs shouldn't be hidden, reversibility still matters, and an ADR doesn't substitute for security review."
     },
     {
       "stage": "check",
-      "question": "Which signal is part of this lesson?",
-      "options": ["vendor lock-in", "line height", "image filter", "keyboard shortcut"],
+      "question": "A team adopts a proprietary vector database with a data format and query API that no other vendor supports, without ever discussing what switching away would cost later. Which of the lesson's four signals does this match most directly?",
+      "options": [
+        "Vendor lock-in — the chosen technology makes switching to an alternative costly or difficult later",
+        "Technical uncertainty — the team isn't sure the chosen approach will even work at the required scale",
+        "Security boundary — the decision changes who or what can access sensitive data",
+        "Cost tradeoff — the decision trades a lower price today for a higher price later"
+      ],
       "correct": 0,
-      "explanation": "Vendor lock-in raises governance needs."
+      "explanation": "Choosing a proprietary format with no viable exit path is the lesson's vendor-lock-in signal — distinct from technical uncertainty (unproven feasibility), a security boundary change, or a cost tradeoff."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked architecture decision plan with governance controls",
-        "A final production system",
-        "A cloud invoice",
-        "A user survey"
+        "A finished, deployable production system ready to serve live traffic",
+        "An itemized cloud invoice showing the cost of each architecture option",
+        "A ranked architecture decision plan with governance controls for each option",
+        "A user survey measuring satisfaction with the chosen architecture"
       ],
-      "correct": 0,
-      "explanation": "The artifact recommends a design note, ADR, or review path."
+      "correct": 2,
+      "explanation": "The artifact ranks scenarios into an architecture decision plan with governance controls, recommending a design note, ADR, or review path — it doesn't build a production system, generate an invoice, or run a survey."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["threat model", "ignore cost", "skip review", "hide alternatives"],
-      "correct": 0,
-      "explanation": "Threat models are part of architecture decision governance."
+      "options": [
+        "Ignoring the cost model because the architecture decision needs to ship quickly",
+        "Skipping the review board because the team is confident in its own judgment",
+        "Threat model — a review of who could misuse the new architecture and how",
+        "Hiding the alternatives that were considered so the ADR looks more decisive"
+      ],
+      "correct": 2,
+      "explanation": "The lesson's controls are ADR record, threat model, cost model, and review board — a threat model reviews who could misuse the architecture, unlike ignoring cost, skipping review, or hiding alternatives."
     },
     {
       "stage": "post",
       "question": "When does an AI architecture decision need stronger governance?",
       "options": [
+        "Only when there is no security boundary involved in the decision at all",
+        "Only when the architecture choice is trivial and easy to reverse later",
         "When impact is high, reversibility is low, or security, vendor, or cost tradeoffs exist",
-        "Only when no security boundary exists",
-        "Only when the choice is trivial",
-        "Never; implementation details are enough"
+        "Never — documenting implementation details is enough governance on its own"
       ],
-      "correct": 0,
-      "explanation": "Impact, reversibility, and tradeoffs drive review level."
+      "correct": 2,
+      "explanation": "High impact, low reversibility, or security, vendor, or cost tradeoffs are exactly when governance should strengthen — not the absence of a security boundary, a trivial choice, or implementation notes alone."
     },
     {
       "stage": "post",
       "question": "What should an AI architecture decision record include?",
       "options": [
-        "Decision, alternatives, consequences, threat model, and cost tradeoff",
-        "Only the chosen vendor name",
-        "No alternatives",
-        "No revisit trigger"
+        "The decision, alternatives considered, consequences, threat model, and cost tradeoff",
+        "Only the name of the vendor that was ultimately chosen for the project",
+        "No alternatives, since listing rejected options makes the record longer",
+        "No trigger for revisiting the decision later, once it has been approved"
       ],
       "correct": 0,
-      "explanation": "ADRs should preserve context and consequences for future teams."
+      "explanation": "An ADR should record the decision, the alternatives considered, consequences, the threat model, and the cost tradeoff — not just a vendor name, a record with no alternatives, or one with no revisit trigger."
     }
   ]
 }

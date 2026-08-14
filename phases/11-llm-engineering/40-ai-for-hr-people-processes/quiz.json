@@ -6,63 +6,73 @@
       "stage": "pre",
       "question": "Why do HR AI use cases need stricter controls?",
       "options": [
+        "They mostly reformat existing policy text, so the wording is the only thing at stake",
         "They can involve personal data, fairness, employee impact, and manager accountability",
-        "They never affect people",
-        "They never require review",
-        "They are only formatting tasks"
+        "They run on internal HR systems, where the data has already cleared privacy review",
+        "They are drafted by HR specialists, whose expertise catches any error before it spreads"
       ],
-      "correct": 0,
-      "explanation": "HR workflows often affect employees directly and require clear human accountability."
+      "correct": 1,
+      "explanation": "HR workflows often affect employees directly and require clear human accountability. Privacy, fairness, and employee trust have to be designed into the workflow from the start."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": ["personal data", "font size", "GPU temperature", "video bitrate"],
-      "correct": 0,
-      "explanation": "Personal data is one of the HR AI triage signals."
+      "question": "An AI tool scores internal candidates during a promotion round. What does this lesson's legal frame say applies?",
+      "options": [
+        "It stays outside the AI Act because the model only ranks and a manager makes the final call",
+        "It is exempt while the tool runs internally and its outputs never leave the company",
+        "It only needs a data processing agreement, since personal data stays in the HR system",
+        "Annex III of the EU AI Act covers it as high-risk employment use, so human oversight applies"
+      ],
+      "correct": 3,
+      "explanation": "The lesson places recruitment, evaluation, promotion, termination, and performance-monitoring use cases under Annex III, point 4 of the EU AI Act, where conformity assessment and human oversight apply. Where an output drives a decision with legal or similarly significant effect without meaningful human review, Art. 22 GDPR is engaged as well."
     },
     {
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A ranked HR AI triage plan with controls and rationale",
-        "An automatic personnel decision",
-        "A payroll system",
-        "A legal approval"
+        "A personnel decision that the responsible manager can confirm with one click",
+        "A payroll integration that writes the outcome back into the HR system",
+        "A legal approval that clears the use case under the EU AI Act",
+        "A ranked HR AI triage plan with matched controls and rationale"
       ],
-      "correct": 0,
-      "explanation": "The artifact supports triage and control selection, not automated HR decisions."
+      "correct": 3,
+      "explanation": "The artifact supports triage and control selection. It does not make HR decisions - humans own judgment, decisions, employee communication, and sensitive escalations."
     },
     {
       "stage": "check",
       "question": "Which control belongs to this lesson?",
-      "options": ["human decision owner", "skip privacy review", "hide employee impact", "remove fairness checks"],
+      "options": [
+        "A named human decision owner who carries the people decision, not the model",
+        "A privacy exemption for HR data, since employees already consented at hiring",
+        "A fairness check deferred until the first complaint reaches the works council",
+        "A communication script that avoids saying where AI was used in the process"
+      ],
       "correct": 0,
-      "explanation": "A human decision owner is required for people-related decisions."
+      "explanation": "A human decision owner is required for people-related decisions. Privacy review, fairness checks, and a communication script are the other controls this lesson teaches."
     },
     {
       "stage": "post",
       "question": "When should an HR AI use case require a launch gate?",
       "options": [
-        "When employee impact, personal data, and uncertainty are high",
-        "Only when the prompt is long",
-        "Only when no manager is involved",
-        "Never; HR AI is always low risk"
+        "Only when the workflow touches recruitment rather than internal learning paths",
+        "Only when the works council has already asked for the tool to be reviewed",
+        "Only when the output is sent to employees rather than kept inside the HR team",
+        "When employee impact, personal data sensitivity, and uncertainty are high"
       ],
-      "correct": 0,
-      "explanation": "High-impact HR use cases need explicit review before rollout."
+      "correct": 3,
+      "explanation": "High-impact HR use cases need explicit review before rollout, driven by employee impact, data sensitivity, and uncertainty rather than by who has already objected."
     },
     {
       "stage": "post",
       "question": "What should communication clarify in HR AI workflows?",
       "options": [
-        "Where AI supports and where humans decide",
-        "That AI owns all decisions",
-        "That review is unnecessary",
-        "That data sensitivity does not matter"
+        "Where AI supports the work and where humans still make the decision",
+        "How the model was trained and which vendor supplied the underlying system",
+        "Which HR processes were the fastest to automate during the pilot phase",
+        "How much reviewer time the workflow saved compared with the manual process"
       ],
       "correct": 0,
-      "explanation": "Trust depends on clear boundaries between AI support and human accountability."
+      "explanation": "Trust depends on clear boundaries between AI support and human accountability. Employee trust is treated as a design requirement, not a communications afterthought."
     }
   ]
 }

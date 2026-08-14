@@ -3,46 +3,46 @@
     {
       "question": "What is the limitation of basic top-k semantic search in RAG?",
       "options": [
-        "It's too slow",
-        "It retrieves chunks that are semantically similar to the query but may not contain the actual answer, especially for ambiguous or multi-hop questions",
-        "It can't handle large documents",
-        "It requires GPU"
+        "It can score at most fifty candidates per query, so any corpus beyond a few thousand chunks will overrun the index",
+        "It scores every query-document pair jointly with cross-attention, which is 100-1000x too slow to run over a whole corpus of millions of chunks",
+        "It returns chunks that are semantically similar to the query but may not contain the answer, especially for ambiguous or multi-hop questions",
+        "It ignores rare terms, because each query term is weighted by its inverse document frequency before vectors are compared"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Basic semantic search matches surface-level meaning. 'What was revenue last quarter?' retrieves chunks about 'revenue strategy' (semantically similar) instead of the chunk saying '$47.2M in Q3 2025' (which uses 'earnings').",
       "stage": "pre"
     },
     {
       "question": "What is hybrid search in the context of RAG?",
       "options": [
-        "Using two different LLMs",
+        "Running the query through a small model first and a large model second, then merging the two generated answers",
+        "Searching several vector databases in parallel and keeping whichever store returns the single highest raw similarity score",
         "Combining BM25 keyword matching with semantic vector search to capture both exact terms and meaning-based relevance",
-        "Searching across multiple databases",
-        "Using both CPU and GPU for search"
+        "Filtering the corpus by metadata such as date and category first, then searching only the chunks that survive it"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "BM25 catches exact keyword matches (e.g., '$47.2M' or 'Q3'). Semantic search catches meaning matches. Combining them with a reranker gives the best of both worlds: precision on specific terms plus recall on semantic variants.",
       "stage": "pre"
     },
     {
       "question": "What does a cross-encoder reranker do in an advanced RAG pipeline?",
       "options": [
-        "It generates the final answer",
-        "It takes (query, document) pairs and scores their relevance with higher accuracy than embedding similarity, reordering the initial retrieval results",
-        "It encodes documents into vectors",
-        "It splits documents into chunks"
+        "It scores (query, document) pairs jointly, far more accurately than embedding similarity, and reorders the initial retrieval results",
+        "It merges the vector ranking with the BM25 ranking by summing one over sixty plus each document's rank in each of the two lists",
+        "It embeds each chunk once during indexing, so that at query time only the cached vectors still have to be compared once",
+        "It generates a hypothetical answer to the query first, then searches for the real documents most similar to that answer"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Bi-encoder similarity (used for initial retrieval) is fast but approximate. A cross-encoder processes the full query-document pair together with cross-attention, giving much more accurate relevance scores for reranking the top candidates.",
       "stage": "post"
     },
     {
       "question": "What is the HyDE (Hypothetical Document Embedding) query transformation technique?",
       "options": [
-        "Hiding the query from the model",
+        "Rewriting a vague user question into a sharper set of explicit search terms before it is embedded and sent to the index",
         "Using the LLM to generate a hypothetical answer, then embedding that answer as the search query instead of the original question",
-        "Encrypting the query for privacy",
-        "Expanding abbreviations in the query"
+        "Embedding the small child chunk for the search step while handing its larger parent chunk to the model as extra context",
+        "Splitting the question into several sub-questions, retrieving for each one, and pooling all the results before ranking"
       ],
       "correct": 1,
       "explanation": "The original query 'What was Q3 revenue?' might not embed close to the answer chunk. HyDE asks the LLM to generate a hypothetical answer ('Q3 revenue was approximately...'), then uses that as the search query, which embeds closer to actual answer-containing chunks.",
@@ -51,12 +51,12 @@
     {
       "question": "Why does parent-child chunking improve RAG over flat chunking?",
       "options": [
-        "It's faster to index",
+        "Indexing at two levels lets BM25 score the parents and vector search score the children, which removes the need for any fusion",
+        "Parents and children are scored jointly by a cross-encoder, so relevance stops depending on how the source document was split up",
         "Small child chunks are used for precise retrieval, but the larger parent chunk is returned for context, preventing the 'lost context' problem",
-        "It reduces the number of chunks",
-        "It eliminates the need for embeddings"
+        "Merging children back into their parent cuts the total chunk count, so approximate search stays inside its recall budget at scale"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Small chunks (200 tokens) embed precisely but lack context. Large chunks (2000 tokens) have context but embed imprecisely. Parent-child uses small chunks for search accuracy but returns the parent chunk for generation context.",
       "stage": "post"
     }

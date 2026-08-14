@@ -53,7 +53,7 @@
   <rect x="360" y="222" width="260" height="36" class="dsk"/>
   <text x="490" y="244" text-anchor="middle" class="step">assemble cache-stable prompt</text>
   <rect x="360" y="266" width="260" height="36" class="dsk"/>
-  <text x="490" y="288" text-anchor="middle" class="step">Claude Sonnet 4.7 synth</text>
+  <text x="490" y="288" text-anchor="middle" class="step">Claude Sonnet 4.6 synth</text>
   <rect x="360" y="310" width="260" height="36" class="hot"/>
   <text x="490" y="332" text-anchor="middle" class="step">Llama Guard 4 output</text>
   <rect x="360" y="354" width="260" height="36" class="hot"/>

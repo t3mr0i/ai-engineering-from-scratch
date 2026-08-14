@@ -16,7 +16,7 @@ The failure surface is the handoff. Architect plans something the coders cannot 
 
 ## Concept
 
-Roles are typed agents. **Architect** (Claude Opus 4.7) reads the issue, writes a plan, and breaks it into subtasks with explicit interfaces. **Coders** (Claude Sonnet 4.7, N parallel instances, each in a `git worktree` + Daytona sandbox) implement subtasks independently. **Reviewer** (GPT-5.4) reads the merged diff and either approves or requests specific changes. **Tester** (Gemini 2.5 Pro) runs the test suite in isolation and reports pass/fail with artifacts.
+Roles are typed agents. **Architect** (Claude Opus 4.7) reads the issue, writes a plan, and breaks it into subtasks with explicit interfaces. **Coders** (Claude Sonnet 4.6, N parallel instances, each in a `git worktree` + Daytona sandbox) implement subtasks independently. **Reviewer** (GPT-5.4) reads the merged diff and either approves or requests specific changes. **Tester** (Gemini 2.5 Pro) runs the test suite in isolation and reports pass/fail with artifacts.
 
 Communication is through a shared task board (file-backed or Redis). Each role consumes tasks it is permitted to handle. Handoffs are A2A-protocol-typed messages. Coordination concerns: merge-conflict resolution (coordinator role or automatic three-way merge), shared-state synchronization (the plan is frozen once coders start; replans are separate events), and reviewer gatekeeping (the reviewer cannot approve its own changes or changes it proposed).
 
@@ -57,7 +57,7 @@ Coder A          Coder B          Coder C          Coder D          (4 parallel)
 
 - Orchestration: LangGraph with shared state + per-agent sub-graphs
 - Messaging: A2A protocol (Google 2025) for typed inter-agent messages
-- Models: Opus 4.7 (architect), Sonnet 4.7 (coders), GPT-5.4 (reviewer), Gemini 2.5 Pro (tester)
+- Models: Opus 4.7 (architect), Sonnet 4.6 (coders), GPT-5.4 (reviewer), Gemini 2.5 Pro (tester)
 - Worktree isolation: `git worktree add` per coder + Daytona sandbox
 - Merge coordinator: custom three-way merge + LLM-mediated conflict resolution
 - Eval: SWE-bench Pro (50 issues), SWE-AF scenarios, HumanEval++ for unit tests

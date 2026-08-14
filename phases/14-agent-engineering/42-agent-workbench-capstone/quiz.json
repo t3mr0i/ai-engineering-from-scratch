@@ -6,24 +6,24 @@
       "stage": "pre",
       "question": "What does the capstone produce?",
       "options": [
-        "A research paper",
-        "A versioned drop-in directory (agent-workbench-pack/) with the seven surfaces plus a bin/install.sh that lays them down idempotently",
-        "A new LLM",
-        "A monitoring dashboard"
+        "A versioned drop-in directory with the seven surfaces plus an install.sh that runs idempotently",
+        "A detailed research paper summarizing the mini-track's findings for an academic audience",
+        "A brand-new fine-tuned model trained end to end on the workbench's own feedback records",
+        "A monitoring dashboard that graphs verification-gate pass rates across every branch of the repo over time"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The pack is the recipe; each install is a serving."
     },
     {
       "stage": "pre",
       "question": "Which is NOT part of the pack layout?",
       "options": [
-        "AGENTS.md + docs/",
-        "schemas/",
-        "scripts/",
-        "vendor_proprietary_weights/"
+        "AGENTS.md and the docs/ directory that hold the pack's rules and rubric",
+        "The schemas/ directory that defines the pack's contract for target repos",
+        "vendor_proprietary_weights/, since the pack ships no model weights of its own",
+        "The scripts/ directory that supplies the pack's runtime behavior at install time"
       ],
-      "correct": 3,
+      "correct": 2,
       "explanation": "Pack layout is AGENTS.md, docs/, schemas/, scripts/, bin/, README.md. The pack is framework- and vendor-agnostic."
     },
     {
@@ -66,10 +66,10 @@
       "stage": "post",
       "question": "What stays OUT of the pack?",
       "options": [
-        "Schemas",
-        "Project-specific tasks, vendor SDK calls, team onboarding prose — the pack is framework-agnostic and lives next to onboarding, not inside it",
-        "Scripts",
-        "The installer"
+        "Surface schemas, since they are the only thing the installer copies into a target repo",
+        "Project-specific tasks, vendor SDK calls, and onboarding prose; the pack stays framework-agnostic",
+        "The four runtime scripts, since those alone define what the pack does at install time",
+        "The bin/install.sh entry point, since it is the single script a target repo directly and actually executes"
       ],
       "correct": 1,
       "explanation": "Tasks belong on the target repo's board, not the pack; vendor SDK calls would lock the pack to one framework."

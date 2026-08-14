@@ -93,7 +93,7 @@ In 2026, the standard integration pattern for LLM-assisted backlog scoring is:
 - **Scoring layer:** A deterministic function (not a model) applies the weights and computes the ranked order.
 - **Decision record:** A markdown file committed to the product repo, versioned alongside the code.
 
-The deterministic scoring layer is intentional. You do not want the ranking to change because you switched from Sonnet 4.5 to Sonnet 4.7. The model populates the inputs; the formula produces the output. This separation also makes the ranking auditable: you can replay any past ranking by re-running the deterministic function against the stored inputs.
+The deterministic scoring layer is intentional. You do not want the ranking to change because you switched from Sonnet 4.5 to Sonnet 4.6. The model populates the inputs; the formula produces the output. This separation also makes the ranking auditable: you can replay any past ranking by re-running the deterministic function against the stored inputs.
 
 
 
