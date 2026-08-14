@@ -673,9 +673,9 @@
     .code-collapse > .code-collapse__summary:hover .code-collapse__hint { color: var(--blueprint); }
 
     /* The wrapped <pre> already has its own margin/border; reset inside details.
-       Covers the direct <pre> (normal/editable) and the nested one in fillin. */
-    .code-collapse > pre,
-    .code-collapse > .fillin-block > pre {
+       Fill-in blocks are never collapsed (see renderFillinBlock), so this only
+       covers the direct <pre> of normal/editable blocks. */
+    .code-collapse > pre {
       margin: 0;
       border-left: none;
       border-right: none;
@@ -683,8 +683,6 @@
       border-top: 1px solid var(--rule-soft);
       border-radius: 0;
     }
-
-    .code-collapse > .fillin-block { margin: 0; }
 
     .code-actions {
       position: absolute;
@@ -795,40 +793,146 @@
       border-color: var(--blueprint);
     }
 
-    /* Fill-in-the-blank exercise */
-    .fillin-block { position: relative; }
+    /* Fill-in-the-blank challenge card. Deliberately its own component, not a
+       .code-collapse — a challenge should read as an invitation, not hide
+       behind a generic "Show code" disclosure. The editor surface is a fixed
+       dark panel (literal hex, not var(--...)) so it reads as a distinct
+       code-execution surface — Codecademy/Scrimba-style — regardless of the
+       page's own light/dark theme. */
+    .fillin-block {
+      margin: 20px 0;
+      border: 1px solid var(--rule-soft);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-surface);
+    }
+    .fillin-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+    .fillin-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blueprint);
+    }
+    .fillin-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blueprint);
+    }
+    .fillin-actions { display: flex; gap: 6px; align-items: center; }
+    .fillin-editor {
+      display: flex;
+      background: #05164d;
+      overflow-x: auto;
+    }
+    .fillin-gutter {
+      flex: 0 0 auto;
+      padding: 14px 10px 14px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      line-height: 1.75;
+      color: #3a5590;
+      text-align: right;
+      user-select: none;
+    }
+    .fillin-pre {
+      flex: 1;
+      margin: 0;
+      border: none;
+      background: transparent;
+    }
+    .fillin-pre code {
+      display: block;
+      padding: 14px 16px 14px 8px;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      line-height: 1.75;
+      color: #c3d5ee;
+      background: transparent;
+      border: none;
+      white-space: pre;
+    }
+    .fillin-editor .syn-keyword { color: #7ba6dc; font-weight: 500; }
+    .fillin-editor .syn-string { color: #a8d5b8; }
+    .fillin-editor .syn-number { color: #7ba6dc; }
+    .fillin-editor .syn-comment { color: #6f83ab; font-style: italic; }
     .fillin-input {
       font-family: var(--font-mono);
       font-size: 0.84rem;
-      color: var(--blueprint);
-      background: var(--blueprint-tint);
+      color: #eaf1fb;
+      background: rgba(123, 166, 220, 0.16);
       border: none;
-      border-bottom: 2px solid var(--blueprint);
+      border-bottom: 2px solid #7ba6dc;
       padding: 0 4px;
       margin: 0 1px;
+      min-width: 4em;
       border-radius: 2px 2px 0 0;
       outline: none;
     }
-    .fillin-input::placeholder { color: var(--blueprint); opacity: 0.5; }
-    .fillin-input:focus { background: var(--blueprint); color: var(--bg); }
+    .fillin-input::placeholder { color: #7ba6dc; opacity: 0.7; }
+    .fillin-input:focus { background: #7ba6dc; color: #05164d; }
     .fillin-input.fillin-ok {
+      color: #6fc79c;
+      border-bottom-color: #6fc79c;
+      background: rgba(111, 199, 156, 0.18);
+    }
+    .fillin-console {
+      padding: 10px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-mute);
+    }
+    .fillin-console.fillin-pass {
       color: var(--status-ok);
-      border-bottom-color: var(--status-ok);
       background: var(--status-ok-bg);
     }
-    .fillin-solve {
-      background: var(--blueprint);
-      border: 1px solid var(--blueprint);
-      padding: 3px 10px;
+    .fillin-console.fillin-fail {
+      color: var(--status-error);
+      background: var(--status-error-bg);
+    }
+    .fillin-solve,
+    .fillin-reset,
+    .fillin-run {
       font-family: var(--font-mono);
       font-size: 0.66rem;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--bg);
+      padding: 5px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: opacity 0.15s;
+      transition: opacity 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .fillin-solve:hover { opacity: 0.85; }
+    .fillin-solve,
+    .fillin-reset {
+      background: transparent;
+      border: 1px solid var(--rule-soft);
+      color: var(--ink-soft);
+    }
+    .fillin-solve:hover,
+    .fillin-reset:hover {
+      color: var(--blueprint);
+      border-color: var(--blueprint);
+    }
+    .fillin-run {
+      background: var(--blueprint);
+      border: 1px solid var(--blueprint);
+      color: var(--bg-surface);
+    }
+    .fillin-run:hover:not(:disabled) { opacity: 0.85; }
+    .fillin-run:disabled { opacity: 0.6; cursor: default; }
 
     .syn-keyword { color: var(--blueprint); font-weight: 500; }
     .syn-string { color: var(--ink); }
@@ -3887,9 +3991,10 @@
         var _lineCount = code.split('\n').length;
         // Fill-in-the-blank exercise: blanks are written {{blank:SOLUTION}}.
         // Render each as an <input>; "Fill it in for me" drops in the solutions,
-        // Run executes the code with the learner's values substituted.
+        // Run executes the code with the learner's values substituted. Rendered
+        // as its own challenge card, never collapsed — see renderFillinBlock.
         if (fillin && (l0 === 'python' || l0 === 'py')) {
-          return wrapCollapsible(renderFillinBlock(code, lang), lang || 'python', _lineCount);
+          return renderFillinBlock(code, lang);
         }
         var highlighted = highlightSyntax(escapeHtml(code), lang);
         var langLabel = lang ? '<span class="code-lang">' + escapeHtml(lang) + '</span>' : '';
@@ -3929,10 +4034,13 @@
         return wrapCollapsible('<pre>' + langLabel + '<span class="code-actions">' + runBtn + vscodeBtns + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button></span><code>' + highlighted + '</code></pre>', lang, _lineCount);
       }
 
-      // Render a fill-in-the-blank Python exercise. Blanks: {{blank:SOLUTION}}.
-      // We swap each blank for a sentinel, run the syntax highlighter on the rest,
-      // then expand sentinels into <input> fields (so highlighting never touches
-      // the inputs). The solutions ride along in data-answer for "fill for me".
+      // Render a fill-in-the-blank Python exercise as its own challenge card
+      // (header with badge/actions, dark editor with line numbers, console
+      // strip for the run result) instead of a generic collapsed code block.
+      // Blanks: {{blank:SOLUTION}}. We swap each blank for a sentinel, run the
+      // syntax highlighter on the rest, then expand sentinels into <input>
+      // fields (so highlighting never touches the inputs). The solutions ride
+      // along in data-answer for "fill it in for me".
       function renderFillinBlock(code, lang) {
         var blanks = [];
         var SENT = '\x00BLK';
@@ -3943,24 +4051,29 @@
           return SENT + id + '\x00';
         });
         var highlighted = highlightSyntax(escapeHtml(skeleton), lang);
-        // Width sized to the solution so the field doesn't jump after filling.
         highlighted = highlighted.replace(/\x00BLK(\d+)\x00/g, function (_m, i) {
           var sol = blanks[+i] || '';
-          var size = Math.max(6, sol.length + 1);
           return '<input class="fillin-input" type="text" spellcheck="false" ' +
-            'autocomplete="off" data-answer="' + escapeAttr(sol) + '" ' +
-            'size="' + size + '" placeholder="…">';
+            'autocomplete="off" data-answer="' + escapeAttr(sol) + '" placeholder="…">';
         });
-        var langLabel = lang ? '<span class="code-lang">' + escapeHtml(lang) + '</span>' : '';
+        var lineCount = code.split('\n').length;
+        var gutterLines = [];
+        for (var i = 1; i <= lineCount; i++) gutterLines.push(i);
+        var blankLabel = blanks.length + (blanks.length === 1 ? ' blank' : ' blanks');
         return '<div class="fillin-block" data-template="' + escapeAttr(code) + '">' +
-          '<pre class="fillin-pre">' + langLabel +
-          '<span class="code-edit-hint">' + blanks.length + ' blanks — fill them in</span>' +
-          '<span class="code-actions">' +
-            '<button class="fillin-run code-run-inline">▶ Run</button>' +
-            '<button class="fillin-solve" title="Fill in the answers for me">Fill it in for me</button>' +
-            '<button class="fillin-reset code-reset" title="Clear">↺</button>' +
-          '</span>' +
-          '<code>' + highlighted + '</code></pre>' +
+          '<div class="fillin-head">' +
+            '<span class="fillin-badge">Challenge &middot; ' + blankLabel + '</span>' +
+            '<span class="fillin-actions">' +
+              '<button class="fillin-solve" title="Fill in the answers for me">Fill it in for me</button>' +
+              '<button class="fillin-reset" title="Clear">↺</button>' +
+              '<button class="fillin-run">▶ Run</button>' +
+            '</span>' +
+          '</div>' +
+          '<div class="fillin-editor">' +
+            '<div class="fillin-gutter">' + gutterLines.join('<br>') + '</div>' +
+            '<pre class="fillin-pre"><code>' + highlighted + '</code></pre>' +
+          '</div>' +
+          '<div class="fillin-console">Run once every blank is filled in</div>' +
           '</div>';
       }
 
@@ -4178,9 +4291,10 @@
         document.querySelectorAll('.fillin-block').forEach(function (block) {
           if (block.dataset.wired) return;
           block.dataset.wired = '1';
-          var pre = block.querySelector('.fillin-pre');
           var inputs = block.querySelectorAll('.fillin-input');
           var template = block.getAttribute('data-template') || '';
+          var out = block.querySelector('.fillin-console');
+          var idleText = out.textContent;
 
           function buildCode() {
             var idx = 0;
@@ -4192,14 +4306,10 @@
               return v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
             });
           }
-          function output() {
-            var out = pre.nextElementSibling;
-            if (!out || !out.classList.contains('code-output')) {
-              out = document.createElement('pre');
-              out.className = 'code-output';
-              pre.parentNode.insertBefore(out, pre.nextSibling);
-            }
-            return out;
+          // state: null (idle/plain output), 'pass', or 'fail'.
+          function setConsole(text, state) {
+            out.textContent = text;
+            out.className = 'fillin-console' + (state ? ' fillin-' + state : '');
           }
           function mark() {
             inputs.forEach(function (el) {
@@ -4211,10 +4321,7 @@
 
           var solveBtn = block.querySelector('.fillin-solve');
           if (solveBtn) solveBtn.addEventListener('click', function () {
-            inputs.forEach(function (el) {
-              el.value = el.getAttribute('data-answer') || '';
-              el.size = Math.max(6, el.value.length + 1);
-            });
+            inputs.forEach(function (el) { el.value = el.getAttribute('data-answer') || ''; });
             mark();
             runBtn.click();
           });
@@ -4222,19 +4329,15 @@
           var resetBtn = block.querySelector('.fillin-reset');
           if (resetBtn) resetBtn.addEventListener('click', function () {
             inputs.forEach(function (el) { el.value = ''; el.classList.remove('fillin-ok'); });
-            var out = pre.nextElementSibling;
-            if (out && out.classList.contains('code-output')) out.hidden = true;
+            setConsole(idleText, null);
           });
 
           var runBtn = block.querySelector('.fillin-run');
           runBtn.addEventListener('click', function () {
             var code = buildCode();
-            var out = output();
             runBtn.disabled = true;
             runBtn.textContent = 'Loading…';
-            out.hidden = false;
-            out.textContent = '';
-            out.className = 'code-output';
+            setConsole('Loading Python…', null);
             loadPyodide_().then(function (py) {
               runBtn.textContent = 'Running…';
               var buf = [];
@@ -4243,14 +4346,19 @@
               return py.loadPackagesFromImports(code)
                 .catch(function () {})
                 .then(function () { return py.runPythonAsync(code); })
-                .then(function () { out.textContent = buf.join('') || '(no output)'; })
+                .then(function () {
+                  var text = buf.join('') || '(no output)';
+                  // Self-check convention: a block's own print() reports
+                  // PASS/WRONG (see notebook-exercise-format memory) — surface
+                  // that as console color instead of leaving it as plain text.
+                  var state = /\bWRONG\b/.test(text) ? 'fail' : /\bPASS\b/.test(text) ? 'pass' : null;
+                  setConsole(text, state);
+                })
                 .catch(function (err) {
-                  out.textContent = buf.join('') + '\n' + String(err.message || err);
-                  out.className = 'code-output code-output-error';
+                  setConsole(buf.join('') + '\n' + String(err.message || err), 'fail');
                 });
             }).catch(function (err) {
-              out.textContent = String(err.message || err);
-              out.className = 'code-output code-output-error';
+              setConsole(String(err.message || err), 'fail');
             }).then(function () {
               runBtn.disabled = false;
               runBtn.textContent = '▶ Run';
