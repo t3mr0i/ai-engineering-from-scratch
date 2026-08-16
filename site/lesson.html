@@ -2400,6 +2400,18 @@
       // hardcoding it means it tracks correctly once a de.md fallback ships.
       var currentLessonLang = 'en';
 
+      // Lesson content (docs/en.md, quiz.json, code/main.py, assets/*) is
+      // gated server-side by the /api/content function — see api/content/
+      // index.js. Local dev bypass: that's an Azure Function a plain static
+      // server can't run, so on localhost fall back to fetching the same
+      // files straight from site/phases/ (staged by serve.sh), same
+      // precedent as the localhost bypass in gate-guard.js. Every other
+      // hostname (any real deployment) always goes through /api/content.
+      var IS_LOCAL_DEV = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+      function contentUrl(relPath) {
+        return IS_LOCAL_DEV ? relPath : ('/api/content?path=' + encodeURIComponent(relPath));
+      }
+
       if (!lessonPath) {
         showError('No lesson path specified', 'Add ?path=phases/01-math-foundations/01-linear-algebra-intuition to the URL.');
         return;
@@ -2944,14 +2956,15 @@
       }
 
       function fetchLesson(path) {
-        // Load lesson content from local files served alongside the site, not
-        // from GitHub. `path` is "phases/<phase>/<lesson>"; the deploy stages
-        // those files under the web root next to lesson.html (site/phases/...),
-        // so the content resolves at <path>/docs/en.md relative to the page.
+        // Load lesson content through the gated /api/content function (see
+        // contentUrl() above), not from GitHub and not from a static site
+        // path. `path` is "phases/<phase>/<lesson>"; rawUrl/quizUrl stay
+        // plain relative paths (used below for lang detection and error
+        // messages) — contentUrl() wraps them for the actual fetch.
         var rawUrl = path + '/docs/en.md';
         var quizUrl = path + '/quiz.json';
 
-        fetch(rawUrl)
+        fetch(contentUrl(rawUrl))
           .then(function (res) {
             if (!res.ok) throw new Error('fetch-failed');
             return res.text();
@@ -2968,7 +2981,7 @@
               showError('Render error', 'Loaded the lesson markdown but failed to render it. Details in the browser console.');
               return;
             }
-            fetch(quizUrl)
+            fetch(contentUrl(quizUrl))
               .then(function (res) { return res.ok ? res.json() : null; })
               .catch(function () { return null; })
               .then(function (data) {
@@ -3753,7 +3766,9 @@
           if (p === '..') stack.pop();
           else stack.push(p);
         }
-        return stack.join('/');
+        // Assets are gated content too (phases/<phase>/<lesson>/assets/*) —
+        // route through /api/content like the rest of fetchLesson().
+        return contentUrl(stack.join('/'));
       }
 
       function inlineFormat(text, opts) {
@@ -5344,7 +5359,7 @@
         }
 
         Promise.all([
-          fetch(codeUrl).then(function (r) { return r.ok ? r.text() : null; }).catch(function () { return null; }),
+          fetch(contentUrl(codeUrl)).then(function (r) { return r.ok ? r.text() : null; }).catch(function () { return null; }),
           resolveNotebookBase()
         ]).then(function (res) { mountNotebook(res[0], res[1]); });
 

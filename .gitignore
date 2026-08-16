@@ -79,6 +79,11 @@ ide/jupyter/lessons/
 site/phases/
 site/jupyterlite/
 
+# Lesson content bundled with the gated api/content function — staged from
+# phases/ at deploy time (see .github/workflows/azure-static-web-apps.yml
+# and serve.sh), same reasoning as site/phases/ above.
+api/content/_data/
+
 # Lazyweb MCP tool cache
 .lazyweb/
 

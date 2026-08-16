@@ -1,10 +1,16 @@
 name: Deploy to Azure Static Web Apps
 
-# Hosts the site on Azure Static Web Apps with `site/` as the web root. Lesson
-# content (phases/<phase>/<lesson>/docs/en.md, quiz.json) is staged into
-# site/phases/ before deploy so lesson.html loads it at runtime with no GitHub
-# fetch. Requires the repo secret AZURE_STATIC_WEB_APPS_API_TOKEN (the
-# deployment token from the Azure Static Web App resource).
+# Hosts the site on Azure Static Web Apps with `site/` as the web root.
+# Lesson content (docs/en.md, quiz.json, code/main.py, assets/*) is gated:
+# it is staged into api/content/_data/ and served only through the
+# /api/content managed function, which checks the `ase_gate` session cookie
+# before returning anything. It is deliberately NOT staged into site/ —
+# static files under site/ ship with no access control, so any lesson
+# content placed there would defeat the gate (this is exactly the bug this
+# workflow used to have: it staged phases/ straight into site/phases/,
+# which meant every lesson doc was a plain unauthenticated GET away).
+# Requires the repo secret AZURE_STATIC_WEB_APPS_API_TOKEN (the deployment
+# token from the Azure Static Web App resource).
 
 on:
   push:
@@ -34,18 +40,25 @@ jobs:
       - name: Generate site/data.js
         run: node site/build.js
 
-      - name: Stage lesson content into site/phases
-        # site/ is the web root; copy the lesson docs/quizzes so lesson.html
-        # can load <path>/docs/en.md and <path>/quiz.json without GitHub.
+      - name: Stage lesson content into api/content/_data
+        # api/content (the gated function, api/content/index.js) reads from
+        # here at request time — NOT from site/, which ships with no access
+        # control. Same file selection as before, just a different
+        # destination. NOTE: `assets/*` (one path segment), not `assets/**`
+        # — see serve.sh for why (openrsync on the dev machine silently
+        # stages nothing with `**`; this workflow uses GNU rsync on
+        # ubuntu-latest where `**` would work, but kept identical to serve.sh
+        # on purpose so the two staging steps can't quietly diverge).
         run: |
-          mkdir -p site/phases
+          mkdir -p api/content/_data
           rsync -a --prune-empty-dirs \
             --include='*/' \
             --include='docs/en.md' \
             --include='quiz.json' \
             --include='code/main.py' \
+            --include='assets/*' \
             --exclude='*' \
-            phases/ site/phases/
+            phases/ api/content/_data/phases/
 
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
@@ -53,8 +66,11 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          # site/ is the web root; staged site/phases/* serves lesson content.
+          # site/ is the web root (no lesson content in it — see above).
+          # api/ is deployed alongside it as the managed function app;
+          # api/content/_data/ (staged above) travels with it.
           app_location: "site"
+          api_location: "api"
           output_location: ""
           skip_app_build: true
 

@@ -45,6 +45,25 @@ rsync -a --prune-empty-dirs \
   --exclude='*' \
   phases/ site/phases/
 
+# This local server can't run the Azure Function (/api/content) — lesson.html
+# falls back to fetching straight from site/phases/ on localhost (see the
+# IS_LOCAL_DEV check in lesson.html, same precedent as gate-guard.js). The
+# deployed site does NOT ship site/phases/ — see .github/workflows/azure-
+# static-web-apps.yml, which stages this same selection into
+# api/content/_data/ instead so the gated function can serve it.
+# Staged here too (same selection) only so `func start`/SWA-CLI-based local
+# testing of api/content itself has real files to read; the plain
+# python3 http.server below never touches this directory.
+mkdir -p api/content/_data
+rsync -a --prune-empty-dirs \
+  --include='*/' \
+  --include='docs/en.md' \
+  --include='quiz.json' \
+  --include='code/main.py' \
+  --include='assets/*' \
+  --exclude='*' \
+  phases/ api/content/_data/phases/
+
 URL="http://localhost:${PORT}/"
 
 echo "──────────────────────────────────────────────"
