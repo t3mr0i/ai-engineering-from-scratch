@@ -109,7 +109,7 @@ sequenceDiagram
 
 “The agent said it was done” is not an evaluator. “The tests exited zero” may
 be an evaluator, provided the tests actually ran and cover the stated goal.
-The verification gate from Lesson 38 remains useful inside the loop; this
+The verification gate from "Verification Gates" remains useful inside the loop; this
 lesson adds the scheduling and repetition around it.
 
 ## Stop conditions are part of correctness
@@ -160,7 +160,7 @@ durable evidence; the in-memory list is only the live convenience view.
 
 ## Design exercise: take yourself out of the loop
 
-Use a task from Lesson 42 and write a `goal.md` with these fields:
+Use a task from "Capstone: Ship a Reusable Agent Workbench Pack" and write a `goal.md` with these fields:
 
 ```text
 Goal: the exact end state
@@ -194,8 +194,8 @@ coordination cost explicit.
 ## Exercises
 
 1. Replace the demo evaluator with a command-backed evaluator that records an
-   exit code and truncated output, reusing the feedback discipline from Lesson
-   37.
+   exit code and truncated output, reusing the feedback discipline from
+   "Runtime Feedback Loops".
 2. Add a wall-clock deadline to `LoopPolicy` and test that a deadline produces a
    receipt instead of an unbounded wait.
 3. Design a timer loop for a read-only task. List the idempotency key, interval,

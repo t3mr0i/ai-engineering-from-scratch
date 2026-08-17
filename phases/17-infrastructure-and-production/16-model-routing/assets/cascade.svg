@@ -54,7 +54,7 @@
   <rect x="40" y="290" width="880" height="100" class="box"/>
   <text x="480" y="312" text-anchor="middle" class="head">the 2026 price curve</text>
   <text x="480" y="334" text-anchor="middle" class="step">GPT-4-level quality: $20/M (late 2022) → $0.40/M (2026) ≈ 50x cheaper</text>
-  <text x="480" y="352" text-anchor="middle" class="step">aggregate LLM price drop: ~10x per year, mostly serving efficiency (Phase 17 · 04-09)</text>
+  <text x="480" y="352" text-anchor="middle" class="step">aggregate LLM price drop: ~3.3x per year, mostly serving efficiency (Phase 17 · 04-09)</text>
   <text x="480" y="372" text-anchor="middle" class="caption">routing captures those gains at the app layer</text>
 
   <rect x="40" y="410" width="880" height="80" class="box"/>

@@ -12,7 +12,7 @@
 - Implement token-level exact-match, F1, and accuracy with explicit tokenisation rules.
 - Implement BLEU-4 from the ground up: modified n-gram precision, geometric mean over n equals 1 through 4, brevity penalty.
 - Implement ROUGE-L using longest common subsequence, with F-beta combination of precision and recall.
-- Dispatch on the metric_name field from lesson 70 so the runner stays metric-agnostic.
+- Dispatch on the metric_name field from "Task Spec Format" so the runner stays metric-agnostic.
 - Pin the behaviour with reference vectors drawn from worked examples, not from a third-party library.
 
 ## Why reimplement
@@ -142,7 +142,7 @@ For multi-target classification tasks, accuracy reduces to exact-match against a
 
 ## Dispatch contract
 
-The single entry point is `score(metric_name, prediction, targets)`. It returns a float in `[0, 1]`. The runner does not branch on metric name. It hands the call off and writes the result. This is the surface that lesson 75 will glue to the task spec from lesson 70.
+The single entry point is `score(metric_name, prediction, targets)`. It returns a float in `[0, 1]`. The runner does not branch on metric name. It hands the call off and writes the result. This is the surface that "End-to-End Eval Runner" will glue to the task spec from "Task Spec Format".
 
 ```python
 def score(metric_name, pred, targets):
@@ -159,11 +159,11 @@ def score(metric_name, pred, targets):
     raise ValueError(f"unknown metric_name: {metric_name}")
 ```
 
-`code_exec` is handled in lesson 72 and slotted into the dispatcher there.
+`code_exec` is handled in "Code Exec Metric" and slotted into the dispatcher there.
 
 ## What this lesson does not do
 
-It does not call a model. It does not normalise generations beyond what the post-process rules from lesson 70 already did. It does not compute confidence intervals. It does not do BLEURT or BERTScore (those need a model and live in a different lesson). The point is the floor: five metrics, one tokenizer, one dispatch table.
+It does not call a model. It does not normalise generations beyond what the post-process rules from "Task Spec Format" already did. It does not compute confidence intervals. It does not do BLEURT or BERTScore (those need a model and live in a different lesson). The point is the floor: five metrics, one tokenizer, one dispatch table.
 
 ## How to read the code
 

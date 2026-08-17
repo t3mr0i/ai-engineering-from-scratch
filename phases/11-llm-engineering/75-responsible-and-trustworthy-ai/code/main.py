@@ -56,8 +56,13 @@ SPECIAL_CATEGORY_FIELDS = frozenset({
     "religious_belief",
     "trade_union_membership",
     "sexual_orientation",
-    "criminal_record",
     "genetic_data",
+})
+
+# GDPR Art. 10: criminal-conviction/offence data is its own regime, not one
+# of the Art. 9 special categories above.
+ART_10_CRIMINAL_DATA_FIELDS = frozenset({
+    "criminal_record",
 })
 
 # Fields that are personal data but not special-category
@@ -109,7 +114,8 @@ def assess_gdpr_risk(
 
     for f in fields:
         is_special = f.field_type in SPECIAL_CATEGORY_FIELDS
-        is_personal = f.field_type in PERSONAL_FIELDS or is_special
+        is_criminal_data = f.field_type in ART_10_CRIMINAL_DATA_FIELDS
+        is_personal = f.field_type in PERSONAL_FIELDS or is_special or is_criminal_data
 
         if not f.necessary_for_purpose:
             violations.append(
@@ -124,6 +130,13 @@ def assess_gdpr_risk(
                     f"Art. 9 special-category: '{f.name}' ({f.field_type}) lacks "
                     f"an Art. 9 lawful basis (declared: {f.legal_basis!r})"
                 )
+        elif is_criminal_data:
+            if f.legal_basis not in ("official_authority", "statutory_authorization"):
+                violations.append(
+                    f"Art. 10 criminal-conviction data: '{f.name}' ({f.field_type}) may only be "
+                    "processed under the control of official authority, or when authorised by "
+                    f"Union/Member State law with appropriate safeguards (declared: {f.legal_basis!r})"
+                )
         elif is_personal:
             if f.legal_basis is None:
                 violations.append(
@@ -131,7 +144,7 @@ def assess_gdpr_risk(
                     "has no declared lawful basis"
                 )
 
-    has_special_violation = any("Art. 9" in v for v in violations)
+    has_special_violation = any("Art. 9" in v or "Art. 10" in v for v in violations)
     has_minimisation = any("Art. 5(1)(c)" in v for v in violations)
     has_basis_missing = any("Art. 6" in v for v in violations)
 

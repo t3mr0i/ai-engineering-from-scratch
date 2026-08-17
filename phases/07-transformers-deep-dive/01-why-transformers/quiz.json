@@ -1,0 +1,64 @@
+{
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why can't an RNN process a 1,024-token sequence in parallel on a GPU?",
+      "options": [
+        "The tokenizer produces embeddings one at a time",
+        "GPUs cannot run more than a few hundred threads at once",
+        "Each hidden state h_t depends on h_{t-1}, forcing 1,024 serial steps",
+        "RNN weight matrices are too large to fit in GPU memory"
+      ],
+      "correct": 2,
+      "explanation": "An RNN computes h_t = f(h_{t-1}, x_t): step t cannot start before step t-1 finishes. That serial dependency chain is what wastes a GPU's parallel cores on long sequences, regardless of memory or embedding cost."
+    },
+    {
+      "stage": "pre",
+      "question": "What does the fixed-width hidden state in a classic encoder-decoder RNN force the model to do?",
+      "options": [
+        "Squeeze the entire source sequence into one vector before the decoder sees anything",
+        "Store one hidden state per attention head",
+        "Discard tokens beyond a fixed context window",
+        "Recompute gradients for every layer at every step"
+      ],
+      "correct": 0,
+      "explanation": "The encoder compresses a source sequence of any length down to a single fixed-size vector. A 5-token and a 500-token source end up in the same bottleneck shape, which is why long sequences lose information before the decoder ever runs."
+    },
+    {
+      "stage": "post",
+      "question": "Self-attention removes the RNN's serial dependency. What does it cost in exchange?",
+      "options": [
+        "Model accuracy on short sequences",
+        "The ability to train with backpropagation",
+        "O(N^2) memory in the attention matrix as sequence length N grows",
+        "Compatibility with GPU hardware"
+      ],
+      "correct": 2,
+      "explanation": "Recurrence was O(N) in time and memory. Attention trades that for O(1) serial depth (full parallelism) at the cost of an N x N attention matrix, which is O(N^2) in memory — the reason long-context transformers need tricks like sliding windows or Flash Attention."
+    },
+    {
+      "stage": "post",
+      "question": "According to Chinchilla (2022), how does a transformer compare to an RNN of equal parameter count?",
+      "options": [
+        "The RNN always wins because it needs less training data",
+        "They perform identically once both are fully trained",
+        "The transformer needs more data to train well, but always wins given enough tokens",
+        "Neither architecture benefits from additional training data past a point"
+      ],
+      "correct": 2,
+      "explanation": "Transformers assume no locality bias — every pair of tokens is a candidate for attention — so they need more data than an RNN to learn useful patterns. But given enough tokens, Chinchilla found a transformer always outperforms an RNN of the same size."
+    },
+    {
+      "stage": "post",
+      "question": "Vanishing gradients made long-range dependencies unreliable in RNNs. What specifically causes this?",
+      "options": [
+        "The attention matrix grows quadratically with sequence length",
+        "Information from 50 tokens back is compressed through 50 non-linearities before it reaches the current step",
+        "LSTMs and GRUs cannot be trained with backpropagation",
+        "The tokenizer merges distant tokens into a single embedding"
+      ],
+      "correct": 1,
+      "explanation": "Each recurrent step pushes the hidden state through another non-linearity. Fifty steps back means fifty compressions, and gradients (and the original signal) shrink at each one — gated units like LSTM/GRU soften this but don't eliminate it."
+    }
+  ]
+}

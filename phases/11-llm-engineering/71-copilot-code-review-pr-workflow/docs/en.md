@@ -47,7 +47,7 @@ Treat it exactly as a careful senior treats a junior's first PR — with one add
 - **Scope creep.** The agent "improved" adjacent code you didn't ask it to touch. Every changed line should trace to the issue.
 - **Confident wrong context.** It may have pulled a stale doc or the wrong file. Check what it read, not just what it wrote.
 
-The verification gate from Lesson 70 applies in full: read the diff, run the tests yourself, scan for secrets, you own the merge.
+The verification gate from "GitHub Copilot for Software Engineers: The Daily Workflow" applies in full: read the diff, run the tests yourself, scan for secrets, you own the merge.
 
 ### What Copilot code review owns — and does not
 

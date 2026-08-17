@@ -113,7 +113,7 @@ Define the fallback strategy before launch. The default behavior without a defin
 
 For every answer above the high threshold, check that every claim in the generated answer is supported by some sentence in the retrieved snippets. A cheap extractive check (every content-bearing noun/number in the claim must appear in some retrieved chunk) handles the common case; escalate borderline cases to an LLM-as-judge (Claude Haiku 4.x for cost, Claude Sonnet 4.x when borderline is rare).
 
-Cost numbers: LLM-as-judge faithfulness on ~2K tokens of answer plus ~2K tokens of snippets costs ~$0.003 (Sonnet 4.x) or ~$0.0004 (Haiku 4.x). At 10K queries/day that's $30/day (Sonnet) or $4/day (Haiku) — trivial compared to a single compliance incident. Calibrate threshold on your evaluation dataset using answer faithfulness as the success metric, not retrieval recall. Retrieval recall of 0.9 with faithfulness 0.6 is worse than retrieval recall 0.7 with faithfulness 0.9.
+Cost numbers: LLM-as-judge faithfulness on ~2K tokens of answer plus ~2K tokens of snippets costs ~$0.012 (Sonnet 4.x) or ~$0.004 (Haiku 4.x, at $3 / $1 per million input tokens respectively). At 10K queries/day that's $120/day (Sonnet) or $40/day (Haiku) — trivial compared to a single compliance incident. Calibrate threshold on your evaluation dataset using answer faithfulness as the success metric, not retrieval recall. Retrieval recall of 0.9 with faithfulness 0.6 is worse than retrieval recall 0.7 with faithfulness 0.9.
 
 ---
 

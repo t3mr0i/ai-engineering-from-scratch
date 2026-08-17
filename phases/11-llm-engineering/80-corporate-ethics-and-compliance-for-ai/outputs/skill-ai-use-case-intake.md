@@ -19,8 +19,9 @@ Fill in the blanks:
 | Does it involve real-time biometric identification in public spaces? | | **Prohibited — stop here** |
 | Does it involve social scoring of individuals? | | **Prohibited — stop here** |
 | Does it operate in: employment/HR, credit/insurance, health, education, critical infrastructure, law enforcement, migration? | | **High-Risk** |
-| Does it deploy a third-party foundation model (Claude, GPT-4o, Gemini, etc.) as a component? | | **GPAI** |
 | None of the above? | | **Minimal-Risk** |
+
+Separately — does it deploy a third-party foundation model (Claude, GPT-4o, Gemini, etc.) as a component? GPAI is not a tier on this table: Chapter V obligations attach to the *model provider*, not the use case, so they apply on top of whichever tier above applies rather than replacing it.
 
 ### Obligations by tier
 
@@ -28,8 +29,8 @@ Fill in the blanks:
 |---|---|
 | **Prohibited** | Do not proceed. Escalate to legal immediately. |
 | **High-Risk** | Conformity assessment; EU database registration; human oversight mechanism; 10-year logging; explainability; FRIA if public sector. |
-| **GPAI** | Verify provider's capability evaluation and copyright summary. Confirm systemic-risk mitigations if provider model exceeds 10^25 FLOP training compute. |
-| **Minimal-Risk** | Self-declaration of conformity; internal documentation; incident-response plan. |
+| **Minimal-Risk** | No conformity declaration outside High-Risk (Art. 43, 47); internal documentation; incident-response plan. |
+| **+ third-party foundation model (any tier)** | Verify the provider's capability evaluation and copyright training-data summary (Art. 53); confirm systemic-risk mitigations if the provider's model exceeds 10^25 FLOP training compute. |
 
 ---
 
@@ -65,8 +66,8 @@ All three gates must be cleared before design or development begins.
 | Prohibited | Legal + project sponsor | Same day; project halt |
 | High-Risk, any gate open | Legal + InfoSec + project sponsor | Before sprint 1 |
 | High-Risk, all gates clear | Legal sign-off on conformity path + CISO | Before architecture review |
-| GPAI or Minimal, any gate open | InfoSec + Legal | Within 5 business days |
-| GPAI or Minimal, all gates clear | Engineering lead | Proceed to design |
+| Minimal, any gate open | InfoSec + Legal | Within 5 business days |
+| Minimal, all gates clear | Engineering lead | Proceed to design |
 
 ---
 

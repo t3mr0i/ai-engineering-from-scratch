@@ -56,7 +56,7 @@ When a new generative model paper drops, answer these five questions before read
 2. **Is the density explicit or implicit?** Do they write down `log p(x)`?
 3. **Sampling: one-shot or iterative?** Iterative means slower inference; one-shot usually means adversarial or distilled.
 4. **Conditioning: unconditional, class, text, image, pose?** This determines the loss and architecture scaffolding.
-5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?** Each has known failure modes (see Lesson 14).
+5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?** Each has known failure modes (see "Evaluation — FID, CLIP Score, Human Preference" later in this phase).
 
 You will re-answer these five for every lesson in this phase. By the end, they will be reflex.
 

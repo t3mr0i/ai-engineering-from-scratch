@@ -35,7 +35,7 @@ or use as a pre-task checklist.
 | Tool category | Best for | Approx cost (2026) | Watch out for |
 |---|---|---|---|
 | Internal RAG / Copilot M365 | Policy questions, internal knowledge retrieval | Infrastructure cost; marginal per query | May lag on recent updates; verify currency |
-| Chat assistant (Claude Opus/Sonnet 4.x, ChatGPT, Gemini 2.x) | Drafting, ideation, public-data summarization | $3–$15 / 1K input, $15–$75 / 1K output (frontier) | Hallucinated specificity in numbers/names/dates |
+| Chat assistant (Claude Opus/Sonnet 4.x, ChatGPT, Gemini 2.x) | Drafting, ideation, public-data summarization | $3–$15 / 1M input, $15–$75 / 1M output (frontier) | Hallucinated specificity in numbers/names/dates |
 | Code assistant (Copilot, Cursor, Claude Code) | Inline completion, multi-file edits, code review | Subscription or ~$3–$10 per active hour | Secret-scan context; attention cost on multi-file edits |
 | Document intelligence | Large-volume PDF extraction, structured data | $0.01–$0.05 per page (Azure DI) | Position bias in long docs; never sole source for Tier 3+ |
 | Human-only | Regulated data, irreversible decisions | N/A | N/A |

@@ -11,7 +11,8 @@ Run before any retrieval context is finalised. One RED row blocks production.
 | Check | Pass condition | Risk if failed |
 |---|---|---|
 | Every field in the context has a declared Art. 6 legal basis | Basis is documented in the design doc | AMBER — processing without lawful basis |
-| Special-category fields (health, biometric, racial origin, political opinion, religious belief, sexual orientation, trade-union, genetic, criminal record) have an Art. 9 lawful basis | Basis is consent, statutory necessity, public interest, or legal claim (legitimate interest is not an Art. 9 basis) | RED — illegal special-category processing |
+| Special-category fields (health, biometric, racial origin, political opinion, religious belief, sexual orientation, trade-union, genetic) have an Art. 9 lawful basis | Basis is consent, statutory necessity, public interest, or legal claim (legitimate interest is not an Art. 9 basis) | RED — illegal special-category processing |
+| Criminal-conviction/offence data (criminal record) has an Art. 10 lawful basis | Basis is official-authority control, or authorisation under Union/Member State law with appropriate safeguards (consent alone is not an Art. 10 basis) | RED — illegal criminal-data processing |
 | Every field is declared necessary for the stated purpose | Product owner has signed off the field list | RED — data minimisation violation (Art. 5(1)(c)) |
 | Prompt and completion logs have a defined retention period | Retention period is in the privacy notice | Violation of storage limitation (Art. 5(1)(e)) |
 | Logs with personal data are redacted before storage | PII scrubber runs at log time, not as a post-hoc export step | Retention of unlawful log data |

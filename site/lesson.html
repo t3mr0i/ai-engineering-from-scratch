@@ -319,7 +319,7 @@
     }
 
     .lesson-content {
-      max-width: 720px;
+      max-width: 900px;
       width: 100%;
       min-width: 0;
     }
@@ -848,13 +848,26 @@
       text-align: right;
       user-select: none;
     }
-    .fillin-pre {
+    /* Scoped with an extra ancestor class (not just `.fillin-pre`) so this
+       beats the generic `.lesson-article pre` / `pre code` rules on
+       specificity -- those are meant for plain code blocks, but since this
+       is also a <pre>/<code> nested in .lesson-article, the generic rules
+       were winning and flipping the editor to the light prose code style
+       (wrong background, and clipped long lines instead of scrolling them).
+       Scroll boundary lives on `code` itself -- same pattern as the plain
+       `.lesson-article pre code` rule below -- not on the flex row, since a
+       `overflow: visible` flex item doesn't register as scrollable overflow
+       for an ancestor's `overflow-x: auto` (verified in-browser: content
+       silently painted past the card instead of scrolling). */
+    .fillin-block .fillin-pre {
       flex: 1;
+      min-width: 0;
       margin: 0;
       border: none;
       background: transparent;
+      overflow: hidden;
     }
-    .fillin-pre code {
+    .fillin-block .fillin-pre code {
       display: block;
       padding: 14px 16px 14px 8px;
       font-family: var(--font-mono);
@@ -864,6 +877,7 @@
       background: transparent;
       border: none;
       white-space: pre;
+      overflow-x: auto;
     }
     .fillin-editor .syn-keyword { color: #7ba6dc; font-weight: 500; }
     .fillin-editor .syn-string { color: #a8d5b8; }
@@ -2147,7 +2161,7 @@
     }
 
     @media (min-width: 1440px) {
-      .lesson-article { max-width: 760px; }
+      .lesson-article { max-width: 900px; }
       .lesson-sidebar { width: 280px; min-width: 280px; }
       .lesson-main { margin-left: 280px; padding-right: 280px; }
       .toc-sidebar { width: 280px; }
@@ -2959,7 +2973,7 @@
         // Load lesson content through the gated /api/content function (see
         // contentUrl() above), not from GitHub and not from a static site
         // path. `path` is "phases/<phase>/<lesson>". Tries docs/de.md first,
-        // falling back to docs/en.md — as of this writing 0 lessons ship a
+        // falling back to docs/en.md — as of this writing 503 lessons ship a
         // de.md, so every fetch still falls through to English, but the
         // fallback is real: the moment a de.md exists, this starts serving
         // it (B1).

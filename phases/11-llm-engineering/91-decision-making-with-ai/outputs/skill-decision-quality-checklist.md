@@ -98,8 +98,9 @@ Every decision (automated or human-reviewed) must emit a structured log entry:
 | `override` | `false` | True if approver accepted despite gate failure -- this is the rubber-stamp signal |
 | `timestamp` | `2026-06-22T09:14:33Z` | UTC, millisecond precision |
 
-Store in an append-only log. Retain for the period required by applicable law
-(EU AI Act Article 12: minimum 10 years for high-risk systems).
+Store in an append-only log. Retain for the period required by applicable law:
+the automatically generated logs for at least 6 months (EU AI Act Article
+19(1)); the underlying technical documentation for 10 years (Article 18).
 
 ---
 
@@ -124,7 +125,7 @@ Use this table in a sprint review or project gate:
 
 | Standard | Scope | Key obligation |
 |---|---|---|
-| EU AI Act (2024/1689) | EU; high-risk AI systems | Technical documentation, human oversight (Art. 14), conformity assessment, audit trail (Art. 12, min. 10-year retention) |
+| EU AI Act (2024/1689) | EU; high-risk AI systems | Technical documentation (Art. 18, 10-year retention), human oversight (Art. 14), conformity assessment, audit trail logs (Art. 19(1), min. 6-month retention) |
 | NIST AI RMF 1.0 | US federal; voluntary best practice | Govern, Map, Measure, Manage lifecycle |
 | NIST SP 1270 | Bias measurement | Protected-attribute audit, disparity metrics |
 | ISO/IEC 42001 | International; AI management systems | Management system standard for responsible AI |

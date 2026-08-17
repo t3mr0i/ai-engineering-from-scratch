@@ -1,0 +1,64 @@
+{
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "In the lesson's canonical failure mode, why does the automation demo work but production fail a week later?",
+      "options": [
+        "The model was retrained on stale data between demo and launch",
+        "The demo only covers the curated examples the team chose, and production silently fails on the exception cases nobody looked at",
+        "The production environment has less compute than the demo environment",
+        "The manual team stopped reviewing outputs once headcount was reduced"
+      ],
+      "correct": 1,
+      "explanation": "The twenty curated demo examples hide the 8% of cases — multi-currency invoices, API-created tickets, non-standard clause ordering — that the team never examined. By the time the silent failures surface, the fallback (the manual team) is often already gone."
+    },
+    {
+      "stage": "pre",
+      "question": "Which of the four automation-readiness inputs specifically sets the accuracy floor the AI must clear?",
+      "options": [
+        "Output sensitivity",
+        "Volume and variance profile",
+        "Manual process error rate",
+        "Exception map"
+      ],
+      "correct": 2,
+      "explanation": "The manual process error rate is the baseline the AI has to beat — it also reveals whether 'automation' is really just papering over a process defect that has a cheaper fix than a model."
+    },
+    {
+      "stage": "post",
+      "question": "At the 'High' output-sensitivity level, what does the lesson say the automation posture should be?",
+      "options": [
+        "Automate immediately with lightweight monitoring",
+        "Automate with a sampling-based human review layer",
+        "Human-in-the-loop on every decision, or automation is premature",
+        "Delay automation until volume data covers two full years"
+      ],
+      "correct": 2,
+      "explanation": "High sensitivity means a wrong output has financial, legal, or reputational consequences that survive detection — the lesson's table maps that directly to full human-in-the-loop review, not sampling-based checks."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the lesson call it circular to use a model to decide whether a process is ready to automate, and then use that analysis to justify deploying the model?",
+      "options": [
+        "Because models cannot read structured SOPs at all",
+        "Because the readiness judgment and the deployment justification would both rest on the same unverified model output, with no independent ground truth",
+        "Because ISO/IEC 42001 explicitly prohibits using AI in the assessment phase",
+        "Because it doubles the compute cost of the assessment"
+      ],
+      "correct": 1,
+      "explanation": "If the same model both generates the readiness hypothesis and gets deployed on the strength of it, nothing independent has validated the process. The lesson calls a human audit of a sample the only non-circular baseline."
+    },
+    {
+      "stage": "post",
+      "question": "Why does skipping this lesson's readiness gate make a Phase 17 · 20 shadow deployment meaningless?",
+      "options": [
+        "Shadow deployments require GPU quota that only the readiness gate can allocate",
+        "A shadow comparison needs a defined baseline of 'correct,' which this lesson's exception map and error-rate measurement establish",
+        "Phase 17 · 20 cannot run without a signed scope contract from Phase 14 · 36",
+        "Shadow mode only works on processes with fewer than 200 cases per day"
+      ],
+      "correct": 1,
+      "explanation": "The lesson frames the three-stage sequence explicitly: this lesson establishes what the process does and fails at; without that baseline, a shadow deployment in Phase 17 · 20 has nothing meaningful to compare its outputs against."
+    }
+  ]
+}

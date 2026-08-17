@@ -25,9 +25,9 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Shortens broad AI foundations into a business-readable entry path.",
         lessons: [
-          { path: "phases/11-llm-engineering/73-ai-fundamentals", title: "How AI Systems Actually Work: A Consultant's Map of the Four Layers" },
           { path: "phases/02-ml-fundamentals/01-what-is-machine-learning", title: "What Is Machine Learning" },
           { path: "phases/08-generative-ai/01-generative-models-taxonomy-history", title: "Generative Models — Taxonomy & History" },
+          { path: "phases/11-llm-engineering/73-ai-fundamentals", title: "How AI Systems Actually Work: A Consultant's Map of the Four Layers" },
           { path: "phases/07-transformers-deep-dive/01-why-transformers", title: "Why Transformers" },
           { path: "phases/10-llms-from-scratch/14-open-models-architecture-walkthroughs", title: "Open Models: Architecture Walkthroughs" }
         ]
@@ -104,7 +104,7 @@ window.LrnCurriculumMap = {
         note: "Maps GDPR, auditability and enterprise control language into the LRN course.",
         lessons: [
           { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security — Secrets, API Key Rotation, Audit Logs, Guardrails" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"},
           { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks — EU, US, UK, Korea" }
         ]
       },
@@ -138,7 +138,7 @@ window.LrnCurriculumMap = {
         note: "Useful when prompts must produce reliable business artifacts.",
         lessons: [
           { path: "phases/11-llm-engineering/03-structured-outputs", title: "Structured Outputs: JSON, Schema Validation, Constrained Decoding" },
-          { path: "phases/13-tools-and-protocols/04-structured-output", title: "Structured Output — JSON Schema, Pydantic, Zod" },
+          { path: "phases/13-tools-and-protocols/04-structured-output", title: "Structured Output — JSON Schema, Pydantic, Zod, Constrained Decoding"},
           { path: "phases/13-tools-and-protocols/05-tool-schema-design", title: "Tool Schema Design" }
         ]
       },
@@ -181,7 +181,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Keeps pilots accountable and measurable.",
         lessons: [
-          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" },
+          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs"},
           { path: "phases/17-infrastructure-and-production/21-ab-testing-llm-features", title: "A/B Testing LLM Features" },
           { path: "phases/15-autonomous-systems/13-cost-governors", title: "Action Budgets, Iteration Caps, and Cost Governors" }
         ]
@@ -198,7 +198,7 @@ window.LrnCurriculumMap = {
           { path: "phases/11-llm-engineering/72-copilot-cursor-claude-code-mcp", title: "Copilot vs Cursor vs Claude Code, and MCP in the IDE" },
           { path: "phases/11-llm-engineering/01-prompt-engineering", title: "Prompt Engineering: Techniques & Patterns" },
           { path: "phases/15-autonomous-systems/09-coding-agent-landscape", title: "The Autonomous Coding Agent Landscape" },
-          { path: "phases/15-autonomous-systems/10-claude-code-permission-modes", title: "Claude Code Permission Modes and Auto Mode" }
+          { path: "phases/15-autonomous-systems/10-claude-code-permission-modes", title: "Claude Code as an Autonomous Agent: Permission Modes and Auto Mode"}
         ]
       },
       {
@@ -258,7 +258,7 @@ window.LrnCurriculumMap = {
           { path: "phases/17-infrastructure-and-production/08-inference-metrics-goodput", title: "Inference Metrics" },
           { path: "phases/17-infrastructure-and-production/13-llm-observability", title: "LLM Observability Stack Selection" },
           { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security — Secrets, API Key Rotation, Audit Logs, Guardrails" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"}
         ]
       }
     ],
@@ -309,7 +309,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/80-corporate-ethics-and-compliance-for-ai", title: "AI Use-Case Intake: From Idea to Approved Deployment" },
           { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"},
           { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks — EU, US, UK, Korea" }
         ]
       },
@@ -359,7 +359,7 @@ window.LrnCurriculumMap = {
         decision: "optional",
         note: "For product teams moving from QA design into rollout decisions.",
         lessons: [
-          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" },
+          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs"},
           { path: "phases/17-infrastructure-and-production/21-ab-testing-llm-features", title: "A/B Testing LLM Features" }
         ]
       }
@@ -390,7 +390,7 @@ window.LrnCurriculumMap = {
         decision: "optional",
         note: "Adds rollout and audit controls for larger modernization efforts.",
         lessons: [
-          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" },
+          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs"},
           { path: "phases/17-infrastructure-and-production/25-security-secrets-audit", title: "Security — Secrets, API Key Rotation, Audit Logs, Guardrails" }
         ]
       }
@@ -514,7 +514,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Keeps discovery connected to controlled rollout and measurement.",
         lessons: [
-          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" },
+          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs"},
           { path: "phases/17-infrastructure-and-production/21-ab-testing-llm-features", title: "A/B Testing LLM Features" }
         ]
       }
@@ -609,7 +609,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/13-tools-and-protocols/17-mcp-gateways-and-registries", title: "MCP Gateways and Registries" },
           { path: "phases/13-tools-and-protocols/23-capstone-tool-ecosystem", title: "Capstone — Build a Complete Tool Ecosystem" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"}
         ]
       }
     ],
@@ -640,7 +640,7 @@ window.LrnCurriculumMap = {
         note: "For leaders building communities, champions and reusable enablement packs.",
         lessons: [
           { path: "phases/13-tools-and-protocols/22-skills-and-agent-sdks", title: "Skills and Agent SDKs" },
-          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Reusable Agent Workbench Pack" }
+          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Ship a Reusable Agent Workbench Pack" }
         ]
       }
     ],
@@ -694,7 +694,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/18-ethics-safety-alignment/27-data-provenance-training-governance", title: "Data Provenance and Training-Data Governance" },
           { path: "phases/18-ethics-safety-alignment/26-model-system-dataset-cards", title: "Model, System, and Dataset Cards" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"}
         ]
       },
       {
@@ -734,7 +734,7 @@ window.LrnCurriculumMap = {
         note: "For teams moving from security awareness into production readiness.",
         lessons: [
           { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"}
         ]
       }
     ],
@@ -786,7 +786,7 @@ window.LrnCurriculumMap = {
         note: "Keeps procurement tied to enterprise control evidence.",
         lessons: [
           { path: "phases/11-llm-engineering/35-ai-security-prompt-injection", title: "AI Security and Prompt Injection Defense" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" },
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"},
           { path: "phases/18-ethics-safety-alignment/24-regulatory-frameworks-eu-us-uk-korea", title: "Regulatory Frameworks — EU, US, UK, Korea" }
         ]
       },
@@ -816,7 +816,7 @@ window.LrnCurriculumMap = {
         decision: "core",
         note: "Connects incident response to release discipline.",
         lessons: [
-          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" },
+          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs"},
           { path: "phases/14-agent-engineering/38-verification-gates", title: "Verification Gates" },
           { path: "phases/15-autonomous-systems/16-checkpoints-rollback", title: "Checkpoints and Rollback" }
         ]
@@ -973,7 +973,7 @@ window.LrnCurriculumMap = {
         note: "Connects automation candidates to measurable value and bounded pilot design.",
         lessons: [
           { path: "phases/11-llm-engineering/25-ai-cost-value-economics", title: "AI Cost and Value Economics" },
-          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment" },
+          { path: "phases/17-infrastructure-and-production/20-shadow-canary-progressive", title: "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs"},
           { path: "phases/15-autonomous-systems/13-cost-governors", title: "Action Budgets, Iteration Caps, and Cost Governors" }
         ]
       },
@@ -995,7 +995,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/102-ai-risk-management-and-internal-controls", title: "AI Risk Management: Owners, Controls, and Audit Evidence" },
           { path: "phases/11-llm-engineering/75-responsible-and-trustworthy-ai", title: "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"}
         ]
       },
       {
@@ -1130,7 +1130,7 @@ window.LrnCurriculumMap = {
         lessons: [
           { path: "phases/11-llm-engineering/10-evaluation", title: "Evaluation & Testing LLM Applications" },
           { path: "phases/18-ethics-safety-alignment/27-data-provenance-training-governance", title: "Data Provenance and Training-Data Governance" },
-          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance Frameworks" }
+          { path: "phases/17-infrastructure-and-production/26-compliance-frameworks", title: "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001"}
         ]
       },
       {
@@ -1375,7 +1375,7 @@ window.LrnCurriculumMap = {
           { path: "phases/14-agent-engineering/39-reviewer-agent", title: "Reviewer Agent" },
           { path: "phases/14-agent-engineering/40-multi-session-handoff", title: "Multi-Session Handoff" },
           { path: "phases/14-agent-engineering/41-workbench-for-real-repos", title: "The Workbench on a Real Repo" },
-          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Reusable Agent Workbench Pack" }
+          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Ship a Reusable Agent Workbench Pack" }
         ]
       },
       {
@@ -1447,7 +1447,7 @@ window.LrnCurriculumMap = {
         note: "Combines the workbench surfaces into a reusable, reviewable delivery report.",
         lessons: [
           { path: "phases/14-agent-engineering/41-workbench-for-real-repos", title: "The Workbench on a Real Repo" },
-          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Reusable Agent Workbench Pack" },
+          { path: "phases/14-agent-engineering/42-agent-workbench-capstone", title: "Capstone: Ship a Reusable Agent Workbench Pack" },
           { path: "phases/14-agent-engineering/50-complete-harness", title: "Complete Harness" }
         ]
       },

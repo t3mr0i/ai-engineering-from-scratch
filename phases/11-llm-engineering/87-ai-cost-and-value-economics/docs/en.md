@@ -42,7 +42,7 @@ Prompt caching (Phase 17 · 14) is the highest-leverage lever for most productio
 
 - **Cache write cost** is typically 125% of input token price, a 25% premium over a cache miss (you pay to write the block once).
 - **Cache read cost** is typically 10% of input token price (you pay far less each subsequent hit).
-- **Break-even** is at two reads per cached block: write at 0.25 + one read at 0.10 = 0.35 total vs. 2 × 1.0 = 2.0 for two uncached reads. By the second read you have already paid for itself.
+- **Break-even** is at two reads per cached block: write at 1.25 + one read at 0.10 = 1.35 total vs. 2 × 1.0 = 2.0 for two uncached reads. By the second read, the cache has already paid for itself.
 
 The structural implication: cache hit rate matters far more than token price. A system with a 70% cache hit rate on a 2,000-token system prompt at Opus prices is cheaper per effective call than a system with 0% hit rate at Haiku prices with the same prompt. In our experience, roughly 7 out of 10 teams shipping LLM features in 2026 still do not log cache hit rate as a first-class metric; it should be a first-class metric in every LLM cost dashboard.
 

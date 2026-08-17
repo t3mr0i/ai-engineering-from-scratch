@@ -1,0 +1,76 @@
+{
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What single job does every generative model do, regardless of data type?",
+      "options": [
+        "Classify samples into a fixed set of categories",
+        "Given training samples from an unknown distribution, output new samples that look like they came from it",
+        "Compress input data to the smallest possible representation",
+        "Predict the next token in a sequence with maximum accuracy"
+      ],
+      "correct": 1,
+      "explanation": "Faces, sentences, MIDI files, protein structures — the underlying task is identical: learn p_data(x) well enough to draw new, plausible samples from it. Everything else (architecture, loss, family) is a choice of which hard problem to trade for a slightly less hard one."
+    },
+    {
+      "stage": "pre",
+      "question": "GANs skip writing down an explicit density p(x) entirely. What do they use instead?",
+      "options": [
+        "A generator G(z) producing samples and a discriminator D(x) telling real from fake",
+        "An invertible transform of a simple base distribution",
+        "A denoiser trained to reverse a fixed noising process",
+        "A variational lower bound on the log-likelihood"
+      ],
+      "correct": 0,
+      "explanation": "GANs are the implicit-density family: instead of evaluating a likelihood, a generator and discriminator play an adversarial game. That buys fast one-pass inference but notoriously unstable training compared to the explicit-density families."
+    },
+    {
+      "stage": "post",
+      "question": "Autoregressive models and normalizing flows are both 'explicit density, tractable.' What do they trade off against that tractability?",
+      "options": [
+        "They cannot be trained with gradient descent",
+        "They require millions more training examples than diffusion",
+        "Autoregressive inference is sequential, and flows need architecturally restrictive invertible layers",
+        "Neither family can model discrete data"
+      ],
+      "correct": 2,
+      "explanation": "Both families pay for an exact, evaluable log p(x) with a structural constraint at inference or architecture time: autoregressive generation is inherently step-by-step (slow for long sequences), and flows must be built entirely from invertible transforms."
+    },
+    {
+      "stage": "post",
+      "question": "Why does flow matching train faster and sample faster than DDPM-style diffusion?",
+      "options": [
+        "It replaces the transformer backbone with a smaller CNN",
+        "It trains simulate-free with straighter paths, cutting sampling to roughly 4-10x fewer steps than DDPM",
+        "It skips training entirely and uses a pretrained discriminator",
+        "It only works on lower-resolution images, reducing compute per step"
+      ],
+      "correct": 1,
+      "explanation": "Flow matching (Lipman 2023) learns straighter probability paths than the stochastic ones DDPM follows, so training needs no simulation of the forward process and sampling converges in far fewer steps — the lesson cites roughly 4-10x faster sampling."
+    },
+    {
+      "stage": "post",
+      "question": "In the token-based autoregressive family (Parti, VALL-E, Sora's tokenizer), what makes this different from bucket 1's plain autoregressive models?",
+      "options": [
+        "It uses a discriminator instead of a likelihood loss",
+        "It first compresses the data into discrete tokens with a VQ-VAE or residual quantizer, then models that token sequence autoregressively",
+        "It generates every token in the sequence in a single parallel step",
+        "It requires no training data, only a pretrained diffusion prior"
+      ],
+      "correct": 1,
+      "explanation": "This family is explicitly bucket 1 (explicit density, tractable) plus a learned tokenizer: a VQ-VAE or residual quantizer turns high-dimensional data into a short discrete sequence, which a transformer then models the same way GPT models text tokens."
+    },
+    {
+      "stage": "post",
+      "question": "According to the lesson's timeline, what did DDPM (Ho, 2020) mark?",
+      "options": [
+        "The first megapixel face generation with a GAN",
+        "The point where diffusion became practical, ahead of latent diffusion and text conditioning arriving in 2022",
+        "The introduction of the VQ-VAE tokenizer used by later video models",
+        "The first model to use flow matching for image synthesis"
+      ],
+      "correct": 1,
+      "explanation": "DDPM (2020) is the entry that makes diffusion practical in the timeline; latent diffusion and text conditioning (Imagen, Stable Diffusion 1, DALL-E 2) don't land as commodity tools until 2022, two years later."
+    }
+  ]
+}

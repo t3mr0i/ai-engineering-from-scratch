@@ -33,7 +33,7 @@ You are a senior copywriter at a B2B SaaS company. Write a product launch email 
 
 The first prompt activates a generic distribution of marketing emails in the model's training data. The second activates a narrow, high-quality slice. Same model. Same parameters. Wildly different outputs.
 
-This gap between what you ask and what you get is the entire discipline of prompt engineering. It is not a hack or a workaround. It is the primary interface between human intent and machine capability. And it is a subset of a larger discipline -- context engineering (covered in Lesson 05) -- that deals with everything that goes into the model's context window, not just the prompt itself.
+This gap between what you ask and what you get is the entire discipline of prompt engineering. It is not a hack or a workaround. It is the primary interface between human intent and machine capability. And it is a subset of a larger discipline -- context engineering (covered in "Context Engineering: Windows, Budgets, Memory, and Retrieval") -- that deals with everything that goes into the model's context window, not just the prompt itself.
 
 What changed is that it became table stakes. Every serious AI engineer needs it. The question is not whether to learn it but how deep to go.
 

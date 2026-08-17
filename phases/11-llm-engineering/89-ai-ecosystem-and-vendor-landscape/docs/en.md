@@ -50,7 +50,7 @@ Benchmarks mislead when used as the primary selection signal. The decision tree 
 | Balanced | Claude Sonnet 4.x, Gemini 2.0 Flash, Llama 4 Scout hosted | $1–$6 | Most production workloads: RAG, summarization, structured extraction |
 | Commodity | Haiku 4.x, Gemini 2.0 Flash Lite, Llama 3.1 8B hosted | $0.10–$0.50 | High-volume triage, extraction, routing, simple QA |
 
-A flagship-tier misroute at 50M tokens/month costs approximately $1,500–$2,000/month more than the same workload on the commodity tier. At enterprise scale the annual delta is the cost of a junior engineer. The exit cost: a team that has built its prompts and evals around the flagship model cannot trivially drop down a tier without re-running the eval suite. *The tier you pick is the tier you stay on for at least the next two quarters.*
+A flagship-tier misroute at 50M tokens/month costs approximately $725–$2,000/month more than the same workload on the commodity tier. At enterprise scale the annual delta is the cost of a junior engineer. The exit cost: a team that has built its prompts and evals around the flagship model cannot trivially drop down a tier without re-running the eval suite. *The tier you pick is the tier you stay on for at least the next two quarters.*
 
 4. **Latency profile.** Groq (LPU inference) and Gemini Flash on Vertex consistently hit sub-200ms TTFT for prompt lengths under 2K tokens. Flagship models via standard APIs often sit at 500ms–2s TTFT. For real-time interactive applications the distinction is architectural; for batch analytics it is irrelevant. Do not let "low latency" appear on a vendor scorecard if your workload is batch.
 

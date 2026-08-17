@@ -17,7 +17,7 @@
 
 ## From one loop to a system
 
-Lesson 43 made the loop's internal contract visible: a goal, a maker, an
+"Loop Engineering: From Prompts to Bounded Autonomy" made the loop's internal contract visible: a goal, a maker, an
 evaluator, feedback, and stop conditions. That is enough for one coherent task.
 Real engineering work often needs several kinds of work at once: research,
 implementation, tests, review, rollback, and human approval. If one agent keeps
@@ -259,7 +259,7 @@ job is to make that cost visible and place approval where it matters.
 
 ## Exercises
 
-1. Draw the loop from Lesson 43 as a graph. Mark the edge that was implicit in
+1. Draw the loop from "Loop Engineering: From Prompts to Bounded Autonomy" as a graph. Mark the edge that was implicit in
    the loop and name the state field that carries its feedback.
 2. Add a second verification branch for security findings. Choose append or
    conflict semantics for each shared field and test a conflicting update.

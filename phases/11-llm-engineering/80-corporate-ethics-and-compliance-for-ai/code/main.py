@@ -71,6 +71,7 @@ class UseCase:
     sector: Sector
     is_biometric_public_space: bool = False
     is_social_scoring: bool = False
+    is_safety_component_of_regulated_product: bool = False  # Annex I, e.g. medical devices, machinery, cars
     deploys_third_party_foundation_model: bool = False  # e.g., calling Claude/GPT API
     # Control states for Part 2
     dpa_signed: Optional[bool] = None          # None = not yet assessed
@@ -122,7 +123,7 @@ OBLIGATIONS_BY_TIER = {
         "Conduct a Fundamental Rights Impact Assessment (FRIA) if public-sector deployer.",
     ],
     AIActTier.MINIMAL: [
-        "Self-declaration of conformity recommended.",
+        "No conformity declaration required — that instrument (Art. 43, 47) applies only to High-Risk systems.",
         "Voluntary adherence to EU AI Act Code of Practice.",
         "Maintain internal documentation for incident response.",
     ],
@@ -158,18 +159,19 @@ def classify_use_case(uc: UseCase) -> ClassificationResult:
             f"category. The decision effect is '{uc.decision_effect.value}', which reinforces "
             "the high-risk classification."
         )
-    elif uc.deploys_third_party_foundation_model:
-        tier = AIActTier.GPAI
+    elif uc.is_safety_component_of_regulated_product:
+        tier = AIActTier.HIGH_RISK
         reasoning = (
-            "The use case deploys a third-party foundation model (general-purpose AI). "
-            "GPAI obligations apply to the model provider; the deployer must verify the "
-            "provider's compliance documentation and supplement it with use-case-specific controls."
+            "The AI is a safety component of a product already covered by EU harmonisation "
+            "legislation (Annex I, e.g. machinery, medical devices, toys, vehicles) — "
+            "high-risk under Article 6(1), independent of sector."
         )
     else:
         tier = AIActTier.MINIMAL
         reasoning = (
             f"Sector '{uc.sector.value}' is not in EU AI Act Annex III high-risk categories, "
-            "no prohibited features detected. Minimal-risk tier applies."
+            "not a safety component under Annex I, no prohibited features detected. "
+            "Minimal-risk tier applies."
         )
 
     # --- GDPR triggers ---
@@ -208,10 +210,14 @@ def classify_use_case(uc: UseCase) -> ClassificationResult:
             "no immediate GDPR triggers identified. Verify data types are exhaustive."
         )
 
+    obligations = list(OBLIGATIONS_BY_TIER[tier])
+    if uc.deploys_third_party_foundation_model:
+        obligations.append(GPAI_PROVIDER_NOTE)
+
     return ClassificationResult(
         use_case_name=uc.name,
         tier=tier,
-        obligations=OBLIGATIONS_BY_TIER[tier],
+        obligations=obligations,
         gdpr_triggers=gdpr_triggers,
         reasoning=reasoning,
     )
@@ -453,7 +459,7 @@ def main() -> None:
 
     print()
     print(
-        "Key finding: The GPAI-tier chatbot (all controls confirmed) is the only APPROVED "
+        "Key finding: The Minimal-tier FAQ chatbot (all controls confirmed) is the only APPROVED "
         "case. The complaint AI is CONDITIONAL: DPA not signed and Confidential data "
         "classification uncleared — both must be resolved before any personal data can be "
         "sent to the model API. The CV screener is also CONDITIONAL: it is High-Risk under "
