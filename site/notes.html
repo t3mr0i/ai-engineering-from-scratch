@@ -2,9 +2,27 @@
 <html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
+  <script>
+    /* D1 — resolve an explicit stored dark-mode choice before first paint,
+       same mechanism as lesson.html/llm-primer. Only an explicit stored
+       value is applied; with nothing stored the attribute stays as
+       authored and the prefers-color-scheme media query in lrn/tokens.css
+       keeps handling the OS preference. */
+    (function () {
+      function apply() {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        if (stored === 'dark' || stored === 'light') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      }
+      apply();
+      window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Meine Merkzettel · LHIND AI Learning Catalog</title>
+  <title data-i18n="title_notes">My Merkzettel · LHIND AI Learning Catalog</title>
   <meta name="description" content="Gespeicherte Key Terms und markierte Textstellen aus deinen Lektionen, an einem Ort — durchsuchbar und exportierbar, ohne die Lektionen erneut zu öffnen.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
@@ -23,6 +41,9 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <button type="button" id="darkModeToggle" class="nav-settings theme-toggle" title="Switch color theme" aria-label="Switch color theme">
+      <i class="ph-light ph-moon" aria-hidden="true" id="darkModeIcon"></i>
+    </button>
     <a href="notes.html" class="nav-settings notes-link" title="Meine Merkzettel" aria-label="Meine Merkzettel" aria-current="page">
       <i class="ph-light ph-bookmarks" aria-hidden="true"></i>
       <span class="badges-link__count" id="navNotesCount" data-show="false" aria-hidden="true">0</span>
@@ -59,5 +80,6 @@
   <script src="progress.js?v=20260724a"></script>
   <script src="badges.js?v=20260713a"></script>
   <script src="notes.js?v=20260724a"></script>
+  <script src="theme-toggle.js"></script>
 </body>
 </html>

@@ -8,10 +8,15 @@ on:
       - "scripts/audit_lessons.py"
       - "scripts/build_catalog.py"
       - "scripts/check_readme_counts.py"
+      - "scripts/ci-content-check.js"
       - "README.md"
       - "ROADMAP.md"
       - "glossary/**"
       - "site/build.js"
+      - "site/lrn/curriculum-map.js"
+      - "site/lrn/data.js"
+      - "site/i18n.js"
+      - "server/server.js"
       - ".github/workflows/curriculum.yml"
   pull_request:
     branches: [main]
@@ -20,10 +25,15 @@ on:
       - "scripts/audit_lessons.py"
       - "scripts/build_catalog.py"
       - "scripts/check_readme_counts.py"
+      - "scripts/ci-content-check.js"
       - "README.md"
       - "ROADMAP.md"
       - "glossary/**"
       - "site/build.js"
+      - "site/lrn/curriculum-map.js"
+      - "site/lrn/data.js"
+      - "site/i18n.js"
+      - "server/server.js"
       - ".github/workflows/curriculum.yml"
 
 permissions:
@@ -42,6 +52,22 @@ jobs:
           python-version: "3.12"
       - name: run scripts/audit_lessons.py
         run: python3 scripts/audit_lessons.py
+
+  content-check:
+    name: content invariant checks (ci-content-check.js)
+    # Was written and 100% passing at the source (all 22 checks, thresholds
+    # ratcheted to today's real counts) but never wired into any pipeline —
+    # a PASS locally proved nothing about what actually shipped (§10-CI).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: 20
+      - name: run scripts/ci-content-check.js
+        run: node scripts/ci-content-check.js
 
   readme-counts-sync:
     name: README counts auto-fix (main only)

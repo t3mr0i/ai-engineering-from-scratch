@@ -47,6 +47,9 @@
   --b-ink: var(--ink, #05164d);
   --b-rule: var(--rule-soft, #e3e1de);
   --b-mute: var(--ink-mute, #7a7673);
+  /* --b-mute on --b-rule is 4.29:1, under WCAG AA's 4.5:1 for the locked
+     pill's small text — own foreground, not the shared muted-text token. */
+  --b-mute-locked: #605c5a;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,7 +109,7 @@
   max-width: 110px;
 }
 /* earned tier pills keep their tone colour; locked pills dim to neutral */
-.aifs-badge--locked .aifs-pill { background: var(--b-rule); color: var(--b-mute); }
+.aifs-badge--locked .aifs-pill { background: var(--b-rule); color: var(--b-mute-locked); }
 
 .aifs-badge__progress {
   width: 64px; height: 4px;
@@ -241,6 +244,7 @@
   --b-ink: var(--ink, #eaf1fb);
   --b-rule: var(--rule-soft, #234168);
   --b-mute: var(--ink-mute, #93a8c7);
+  --b-mute-locked: #a1b8da;
 }
 [data-theme="dark"] .aifs-badge-toast { box-shadow: 0 14px 40px rgba(0,0,0,0.45); }
 

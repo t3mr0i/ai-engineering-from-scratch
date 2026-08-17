@@ -122,19 +122,18 @@ const THRESHOLDS = {
   c4_badCorrectIndex: 0,
   c4_dupOptions: 0,
   // 5. Share of questions whose correct answer is the longest option.
-  //    PLAN: start at today's state (B13 remediation is large and ongoing).
-  //    Target is <=40% (random-chance-shaped). Measured repo-wide at 89.5%
-  //    (2082/2326); quiz.json is being actively rewritten by other workers
-  //    right now — two consecutive runs during verification already showed
-  //    72.4-73.1%, i.e. real progress. This threshold is deliberately kept
-  //    at the higher calibration value rather than chased down to the
-  //    moving target; ratchet it down once content work settles.
-  c5_longestCorrectSharePct: 89.5,
-  // 6. No empty `explanation`. PLAN: start at today's state. Measured at
-  //    401 repo-wide; same caveat as check 5 — live tree already showed 383
-  //    during verification. Kept at the higher calibration value on
-  //    purpose; ratchet down once content work settles.
-  c6_emptyExplanation: 401,
+  //    Target is <=40% (random-chance-shaped). Ratcheted from 89.5% (§10-5:
+  //    the "moving target" comment that kept this at the stale 89.5%
+  //    calibration, despite the same comment noting the real number had
+  //    already dropped to 72.4-73.1%, didn't justify a permanent 20-point
+  //    reserve) down to today's real measured value. Keep lowering as B13
+  //    remediation continues toward 40%.
+  c5_longestCorrectSharePct: 69.4,
+  // 6. No empty `explanation`. Ratcheted from 401 (repo-wide max, could
+  //    never fail) to today's real measured value, per §10-5's same
+  //    "ratchet, don't chase a moving target with a permanent cushion"
+  //    reasoning. Keep lowering as B14 remediation continues.
+  c6_emptyExplanation: 383,
   // 7. Every ![...](...) reference resolves to a file on disk.
   c7_brokenImageRefs: 0,
   // 8. No "(covered in|see|from) Lesson N" cross-references (curriculum-scoped —
@@ -417,22 +416,31 @@ function check9() {
 }
 
 // =============================================================================
-// Check 10 — "**Languages:** Python" only on lessons with >=1 code block
+// Check 10 — "**Languages:** Python" only on lessons with actual Python code
 // Curriculum-scoped: the "Languages:" metadata line only means anything in
 // the context of a rendered lesson page, and only curriculum-mapped lessons
-// are rendered that way. "Code block" is any fenced ``` block (not
-// specifically ```python — a mermaid diagram or a bash snippet still counts
-// as *some* code demonstration; the defect this catches is a lesson with
-// literally zero fenced content declaring a programming language).
+// are rendered that way. "Has code" is either a fenced ``` block in the
+// prose (not specifically ```python — a mermaid diagram or a bash snippet
+// still counts as *some* code demonstration) OR a code/main.py file, which
+// lesson.html fetches and renders as its own panel independent of the
+// prose (site/lesson.html: codeUrl = lessonPath + '/code/main.py') — a
+// lesson with a substantive code/main.py and no inline fence still has
+// real Python on the page. Checked every one of the lessons this used to
+// flag: all had a real, non-trivial code/main.py (83+ lines), none were
+// dead stubs — the original narrower check was a false-positive class,
+// not a content defect (B23).
 // =============================================================================
 function check10() {
   const details = [];
   for (const p of curriculumPaths) {
     const doc = readFileSync(path.join(REPO, p, "docs/en.md"), "utf8");
     if (!/\*\*Languages:\*\*\s*Python/i.test(doc)) continue;
-    if (!/```/.test(doc)) details.push(`${p}/docs/en.md`);
+    if (/```/.test(doc)) continue;
+    const codeFile = path.join(REPO, p, "code/main.py");
+    if (existsSync(codeFile) && readFileSync(codeFile, "utf8").split("\n").length > 10) continue;
+    details.push(`${p}/docs/en.md`);
   }
-  return record("10", "Languages:Python only on lessons with a code block", details.length, THRESHOLDS.c10_languagesNoCode, { details });
+  return record("10", "Languages:Python only on lessons with actual Python code", details.length, THRESHOLDS.c10_languagesNoCode, { details });
 }
 
 // =============================================================================
@@ -646,7 +654,14 @@ const ALLOWLIST_PATTERNS = [
 const MODEL_CANDIDATE_RE = /\b(GPT-[0-9][^\s,.)]*|Claude [A-Za-z0-9. ]+?[0-9](\.[0-9]+)?|Llama [0-9][^\s,.)]*(?: [0-9]+B)?|Gemini [0-9][^\s,.)]*|o[1-4](-mini|-pro)?|Mistral[- ][A-Za-z0-9]+|Ministral[- ][A-Za-z0-9]+|DeepSeek-[A-Za-z0-9.-]+|Qwen[0-9.]*|Grok[- ]?[0-9])/g;
 
 function check14() {
-  const files = findFiles(`phases -path "*/docs/en.md"`);
+  // Was docs/en.md only, which structurally could never catch the F6-1
+  // Llama-4 fabrications living in code/main.py and outputs/skill-*.md
+  // (§10-14) — widened to every file type a fabricated model name has
+  // actually turned up in: prose, code, generated skill outputs, notebooks,
+  // and SVG diagrams.
+  const files = findFiles(
+    `phases -type f \\( -path "*/docs/en.md" -o -path "*/code/*" -o -path "*/outputs/*" -o -name "*.ipynb" -o -path "*/assets/*.svg" \\)`
+  );
   const denyHits = [];
   const unverified = new Map(); // string -> count
   for (const f of files) {

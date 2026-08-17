@@ -22,7 +22,7 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LHIND · AI-Literacy Self-Assessment</title>
+  <title data-i18n="title_assessment">LHIND · AI-Literacy Self-Assessment</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
   <meta name="description" content="Rate yourself across 19 AI-literacy capabilities, get your AI-Literacy score, and a personalized learning path built from the curriculum.">
   <meta name="robots" content="noindex">
@@ -253,15 +253,31 @@
       var phaseById = {};
       if (typeof PHASES !== 'undefined') PHASES.forEach(function (p) { phaseById[p.id] = p; });
 
+      // Reads site/i18n.js directly (the shared window.SITE_I18N dictionary)
+      // rather than going through data-i18n, since these strings are built
+      // at runtime with values (capability count, score, role name) that
+      // data-i18n's static textContent swap can't fill in.
+      function i18nText(key, vars) {
+        var lang = (window.SiteLang ? window.SiteLang.get() : 'en');
+        var entry = window.SITE_I18N && window.SITE_I18N[key];
+        var s = entry && entry[lang] != null ? entry[lang] : (entry ? entry.en : key);
+        if (vars) {
+          Object.keys(vars).forEach(function (k) {
+            s = s.replace(new RegExp('\\{' + k + '\\}', 'g'), vars[k]);
+          });
+        }
+        return s;
+      }
+
       // B7: the intro copy hardcoded "19 capabilities" instead of reading
       // it from the data (capabilities.js currently has exactly 19, but
       // that number drifts whenever the sheet capabilities.js is generated
       // from changes) — derive it so the two can never disagree again.
       var introEl = document.getElementById('assessIntro');
-      if (introEl) {
-        introEl.textContent = 'Pick your role, rate yourself across the ' + CAPABILITIES.length +
-          ' capabilities, and get an AI-Literacy score plus a learning path built from the lessons you actually need.';
+      function renderIntro() {
+        if (introEl) introEl.textContent = i18nText('assess_intro', { count: CAPABILITIES.length });
       }
+      renderIntro();
 
       // B6: descriptions were cut at a hard 160-char slice, landing
       // mid-word. Cut back to the last full word within the limit instead.
@@ -383,14 +399,13 @@
         var complete = ratedRequired.length === required.length;
 
         document.getElementById('scoreNum').textContent = complete ? score : '–';
-        var band = !complete ? 'In progress'
-          : score >= 85 ? 'Role-ready' : score >= 60 ? 'On track'
-          : score >= 35 ? 'Developing' : 'Getting started';
+        var band = !complete ? i18nText('assess_band_in_progress')
+          : score >= 85 ? i18nText('assess_band_role_ready') : score >= 60 ? i18nText('assess_band_on_track')
+          : score >= 35 ? i18nText('assess_band_developing') : i18nText('assess_band_getting_started');
         document.getElementById('scoreBand').textContent = band;
         document.getElementById('scoreSub').textContent = complete
-          ? 'You meet ' + metCount + ' of ' + required.length + ' capability targets for ' + state.role + '.'
-          : 'Rate all ' + required.length + ' required capabilities for a score — ' +
-            ratedRequired.length + ' done. Your path is ready below.';
+          ? i18nText('assess_score_sub_complete', { met: metCount, total: required.length, role: state.role })
+          : i18nText('assess_score_sub_incomplete', { total: required.length, rated: ratedRequired.length });
 
         // Path: gaps only, ordered by cluster, then lessons-available, then gap size.
         var items = required.filter(function (x) { return x.gap > 0; });
@@ -405,7 +420,7 @@
         var list = document.getElementById('pathList');
         list.innerHTML = '';
         if (!items.length) {
-          list.innerHTML = '<p style="color:var(--text-muted)">No gaps — you meet every target for your role. <i data-lucide="party-popper" style="width:1em;height:1em;vertical-align:-0.15em"></i></p>';
+          list.innerHTML = '<p style="color:var(--text-muted)">' + i18nText('assess_no_gaps') + ' <i data-lucide="party-popper" style="width:1em;height:1em;vertical-align:-0.15em"></i></p>';
           if (window.lucide) lucide.createIcons();
           return;
         }
@@ -450,6 +465,17 @@
       // Resume into the rate step (not results) so a partially-rated user
       // continues rating rather than landing on a misleading low score.
       if (state.role && Object.keys(state.ratings).length) { buildRateForm(); showStep('step-rate'); }
+
+      // i18nText reads the current language at call time, so re-run every
+      // runtime-built string when the toggle fires (data-i18n elements
+      // re-translate themselves; these don't since they're plain text, not
+      // DOM attributes).
+      if (window.SiteLang) {
+        document.addEventListener('sitelang:change', function () {
+          renderIntro();
+          if (document.getElementById('step-result').classList.contains('active')) renderResult();
+        });
+      }
     })();
   </script>
 </body>

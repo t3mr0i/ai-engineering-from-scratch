@@ -22,7 +22,7 @@ Not every ticket belongs in the same automation lane. The decision point is the 
 | Zone | Knowledge quality | Resolution determinism | Action |
 |---|---|---|---|
 | **A — Automate** | High | High | Build a runbook-driven automation; LLM drafts the step sequence, engineer validates and wires to ITSM |
-| **B — Augment** | High | Low | AI surface the runbook to the analyst; human decides the next step; log the decision for future training |
+| **B — Augment** | High | Low | AI surfaces the runbook to the analyst; human decides the next step; log the decision for future training |
 | **C — Document first** | Low | High | The fix is known but not written; priority-1 knowledge capture task before any automation attempt |
 | **D — Escalate or accept** | Low | Low | Edge case or novel incident type; route to L2/L3; AI flags pattern when volume crosses a threshold |
 

@@ -80,7 +80,7 @@ Given boundary type and latency budget, only four base patterns are feasible:
 | Pattern | When to use | Data boundary handled | Latency profile |
 |---|---|---|---|
 | **Cloud-first RAG** | No sovereignty constraint; data reachable via API; latency > 3 s acceptable | Ownership (retrieval only) | Moderate |
-| **Edge-preprocessed RAG** | IoT source; sovereignty at edge; LLM in cloud; latency < 3 S | Latency + partial sovereignty | Fast (edge) + moderate (cloud LLM) |
+| **Edge-preprocessed RAG** | IoT source; sovereignty at edge; LLM in cloud; latency < 3 s | Latency + partial sovereignty | Fast (edge) + moderate (cloud LLM) |
 | **On-premises inference** | Strict sovereignty; no data egress permitted; latency flexible | Full sovereignty | Depends on on-prem hardware |
 | **Hybrid federated** | Compound boundary: some data sovereign, some not; unified user-facing interface | All three boundary types | Complex; requires explicit budget per federated source |
 

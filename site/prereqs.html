@@ -2,6 +2,24 @@
 <html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
+  <script>
+    /* D1 — resolve an explicit stored dark-mode choice before first paint,
+       same mechanism as lesson.html/llm-primer. Only an explicit stored
+       value is applied; with nothing stored the attribute stays as
+       authored and the prefers-color-scheme media query in lrn/tokens.css
+       keeps handling the OS preference. */
+    (function () {
+      function apply() {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        if (stored === 'dark' || stored === 'light') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      }
+      apply();
+      window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="title_prereqs">Roadmap · LHIND AI Learning Catalog</title>
@@ -21,6 +39,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260813a">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <style>
     /* ===================================================
        Learning Path — Page Styles
@@ -407,12 +426,16 @@
       <span>LHIND Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <button type="button" id="darkModeToggle" class="nav-settings theme-toggle" title="Switch color theme" aria-label="Switch color theme">
+      <i class="ph-light ph-moon" aria-hidden="true" id="darkModeIcon"></i>
+    </button>
     <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
   <script src="i18n.js"></script>
   <script src="lang.js"></script>
+  <script src="theme-toggle.js"></script>
 
   <main class="prereqs-page" id="main">
     <div class="container">

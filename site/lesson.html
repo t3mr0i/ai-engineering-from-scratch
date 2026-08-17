@@ -25,7 +25,7 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson · LHIND AI Learning Catalog</title>
+  <title data-i18n="title_lesson">Lesson · LHIND AI Learning Catalog</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
   <meta name="description" content="A lesson from the LHIND AI Learning Catalog curriculum by Lufthansa Industry Solutions. 503 lessons across 15 phases, four languages, every algorithm implemented from first principles.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
@@ -5402,8 +5402,8 @@
           setNotebookBase(base);
           var heavy = src && PY_NO_WASM.test(src);
           var note = heavy
-            ? 'This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU. The notebook shows the saved output already — open it to read and edit; run it locally for live results.'
-            : 'The notebook opens with the results already shown. Edit any cell and press ▶ to re-run it live in your browser (the Python kernel runs locally — nothing leaves your machine).';
+            ? 'This lesson uses a library (e.g. PyTorch) that needs a local machine or GPU. Open it to read and edit the code; run it locally for live results.'
+            : 'Edit any cell and press ▶ to run it live in your browser (the Python kernel runs locally — nothing leaves your machine).';
 
           el.innerHTML =
             '<div class="nb-placeholder" id="nbPlaceholder">' +

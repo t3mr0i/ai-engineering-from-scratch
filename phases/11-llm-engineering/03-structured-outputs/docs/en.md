@@ -78,7 +78,7 @@ JSON Schema is how you tell the model (or validation layer) what shape the outpu
 }
 ```
 
-This schema says: the output must be an object with a string `product`, a non-negative number `price`, a boolean `in_stock`, and an optional array of string `categories`. Any output that does not match gets rejected.
+This schema says: the output must be an object with a string `product`, a non-negative number `price`, a boolean `in_stock`, and an optional array of strings `categories`. Any output that does not match gets rejected.
 
 Schemas handle the hard cases: nested objects, arrays with typed items, enums (constrain a string to specific values), pattern matching (regex on strings), and combinators (oneOf, anyOf, allOf for polymorphic outputs).
 

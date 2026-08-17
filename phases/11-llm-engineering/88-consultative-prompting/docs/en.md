@@ -52,7 +52,7 @@ A stakeholder-aware prompt must encode at minimum three things: **level** (opera
 
 | Stakeholder type | Level encoding | Belief encoding | Decision type encoding |
 |---|---|---|---|
-| CIO evaluating vendor | "CIO of a 8,000-employee industrial company" | "Currently believes vendor A is operationally superior" | "Deciding whether to shortlist vendor B for final RFP" |
+| CIO evaluating vendor | "CIO of an 8,000-employee industrial company" | "Currently believes vendor A is operationally superior" | "Deciding whether to shortlist vendor B for final RFP" |
 | Steering committee | "5-person committee, 3 IT, 2 business" | "Two business members skeptical of cost projections" | "Approving or rejecting Q3 budget increase" |
 | External board | "Non-technical board; last briefing was 6 months ago" | "Believes the program is on track" | "Deciding whether to ask management for a status audit" |
 

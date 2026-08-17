@@ -183,6 +183,10 @@ window.SITE_I18N = {
   title_prereqs: { en: "Roadmap · LHIND AI Learning Catalog", de: "Roadmap · LHIND AI Learning Catalog" },
   title_badges: { en: "Badges · LHIND AI Learning", de: "Deine Erfolge · LHIND AI Learning" },
   title_course: { en: "Course · LHIND AI Learning Catalog", de: "Kurs · LHIND AI Learning Catalog" },
+  title_lesson: { en: "Lesson · LHIND AI Learning Catalog", de: "Lektion · LHIND AI Learning Catalog" },
+  title_notes: { en: "My Merkzettel · LHIND AI Learning Catalog", de: "Meine Merkzettel · LHIND AI Learning Catalog" },
+  title_gate: { en: "Enter passcode · LHIND Learning Catalog", de: "Passcode eingeben · LHIND Learning Catalog" },
+  title_403: { en: "Access restricted · LHIND Learning Catalog", de: "Zugriff eingeschränkt · LHIND Learning Catalog" },
 
   // skip links not covered by the shared skip_content/skip_catalog keys —
   // each page names its own landmark.
