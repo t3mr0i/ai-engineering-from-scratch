@@ -24,7 +24,7 @@
         "REST with an OpenAPI schema"
       ],
       "correct": 1,
-      "explanation": "The lesson states MCP messages are JSON-RPC 2.0 over stdio, WebSocket, or streamable HTTP, with the format `{\"jsonrpc\": \"2.0\", \"method\": \"...\", \"params\": {...}, \"id\": N}`."
+      "explanation": "The lesson states MCP messages are JSON-RPC 2.0 over stdio or streamable HTTP, with the format `{\"jsonrpc\": \"2.0\", \"method\": \"...\", \"params\": {...}, \"id\": N}`."
     },
     {
       "stage": "post",
@@ -48,7 +48,7 @@
         "gRPC bidirectional streaming"
       ],
       "correct": 1,
-      "explanation": "The lesson's wire-format section lists streamable HTTP, alongside stdio and WebSocket, as a transport for MCP's JSON-RPC 2.0 messages; of the four options, it is the only one the lesson names."
+      "explanation": "The lesson's wire-format section lists streamable HTTP, alongside stdio, as a transport for MCP's JSON-RPC 2.0 messages; of the four options, it is the only one the lesson names."
     },
     {
       "stage": "post",

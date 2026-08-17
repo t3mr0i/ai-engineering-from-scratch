@@ -69,12 +69,44 @@ Stderr is captured verbatim into the result. The runner never raises on a non ze
 
 ## Ablation table
 
-```python
-def ablate(base: ExperimentSpec, knob: str, values: list[Any]) -> list[ExperimentSpec]:
-    ...
-```
-
 Given a base spec and a knob name, the helper returns one spec per value with `config[knob]` overridden. Each spec gets a derived `spec_id` (`f"{base.spec_id}_{knob}_{value}"`). The runner ships an `AblationRunner` that runs them in order and returns an `AblationTable` keyed by knob value.
+
+The naive version below reuses the same config dict across iterations — the classic aliasing bug. Fix it so each spec is independent.
+
+```python fillin
+def broken_ablate(base_config, knob, values):
+    specs = []
+    cfg = base_config  # no copy!
+    for v in values:
+        cfg[knob] = v
+        specs.append(cfg)
+    return specs
+
+base_config = {"lr": 0.01, "dropout": 0.1, "batch_size": 32}
+broken = broken_ablate(dict(base_config), "lr", [0.001, 0.01, 0.1])
+print("broken (aliased, all show the last value):", broken)
+
+def ablate(base_config, knob, values):
+    specs = []
+    for v in values:
+        cfg = {{blank:dict(base_config)}}
+        cfg[knob] = v
+        specs.append(cfg)
+    return specs
+
+fixed = ablate(base_config, "lr", [0.001, 0.01, 0.1])
+
+expected = [
+    {"lr": 0.001, "dropout": 0.1, "batch_size": 32},
+    {"lr": 0.01, "dropout": 0.1, "batch_size": 32},
+    {"lr": 0.1, "dropout": 0.1, "batch_size": 32},
+]
+num_distinct_objects = len(set({{blank:id(cfg)}} for cfg in fixed))
+if fixed == expected and num_distinct_objects == 3:
+    print("PASS")
+else:
+    print("WRONG:", fixed, num_distinct_objects)
+```
 
 Why one knob at a time. Full factorial sweeps blow up exponentially and produce results the evaluator cannot interpret. One knob at a time produces a clean axis the evaluator can plot. The lesson supports multi knob sweeps only as repeated single knob ablations, composed by the caller.
 

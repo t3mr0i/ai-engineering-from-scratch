@@ -46,6 +46,8 @@ Servers MUST treat roots as the boundary: any file read or write outside the roo
 
 When the user adds or removes a root, the client sends `notifications/roots/list_changed`. The server re-calls `roots/list` and updates its boundary.
 
+**Roots is deprecated as of protocol version 2026-07-28 (SEP-2577).** It stays in the spec for at least twelve months after that revision before it becomes eligible for removal, so the mechanics above still apply today — but new implementations should not adopt it; the spec's guidance is to pass directories or files via tool parameters, resource URIs, or server configuration instead. Elicitation (below) is unaffected.
+
 ### Why roots are a client primitive
 
 Roots are declared by the client because they represent the user's consent model. The user told Claude Desktop "give this notes server access to these two directories". The server cannot widen that scope.

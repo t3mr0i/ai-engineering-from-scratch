@@ -96,7 +96,7 @@ TODAY = date(2026, 6, 22)
 def analyze_gaps(uc: UseCase) -> list[str]:
     """Return a list of gap descriptions for this use case.
 
-    Encodes the four required control elements (NIST AI RMF GOVERN 1.1
+    Encodes the four required control elements (NIST AI RMF GOVERN 2.1
     and ISO 42001 clause 6.1.2) and the two most common exception
     findings: open-ended (no expiry) and expired exceptions.
     """

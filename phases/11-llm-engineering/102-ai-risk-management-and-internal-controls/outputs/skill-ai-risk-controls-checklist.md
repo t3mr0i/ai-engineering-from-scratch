@@ -100,7 +100,7 @@ If the downstream effect of an output changes (e.g. an L0 "informational hint" i
 
 | Framework | Where it applies | Key clause for this checklist |
 |---|---|---|
-| NIST AI RMF 1.0 | US federal / US-regulated | GOVERN 1.1 (ownership), MANAGE 1.3 (evidence) |
+| NIST AI RMF 1.0 | US federal / US-regulated | GOVERN 2.1 (ownership), MANAGE 1.3 (evidence) |
 | ISO 42001:2023 | International / EU supply chain | Clause 6.1.2 (risk treatment), Clause 8.4 (monitoring) |
 | EU AI Act GPAI | EU market | Article 53 (transparency), Article 55 (systemic risk) |
 

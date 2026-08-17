@@ -29,8 +29,10 @@ from typing import Any, Iterator
 # ---------------------------------------------------------------------------
 
 # Standard GenAI attributes (OpenTelemetry GenAI semantic conventions).
-# These keys are stable; only new keys get added, never renamed.
-GEN_AI_SYSTEM = "gen_ai.system"
+# Not frozen: gen_ai.system was deprecated and renamed to gen_ai.provider.name
+# in semantic-conventions v1.37.0, and gen_ai.prompt/gen_ai.completion have
+# been deprecated too. Treat these as versioned, not stable.
+GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
 GEN_AI_REQUEST_MODEL = "gen_ai.request.model"
 GEN_AI_REQUEST_MAX_TOKENS = "gen_ai.request.max_tokens"
 GEN_AI_REQUEST_TEMPERATURE = "gen_ai.request.temperature"
@@ -405,7 +407,7 @@ def run_demo() -> int:
     with builder.span(
         "gen_ai.chat",
         attributes={
-            GEN_AI_SYSTEM: "anthropic",
+            GEN_AI_PROVIDER_NAME: "anthropic",
             GEN_AI_REQUEST_MODEL: "claude-track-a",
             GEN_AI_REQUEST_MAX_TOKENS: 1024,
             GEN_AI_REQUEST_TEMPERATURE: 0.0,

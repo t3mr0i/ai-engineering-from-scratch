@@ -12,7 +12,7 @@
 - Identify when to promote a tool from synchronous to task-augmented (>30 seconds of server-side work).
 - Walk the task lifecycle: `working` → `input_required` → `completed` / `failed` / `cancelled`.
 - Persist task state so crashes do not lose in-flight work.
-- Poll `tasks/status` and fetch `tasks/result` correctly.
+- Poll `tasks/get` and fetch `tasks/result` correctly.
 
 ## The Problem
 
@@ -22,7 +22,7 @@ A `generate_report` tool runs a multi-minute extraction pipeline. Options under 
 2. Return immediately with a placeholder; require the client to poll a custom endpoint. Breaks the MCP uniformity.
 3. Fire-and-forget; no result.
 
-None are good. SEP-1686 adds a fourth: task augmentation. Any request (typically `tools/call`) can be tagged as a task. The server returns a task id immediately. The client polls `tasks/status` and fetches `tasks/result` when done. Server-side state survives restarts.
+None are good. SEP-1686 adds a fourth: task augmentation. Any request (typically `tools/call`) can be tagged as a task. The server returns a task id immediately. The client polls `tasks/get` and fetches `tasks/result` when done. Server-side state survives restarts.
 
 ## The Concept
 
@@ -70,7 +70,7 @@ State machine is append-only: once `completed`, `failed`, or `cancelled`, the ta
 
 ### Methods
 
-- `tasks/status {taskId}` — returns current state and a progress hint.
+- `tasks/get {taskId}` — returns current state and a progress hint.
 - `tasks/result {taskId}` — blocks or returns 404 if not yet done.
 - `tasks/cancel {taskId}` — idempotent; terminal states ignore.
 - `tasks/list` — optional; enumerates active and recently-completed tasks.

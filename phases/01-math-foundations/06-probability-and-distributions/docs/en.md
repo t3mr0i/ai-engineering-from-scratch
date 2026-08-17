@@ -257,26 +257,37 @@ Sampling from arbitrary distributions requires techniques like inverse transform
 
 ## Use It
 
-With NumPy and SciPy, everything above is one-liners:
+The naive softmax below is exactly what the properties list above describes —
+and it silently breaks on logits a real model would actually produce. Fix it
+with the shift trick from the previous section.
 
-```python
+```python fillin
 import numpy as np
-from scipy import stats
 
-normal = stats.norm(loc=0, scale=1)
-samples = normal.rvs(size=10000)
-print(f"Mean: {np.mean(samples):.4f}, Std: {np.std(samples):.4f}")
-print(f"P(X < 1.96) = {normal.cdf(1.96):.4f}")
+def naive_softmax(z):
+    exp_z = np.exp(z)
+    return exp_z / np.sum(exp_z)
 
-logits = np.array([2.0, 1.0, 0.1])
-from scipy.special import softmax, log_softmax
-probs = softmax(logits)
-log_probs = log_softmax(logits)
-print(f"Softmax: {probs}")
-print(f"Log-softmax: {log_probs}")
+# Logits a real model can produce -- naive softmax overflows here.
+z = np.array([1000.0, 1001.0, 1002.0])
+print("naive:", naive_softmax(z))
+
+def stable_softmax(z):
+    z_shifted = z - {{blank:np.max(z)}}
+    exp_z = np.exp(z_shifted)
+    return exp_z / {{blank:np.sum(exp_z)}}
+
+result = stable_softmax(z)
+expected = np.array([0.09003057, 0.24472847, 0.66524096])
+if np.all(np.isfinite(result)) and np.allclose(result, expected, atol=1e-6):
+    print("PASS")
+else:
+    print("WRONG:", result)
 ```
 
-You built these from scratch. Now you know what the library calls are doing.
+`naive_softmax` prints `nan` — `exp(1002)` overflows float64 before the
+division ever happens. `stable_softmax` fixes it the same way real libraries
+(including SciPy's `softmax`) do internally.
 
 
 ## Key Terms

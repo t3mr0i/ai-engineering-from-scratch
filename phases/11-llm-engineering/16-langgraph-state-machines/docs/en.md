@@ -41,6 +41,44 @@ You compile the graph. Compile binds the topology, attaches a checkpointer (opti
 
 Every state field has a reducer. Most defaults are fine — a new value overwrites the old. But message lists need `operator.add` so new messages append instead of replacing. Parallel edges merge their updates through the reducer. If two nodes both update `messages` and you forgot the `Annotated[list, add_messages]`, the second wins silently and you lose half the turn. The reducer is the only subtle thing in the library; get it right and the rest composes.
 
+LangGraph isn't available in-browser, but a reducer is just a merge function
+per field — rebuild the bug and the fix in plain dicts:
+
+```python fillin
+def naive_apply(state, update):
+    merged = dict(state)
+    merged.update(update)  # every field overwrites -- messages included
+    return merged
+
+state = {"messages": ["hi"], "plan": "draft"}
+update1 = {"messages": ["tool ran"]}
+print("naive:", naive_apply(state, update1))  # {"messages": ["tool ran"], ...} -- "hi" is gone
+
+REDUCERS = {
+    "messages": lambda old, new: old {{blank:+}} new,
+}
+
+def apply_update(state, update):
+    merged = dict(state)
+    for key, value in update.items():
+        reducer = REDUCERS.get(key)
+        if reducer:
+            merged[key] = reducer(merged.get(key, {{blank:[]}}), value)
+        else:
+            merged[key] = {{blank:value}}
+    return merged
+
+after = apply_update(state, update1)
+update2 = {"plan": "final"}
+after = apply_update(after, update2)
+
+expected = {"messages": ["hi", "tool ran"], "plan": "final"}
+if after == expected:
+    print("PASS")
+else:
+    print("WRONG:", after)
+```
+
 ### The ReAct graph in four nodes
 
 A production ReAct agent is four nodes and two edges:

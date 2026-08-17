@@ -120,6 +120,56 @@ def notes_search(query: str, limit: int = 10) -> list[dict]:
 
 The TypeScript SDK has an equivalent shape. The graduation path is drop-in when you are ready; the concepts (capabilities, dispatch, content blocks) are the same.
 
+## Use It
+
+The dispatch loop's core rule — every request gets a response with the same
+`id`, notifications never get one — is easy to get wrong by responding to
+everything that comes off the wire.
+
+```python fillin
+messages = [
+    {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}},
+    {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}},  # no id -> notification
+    {"jsonrpc": "2.0", "id": 2, "method": "unknown/method", "params": {}},
+]
+
+def handle(msg):
+    if msg["method"] == "tools/list":
+        return {"tools": []}
+    raise KeyError(msg["method"])
+
+def naive_dispatch(messages):
+    return [{"jsonrpc": "2.0", "id": msg.get("id"), "note": "responded"} for msg in messages]
+
+print("naive:", len(naive_dispatch(messages)), "responses")  # 3 -- one for the notification too, spec violation
+
+def dispatch(messages):
+    responses = []
+    for msg in messages:
+        is_request = {{blank:"id" in msg}}
+        if not is_request:
+            continue  # notifications MUST NOT be responded to
+        try:
+            result = handle(msg)
+            responses.append({"jsonrpc": "2.0", "id": msg["id"], "result": result})
+        except KeyError:
+            responses.append({
+                "jsonrpc": "2.0",
+                "id": msg["id"],
+                "error": {"code": {{blank:-32601}}, "message": "Method not found"},
+            })
+    return responses
+
+results = dispatch(messages)
+expected = [
+    {"jsonrpc": "2.0", "id": 1, "result": {"tools": []}},
+    {"jsonrpc": "2.0", "id": 2, "error": {"code": -32601, "message": "Method not found"}},
+]
+if results == expected:
+    print("PASS")
+else:
+    print("WRONG:", results)
+```
 
 
 ## Further Reading

@@ -81,6 +81,49 @@ class DecoderBlock:
 
 ## Use It
 
+The class above needs a real tensor framework, which Pyodide doesn't have. The
+numpy version below rebuilds the same cross-attention math directly — scaled
+dot-product scores, softmax over the *image* axis, weighted sum of values.
+The naive version below softmaxes over the wrong axis (text instead of
+image), so each query's attention weights don't sum to 1. Fix the scaling
+and the softmax axis.
+
+```python fillin
+import numpy as np
+
+def softmax(x, axis):
+    x = x - np.max(x, axis=axis, keepdims=True)
+    e = np.exp(x)
+    return e / np.sum(e, axis=axis, keepdims=True)
+
+# text query tokens (Nt=2), image key/value tokens (Nv=3), d=4
+Q = np.array([[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0]])
+K = np.array([[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0]])
+V = np.array([[10.0, 0.0], [0.0, 10.0], [5.0, 5.0]])
+
+def naive_weights(Q, K):
+    d = Q.shape[-1]
+    scores = Q @ K.T / np.sqrt(d)
+    return softmax(scores, axis=0)  # normalizes down the text axis, not across image patches
+
+naive_w = naive_weights(Q, K)
+print("naive per-query weight sums (should each be 1.0):", naive_w.sum(axis=1))
+
+def cross_attention_weights(Q, K):
+    d = Q.shape[-1]
+    scores = Q @ K.T / {{blank:np.sqrt(d)}}
+    return softmax(scores, axis={{blank:-1}})
+
+weights = cross_attention_weights(Q, K)
+out = weights @ V
+
+expected_out = np.array([[5.88897071, 4.11102929], [4.11102929, 5.88897071]])
+if np.allclose(weights.sum(axis=1), 1.0) and np.allclose(out, expected_out, atol=1e-4):
+    print("PASS")
+else:
+    print("WRONG:", weights.sum(axis=1), out)
+```
+
 Cross-attention shows up in two production families:
 
 - **Flamingo and IDEFICS.** Insert a cross-attention sub-layer every K language model blocks, with a frozen LM. The vision-language adapter is the cross-attention block plus its gate.

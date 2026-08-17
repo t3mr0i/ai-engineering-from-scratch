@@ -253,6 +253,32 @@ index.add(embeddings)
 distances, indices = index.search(query_vectors, k=5)
 ```
 
+`faiss` has no Pyodide wheel, but `IndexFlatL2` is exact brute-force L2
+search -- exactly what `index.search()` does internally. Rebuild it with
+NumPy:
+
+```python fillin
+import numpy as np
+
+embeddings = np.array([
+    [0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [5.0, 5.0], [5.0, 6.0], [6.0, 5.0],
+])
+query = np.array([0.2, 0.1])
+k = 2
+
+diff = {{blank:embeddings - query}}
+sq_dist = np.sum(diff ** {{blank:2}}, axis=1)
+nearest_idx = np.argsort(sq_dist)[:k]
+nearest_dist = np.sqrt(sq_dist[nearest_idx])
+
+expected_idx = np.array([0, 1])
+expected_dist = np.array([0.2236068, 0.80622577])
+if np.array_equal(nearest_idx, expected_idx) and np.allclose(nearest_dist, expected_dist):
+    print("PASS")
+else:
+    print("WRONG:", nearest_idx, nearest_dist)
+```
+
 
 ## Key Terms
 

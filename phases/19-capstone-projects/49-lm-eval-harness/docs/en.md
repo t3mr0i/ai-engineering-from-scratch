@@ -79,6 +79,49 @@ Every metric is a function from `(prediction, targets, extras) -> float in [0.0,
 
 The code_exec metric runs the prediction in a stripped builtins namespace. The lesson's test asserts that `import os` blows up because `os` is not in the namespace; you cannot reach the filesystem from a code prediction.
 
+The naive rouge-l below treats the prediction and reference as unordered bags of words — it can't tell "the cat sat on the mat" from "the mat sat on the cat". Fix it with a real longest-common-subsequence.
+
+```python fillin
+def naive_rouge_l(pred, ref):
+    p_tokens = pred.lower().split()
+    r_tokens = ref.lower().split()
+    overlap = len(set(p_tokens) & set(r_tokens))  # unordered set overlap, ignores order
+    precision = overlap / len(p_tokens) if p_tokens else 0.0
+    recall = overlap / len(r_tokens) if r_tokens else 0.0
+    return 2 * precision * recall / (precision + recall) if (precision + recall) else 0.0
+
+pred = "the cat sat on the mat"
+ref = "the mat sat on the cat"  # same bag of words, different order/meaning
+
+print("naive:", naive_rouge_l(pred, ref))
+
+def lcs_length(a, b):
+    m, n = len(a), len(b)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if a[i - 1] == b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + {{blank:1}}
+            else:
+                dp[i][j] = max({{blank:dp[i - 1][j]}}, dp[i][j - 1])
+    return dp[m][n]
+
+def rouge_l(pred, ref):
+    p_tokens = pred.lower().split()
+    r_tokens = ref.lower().split()
+    lcs = lcs_length(p_tokens, r_tokens)
+    precision = lcs / len(p_tokens) if p_tokens else 0.0
+    recall = lcs / len(r_tokens) if r_tokens else 0.0
+    return 2 * precision * recall / (precision + recall) if (precision + recall) else 0.0
+
+result = rouge_l(pred, ref)
+expected = 4 / 6
+if abs(result - expected) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", result)
+```
+
 ### The model adapter
 
 ```python

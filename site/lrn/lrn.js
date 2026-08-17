@@ -15,13 +15,18 @@
   var profileById = indexBy(data.profiles, "id");
   var state = loadState();
 
-  var levelDefinitions = [
-    { value: 1, labelKey: "lrn_level_basic", focusLevels: ["Acquire"] },
-    { value: 2, labelKey: "lrn_level_foundation", focusLevels: ["Acquire", "Deepen"] },
-    { value: 3, labelKey: "lrn_level_practitioner", focusLevels: ["Deepen"] },
-    { value: 4, labelKey: "lrn_level_advanced", focusLevels: ["Deepen", "Create"] },
-    { value: 5, labelKey: "lrn_level_lead", focusLevels: ["Create"] }
-  ];
+  // Ersetzt die frueheren LV1-LV5. Die Fuenferskala stammte aus einem
+  // Fremd-Self-Assessment und war bereits nur eine Interpolation ueber
+  // Acquire/Deepen/Create. LV2 "Foundation" hatte keine Entsprechung in
+  // MyCompetence und entfaellt. Mapping: LV1->L1, LV3->L2, LV4->L3, LV5->L4.
+  var levelDefinitions = (data.aseLevels || []).map(function (lv) {
+    return {
+      value: lv.value,
+      code: lv.code,
+      labelKey: lv.labelKey,
+      focusLevels: lv.depthOwn
+    };
+  });
 
   // Mirrors lang.js's entry() lookup so lrn.js-owned UI chrome strings (level
   // labels, status tabs, CTA, empty-state, announcements) translate with the
@@ -153,8 +158,6 @@
     resultLine: document.getElementById("resultLine"),
     searchInput: document.getElementById("searchInput"),
     searchClear: document.getElementById("searchClear"),
-    topicChips: document.getElementById("topicChips"),
-    topicClearBtn: document.getElementById("topicClearBtn"),
     resetBtn: document.getElementById("resetBtn"),
     srStatus: document.getElementById("srStatus")
   };
@@ -173,8 +176,7 @@
       externalLevel: 1,
       interests: ["foundation", "productivity"],
       filter: "recommended",
-      activeCourseId: null,
-      searchTopic: null
+      activeCourseId: null
     };
 
     try {
@@ -185,8 +187,7 @@
         externalLevel: validLevel(saved.externalLevel) ? Number(saved.externalLevel) : fallback.externalLevel,
         interests: validInterests(saved.interests) ? saved.interests : fallback.interests,
         filter: ["recommended", "optional", "inprogress", "completed", "all"].indexOf(saved.filter) !== -1 ? saved.filter : "recommended",
-        activeCourseId: saved.activeCourseId || null,
-        searchTopic: validSearchTopic(saved.searchTopic) ? saved.searchTopic : fallback.searchTopic
+        activeCourseId: saved.activeCourseId || null
       };
     } catch (error) {
       return fallback;
@@ -199,7 +200,6 @@
     var rawLevel = params.get("level") || params.get("score") || params.get("assessment");
     var rawProfile = params.get("profile") || params.get("role");
     var rawInterests = params.get("interests");
-    var rawTopic = params.get("topic") || params.get("theme");
     var rawQuery = params.get("q");
 
     if (rawQuery && els.searchInput) {
@@ -231,14 +231,6 @@
       }
     }
 
-    if (rawTopic) {
-      var topicId = resolveInterest(rawTopic);
-      if (topicId) {
-        state.searchTopic = topicId;
-        changed = true;
-      }
-    }
-
     if (changed) saveState();
   }
 
@@ -257,10 +249,8 @@
       state.interests = ["foundation", "productivity"];
       state.filter = "recommended";
       state.activeCourseId = null;
-      state.searchTopic = null;
       if (els.searchInput) els.searchInput.value = "";
       syncSearchUi();
-      syncTopicUi();
       saveState();
       renderControls();
       render();
@@ -282,11 +272,6 @@
     }
     if (els.searchClear) {
       els.searchClear.addEventListener("click", clearSearch);
-    }
-    if (els.topicClearBtn) {
-      els.topicClearBtn.addEventListener("click", function () {
-        clearTopic(true);
-      });
     }
     var searchForm = document.getElementById("searchForm");
     if (searchForm) {
@@ -326,21 +311,18 @@
     });
   }
 
-  // Controls (profile/level selects + interest/topic chips) only need a full
+  // Controls (profile/level selects + interest chips) only need a full
   // rebuild when the underlying selection set or language changes — not on
   // every progress tick.
   function renderControls() {
     renderProfileSelect();
     renderLevelSelect();
     renderInterestChips();
-    renderTopicChips();
   }
 
   function render() {
     var computed = compute();
     syncSelects();
-    syncTopicChipState();
-    syncTopicUi();
     renderFilters();
     renderCourses(computed);
     refreshIcons();
@@ -360,7 +342,7 @@
     replaceChildren(els.levelSelect, levelDefinitions.map(function (level) {
       var option = document.createElement("option");
       option.value = String(level.value);
-      option.textContent = "LV" + level.value + " · " + i18n(level.labelKey);
+      option.textContent = level.code + " " + i18n(level.labelKey);
       return option;
     }));
     els.levelSelect.value = String(state.externalLevel);
@@ -390,41 +372,6 @@
     }));
   }
 
-  // Search topic controls are deliberately separate from the multi-select
-  // recommendation interests above. Both lists come from LrnData.interests;
-  // the single topic scope gives search an unambiguous, resettable dimension.
-  function renderTopicChips() {
-    if (!els.topicChips) return;
-    var topics = [{ id: "", label: i18n("topic_filter_all") }].concat(data.interests.map(function (interest) {
-      return {
-        id: interest.id,
-        label: topicLabel(interest.id, interest.label),
-        hint: topicHint(interest.id, interest.hint)
-      };
-    }));
-
-    replaceChildren(els.topicChips, topics.map(function (topic) {
-      var selected = state.searchTopic === (topic.id || null);
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "chip topic-chip" + (topic.id ? "" : " topic-chip--all");
-      btn.setAttribute("data-topic", topic.id || "");
-      btn.setAttribute("aria-pressed", String(selected));
-      btn.textContent = topic.label;
-      if (topic.hint) btn.title = topic.hint;
-      btn.addEventListener("click", function () {
-        state.searchTopic = topic.id || null;
-        saveState();
-        syncTopicUi();
-        render();
-        announce(state.searchTopic
-          ? i18n("lrn_announce_topic_set").replace("{topic}", topicLabel(state.searchTopic))
-          : i18n("lrn_announce_topic_clear"));
-      });
-      return btn;
-    }));
-  }
-
   function topicLabel(id, fallback) {
     var interest = data.interests.find(function (item) { return item.id === id; });
     return i18n("topic_" + id, fallback || (interest && interest.label) || id || i18n("topic_filter_all"));
@@ -433,21 +380,6 @@
   function topicHint(id, fallback) {
     var interest = data.interests.find(function (item) { return item.id === id; });
     return i18n("topic_" + id + "_hint", fallback || (interest && interest.hint) || "");
-  }
-
-  function syncTopicChipState() {
-    if (!els.topicChips) return;
-    var selected = state.searchTopic || "";
-    var chips = els.topicChips.querySelectorAll("[data-topic]");
-    for (var i = 0; i < chips.length; i += 1) {
-      chips[i].setAttribute("aria-pressed", String(chips[i].getAttribute("data-topic") === selected));
-    }
-  }
-
-  function focusAllTopicChip() {
-    if (!els.topicChips) return;
-    var allTopic = els.topicChips.querySelector('[data-topic=""]');
-    if (allTopic && typeof allTopic.focus === "function") allTopic.focus();
   }
 
   function renderFilters() {
@@ -479,25 +411,14 @@
   function renderCourses(computed) {
     var term = searchTerm();
     var scoped = filterCourses(computed.entries);
-    if (state.searchTopic) {
-      scoped = filterTopicEntries(scoped, state.searchTopic);
-    }
     var visible = term ? applySearch(scoped) : scoped;
-    var activeTopic = state.searchTopic ? topicLabel(state.searchTopic) : "";
 
     if (els.resultLine) {
       if (term) {
-        var searchResultKey = state.searchTopic
-          ? (visible.length === 1 ? "lrn_search_topic_one" : "lrn_search_topic_many")
-          : (visible.length === 1 ? "lrn_search_one" : "lrn_search_many");
+        var searchResultKey = visible.length === 1 ? "lrn_search_one" : "lrn_search_many";
         els.resultLine.textContent = i18n(searchResultKey)
           .replace("{count}", String(visible.length))
-          .replace("{query}", term)
-          .replace("{topic}", activeTopic);
-      } else if (state.searchTopic) {
-        els.resultLine.textContent = i18n(visible.length === 1 ? "lrn_topic_one" : "lrn_topic_many")
-          .replace("{count}", String(visible.length))
-          .replace("{topic}", activeTopic);
+          .replace("{query}", term);
       } else {
         els.resultLine.textContent = i18n(visible.length === 1 ? "lrn_courses_one" : "lrn_courses_many")
           .replace("{count}", String(visible.length));
@@ -511,7 +432,7 @@
       // When "Recommended" is empty but optional courses exist, the level/interest
       // combination simply has no on-path match — point the user at Optional.
       var hasOptional = computed.entries.some(function (entry) { return entry.kind === "optional"; });
-      if (term || state.searchTopic) {
+      if (term) {
         var emptyIcon = document.createElement("span");
         emptyIcon.className = "empty-state__icon";
         emptyIcon.setAttribute("aria-hidden", "true");
@@ -519,36 +440,22 @@
         var emptyTitle = document.createElement("h3");
         emptyTitle.textContent = i18n("lrn_search_empty_title");
         var emptyBody = document.createElement("p");
-        emptyBody.textContent = term && state.searchTopic
-          ? i18n("lrn_search_topic_empty_body")
-          : (term ? i18n("lrn_search_empty_body") : i18n("lrn_topic_empty_body"));
+        emptyBody.textContent = i18n("lrn_search_empty_body");
         empty.append(emptyIcon, emptyTitle, emptyBody);
-        if (term) {
-          var clearSearchButton = document.createElement("button");
-          clearSearchButton.type = "button";
-          clearSearchButton.className = "text-btn";
-          clearSearchButton.textContent = i18n("lrn_search_clear");
-          clearSearchButton.addEventListener("click", clearSearch);
-          empty.appendChild(clearSearchButton);
-        }
-        if (state.searchTopic) {
-          var clearTopicButton = document.createElement("button");
-          clearTopicButton.type = "button";
-          clearTopicButton.className = "text-btn";
-          clearTopicButton.textContent = i18n("topic_filter_clear");
-          clearTopicButton.addEventListener("click", function () {
-            clearTopic(true);
-          });
-          empty.appendChild(clearTopicButton);
-        }
+        var clearSearchButton = document.createElement("button");
+        clearSearchButton.type = "button";
+        clearSearchButton.className = "text-btn";
+        clearSearchButton.textContent = i18n("lrn_search_clear");
+        clearSearchButton.addEventListener("click", clearSearch);
+        empty.appendChild(clearSearchButton);
       } else if (state.filter === "recommended" && hasOptional) {
         empty.textContent = i18n("lrn_empty_no_onpath");
       } else {
         // B10: lrn_empty_no_matches told users to "clear the search" even
-        // though no search term or topic is active in this branch (both
-        // are handled above) — there is nothing to clear. Reuse the
-        // on-path empty copy instead: it already only points at the "All"
-        // filter, an action that always exists on this page.
+        // though no search term was active in this branch (handled above) —
+        // there is nothing to clear. Reuse the on-path empty copy instead:
+        // it already only points at the "All" filter, an action that always
+        // exists on this page.
         empty.textContent = i18n("lrn_empty_no_onpath");
       }
       replaceChildren(els.courseGrid, [empty]);
@@ -607,27 +514,12 @@
     els.searchClear.hidden = !searchTerm();
   }
 
-  function syncTopicUi() {
-    if (!els.topicClearBtn) return;
-    els.topicClearBtn.hidden = !state.searchTopic;
-  }
-
   function clearSearch() {
     if (!els.searchInput) return;
     els.searchInput.value = "";
     syncSearchUi();
     render();
     els.searchInput.focus();
-  }
-
-  function clearTopic(restoreFocus) {
-    if (!state.searchTopic) return;
-    state.searchTopic = null;
-    syncTopicUi();
-    saveState();
-    render();
-    if (restoreFocus) focusAllTopicChip();
-    announce(i18n("lrn_announce_topic_clear"));
   }
 
   function courseSearchText(course) {
@@ -643,22 +535,6 @@
       (course.dimensions || []).join(" "),
       (course.levels || []).join(" ")
     ].join(" ").toLowerCase();
-  }
-
-  function filterTopicEntries(entries, topic) {
-    if (!topic) return entries;
-    if (window.CurriculumSearch && window.CurriculumSearch.filterByTopic) {
-      return window.CurriculumSearch.filterByTopic(entries.map(function (entry) {
-        return Object.assign({}, entry, { interests: entry.course.interests || [] });
-      }), topic).map(function (entry) {
-        var copy = Object.assign({}, entry);
-        delete copy.interests;
-        return copy;
-      });
-    }
-    return entries.filter(function (entry) {
-      return (entry.course.interests || []).indexOf(topic) !== -1;
-    });
   }
 
   function courseTheme(course) {
@@ -953,27 +829,6 @@
     return Array.isArray(interests) && interests.length && interests.every(function (id) {
       return data.interests.some(function (interest) { return interest.id === id; });
     });
-  }
-
-  function validSearchTopic(topic) {
-    return topic == null || topic === "" || data.interests.some(function (interest) {
-      return interest.id === topic;
-    });
-  }
-
-  function resolveInterest(rawInterest) {
-    var normalized = String(rawInterest == null ? "" : rawInterest).trim().toLowerCase();
-    if (!normalized) return null;
-    var direct = data.interests.find(function (interest) {
-      return interest.id === normalized;
-    });
-    if (direct) return direct.id;
-    var match = data.interests.find(function (interest) {
-      return interest.label.toLowerCase() === normalized ||
-        topicLabel(interest.id, interest.label).toLowerCase() === normalized ||
-        interest.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === normalized;
-    });
-    return match && match.id;
   }
 
   function resolveProfile(rawProfile) {

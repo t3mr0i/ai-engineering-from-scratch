@@ -77,6 +77,42 @@ For each task:
 
 The `correct` signal is `score >= 1.0` for exact_match-style metrics (`exact_match`, `accuracy`, `code_exec`) and `score >= 0.5` for graded metrics. The threshold lives in `_correct_from_score` and the runner does not expose a public override.
 
+A naive "any nonzero score counts" threshold looks harmless until `code_exec` shows up -- a candidate that passes 2 of 3 assertions is not correct. Fill in the two thresholds:
+
+```python fillin
+EXACT_FAMILY = {"exact_match", "accuracy", "code_exec"}
+
+def naive_correct(metric_name, score):
+    # naive: any nonzero score counts as a "correct" prediction
+    return score > 0.0
+
+def is_correct(metric_name, score):
+    if metric_name in EXACT_FAMILY:
+        return score >= {{blank:1.0}}
+    return score >= {{blank:0.5}}
+
+results = [
+    ("exact_match", 1.0),
+    ("exact_match", 0.0),
+    ("f1", 0.6),
+    ("f1", 0.3),
+    ("bleu_4", 0.5),
+    ("code_exec", 0.67),  # 2 of 3 assertions passed
+]
+
+naive_rate = sum(naive_correct(m, s) for m, s in results) / len(results)
+fixed_rate = sum(is_correct(m, s) for m, s in results) / len(results)
+print("naive accuracy:", naive_rate)
+
+expected = 0.5
+if abs(fixed_rate - expected) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", fixed_rate)
+```
+
+The naive threshold reports 83% accuracy on this batch, counting the partial `code_exec` pass as a win. `_correct_from_score`'s per-family thresholds report 50% -- the true number once a `code_exec` candidate has to pass every assertion, not just some of them, to count.
+
 ## Aggregation
 
 After every task has a result, the runner calls `aggregate` and `pairwise_diffs` from lesson 74 and `CalibrationReport.from_predictions` from lesson 73. The output is a single JSON envelope:

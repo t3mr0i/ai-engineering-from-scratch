@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(HERE))
 from main import (  # noqa: E402
     GEN_AI_REQUEST_MODEL,
     GEN_AI_RESPONSE_ID,
-    GEN_AI_SYSTEM,
+    GEN_AI_PROVIDER_NAME,
     GEN_AI_TOOL_NAME,
     GEN_AI_USAGE_INPUT_TOKENS,
     STATUS_ERROR,
@@ -54,7 +54,7 @@ class SpanShapeTests(unittest.TestCase):
             name="gen_ai.chat",
             start_unix_nano=10_000,
             end_unix_nano=15_000_000,
-            attributes={GEN_AI_SYSTEM: "anthropic"},
+            attributes={GEN_AI_PROVIDER_NAME: "anthropic"},
         )
         d = span.to_dict()
         for key in (
@@ -70,7 +70,7 @@ class SpanShapeTests(unittest.TestCase):
             "status",
         ):
             self.assertIn(key, d)
-        self.assertEqual(d["attributes"][GEN_AI_SYSTEM], "anthropic")
+        self.assertEqual(d["attributes"][GEN_AI_PROVIDER_NAME], "anthropic")
         self.assertGreater(d["duration_ms"], 0.0)
 
     def test_duration_zero_when_not_ended(self) -> None:
@@ -193,7 +193,7 @@ class JSONLRoundtripTests(unittest.TestCase):
         with builder.span(
             "gen_ai.chat",
             attributes={
-                GEN_AI_SYSTEM: "anthropic",
+                GEN_AI_PROVIDER_NAME: "anthropic",
                 GEN_AI_REQUEST_MODEL: "claude-track-a",
             },
         ) as span:
@@ -204,7 +204,7 @@ class JSONLRoundtripTests(unittest.TestCase):
         self.assertEqual(len(lines), 1)
         d = lines[0]
         self.assertEqual(d["name"], "gen_ai.chat")
-        self.assertEqual(d["attributes"][GEN_AI_SYSTEM], "anthropic")
+        self.assertEqual(d["attributes"][GEN_AI_PROVIDER_NAME], "anthropic")
         self.assertEqual(d["attributes"][GEN_AI_REQUEST_MODEL], "claude-track-a")
         self.assertEqual(d["status"]["code"], STATUS_OK)
 

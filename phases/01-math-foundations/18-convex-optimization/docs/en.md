@@ -397,15 +397,32 @@ For non-convex problems (neural networks):
 - Use overparameterization, noise, and learning rate schedules as implicit regularization
 - Do not waste time searching for the global minimum. A good local minimum is sufficient.
 
-```python
+```python fillin
+import numpy as np
 from scipy.optimize import minimize
 
-result = minimize(
-    fun=lambda w: sum((y - X @ w) ** 2) + 0.1 * sum(w ** 2),
-    x0=np.zeros(d),
-    method='L-BFGS-B',
-    jac=lambda w: -2 * X.T @ (y - X @ w) + 0.2 * w,
-)
+# Ridge regression is convex: L-BFGS reaches the same optimum no matter
+# where it starts. Two wildly different starting points should agree.
+rng = np.random.default_rng(0)
+X = rng.normal(size=(20, 3))
+true_w = np.array([2.0, -1.0, 0.5])
+y = X @ true_w
+d = X.shape[1]
+lam = 0.1
+
+def loss(w):
+    return np.sum((y - X @ w) ** 2) + lam * np.sum(w ** 2)
+
+def grad(w):
+    return {{blank:-2 * X.T @ (y - X @ w) + 2 * lam * w}}
+
+result_a = minimize(fun=loss, x0=np.zeros(d), method='L-BFGS-B', jac=grad)
+result_b = minimize(fun=loss, x0={{blank:np.full(d, 100.0)}}, method='L-BFGS-B', jac=grad)
+
+if np.allclose(result_a.x, result_b.x, atol=1e-3):
+    print("PASS")
+else:
+    print("WRONG:", result_a.x, result_b.x)
 ```
 
 For SVMs, the dual formulation lets you use the kernel trick:

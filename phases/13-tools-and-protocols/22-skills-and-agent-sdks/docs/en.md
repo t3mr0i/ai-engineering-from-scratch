@@ -136,7 +136,7 @@ All three compose: the agent reads AGENTS.md on session start, the user invokes 
 
 ## Further Reading
 
-- [Anthropic — Agent Skills announcement](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) — December 2025 launch
+- [Anthropic — Agent Skills announcement](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) — October 2025 launch
 - [Anthropic — Agent Skills docs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) — SKILL.md format reference
 - [OpenAI — Apps SDK](https://developers.openai.com/apps-sdk) — MCP-based developer platform for ChatGPT
 - [agents.md](https://agents.md/) — AGENTS.md format and adoption list

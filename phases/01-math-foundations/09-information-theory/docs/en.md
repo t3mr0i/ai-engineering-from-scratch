@@ -276,34 +276,36 @@ GPT-2 achieved perplexity ~30 on common benchmarks. Modern models are in the sin
 
 ## Use It
 
-The same concepts using NumPy, the way you will use them in practice:
+Entropy in practice: the textbook formula breaks the moment a probability hits zero.
 
-```python
+```python fillin
 import numpy as np
 
-def np_entropy(p):
+def naive_entropy(p):
     p = np.asarray(p, dtype=float)
-    mask = p > 0
+    return -(p * np.log(p)).sum()
+
+# A distribution with a zero-probability outcome -- like a token the model
+# never assigns any probability to.
+skewed = np.array([0.9, 0.1, 0.0])
+print("naive:", naive_entropy(skewed))  # nan: log(0) = -inf, 0 * -inf = nan
+
+def entropy(p):
+    p = np.asarray(p, dtype=float)
+    mask = p {{blank:> 0}}
     result = np.zeros_like(p)
     result[mask] = p[mask] * np.log(p[mask])
-    return -result.sum()
+    return {{blank:-result.sum()}}
 
-def np_cross_entropy(p, q):
-    p, q = np.asarray(p, dtype=float), np.asarray(q, dtype=float)
-    mask = p > 0
-    return -(p[mask] * np.log(q[mask])).sum()
-
-def np_kl_divergence(p, q):
-    return np_cross_entropy(p, q) - np_entropy(p)
-
-true = np.array([0.7, 0.2, 0.1])
-pred = np.array([0.6, 0.25, 0.15])
-print(f"Entropy:    {np_entropy(true):.4f} nats")
-print(f"Cross-ent:  {np_cross_entropy(true, pred):.4f} nats")
-print(f"KL div:     {np_kl_divergence(true, pred):.4f} nats")
+result = entropy(skewed)
+expected = 0.9 * -np.log(0.9) + 0.1 * -np.log(0.1)
+if np.isfinite(result) and np.isclose(result, expected, atol=1e-6):
+    print("PASS")
+else:
+    print("WRONG:", result)
 ```
 
-You built from scratch what `torch.nn.CrossEntropyLoss()` does internally. Now you know why the loss goes down during training: your model's predicted distribution is getting closer to the true distribution, measured in nats of wasted information.
+The `p > 0` mask is the same convention every ML framework uses: by definition, `0 * log(0)` contributes zero bits of surprise, not `nan`. `torch.nn.CrossEntropyLoss()`, cross-entropy, and KL divergence all build on this same masked formula.
 
 
 ## Key Terms

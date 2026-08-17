@@ -14,7 +14,7 @@ Produce:
 1. Metric coverage. Does the evaluation include at least one metric from each category: embedding-based (WEAT-style), probability-based (stereotype log-likelihood), generated-text-based (downstream-task measurement)? Flag missing categories.
 2. Harm-type separation. Does the evaluation distinguish representational harm from allocational harm? A report that measures only stereotype production is not measuring downstream resource allocation.
 3. Intersectionality coverage. Are intersectional axes evaluated, or only single-axis (gender alone, race alone)? Per An et al. 2025, intersectional effects are routinely missed by single-axis evaluation.
-4. Debias mechanism. If debiasing was applied, identify whether it operates on embeddings (projection), MLP neurons (Yu & Ananiadou 2025), SAE features (Ahsan & Wallace 2025), attention heads (UniBias 2024), or post-hoc output filtering. Estimate the general-capability cost.
+4. Debias mechanism. If debiasing was applied, identify whether it operates on embeddings (projection), FFN-value/FFN-query/attention-value layers (Yu & Ananiadou 2025), SAE features (Ahsan & Wallace 2025), attention heads (UniBias 2024, ICL label-bias only), or post-hoc output filtering. Estimate the general-capability cost.
 5. Axis diversity. Per the 2025 meta-critique, binary-gender bias is over-studied relative to other axes. Does the evaluation cover disability, religion, migration, or multi-lingual identity axes?
 
 Hard rejects:

@@ -4,6 +4,7 @@
     { "route": "/api/gate", "allowedRoles": ["anonymous"] },
     { "route": "/api/check", "allowedRoles": ["anonymous"] },
     { "route": "/api/content", "allowedRoles": ["anonymous"] },
+    { "route": "/api/llm/chat/completions", "allowedRoles": ["anonymous"] },
 
     { "route": "/glossary", "rewrite": "/glossary.html" },
     { "route": "/path", "rewrite": "/prereqs.html" },

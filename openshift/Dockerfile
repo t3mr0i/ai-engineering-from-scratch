@@ -18,8 +18,8 @@ COPY README.md ROADMAP.md ./
 COPY glossary ./glossary
 COPY site ./site
 COPY phases ./phases
-# Same selection as serve.sh's rsync staging (docs/en.md, quiz.json,
-# code/main.py, assets/ per phase/lesson) — the equivalent .gitlab-ci.yml
+# Same selection as serve.sh's rsync staging (docs/en.md, docs/de.md,
+# quiz.json, code/main.py, assets/ per phase/lesson) — the equivalent .gitlab-ci.yml
 # deploy_azure job this used to mirror was removed when Azure was
 # decommissioned (see CLAUDE.md §1), so serve.sh is now the only other
 # copy of this selection; keep the two in sync. Reimplemented in plain Node
@@ -33,7 +33,7 @@ COPY phases ./phases
 RUN node site/build.js && node -e " \
   const fs = require('fs'); \
   const path = require('path'); \
-  const FILES = ['docs/en.md', 'quiz.json', 'code/main.py']; \
+  const FILES = ['docs/en.md', 'docs/de.md', 'quiz.json', 'code/main.py']; \
   for (const phase of fs.readdirSync('phases')) { \
     const phaseDir = path.join('phases', phase); \
     if (!fs.statSync(phaseDir).isDirectory()) continue; \

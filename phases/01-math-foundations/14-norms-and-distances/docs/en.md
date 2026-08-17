@@ -428,24 +428,33 @@ HNSW (Hierarchical Navigable Small World) is the dominant algorithm in modern ve
 
 The most common practical use: finding similar items in a vector database.
 
-```python
+```python fillin
 import numpy as np
+
+def naive_similarity(X):
+    return X @ X.T
+
+X = np.array([
+    [3.0, 4.0],  # norm 5
+    [6.0, 8.0],  # same direction as row 0, norm 10
+    [0.0, 5.0],  # a different direction
+])
+
+print("naive (dot product):", naive_similarity(X)[0])
+# Row 0 and row 1 point the same direction -- true cosine similarity is 1.0 --
+# but the raw dot product doesn't reflect that; it just reports magnitude.
 
 def cosine_similarity_matrix(X):
     norms = np.linalg.norm(X, axis=1, keepdims=True)
-    norms = np.where(norms == 0, 1, norms)
-    X_normalized = X / norms
-    return X_normalized @ X_normalized.T
+    X_normalized = X / {{blank:norms}}
+    return X_normalized @ {{blank:X_normalized.T}}
 
-embeddings = np.random.randn(1000, 768)
-
-sim_matrix = cosine_similarity_matrix(embeddings)
-
-query_idx = 0
-similarities = sim_matrix[query_idx]
-top_k = np.argsort(similarities)[::-1][1:6]
-print(f"Top 5 most similar to item 0: {top_k}")
-print(f"Similarities: {similarities[top_k]}")
+sim = cosine_similarity_matrix(X)
+expected = 1.0
+if np.isclose(sim[0, 1], expected, atol=1e-6):
+    print("PASS")
+else:
+    print("WRONG:", sim[0, 1])
 ```
 
 When you call `model.encode(text)` and then search a vector database, this is what happens under the hood. The embedding model maps text to vectors. The vector database computes cosine similarity (or dot product) between your query vector and every stored vector, using ANN algorithms to avoid checking all of them.

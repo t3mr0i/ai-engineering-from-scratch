@@ -3,7 +3,7 @@
 Simulates a long-running generate_report tool:
   - tools/call with _meta.task.required returns immediately with taskId
   - worker thread updates progress in a filesystem-backed task store
-  - tasks/status polls progress
+  - tasks/get polls progress
   - tasks/result returns the final payload
   - tasks/cancel signals the worker to stop
   - crash recovery marks in-flight tasks as failed on reload

@@ -30,6 +30,7 @@
 const { readFileSync, existsSync, readdirSync } = require("node:fs");
 const path = require("node:path");
 const { execSync, spawnSync } = require("node:child_process");
+const vm = require("node:vm");
 
 const REPO = path.resolve(__dirname, "..");
 const rel = (p) => path.relative(REPO, p);
@@ -105,13 +106,16 @@ function record(id, name, count, threshold, opts = {}) {
 // THRESHOLDS — the one place to edit when ratcheting a limit down.
 // =============================================================================
 const THRESHOLDS = {
+  // 18. ASE-Rollenmatrix-Integritaet. Strukturell, gehoert immer auf 0.
+  c18_aseMatrix: 0,
   // 1. Every curriculum-map path has docs/en.md. Structural — should always be 0.
   c1_missingEnMd: 0,
-  // 2. Every docs/en.md has a sibling docs/de.md. PLAN: start at today's state.
-  //    Today ALL 598 en.md files (repo-wide) lack a de.md — German translation
-  //    is simply not done yet. Ratchet this down as de.md files land; it will
-  //    not reach 0 quickly.
-  c2_missingDeMd: 598,
+  // 2. Every curriculum-map lesson's docs/en.md has a sibling docs/de.md.
+  //    Curriculum-scoped, not repo-wide (§10-2) — repo-wide would equal the
+  //    repo-wide count by construction and could never fail. Today all 179
+  //    curriculum-map lessons lack a de.md — German translation is simply
+  //    not done yet. Ratchet this down as de.md files land.
+  c2_missingDeMd: 179,
   // 3. Every quiz.json is the object form ({questions:[...]}), not a bare array.
   c3_arrayFormQuiz: 0,
   // 4. `correct` is a valid options index; no duplicate option strings.
@@ -199,7 +203,11 @@ function check2() {
   const curriculumScopedMissing = curriculumPaths.filter(
     (p) => !existsSync(path.join(REPO, p, "docs/de.md"))
   ).length;
-  return record("2", "docs/en.md has sibling docs/de.md", details.length, THRESHOLDS.c2_missingDeMd, {
+  // Gated on the curriculum-scoped count, not the repo-wide one: repo-wide
+  // (598) equals THRESHOLDS.c2_missingDeMd by construction (every en.md
+  // still lacks a de.md), so that comparison can never fail and proves
+  // nothing (§10-2). curriculumPaths.length is what actually ships.
+  return record("2", "docs/en.md has sibling docs/de.md (curriculum-scoped)", curriculumScopedMissing, THRESHOLDS.c2_missingDeMd, {
     details: details.slice(0, 5).concat([`... ${details.length} total (repo-wide); ${curriculumScopedMissing}/${curriculumPaths.length} missing within curriculum-map lessons`]),
   });
 }
@@ -819,6 +827,72 @@ function check17() {
 // =============================================================================
 // Run all checks, print report, set exit code
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// 18. ASE-Rollenmatrix: Integritaet der Zuordnung Kurs -> (Auspraegung, Level).
+//     Strukturell, gehoert immer auf 0. Faengt drei Fehlerklassen:
+//     (a) unbekannte Rollen-ID oder unbekannter Level-Wert,
+//     (b) Kurs steht in einem Level, dessen zugelassene Tiefen er laut `levels`
+//         nicht trifft (depthAdmissible je Level). Die Regel ist bewusst weit:
+//         ein Kurs darf lieber ein Level zu viel als zu wenig tragen. Einzige
+//         Ausschlussregel ist reines Grundwissen an L4.
+//     (c) eine Zelle der 5x4-Matrix ist leer.
+//     Laeuft folgenlos durch, solange data.js noch keine aseRoles traegt.
+// -----------------------------------------------------------------------------
+function check18() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync(path.join(REPO, "site/lrn/data.js"), "utf8"), sandbox);
+  const data = sandbox.window.LrnData;
+
+  if (!data || !data.aseRoles || !data.aseLevels) {
+    record("18", "ASE matrix integrity", 0, THRESHOLDS.c18_aseMatrix, {
+      note: "uebersprungen: data.js traegt keine aseRoles/aseLevels (Vor-Migrations-Stand)",
+    });
+    return;
+  }
+
+  const roleIds = new Set(data.aseRoles.map((r) => r.id));
+  const levelByValue = new Map(data.aseLevels.map((l) => [l.value, l]));
+  const problems = [];
+  const cell = new Map();
+  for (const r of data.aseRoles) for (const l of data.aseLevels) cell.set(r.id + ":L" + l.value, 0);
+
+  for (const c of data.courses) {
+    if (!c.ase) continue;
+    for (const a of c.ase) {
+      if (!roleIds.has(a.role)) {
+        problems.push(`${c.id}: unbekannte Rollen-ID "${a.role}"`);
+        continue;
+      }
+      for (const lv of a.levels || []) {
+        const level = levelByValue.get(lv);
+        if (!level) {
+          problems.push(`${c.id}: unbekannter Level-Wert ${lv}`);
+          continue;
+        }
+        const key = a.role + ":L" + lv;
+        cell.set(key, cell.get(key) + 1);
+        const admissible = level.depthAdmissible || level.depthOwn || [];
+        if (!(c.levels || []).some((d) => admissible.includes(d))) {
+          problems.push(
+            `${c.id}: levels=[${(c.levels || []).join(",")}] ist auf ${level.code} nicht zugelassen ` +
+            `(erlaubt: ${admissible.join("/")})`
+          );
+        }
+      }
+    }
+  }
+
+  for (const [k, n] of cell) if (n === 0) problems.push(`Zelle ${k} ist leer`);
+
+  const tagged = data.courses.filter((c) => c.ase).length;
+  record("18", "ASE matrix integrity (role/level valid, depth admissible, no empty cell)", problems.length, THRESHOLDS.c18_aseMatrix, {
+    details: problems,
+    note: `${tagged}/${data.courses.length} Kurse tragen ein ase-Feld, ${cell.size} Zellen geprueft`,
+  });
+}
+
 check1();
 check2();
 check3();
@@ -836,6 +910,7 @@ check14();
 check15();
 check16();
 check17();
+check18();
 
 let anyFail = false;
 console.log("=".repeat(78));

@@ -98,6 +98,45 @@ class Product(BaseModel):
 
 This produces the same JSON Schema as above. The Instructor library (and OpenAI's SDK) accept Pydantic models directly: pass the model class, get back a validated instance. If the LLM output does not match, Instructor retries automatically.
 
+Pydantic isn't available here, but the checks it runs are just typed
+comparisons — rebuild two of the failure modes from below (hallucinated type,
+array length) without it:
+
+```python fillin
+schema = {
+    "product": {"type": "string", "required": True},
+    "price": {"type": "number", "minimum": 0, "required": True},
+    "categories": {"type": "array", "maxItems": 3, "required": True},
+}
+
+def naive_validate(payload, schema):
+    return [f for f in schema if schema[f]["required"] and f not in payload]
+
+payload = {"product": 12345, "price": -10, "categories": ["a", "b", "c", "d"]}
+print("naive:", naive_validate(payload, schema))  # [] -- all fields present, none of the violations caught
+
+def strict_validate(payload, schema):
+    errors = naive_validate(payload, schema)
+    for field, sub in schema.items():
+        if field not in payload:
+            continue
+        value = payload[field]
+        if sub["type"] == "string" and not isinstance(value, {{blank:str}}):
+            errors.append(f"{field}: expected string")
+        if sub["type"] == "number" and value {{blank:<}} sub["minimum"]:
+            errors.append(f"{field}: below minimum")
+        if sub["type"] == "array" and len(value) {{blank:>}} sub["maxItems"]:
+            errors.append(f"{field}: more than maxItems ({sub['maxItems']})")
+    return errors
+
+errors = strict_validate(payload, schema)
+expected = ["product: expected string", "price: below minimum", "categories: more than maxItems (3)"]
+if errors == expected:
+    print("PASS")
+else:
+    print("WRONG:", errors)
+```
+
 ### Function Calling / Tool Use
 
 An alternative interface for the same problem. Instead of asking the model to produce JSON directly, you define "tools" (functions) with typed parameters. The model outputs a function call with structured arguments. OpenAI calls this "function calling." Anthropic calls it "tool use." The result is the same: structured data.

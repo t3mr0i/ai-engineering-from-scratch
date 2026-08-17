@@ -114,6 +114,39 @@ Three tiny functions translate it to the three provider shapes. The harness in `
 
 Production teams wrap this translator in `AbstractToolset` (Pydantic AI), `UniversalToolNode` (LangGraph), or `BaseTool` (LlamaIndex). Phase 13 · 17 ships a gateway that exposes an OpenAI-shaped API in front of any of the three.
 
+## Use It
+
+The "Arguments type" row of the shape-diff table is the bug that actually
+ships: OpenAI's `arguments` field is a JSON *string*, Anthropic's `input` and
+Gemini's `args` are already parsed objects. Code that treats them the same
+breaks on exactly one of the three providers.
+
+```python fillin
+import json
+
+openai_call = {"type": "function", "function": {"name": "get_weather", "arguments": '{"city": "Tokyo"}'}}
+anthropic_call = {"type": "tool_use", "name": "get_weather", "input": {"city": "Tokyo"}}
+gemini_call = {"functionCall": {"name": "get_weather", "args": {"city": "Tokyo"}}}
+
+naive_arguments = openai_call["function"]["arguments"]
+print("naive:", type(naive_arguments).__name__, naive_arguments)  # str, not dict -- **naive_arguments would TypeError
+
+def normalize(call):
+    if call.get("type") == "function":
+        return {"name": call["function"]["name"], "arguments": {{blank:json.loads}}(call["function"]["arguments"])}
+    if call.get("type") == "tool_use":
+        return {"name": call["name"], "arguments": call[{{blank:"input"}}]}
+    if "functionCall" in call:
+        return {"name": call["functionCall"]["name"], "arguments": call["functionCall"][{{blank:"args"}}]}
+    raise ValueError("unknown call shape")
+
+results = [normalize(c) for c in (openai_call, anthropic_call, gemini_call)]
+expected = [{"name": "get_weather", "arguments": {"city": "Tokyo"}}] * 3
+if results == expected:
+    print("PASS")
+else:
+    print("WRONG:", results)
+```
 
 
 ## Further Reading

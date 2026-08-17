@@ -47,30 +47,42 @@ The pipeline guarantees:
 
 Data leakage happens when information from the test set or future data contaminates training. Pipelines prevent the most common forms.
 
-**Leaky (wrong):**
-```python
-X = df.drop("target", axis=1)
-y = df["target"]
+**Leaky (wrong):** fit the scaler before splitting off the test set, so its
+mean and standard deviation are contaminated by data the model should never
+see. **Correct:** fit only on the training split; the test split is only
+ever transformed. See the actual size of the contamination:
 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+```python fillin
+import numpy as np
 
-X_train, X_test = X_scaled[:800], X_scaled[800:]
-y_train, y_test = y[:800], y[800:]
+X_train = np.array([1.0, 2.0, 3.0, 4.0])
+X_test = np.array([100.0, 200.0])  # far outside the training range
+
+# Leaky: fit the scaler on train+test combined, before ever splitting.
+X_all = np.concatenate([X_train, X_test])
+leaky_mean = X_all.mean()
+leaky_std = X_all.std()
+print("leaky mean/std:", leaky_mean, leaky_std)  # contaminated by test data
+
+# Fix: compute scaling stats using only the training split.
+clean_mean = {{blank:X_train.mean()}}
+clean_std = {{blank:X_train.std()}}
+X_test_scaled = (X_test - clean_mean) / clean_std  # test only ever transformed
+
+expected_mean = 2.5
+expected_std = 1.118033988749895
+if (abs(clean_mean - expected_mean) < 1e-9
+        and abs(clean_std - expected_std) < 1e-9
+        and abs(leaky_mean - clean_mean) > 1.0):
+    print("PASS")
+else:
+    print("WRONG:", clean_mean, clean_std)
 ```
 
-The scaler saw test data. The mean and standard deviation include test samples. This inflates accuracy estimates.
-
-**Correct:**
-```python
-X_train, X_test = X[:800], X[800:]
-
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-```
-
-With a pipeline, you do not need to think about this. The pipeline handles it automatically.
+Two test points at 100 and 200 drag the "leaky" mean from 2.5 to nearly 52 --
+every distance computed with that scaler is now wrong, not just for the test
+set but for anything scaled with it afterward. With a pipeline, you do not
+need to think about this. The pipeline handles it automatically.
 
 ### sklearn Pipeline
 

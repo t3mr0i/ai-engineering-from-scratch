@@ -42,7 +42,7 @@
       "stage": "check",
       "question": "The harness wraps a tool execution in a span. Which attribute keys identify it as a tool call under the GenAI conventions?",
       "options": [
-        "gen_ai.system and gen_ai.request.model, the pair used to identify which provider and model handled a chat span",
+        "gen_ai.provider.name and gen_ai.request.model, the pair used to identify which provider and model handled a chat span",
         "gen_ai.tool.name and gen_ai.tool.call.id, the canonical keys for tool executions in the GenAI conventions",
         "agent.harness.tool and agent.harness.call, a harness-local naming scheme instead of the standardized GenAI keys",
         "operation and tool.name, a shorthand pair that is not part of the GenAI semantic conventions at all"

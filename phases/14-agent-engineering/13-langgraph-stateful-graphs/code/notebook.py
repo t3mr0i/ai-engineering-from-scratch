@@ -75,7 +75,7 @@ print(f"✅ LLM erreichbar: {r}")
 #
 # When a multi-step agent run fails at step 38, you want to **resume from step 38**, not restart from step 1.
 #
-# **LangGraph's answer:** State is immutable, mutations explicit, and **checkpoints persist after every node**. Resume is a `load(session_id)` call.
+# **LangGraph's answer:** State is immutable, mutations explicit, and **checkpoints persist after every node**. Resume means passing the same `thread_id` in `config` and calling `graph.get_state(config)`.
 #
 # We'll build a **support ticket routing system** with:
 # - **Classify** (LLM-powered): route customer input → refund / bug / sales

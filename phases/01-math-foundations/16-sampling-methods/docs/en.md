@@ -440,27 +440,40 @@ The entire image generation process is iterative sampling: start from noise, and
 
 ## Use It
 
-With NumPy and SciPy, the production versions:
+Top-k sampling in practice: naive filtering leaves a broken distribution.
 
-```python
+```python fillin
 import numpy as np
 
-rng = np.random.default_rng(42)
+logits = np.array([2.0, 1.0, 0.5, 0.1, -1.0, 3.0, 0.8])
+k = 3
 
-exponential_samples = rng.exponential(scale=2.0, size=10000)
-print(f"Exponential mean: {exponential_samples.mean():.4f} (expected 2.0)")
+def naive_topk_probs(logits, k):
+    # Softmax first, THEN zero out everything but the top k -- but nothing
+    # renormalizes afterward, so what's left over no longer sums to 1.
+    probs = np.exp(logits - logits.max())
+    probs /= probs.sum()
+    top_idx = np.argsort(probs)[::-1][:k]
+    mask = np.zeros_like(probs)
+    mask[top_idx] = probs[top_idx]
+    return mask
 
-from scipy import stats
-normal = stats.norm(loc=0, scale=1)
-print(f"CDF at 1.96: {normal.cdf(1.96):.4f}")
-print(f"Inverse CDF at 0.975: {normal.ppf(0.975):.4f}")
+naive = naive_topk_probs(logits, k)
+print("naive top-k sums to:", naive.sum())  # < 1.0 -- not a valid distribution
 
-logits = np.array([2.0, 1.0, 0.5, 0.1, -1.0])
-temperature = 0.7
-scaled = logits / temperature
-probs = np.exp(scaled - scaled.max()) / np.exp(scaled - scaled.max()).sum()
-token = rng.choice(len(logits), p=probs)
-print(f"Sampled token index: {token}")
+def topk_probs(logits, k):
+    top_idx = np.argsort(logits)[::-1][:k]
+    filtered = np.full_like(logits, -np.inf)
+    filtered[top_idx] = logits[top_idx]
+    exp = np.exp(filtered - {{blank:np.max(filtered)}})
+    return exp / {{blank:exp.sum()}}
+
+result = topk_probs(logits, k)
+nonzero = np.sum(result > 0)
+if nonzero == k and np.isclose(result.sum(), 1.0, atol=1e-9):
+    print("PASS")
+else:
+    print("WRONG:", result)
 ```
 
 For MCMC at scale, use dedicated libraries:

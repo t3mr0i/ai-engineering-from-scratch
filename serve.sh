@@ -39,6 +39,7 @@ mkdir -p site/phases
 rsync -a --prune-empty-dirs \
   --include='*/' \
   --include='docs/en.md' \
+  --include='docs/de.md' \
   --include='quiz.json' \
   --include='code/main.py' \
   --include='assets/*' \
@@ -58,6 +59,7 @@ mkdir -p api/content/_data
 rsync -a --prune-empty-dirs \
   --include='*/' \
   --include='docs/en.md' \
+  --include='docs/de.md' \
   --include='quiz.json' \
   --include='code/main.py' \
   --include='assets/*' \

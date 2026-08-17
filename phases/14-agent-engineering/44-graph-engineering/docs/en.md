@@ -174,6 +174,58 @@ same input. At fan-in:
 The same policy belongs in a concurrent production scheduler. Concurrency does
 not make an ambiguous merge safe; it merely makes the ambiguity happen sooner.
 
+## Use It
+
+`code/main.py` runs the real fan-in, but the merge contract itself — append
+lists, pass through equal scalars, raise on conflicting scalars — is plain
+dict logic you can check without the runner:
+
+```python fillin
+class GraphError(Exception):
+    pass
+
+def naive_merge(base, patches):
+    merged = dict(base)
+    for patch in patches:
+        merged.update(patch)  # last writer wins -- silently drops branch_a's evidence
+    return merged
+
+base = {"evidence": ["seed"], "attempts": 0}
+branch_a = {"evidence": ["a-finding"], "attempts": 0}
+branch_b = {"evidence": ["b-finding"], "attempts": 0}
+
+print("naive:", naive_merge(base, [branch_a, branch_b]))
+# {"evidence": ["b-finding"], "attempts": 0} -- branch_a's finding vanished
+
+def merge_state(base, patches):
+    merged = dict(base)
+    for patch in patches:
+        for key, value in patch.items():
+            if key not in merged:
+                merged[key] = value
+            elif isinstance(value, {{blank:list}}):
+                merged[key] = merged[key] + value
+            elif merged[key] == value:
+                continue
+            else:
+                raise GraphError(f"conflicting value for {key!r}")
+    return merged
+
+merged = merge_state(base, [branch_a, branch_b])
+
+conflict_raised = False
+try:
+    merge_state(merged, [{"attempts": {{blank:1}}}])
+except GraphError:
+    conflict_raised = {{blank:True}}
+
+expected_merged = {"evidence": ["seed", "a-finding", "b-finding"], "attempts": 0}
+if merged == expected_merged and conflict_raised:
+    print("PASS")
+else:
+    print("WRONG:", merged, conflict_raised)
+```
+
 ## Read the implementation
 
 `code/main.py` has four layers:

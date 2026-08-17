@@ -75,6 +75,50 @@ def win_rate(model_id, runs_by_task, all_models):
     return wins / total if total else 0.0
 ```
 
+The naive version below compares strictly greater than the max — which can never be true, since `best` is computed from the same scores. Fix the tie-handling.
+
+```python fillin
+def naive_win_rate(model_id, runs_by_task, all_models):
+    wins, total = 0, 0
+    for task_id, runs in runs_by_task.items():
+        scores = {r["model_id"]: r["score"] for r in runs if r["model_id"] in all_models}
+        if model_id not in scores:
+            continue
+        total += 1
+        best = max(scores.values())
+        if scores[model_id] > best:  # never true, best IS the max
+            wins += 1
+    return wins / total if total else 0.0
+
+runs_by_task = {
+    "task1": [{"model_id": "gpt", "score": 0.9}, {"model_id": "claude", "score": 0.8}, {"model_id": "random", "score": 0.1}],
+    "task2": [{"model_id": "gpt", "score": 0.5}, {"model_id": "claude", "score": 0.5}, {"model_id": "random", "score": 0.1}],
+    "task3": [{"model_id": "gpt", "score": 0.3}, {"model_id": "claude", "score": 0.6}, {"model_id": "random", "score": 0.1}],
+}
+all_models = {"gpt", "claude", "random"}
+
+print("naive:", naive_win_rate("gpt", runs_by_task, all_models))
+
+def win_rate_fixed(model_id, runs_by_task, all_models):
+    wins, total = 0, 0
+    for task_id, runs in runs_by_task.items():
+        scores = {r["model_id"]: r["score"] for r in runs if r["model_id"] in all_models}
+        if model_id not in scores:
+            continue
+        total += 1
+        best = max(scores.values())
+        if scores[model_id] {{blank:>=}} best:
+            wins += 1
+    return wins / {{blank:total}} if total else 0.0
+
+result = win_rate_fixed("gpt", runs_by_task, all_models)
+expected = 2 / 3
+if abs(result - expected) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", result)
+```
+
 The harness reports both. The runner in lesson 75 ranks by mean by default; the markdown column for win-rate is right there in case the user prefers it.
 
 ## Bootstrap confidence intervals

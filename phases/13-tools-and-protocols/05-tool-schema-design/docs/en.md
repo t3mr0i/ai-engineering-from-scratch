@@ -121,6 +121,50 @@ Descriptions land in the model's context verbatim. A malicious server can embed 
 
 All three are open; a full evaluation loop runs in under an hour on a modest GPU setup. Include one in your CI (eval-driven development is covered in a future phase).
 
+## Use It
+
+A linter that only checks naming conventions misses the two rules that
+actually move selection accuracy: the "Use when X. Do not use for Y."
+description pattern and the atomic-vs-monolithic threshold.
+
+```python fillin
+def naive_lint(tool):
+    errors = []
+    if tool["name"] != tool["name"].lower():
+        errors.append("name must be snake_case")
+    return errors
+
+tool = {
+    "name": "do_everything",
+    "description": "Handles notes.",
+    "action_enum": ["create", "delete", "search", "archive"],
+}
+
+print("naive:", naive_lint(tool))  # [] -- passes a genuinely bad tool
+
+def lint_tool(tool):
+    errors = naive_lint(tool)
+    description = tool["description"].lower()
+    if "use when" {{blank:not in}} description:
+        errors.append("missing 'Use when' clause")
+    if "do not use for" {{blank:not in}} description:
+        errors.append("missing 'Do not use for' clause")
+    action_values = tool.get("action_enum")
+    if action_values and len(action_values) {{blank:>}} 3:
+        errors.append("monolithic tool: split into atomic tools")
+    return errors
+
+errors = lint_tool(tool)
+expected = [
+    "missing 'Use when' clause",
+    "missing 'Do not use for' clause",
+    "monolithic tool: split into atomic tools",
+]
+if errors == expected:
+    print("PASS")
+else:
+    print("WRONG:", errors)
+```
 
 
 ## Further Reading

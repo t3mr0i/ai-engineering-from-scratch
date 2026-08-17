@@ -85,14 +85,42 @@ The validator returns two lists: validated records and error records with the of
 
 The runner concatenates few-shot examples in front of the prompt with a blank line separator. The same code path runs for every model, so the only source of variance is the model itself. Authors write examples once, not once per provider.
 
-```python
+Skip the separators and a few-shot block reads like this:
+
+```python fillin
+def naive_render(task):
+    # naive: no separator between prompt and completion, no gap between examples
+    parts = []
+    for ex in task.get("few_shot_examples", []):
+        parts.append(ex["prompt"] + ex["completion"])
+    parts.append(task["prompt"])
+    return "".join(parts)
+
 def render(task):
     parts = []
     for ex in task.get("few_shot_examples", []):
-        parts.append(ex["prompt"] + " " + ex["completion"])
+        parts.append(ex["prompt"] + {{blank:" "}} + ex["completion"])
     parts.append(task["prompt"])
-    return "\n\n".join(parts)
+    return {{blank:"\n\n"}}.join(parts)
+
+task = {
+    "prompt": "Question: 17 + 24\nAnswer:",
+    "few_shot_examples": [
+        {"prompt": "Question: 2 + 2\nAnswer:", "completion": "4"},
+    ],
+}
+
+print("naive:", repr(naive_render(task)))
+
+rendered = render(task)
+expected = "Question: 2 + 2\nAnswer: 4\n\nQuestion: 17 + 24\nAnswer:"
+if rendered == expected:
+    print("PASS")
+else:
+    print("WRONG:", repr(rendered))
 ```
+
+`naive_render` produces `'...Answer:4Question: 17 + 24...'` -- the completion `4` runs straight into the next example's prompt with no boundary at all. `render` puts a space between a prompt and its completion and a blank line between examples, so the model can actually tell where one example ends and the next begins.
 
 ## Post-process rules
 

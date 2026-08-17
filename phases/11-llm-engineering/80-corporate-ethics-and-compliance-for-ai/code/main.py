@@ -6,8 +6,11 @@ Two deterministic, stdlib-only parts:
 
 Part 1 — Risk Classifier
   Given a structured description of an AI use case, maps it to an EU AI Act
-  tier (Prohibited / High-Risk / GPAI / Minimal-Risk) and returns the obligation
-  list for that tier.
+  Article 6 risk tier (Prohibited / High-Risk / Minimal-Risk) and returns the
+  obligation list for that tier. GPAI (Chapter V) is a separate axis that
+  classifies the *model*, not the use case — deploying a third-party
+  foundation model adds a provider-obligation note, it does not change the
+  deployer's own tier.
 
 Part 2 — Approval Gate Checker
   Given the classifier output plus three control booleans (DPA signed, data
@@ -56,7 +59,6 @@ class Sector(Enum):
 class AIActTier(Enum):
     PROHIBITED = "Prohibited"
     HIGH_RISK = "High-Risk"
-    GPAI = "General-Purpose AI (GPAI)"
     MINIMAL = "Minimal-Risk"
 
 
@@ -119,17 +121,24 @@ OBLIGATIONS_BY_TIER = {
         "Provide clear explanations to affected persons (explainability obligation).",
         "Conduct a Fundamental Rights Impact Assessment (FRIA) if public-sector deployer.",
     ],
-    AIActTier.GPAI: [
-        "Publish model capability evaluation and limitations summary.",
-        "Provide copyright training-data summary (Art. 53).",
-        "For systemic-risk models (>10^25 FLOP): adversarial testing, incident reporting, cybersecurity measures.",
-    ],
     AIActTier.MINIMAL: [
         "Self-declaration of conformity recommended.",
         "Voluntary adherence to EU AI Act Code of Practice.",
         "Maintain internal documentation for incident response.",
     ],
 }
+
+# GPAI (Chapter V) obligations attach to the *model provider*, not the
+# deployer's Article 6 risk tier — appended as a note when a use case
+# deploys a third-party foundation model, regardless of tier.
+GPAI_PROVIDER_NOTE = (
+    "Deploys a third-party foundation model: GPAI obligations (Chapter V) apply to "
+    "the model provider, not this use case's own tier — publishing a capability "
+    "evaluation, a copyright training-data summary (Art. 53), and, for systemic-risk "
+    "models (>10^25 FLOP), adversarial testing, incident reporting, and cybersecurity "
+    "measures. The deployer must verify the provider's compliance documentation and "
+    "supplement it with use-case-specific controls."
+)
 
 
 def classify_use_case(uc: UseCase) -> ClassificationResult:

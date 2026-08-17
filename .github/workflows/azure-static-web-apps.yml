@@ -37,8 +37,19 @@ jobs:
         with:
           node-version: 20
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Generate site/data.js
         run: node site/build.js
+
+      - name: Build JupyterLite (Pyodide kernel + pre-executed notebooks)
+        # site/jupyterlite/ is gitignored (build output, not source — see
+        # .gitignore), so nothing puts it on this runner unless this step
+        # does. Without it, app_location: "site" below deploys a site/ with
+        # no jupyterlite/ dir at all and every /jupyterlite/... request 404s.
+        run: bash ide/jupyterlite/build.sh
 
       - name: Stage lesson content into api/content/_data
         # api/content (the gated function, api/content/index.js) reads from
@@ -54,6 +65,7 @@ jobs:
           rsync -a --prune-empty-dirs \
             --include='*/' \
             --include='docs/en.md' \
+            --include='docs/de.md' \
             --include='quiz.json' \
             --include='code/main.py' \
             --include='assets/*' \

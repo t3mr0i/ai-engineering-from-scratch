@@ -82,6 +82,26 @@ d2f(3.0)
 
 Second derivatives. Third derivatives. Jacobians. Hessians. All by composing `grad`. PyTorch can do this too (`torch.autograd.functional.hessian`), but it is bolted on. In JAX, it is the foundation.
 
+`jax` has no Pyodide wheel, so `d2f` above can't run in-browser -- but the
+power rule it applies twice is just arithmetic. Rebuild it by hand:
+
+```python fillin
+# jax.grad(jax.grad(f)) composes -- same chain rule, applied twice.
+def f(x):
+    return x**3
+
+xs = [1.0, 2.0, 3.0]
+first_deriv = [{{blank:3}} * x ** {{blank:2}} for x in xs]   # d/dx x^3 = 3x^2
+second_deriv = [{{blank:6}} * x for x in xs]                 # d/dx 3x^2 = 6x
+
+expected_first = [3.0, 12.0, 27.0]
+expected_second = [6.0, 12.0, 18.0]
+if first_deriv == expected_first and second_deriv == expected_second:
+    print("PASS")
+else:
+    print("WRONG:", first_deriv, second_deriv)
+```
+
 The constraint: `grad` only works on pure functions. No print statements inside (they run during tracing, not execution). No mutation of external state. No random number generation without explicit key management.
 
 ### jit: Compile to XLA

@@ -121,6 +121,38 @@ if torch.cuda.is_available():
 ```
 
 
+This benchmark needs `torch` and an actual GPU to run for real, so it can't
+execute in-browser. The VRAM budgeting math behind "will my model fit,"
+though, is just arithmetic -- rebuild it below.
+
+```python fillin
+# fp16 rule of thumb: ~2 bytes/param. The naive estimate below ignores
+# that activations and KV cache also eat into VRAM.
+def naive_max_params_billions(vram_gb, bytes_per_param):
+    return (vram_gb * 1e9) / bytes_per_param / 1e9
+
+vram_gb = 24  # e.g. RTX 4090
+print("naive fp16:", naive_max_params_billions(vram_gb, 2), "B params")  # looks fine on paper, OOMs in practice
+
+def max_params_billions(vram_gb, bytes_per_param, overhead_frac=0.2):
+    usable_gb = vram_gb * (1 - {{blank:overhead_frac}})
+    return (usable_gb * 1e9) / {{blank:bytes_per_param}} / 1e9
+
+fp16_result = max_params_billions(vram_gb, {{blank:2}})
+int8_result = max_params_billions(vram_gb, {{blank:1}})
+
+expected_fp16 = 9.6
+expected_int8 = 19.2
+if abs(fp16_result - expected_fp16) < 1e-9 and abs(int8_result - expected_int8) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", fp16_result, int8_result)
+```
+
+Reserving 20% of VRAM for activations/KV cache turns a naive "12B fits in
+24GB" into the real answer: ~9.6B in fp16, ~19.2B if you quantize to int8.
+
+
 ## Key Terms
 
 | Term | What people say | What it actually means |

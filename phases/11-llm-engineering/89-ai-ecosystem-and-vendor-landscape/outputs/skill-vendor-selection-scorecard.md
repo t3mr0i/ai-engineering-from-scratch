@@ -45,8 +45,8 @@ to flagship models.
 | Band | Representative models | Blended $/1M tokens |
 |---|---|---|
 | Flagship | Claude Fable 5, GPT-4o, Gemini 2.0 Pro | $15–$40 |
-| Balanced | Claude Sonnet 4.x, Gemini 2.0 Flash, Llama 4 70B hosted | $1–$6 |
-| Commodity | Haiku 4.x, Gemini 2.0 Flash Lite, Llama 4 8B hosted | $0.10–$0.50 |
+| Balanced | Claude Sonnet 4.x, Gemini 2.0 Flash, Llama 4 Maverick hosted | $1–$6 |
+| Commodity | Haiku 4.x, Gemini 2.0 Flash Lite, Llama 4 Scout hosted | $0.10–$0.50 |
 
 **Cost check:** at 50M tokens/month, misrouting commodity tasks to flagship
 costs approximately $1,200–$2,000/month more than the balanced/commodity rate.

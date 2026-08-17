@@ -80,6 +80,47 @@ Why random beats grid (Bergstra & Bengio, 2012):
 - Random search covers the important dimensions more densely for the same budget.
 - At 60 random trials, you have a 95% chance of finding a point within 5% of the optimum (if one exists in the search space).
 
+See it with a matching budget: 9 evaluations, one hyperparameter that
+matters and one that doesn't.
+
+```python fillin
+import random
+
+def objective(x1, x2):
+    # only x1 matters -- x2 does nothing but burns evaluation budget,
+    # exactly the low-effective-dimensionality case Bergstra & Bengio describe.
+    return (x1 - 3.5) ** 2
+
+# Grid search: 3 x1 values x 3 x2 values = 9 evaluations, but only 3
+# unique x1 values are ever tried -- the dimension that actually matters.
+grid_x1 = [0.0, 3.0, 6.0]
+grid_x2 = [0.0, 3.0, 6.0]
+grid_results = [objective(x1, x2) for x1 in grid_x1 for x2 in grid_x2]
+grid_best = min(grid_results)
+print("grid best loss:", grid_best)
+
+# Random search: same budget, but every draw is independent -- fill in
+# the range (must match the grid's range) and the trial count (must
+# match the grid's budget, or the comparison isn't fair).
+random.seed(0)
+random_results = []
+for _ in range({{blank:9}}):
+    x1 = random.uniform({{blank:0.0}}, {{blank:6.0}})
+    x2 = random.uniform(0.0, 6.0)
+    random_results.append(objective(x1, x2))
+random_best = min(random_results)
+print("random best loss:", random_best)
+
+if random_best < grid_best:
+    print("PASS")
+else:
+    print("WRONG:", random_best, grid_best)
+```
+
+Same 9-evaluation budget, but random search lands within 0.05 of the true
+optimum while grid search is stuck at 0.25 -- it never gets closer than the
+grid's fixed spacing on the one dimension that matters.
+
 ### Bayesian Optimization
 
 Random search ignores results. It does not learn that high learning rates cause divergence or that depth 3 consistently outperforms depth 10. Bayesian optimization uses past evaluations to decide where to search next.

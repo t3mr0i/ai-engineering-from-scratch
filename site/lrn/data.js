@@ -102,6 +102,55 @@ window.LrnData = {
       targets: { literacy: 2, prompting: 3, business: 2, data: 3, change: 2 }
     }
   ],
+  // --- ASE-Rollenmatrix -------------------------------------------------
+  // Sublabel unter R03-TC. Die fuenf Auspraegungen der MyCompetence Key Area
+  // "Agentic Software Engineering". Einzeln sind sie keine eigene Key Area und
+  // keine eigene Einstufung; eingestuft wird immer ueber die eine Key Area.
+  // Bench-Rollen (Agentic System Architect, Quality Architect) sind bewusst
+  // NICHT enthalten, die Bench wird nicht ueber diese Key Area eingestuft.
+  aseParentProfileId: "tc",
+  aseRoles: [
+    { id: "spec", code: "ASE-SPEC", label: "Spec Owner",
+      labelDe: "Spezifizieren", capability: 11 },
+    { id: "orch", code: "ASE-ORCH", label: "Agent Orchestrator",
+      labelDe: "Orchestrieren", capability: 6, tracks: ["build", "ax"] },
+    { id: "verify", code: "ASE-VER", label: "Verification Lead",
+      labelDe: "Verifizieren", capability: 7 },
+    { id: "integrate", code: "ASE-INT", label: "Integration Engineer",
+      labelDe: "Integrieren", capability: 5 },
+    // capability: null ist kein Versehen. Die 19 Capabilities kennen keine
+    // AI-Operations-/Reliability-Capability. Luecke im Kompetenzmodell,
+    // siehe Befund 1 des Konzepts.
+    { id: "operate", code: "ASE-OPS", label: "Operations & Reliability Lead",
+      labelDe: "Betreiben", capability: null }
+  ],
+  // Senioritaetslevel der Key Area. Ersetzt levelDefinitions in lrn.js.
+  // depthOwn = geforderte Tiefe in der getragenen Auspraegung,
+  // depthOthers = geforderte Tiefe in den uebrigen vier.
+  // depthOwn / depthOthers beschreiben die ANFORDERUNG laut MyCompetence:
+  // welche Tiefe in der getragenen bzw. in den uebrigen vier Auspraegungen
+  // nachzuweisen ist. depthAdmissible steuert dagegen das ANGEBOT: welche
+  // Kurstiefen in einer Zelle dieses Levels stehen duerfen. Beides faellt
+  // bewusst auseinander, ein Kurs wird lieber ein Level zu viel als zu wenig
+  // angeboten (Entscheid 14.08.2026). Einzige Ausschlussregel: reines
+  // Grundwissen genuegt an L4 nicht mehr, weil dort schon die Breiten-
+  // anforderung auf Fachwissen steigt.
+  aseLevels: [
+    { value: 1, code: "L1", label: "Associate", labelKey: "lrn_level_l1",
+      depthOwn: ["Acquire"], depthOthers: "Acquire", carriedRoles: 0,
+      depthAdmissible: ["Acquire"] },
+    { value: 2, code: "L2", label: "Senior", labelKey: "lrn_level_l2",
+      depthOwn: ["Deepen"], depthOthers: "Acquire", carriedRoles: 1,
+      depthAdmissible: ["Acquire", "Deepen"] },
+    { value: 3, code: "L3", label: "Expert", labelKey: "lrn_level_l3",
+      depthOwn: ["Deepen", "Create"], depthOthers: "Acquire", carriedRoles: 1,
+      plus: "breadth|authority",
+      depthAdmissible: ["Acquire", "Deepen", "Create"] },
+    { value: 4, code: "L4", label: "Principal", labelKey: "lrn_level_l4",
+      depthOwn: ["Create"], depthOthers: "Deepen", carriedRoles: 2,
+      depthAdmissible: ["Deepen", "Create"] }
+  ],
+
   interests: [
     { id: "foundation", label: "Foundations", dimensions: ["literacy"] },
     { id: "productivity", label: "Productivity", hint: "Prompts, assistants, office", dimensions: ["prompting"] },
@@ -141,6 +190,7 @@ window.LrnData = {
       dimensions: ["literacy"],
       interests: ["foundation"],
       levels: ["Acquire"],
+      ase: [{ role: "spec", levels: [1, 2] }, { role: "orch", levels: [1, 2] }, { role: "verify", levels: [1, 2] }, { role: "integrate", levels: [1, 2] }, { role: "operate", levels: [1, 2] }],
       format: "Interactive mini-games, real GPT tokenizer, glossary, quiz",
       summary: "~75-minute hands-on primer on how large language models work: tokens, context, prompting, tool use, RAG, and limits, through 20 mini-games and a quiz.",
       outcomes: [],
@@ -155,6 +205,7 @@ window.LrnData = {
       dimensions: ["literacy", "data"],
       interests: ["foundation", "governance"],
       levels: ["Acquire"],
+      ase: [{ role: "spec", levels: [1, 2] }, { role: "orch", levels: [1, 2] }, { role: "verify", levels: [1, 2] }, { role: "integrate", levels: [1, 2] }, { role: "operate", levels: [1, 2] }],
       format: "Self-paced online, text-based LRN module plus knowledge checks",
       summary: "Foundations of AI, generative AI, realistic limitations, business use cases, and responsible AI.",
       outcomes: [
@@ -174,6 +225,7 @@ window.LrnData = {
       dimensions: ["prompting", "literacy"],
       interests: ["productivity", "foundation"],
       levels: ["Acquire", "Deepen"],
+      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "orch", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }, { role: "integrate", levels: [1, 2, 3] }, { role: "operate", levels: [1, 2, 3] }],
       format: "Text lesson, interactive prompt lab, LHIND tool checklist",
       summary: "Productive everyday use of approved AI tools: writing, summarizing, analysis, ideation, and safe tool selection.",
       outcomes: [
@@ -193,6 +245,7 @@ window.LrnData = {
       dimensions: ["data"],
       interests: ["governance"],
       levels: ["Acquire", "Deepen"],
+      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "orch", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }, { role: "integrate", levels: [1, 2, 3] }, { role: "operate", levels: [1, 2, 3] }],
       format: "Compliance scenario, risk checklist, certificate quiz",
       summary: "GDPR, ethics guardrails, IT security, bias, fairness, and responsible AI use.",
       outcomes: [
@@ -212,6 +265,7 @@ window.LrnData = {
       dimensions: ["prompting"],
       interests: ["productivity", "consulting"],
       levels: ["Deepen"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }],
       format: "Prompt clinic, before/after exercises, peer review rubric",
       summary: "Prompt strategies, iterative improvement, quality review of AI outputs, and tool-specific best practices.",
       outcomes: [
@@ -231,6 +285,7 @@ window.LrnData = {
       dimensions: ["business"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "spec", levels: [2, 3, 4] }],
       format: "Interactive prioritization board and ROI worksheet",
       summary: "Use case identification, business value, prioritization, quick wins, and strategic projects.",
       outcomes: [
@@ -250,6 +305,7 @@ window.LrnData = {
       dimensions: ["prompting", "business"],
       interests: ["engineering", "productivity"],
       levels: ["Acquire", "Deepen"],
+      ase: [{ role: "orch", levels: [1, 2, 3] }],
       format: "Code task lab, review checklist, guided tool practice",
       summary: "AI in daily development work, pair programming, AI app basics, architecture context, and responsible code use.",
       outcomes: [],
@@ -264,6 +320,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "integrate", levels: [2, 3, 4] }],
       format: "Architecture cards, trade-off cases, integration worksheet",
       summary: "AI system architecture, Azure, generative AI application design, LLM architecture, data preparation, and scaling.",
       outcomes: [],
@@ -278,6 +335,7 @@ window.LrnData = {
       dimensions: ["business", "prompting"],
       interests: ["engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }],
       format: "Agent workflow lab, verification rubric, sandboxed implementation task",
       summary: "Agentic AI, tool use, orchestration, reflection, agentic workflows, and engineering verification.",
       outcomes: [],
@@ -292,6 +350,7 @@ window.LrnData = {
       dimensions: ["data", "change"],
       interests: ["governance", "leadership"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "orch", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }, { role: "integrate", levels: [1, 2, 3] }, { role: "operate", levels: [1, 2, 3] }],
       format: "Policy scenario, risk triage, escalation checklist",
       summary: "Review AI use against GDPR, internal policies, security guardrails, and documented approvals.",
       outcomes: [],
@@ -306,6 +365,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "verify", levels: [1, 2, 3] }],
       format: "QA lab, eval rubric, regression checklist",
       summary: "AI-supported test ideas, evaluation sets, QA gates, and review loops for LLM features.",
       outcomes: [],
@@ -320,6 +380,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }],
       format: "Legacy case, modernization plan, review checklist",
       summary: "Use AI to analyze legacy code, define refactoring slices, control risks, and prepare reviews.",
       outcomes: [],
@@ -334,6 +395,7 @@ window.LrnData = {
       dimensions: ["prompting", "data"],
       interests: ["productivity", "engineering", "governance"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "spec", levels: [2, 3, 4] }, { role: "integrate", levels: [2, 3, 4] }],
       format: "Documentation sprint, source-grounding checklist, quality review",
       summary: "Use AI for architecture, operations, compliance, and handover documentation without losing sources or accountability.",
       outcomes: [],
@@ -348,6 +410,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "leadership"],
       levels: ["Acquire", "Deepen"],
+      ase: [{ role: "operate", levels: [1, 2, 3] }],
       format: "Efficiency case, metric worksheet, architecture trade-off",
       summary: "Review AI and software decisions for efficiency, cost, emissions, and measurable operational impact.",
       outcomes: [],
@@ -362,6 +425,7 @@ window.LrnData = {
       dimensions: ["business", "prompting"],
       interests: ["consulting", "productivity"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }],
       format: "Research synthesis, persona check, insight review",
       summary: "Use AI to cluster user research, structure hypotheses, check bias, and prepare validatable product decisions.",
       outcomes: [],
@@ -376,6 +440,7 @@ window.LrnData = {
       dimensions: ["business", "change"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "spec", levels: [1, 2, 3] }],
       format: "Process walk-through, opportunity canvas, prioritization board",
       summary: "Identify automation and AI opportunities in processes, sort them by value and risk, and formulate pilots.",
       outcomes: [],
@@ -390,6 +455,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "operate", levels: [2, 3, 4] }],
       format: "Cost model, value case, operating metric review",
       summary: "Evaluate token, model, platform, and operating costs against value, risk, and scalability.",
       outcomes: [],
@@ -404,6 +470,7 @@ window.LrnData = {
       dimensions: ["prompting", "business"],
       interests: ["consulting", "productivity", "leadership"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "spec", levels: [1, 2, 3] }],
       format: "Client-case prompt clinic, output critique, reusable prompt pack",
       summary: "Build prompts for consulting situations, stakeholder context, hypothesis work, and robust output review.",
       outcomes: [],
@@ -418,6 +485,7 @@ window.LrnData = {
       dimensions: ["literacy", "business"],
       interests: ["foundation", "engineering", "leadership"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "spec", levels: [3, 4] }, { role: "orch", levels: [3, 4] }, { role: "verify", levels: [3, 4] }, { role: "integrate", levels: [3, 4] }, { role: "operate", levels: [3, 4] }],
       format: "Landscape map, vendor-fit checklist, architecture comparison",
       summary: "Classify AI platforms, agent frameworks, tool ecosystems, and vendor trade-offs for real decisions.",
       outcomes: [
@@ -451,6 +519,7 @@ window.LrnData = {
       dimensions: ["data", "change"],
       interests: ["leadership", "governance", "consulting"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "verify", levels: [3, 4] }],
       format: "Decision case, uncertainty review, accountability checklist",
       summary: "Translate AI recommendations into better decisions using metrics, uncertainty, bias checks, and human accountability.",
       outcomes: [
@@ -470,6 +539,7 @@ window.LrnData = {
       dimensions: ["data", "literacy"],
       interests: ["foundation", "governance", "consulting"],
       levels: ["Acquire", "Deepen"],
+      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }],
       format: "Source inventory, quality triage, data-readiness worksheet",
       summary: "Check data sources, quality, freshness, sensitivity, and evaluation before an AI pilot starts.",
       outcomes: [],
@@ -484,6 +554,7 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["governance", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "verify", levels: [3, 4] }, { role: "integrate", levels: [3, 4] }],
       format: "Threat triage, trust-boundary map, launch-gate checklist",
       summary: "Identify and control prompt injection, data leakage, tool risks, and audit gaps in AI workflows.",
       outcomes: [
@@ -503,6 +574,7 @@ window.LrnData = {
       dimensions: ["prompting", "data"],
       interests: ["productivity", "governance", "engineering"],
       levels: ["Acquire", "Deepen"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }, { role: "integrate", levels: [2, 3, 4] }],
       format: "Source inventory, RAG intake, answer-quality review",
       summary: "Plan internal knowledge assistants with source accountability, permissions, evaluation, and fallback paths.",
       outcomes: [
@@ -522,6 +594,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["consulting", "governance", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "integrate", levels: [3, 4] }, { role: "operate", levels: [3, 4] }],
       format: "Vendor scorecard, trial criteria, exit-plan review",
       summary: "Evaluate AI vendors by value, data handling, security, integration, lock-in, and operating costs.",
       outcomes: [
@@ -541,6 +614,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "operate", levels: [2, 3, 4] }],
       format: "Incident runbook, escalation drill, postmortem update",
       summary: "Monitor AI features in production, triage incident signals, and maintain runbooks for quality, cost, tools, and safety.",
       outcomes: [
@@ -560,6 +634,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance", "productivity"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "operate", levels: [1, 2, 3] }],
       format: "Support triage, confidence threshold, escalation checklist",
       summary: "Use AI for ticket triage, knowledge articles, support responses, and incident handoffs with service controls.",
       outcomes: [],
@@ -588,6 +663,7 @@ window.LrnData = {
       dimensions: ["business", "change", "data"],
       interests: ["leadership", "consulting", "governance"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "spec", levels: [2, 3, 4] }],
       format: "Status evidence, RAG check, risk owner, steering question",
       summary: "Use AI for project status, steering packs, and decision materials with clear evidence and decision questions.",
       outcomes: [],
@@ -602,6 +678,7 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["governance", "engineering", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "spec", levels: [2, 3, 4] }, { role: "integrate", levels: [2, 3, 4] }],
       format: "Data owner, quality rule, sample check, issue backlog",
       summary: "Identify data quality and master data gaps before AI workflows scale poor sources.",
       outcomes: [],
@@ -616,6 +693,7 @@ window.LrnData = {
       dimensions: ["business", "change"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "spec", levels: [2, 3, 4] }],
       format: "Process map, exception log, value check, human fallback",
       summary: "Evaluate AI automation ideas only after process understanding, exception analysis, and pilot controls.",
       outcomes: [],
@@ -630,6 +708,7 @@ window.LrnData = {
       dimensions: ["data", "business", "change"],
       interests: ["governance", "leadership", "consulting"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "verify", levels: [3, 4] }, { role: "operate", levels: [3, 4] }],
       format: "Risk register, control test, audit trail, approval owner",
       summary: "Make AI risks manageable with owners, controls, audit evidence, and policy exception review.",
       outcomes: [
@@ -649,6 +728,7 @@ window.LrnData = {
       dimensions: ["data", "prompting", "change"],
       interests: ["governance", "productivity", "engineering"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }],
       format: "Content owner, freshness check, source ranking, access rule",
       summary: "Curate knowledge sources for AI search and internal assistants before retrieval amplifies poor sources.",
       outcomes: [],
@@ -663,6 +743,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance", "leadership"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "integrate", levels: [3, 4] }],
       format: "ADR, threat model, cost model, architecture review",
       summary: "Document AI architecture decisions for models, vendors, security boundaries, and costs in a traceable way.",
       outcomes: [],
@@ -677,6 +758,7 @@ window.LrnData = {
       dimensions: ["business", "change"],
       interests: ["consulting", "leadership"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "spec", levels: [2, 3, 4] }],
       format: "Evidence note, scoring rubric, dependency check, decision log",
       summary: "Use AI to structure backlog and roadmap decisions more transparently by value, effort, risk, and dependencies.",
       outcomes: [],
@@ -691,6 +773,7 @@ window.LrnData = {
       dimensions: ["data"],
       interests: ["governance", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "verify", levels: [2, 3, 4] }],
       format: "Data classification, coverage matrix, drift check, leakage test",
       summary: "Use synthetic and masked test data for AI and software tests with privacy, coverage, and leakage controls.",
       outcomes: [],
@@ -705,6 +788,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["consulting", "governance", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "integrate", levels: [2, 3, 4] }],
       format: "System boundary, data owner, exception rule, integration note",
       summary: "Evaluate AI use cases in SAP, Salesforce, Microsoft business solutions, and ERP/CRM workflows with system boundaries, data ownership, and integration context.",
       outcomes: [],
@@ -719,6 +803,7 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["engineering", "governance"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "integrate", levels: [2, 3, 4] }],
       format: "Architecture sketch, data boundary, streaming fit, platform decision",
       summary: "Design AI use cases with cloud, data platform, and IoT context around data flows, latency, ownership, and platform boundaries.",
       outcomes: [],
@@ -733,6 +818,7 @@ window.LrnData = {
       dimensions: ["data", "change"],
       interests: ["governance", "leadership"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "verify", levels: [3, 4] }],
       format: "Review role, approval gate, quality checklist, appeal path",
       summary: "Design human-in-the-loop review, approval gates, escalation, and quality checklists for AI-supported decisions and content.",
       outcomes: [],
@@ -747,6 +833,7 @@ window.LrnData = {
       dimensions: ["change", "business"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
+      ase: [{ role: "spec", levels: [4] }, { role: "orch", levels: [4] }, { role: "verify", levels: [4] }, { role: "integrate", levels: [4] }, { role: "operate", levels: [4] }],
       format: "Role charter, standards backlog, asset registry, governance cadence",
       summary: "Operationalize AI scaling through clear roles, standards, reusable assets, a champion network, and governance cadence.",
       outcomes: [],
@@ -761,6 +848,7 @@ window.LrnData = {
       dimensions: ["business", "data", "change"],
       interests: ["engineering", "governance", "productivity"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "operate", levels: [2, 3, 4] }],
       format: "Ticket pattern, runbook step, source article, handoff trigger",
       summary: "Evaluate recurring service desk tickets, known fixes, runbooks, and knowledge base gaps for AI-supported support automation.",
       outcomes: [],
@@ -775,6 +863,7 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["governance", "engineering", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
+      ase: [{ role: "verify", levels: [1, 2, 3] }],
       format: "Data boundary, tool approval, access check, abuse case",
       summary: "Triage business AI ideas for sensitive data, external tools, identity risks, and untrusted inputs before security review starts.",
       outcomes: [],
@@ -789,6 +878,7 @@ window.LrnData = {
       dimensions: ["prompting", "change", "data"],
       interests: ["governance", "productivity", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }],
       format: "Pattern owner, version note, evaluation example, retirement rule",
       summary: "Manage shared prompts as reusable patterns with an owner, version, evaluation example, and retirement rule.",
       outcomes: [],
@@ -803,6 +893,7 @@ window.LrnData = {
       dimensions: ["business", "prompting", "data"],
       interests: ["consulting", "engineering"],
       levels: ["Deepen", "Create"],
+      ase: [{ role: "orch", levels: [2, 3, 4] }, { role: "verify", levels: [2, 3, 4] }],
       format: "14 lecture activities, 8 project labs, reusable workbench artifacts",
       summary: "Design the repository, state, scope, feedback, verification, review, loops, and graphs that make AI-assisted delivery reliable across sessions.",
       outcomes: [
@@ -831,6 +922,7 @@ window.LrnData = {
       dimensions: ["change", "business", "prompting"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
+      ase: [{ role: "spec", levels: [4] }, { role: "orch", levels: [4] }, { role: "verify", levels: [4] }, { role: "integrate", levels: [4] }, { role: "operate", levels: [4] }],
       format: "Mentoring plan, brown-bag kit, community contribution backlog",
       summary: "Multiplier role for knowledge transfer, brown bags, communities of practice, and piloting new AI approaches.",
       outcomes: [],

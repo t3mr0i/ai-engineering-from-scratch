@@ -59,6 +59,43 @@ opt.step()
 
 up to floating point summation order. The accumulated gradient buffer at the end of the loop is the same tensor that a single full-batch backward would produce. The lesson code asserts this with a max-abs difference under 1e-4 in `equivalence_check`.
 
+PyTorch isn't available here, but the scaling arithmetic underneath `loss.backward()` is ordinary division. Rebuild it with a toy gradient function `grad_fn(w, x) = 2*(w - x)` and a manual accumulation loop:
+
+```python fillin
+def grad_fn(w, x):
+    return 2 * (w - x)
+
+x_full = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+w = 0.0
+accum_steps = 4
+
+full_grad = sum(grad_fn(w, x) for x in x_full) / len(x_full)
+
+def micro_batches(data, n):
+    size = len(data) // n
+    return [data[i*size:(i+1)*size] for i in range(n)]
+
+# Naive: accumulate each micro-batch's gradient with no scaling.
+naive_total = 0.0
+for mb in micro_batches(x_full, accum_steps):
+    mb_grad = sum(grad_fn(w, x) for x in mb) / len(mb)
+    naive_total += mb_grad
+print("naive (unscaled) accumulated grad:", naive_total, "vs full-batch grad:", full_grad)
+
+# Fixed: same loop, scale each contribution by accum_steps before summing.
+scaled_total = 0.0
+for mb in micro_batches(x_full, accum_steps):
+    mb_grad = sum(grad_fn(w, x) for x in mb) / {{blank:len(mb)}}
+    scaled_total += mb_grad / {{blank:accum_steps}}
+
+if abs(scaled_total - full_grad) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", scaled_total, "expected", full_grad)
+```
+
+The naive accumulation lands at -36.0, four times the full-batch gradient of -9.0 -- exactly `accum_steps` too big, the same failure mode the section above warns about. Dividing each micro-batch's mean gradient by `accum_steps` before adding it in recovers the full-batch value exactly.
+
 ### Where the cost goes
 
 Each micro-batch costs one forward and one backward. With accumulation you trade memory for time. The throughput curve in `outputs/accum-curve.json` shows what happens as the effective batch grows at fixed micro-batch:

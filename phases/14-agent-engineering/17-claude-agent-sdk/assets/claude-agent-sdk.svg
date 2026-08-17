@@ -83,7 +83,7 @@
   <rect x="520" y="424" width="380" height="26" class="box"/>
   <text x="538" y="442" class="step">delete(session_id)  cascades to subagent sessions</text>
   <rect x="520" y="456" width="380" height="46" class="box"/>
-  <text x="538" y="478" class="step">list_subkeys(parent) + --session-mirror</text>
+  <text x="538" y="478" class="step">list_subkeys(parent)</text>
   <text x="538" y="496" class="small">full TypeScript parity in the Python SDK</text>
 
   <text x="480" y="540" text-anchor="middle" class="caption">W3C trace context propagates into CLI subprocess; entire multi-process run is one trace.</text>

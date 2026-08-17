@@ -33,7 +33,7 @@
   <text x="60" y="286" class="step">]</text>
 
   <path d="M290,280 L460,280" class="edge" marker-end="url(#arrow)"/>
-  <text x="375" y="272" text-anchor="middle" class="small">tasks/send</text>
+  <text x="375" y="272" text-anchor="middle" class="small">message/send</text>
 
   <path d="M460,350 L290,350" class="edge" marker-end="url(#arrow)"/>
   <text x="375" y="342" text-anchor="middle" class="small">state transitions + artifact</text>

@@ -393,25 +393,44 @@ The forward pass computes the prediction and loss. The backward pass computes th
 
 With NumPy, the same operations are faster and more concise:
 
-```python
+```python fillin
 import numpy as np
 
 x = np.array([1, 2, 3, 4, 5], dtype=float)
-y = np.array([3, 5, 7, 9, 11], dtype=float)
+y = np.array([3, 5, 7, 9, 11], dtype=float)  # true relationship: y = 2x + 1
 
-w, b = np.random.randn(), np.random.randn()
-lr = 0.01
+def train(w, b, lr, epochs):
+    for _ in range(epochs):
+        pred = w * x + b
+        error = pred - y
+        dw = np.mean(2 * error * x)
+        db = np.mean(2 * error)
+        w -= lr * dw
+        b -= lr * db
+    return w, b
 
-for epoch in range(200):
+# Learning rate too large -- "Too large: diverge" from the key terms below.
+w_bad, b_bad = train(0.0, 0.0, lr=1.0, epochs=50)
+print("diverged:", w_bad, b_bad)  # blows up toward inf/nan
+
+def loss_gradients(w, b):
     pred = w * x + b
     error = pred - y
-    loss = np.mean(error ** 2)
-    dw = np.mean(2 * error * x)
-    db = np.mean(2 * error)
+    dw = {{blank:np.mean(2 * error * x)}}
+    db = {{blank:np.mean(2 * error)}}
+    return dw, db
+
+w, b = 0.0, 0.0
+lr = {{blank:0.01}}
+for _ in range(2000):
+    dw, db = loss_gradients(w, b)
     w -= lr * dw
     b -= lr * db
 
-print(f"Learned: y = {w:.2f}x + {b:.2f}")
+if abs(w - 2.0) < 0.01 and abs(b - 1.0) < 0.01:
+    print("PASS")
+else:
+    print("WRONG:", w, b)
 ```
 
 You just built gradient descent from scratch. PyTorch automates the gradient computation, but the update loop is identical.

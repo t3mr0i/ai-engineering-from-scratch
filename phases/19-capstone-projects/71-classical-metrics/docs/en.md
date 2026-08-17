@@ -88,20 +88,53 @@ The smoothing rule is the one Lin and Och called method 1: add one to both numer
 
 ROUGE-L compares the longest common subsequence of the candidate and reference token sequences. The LCS captures word order without forcing contiguity, which is why it is the default summarisation metric. We compute the LCS length with a standard dynamic-programming table, then derive recall as `lcs / reference length`, precision as `lcs / candidate length`, and combine with F-beta where beta equals one for the symmetric F1 form.
 
-```python
+A set-overlap metric cannot see word order at all -- it would call two scrambled sentences a perfect match. Fill in the LCS recurrence and the precision/recall denominators to see the difference:
+
+```python fillin
+import re
+
+TOKEN_RE = re.compile(r"\w+")
+def tokenize(text):
+    return TOKEN_RE.findall(text.lower())
+
+def naive_overlap(pred, ref):
+    p, r = set(tokenize(pred)), set(tokenize(ref))
+    inter = p & r
+    return 2 * len(inter) / (len(p) + len(r))
+
+pred = "the cat sat on the mat"
+scrambled = "mat the on sat cat the"  # same tokens, order destroyed
+print("naive (order-blind):", naive_overlap(pred, scrambled))
+
 def lcs_length(a, b):
     n, m = len(a), len(b)
-    dp = numpy.zeros((n + 1, m + 1), dtype=int)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
     for i in range(n):
         for j in range(m):
             if a[i] == b[j]:
-                dp[i+1, j+1] = dp[i, j] + 1
+                dp[i + 1][j + 1] = dp[i][j] + {{blank:1}}
             else:
-                dp[i+1, j+1] = max(dp[i+1, j], dp[i, j+1])
-    return int(dp[n, m])
+                dp[i + 1][j + 1] = {{blank:max(dp[i + 1][j], dp[i][j + 1])}}
+    return dp[n][m]
+
+def rouge_l(pred, ref):
+    p, r = tokenize(pred), tokenize(ref)
+    lcs = lcs_length(p, r)
+    if lcs == 0:
+        return 0.0
+    precision = lcs / {{blank:len(p)}}
+    recall = lcs / {{blank:len(r)}}
+    return 2 * precision * recall / (precision + recall)
+
+score = rouge_l(pred, scrambled)
+expected = 0.5
+if abs(score - expected) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", score)
 ```
 
-The numpy table makes the implementation legible; pure Python lists would work too. Tasks that opt into ROUGE-L pay the O(n m) cost per task. For typical summary lengths that stays under a millisecond.
+The naive set-overlap score reports 1.0 -- a perfect match -- because it only checks which tokens appear, not where. `rouge_l` reports 0.5: the longest common subsequence between the two orderings is half the sentence, which is what a summarisation metric should say about a scrambled reference.
 
 ## Accuracy
 

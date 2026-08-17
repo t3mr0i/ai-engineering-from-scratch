@@ -48,7 +48,7 @@ WinoIdentity (COLM 2025) extends the Winogender/WinoBias tradition of coreferenc
 
 ### The meta-critique
 
-The 10-year literature review (arXiv:2508.11067, 2025) finds the field disproportionately focuses on binary-gender bias. Other axes — disability, religion, migration status, multi-lingual identity — receive far less attention. The meta-critique argues that narrow focus can harm marginalized groups by neglect: a model well-debiased on binary gender may be badly biased on dimensions nobody checked.
+The 10-year literature review (arXiv:2508.11067, 2025) surveys 189 bias-evaluation papers and finds the field disproportionately focuses on binary-gender bias: 79.9% (151/189) cover gender, against 30.2% for race/ethnicity, 20.6% for age, 19.1% for religion, and 13.2% for nationality. Disability and multi-lingual identity barely register. The meta-critique argues that narrow focus can harm marginalized groups by neglect: a model well-debiased on binary gender may be badly biased on dimensions nobody checked. It also finds an academia-industry gap: only 10.6% (20/189) of papers include recommendations for implementing their findings in production systems, so a documented mitigation method existing in the literature is no guarantee it ever reaches a deployed model.
 
 ### Where this fits in Phase 18
 

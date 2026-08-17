@@ -27,8 +27,8 @@ Answer Yes/No per row. One Yes triggers the obligations in the right column. Thi
 
 | Use case category (Annex III) | Your system? | Obligations triggered |
 |---|---|---|
-| Recruitment / CV screening / candidate ranking | Y / N | Conformity assessment, bias audit (Section 3), human review of each individual decision |
-| Credit scoring / loan or insurance eligibility / coverage classification | Y / N | Fundamental Rights Impact Assessment (FRIA), transparency to subjects, Art. 14 human oversight |
+| Recruitment / CV screening / candidate ranking | Y / N | Conformity assessment, bias audit (Section 3), human oversight (Art. 14(4): an overseer able to properly understand, monitor, and override outputs) |
+| Credit scoring / loan eligibility, or life/health insurance risk assessment and pricing (Annex III, 5(c)) | Y / N | Fundamental Rights Impact Assessment (FRIA), transparency to subjects, Art. 14 human oversight |
 | Employee performance monitoring or management | Y / N | Data minimisation, human oversight, access rights |
 | Social benefit eligibility | Y / N | Conformity assessment, logging, explanation on request |
 | Biometric identification in public spaces (real-time) | Y / N | Near-prohibition; legal advice required |
@@ -52,7 +52,7 @@ Required for any system with a ranking, scoring, or classification output used i
 | Define protected groups | Agree on the groups relevant for your deployment geography | [ ] |
 | Run a stratified sample | Approximately 200–500 queries per group, controlled variation in the proxy field only | [ ] |
 | Compute the disparity ratio | Lowest-group outcome rate ÷ highest-group rate | [ ] |
-| Apply the threshold | Conservative floor: 0.80 (four-fifths rule). EU high-risk deployments: 0.85 or higher. | [ ] |
+| Apply the threshold | Conservative floor: 0.80 (four-fifths rule, US EEOC adverse-impact guidance). The AI Act sets no numeric bias threshold of its own — for EU high-risk deployments, treat 0.80 as a floor, not a compliance ceiling, and document why. | [ ] |
 | Document results | Record baseline metrics; commit to re-running on every model or prompt change | [ ] |
 | Block on threshold breach | System does not go to production if disparity ratio is below threshold | [ ] |
 

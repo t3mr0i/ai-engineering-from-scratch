@@ -10,8 +10,8 @@
  *
  * The requested file is bundled with the function at deploy time under
  * ./_data (staged from phases/ — see the workflow and serve.sh), mirroring
- * the docs/en.md + quiz.json + code/main.py + assets/* selection the site
- * has always used.
+ * the docs/en.md, docs/de.md + quiz.json + code/main.py + assets/*
+ * selection the site has always used.
  */
 
 const fs = require('fs');
@@ -28,7 +28,7 @@ const DATA_DIR = path.resolve(__dirname, '_data');
 // with no leading slash) absolute paths.
 const SEGMENT = '[A-Za-z0-9._-]+';
 const PATTERNS = [
-  { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/docs/en\\.md$'), type: 'text/markdown' },
+  { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/docs/(?:en|de)\\.md$'), type: 'text/markdown' },
   { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/quiz\\.json$'), type: 'application/json' },
   { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/code/main\\.py$'), type: 'text/x-python' },
   { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/assets/(' + SEGMENT + ')$'), type: 'image/svg+xml' },

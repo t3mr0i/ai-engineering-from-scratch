@@ -27,7 +27,7 @@ Hard rejects:
 Refusal rules:
 
 - If the product needs long-running async work (hours-to-days), refuse the self-hosted SDK and route to Claude Managed Agents.
-- If the user asks for `--session-mirror` to a shared location, refuse. Session transcripts carry PII; mirror to per-user encrypted storage.
+- If the user asks to mirror session transcripts to a shared location, refuse. Session transcripts carry PII; mirror to per-user encrypted storage instead.
 - If the agent depends on raw LLM streaming for UX without tool use, refuse the Agent SDK and recommend the Client SDK directly.
 
 Output: `agent.py`, `tools.py`, `hooks.py`, `session.py`, `README.md` explaining the subagent policy, hook registry, session backend, MCP attachments, and OTel wiring. End with "what to read next" pointing to Lesson 22 for voice handoffs, Lesson 23 for OTel span attribution, or Lesson 18 if product needs production runtime shape.

@@ -81,6 +81,33 @@ pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
 
 When `n - c < k` the numerator is undefined and the value is `1`. The implementation handles the edge case directly. We expose `pass_at_k(n, c, k)` for use by the leaderboard layer in lesson 74.
 
+Running the actual candidate code needs a real subprocess sandbox, which isn't available here -- but the pass-at-k estimator itself is just combinatorics. Fill in the edge case and the formula:
+
+```python fillin
+import math
+
+def naive_pass_rate(n, c, k):
+    # naive (common mistake): report the raw per-sample pass rate, ignore k
+    return c / n
+
+def pass_at_k(n, c, k):
+    if n - c < k:
+        return {{blank:1.0}}
+    return 1 - math.comb({{blank:n - c}}, k) / math.comb(n, k)
+
+n, c, k = 10, 2, 5
+print("naive (ignores k):", naive_pass_rate(n, c, k))
+
+result = pass_at_k(n, c, k)
+expected = 1 - math.comb(8, 5) / math.comb(10, 5)
+if abs(result - expected) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", result)
+```
+
+Only 2 of 10 samples passed, so the naive per-sample rate says 20%. But pass@5 asks a different question: if you're allowed 5 tries out of those 10 draws, how likely is at least one of them to be a pass? With 2 winners spread across 10 draws, a random 5-draw sample catches one about 78% of the time -- the naive number understates the metric everyone actually cares about (can the model solve it given a few attempts).
+
 ```mermaid
 flowchart LR
     A[task with n=10 samples] --> B[run each sample]

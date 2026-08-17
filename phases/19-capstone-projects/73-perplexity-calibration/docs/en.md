@@ -30,6 +30,47 @@ def perplexity(neg_log_probs, token_counts):
 
 The implementation handles zero-token edge cases and asserts that the negative log-probabilities are non-negative. A common mistake is to forget the negation: an adapter that returns `log p` instead of `-log p` produces a perplexity below one, which is impossible. The function catches that as a contract violation.
 
+The naive version below skips both guards. Add them: reject negative-sign inputs, and return `NaN` on the zero-token case instead of dividing by zero.
+
+```python fillin
+import math
+
+def naive_perplexity(neg_log_probs, token_counts):
+    total_nll = sum(neg_log_probs)
+    total_tokens = sum(token_counts)
+    return math.exp(total_nll / total_tokens)
+
+# adapter bug: returns log p (negative) instead of -log p -- forgot the sign
+buggy_neg_log_probs = [-0.5, -0.3, -0.7, -0.2]
+token_counts = [1, 1, 1, 1]
+print("naive:", naive_perplexity(buggy_neg_log_probs, token_counts))  # < 1, impossible
+
+def perplexity_checked(neg_log_probs, token_counts):
+    assert all(nlp {{blank:>=}} 0 for nlp in neg_log_probs), "neg_log_probs must be non-negative"
+    total_tokens = sum(token_counts)
+    if total_tokens == {{blank:0}}:
+        return float("nan")
+    total_nll = sum(neg_log_probs)
+    return math.exp(total_nll / total_tokens)
+
+good_neg_log_probs = [0.5, 0.3, 0.7, 0.2]
+result = perplexity_checked(good_neg_log_probs, token_counts)
+expected = math.exp(1.7 / 4)
+
+caught_bug = False
+try:
+    perplexity_checked(buggy_neg_log_probs, token_counts)
+except AssertionError:
+    caught_bug = True
+
+empty_ok = math.isnan(perplexity_checked([], []))
+
+if caught_bug and empty_ok and abs(result - expected) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", result, caught_bug, empty_ok)
+```
+
 ## What ECE measures
 
 Expected calibration error groups predictions by their confidence into a fixed number of bins, then measures the average gap between confidence and accuracy across bins, weighted by bin size.

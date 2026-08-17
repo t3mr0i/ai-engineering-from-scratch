@@ -32,7 +32,7 @@ The OpenTelemetry GenAI semantic conventions exist exactly for this. They define
 ```mermaid
 flowchart TD
   Call[tool call / model call / gate decision] --> Span["SpanBuilder.span()<br/>context manager"]
-  Span --> GenAI[GenAISpan<br/>trace_id / span_id / name<br/>attributes:<br/>gen_ai.system<br/>gen_ai.request.*<br/>gen_ai.usage.*<br/>start, end, status]
+  Span --> GenAI[GenAISpan<br/>trace_id / span_id / name<br/>attributes:<br/>gen_ai.provider.name<br/>gen_ai.request.*<br/>gen_ai.usage.*<br/>start, end, status]
   GenAI --> Writer[JSONLWriter]
   GenAI --> Metrics[MetricsRegistry]
   Writer --> Traces[traces.jsonl]

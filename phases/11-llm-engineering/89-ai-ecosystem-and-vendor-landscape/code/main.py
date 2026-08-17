@@ -141,7 +141,7 @@ PLATFORM_CATALOG: list[Platform] = [
         notes="Gemini Flash; EU-resident; sub-200ms TTFT; strong for high-volume triage",
     ),
     Platform(
-        name="Groq API - Llama 4 70B",
+        name="Groq API - Llama 4 Maverick",
         provider="Groq / Meta",
         supported_residency=[DataResidency.US, DataResidency.ANY],
         cost_per_1m=0.8,
@@ -154,7 +154,7 @@ PLATFORM_CATALOG: list[Platform] = [
         notes="LPU inference; open weights; lowest code lock-in but no EU DPA",
     ),
     Platform(
-        name="Self-hosted Llama 4 8B (on-premise GPU)",
+        name="Self-hosted Llama 4 Scout (on-premise GPU)",
         provider="Meta (open weights)",
         supported_residency=[DataResidency.EU, DataResidency.US, DataResidency.ANY],
         cost_per_1m=0.15,

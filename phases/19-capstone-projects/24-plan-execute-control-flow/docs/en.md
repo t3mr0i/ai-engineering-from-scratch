@@ -88,6 +88,47 @@ A tracer or UI can render this as a strikethrough on the removed steps and a hig
 
 `max_replans` caps the number of times the planner is called after the first plan. Default is five. This is the more important limit. A planner that returns the same broken plan five times in a row would otherwise loop until the step budget catches it. Capping replans makes the failure faster and the reason clearer.
 
+The naive budget check below tests for an exact match against the ceiling instead of an overshoot — since the counters can jump past the ceiling in one step, the exact match never fires and the session wrongly reports a different (or no) failure. Fix both checks.
+
+```python fillin
+max_steps = 12
+max_replans = 5
+plan_step_counts = [5, 3, 3, 3, 3, 3]  # first plan + 5 replans, 3 steps each
+
+def naive_run(plan_step_counts, max_steps, max_replans):
+    steps_used, replans_used = 0, 0
+    for i, n in enumerate(plan_step_counts):
+        steps_used += n
+        if i > 0:
+            replans_used += 1
+        if steps_used == max_steps:      # exact-match only, overshoot slips through
+            return "failed:step_budget"
+        if replans_used == max_replans:  # same mistake on the replan counter
+            return "failed:replan_budget"
+    return "completed"
+
+print("naive:", naive_run(plan_step_counts, max_steps, max_replans))
+
+def run(plan_step_counts, max_steps, max_replans):
+    steps_used, replans_used = 0, 0
+    for i, n in enumerate(plan_step_counts):
+        steps_used += n
+        if i > 0:
+            replans_used += 1
+        if steps_used {{blank:>}} max_steps:
+            return "failed:step_budget"
+        if replans_used {{blank:>}} max_replans:
+            return "failed:replan_budget"
+    return "completed"
+
+result = run(plan_step_counts, max_steps, max_replans)
+expected = "failed:step_budget"
+if result == expected:
+    print("PASS")
+else:
+    print("WRONG:", result)
+```
+
 ## The deterministic planner in this lesson
 
 We do not call a model in this lesson. The lesson ships a deterministic planner that picks a plan based on `last_error`.

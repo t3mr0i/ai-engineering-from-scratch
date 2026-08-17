@@ -101,6 +101,56 @@ One retry is usually enough. Three retries catches weak-model flakes. Beyond thr
 
 Constrained decoding works on small models. A 3B-parameter open model with grammar enforcement out-performs a 70B-parameter model with raw prompting on structured tasks. This is the main reason structured outputs matter for production: it decouples reliability from model size.
 
+## Use It
+
+"Validate after generation" (approach two) is exactly as reliable as the checks
+you write. A validator that only confirms required fields are present misses
+every violation of type, range, and enum — the three constraints strict mode
+enforces for you.
+
+```python fillin
+schema = {
+    "properties": {
+        "customer": {"type": "string"},
+        "total_usd": {"type": "number", "minimum": 0},
+        "status": {"type": "string", "enum": ["paid", "unpaid", "refunded"]},
+    },
+    "required": ["customer", "total_usd", "status"],
+}
+
+payload = {"customer": 12345, "total_usd": -50, "status": "cancelled"}
+
+def naive_validate(payload, schema):
+    return [f"missing: {f}" for f in schema["required"] if f not in payload]
+
+print("naive:", naive_validate(payload, schema))  # [] -- looks fine, isn't
+
+def strict_validate(payload, schema):
+    errors = naive_validate(payload, schema)
+    for field, sub in schema["properties"].items():
+        if field not in payload:
+            continue
+        value = payload[field]
+        if sub["type"] == "string" and not isinstance(value, {{blank:str}}):
+            errors.append(f"{field}: expected string")
+        if "minimum" in sub and value {{blank:<}} sub["minimum"]:
+            errors.append(f"{field}: below minimum")
+        if "enum" in sub and value {{blank:not in}} sub["enum"]:
+            errors.append(f"{field}: not in enum")
+    return errors
+
+errors = strict_validate(payload, schema)
+expected = ["customer: expected string", "total_usd: below minimum", "status: not in enum"]
+if errors == expected:
+    print("PASS")
+else:
+    print("WRONG:", errors)
+```
+
+This is the gap between approach two and approach three from the problem
+section: `strict_validate` catches what `naive_validate` misses, but a
+provider's strict mode catches all three *before* the tokens are even
+emitted — no retry needed.
 
 
 ## Further Reading

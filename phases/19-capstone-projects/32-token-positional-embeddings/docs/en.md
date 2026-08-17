@@ -70,6 +70,39 @@ The property that follows from the choice of `sin` and `cos` together is that th
 
 The lesson computes the full sinusoidal table once at construction and indexes into it at forward time.
 
+`nn.Embedding` needs PyTorch, which isn't available here, but the sinusoidal formula itself is plain arithmetic. Fill in the base and the sin/cos split to build one row of the table by hand:
+
+```python fillin
+import numpy as np
+
+def naive_position_vector(p, D):
+    # naive: broadcast the raw position across every dimension
+    return np.full(D, p, dtype=float)
+
+for p in [0, 1, 5]:
+    print("naive pos", p, "->", naive_position_vector(p, 4))
+
+def sinusoidal_row(p, D):
+    row = np.zeros(D)
+    for i in range(D):
+        angle = p / ({{blank:10000}} ** (2 * (i // 2) / D))
+        if i % 2 == 0:
+            row[i] = {{blank:np.sin(angle)}}
+        else:
+            row[i] = {{blank:np.cos(angle)}}
+    return row
+
+row = sinusoidal_row(1, 4)
+expected = np.array([0.8414709848078965, 0.5403023058681398,
+                      0.009999833334166664, 0.9999500004166653])
+if np.allclose(row, expected, atol=1e-9):
+    print("PASS")
+else:
+    print("WRONG:", row)
+```
+
+`naive_position_vector` repeats the same scalar across all `D` dims -- every feature carries identical, unbounded information, which is exactly what a learned table without structure would also do at initialization. `sinusoidal_row` fixes both problems: the geometric base spreads wavelengths across dimensions (coarse to fine), and every value stays in `[-1, 1]` no matter how large `p` gets.
+
 ## The composition
 
 The input pipeline does three things in order. Read the token ids. Look up the token vectors. Add the positional vectors. Return the sum.

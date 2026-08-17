@@ -166,6 +166,32 @@ This trick appears everywhere in ML:
 - Mixture of Gaussians
 - Variational inference
 
+```python fillin
+import math
+
+def naive_log_sum_exp(x):
+    return math.log(sum(math.exp(xi) for xi in x))
+
+# Logits a real model can produce -- naive log-sum-exp overflows here.
+logits = [1000.0, 1001.0, 1002.0]
+try:
+    print("naive:", naive_log_sum_exp(logits))
+except OverflowError as e:
+    print("naive OverflowError:", e)
+
+def stable_log_sum_exp(x):
+    c = {{blank:max(x)}}
+    shifted_sum = sum(math.exp(xi - c) for xi in x)
+    return {{blank:c + math.log(shifted_sum)}}
+
+result = stable_log_sum_exp(logits)
+expected = 1002.4076059644438
+if math.isfinite(result) and abs(result - expected) < 1e-6:
+    print("PASS")
+else:
+    print("WRONG:", result)
+```
+
 ### Why Softmax Needs the Max-Subtraction Trick
 
 Softmax converts logits to probabilities:

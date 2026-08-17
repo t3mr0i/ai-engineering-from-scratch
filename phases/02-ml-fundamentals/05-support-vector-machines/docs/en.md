@@ -224,7 +224,50 @@ SVMs still win in these situations:
 
 ## Use It
 
-With scikit-learn:
+The margin formula from the section above -- margin = 2 / ||w|| -- is exact
+for a linear SVM. Compute it directly from a fitted model, and see what a
+too-small `C` does to it before fixing it.
+
+```python fillin
+import numpy as np
+from sklearn.svm import SVC
+
+# Two clusters offset by 4 units along x -- linearly separable, so the
+# margin formula above is exact.
+X = np.array([
+    [0.0, 0.0], [0.5, 0.5], [0.2, -0.3], [-0.3, 0.4],
+    [4.0, 0.0], [4.5, 0.5], [4.2, -0.3], [3.7, 0.4],
+])
+y = np.array([-1, -1, -1, -1, 1, 1, 1, 1])
+
+# Naive: C too small barely penalizes margin violations -- every point
+# ends up inside the margin and counts as a support vector.
+naive = SVC(kernel="linear", C=0.01)
+naive.fit(X, y)
+naive_w = naive.coef_[0]
+print("naive margin:", 2 / np.linalg.norm(naive_w), "support vectors:", len(naive.support_vectors_))
+
+# Fix: a properly tuned C converges to the true max-margin hyperplane --
+# only the closest point on each side stays a support vector.
+clf = SVC(kernel="linear", C={{blank:1.0}})
+clf.fit(X, y)
+w = clf.coef_[0]
+margin = {{blank:2}} / {{blank:np.linalg.norm(w)}}
+n_support = len(clf.support_vectors_)
+
+expected_margin = 3.201562224835397
+if abs(margin - expected_margin) < 1e-6 and n_support == 2:
+    print("PASS")
+else:
+    print("WRONG:", margin, n_support)
+```
+
+With `C=0.01`, every one of the 8 points becomes a support vector and the
+reported margin (12.5) is meaningless -- the model barely tried to separate
+the classes. A properly tuned `C` recovers the true 2-support-vector
+solution.
+
+With scikit-learn, in practice:
 
 ```python
 from sklearn.svm import SVC, LinearSVC, SVR

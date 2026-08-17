@@ -98,7 +98,65 @@ Each query carries:
 
 In production you label these. This lesson ships a hand-built fixture so the eval runs out of the box.
 
+## Use it
 
+A metric that only asks "did the retriever find a gold doc anywhere?" cannot tell a great ranking from a barely-passing one. Fill in the four retrieval metrics below and watch them disagree with that naive check.
+
+```python fillin
+import math
+
+gold_doc_ids = {"d1", "d3"}
+ranked = ["d2", "d1", "d5", "d3", "d4"]  # a retriever's ranked top-5
+
+def naive_found_any(ranked, gold):
+    # naive: did the retriever return a gold doc ANYWHERE, at any rank?
+    return 1.0 if any(d in gold for d in ranked) else 0.0
+
+print("naive (rank-blind):", naive_found_any(ranked, gold_doc_ids))
+
+def precision_at_k(ranked, gold, k):
+    topk = ranked[:k]
+    hits = sum(1 for d in topk if d in gold)
+    return hits / {{blank:k}}
+
+def recall_at_k(ranked, gold, k):
+    topk = ranked[:k]
+    hits = sum(1 for d in topk if d in gold)
+    return hits / {{blank:len(gold)}}
+
+def mrr(ranked, gold):
+    for i, d in enumerate(ranked):
+        if d in gold:
+            return 1.0 / {{blank:(i + 1)}}
+    return 0.0
+
+def dcg_at_k(ranked, gold, k):
+    total = 0.0
+    for i, d in enumerate(ranked[:k]):
+        if d in gold:
+            total += 1.0 / math.log2(i + {{blank:2}})
+    return total
+
+def ndcg_at_k(ranked, gold, k):
+    dcg = dcg_at_k(ranked, gold, k)
+    ideal_order = list(gold) + [d for d in ranked if d not in gold]
+    ideal = dcg_at_k(ideal_order, gold, k)
+    return dcg / ideal if ideal > 0 else 0.0
+
+p3 = precision_at_k(ranked, gold_doc_ids, 3)
+r3 = recall_at_k(ranked, gold_doc_ids, 3)
+m = mrr(ranked, gold_doc_ids)
+n3 = ndcg_at_k(ranked, gold_doc_ids, 3)
+
+expected = (1 / 3, 0.5, 0.5, 0.38685280723454163)
+got = (p3, r3, m, n3)
+if all(abs(a - b) < 1e-9 for a, b in zip(got, expected)):
+    print("PASS")
+else:
+    print("WRONG:", got)
+```
+
+The naive check says 1.0 -- a gold doc showed up somewhere in the top-5, so it calls the retrieval a success. precision@3 (0.33), recall@3 (0.5), MRR (0.5), and nDCG@3 (0.39) all disagree: `d1` only reached rank 2 and `d3` fell outside the top-3 entirely, which is exactly the kind of ranking failure a rank-blind check can't see.
 
 
 ## Further Reading

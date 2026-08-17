@@ -71,6 +71,50 @@ After each draft is parsed, the generator embeds the text and compares against e
 
 The hashed embedding is not fancy. It is deterministic, has zero dependencies, and is enough to catch the obvious case: two drafts that share most of their nouns. A production deployment would swap in a small sentence model. The interface stays the same.
 
+The naive filter below only checks the draft against the most recent survivor, not the whole accepted set — a near-duplicate of an earlier survivor slips through. Fix it so the draft is compared against every survivor.
+
+```python fillin
+import math
+
+def embed(text):
+    words = text.lower().split()
+    counts = {}
+    for w in words:
+        counts[w] = counts.get(w, 0) + 1
+    norm = math.sqrt(sum(c * c for c in counts.values()))
+    return {w: c / norm for w, c in counts.items()} if norm else {}
+
+def cosine_distance(a, b):
+    dot = sum(a.get(w, 0) * b.get(w, 0) for w in set(a) | set(b))
+    return 1 - dot
+
+def naive_is_novel(draft_emb, survivors, threshold=0.25):
+    if not survivors:
+        return True
+    dist = cosine_distance(draft_emb, survivors[-1])  # only checks the last survivor
+    return dist > threshold
+
+survivors = [
+    embed("temperature ramping improves draft diversity"),
+    embed("larger batch size improves convergence speed"),
+]
+draft = embed("temperature ramping improves draft diversity somewhat")
+
+print("naive:", naive_is_novel(draft, survivors))
+
+def is_novel(draft_emb, survivors, threshold=0.25):
+    if not survivors:
+        return True
+    min_dist = min({{blank:cosine_distance(draft_emb, s)}} for s in survivors)
+    return min_dist {{blank:>}} threshold
+
+result = is_novel(draft, survivors, threshold=0.25)
+if result == False:
+    print("PASS")
+else:
+    print("WRONG:", result)
+```
+
 ## Rank score
 
 ```text

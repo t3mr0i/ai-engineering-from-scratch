@@ -187,8 +187,9 @@ _POLICY_RULES: list[tuple[str, object, Verdict, str | None]] = [
             and not s.human_review
         ),
         Verdict.BLOCK,
-        "AI Act Art. 14 requires human oversight for every individual decision "
-        "in a high-risk use case. Add a reviewer gate before acting on output.",
+        "AI Act Art. 14(4) requires a human overseer who can properly understand, "
+        "monitor, and override the system in a high-risk use case. Add that "
+        "oversight capability before acting on output.",
     ),
     (
         "High-risk AI Act use case + 'ranking' output + no human review",

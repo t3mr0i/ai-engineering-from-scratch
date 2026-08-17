@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a1a1a?style=flat-square&labelColor=fafaf5" alt="MIT License"></a>
-  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-506-3553ff?style=flat-square&labelColor=fafaf5" alt="506 lessons"></a>
+  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-503-3553ff?style=flat-square&labelColor=fafaf5" alt="503 lessons"></a>
   <a href="#contents"><img src="https://img.shields.io/badge/phases-20-3553ff?style=flat-square&labelColor=fafaf5" alt="20 phases"></a>
   <a href="https://github.com/rohitg00/ai-engineering-from-scratch/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/ai-engineering-from-scratch?style=flat-square&labelColor=fafaf5&color=3553ff" alt="GitHub stars"></a>
   <a href="https://aiengineeringfromscratch.com"><img src="https://img.shields.io/badge/web-aiengineeringfromscratch.com-3553ff?style=flat-square&labelColor=fafaf5" alt="Website"></a>
@@ -540,7 +540,6 @@ folder under `phases/`.
 | 15 | [Prompt Caching & Context Caching](phases/11-llm-engineering/15-prompt-caching/) | Build | Python |
 | 16 | [LangGraph: State Machines for Agents](phases/11-llm-engineering/16-langgraph-state-machines/) | Build | Python |
 | 17 | [Agent Framework Tradeoffs](phases/11-llm-engineering/17-agent-framework-tradeoffs/) | Learn | Python |
-| 18 | [Responsible AI Compliance Workflow](phases/11-llm-engineering/18-responsible-ai-compliance-workflow/) | Build | Python |
 | 19 | [AI-Driven Testing and QA](phases/11-llm-engineering/19-ai-driven-testing-qa/) | Build | Python |
 | 21 | [AI-Assisted Documentation](phases/11-llm-engineering/21-ai-assisted-documentation/) | Build | Python |
 | 23 | [AI-Enhanced User Research](phases/11-llm-engineering/23-ai-enhanced-user-research/) | Build | Python |
@@ -549,8 +548,6 @@ folder under `phases/`.
 | 26 | [Consultative Prompting](phases/11-llm-engineering/26-consultative-prompting/) | Build | Python |
 | 27 | [AI Ecosystem and Vendor Landscape](phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape/) | Build | Python |
 | 29 | [Decision Making with AI](phases/11-llm-engineering/29-decision-making-with-ai/) | Build | Python |
-| 30 | [Data Literacy for AI Projects](phases/11-llm-engineering/30-data-literacy-for-ai-projects/) | Build | Python |
-| 31 | [Hands-on Prompt Clinic](phases/11-llm-engineering/31-hands-on-prompt-clinic/) | Build | Python |
 | 32 | [AI Use Case Identification Workshop](phases/11-llm-engineering/32-ai-use-case-identification-workshop/) | Build | Python |
 | 33 | [AI Change Management and Team Integration](phases/11-llm-engineering/33-ai-change-management-team-integration/) | Build | Python |
 | 34 | [AI Champion Enablement](phases/11-llm-engineering/34-ai-champion-enablement/) | Build | Python |

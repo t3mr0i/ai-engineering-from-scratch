@@ -101,11 +101,20 @@ window.SITE_I18N = {
   badges_reset_confirm: { en: "Reset all learning progress and badges? This cannot be undone.", de: "Gesamten Lern-Fortschritt und alle Badges zurücksetzen? Das kann nicht rückgängig gemacht werden." },
 
   // lrn/lrn.js — level select options
-  lrn_level_basic: { en: "Basic", de: "Basis" },
-  lrn_level_foundation: { en: "Foundation", de: "Grundlagen" },
-  lrn_level_practitioner: { en: "Practitioner", de: "Praktiker" },
-  lrn_level_advanced: { en: "Advanced", de: "Fortgeschritten" },
-  lrn_level_lead: { en: "Lead / Principal", de: "Lead / Principal" },
+  // Senioritaetslevel der Key Area ASE (MyCompetence L1-L4).
+  // Ersetzt die frueheren LV1-LV5 aus dem Fremd-Self-Assessment.
+  lrn_level_l1: { en: "Associate", de: "Associate" },
+  lrn_level_l2: { en: "Senior", de: "Senior" },
+  lrn_level_l3: { en: "Expert", de: "Expert" },
+  lrn_level_l4: { en: "Principal", de: "Principal" },
+  // Auspraegungen der ASE-Rolle
+  ase_role_spec: { en: "Spec Owner", de: "Spezifizieren (Spec Owner)" },
+  ase_role_orch: { en: "Agent Orchestrator", de: "Orchestrieren (Agent Orchestrator)" },
+  ase_role_verify: { en: "Verification Lead", de: "Verifizieren (Verification Lead)" },
+  ase_role_integrate: { en: "Integration Engineer", de: "Integrieren (Integration Engineer)" },
+  ase_role_operate: { en: "Operations & Reliability Lead", de: "Betreiben (Operations & Reliability Lead)" },
+  ase_matrix_heading: { en: "ASE role matrix", de: "ASE-Rollenmatrix" },
+  ase_all_roles: { en: "All five roles", de: "Alle fuenf Auspraegungen" },
 
   // lrn/lrn.js — status filter tabs
   lrn_status_recommended: { en: "Recommended", de: "Empfohlen" },
@@ -114,11 +123,9 @@ window.SITE_I18N = {
   lrn_status_completed: { en: "Completed", de: "Abgeschlossen" },
   lrn_status_all: { en: "All", de: "Alle" },
 
-  // lrn/lrn.js — structured topic scope (labels come from LrnData ids)
-  topic_filter_label: { en: "Browse by topic", de: "Nach Thema stöbern" },
-  topic_filter_hint: { en: "Choose one topic to scope results; text search stays inside it.", de: "Wähle ein Thema für die Ergebnisse; die Textsuche bleibt darin." },
+  // catalog.html topic dropdown; also the interest-chip labels below (ids
+  // shared with LrnData.interests)
   topic_filter_all: { en: "All topics", de: "Alle Themen" },
-  topic_filter_clear: { en: "Clear topic", de: "Thema löschen" },
   topic_foundation: { en: "Foundations", de: "Grundlagen" },
   topic_foundation_hint: { en: "Core AI concepts and literacy", de: "KI-Grundlagen und Verständnis" },
   topic_productivity: { en: "Productivity", de: "Produktivität" },
@@ -150,16 +157,10 @@ window.SITE_I18N = {
   lrn_search_clear: { en: "Clear search", de: "Suche löschen" },
   lrn_search_one: { en: "1 match for “{query}”", de: "1 Treffer für „{query}“" },
   lrn_search_many: { en: "{count} matches for “{query}”", de: "{count} Treffer für „{query}“" },
-  lrn_search_topic_one: { en: "1 match for “{query}” in {topic}", de: "1 Treffer für „{query}“ in {topic}" },
-  lrn_search_topic_many: { en: "{count} matches for “{query}” in {topic}", de: "{count} Treffer für „{query}“ in {topic}" },
   lrn_courses_one: { en: "1 course", de: "1 Kurs" },
   lrn_courses_many: { en: "{count} courses", de: "{count} Kurse" },
-  lrn_topic_one: { en: "1 matching course in {topic}", de: "1 passender Kurs in {topic}" },
-  lrn_topic_many: { en: "{count} matching courses in {topic}", de: "{count} passende Kurse in {topic}" },
   lrn_search_empty_title: { en: "No matching courses", de: "Keine passenden Kurse" },
   lrn_search_empty_body: { en: "Try a broader topic, a German or English synonym, or clear the search.", de: "Versuche ein allgemeineres Thema, ein deutsches oder englisches Synonym – oder lösche die Suche." },
-  lrn_topic_empty_body: { en: "No course in this topic matches the current level, interests, or status. Try another topic, adjust interests, or clear the topic.", de: "Kein Kurs in diesem Thema passt zu aktuellem Level, Interessen oder Status. Wähle ein anderes Thema, passe Interessen an oder lösche das Thema." },
-  lrn_search_topic_empty_body: { en: "No course matches this search and the current filters. Try another term, adjust the filters, or clear the topic.", de: "Kein Kurs passt zu dieser Suche und den aktuellen Filtern. Versuche einen anderen Begriff, passe die Filter an oder lösche das Thema." },
 
   // lrn/lrn.js — empty-state copy
   lrn_empty_no_match: { en: "No match.", de: "Kein Treffer." },
@@ -169,8 +170,6 @@ window.SITE_I18N = {
   // lrn/lrn.js — aria-live announcements
   lrn_announce_profile_set: { en: "Profile set: {profile}.", de: "Profil festgelegt: {profile}." },
   lrn_announce_level_set: { en: "Level set: {level}.", de: "Level festgelegt: {level}." },
-  lrn_announce_topic_set: { en: "Topic filter set: {topic}.", de: "Themenfilter gesetzt: {topic}." },
-  lrn_announce_topic_clear: { en: "Topic filter cleared.", de: "Themenfilter gelöscht." },
   lrn_announce_reset: { en: "Selection reset. Activity progress is preserved in the activity tracker.", de: "Auswahl zurückgesetzt. Der Aktivitätsfortschritt bleibt im Aktivitäts-Tracker erhalten." },
 
   // <title> per page — English text matches what was already shipped so

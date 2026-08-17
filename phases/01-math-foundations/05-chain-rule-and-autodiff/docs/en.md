@@ -163,6 +163,40 @@ PyTorch internally:
 
 The graph is dynamic (define-by-run). A new graph is built on every forward pass. This is why PyTorch supports control flow (if/else, loops) inside models.
 
+Torch isn't available in-browser, but the mechanism it wraps -- dual numbers
+from the forward-mode section above -- is a few lines of Python:
+
+```python fillin
+class Dual:
+    """Carries (value, derivative) through every operation -- forward-mode
+    autodiff, described above. Seed the input with derivative 1."""
+    def __init__(self, value, deriv):
+        self.value = value
+        self.deriv = deriv
+
+    def __add__(self, other):
+        other = other if isinstance(other, Dual) else Dual(other, 0.0)
+        return Dual(self.value + other.value, self.deriv + other.deriv)
+
+    def __mul__(self, other):
+        other = other if isinstance(other, Dual) else Dual(other, 0.0)
+        # product rule: d(uv) = u'v + uv'
+        return Dual(self.value * other.value, {{blank:self.deriv * other.value + self.value * other.deriv}})
+
+    __radd__ = __add__
+    __rmul__ = __mul__
+
+# Same function as the torch example above: y = x**2 + 3*x + 1 at x=2.
+x = Dual(2.0, {{blank:1.0}})   # seed: dx/dx = 1
+y = x * x + 3 * x + 1          # x**2 written as x*x -- no __pow__ needed
+
+expected = {{blank:7.0}}       # matches x.grad above: 2*x + 3 = 2*2 + 3
+if abs(y.deriv - expected) < 1e-9:
+    print("PASS")
+else:
+    print("WRONG:", y.deriv)
+```
+
 
 
 

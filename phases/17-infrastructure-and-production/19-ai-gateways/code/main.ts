@@ -14,7 +14,7 @@
  *   - Kong AI Gateway benchmark (228% vs Portkey, 859% vs LiteLLM):
  *     https://konghq.com/blog/engineering/ai-gateway-benchmark-kong-ai-gateway-portkey-litellm
  *   - LiteLLM (MIT OSS, 100+ providers): https://github.com/BerriAI/litellm
- *   - Portkey (Apache 2.0 since March 2026): https://github.com/Portkey-AI/gateway
+ *   - Portkey (MIT-licensed since 2024): https://github.com/Portkey-AI/gateway
  *   - Kong AI Gateway docs: https://docs.konghq.com/gateway/latest/ai-gateway/
  *
  * Runs on Node 20+ stdlib. No npm deps.

@@ -39,7 +39,7 @@
   <rect x="500" y="275" width="400" height="70" class="cold"/>
   <text x="700" y="298" text-anchor="middle" class="step">mechanistic debiasing</text>
   <text x="700" y="316" text-anchor="middle" class="small">gender neurons (Yu &amp; Ananiadou 2025)</text>
-  <text x="700" y="334" text-anchor="middle" class="small">SAE features (Ahsan &amp; Wallace 2025); UniBias heads</text>
+  <text x="700" y="334" text-anchor="middle" class="small">SAE features (Ahsan &amp; Wallace 2025); UniBias heads (ICL label bias)</text>
 
   <rect x="40" y="380" width="880" height="110" class="box"/>
   <text x="480" y="405" text-anchor="middle" class="head">harm-type separation</text>

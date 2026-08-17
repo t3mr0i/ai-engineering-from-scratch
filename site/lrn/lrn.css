@@ -609,32 +609,6 @@ i[class^="ph "] {
   padding-block: var(--space-2);
 }
 
-/* Structured topic scope: this is a search dimension, not a decorative tag
-   list. Keep it visually grouped and give every chip the touch-size floor. */
-.topic-filter {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: var(--space-3) var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-sunken);
-}
-
-.topic-filter .filter-group {
-  min-width: 0;
-}
-
-.topic-filter__hint {
-  grid-column: 1 / -1;
-  margin: 0;
-  color: var(--text-muted);
-  font-family: var(--font-text);
-  font-size: var(--fs-caption);
-  line-height: var(--lh-normal);
-}
-
 .filter-group__hint {
   grid-column: 1 / -1;
   margin: 0;
@@ -642,15 +616,6 @@ i[class^="ph "] {
   font-family: var(--font-text);
   font-size: var(--fs-caption);
   line-height: var(--lh-normal);
-}
-
-.topic-filter__clear {
-  min-height: 44px;
-  white-space: nowrap;
-}
-
-.topic-filter__clear[hidden] {
-  display: none;
 }
 
 .seg-control {
@@ -1391,14 +1356,6 @@ i[class^="ph "] {
   .filter-group {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-2);
-  }
-
-  .topic-filter {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .topic-filter__clear {
-    justify-self: start;
   }
 
   .selector-card {

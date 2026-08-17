@@ -110,6 +110,26 @@ z.backward()
 print(x.grad)  # dz/dx = 2x + 3
 ```
 
+Torch isn't available in-browser, but the tape it builds is just the chain
+rule -- fill in the derivative it computes for `z = sum(x**2 + 3*x)`:
+
+```python fillin
+x = [1.0, 2.0, 3.0]
+
+# Forward pass: what .backward() replays in reverse.
+y = [xi**2 + 3*xi for xi in x]
+z = sum(y)
+
+# Backward pass: dz/dx_i -- same rule autograd applies per element.
+grad = [{{blank:2}} * xi + {{blank:3}} for xi in x]
+
+expected = [5.0, 7.0, 9.0]
+if grad == expected:
+    print("PASS")
+else:
+    print("WRONG:", grad)
+```
+
 Three rules of autograd:
 
 1. Only leaf tensors with `requires_grad=True` accumulate gradients

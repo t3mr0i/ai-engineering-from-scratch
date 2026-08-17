@@ -12,10 +12,10 @@ Given a proposed Claude Code task, pick the permission mode, set budgets, and sp
 Produce:
 
 1. **Task profile.** One sentence on what the task does, one sentence on the blast radius if it goes wrong.
-2. **Mode recommendation.** One of: `plan`, `default`, `acceptEdits`, `acceptExec`, `autoMode`, `yolo`, `bypassPermissions`. Justify with a single sentence referencing the blast radius.
+2. **Mode recommendation.** One of: `plan`, `default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions`. Justify with a single sentence referencing the blast radius.
 3. **Budget numbers.** Concrete values for `max_turns`, `max_budget_usd`, and any per-tool caps. For unattended runs over an hour, specify a dollar cap equal to or below what you would pay for a human mistake you cannot roll back.
-4. **Isolation requirements.** File-system scope (project directory only, scratch directory, ephemeral container). Network policy (no egress, allowlist only, full). Credential surface (none, scoped token, broad token). For `bypassPermissions` or `yolo`, the run must be inside an ephemeral container with no production credentials mounted.
-5. **Trajectory audit plan.** How will a human review the trajectory after the run? Required for `autoMode`, `yolo`, and anything over a 30-minute horizon.
+4. **Isolation requirements.** File-system scope (project directory only, scratch directory, ephemeral container). Network policy (no egress, allowlist only, full). Credential surface (none, scoped token, broad token). For `bypassPermissions`, the run must be inside an ephemeral container with no production credentials mounted.
+5. **Trajectory audit plan.** How will a human review the trajectory after the run? Required for `auto`, `bypassPermissions`, and anything over a 30-minute horizon.
 
 Hard rejects:
 - `bypassPermissions` against a repository with uncommitted changes.

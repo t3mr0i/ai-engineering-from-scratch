@@ -235,6 +235,51 @@ The audience claim is the only defense against this attack at the protocol layer
 
 > **Naming note.** The spec reserves the term *confused deputy* for a related-but-distinct problem: an MCP server acting as an OAuth **proxy** to a third-party API, using a static client ID, that forwards a token without obtaining per-client user consent. Audience binding fixes the replay above; the confused-deputy fix is per-client consent **plus** never passing the inbound token through to upstream APIs (the MCP server `MUST` get its own separate upstream token).
 
+This needs a running authorization server and a real JWKS endpoint, but the
+validation check itself — the one Server B's validator runs above — is pure
+logic over a decoded claim set:
+
+```python fillin
+NOW = 1772668800  # fixed "current time" so the check is deterministic
+
+def naive_validate(token, resource_url, required_scope):
+    # Naive: checks issuer and expiry, forgets audience entirely.
+    if token["iss"] != "https://auth.example.com":
+        return False, "invalid_token"
+    if token["exp"] < NOW:
+        return False, "invalid_token"
+    return True, None
+
+stolen_token = {
+    "iss": "https://auth.example.com",
+    "aud": "https://notes.example.com",
+    "exp": NOW + 3600,
+    "scope": "mcp:tools.invoke",
+}
+
+# Attacker replays a token issued for notes.example.com against tasks.example.com.
+ok, err = naive_validate(stolen_token, "https://tasks.example.com", "mcp:tools.invoke")
+print("naive:", ok, err)  # True, None -- the replay succeeds. This is the bug.
+
+def validate(token, resource_url, required_scope):
+    if token["iss"] != "https://auth.example.com":
+        return False, "invalid_token"
+    if token["exp"] < NOW:
+        return False, "invalid_token"
+    if token.get("aud") {{blank:!=}} resource_url:
+        return False, {{blank:"audience mismatch"}}
+    if required_scope not in token.get("scope", "").split():
+        return False, "insufficient_scope"
+    return True, None
+
+result = validate(stolen_token, "https://tasks.example.com", "mcp:tools.invoke")
+expected = (False, "audience mismatch")
+if result == expected:
+    print("PASS")
+else:
+    print("WRONG:", result)
+```
+
 ### Mix-up attacks (a client-side defense the server cannot provide)
 
 A client talks to many authorization servers over its life. A malicious AS can try to make the client redeem an honest AS's authorization code at the attacker's token endpoint. Audience binding does not help here — the attack happens before any token exists. The defense lives in the client (RFC 9207):

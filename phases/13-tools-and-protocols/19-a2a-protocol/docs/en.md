@@ -65,7 +65,7 @@ submitted -> working -> completed | failed | canceled | rejected
              -> input_required -> working (loop via message)
 ```
 
-Clients initiate with `tasks/send`. The called agent transitions through states; clients subscribe to state updates via SSE or poll.
+Clients initiate with `message/send`. The called agent transitions through states; clients subscribe to state updates via SSE or poll.
 
 ### Messages and Parts
 
