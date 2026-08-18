@@ -87,6 +87,10 @@ api/content/_data/
 # Lazyweb MCP tool cache
 .lazyweb/
 
+# Subagent-driven-development scratch workspace (ledgers, briefs, review
+# packages) — git history is the record once a plan finishes, not this.
+.superpowers/sdd/
+
 # LRN audit/planning artifacts (large intermediate JSON/specs/docx, not product code)
 /outputs/lrn-audit
 /outputs/plan-tc-notebooks.md
