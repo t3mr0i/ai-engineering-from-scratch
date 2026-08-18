@@ -5,6 +5,7 @@ node_modules
 deploy.zip
 *.zip
 site/phases
+site/jupyterlite
 .jupyterlite.doit.db
 .DS_Store
 .sota
