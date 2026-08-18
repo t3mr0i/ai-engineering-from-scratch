@@ -250,7 +250,7 @@ test("real LrnData keeps semantic free-text results inside the chosen topic", ()
   });
   assert.ok(ranked.length > 0);
   assert.ok(ranked.every((result) => result.item.interests.includes("engineering")));
-  assert.equal(ranked[0].item.id, "HARNESS-TC-01");
+  assert.equal(ranked[0].item.id, "LRN-26");
 });
 
 test("real LrnData topic alone can browse governance courses without a keyword", () => {
@@ -301,5 +301,5 @@ test("the real course catalog resolves a bilingual intent to the right course", 
   const ranked = Search.rank(realCourses, "Agenten testen", {
     fields: { title: 9, topics: 5, summary: 4, meta: 2 }
   });
-  assert.ok(["AI-02", "HARNESS-TC-01"].includes(ranked[0].item.id));
+  assert.ok(["LRN-24", "LRN-26"].includes(ranked[0].item.id));
 });

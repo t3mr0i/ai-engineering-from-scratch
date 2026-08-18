@@ -737,6 +737,15 @@ i[class^="ph "] {
 }
 
 
+.course-card__code {
+  display: block;
+  margin: 0 0 2px;
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--fs-body-xs, 0.75rem);
+  letter-spacing: 0.02em;
+}
+
 /* Fixed two-line title zone so every card's meta + progress line up,
    independent of title length. */
 .course-card h3 {
@@ -949,6 +958,14 @@ i[class^="ph "] {
   gap: var(--space-4);
   padding-block-end: var(--space-6);
   border-block-end: 1px solid var(--border-subtle);
+}
+
+.course-head__code {
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--fs-body-sm);
+  letter-spacing: 0.02em;
 }
 
 .course-head h1 {

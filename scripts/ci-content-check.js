@@ -108,6 +108,12 @@ function record(id, name, count, threshold, opts = {}) {
 const THRESHOLDS = {
   // 18. ASE-Rollenmatrix-Integritaet. Strukturell, gehoert immer auf 0.
   c18_aseMatrix: 0,
+  // 19. Buendelkurs (data.js tracks[LP03].bundles[].courses) muss in LP01
+  //     oder LP03 kuratiert sein. Strukturell, gehoert immer auf 0.
+  c19_bundleCourseNotCurated: 0,
+  // 20. Keine AI-NN-Kurs-ID mehr im Katalog (00_REPORT.md Teil A). Nur noch
+  //     LRN-NN und PRIMER-01. Strukturell, gehoert immer auf 0.
+  c20_legacyCourseIds: 0,
   // 1. Every curriculum-map path has docs/en.md. Structural — should always be 0.
   c1_missingEnMd: 0,
   // 2. Every curriculum-map lesson's docs/en.md has a sibling docs/de.md.
@@ -844,15 +850,13 @@ function check17() {
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// 18. ASE-Rollenmatrix: Integritaet der Zuordnung Kurs -> (Auspraegung, Level).
-//     Strukturell, gehoert immer auf 0. Faengt drei Fehlerklassen:
-//     (a) unbekannte Rollen-ID oder unbekannter Level-Wert,
-//     (b) Kurs steht in einem Level, dessen zugelassene Tiefen er laut `levels`
-//         nicht trifft (depthAdmissible je Level). Die Regel ist bewusst weit:
-//         ein Kurs darf lieber ein Level zu viel als zu wenig tragen. Einzige
-//         Ausschlussregel ist reines Grundwissen an L4.
-//     (c) eine Zelle der 5x4-Matrix ist leer.
-//     Laeuft folgenlos durch, solange data.js noch keine aseRoles traegt.
+// 18. ASE-Rollenmatrix: Integritaet der Zuordnung Kurs -> (Auspraegung, Tiefe).
+//     Strukturell, gehoert immer auf 0. 5 Auspraegungen x 3 Tiefen = 15 Zellen
+//     seit der Migration von aseLevels (L1-L4) auf die Tiefenachse
+//     (00_REPORT.md Teil B1/B5) — depthAdmissible ist mit L1-L4 entfallen,
+//     die Tiefe ist jetzt selbst die Achse. Faengt drei Fehlerklassen:
+//     (a) unbekannte Rollen-ID, (b) unbekannter Tiefenwert (nicht
+//     Acquire/Deepen/Create), (c) eine Zelle der 5x3-Matrix ist leer.
 // -----------------------------------------------------------------------------
 function check18() {
   const sandbox = { window: {} };
@@ -860,18 +864,18 @@ function check18() {
   vm.runInContext(readFileSync(path.join(REPO, "site/lrn/data.js"), "utf8"), sandbox);
   const data = sandbox.window.LrnData;
 
-  if (!data || !data.aseRoles || !data.aseLevels) {
+  if (!data || !data.aseRoles) {
     record("18", "ASE matrix integrity", 0, THRESHOLDS.c18_aseMatrix, {
-      note: "uebersprungen: data.js traegt keine aseRoles/aseLevels (Vor-Migrations-Stand)",
+      note: "uebersprungen: data.js traegt keine aseRoles (Vor-Migrations-Stand)",
     });
     return;
   }
 
+  const DEPTHS = ["Acquire", "Deepen", "Create"];
   const roleIds = new Set(data.aseRoles.map((r) => r.id));
-  const levelByValue = new Map(data.aseLevels.map((l) => [l.value, l]));
   const problems = [];
   const cell = new Map();
-  for (const r of data.aseRoles) for (const l of data.aseLevels) cell.set(r.id + ":L" + l.value, 0);
+  for (const r of data.aseRoles) for (const d of DEPTHS) cell.set(r.id + ":" + d, 0);
 
   for (const c of data.courses) {
     if (!c.ase) continue;
@@ -880,21 +884,13 @@ function check18() {
         problems.push(`${c.id}: unbekannte Rollen-ID "${a.role}"`);
         continue;
       }
-      for (const lv of a.levels || []) {
-        const level = levelByValue.get(lv);
-        if (!level) {
-          problems.push(`${c.id}: unbekannter Level-Wert ${lv}`);
+      for (const d of a.depths || []) {
+        if (!DEPTHS.includes(d)) {
+          problems.push(`${c.id}: unbekannter Tiefenwert "${d}"`);
           continue;
         }
-        const key = a.role + ":L" + lv;
+        const key = a.role + ":" + d;
         cell.set(key, cell.get(key) + 1);
-        const admissible = level.depthAdmissible || level.depthOwn || [];
-        if (!(c.levels || []).some((d) => admissible.includes(d))) {
-          problems.push(
-            `${c.id}: levels=[${(c.levels || []).join(",")}] ist auf ${level.code} nicht zugelassen ` +
-            `(erlaubt: ${admissible.join("/")})`
-          );
-        }
       }
     }
   }
@@ -902,9 +898,70 @@ function check18() {
   for (const [k, n] of cell) if (n === 0) problems.push(`Zelle ${k} ist leer`);
 
   const tagged = data.courses.filter((c) => c.ase).length;
-  record("18", "ASE matrix integrity (role/level valid, depth admissible, no empty cell)", problems.length, THRESHOLDS.c18_aseMatrix, {
+  record("18", "ASE matrix integrity (role/depth valid, no empty cell)", problems.length, THRESHOLDS.c18_aseMatrix, {
     details: problems,
     note: `${tagged}/${data.courses.length} Kurse tragen ein ase-Feld, ${cell.size} Zellen geprueft`,
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 19. Jeder Kurs in einem Academy-Buendel (tracks[LP03].bundles[].courses)
+//     muss in LP01 oder LP03 kuratiert sein — sonst waere er im Buendel
+//     sichtbar, aber im Katalog selbst unerreichbar. Strukturell, immer 0.
+//     00_REPORT.md Teil B3/E2 Schritt 8.
+// -----------------------------------------------------------------------------
+function check19() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync(path.join(REPO, "site/lrn/data.js"), "utf8"), sandbox);
+  const data = sandbox.window.LrnData;
+
+  const lp03 = (data.tracks || []).find((t) => t.code === "LP03");
+  if (!lp03 || !lp03.bundles) {
+    record("19", "bundle course curated in LP01/LP03", 0, THRESHOLDS.c19_bundleCourseNotCurated, {
+      note: "uebersprungen: keine bundles in tracks[LP03] (Vor-Migrations-Stand)",
+    });
+    return;
+  }
+
+  const lp01 = (data.tracks || []).find((t) => t.code === "LP01");
+  const curatedIds = new Set();
+  for (const t of [lp01, lp03]) {
+    if (!t) continue;
+    for (const stage of t.stages || []) for (const id of stage.courses || []) curatedIds.add(id);
+  }
+
+  const problems = [];
+  for (const bundle of lp03.bundles) {
+    for (const id of bundle.courses || []) {
+      if (!curatedIds.has(id)) problems.push(`${bundle.id}: ${id} ist weder in LP01 noch LP03 kuratiert`);
+    }
+  }
+
+  record("19", "bundle course curated in LP01/LP03", problems.length, THRESHOLDS.c19_bundleCourseNotCurated, {
+    details: problems,
+    note: `${lp03.bundles.length} Buendel geprueft`,
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 20. Keine AI-NN/RESP-01/PROMPT-01/USECASE-01/HARNESS-TC-01/CHAMP-01-Kurs-ID
+//     mehr im Katalog. Nur noch LRN-NN und PRIMER-01. Strukturell, immer 0.
+//     00_REPORT.md Teil A.
+// -----------------------------------------------------------------------------
+function check20() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync(path.join(REPO, "site/lrn/data.js"), "utf8"), sandbox);
+  const data = sandbox.window.LrnData;
+
+  const problems = (data.courses || [])
+    .filter((c) => c.id !== "PRIMER-01" && !/^LRN-\d{2}$/.test(c.id))
+    .map((c) => `legacy course id "${c.id}"`);
+
+  record("20", "no legacy AI-NN course ids", problems.length, THRESHOLDS.c20_legacyCourseIds, {
+    details: problems,
+    note: `${(data.courses || []).length} Kurse geprueft`,
   });
 }
 
@@ -926,6 +983,8 @@ check15();
 check16();
 check17();
 check18();
+check19();
+check20();
 
 let anyFail = false;
 console.log("=".repeat(78));

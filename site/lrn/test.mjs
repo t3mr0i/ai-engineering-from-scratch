@@ -89,8 +89,8 @@ test("every Course has the required fields", () => {
 // They must have outcomes authored (3-5 verbs each) — that is the table-stakes
 // capability we closed. Other courses may carry an empty outcomes: [] placeholder.
 const TOP12_IDS = [
-  "AI-09", "AI-06", "RESP-01", "PROMPT-01", "USECASE-01",
-  "AI-23", "AI-24", "AI-19", "AI-26", "AI-21", "AI-25", "AI-39",
+  "LRN-01", "LRN-02", "LRN-03", "LRN-22", "LRN-23",
+  "LRN-28", "LRN-18", "LRN-15", "LRN-36", "LRN-40", "LRN-41", "LRN-39",
 ];
 
 test("every TOP12 flagship course has 3-5 outcomes", () => {
@@ -115,7 +115,7 @@ test("every Course has an outcomes: field (empty array is allowed)", () => {
 });
 
 test("Harness Engineering course is scoped to the Technology Consulting profile", () => {
-  const course = data.courses.find((c) => c.id === "HARNESS-TC-01");
+  const course = data.courses.find((c) => c.id === "LRN-26");
   assert.ok(course, "HARNESS-TC-01 missing from data.js");
   assert.deepEqual([...course.profileIds], ["tc"]);
   assert.ok(course.interests.includes("consulting"), "course must support the Consulting interest");
@@ -162,9 +162,9 @@ test("Harness Engineering is staged in LP03 and not broadened through LP02", () 
   const lp03 = data.tracks.find((track) => track.code === "LP03");
   const lp02 = data.tracks.find((track) => track.code === "LP02");
   assert.ok(lp03 && lp02, "LP02 and LP03 must exist");
-  const lp03Stages = lp03.stages.filter((stage) => stage.courses.includes("HARNESS-TC-01"));
+  const lp03Stages = lp03.stages.filter((stage) => stage.courses.includes("LRN-26"));
   assert.deepEqual([...lp03Stages.map((stage) => stage.label)], ["Deepen", "Create"]);
-  assert.equal(lp02.stages.some((stage) => stage.courses.includes("HARNESS-TC-01")), false);
+  assert.equal(lp02.stages.some((stage) => stage.courses.includes("LRN-26")), false);
   assert.ok(lp03.profileIds.includes("tc"), "LP03 must serve Technology Consulting");
 });
 
@@ -204,7 +204,7 @@ test("every Course referenced by curriculum-map is visible in the active cockpit
 });
 
 test("Harness Engineering map preserves 8 units and 22 activities", () => {
-  const units = cmap.courseMaps["HARNESS-TC-01"];
+  const units = cmap.courseMaps["LRN-26"];
   assert.ok(Array.isArray(units), "HARNESS-TC-01 course map missing");
   assert.equal(units.length, 8);
   assert.deepEqual([...units.map((unit) => unit.lessons.length)], [3, 3, 3, 3, 3, 3, 2, 2]);
@@ -223,7 +223,7 @@ test("Harness Engineering map preserves 8 units and 22 activities", () => {
 });
 
 test("HARNESS-TC-01 quiz lesson ids match activity directory basenames", () => {
-  const units = cmap.courseMaps["HARNESS-TC-01"];
+  const units = cmap.courseMaps["LRN-26"];
   assert.ok(Array.isArray(units), "HARNESS-TC-01 course map missing");
   const activities = units.flatMap((unit) => unit.lessons || []);
   assert.equal(activities.length, 22, "HARNESS-TC-01 must keep 22 activities");

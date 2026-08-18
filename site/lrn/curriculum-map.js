@@ -19,7 +19,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-09": [
+    "LRN-01": [
       {
         title: "AI literacy and terminology",
         decision: "core",
@@ -54,7 +54,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-06": [
+    "LRN-02": [
       {
         decision: "core",
         note: "Turns the technical prompting lessons into productivity routines.",
@@ -86,7 +86,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "RESP-01": [
+    "LRN-03": [
       {
         title: "Guardrails and prompt-injection risk",
         decision: "core",
@@ -120,7 +120,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "PROMPT-01": [
+    "LRN-22": [
       {
         title: "Prompt patterns and output contracts",
         decision: "core",
@@ -153,7 +153,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-        "USECASE-01": [
+        "LRN-23": [
       {
         title: "Use-case triage and feasibility",
         decision: "core",
@@ -187,7 +187,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-            "AI-01": [
+            "LRN-06": [
       {
         title: "Coding with Copilot day to day",
         decision: "core",
@@ -225,7 +225,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-03": [
+    "LRN-25": [
       {
         title: "AI system architecture",
         decision: "core",
@@ -262,7 +262,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-02": [
+    "LRN-24": [
       {
         title: "Agent fundamentals",
         decision: "core",
@@ -301,7 +301,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-            "AI-10": [
+            "LRN-04": [
       {
         title: "Compliance intake and controls",
         decision: "core",
@@ -333,7 +333,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-11": [
+    "LRN-19": [
       {
         title: "Evaluation design",
         decision: "core",
@@ -364,7 +364,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-12": [
+    "LRN-20": [
       {
         title: "Modernization intake",
         decision: "core",
@@ -395,7 +395,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-13": [
+    "LRN-11": [
       {
         title: "Source-grounded documentation",
         decision: "core",
@@ -426,7 +426,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-14": [
+    "LRN-08": [
       {
         title: "Sustainable architecture choices",
         decision: "core",
@@ -457,7 +457,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-15": [
+    "LRN-17": [
       {
         title: "Research intake and synthesis",
         decision: "core",
@@ -488,7 +488,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-16": [
+    "LRN-07": [
       {
         title: "Opportunity discovery",
         decision: "core",
@@ -519,7 +519,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-17": [
+    "LRN-33": [
       {
         title: "Cost anatomy",
         decision: "core",
@@ -550,7 +550,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-18": [
+    "LRN-21": [
       {
         title: "Consulting prompt patterns",
         decision: "core",
@@ -581,7 +581,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-19": [
+    "LRN-15": [
       {
         title: "Platform landscape",
         decision: "core",
@@ -613,7 +613,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-20": [
+    "LRN-16": [
       {
         title: "Role and capability strategy",
         decision: "core",
@@ -644,7 +644,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-21": [
+    "LRN-40": [
       {
         title: "Decision quality",
         decision: "core",
@@ -676,7 +676,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-22": [
+    "LRN-05": [
       {
         title: "Data readiness baseline",
         decision: "core",
@@ -707,7 +707,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-23": [
+    "LRN-28": [
       {
         title: "AI security triage",
         decision: "core",
@@ -738,7 +738,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-24": [
+    "LRN-18": [
       {
         title: "Internal assistant source readiness",
         decision: "core",
@@ -769,7 +769,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-25": [
+    "LRN-41": [
       {
         title: "Vendor-fit scorecard",
         decision: "core",
@@ -800,7 +800,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-26": [
+    "LRN-36": [
       {
         title: "AI incident response",
         decision: "core",
@@ -831,7 +831,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-                    "AI-31": [
+                    "LRN-09": [
       {
         title: "Service AI readiness",
         decision: "core",
@@ -862,7 +862,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-                "AI-35": [
+                "LRN-10": [
       {
         title: "Meeting and workshop preparation",
         decision: "core",
@@ -893,7 +893,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-36": [
+    "LRN-32": [
       {
         title: "Steering report controls",
         decision: "core",
@@ -924,7 +924,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-37": [
+    "LRN-12": [
       {
         title: "Data-quality readiness",
         decision: "core",
@@ -956,7 +956,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-38": [
+    "LRN-30": [
       {
         title: "Process and automation triage",
         decision: "core",
@@ -979,15 +979,15 @@ window.LrnCurriculumMap = {
       },
       {
         title: "Human-in-the-loop design",
-        decision: "optional",
-        note: "For process owners deciding where humans remain accountable.",
+        decision: "core",
+        note: "Lifted to core 17.08.2026 for the AI-04 Pflichtspur (00_REPORT.md Teil B4): the only lesson in the corpus that teaches testable specification (14/36-scope-contracts).",
         lessons: [
           { path: "phases/11-llm-engineering/33-ai-change-management-team-integration", title: "AI Change Management and Team Integration" },
           { path: "phases/14-agent-engineering/36-scope-contracts", title: "Scope Contracts and Task Boundaries" }
         ]
       }
     ],
-    "AI-39": [
+    "LRN-39": [
       {
         title: "Risk and control evidence",
         decision: "core",
@@ -1018,7 +1018,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-40": [
+    "LRN-13": [
       {
         title: "Knowledge source governance",
         decision: "core",
@@ -1049,7 +1049,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-        "AI-42": [
+        "LRN-42": [
       {
         title: "Architecture decision governance",
         decision: "core",
@@ -1081,7 +1081,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-43": [
+    "LRN-31": [
       {
         title: "Backlog evidence and scoring",
         decision: "core",
@@ -1112,7 +1112,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-        "AI-45": [
+        "LRN-29": [
       {
         title: "Synthetic data governance",
         decision: "core",
@@ -1143,7 +1143,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-            "AI-48": [
+            "LRN-34": [
       {
         title: "Business application use-case fit",
         decision: "core",
@@ -1174,7 +1174,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-49": [
+    "LRN-35": [
       {
         title: "Platform-aware AI design",
         decision: "core",
@@ -1206,7 +1206,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-        "AI-51": [
+        "LRN-38": [
       {
         title: "Human review workflow",
         decision: "core",
@@ -1237,7 +1237,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-52": [
+    "LRN-43": [
       {
         title: "Operating model design",
         decision: "core",
@@ -1269,7 +1269,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-53": [
+    "LRN-37": [
       {
         title: "Service desk runbook automation",
         decision: "core",
@@ -1301,7 +1301,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "AI-54": [
+    "LRN-14": [
       {
         title: "Business threat triage",
         decision: "core",
@@ -1332,7 +1332,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-            "AI-57": [
+            "LRN-27": [
       {
         title: "Prompt library governance",
         decision: "core",
@@ -1364,7 +1364,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "CHAMP-01": [
+    "LRN-44": [
       {
         title: "Champion delivery discipline",
         decision: "core",
@@ -1390,7 +1390,7 @@ window.LrnCurriculumMap = {
         ]
       }
     ],
-    "HARNESS-TC-01": [
+    "LRN-26": [
       {
         title: "See the reliability gap",
         decision: "core",

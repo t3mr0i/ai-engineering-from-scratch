@@ -15,16 +15,17 @@
   var profileById = indexBy(data.profiles, "id");
   var state = loadState();
 
-  // Ersetzt die frueheren LV1-LV5. Die Fuenferskala stammte aus einem
-  // Fremd-Self-Assessment und war bereits nur eine Interpolation ueber
-  // Acquire/Deepen/Create. LV2 "Foundation" hatte keine Entsprechung in
-  // MyCompetence und entfaellt. Mapping: LV1->L1, LV3->L2, LV4->L3, LV5->L4.
-  var levelDefinitions = (data.aseLevels || []).map(function (lv) {
+  // Die Tiefenachse (Acquire/Deepen/Create) ersetzt die frueheren L1-L4-
+  // Senioritaetscodes im Katalog (00_REPORT.md Teil B1). Abgeleitet aus
+  // data.levels statt aus data.aseLevelReference, das ist nur noch die
+  // MyCompetence-Referenzstruktur ohne UI-Wirkung, siehe data.js.
+  var levelDefinitions = (data.levels || []).filter(function (lv) {
+    return lv.id >= 1 && lv.id <= 3;
+  }).map(function (lv) {
     return {
-      value: lv.value,
-      code: lv.code,
-      labelKey: lv.labelKey,
-      focusLevels: lv.depthOwn
+      value: lv.id,
+      labelKey: "lrn_depth_" + lv.label.toLowerCase(),
+      focusLevels: [lv.label]
     };
   });
 
@@ -73,48 +74,48 @@
   // names verified against @phosphor-icons/web 2.1.2.
   var COURSE_ICONS = {
     "PRIMER-01": "brain",
-    "AI-09": "graduation-cap",
-    "AI-06": "lightning",
-    "RESP-01": "scales",
-    "PROMPT-01": "chats",
-    "USECASE-01": "magnifying-glass",
-    "AI-01": "code",
-    "AI-03": "tree-structure",
-    "AI-02": "robot",
-    "AI-10": "shield-check",
-    "AI-11": "test-tube",
-    "AI-12": "path",
-    "AI-13": "file-text",
-    "AI-14": "leaf",
-    "AI-15": "users-three",
-    "AI-16": "magnifying-glass",
-    "AI-17": "coins",
-    "AI-18": "chats",
-    "AI-19": "handshake",
-    "AI-20": "users",
-    "AI-21": "compass",
-    "AI-22": "chart-bar",
-    "AI-23": "shield-warning",
-    "AI-24": "database",
-    "AI-25": "handshake",
-    "AI-26": "wrench",
-    "AI-31": "headphones",
-    "AI-35": "presentation-chart",
-    "AI-36": "squares-four",
-    "AI-37": "database",
-    "AI-38": "flow-arrow",
-    "AI-39": "shield-check",
-    "AI-40": "file-text",
-    "AI-42": "tree-structure",
-    "AI-43": "clipboard-text",
-    "AI-45": "test-tube",
-    "AI-48": "briefcase",
-    "AI-49": "cloud",
-    "AI-51": "users-three",
-    "AI-52": "squares-four",
-    "AI-53": "wrench",
-    "AI-54": "shield-warning",
-    "AI-57": "book-open"
+    "LRN-01": "graduation-cap",
+    "LRN-02": "lightning",
+    "LRN-03": "scales",
+    "LRN-22": "chats",
+    "LRN-23": "magnifying-glass",
+    "LRN-06": "code",
+    "LRN-25": "tree-structure",
+    "LRN-24": "robot",
+    "LRN-04": "shield-check",
+    "LRN-19": "test-tube",
+    "LRN-20": "path",
+    "LRN-11": "file-text",
+    "LRN-08": "leaf",
+    "LRN-17": "users-three",
+    "LRN-07": "magnifying-glass",
+    "LRN-33": "coins",
+    "LRN-21": "chats",
+    "LRN-15": "handshake",
+    "LRN-16": "users",
+    "LRN-40": "compass",
+    "LRN-05": "chart-bar",
+    "LRN-28": "shield-warning",
+    "LRN-18": "database",
+    "LRN-41": "handshake",
+    "LRN-36": "wrench",
+    "LRN-09": "headphones",
+    "LRN-10": "presentation-chart",
+    "LRN-32": "squares-four",
+    "LRN-12": "database",
+    "LRN-30": "flow-arrow",
+    "LRN-39": "shield-check",
+    "LRN-13": "file-text",
+    "LRN-42": "tree-structure",
+    "LRN-31": "clipboard-text",
+    "LRN-29": "test-tube",
+    "LRN-34": "briefcase",
+    "LRN-35": "cloud",
+    "LRN-38": "users-three",
+    "LRN-43": "squares-four",
+    "LRN-37": "wrench",
+    "LRN-14": "shield-warning",
+    "LRN-27": "book-open"
   };
 
   // Keyword fallback for any future course id that isn't in COURSE_ICONS yet.
@@ -182,7 +183,7 @@
       if (!saved || !profileById[saved.profileId]) return fallback;
       return {
         profileId: saved.profileId,
-        externalLevel: validLevel(saved.externalLevel) ? Number(saved.externalLevel) : fallback.externalLevel,
+        externalLevel: validDepthValue(saved.externalLevel) ? Number(saved.externalLevel) : fallback.externalLevel,
         filter: ["recommended", "optional", "inprogress", "completed", "all"].indexOf(saved.filter) !== -1 ? saved.filter : "recommended",
         activeCourseId: saved.activeCourseId || null
       };
@@ -195,6 +196,7 @@
     var params = new URLSearchParams(window.location.search);
     var changed = false;
     var rawLevel = params.get("level") || params.get("score") || params.get("assessment");
+    var rawDepth = params.get("depth");
     var rawProfile = params.get("profile") || params.get("role");
     var rawQuery = params.get("q");
 
@@ -202,9 +204,16 @@
       els.searchInput.value = rawQuery;
     }
 
-    if (validLevel(rawLevel)) {
-      state.externalLevel = Number(rawLevel);
+    var depthFromParam = depthParamToValue(rawDepth);
+    if (depthFromParam) {
+      state.externalLevel = depthFromParam;
       changed = true;
+    } else {
+      var depthFromLevel = mapExternalLevelToDepth(rawLevel);
+      if (depthFromLevel) {
+        state.externalLevel = depthFromLevel;
+        changed = true;
+      }
     }
 
     if (rawProfile) {
@@ -281,7 +290,7 @@
 
     els.levelSelect.addEventListener("change", function () {
       var level = Number(els.levelSelect.value);
-      if (!validLevel(level) || state.externalLevel === level) return;
+      if (!validDepthValue(level) || state.externalLevel === level) return;
       state.externalLevel = level;
       saveState();
       render();
@@ -323,7 +332,7 @@
     replaceChildren(els.levelSelect, levelDefinitions.map(function (level) {
       var option = document.createElement("option");
       option.value = String(level.value);
-      option.textContent = level.code + " " + i18n(level.labelKey);
+      option.textContent = i18n(level.labelKey);
       return option;
     }));
     els.levelSelect.value = String(state.externalLevel);
@@ -527,9 +536,13 @@
 
     head.appendChild(tile);
 
+    var code = document.createElement("span");
+    code.className = "course-card__code";
+    code.textContent = course.id;
+
     var h = document.createElement("h3");
     h.textContent = course.title;
-    h.title = courseCode(course) + " · " + course.id + " · " + (course.summary || "");
+    h.title = course.id + " · " + course.title;
 
     var meta = document.createElement("p");
     meta.className = "course-card__meta";
@@ -562,7 +575,7 @@
     open.appendChild(lucideIcon("arrow-right"));
     foot.appendChild(open);
 
-    card.append(head, h, meta);
+    card.append(head, code, h, meta);
     if (summary) card.appendChild(summary);
     card.appendChild(foot);
     return card;
@@ -734,11 +747,6 @@
     return curriculum.courseMaps && curriculum.courseMaps[courseId] ? curriculum.courseMaps[courseId] : [];
   }
 
-  function courseCode(course) {
-    var index = data.courses.indexOf(course);
-    return "C" + String(index + 1).padStart(2, "0");
-  }
-
   // Build the course-detail URL relative to where the catalog is hosted.
   // The catalog can be served as "/" (root index.html), "/lrn/" (SWA
   // navigationFallback rewrite), or "/lrn/course.html" itself (deep link).
@@ -750,9 +758,28 @@
     return prefix + "?id=" + encodeURIComponent(courseId);
   }
 
-  function validLevel(value) {
+  function validDepthValue(value) {
     var number = Number(value);
-    return Number.isInteger(number) && number >= 1 && number <= 5;
+    return Number.isInteger(number) && number >= 1 && number <= 3;
+  }
+
+  // Backward-compat for the external AI Self-Assessment ?level= contract
+  // (previously addressed the retired L1-L4 seniority codes, before that an
+  // LV1-LV5 scale). L3's old "Deepen/Create" straddle resolves to Deepen,
+  // its primary depthOwn value — see data.aseLevelReference and
+  // 00_REPORT.md Teil B2/E-7. Returns null (no change) for out-of-range input.
+  function mapExternalLevelToDepth(raw) {
+    var n = Number(raw);
+    if (!Number.isInteger(n) || n < 1 || n > 5) return null;
+    if (n <= 1) return 1; // Acquire
+    if (n <= 3) return 2; // Deepen
+    return 3; // Create
+  }
+
+  function depthParamToValue(raw) {
+    if (!raw) return null;
+    var match = { acquire: 1, deepen: 2, create: 3 }[String(raw).trim().toLowerCase()];
+    return match || null;
   }
 
   function resolveProfile(rawProfile) {

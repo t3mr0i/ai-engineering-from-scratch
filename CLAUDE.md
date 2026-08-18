@@ -293,8 +293,8 @@ Use this hierarchy everywhere in `site/lrn/*` and in LRN mode of
 `site/lesson.html`:
 
 ```text
-Profile -> External level -> Learning path -> Course -> Unit -> Activity
-Rxx     -> LVx            -> LPxx          -> Cxx    -> Uxx  -> Axx
+Profile -> External level -> Learning path -> Course  -> Unit -> Activity
+Rxx     -> LVx            -> LPxx          -> LRN-NN  -> Uxx  -> Axx
 ```
 
 Stable codes:
@@ -306,10 +306,17 @@ Stable codes:
 - Learning paths: `LP01` Core AI Foundation Path, `LP02` Consulting & Value
   Creation Path, `LP03` Technology & Engineering Delivery Path, `LP04`
   Leadership & Transformation Path, `LP05` Corporate Functions Enablement Path.
-- Course display codes: `C01`, `C02`, ... derived from the order in
-  `window.LrnData.courses`. Keep the original course id (`AI-04`,
-  `PROMPT-01`, etc.) next to the display code because those ids map to real LRN
-  course inventory.
+- Course ids: `LRN-01` through `LRN-44`, plus `PRIMER-01`. Fixed on
+  assignment — the learning-sequence order lives separately in each course's
+  `sequence` field, not in the id or in array position, so inserting a course
+  later never forces renumbering. These replaced the earlier `AI-NN`/`RESP-01`/`PROMPT-01`/`USECASE-01`/
+  `HARNESS-TC-01`/`CHAMP-01` ids, which collided with the AI Literacy
+  Academy's own bookable-course numbering (`AI-01`..`AI-09`) — five courses
+  (`LRN-01`, `LRN-02`, `LRN-06`, `LRN-24`, `LRN-25`) still carry that original
+  Academy id in a separate `academyCourse` field because they map to real
+  bookable inventory. There is no positional display code (the former `Cxx`,
+  derived from array order in `window.LrnData.courses`) — it was removed as
+  unstable and redundant with the id.
 - Units are local to a course and must be numbered `U01`, `U02`, ...
   according to the order in `window.LrnCurriculumMap.courseMaps[courseId]`.
 - Activities are local to a unit in the cockpit (`U02 · A03`) and sequential
@@ -322,9 +329,13 @@ When adding or remapping content:
 - Keep lesson `path` values as raw curriculum paths, but show LRN labels in the
   UI.
 - A complete context key should read like
-  `R03-TC / LV4 / LP03 / C08`, optionally followed by `U02 / A03`.
+  `R03-TC / LV4 / LP03 / LRN-19`, optionally followed by `U02 / A03`.
 - Use "Learning Path", "Course", "Unit", and "Activity" in LRN UI. Avoid
   "Phase", "Lesson number", "Subcourse", and raw `Pxx/Lxx` labels in LRN UI.
+- The Acquire/Deepen/Create depth axis (`window.LrnData.levels`, ids 1-3) is
+  the sole seniority axis rendered in LRN UI. `aseLevelReference` in
+  `data.js` is a MyCompetence-only reference structure with no UI wiring —
+  don't derive UI level options from it.
 
 ---
 

@@ -101,12 +101,11 @@ window.SITE_I18N = {
   badges_reset_confirm: { en: "Reset all learning progress and badges? This cannot be undone.", de: "Gesamten Lern-Fortschritt und alle Badges zurücksetzen? Das kann nicht rückgängig gemacht werden." },
 
   // lrn/lrn.js — level select options
-  // Senioritaetslevel der Key Area ASE (MyCompetence L1-L4).
-  // Ersetzt die frueheren LV1-LV5 aus dem Fremd-Self-Assessment.
-  lrn_level_l1: { en: "Associate", de: "Associate" },
-  lrn_level_l2: { en: "Senior", de: "Senior" },
-  lrn_level_l3: { en: "Expert", de: "Expert" },
-  lrn_level_l4: { en: "Principal", de: "Principal" },
+  // Tiefenachse des Katalogs (Acquire/Deepen/Create). Ersetzt die frueheren
+  // L1-L4-Senioritaetscodes (und davor LV1-LV5), siehe 00_REPORT.md Teil B1.
+  lrn_depth_acquire: { en: "Acquire", de: "Acquire" },
+  lrn_depth_deepen: { en: "Deepen", de: "Deepen" },
+  lrn_depth_create: { en: "Create", de: "Create" },
   // Auspraegungen der ASE-Rolle
   ase_role_spec: { en: "Spec Owner", de: "Spezifizieren (Spec Owner)" },
   ase_role_orch: { en: "Agent Orchestrator", de: "Orchestrieren (Agent Orchestrator)" },
@@ -115,6 +114,12 @@ window.SITE_I18N = {
   ase_role_operate: { en: "Operations & Reliability Lead", de: "Betreiben (Operations & Reliability Lead)" },
   ase_matrix_heading: { en: "ASE role matrix", de: "ASE-Rollenmatrix" },
   ase_all_roles: { en: "All five roles", de: "Alle fuenf Auspraegungen" },
+
+  // lrn/data.js tracks[LP03].bundles — the three Academy bundles (online
+  // self-study, Module 1, to a live Module 2 course). 00_REPORT.md Teil B3.
+  bundle_ai01_title: { en: "Introduction to GitHub Copilot", de: "Introduction to GitHub Copilot" },
+  bundle_ai02_title: { en: "Agentic Software Engineering", de: "Agentic Software Engineering" },
+  bundle_ai04_title: { en: "Requirement Engineering with AI", de: "Requirement Engineering with AI" },
 
   // lrn/lrn.js — status filter tabs
   lrn_status_recommended: { en: "Recommended", de: "Empfohlen" },

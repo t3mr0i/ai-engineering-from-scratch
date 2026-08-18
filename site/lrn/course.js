@@ -100,9 +100,13 @@
     var head = document.createElement("header");
     head.className = "course-head";
 
+    var code = document.createElement("p");
+    code.className = "course-head__code";
+    code.textContent = course.id;
+
     var title = document.createElement("h1");
     title.textContent = course.title;
-    title.title = courseCode(course) + " · " + course.id;
+    title.title = course.id + " · " + course.title;
 
     var summary = document.createElement("p");
     summary.className = "course-head__summary";
@@ -131,7 +135,7 @@
       action.addEventListener("click", function (event) { event.preventDefault(); });
     }
 
-    head.append(title, summary, meta, progressMeter(stats.percent, i18nFmt("course_progress_label", { title: course.title }, "Progress {title}")), action);
+    head.append(code, title, summary, meta, progressMeter(stats.percent, i18nFmt("course_progress_label", { title: course.title }, "Progress {title}")), action);
 
     var children = [head];
 
@@ -444,11 +448,6 @@
 
   function courseMap(courseId) {
     return curriculum.courseMaps && curriculum.courseMaps[courseId] ? curriculum.courseMaps[courseId] : [];
-  }
-
-  function courseCode(course) {
-    var index = data.courses.indexOf(course);
-    return "C" + String(index + 1).padStart(2, "0");
   }
 
   function unitCode(index) {

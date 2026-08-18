@@ -124,31 +124,21 @@ window.LrnData = {
     { id: "operate", code: "ASE-OPS", label: "Operations & Reliability Lead",
       labelDe: "Betreiben", capability: null }
   ],
-  // Senioritaetslevel der Key Area. Ersetzt levelDefinitions in lrn.js.
-  // depthOwn = geforderte Tiefe in der getragenen Auspraegung,
-  // depthOthers = geforderte Tiefe in den uebrigen vier.
-  // depthOwn / depthOthers beschreiben die ANFORDERUNG laut MyCompetence:
-  // welche Tiefe in der getragenen bzw. in den uebrigen vier Auspraegungen
-  // nachzuweisen ist. depthAdmissible steuert dagegen das ANGEBOT: welche
-  // Kurstiefen in einer Zelle dieses Levels stehen duerfen. Beides faellt
-  // bewusst auseinander, ein Kurs wird lieber ein Level zu viel als zu wenig
-  // angeboten (Entscheid 14.08.2026). Einzige Ausschlussregel: reines
-  // Grundwissen genuegt an L4 nicht mehr, weil dort schon die Breiten-
-  // anforderung auf Fachwissen steigt.
-  aseLevels: [
-    { value: 1, code: "L1", label: "Associate", labelKey: "lrn_level_l1",
-      depthOwn: ["Acquire"], depthOthers: "Acquire", carriedRoles: 0,
-      depthAdmissible: ["Acquire"] },
-    { value: 2, code: "L2", label: "Senior", labelKey: "lrn_level_l2",
-      depthOwn: ["Deepen"], depthOthers: "Acquire", carriedRoles: 1,
-      depthAdmissible: ["Acquire", "Deepen"] },
-    { value: 3, code: "L3", label: "Expert", labelKey: "lrn_level_l3",
-      depthOwn: ["Deepen", "Create"], depthOthers: "Acquire", carriedRoles: 1,
-      plus: "breadth|authority",
-      depthAdmissible: ["Acquire", "Deepen", "Create"] },
-    { value: 4, code: "L4", label: "Principal", labelKey: "lrn_level_l4",
-      depthOwn: ["Create"], depthOthers: "Deepen", carriedRoles: 2,
-      depthAdmissible: ["Deepen", "Create"] }
+  // Senioritaetsstufen aus dem MyCompetence-Blatt TC2. Kein UI-Feld mehr: der
+  // Katalog zeigt nur noch die drei Tiefen (Acquire/Deepen/Create, siehe
+  // `levels` oben), die frueheren L1-L4-Codes und -Labels sind entfallen
+  // (00_REPORT.md Teil B1/B5). Diese Struktur bleibt als reine Referenz auf
+  // die MyCompetence-ANFORDERUNG stehen: depthOwn = geforderte Tiefe in der
+  // getragenen Auspraegung, depthOthers = geforderte Tiefe in den uebrigen
+  // vier, carriedRoles = Anzahl getragener Auspraegungen. `depthAdmissible`
+  // ist entfallen, es steuerte das Kurs-ANGEBOT pro Level-Zelle, und die
+  // Tiefe ist jetzt selbst die Achse (Entscheid E-7, 17.08.2026).
+  aseLevelReference: [
+    { value: 1, depthOwn: ["Acquire"], depthOthers: "Acquire", carriedRoles: 0 },
+    { value: 2, depthOwn: ["Deepen"], depthOthers: "Acquire", carriedRoles: 1 },
+    { value: 3, depthOwn: ["Deepen", "Create"], depthOthers: "Acquire", carriedRoles: 1,
+      plus: "breadth|authority" },
+    { value: 4, depthOwn: ["Create"], depthOthers: "Deepen", carriedRoles: 2 }
   ],
 
   interests: [
@@ -183,6 +173,7 @@ window.LrnData = {
   courses: [
     {
       id: "PRIMER-01",
+      sequence: 0,
       title: "Interactive LLM Primer",
       status: "Available",
       source: "llm-primer",
@@ -190,14 +181,16 @@ window.LrnData = {
       dimensions: ["literacy"],
       interests: ["foundation"],
       levels: ["Acquire"],
-      ase: [{ role: "spec", levels: [1, 2] }, { role: "orch", levels: [1, 2] }, { role: "verify", levels: [1, 2] }, { role: "integrate", levels: [1, 2] }, { role: "operate", levels: [1, 2] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen"] }, { role: "orch", depths: ["Acquire", "Deepen"] }, { role: "verify", depths: ["Acquire", "Deepen"] }, { role: "integrate", depths: ["Acquire", "Deepen"] }, { role: "operate", depths: ["Acquire", "Deepen"] }],
       format: "Interactive mini-games, real GPT tokenizer, glossary, quiz",
       summary: "~75-minute hands-on primer on how large language models work: tokens, context, prompting, tool use, RAG, and limits, through 20 mini-games and a quiz.",
       outcomes: [],
       modules: ["Interactive LLM Primer"]
     },
     {
-      id: "AI-09",
+      id: "LRN-01",
+      sequence: 1,
+      academyCourse: "AI-09",
       title: "AI Fundamentals / AI for Everyone",
       status: "Maintained in SharePoint",
       source: "trainings.xlsx",
@@ -205,7 +198,7 @@ window.LrnData = {
       dimensions: ["literacy", "data"],
       interests: ["foundation", "governance"],
       levels: ["Acquire"],
-      ase: [{ role: "spec", levels: [1, 2] }, { role: "orch", levels: [1, 2] }, { role: "verify", levels: [1, 2] }, { role: "integrate", levels: [1, 2] }, { role: "operate", levels: [1, 2] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen"] }, { role: "orch", depths: ["Acquire", "Deepen"] }, { role: "verify", depths: ["Acquire", "Deepen"] }, { role: "integrate", depths: ["Acquire", "Deepen"] }, { role: "operate", depths: ["Acquire", "Deepen"] }],
       format: "Self-paced online, text-based LRN module plus knowledge checks",
       summary: "Foundations of AI, generative AI, realistic limitations, business use cases, and responsible AI.",
       outcomes: [
@@ -217,7 +210,9 @@ window.LrnData = {
       modules: ["AI for Everyone", "Generative AI for Everyone"]
     },
     {
-      id: "AI-06",
+      id: "LRN-02",
+      sequence: 2,
+      academyCourse: "AI-06",
       title: "AI: Concepts and Tools for Personal Productivity",
       status: "Maintained in SharePoint / LHIND tool part to build",
       source: "trainings.xlsx",
@@ -225,7 +220,7 @@ window.LrnData = {
       dimensions: ["prompting", "literacy"],
       interests: ["productivity", "foundation"],
       levels: ["Acquire", "Deepen"],
-      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "orch", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }, { role: "integrate", levels: [1, 2, 3] }, { role: "operate", levels: [1, 2, 3] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen", "Create"] }, { role: "orch", depths: ["Acquire", "Deepen", "Create"] }, { role: "verify", depths: ["Acquire", "Deepen", "Create"] }, { role: "integrate", depths: ["Acquire", "Deepen", "Create"] }, { role: "operate", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Text lesson, interactive prompt lab, LHIND tool checklist",
       summary: "Productive everyday use of approved AI tools: writing, summarizing, analysis, ideation, and safe tool selection.",
       outcomes: [
@@ -237,7 +232,8 @@ window.LrnData = {
       modules: ["Microsoft AI Fluency", "Google AI Fundamentals", "LHIND tools and best practices"]
     },
     {
-      id: "RESP-01",
+      id: "LRN-03",
+      sequence: 3,
       title: "Responsible & Trustworthy AI / GDPR & AI",
       status: "To derive from DOCX template",
       source: "DOCX",
@@ -245,7 +241,7 @@ window.LrnData = {
       dimensions: ["data"],
       interests: ["governance"],
       levels: ["Acquire", "Deepen"],
-      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "orch", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }, { role: "integrate", levels: [1, 2, 3] }, { role: "operate", levels: [1, 2, 3] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen", "Create"] }, { role: "orch", depths: ["Acquire", "Deepen", "Create"] }, { role: "verify", depths: ["Acquire", "Deepen", "Create"] }, { role: "integrate", depths: ["Acquire", "Deepen", "Create"] }, { role: "operate", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Compliance scenario, risk checklist, certificate quiz",
       summary: "GDPR, ethics guardrails, IT security, bias, fairness, and responsible AI use.",
       outcomes: [
@@ -257,7 +253,8 @@ window.LrnData = {
       modules: ["GDPR decision tree", "Responsible AI risk cases"]
     },
     {
-      id: "PROMPT-01",
+      id: "LRN-22",
+      sequence: 22,
       title: "Hands-on Prompt Engineering Workshop",
       status: "In development",
       source: "DOCX",
@@ -265,7 +262,7 @@ window.LrnData = {
       dimensions: ["prompting"],
       interests: ["productivity", "consulting"],
       levels: ["Deepen"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }],
       format: "Prompt clinic, before/after exercises, peer review rubric",
       summary: "Prompt strategies, iterative improvement, quality review of AI outputs, and tool-specific best practices.",
       outcomes: [
@@ -277,7 +274,8 @@ window.LrnData = {
       modules: ["Prompt patterns", "Output critique", "Role-based prompt cases"]
     },
     {
-      id: "USECASE-01",
+      id: "LRN-23",
+      sequence: 23,
       title: "AI Use Case Identification & Business Value Assessment",
       status: "To derive from DOCX template",
       source: "DOCX",
@@ -285,7 +283,7 @@ window.LrnData = {
       dimensions: ["business"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "spec", levels: [2, 3, 4] }],
+      ase: [{ role: "spec", depths: ["Deepen", "Create"] }],
       format: "Interactive prioritization board and ROI worksheet",
       summary: "Use case identification, business value, prioritization, quick wins, and strategic projects.",
       outcomes: [
@@ -297,7 +295,9 @@ window.LrnData = {
       modules: ["Use case canvas", "Value/risk matrix", "Pilot-to-scale checklist"]
     },
     {
-      id: "AI-01",
+      id: "LRN-06",
+      sequence: 6,
+      academyCourse: "AI-01",
       title: "AI for Software Engineers / GitHub Copilot",
       status: "Maintained in SharePoint",
       source: "trainings.xlsx",
@@ -305,14 +305,16 @@ window.LrnData = {
       dimensions: ["prompting", "business"],
       interests: ["engineering", "productivity"],
       levels: ["Acquire", "Deepen"],
-      ase: [{ role: "orch", levels: [1, 2, 3] }],
+      ase: [{ role: "orch", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Code task lab, review checklist, guided tool practice",
       summary: "AI in daily development work, pair programming, AI app basics, architecture context, and responsible code use.",
       outcomes: [],
       modules: ["Generative AI for Software Development", "Get started with AI apps and agents on Azure", "Integrating AI into the Product Architecture"]
     },
     {
-      id: "AI-03",
+      id: "LRN-25",
+      sequence: 25,
+      academyCourse: "AI-03",
       title: "AI: Introduction to Architecture for AI-Systems",
       status: "Maintained in SharePoint",
       source: "trainings.xlsx",
@@ -320,14 +322,16 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "integrate", levels: [2, 3, 4] }],
+      ase: [{ role: "integrate", depths: ["Deepen", "Create"] }],
       format: "Architecture cards, trade-off cases, integration worksheet",
       summary: "AI system architecture, Azure, generative AI application design, LLM architecture, data preparation, and scaling.",
       outcomes: [],
       modules: ["Artificial Intelligence on Microsoft Azure", "Generative AI Architecture and Application Development", "Architecture of AI Solutions"]
     },
     {
-      id: "AI-02",
+      id: "LRN-24",
+      sequence: 24,
+      academyCourse: "AI-02",
       title: "AI: Agentic Software Engineering",
       status: "Maintained in SharePoint",
       source: "trainings.xlsx",
@@ -335,14 +339,15 @@ window.LrnData = {
       dimensions: ["business", "prompting"],
       interests: ["engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }],
       format: "Agent workflow lab, verification rubric, sandboxed implementation task",
       summary: "Agentic AI, tool use, orchestration, reflection, agentic workflows, and engineering verification.",
       outcomes: [],
       modules: ["Building AI Agents and Agentic Workflows", "Agentic AI Engineering", "Building Agentic AI Systems for Developers"]
     },
     {
-      id: "AI-10",
+      id: "LRN-04",
+      sequence: 4,
       title: "Corporate Ethics & Compliance for AI",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -350,14 +355,15 @@ window.LrnData = {
       dimensions: ["data", "change"],
       interests: ["governance", "leadership"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "orch", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }, { role: "integrate", levels: [1, 2, 3] }, { role: "operate", levels: [1, 2, 3] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen", "Create"] }, { role: "orch", depths: ["Acquire", "Deepen", "Create"] }, { role: "verify", depths: ["Acquire", "Deepen", "Create"] }, { role: "integrate", depths: ["Acquire", "Deepen", "Create"] }, { role: "operate", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Policy scenario, risk triage, escalation checklist",
       summary: "Review AI use against GDPR, internal policies, security guardrails, and documented approvals.",
       outcomes: [],
       modules: ["Policy intake", "Risk register", "Compliance decision record"]
     },
     {
-      id: "AI-11",
+      id: "LRN-19",
+      sequence: 19,
       title: "AI-Driven Testing & QA",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -365,14 +371,15 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "verify", levels: [1, 2, 3] }],
+      ase: [{ role: "verify", depths: ["Acquire", "Deepen", "Create"] }],
       format: "QA lab, eval rubric, regression checklist",
       summary: "AI-supported test ideas, evaluation sets, QA gates, and review loops for LLM features.",
       outcomes: [],
       modules: ["Eval design", "Test generation", "Release gate"]
     },
     {
-      id: "AI-12",
+      id: "LRN-20",
+      sequence: 20,
       title: "AI-Supported Code Modernization",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -380,14 +387,15 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }],
       format: "Legacy case, modernization plan, review checklist",
       summary: "Use AI to analyze legacy code, define refactoring slices, control risks, and prepare reviews.",
       outcomes: [],
       modules: ["Legacy intake", "Modernization backlog", "Risk-controlled refactor"]
     },
     {
-      id: "AI-13",
+      id: "LRN-11",
+      sequence: 11,
       title: "AI-Assisted Documentation",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -395,14 +403,15 @@ window.LrnData = {
       dimensions: ["prompting", "data"],
       interests: ["productivity", "engineering", "governance"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "spec", levels: [2, 3, 4] }, { role: "integrate", levels: [2, 3, 4] }],
+      ase: [{ role: "spec", depths: ["Deepen", "Create"] }, { role: "integrate", depths: ["Deepen", "Create"] }],
       format: "Documentation sprint, source-grounding checklist, quality review",
       summary: "Use AI for architecture, operations, compliance, and handover documentation without losing sources or accountability.",
       outcomes: [],
       modules: ["Source-grounded docs", "Review rubric", "Reusable doc pack"]
     },
     {
-      id: "AI-14",
+      id: "LRN-08",
+      sequence: 8,
       title: "Sustainable Software & Green Coding",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -410,14 +419,15 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "leadership"],
       levels: ["Acquire", "Deepen"],
-      ase: [{ role: "operate", levels: [1, 2, 3] }],
+      ase: [{ role: "operate", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Efficiency case, metric worksheet, architecture trade-off",
       summary: "Review AI and software decisions for efficiency, cost, emissions, and measurable operational impact.",
       outcomes: [],
       modules: ["Efficiency metrics", "Model-routing trade-offs", "Green release checklist"]
     },
     {
-      id: "AI-15",
+      id: "LRN-17",
+      sequence: 17,
       title: "AI-Enhanced User Research",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -425,14 +435,15 @@ window.LrnData = {
       dimensions: ["business", "prompting"],
       interests: ["consulting", "productivity"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }],
       format: "Research synthesis, persona check, insight review",
       summary: "Use AI to cluster user research, structure hypotheses, check bias, and prepare validatable product decisions.",
       outcomes: [],
       modules: ["Research intake", "Insight synthesis", "Validation plan"]
     },
     {
-      id: "AI-16",
+      id: "LRN-07",
+      sequence: 7,
       title: "AI & Automation Use Case Spotting",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -440,14 +451,15 @@ window.LrnData = {
       dimensions: ["business", "change"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "spec", levels: [1, 2, 3] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Process walk-through, opportunity canvas, prioritization board",
       summary: "Identify automation and AI opportunities in processes, sort them by value and risk, and formulate pilots.",
       outcomes: [],
       modules: ["Opportunity scan", "Value-risk scoring", "Pilot brief"]
     },
     {
-      id: "AI-17",
+      id: "LRN-33",
+      sequence: 33,
       title: "AI Cost & Value Economics",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -455,14 +467,15 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "operate", levels: [2, 3, 4] }],
+      ase: [{ role: "operate", depths: ["Deepen", "Create"] }],
       format: "Cost model, value case, operating metric review",
       summary: "Evaluate token, model, platform, and operating costs against value, risk, and scalability.",
       outcomes: [],
       modules: ["Unit economics", "Value hypothesis", "FinOps controls"]
     },
     {
-      id: "AI-18",
+      id: "LRN-21",
+      sequence: 21,
       title: "Consultative Prompting",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -470,14 +483,15 @@ window.LrnData = {
       dimensions: ["prompting", "business"],
       interests: ["consulting", "productivity", "leadership"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "spec", levels: [1, 2, 3] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Client-case prompt clinic, output critique, reusable prompt pack",
       summary: "Build prompts for consulting situations, stakeholder context, hypothesis work, and robust output review.",
       outcomes: [],
       modules: ["Consulting brief", "Prompt iteration", "Client-ready output"]
     },
     {
-      id: "AI-19",
+      id: "LRN-15",
+      sequence: 15,
       title: "AI Ecosystem & Vendor Landscape",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -485,7 +499,7 @@ window.LrnData = {
       dimensions: ["literacy", "business"],
       interests: ["foundation", "engineering", "leadership"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "spec", levels: [3, 4] }, { role: "orch", levels: [3, 4] }, { role: "verify", levels: [3, 4] }, { role: "integrate", levels: [3, 4] }, { role: "operate", levels: [3, 4] }],
+      ase: [{ role: "spec", depths: ["Deepen", "Create"] }, { role: "orch", depths: ["Deepen", "Create"] }, { role: "verify", depths: ["Deepen", "Create"] }, { role: "integrate", depths: ["Deepen", "Create"] }, { role: "operate", depths: ["Deepen", "Create"] }],
       format: "Landscape map, vendor-fit checklist, architecture comparison",
       summary: "Classify AI platforms, agent frameworks, tool ecosystems, and vendor trade-offs for real decisions.",
       outcomes: [
@@ -497,7 +511,8 @@ window.LrnData = {
       modules: ["Platform map", "Framework comparison", "Vendor decision brief"]
     },
     {
-      id: "AI-20",
+      id: "LRN-16",
+      sequence: 16,
       title: "AI Workforce Strategy",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -511,7 +526,8 @@ window.LrnData = {
       modules: ["Role impact", "Skill matrix", "Enablement roadmap"]
     },
     {
-      id: "AI-21",
+      id: "LRN-40",
+      sequence: 40,
       title: "Decision Making with AI",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -519,7 +535,7 @@ window.LrnData = {
       dimensions: ["data", "change"],
       interests: ["leadership", "governance", "consulting"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "verify", levels: [3, 4] }],
+      ase: [{ role: "verify", depths: ["Deepen", "Create"] }],
       format: "Decision case, uncertainty review, accountability checklist",
       summary: "Translate AI recommendations into better decisions using metrics, uncertainty, bias checks, and human accountability.",
       outcomes: [
@@ -531,7 +547,8 @@ window.LrnData = {
       modules: ["Decision brief", "Uncertainty check", "Accountability review"]
     },
     {
-      id: "AI-22",
+      id: "LRN-05",
+      sequence: 5,
       title: "Data Literacy for AI Projects",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -539,14 +556,15 @@ window.LrnData = {
       dimensions: ["data", "literacy"],
       interests: ["foundation", "governance", "consulting"],
       levels: ["Acquire", "Deepen"],
-      ase: [{ role: "spec", levels: [1, 2, 3] }, { role: "verify", levels: [1, 2, 3] }],
+      ase: [{ role: "spec", depths: ["Acquire", "Deepen", "Create"] }, { role: "verify", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Source inventory, quality triage, data-readiness worksheet",
       summary: "Check data sources, quality, freshness, sensitivity, and evaluation before an AI pilot starts.",
       outcomes: [],
       modules: ["Source inventory", "Quality and freshness", "Evaluation sample"]
     },
     {
-      id: "AI-23",
+      id: "LRN-28",
+      sequence: 28,
       title: "AI Security and Prompt Injection Defense",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -554,7 +572,7 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["governance", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "verify", levels: [3, 4] }, { role: "integrate", levels: [3, 4] }],
+      ase: [{ role: "verify", depths: ["Deepen", "Create"] }, { role: "integrate", depths: ["Deepen", "Create"] }],
       format: "Threat triage, trust-boundary map, launch-gate checklist",
       summary: "Identify and control prompt injection, data leakage, tool risks, and audit gaps in AI workflows.",
       outcomes: [
@@ -566,7 +584,8 @@ window.LrnData = {
       modules: ["Trust boundaries", "Tool approval", "Audit controls"]
     },
     {
-      id: "AI-24",
+      id: "LRN-18",
+      sequence: 18,
       title: "Internal Knowledge Assistants with RAG",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -574,7 +593,7 @@ window.LrnData = {
       dimensions: ["prompting", "data"],
       interests: ["productivity", "governance", "engineering"],
       levels: ["Acquire", "Deepen"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }, { role: "integrate", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }, { role: "integrate", depths: ["Deepen", "Create"] }],
       format: "Source inventory, RAG intake, answer-quality review",
       summary: "Plan internal knowledge assistants with source accountability, permissions, evaluation, and fallback paths.",
       outcomes: [
@@ -586,7 +605,8 @@ window.LrnData = {
       modules: ["Source readiness", "Access boundary", "Answer evaluation"]
     },
     {
-      id: "AI-25",
+      id: "LRN-41",
+      sequence: 41,
       title: "AI Vendor and Procurement Evaluation",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -594,7 +614,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["consulting", "governance", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "integrate", levels: [3, 4] }, { role: "operate", levels: [3, 4] }],
+      ase: [{ role: "integrate", depths: ["Deepen", "Create"] }, { role: "operate", depths: ["Deepen", "Create"] }],
       format: "Vendor scorecard, trial criteria, exit-plan review",
       summary: "Evaluate AI vendors by value, data handling, security, integration, lock-in, and operating costs.",
       outcomes: [
@@ -606,7 +626,8 @@ window.LrnData = {
       modules: ["Vendor scorecard", "Trial criteria", "Exit plan"]
     },
     {
-      id: "AI-26",
+      id: "LRN-36",
+      sequence: 36,
       title: "AI Operations and Incident Response",
       status: "New from capability gap",
       source: "DOCX/XLSX capability gap",
@@ -614,7 +635,7 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "operate", levels: [2, 3, 4] }],
+      ase: [{ role: "operate", depths: ["Deepen", "Create"] }],
       format: "Incident runbook, escalation drill, postmortem update",
       summary: "Monitor AI features in production, triage incident signals, and maintain runbooks for quality, cost, tools, and safety.",
       outcomes: [
@@ -626,7 +647,8 @@ window.LrnData = {
       modules: ["AI incident triage", "Rollback path", "Postmortem loop"]
     },
     {
-      id: "AI-31",
+      id: "LRN-09",
+      sequence: 9,
       title: "AI for Service Management and Support",
       status: "New from role gap",
       source: "DOCX/XLSX role gap",
@@ -634,14 +656,15 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance", "productivity"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "operate", levels: [1, 2, 3] }],
+      ase: [{ role: "operate", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Support triage, confidence threshold, escalation checklist",
       summary: "Use AI for ticket triage, knowledge articles, support responses, and incident handoffs with service controls.",
       outcomes: [],
       modules: ["Service scope", "Confidence threshold", "Escalation path"]
     },
     {
-      id: "AI-35",
+      id: "LRN-10",
+      sequence: 10,
       title: "AI Meeting Facilitation and Workshop Design",
       status: "New from productivity gap",
       source: "DOCX/XLSX capability gap",
@@ -655,7 +678,8 @@ window.LrnData = {
       modules: ["Agenda contract", "Decision log", "Action tracker"]
     },
     {
-      id: "AI-36",
+      id: "LRN-32",
+      sequence: 32,
       title: "AI Project Reporting and Steering",
       status: "New from delivery gap",
       source: "DOCX/XLSX role gap",
@@ -663,14 +687,15 @@ window.LrnData = {
       dimensions: ["business", "change", "data"],
       interests: ["leadership", "consulting", "governance"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "spec", levels: [2, 3, 4] }],
+      ase: [{ role: "spec", depths: ["Deepen", "Create"] }],
       format: "Status evidence, RAG check, risk owner, steering question",
       summary: "Use AI for project status, steering packs, and decision materials with clear evidence and decision questions.",
       outcomes: [],
       modules: ["Source snapshot", "RAG status", "Steering ask"]
     },
     {
-      id: "AI-37",
+      id: "LRN-12",
+      sequence: 12,
       title: "AI Data Quality and Master Data Processes",
       status: "New from data gap",
       source: "DOCX/XLSX capability gap",
@@ -678,14 +703,15 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["governance", "engineering", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "spec", levels: [2, 3, 4] }, { role: "integrate", levels: [2, 3, 4] }],
+      ase: [{ role: "spec", depths: ["Deepen", "Create"] }, { role: "integrate", depths: ["Deepen", "Create"] }],
       format: "Data owner, quality rule, sample check, issue backlog",
       summary: "Identify data quality and master data gaps before AI workflows scale poor sources.",
       outcomes: [],
       modules: ["Data owner", "Quality rule", "Sample check"]
     },
     {
-      id: "AI-38",
+      id: "LRN-30",
+      sequence: 30,
       title: "AI Process Analysis and Automation Design",
       status: "New from process gap",
       source: "DOCX/XLSX capability gap",
@@ -693,14 +719,15 @@ window.LrnData = {
       dimensions: ["business", "change"],
       interests: ["consulting", "leadership", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "spec", levels: [2, 3, 4] }],
+      ase: [{ role: "spec", depths: ["Deepen", "Create"] }],
       format: "Process map, exception log, value check, human fallback",
       summary: "Evaluate AI automation ideas only after process understanding, exception analysis, and pilot controls.",
       outcomes: [],
       modules: ["Process map", "Exception log", "Automation pilot"]
     },
     {
-      id: "AI-39",
+      id: "LRN-39",
+      sequence: 39,
       title: "AI Risk Management and Internal Controls",
       status: "New from governance gap",
       source: "DOCX/XLSX capability gap",
@@ -708,7 +735,7 @@ window.LrnData = {
       dimensions: ["data", "business", "change"],
       interests: ["governance", "leadership", "consulting"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "verify", levels: [3, 4] }, { role: "operate", levels: [3, 4] }],
+      ase: [{ role: "verify", depths: ["Deepen", "Create"] }, { role: "operate", depths: ["Deepen", "Create"] }],
       format: "Risk register, control test, audit trail, approval owner",
       summary: "Make AI risks manageable with owners, controls, audit evidence, and policy exception review.",
       outcomes: [
@@ -720,7 +747,8 @@ window.LrnData = {
       modules: ["Risk register", "Control test", "Audit evidence"]
     },
     {
-      id: "AI-40",
+      id: "LRN-13",
+      sequence: 13,
       title: "AI Knowledge Management and Content Governance",
       status: "New from knowledge gap",
       source: "DOCX/XLSX capability gap",
@@ -728,14 +756,15 @@ window.LrnData = {
       dimensions: ["data", "prompting", "change"],
       interests: ["governance", "productivity", "engineering"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }],
       format: "Content owner, freshness check, source ranking, access rule",
       summary: "Curate knowledge sources for AI search and internal assistants before retrieval amplifies poor sources.",
       outcomes: [],
       modules: ["Source owner", "Freshness check", "Access rule"]
     },
     {
-      id: "AI-42",
+      id: "LRN-42",
+      sequence: 42,
       title: "AI Architecture Decision Governance",
       status: "New from architecture gap",
       source: "DOCX/XLSX role gap",
@@ -743,14 +772,15 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["engineering", "governance", "leadership"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "integrate", levels: [3, 4] }],
+      ase: [{ role: "integrate", depths: ["Deepen", "Create"] }],
       format: "ADR, threat model, cost model, architecture review",
       summary: "Document AI architecture decisions for models, vendors, security boundaries, and costs in a traceable way.",
       outcomes: [],
       modules: ["ADR", "Threat model", "Cost tradeoff"]
     },
     {
-      id: "AI-43",
+      id: "LRN-31",
+      sequence: 31,
       title: "AI Product Backlog and Prioritization",
       status: "New from product gap",
       source: "DOCX/XLSX role gap",
@@ -758,14 +788,15 @@ window.LrnData = {
       dimensions: ["business", "change"],
       interests: ["consulting", "leadership"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "spec", levels: [2, 3, 4] }],
+      ase: [{ role: "spec", depths: ["Deepen", "Create"] }],
       format: "Evidence note, scoring rubric, dependency check, decision log",
       summary: "Use AI to structure backlog and roadmap decisions more transparently by value, effort, risk, and dependencies.",
       outcomes: [],
       modules: ["Evidence note", "Scoring rubric", "Decision log"]
     },
     {
-      id: "AI-45",
+      id: "LRN-29",
+      sequence: 29,
       title: "AI Test Data and Synthetic Data Governance",
       status: "New from QA/data gap",
       source: "DOCX/XLSX capability gap",
@@ -773,14 +804,15 @@ window.LrnData = {
       dimensions: ["data"],
       interests: ["governance", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "verify", levels: [2, 3, 4] }],
+      ase: [{ role: "verify", depths: ["Deepen", "Create"] }],
       format: "Data classification, coverage matrix, drift check, leakage test",
       summary: "Use synthetic and masked test data for AI and software tests with privacy, coverage, and leakage controls.",
       outcomes: [],
       modules: ["Classification", "Coverage", "Leakage test"]
     },
     {
-      id: "AI-48",
+      id: "LRN-34",
+      sequence: 34,
       title: "AI Business Applications, ERP, and CRM Consulting",
       status: "New from role/capability gap",
       source: "DOCX/XLSX role gap",
@@ -788,14 +820,15 @@ window.LrnData = {
       dimensions: ["business", "data"],
       interests: ["consulting", "governance", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "integrate", levels: [2, 3, 4] }],
+      ase: [{ role: "integrate", depths: ["Deepen", "Create"] }],
       format: "System boundary, data owner, exception rule, integration note",
       summary: "Evaluate AI use cases in SAP, Salesforce, Microsoft business solutions, and ERP/CRM workflows with system boundaries, data ownership, and integration context.",
       outcomes: [],
       modules: ["System boundary", "Data owner", "Integration note"]
     },
     {
-      id: "AI-49",
+      id: "LRN-35",
+      sequence: 35,
       title: "AI Cloud, Data Platform, and IoT Use Case Design",
       status: "New from platform/data gap",
       source: "DOCX/XLSX role gap",
@@ -803,14 +836,15 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["engineering", "governance"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "integrate", levels: [2, 3, 4] }],
+      ase: [{ role: "integrate", depths: ["Deepen", "Create"] }],
       format: "Architecture sketch, data boundary, streaming fit, platform decision",
       summary: "Design AI use cases with cloud, data platform, and IoT context around data flows, latency, ownership, and platform boundaries.",
       outcomes: [],
       modules: ["Architecture sketch", "Data boundary", "Platform decision"]
     },
     {
-      id: "AI-51",
+      id: "LRN-38",
+      sequence: 38,
       title: "AI Human Review and Approval Workflow Design",
       status: "New from governance/compliance gap",
       source: "DOCX/XLSX capability gap",
@@ -818,14 +852,15 @@ window.LrnData = {
       dimensions: ["data", "change"],
       interests: ["governance", "leadership"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "verify", levels: [3, 4] }],
+      ase: [{ role: "verify", depths: ["Deepen", "Create"] }],
       format: "Review role, approval gate, quality checklist, appeal path",
       summary: "Design human-in-the-loop review, approval gates, escalation, and quality checklists for AI-supported decisions and content.",
       outcomes: [],
       modules: ["Review role", "Approval gate", "Appeal path"]
     },
     {
-      id: "AI-52",
+      id: "LRN-43",
+      sequence: 43,
       title: "AI Operating Model and Center of Excellence",
       status: "New from leadership/operating model gap",
       source: "DOCX/XLSX role gap",
@@ -833,14 +868,15 @@ window.LrnData = {
       dimensions: ["change", "business"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
-      ase: [{ role: "spec", levels: [4] }, { role: "orch", levels: [4] }, { role: "verify", levels: [4] }, { role: "integrate", levels: [4] }, { role: "operate", levels: [4] }],
+      ase: [{ role: "spec", depths: ["Create"] }, { role: "orch", depths: ["Create"] }, { role: "verify", depths: ["Create"] }, { role: "integrate", depths: ["Create"] }, { role: "operate", depths: ["Create"] }],
       format: "Role charter, standards backlog, asset registry, governance cadence",
       summary: "Operationalize AI scaling through clear roles, standards, reusable assets, a champion network, and governance cadence.",
       outcomes: [],
       modules: ["Role charter", "Asset registry", "Governance cadence"]
     },
     {
-      id: "AI-53",
+      id: "LRN-37",
+      sequence: 37,
       title: "AI Service Desk Runbook and Knowledge Automation",
       status: "New from application management gap",
       source: "DOCX/XLSX role gap",
@@ -848,14 +884,15 @@ window.LrnData = {
       dimensions: ["business", "data", "change"],
       interests: ["engineering", "governance", "productivity"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "operate", levels: [2, 3, 4] }],
+      ase: [{ role: "operate", depths: ["Deepen", "Create"] }],
       format: "Ticket pattern, runbook step, source article, handoff trigger",
       summary: "Evaluate recurring service desk tickets, known fixes, runbooks, and knowledge base gaps for AI-supported support automation.",
       outcomes: [],
       modules: ["Ticket pattern", "Runbook step", "Handoff trigger"]
     },
     {
-      id: "AI-54",
+      id: "LRN-14",
+      sequence: 14,
       title: "AI Security Review and Threat Triage for Business Teams",
       status: "New from security/governance gap",
       source: "DOCX/XLSX role gap",
@@ -863,14 +900,15 @@ window.LrnData = {
       dimensions: ["data", "business"],
       interests: ["governance", "engineering", "consulting"],
       levels: ["Acquire", "Deepen", "Create"],
-      ase: [{ role: "verify", levels: [1, 2, 3] }],
+      ase: [{ role: "verify", depths: ["Acquire", "Deepen", "Create"] }],
       format: "Data boundary, tool approval, access check, abuse case",
       summary: "Triage business AI ideas for sensitive data, external tools, identity risks, and untrusted inputs before security review starts.",
       outcomes: [],
       modules: ["Data boundary", "Tool approval", "Abuse case"]
     },
     {
-      id: "AI-57",
+      id: "LRN-27",
+      sequence: 27,
       title: "AI Prompt Library Governance and Reuse",
       status: "New from prompt/knowledge gap",
       source: "DOCX/XLSX capability gap",
@@ -878,14 +916,15 @@ window.LrnData = {
       dimensions: ["prompting", "change", "data"],
       interests: ["governance", "productivity", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }],
       format: "Pattern owner, version note, evaluation example, retirement rule",
       summary: "Manage shared prompts as reusable patterns with an owner, version, evaluation example, and retirement rule.",
       outcomes: [],
       modules: ["Pattern owner", "Version note", "Retirement rule"]
     },
     {
-      id: "HARNESS-TC-01",
+      id: "LRN-26",
+      sequence: 26,
       title: "Harness Engineering for Reliable Agent Delivery",
       status: "New curriculum course",
       source: "Phase 14 agent workbench track",
@@ -893,7 +932,7 @@ window.LrnData = {
       dimensions: ["business", "prompting", "data"],
       interests: ["consulting", "engineering"],
       levels: ["Deepen", "Create"],
-      ase: [{ role: "orch", levels: [2, 3, 4] }, { role: "verify", levels: [2, 3, 4] }],
+      ase: [{ role: "orch", depths: ["Deepen", "Create"] }, { role: "verify", depths: ["Deepen", "Create"] }],
       format: "14 lecture activities, 8 project labs, reusable workbench artifacts",
       summary: "Design the repository, state, scope, feedback, verification, review, loops, and graphs that make AI-assisted delivery reliable across sessions.",
       outcomes: [
@@ -914,7 +953,8 @@ window.LrnData = {
       ]
     },
     {
-      id: "CHAMP-01",
+      id: "LRN-44",
+      sequence: 44,
       title: "AI Champion / Community Lead",
       status: "Role format from DOCX",
       source: "DOCX",
@@ -922,7 +962,7 @@ window.LrnData = {
       dimensions: ["change", "business", "prompting"],
       interests: ["leadership", "consulting", "engineering"],
       levels: ["Create"],
-      ase: [{ role: "spec", levels: [4] }, { role: "orch", levels: [4] }, { role: "verify", levels: [4] }, { role: "integrate", levels: [4] }, { role: "operate", levels: [4] }],
+      ase: [{ role: "spec", depths: ["Create"] }, { role: "orch", depths: ["Create"] }, { role: "verify", depths: ["Create"] }, { role: "integrate", depths: ["Create"] }, { role: "operate", depths: ["Create"] }],
       format: "Mentoring plan, brown-bag kit, community contribution backlog",
       summary: "Multiplier role for knowledge transfer, brown bags, communities of practice, and piloting new AI approaches.",
       outcomes: [],
@@ -936,8 +976,8 @@ window.LrnData = {
       label: "Core AI Foundation",
       profileIds: ["all", "bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
       stages: [
-        { label: "Acquire", courses: ["PRIMER-01", "AI-09", "AI-06", "RESP-01", "AI-10", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40"] },
-        { label: "Deepen", courses: ["AI-06", "AI-22", "PROMPT-01", "AI-18", "AI-23", "AI-39", "AI-51", "AI-54", "AI-57"] }
+        { label: "Acquire", courses: ["PRIMER-01", "LRN-01", "LRN-02", "LRN-03", "LRN-04", "LRN-05", "LRN-18", "LRN-10", "LRN-12", "LRN-13"] },
+        { label: "Deepen", courses: ["LRN-02", "LRN-05", "LRN-22", "LRN-21", "LRN-28", "LRN-39", "LRN-38", "LRN-14", "LRN-27"] }
       ]
     },
     {
@@ -946,9 +986,9 @@ window.LrnData = {
       label: "Consulting & Value Creation",
       profileIds: ["bsc", "pvs", "pma"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["USECASE-01", "AI-15", "AI-16", "AI-17", "AI-18", "AI-25", "AI-35", "AI-36", "AI-38", "AI-39", "AI-43", "AI-48", "AI-51", "AI-54", "AI-57"] },
-        { label: "Create", courses: ["AI-19", "AI-42", "AI-52", "CHAMP-01"] }
+        { label: "Acquire", courses: ["LRN-01", "LRN-02"] },
+        { label: "Deepen", courses: ["LRN-23", "LRN-17", "LRN-07", "LRN-33", "LRN-21", "LRN-41", "LRN-10", "LRN-32", "LRN-30", "LRN-39", "LRN-31", "LRN-34", "LRN-38", "LRN-14", "LRN-27"] },
+        { label: "Create", courses: ["LRN-15", "LRN-42", "LRN-43", "LRN-44"] }
       ]
     },
     {
@@ -957,9 +997,57 @@ window.LrnData = {
       label: "Technology & Engineering Delivery",
       profileIds: ["tc", "am"],
       stages: [
-        { label: "Acquire", courses: ["AI-01", "RESP-01", "AI-14"] },
-        { label: "Deepen", courses: ["AI-03", "AI-02", "AI-11", "AI-12", "AI-13", "AI-23", "AI-24", "AI-26", "AI-31", "AI-36", "AI-37", "AI-38", "AI-40", "AI-43", "AI-45", "AI-49", "AI-51", "AI-53", "AI-54", "AI-57", "HARNESS-TC-01"] },
-        { label: "Create", courses: ["AI-19", "AI-25", "AI-42", "AI-52", "AI-53", "CHAMP-01", "HARNESS-TC-01"] }
+        { label: "Acquire", courses: ["LRN-06", "LRN-03", "LRN-08"] },
+        // LRN-23 wurde am 17.08.2026 aufgenommen (00_REPORT.md E-1/Schritt 8):
+        // sonst haette Buendel AI-04 keinen Kopfkurs und Capability 11 waere
+        // fuer Technology Consulting unerreichbar.
+        { label: "Deepen", courses: ["LRN-25", "LRN-24", "LRN-19", "LRN-20", "LRN-11", "LRN-28", "LRN-18", "LRN-36", "LRN-09", "LRN-32", "LRN-12", "LRN-30", "LRN-13", "LRN-31", "LRN-29", "LRN-35", "LRN-38", "LRN-37", "LRN-14", "LRN-27", "LRN-26", "LRN-23"] },
+        { label: "Create", courses: ["LRN-15", "LRN-41", "LRN-42", "LRN-43", "LRN-37", "LRN-44", "LRN-26"] }
+      ],
+      // Die drei Academy-Buendel (Online-Selbststudium zu einem buchbaren
+      // Praesenz-Hands-on-Kurs, Modul 2, geleitet von AI Dev Champions).
+      // Nicht die Kurse selbst, kein Einsteigerpaket: flach, nicht
+      // kaskadierend, max. 5 Kurse, auf Deepen angesiedelt.
+      // 00_REPORT.md Teil B3/B4. `core` je Bundle-Feld ist die Pflichtspur
+      // (Unit-Titel + Restaufwand siehe curriculum-map.js `decision`).
+      bundles: [
+        {
+          id: "bundle-ai-01",
+          academyCourse: "AI-01",
+          title: "Introduction to GitHub Copilot",
+          titleKey: "bundle_ai01_title",
+          format: "blended",
+          courses: ["LRN-06", "LRN-22", "LRN-20", "LRN-19"],
+          core: [
+            { courseId: "LRN-06", unit: "U1" },
+            { courseId: "LRN-22", unit: "U1" }
+          ]
+        },
+        {
+          id: "bundle-ai-02",
+          academyCourse: "AI-02",
+          title: "Agentic Software Engineering",
+          titleKey: "bundle_ai02_title",
+          format: "blended",
+          courses: ["LRN-24", "LRN-25", "LRN-26", "LRN-28", "LRN-18"],
+          core: [
+            { courseId: "LRN-24", unit: "U1" },
+            { courseId: "LRN-25", unit: "U1" }
+          ]
+        },
+        {
+          id: "bundle-ai-04",
+          academyCourse: "AI-04",
+          title: "Requirement Engineering with AI",
+          titleKey: "bundle_ai04_title",
+          format: "blended",
+          courses: ["LRN-23", "LRN-21", "LRN-30", "LRN-31", "LRN-38"],
+          core: [
+            { courseId: "LRN-23", unit: "U1" },
+            { courseId: "LRN-21", unit: "U2" },
+            { courseId: "LRN-30", unit: "U3" }
+          ]
+        }
       ]
     },
     {
@@ -968,9 +1056,9 @@ window.LrnData = {
       label: "Leadership & Transformation",
       profileIds: ["lead", "corp", "pma", "bsc"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06"] },
-        { label: "Deepen", courses: ["AI-17", "AI-20", "AI-21", "AI-25", "AI-35", "AI-36", "AI-37", "AI-38", "AI-39", "AI-40", "AI-43", "AI-48", "AI-49", "AI-51", "AI-54", "AI-57"] },
-        { label: "Create", courses: ["AI-19", "AI-42", "AI-52", "CHAMP-01"] }
+        { label: "Acquire", courses: ["LRN-01", "LRN-02"] },
+        { label: "Deepen", courses: ["LRN-33", "LRN-16", "LRN-40", "LRN-41", "LRN-10", "LRN-32", "LRN-12", "LRN-30", "LRN-39", "LRN-13", "LRN-31", "LRN-34", "LRN-35", "LRN-38", "LRN-14", "LRN-27"] },
+        { label: "Create", courses: ["LRN-15", "LRN-42", "LRN-43", "LRN-44"] }
       ]
     },
     {
@@ -979,9 +1067,9 @@ window.LrnData = {
       label: "Corporate Functions Enablement",
       profileIds: ["corp"],
       stages: [
-        { label: "Acquire", courses: ["AI-09", "AI-06", "AI-22", "AI-24", "AI-35", "AI-37", "AI-40"] },
-        { label: "Deepen", courses: ["AI-10", "AI-36", "AI-38", "AI-39", "AI-45", "AI-48", "AI-51", "AI-53", "AI-54", "AI-57"] },
-        { label: "Create", courses: ["AI-20", "AI-21", "AI-52", "AI-57", "CHAMP-01"] }
+        { label: "Acquire", courses: ["LRN-01", "LRN-02", "LRN-05", "LRN-18", "LRN-10", "LRN-12", "LRN-13"] },
+        { label: "Deepen", courses: ["LRN-04", "LRN-32", "LRN-30", "LRN-39", "LRN-29", "LRN-34", "LRN-38", "LRN-37", "LRN-14", "LRN-27"] },
+        { label: "Create", courses: ["LRN-16", "LRN-40", "LRN-43", "LRN-27", "LRN-44"] }
       ]
     }
   ]

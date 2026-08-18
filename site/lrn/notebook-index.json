@@ -10,22 +10,22 @@
 "*"
 ],
 "phases/11-llm-engineering/01-prompt-engineering": [
-"AI-01",
-"AI-06",
-"AI-15",
-"AI-18",
-"PROMPT-01"
+"LRN-06",
+"LRN-02",
+"LRN-17",
+"LRN-21",
+"LRN-22"
 ],
 "phases/11-llm-engineering/02-few-shot-cot": [
-"AI-06",
-"AI-18",
-"PROMPT-01"
+"LRN-02",
+"LRN-21",
+"LRN-22"
 ],
 "phases/11-llm-engineering/03-structured-outputs": [
-"AI-06",
-"AI-15",
-"AI-18",
-"PROMPT-01"
+"LRN-02",
+"LRN-17",
+"LRN-21",
+"LRN-22"
 ],
 "phases/11-llm-engineering/05-context-engineering": [
 "*"
@@ -40,20 +40,20 @@
 "*"
 ],
 "phases/11-llm-engineering/10-evaluation": [
-"AI-01",
-"AI-11",
-"AI-16",
-"AI-21",
-"AI-22",
-"AI-24",
-"AI-31",
-"AI-36",
-"AI-37",
-"AI-40",
-"AI-45",
-"AI-51",
-"AI-54",
-"USECASE-01"
+"LRN-06",
+"LRN-19",
+"LRN-07",
+"LRN-40",
+"LRN-05",
+"LRN-18",
+"LRN-09",
+"LRN-32",
+"LRN-12",
+"LRN-13",
+"LRN-29",
+"LRN-38",
+"LRN-14",
+"LRN-23"
 ],
 "phases/11-llm-engineering/11-caching-cost": [
 "*"
