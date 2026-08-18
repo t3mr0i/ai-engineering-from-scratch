@@ -36,6 +36,265 @@ Each node is a coherent intermediate step ("a thought"). Each node can expand to
 
 Self-evaluation is the load-bearing piece. The paper shows three variants: `sure / likely / impossible` classification, `1..10` numeric score, and vote among candidates. All three beat CoT substantially on Game of 24 (4% -> 74% with GPT-4).
 
+Every example below shares this setup — run it once, then the rest reuse `lrn_llm`. Start with the numbers [4, 6, 4, 1] and ask the LLM to generate candidate next steps toward 24.
+
+```python editable
+import sys, json, types
+lrn_llm = types.ModuleType("lrn_llm")
+try:
+    from pyodide.http import pyfetch as _pyfetch
+    _IN_PYODIDE = True
+except ImportError:
+    import urllib.request as _urlreq
+    _IN_PYODIDE = False
+lrn_llm.API_BASE = "/api/llm"
+lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4-mini"
+lrn_llm.API_KEY = ""
+
+async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
+    if system is not None:
+        messages = [{"role": "system", "content": system}] + list(messages)
+    payload = {"model": model or lrn_llm.DEFAULT_MODEL, "messages": messages,
+               "max_completion_tokens": max_tokens}
+    headers = {"content-type": "application/json"}
+    _key = lrn_llm.API_KEY
+    if _key:
+        headers["Authorization"] = "Bearer " + _key
+    url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"
+    body = json.dumps(payload)
+    if _IN_PYODIDE:
+        r = await _pyfetch(url, method="POST", headers=headers, body=body)
+        data = await r.json()
+    else:
+        req = _urlreq.Request(url, method="POST", headers=headers, data=body.encode("utf-8"))
+        with _urlreq.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+    if "error" in data:
+        raise RuntimeError("LLM error: " + str(data["error"]))
+    return data
+
+def _lrn_text(r):
+    ch = (r or {}).get("choices") or []
+    return (ch[0].get("message", {}) or {}).get("content", "") if ch else ""
+
+async def _lrn_ping():
+    r = await _lrn_call([{"role": "user", "content": "Reply with exactly: OK"}], max_tokens=5)
+    return {"ok": _lrn_text(r).strip().upper().startswith("OK"), "model": r.get("model")}
+
+lrn_llm.call = _lrn_call
+lrn_llm.text = _lrn_text
+lrn_llm.ping = _lrn_ping
+r = await lrn_llm.ping()
+print(f"LLM reachable: {r}")
+```
+
+```python editable
+import itertools
+import re
+
+NUMBERS = [4, 6, 4, 1]
+TARGET = 24
+
+async def generate_candidates(numbers):
+    """Ask the LLM to suggest the next arithmetic step to reach 24."""
+    num_str = ", ".join(str(n) for n in numbers)
+    prompt = f"""You have the numbers: {num_str}. Your goal is to reach {TARGET}.
+
+Suggest 3 different arithmetic steps (pick two numbers, apply an operation).
+Format each as: "a OP b = result" where OP is +, -, *, or /.
+List only valid operations (no division by zero)."""
+
+    r = await lrn_llm.call(
+        [{"role": "user", "content": prompt}],
+        max_tokens=150
+    )
+    return lrn_llm.text(r)
+
+response = await generate_candidates(NUMBERS)
+print("LLM's suggested next steps:")
+print(response)
+```
+
+The value function is what makes this search instead of guessing: ask the LLM to score how close a state is to 24.
+
+```python editable
+async def score_state(numbers):
+    """Ask the LLM to score a state: how close to 24? How promising for next steps?"""
+    num_str = ", ".join(str(round(n, 2)) for n in numbers)
+    prompt = f"""You have reached: {num_str}.
+Target: {TARGET}.
+
+Score this state 0-10 where:
+- 10 = reached 24 exactly
+- 8-9 = very close, clear next steps
+- 5-7 = intermediate, progress visible
+- 1-4 = unlikely, bad path
+- 0 = stuck, abandon
+
+Reply with only the score number (0-10)."""
+
+    r = await lrn_llm.call(
+        [{"role": "user", "content": prompt}],
+        max_tokens=10
+    )
+    text = lrn_llm.text(r).strip()
+    try:
+        score = float(text.split()[0])
+    except (ValueError, IndexError):
+        score = 5.0
+    return score
+
+score_1 = await score_state([24])
+score_2 = await score_state([6, 4])
+print(f"Score of [24]: {score_1}")
+print(f"Score of [6, 4]: {score_2}")
+```
+
+To actually search, the LLM's free-text suggestions ("a OP b = result") need to become real state transitions: parse the arithmetic, check the numbers it used are actually available, and apply it. No child state is assumed in advance — every one comes from parsing what the LLM proposed.
+
+```python editable
+def parse_step(text):
+    """Parse one 'a OP b = result' line into (a, op, b, result). Returns None if the
+    line doesn't match — LLM output is free text and often includes commentary."""
+    m = re.search(r"(-?\d+(?:\.\d+)?)\s*([+\-*/x×])\s*(-?\d+(?:\.\d+)?)\s*=\s*(-?\d+(?:\.\d+)?)", text)
+    if not m:
+        return None
+    a, op, b, result = m.groups()
+    op = {"x": "*", "×": "*"}.get(op, op)
+    return float(a), op, float(b), float(result)
+
+def apply_step(numbers, parsed):
+    """Apply a parsed step to a numbers list. Returns None if a/b aren't both actually
+    available (the LLM hallucinated numbers we don't have) — that step is invalid."""
+    a, op, b, result = parsed
+    remaining = list(numbers)
+    try:
+        remaining.remove(a)
+        remaining.remove(b)
+    except ValueError:
+        return None
+    remaining.append(result)
+    return remaining
+
+async def expand_state(numbers):
+    """Real tree expansion: ask the LLM for candidate steps, parse each line, apply the
+    ones that check out. Returns a list of {"state": [...], "step": "..."} children —
+    zero, one, or several, depending on what the LLM actually proposed."""
+    raw = await generate_candidates(numbers)
+    children = []
+    for line in raw.splitlines():
+        parsed = parse_step(line)
+        if parsed is None:
+            continue
+        new_state = apply_step(numbers, parsed)
+        if new_state is None:
+            continue
+        children.append({"state": new_state, "step": line.strip()})
+    return children
+
+async def get_initial_problem():
+    """Ask LLM for a fresh Game-of-24 instance (optimum for demonstrating search)."""
+    prompt = "Generate one unique set of 4 numbers between 1-9 that has a short path to 24 but requires search. Reply with exactly 4 comma-separated numbers."
+    r = await lrn_llm.call([{"role": "user", "content": prompt}], max_tokens=20)
+    numbers_str = lrn_llm.text(r).strip().replace(" ", "")
+    try:
+        numbers = [int(x) for x in numbers_str.split(",")]
+        if len(numbers) != 4 or any(not 1 <= n <= 9 for n in numbers):
+            numbers = [4, 6, 4, 1]
+    except:
+        numbers = [4, 6, 4, 1]
+    print(f"Generated initial problem: {numbers}")
+    return numbers
+
+async def tot_one_step():
+    """Single BFS level: expand real children from the LLM's suggestions, score each
+    with the LLM, keep the best. The new state is whatever the LLM's parsed step
+    produces, not a fixed value. Now starts from LLM-generated instance."""
+    numbers = await get_initial_problem()
+    print("\n=== Level 0: Initial ===")
+    print(f"State: {numbers}")
+
+    children = await expand_state(numbers)
+    print(f"\n=== Level 1: {len(children)} candidate(s) parsed from the LLM's suggestions ===")
+    if not children:
+        print("No parseable steps this round (LLM output didn't match 'a OP b = result').")
+        return None
+
+    for child in children:
+        child["score"] = await score_state(child["state"])
+        print(f"  {child['step']:20} -> state {child['state']}  score {child['score']}/10")
+
+    best = max(children, key=lambda c: c["score"])
+    print(f"\nBest candidate: {best['step']} -> {best['state']} (score {best['score']}/10)")
+    return best
+
+await tot_one_step()
+
+await tot_one_step()
+```
+
+`tot_one_step` runs a single BFS level. The full solver runs `expand_state` across multiple levels: expand every node on the frontier, score every child, keep the top `beam_width`, repeat until a state reduces to exactly `[24]` or the depth budget runs out. Every node is a real dict in `tree`, linked to its parent — the reported answer is read off whichever node the search actually reached, never assumed.
+
+```python editable
+async def bfs_search(start, target=TARGET, beam_width=2, max_depth=3):
+    """Real breadth-first Tree-of-Thoughts search. Returns (best_node, all_nodes)."""
+    root = {"state": start, "step": "start", "parent": None, "score": None, "depth": 0}
+    frontier = [root]
+    tree = [root]
+
+    for depth in range(1, max_depth + 1):
+        candidates = []
+        for node in frontier:
+            for child in await expand_state(node["state"]):
+                candidates.append({**child, "parent": node, "score": None, "depth": depth})
+        if not candidates:
+            print(f"  Level {depth}: no valid expansions from the frontier — search dead-ends here.")
+            break
+        for node in candidates:
+            node["score"] = 10.0 if node["state"] == [target] else await score_state(node["state"])
+        tree.extend(candidates)
+        candidates.sort(key=lambda n: n["score"], reverse=True)
+        frontier = candidates[:beam_width]
+        print(f"  Level {depth}: kept top {len(frontier)} of {len(candidates)} candidate(s), "
+              f"best score {frontier[0]['score']}/10")
+        if any(n["state"] == [target] for n in frontier):
+            break
+
+    solved = [n for n in frontier if n["state"] == [target]]
+    best = solved[0] if solved else max(frontier, key=lambda n: n["score"] if n["score"] is not None else -1)
+    return best, tree
+
+def reconstruct_path(node):
+    """Walk parent pointers back to the root — the sequence of steps the search took."""
+    path = []
+    while node is not None and node.get("step") != "start":
+        path.append(node["step"])
+        node = node["parent"]
+    return list(reversed(path))
+
+async def solve_game_of_24():
+    """BFS Game-of-24 solver: the LLM proposes steps, code parses and applies them to
+    build a real search tree, the LLM scores each node, and the outcome is read off
+    the tree — nothing here is precomputed."""
+    state = [4, 6, 4, 1]
+    print(f"\n{'='*60}")
+    print(f"Solving: {state} -> {TARGET}")
+    print(f"{'='*60}")
+
+    best, tree = await bfs_search(state, beam_width=2, max_depth=3)
+    solved = best["state"] == [TARGET]
+
+    print(f"\nNodes explored: {len(tree)}")
+    if solved:
+        print(f"\n✅ SUCCESS: {' -> '.join(reconstruct_path(best))} = {TARGET}")
+    else:
+        print(f"\n⚠️  Did not reach {TARGET}. Best state found: {best['state']} "
+              f"(score {best['score']}/10) via {' -> '.join(reconstruct_path(best)) or '(no valid steps found)'}")
+    return solved
+
+result = await solve_game_of_24()
+```
+
 ### LATS (Zhou et al., ICML 2024)
 
 LATS unifies ToT, ReAct, and Reflexion under MCTS. The LLM plays three roles:
@@ -45,6 +304,55 @@ LATS unifies ToT, ReAct, and Reflexion under MCTS. The LLM plays three roles:
 - **Self-reflector**: on failure, write a natural-language reflection (Reflexion-style) and use it to reseed future rollouts.
 
 Environment feedback (observations) mixes into the value function so the search is informed by real tool results, not just model opinions. Results at paper time: HumanEval pass@1 92.7% with GPT-4 (SOTA), WebShop average 75.9 with GPT-3.5 (approaching gradient-based fine-tuning).
+
+The policy role proposes a short multi-step rollout instead of a single next move:
+
+```python editable
+async def propose_rollout(numbers, depth=2):
+    """Ask LLM to propose a short trajectory to 24 from the current numbers."""
+    num_str = ", ".join(str(n) for n in numbers)
+    prompt = f"""From {num_str}, propose {depth} arithmetic steps that move toward {TARGET}.
+Format: step1: a OP b = result\nstep2: c OP d = result
+Be concise."""
+
+    r = await lrn_llm.call(
+        [{"role": "user", "content": prompt}],
+        max_tokens=100
+    )
+    return lrn_llm.text(r).strip()
+
+rollout = await propose_rollout([4, 6, 4, 1], depth=2)
+print("LLM's proposed 2-step trajectory:")
+print(rollout)
+```
+
+The self-reflector role: given a failed trajectory, generate a corrective insight to reseed future rollouts.
+
+```python editable
+async def reflect_on_failure():
+    """LATS reflexion: given a failed trajectory, generate a corrective insight."""
+    failed_trajectory = [
+        "6 - 1 = 5",
+        "5 * 4 = 20",
+        "20 + 4 = 24"  # But we already used 4!
+    ]
+
+    prompt = f"""This trajectory failed: {' -> '.join(failed_trajectory)}.
+Problem: some numbers were reused.
+
+What went wrong? Suggest a correction rule for the next attempt."""
+
+    r = await lrn_llm.call(
+        [{"role": "user", "content": prompt}],
+        max_tokens=100
+    )
+    reflection = lrn_llm.text(r).strip()
+    print("\nLLM's reflexion:")
+    print(reflection)
+    return reflection
+
+await reflect_on_failure()
+```
 
 ### MCTS, minimally
 
@@ -67,6 +375,34 @@ Search explodes tokens. ToT on Game of 24 uses 100–1000x the tokens of CoT. LA
 
 If your task has a single right answer and a noisy evaluator, search often makes things worse — it finds a "good-scoring" wrong answer.
 
+Ask the LLM to make this call on a few tasks — search or single trajectory:
+
+```python editable
+async def should_use_search(task):
+    """Ask LLM: does this task benefit from search vs. single trajectory?"""
+    prompt = f"""Task: {task}
+
+Should you use Tree of Thoughts / LATS search (100-1000x tokens) or single chain-of-thought (1x tokens)?
+Reason briefly in one sentence. Reply: 'SEARCH' or 'CoT'."""
+
+    r = await lrn_llm.call(
+        [{"role": "user", "content": prompt}],
+        max_tokens=50
+    )
+    return lrn_llm.text(r).strip()
+
+tasks = [
+    "Solve Game of 24: make 24 from [3, 8, 3, 8]",
+    "What is the capital of France?",
+    "Generate Python code to merge two sorted lists"
+]
+
+for task in tasks:
+    decision = await should_use_search(task)
+    print(f"Task: {task[:40]}...")
+    print(f"→ {decision}\n")
+```
+
 ### 2026 positioning
 
 Most production agents do not run LATS. They run ReAct with tool-grounded verification (CRITIC, Lesson 05). Search shows up in specialized niches:
@@ -77,8 +413,34 @@ Most production agents do not run LATS. They run ReAct with tool-grounded verifi
 
 AlphaEvolve (Lesson 11) is the 2025 extreme: evolutionary search over code, machine-checkable fitness, frontier gains (first 4x4 matmul improvement in 56 years).
 
+## Try It Yourself
 
+Edit the `task` below and run it. The LLM decides whether to use search (Tree of Thoughts) or a single trajectory (chain-of-thought). Try "Make 24 from [2, 3, 4, 5]", "Write a Python function to find the longest palindrome substring", or "What is 2 + 2?".
 
+```python editable
+# TODO: Edit the task below and run
+task = "Make 24 from [2, 3, 4, 5]"  # Change this to your own task
+
+print(f"Your task: {task}\n")
+
+# Ask LLM whether search is needed
+decision = await should_use_search(task)
+print(f"LLM recommends: {decision}")
+
+# If search is recommended, ask for a first step
+if "SEARCH" in decision.upper():
+    r = await lrn_llm.call(
+        [{"role": "user", "content": f"First step toward: {task}"}],
+        max_tokens=100
+    )
+    print(f"\nFirst step:\n{lrn_llm.text(r)}")
+else:
+    r = await lrn_llm.call(
+        [{"role": "user", "content": task}],
+        max_tokens=200
+    )
+    print(f"\nDirect answer:\n{lrn_llm.text(r)}")
+```
 
 ## Further Reading
 
