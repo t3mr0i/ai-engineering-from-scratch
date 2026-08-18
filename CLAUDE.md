@@ -86,16 +86,18 @@ a container instead of an App Service zip. Manifests live in `openshift/`.
   own key into a site dialog (`site/settings.js`, removed) that was
   postMessaged into the JupyterLite iframe (`lrn-key-bridge.js`, removed) and
   sent as `Authorization: Bearer <key>` directly from the browser to
-  `gateway.lhind.ai`. `ide/jupyterlite/lrn_llm.py`'s `API_BASE` now defaults
-  to the same-origin `/api/llm` path — propagate any change to it into every
-  `phases/**/code/lrn_llm.py` copy (`scripts/generate_notebooks.py` does this
-  automatically when specs are available; otherwise copy by hand, see git
-  history for the one-off script used here).
+  `gateway.lhind.ai`. `DEFAULT_MODEL`/`API_BASE` now live only in the inlined
+  `lrn_llm` bootstrap block inside each migrated lesson's `phases/**/docs/en.md`
+  (currently ~36 lessons) — there is no longer a canonical template file or
+  propagation script (the old `ide/jupyterlite/lrn_llm.py` template and
+  `scripts/generate_notebooks.py` are both gone). A model/endpoint change must
+  be swept across every lesson's inlined bootstrap block directly; find them
+  with `grep -rl 'DEFAULT_MODEL' phases --include=en.md`.
   - **Allowed models**: only the GPT-5.4 family (`azure/gpt-5.4-mini`,
     `azure/gpt-5.4-mini`, `azure/gpt-5.4-nano`) — the gateway's virtual-key
     policy 403s (`model_blocked`) on anything else, including `gpt-4o`, which
-    was the old default. `DEFAULT_MODEL` is now `azure/gpt-5.4-mini` everywhere
-    (canonical `lrn_llm.py` + all propagated/inlined copies).
+    was the old default. `DEFAULT_MODEL` is `azure/gpt-5.4-mini` in every
+    inlined bootstrap block.
   - **Rate limiting**: a simple in-memory per-IP cap (`LLM_RATE_LIMIT_PER_MIN`,
     currently 20/min) protects the shared gateway budget (5000€ one-time,
     25€/h cap) since there's no per-user key anymore. IP is read from

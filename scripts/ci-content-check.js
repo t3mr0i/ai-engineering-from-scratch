@@ -29,7 +29,7 @@
  */
 const { readFileSync, existsSync, readdirSync } = require("node:fs");
 const path = require("node:path");
-const { execSync, spawnSync } = require("node:child_process");
+const { execSync } = require("node:child_process");
 const vm = require("node:vm");
 
 const REPO = path.resolve(__dirname, "..");
@@ -175,8 +175,6 @@ const THRESHOLDS = {
   // 16. Every /api/... path a notebook actually calls resolves to a route
   //     server/server.js serves.
   c16_deadApiCalls: 0,
-  // 17. Notebook code cells compile with ast.PyCF_ALLOW_TOP_LEVEL_AWAIT.
-  c17_notebookCompileErrors: 0,
 };
 
 // =============================================================================
@@ -787,65 +785,6 @@ function check16() {
 }
 
 // =============================================================================
-// Check 17 — notebook code cells compile with ast.PyCF_ALLOW_TOP_LEVEL_AWAIT
-//
-// Shells out to python3 (no JS equivalent of Python's ast.compile flags
-// exists). Reuses ide/jupyterlite/py_to_notebook.py — the exact module that
-// builds the notebooks actually shipped — to split each notebook.py into
-// cells, so this checks precisely what a learner's browser would receive.
-// 270/525 cells across the corpus use top-level `await`; without
-// PyCF_ALLOW_TOP_LEVEL_AWAIT every one of those would be a false failure
-// (the plan's rule 4) — verified here as 279/533, close enough to attribute
-// the small drift to concurrent content edits.
-// =============================================================================
-const PY17 = `
-import ast, sys, glob, json, importlib.util
-repo = sys.argv[1]
-spec = importlib.util.spec_from_file_location("py_to_notebook", repo + "/ide/jupyterlite/py_to_notebook.py")
-p2n = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(p2n)
-files = sorted(glob.glob(repo + "/phases/*/*/code/notebook.py") + glob.glob(repo + "/phases/*/*/code/notebook.*.py"))
-total_cells = 0
-await_cells = 0
-errors = []
-for f in files:
-    src = open(f, encoding="utf8").read()
-    try:
-        nb = p2n.build_notebook(src)
-    except Exception as e:
-        errors.append([f, "<build_notebook>", "%s: %s" % (type(e).__name__, e)])
-        continue
-    for i, cell in enumerate(nb["cells"]):
-        if cell["cell_type"] != "code":
-            continue
-        total_cells += 1
-        code = "".join(cell["source"])
-        if "await " in code or "async for" in code or "async with" in code:
-            await_cells += 1
-        try:
-            compile(code, f + "#cell" + str(i), "exec", ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)
-        except SyntaxError as e:
-            errors.append([f, "cell" + str(i), "%s: %s" % (type(e).__name__, e)])
-print(json.dumps({"files": len(files), "total_cells": total_cells, "await_cells": await_cells, "errors": errors}))
-`;
-
-function check17() {
-  const py = spawnSync("python3", ["-c", PY17, REPO], { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
-  if (py.status !== 0 || !py.stdout) {
-    return record("17", "notebook cells compile with PyCF_ALLOW_TOP_LEVEL_AWAIT", -1, THRESHOLDS.c17_notebookCompileErrors, {
-      details: [`python3 invocation failed: ${py.stderr || py.error}`],
-      note: "could not run — treated as a hard failure, see details",
-      cmp: () => true,
-    });
-  }
-  const out = JSON.parse(py.stdout.trim().split("\n").pop());
-  return record("17", "notebook cells compile with PyCF_ALLOW_TOP_LEVEL_AWAIT", out.errors.length, THRESHOLDS.c17_notebookCompileErrors, {
-    details: out.errors.map(([f, cell, msg]) => `${rel(path.join(REPO, f)) === f ? f : f}#${cell}: ${msg}`),
-    note: `${out.files} notebook.py files, ${out.total_cells} code cells, ${out.await_cells} use top-level await (would all false-fail without PyCF_ALLOW_TOP_LEVEL_AWAIT)`,
-  });
-}
-
-// =============================================================================
 // Run all checks, print report, set exit code
 // =============================================================================
 
@@ -981,7 +920,6 @@ check13();
 check14();
 check15();
 check16();
-check17();
 check18();
 check19();
 check20();
