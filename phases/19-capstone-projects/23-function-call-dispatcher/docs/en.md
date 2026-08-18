@@ -474,15 +474,15 @@ The tests use `asyncio.sleep(0)` and deterministic `Counter`-based handlers, so 
 
 ## Try It Yourself
 
-The cell below dispatches a batch of sentiment-analysis calls through the `ConcurrentDispatcher` — same scenario as the happy-path case above — but it has one deliberate bug. One of the keyword arguments is misspelled, so every call to `lrn_llm.call()` inside `sentiment_handler` raises `TypeError` instead of dispatching. Find the typo and fix it so all three dispatches complete with `DispatchOk`.
+The cell below dispatches a batch of sentiment-analysis calls through the `ConcurrentDispatcher` — same scenario as the happy-path case above — but it has one deliberate bug. One of the keyword arguments is misspelled, so every call to `lrn_llm.call()` inside `sentiment_handler` raises `TypeError` instead of dispatching. Find and fix the typo (it should be `system=system`) so all three dispatches complete with `DispatchOk`.
 
-```python fillin
+```python editable
 async def sentiment_handler(text: str):
     system = "Classify the sentiment as positive, negative, or neutral. Respond with one word."
     msg = f"Analyze sentiment: '{text}'"
     resp = await lrn_llm.call(
         [{"role": "user", "content": msg}],
-        {{blank:system}}=system,
+        syste=system,  # BUG: misspelled kwarg -- should be system=system
         max_tokens=10
     )
     return {"sentiment": lrn_llm.text(resp).strip(), "text": text}
