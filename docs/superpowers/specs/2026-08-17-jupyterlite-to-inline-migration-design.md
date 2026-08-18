@@ -23,10 +23,15 @@ The user does not see what JupyterLite buys over the inline blocks and wants
 it gone, with the inline blocks picking up whatever slack that requires.
 
 **Why JupyterLite exists at all, and why this isn't a pure delete:**
-53 lessons have a `code/notebook*.py`. Of those, **52 make a real call to a
-live LLM gateway** (`lrn_llm.call()` → same-origin `/api/llm/chat/completions`
-→ `LLM_GATEWAY_KEY`-backed proxy, see `CLAUDE.md` §1b). Average cell count is
-~23 per notebook. These are multi-step, stateful, exploratory walkthroughs
+39 lessons have a base `code/notebook.py` (53 files total counting the 14
+course-variant files on 3 of those lessons — see Scope below). Of the 39,
+**38 make a real call to a live LLM gateway** (`lrn_llm.call()` →
+same-origin `/api/llm/chat/completions` → `LLM_GATEWAY_KEY`-backed proxy,
+see `CLAUDE.md` §1b) — the sole exception is
+`00-setup-and-tooling/01-dev-environment`, whose "notebook" has zero real
+code cells (it's an install-instructions guide formatted as markdown cells
+containing fenced shell blocks, not executable Python). Average cell count
+across the 39 is ~23 per notebook. These are multi-step, stateful, exploratory walkthroughs
 with genuinely non-deterministic output (real model responses) — not
 graded exercises. `fillin`'s `PASS`/`WRONG` self-check requires a fixed
 reference value, which doesn't exist for "call the model and see what comes
@@ -34,7 +39,7 @@ back." `editable` blocks have no such requirement (no self-check, just
 edit-and-run) and already support real network calls in Pyodide — they are
 the correct target for these cells, not `fillin`.
 
-Separately: for each of these 53 lessons, `docs/en.md` **already has its own
+Separately: for each of these 39 lessons, `docs/en.md` **already has its own
 full prose walkthrough of the same concepts**, written independently of the
 notebook (confirmed by spot-check: `11-llm-engineering/11-caching-cost`'s
 `docs/en.md` has `### Exact Caching: Hash and Match`, `### Semantic Caching:
@@ -51,7 +56,7 @@ mostly discarding the notebook's own narration.
 ## Scope
 
 **In scope:**
-- All 53 lessons with `phases/**/code/notebook*.py`.
+- All 39 lessons with `phases/**/code/notebook.py`.
 - Each code cell becomes one ```` ```python editable ```` block (default) or
   ```` ```python fillin ```` (only for the rare cell with a deterministic,
   checkable result — same bar as the earlier 37-lesson rollout), inserted
@@ -163,13 +168,13 @@ Per lesson (one agent per small batch, same shape as the fillin rollout):
 
 ## Rollout
 
-Same shape as the 37-lesson fillin rollout: 1-2 pilot lessons done directly
-(one simple, one with the `lrn_llm` bootstrap-block consolidation and a
-course-variant case if useful), shown for review, then the remaining ~50-51
-lessons split into parallel batches (~6-7 lessons each) via the `Agent`
-tool, each batch agent given this document's transformation rules plus the
-pilot(s) as a format reference. Decommission (the list above) happens as a
-final pass once all 53 lessons are confirmed migrated, not incrementally —
+Same shape as the 37-lesson fillin rollout: 2 pilot lessons done directly
+(one with the `lrn_llm` bootstrap-block consolidation, one with the
+course-variant case), shown for review, then the remaining 37 lessons split
+into parallel batches (6-7 lessons each) via the `Agent` tool, each batch
+agent given this document's transformation rules plus the pilot(s) as a
+format reference. Decommission (the list above) happens as a
+final pass once all 39 lessons are confirmed migrated, not incrementally —
 deleting `ide/jupyterlite/` mid-migration would break any lesson not yet
 converted.
 
