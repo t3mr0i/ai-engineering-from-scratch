@@ -33,7 +33,19 @@ graph TD
 
 We install bottom-up. Each layer depends on the one below it.
 
+### Verify Your Python Setup
 
+Once `uv` has installed Python and NumPy, confirm both are on the path and working:
+
+```python editable
+import sys
+print(f"Python {sys.version}")
+
+import numpy as np
+print(f"NumPy {np.__version__}")
+a = np.array([1, 2, 3])
+print(f"Vector: {a}, dot product with itself: {np.dot(a, a)}")
+```
 
 ## Ship It
 
