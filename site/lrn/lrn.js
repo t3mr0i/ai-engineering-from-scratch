@@ -152,7 +152,6 @@
   var els = {
     profileSelect: document.getElementById("profileSelect"),
     levelSelect: document.getElementById("levelSelect"),
-    interestChips: document.getElementById("interestChips"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
     resultLine: document.getElementById("resultLine"),
@@ -174,7 +173,6 @@
     var fallback = {
       profileId: "tc",
       externalLevel: 1,
-      interests: ["foundation", "productivity"],
       filter: "recommended",
       activeCourseId: null
     };
@@ -185,7 +183,6 @@
       return {
         profileId: saved.profileId,
         externalLevel: validLevel(saved.externalLevel) ? Number(saved.externalLevel) : fallback.externalLevel,
-        interests: validInterests(saved.interests) ? saved.interests : fallback.interests,
         filter: ["recommended", "optional", "inprogress", "completed", "all"].indexOf(saved.filter) !== -1 ? saved.filter : "recommended",
         activeCourseId: saved.activeCourseId || null
       };
@@ -199,7 +196,6 @@
     var changed = false;
     var rawLevel = params.get("level") || params.get("score") || params.get("assessment");
     var rawProfile = params.get("profile") || params.get("role");
-    var rawInterests = params.get("interests");
     var rawQuery = params.get("q");
 
     if (rawQuery && els.searchInput) {
@@ -219,18 +215,6 @@
       }
     }
 
-    if (rawInterests) {
-      var interests = rawInterests.split(",").map(function (item) {
-        return item.trim();
-      }).filter(function (item) {
-        return data.interests.some(function (interest) { return interest.id === item; });
-      });
-      if (interests.length) {
-        state.interests = interests;
-        changed = true;
-      }
-    }
-
     if (changed) saveState();
   }
 
@@ -246,7 +230,6 @@
     els.resetBtn.addEventListener("click", function () {
       state.profileId = "tc";
       state.externalLevel = 1;
-      state.interests = ["foundation", "productivity"];
       state.filter = "recommended";
       state.activeCourseId = null;
       if (els.searchInput) els.searchInput.value = "";
@@ -311,13 +294,11 @@
     });
   }
 
-  // Controls (profile/level selects + interest chips) only need a full
-  // rebuild when the underlying selection set or language changes — not on
-  // every progress tick.
+  // Controls (profile/level selects) only need a full rebuild when the
+  // underlying selection set or language changes — not on every progress tick.
   function renderControls() {
     renderProfileSelect();
     renderLevelSelect();
-    renderInterestChips();
   }
 
   function render() {
@@ -351,35 +332,6 @@
   function syncSelects() {
     if (els.profileSelect.value !== state.profileId) els.profileSelect.value = state.profileId;
     if (els.levelSelect.value !== String(state.externalLevel)) els.levelSelect.value = String(state.externalLevel);
-  }
-
-  function renderInterestChips() {
-    replaceChildren(els.interestChips, data.interests.map(function (interest) {
-      var selected = state.interests.indexOf(interest.id) !== -1;
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "chip";
-      btn.setAttribute("aria-pressed", String(selected));
-      btn.textContent = topicLabel(interest.id, interest.label);
-      btn.title = topicHint(interest.id, interest.hint);
-      btn.addEventListener("click", function () {
-        toggleInterest(interest.id);
-        saveState();
-        renderInterestChips();
-        render();
-      });
-      return btn;
-    }));
-  }
-
-  function topicLabel(id, fallback) {
-    var interest = data.interests.find(function (item) { return item.id === id; });
-    return i18n("topic_" + id, fallback || (interest && interest.label) || id || i18n("topic_filter_all"));
-  }
-
-  function topicHint(id, fallback) {
-    var interest = data.interests.find(function (item) { return item.id === id; });
-    return i18n("topic_" + id + "_hint", fallback || (interest && interest.hint) || "");
   }
 
   function renderFilters() {
@@ -626,13 +578,6 @@
   }
 
   function rankedCourses(profile, level) {
-    var selectedInterests = state.interests;
-    var selectedInterestDims = data.interests.filter(function (interest) {
-      return selectedInterests.indexOf(interest.id) !== -1;
-    }).reduce(function (out, interest) {
-      return out.concat(interest.dimensions);
-    }, []);
-
     // Course candidacy comes from the curated learning tracks (LP01-LP05), not
     // from re-deriving it via tag matching. A course only counts as on-path for
     // this profile/level if it sits in a track serving the profile, in a stage
@@ -643,7 +588,6 @@
       return course.profileIds.indexOf(profile.id) !== -1;
     }).map(function (course) {
       var onPath = stageCoursesForLevel.indexOf(course.id) !== -1;
-      var interestMatch = intersects(course.interests, selectedInterests) || intersects(course.dimensions, selectedInterestDims);
       var roleTargetMatch = course.dimensions.some(function (dimensionId) {
         return Number(profile.targets[dimensionId] || 0) > 0;
       });
@@ -651,19 +595,15 @@
       // Sharpness score decides which of the relevant courses survive the cap.
       var score = 10;
       if (onPath) score += 60;
-      if (interestMatch) score += 24;
-      if (onPath && interestMatch) score += 12;
       if (roleTargetMatch) score += 8;
       if (progress.percent > 0 && progress.percent < 100) score += 12;
       if (progress.percent === 100 && progress.lessonCount > 0) score -= 20;
       return {
         course: course,
         score: score,
-        // Recommended requires both an on-path course AND a matching interest.
         // The cap is applied below; everything else falls back to optional.
-        kind: onPath && interestMatch ? "recommended" : "optional",
+        kind: onPath ? "recommended" : "optional",
         onPath: onPath,
-        interestMatch: interestMatch,
         progress: progress
       };
     }).sort(function (a, b) {
@@ -671,15 +611,12 @@
       return a.course.id.localeCompare(b.course.id);
     });
 
-    // Strict matching can yield zero recommendations (e.g. a profile/level whose
-    // track stages don't intersect the chosen interests). Never present an empty
-    // recommendation: fall back to the next-best relevant courses (on-path OR
-    // interest match), which the score ordering already ranks sensibly.
+    // A profile/level whose track stages have no on-path courses would
+    // otherwise leave the Recommended tab empty — fall back to showing
+    // everything relevant instead.
     var hasStrict = entries.some(function (entry) { return entry.kind === "recommended"; });
     if (!hasStrict) {
-      entries.forEach(function (entry) {
-        if (entry.onPath || entry.interestMatch) entry.kind = "recommended";
-      });
+      entries.forEach(function (entry) { entry.kind = "recommended"; });
     }
 
     // Enforce the cap: demote recommended courses past RECOMMEND_CAP to optional
@@ -813,22 +750,9 @@
     return prefix + "?id=" + encodeURIComponent(courseId);
   }
 
-  function toggleInterest(id) {
-    var idx = state.interests.indexOf(id);
-    if (idx === -1) state.interests.push(id);
-    else state.interests.splice(idx, 1);
-    if (!state.interests.length) state.interests.push("foundation");
-  }
-
   function validLevel(value) {
     var number = Number(value);
     return Number.isInteger(number) && number >= 1 && number <= 5;
-  }
-
-  function validInterests(interests) {
-    return Array.isArray(interests) && interests.length && interests.every(function (id) {
-      return data.interests.some(function (interest) { return interest.id === id; });
-    });
   }
 
   function resolveProfile(rawProfile) {
@@ -854,13 +778,6 @@
       out[item[key]] = item;
       return out;
     }, {});
-  }
-
-  function intersects(a, b) {
-    if (!a || !b || !a.length || !b.length) return false;
-    return a.some(function (item) {
-      return b.indexOf(item) !== -1;
-    });
   }
 
   function announce(text) {

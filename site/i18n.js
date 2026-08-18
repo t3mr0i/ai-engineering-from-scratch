@@ -123,31 +123,22 @@ window.SITE_I18N = {
   lrn_status_completed: { en: "Completed", de: "Abgeschlossen" },
   lrn_status_all: { en: "All", de: "Alle" },
 
-  // catalog.html topic dropdown; also the interest-chip labels below (ids
-  // shared with LrnData.interests)
+  // catalog.html topic dropdown (ids shared with LrnData.interests)
   topic_filter_all: { en: "All topics", de: "Alle Themen" },
   topic_foundation: { en: "Foundations", de: "Grundlagen" },
-  topic_foundation_hint: { en: "Core AI concepts and literacy", de: "KI-Grundlagen und Verständnis" },
   topic_productivity: { en: "Productivity", de: "Produktivität" },
-  topic_productivity_hint: { en: "Prompts, assistants, and office work", de: "Prompts, Assistenten und Büroarbeit" },
   topic_consulting: { en: "Consulting", de: "Consulting" },
-  topic_consulting_hint: { en: "Use cases, requirements, and value", de: "Use Cases, Anforderungen und Nutzen" },
   topic_engineering: { en: "Engineering", de: "Engineering" },
-  topic_engineering_hint: { en: "Agents, architecture, and QA", de: "Agenten, Architektur und Qualitätssicherung" },
   topic_governance: { en: "Governance", de: "Governance" },
-  topic_governance_hint: { en: "GDPR, responsible AI, and controls", de: "DSGVO, verantwortungsvolle KI und Kontrollen" },
   topic_leadership: { en: "Leadership", de: "Leadership" },
-  topic_leadership_hint: { en: "Change, workforce, and strategy", de: "Veränderung, Workforce und Strategie" },
   profile_label: { en: "Profile", de: "Profil" },
   level_label: { en: "Level", de: "Level" },
   selector_group_label: { en: "Choose profile and level", de: "Profil und Level auswählen" },
-  interests_label: { en: "Interests", de: "Interessen" },
   profile_select_label: { en: "Choose profile", de: "Profil auswählen" },
   level_select_label: { en: "Choose level", de: "Level auswählen" },
   course_filters_label: { en: "Course filters", de: "Kursfilter" },
   course_status_filters_label: { en: "Filter course status", de: "Kursstatus filtern" },
   reset_filters_label: { en: "Reset all filters and selections", de: "Alle Filter und Auswahl zurücksetzen" },
-  interests_hint: { en: "Choose several interests to shape which courses are recommended.", de: "Wähle mehrere Interessen, um die empfohlenen Kurse zu gewichten." },
   reset_btn: { en: "Reset", de: "Zurücksetzen" },
 
   // lrn/lrn.js — hybrid course search
