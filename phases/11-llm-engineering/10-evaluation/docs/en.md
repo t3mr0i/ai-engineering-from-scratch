@@ -29,6 +29,58 @@ Evaluation is table stakes. Shipping without evals is deploying blind.
 
 ## The Concept
 
+Every example below shares this setup — run it once, then the rest reuse `lrn_llm`. The running example throughout is an internal IT service-desk RAG assistant, comparing a concise baseline prompt against a more detailed expert prompt.
+
+```python editable
+import sys, json, types
+lrn_llm = types.ModuleType("lrn_llm")
+try:
+    from pyodide.http import pyfetch as _pyfetch
+    _IN_PYODIDE = True
+except ImportError:
+    import urllib.request as _urlreq
+    _IN_PYODIDE = False
+lrn_llm.API_BASE = "/api/llm"
+lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4-mini"
+lrn_llm.API_KEY = ""
+
+async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
+    if system is not None:
+        messages = [{"role": "system", "content": system}] + list(messages)
+    payload = {"model": model or lrn_llm.DEFAULT_MODEL, "messages": messages,
+               "max_completion_tokens": max_tokens}
+    headers = {"content-type": "application/json"}
+    _key = lrn_llm.API_KEY
+    if _key:
+        headers["Authorization"] = "Bearer " + _key
+    url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"
+    body = json.dumps(payload)
+    if _IN_PYODIDE:
+        r = await _pyfetch(url, method="POST", headers=headers, body=body)
+        data = await r.json()
+    else:
+        req = _urlreq.Request(url, method="POST", headers=headers, data=body.encode("utf-8"))
+        with _urlreq.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+    if "error" in data:
+        raise RuntimeError("LLM error: " + str(data["error"]))
+    return data
+
+def _lrn_text(r):
+    ch = (r or {}).get("choices") or []
+    return (ch[0].get("message", {}) or {}).get("content", "") if ch else ""
+
+async def _lrn_ping():
+    r = await _lrn_call([{"role": "user", "content": "Reply with exactly: OK"}], max_tokens=5)
+    return {"ok": _lrn_text(r).strip().upper().startswith("OK"), "model": r.get("model")}
+
+lrn_llm.call = _lrn_call
+lrn_llm.text = _lrn_text
+lrn_llm.ping = _lrn_ping
+r = await lrn_llm.ping()
+print(f"LLM reachable: {r}")
+```
+
 ### The Eval Taxonomy
 
 There are three categories of LLM evaluation. Each has a role. None is sufficient alone.
@@ -108,6 +160,45 @@ Anchored descriptions reduce judge variance by 30-40% compared to unanchored sca
 
 **Best-of-N** generates N outputs for each input and has the judge pick the best one. This measures the ceiling of your system. If best-of-5 consistently beats best-of-1, you might benefit from sampling multiple responses and selecting.
 
+Here are anchored rubrics for the four criteria above, applied to IT support quality specifically — relevance, correctness, helpfulness, and safety:
+
+```python editable
+RUBRICS = {
+    "relevance": {
+        5: "Directly answers the exact question asked with specific, no irrelevant information",
+        4: "Addresses the question well with only minor tangential content",
+        3: "Partially answers the question, misses some key aspects",
+        2: "Only tangentially related, mostly off-topic",
+        1: "Completely off-topic or does not address the question",
+    },
+    "correctness": {
+        5: "All information is factually accurate per IT policy and procedures",
+        4: "Mostly correct with one minor inaccuracy that doesn't affect the main answer",
+        3: "Contains a notable inaccuracy but core message is correct",
+        2: "Contains significant factual errors that undermine the response",
+        1: "Fundamentally incorrect or contradicts IT policy",
+    },
+    "helpfulness": {
+        5: "User can immediately act on it, includes specific steps and clear instructions",
+        4: "Provides useful information but lacks some specificity or action steps",
+        3: "Somewhat helpful but requires the user to seek additional information",
+        2: "Minimally helpful, too vague or generic to be actionable",
+        1: "Provides no value or leaves user more confused",
+    },
+    "safety": {
+        5: "Fully complies with security policy, no risk of policy violation",
+        4: "Safe with minor tone issues that don't compromise security",
+        3: "Contains mildly risky content or subtle policy ambiguity",
+        2: "Contains content that could lead to security risks if followed",
+        1: "Dangerous advice that violates security policy or exposes risk",
+    },
+}
+
+print("Evaluation rubrics defined for:")
+for criterion in RUBRICS:
+    print(f"  - {criterion}")
+```
+
 ### The Eval Pipeline
 
 Every evaluation follows the same 6-step pipeline.
@@ -150,6 +241,89 @@ Your eval dataset is only as good as the cases in it. Three types of test cases 
 
 **Distribution samples** (100-200 cases): Random samples from real production traffic. These catch problems that curated tests miss because they reflect what users actually ask.
 
+A small goldset for the IT service-desk assistant — six representative tickets covering authentication, connectivity, policy, onboarding, troubleshooting, and email:
+
+```python editable
+import json
+import math
+import random
+import statistics
+from dataclasses import dataclass, field
+from typing import Optional
+
+# Define the IT service-desk test cases (goldset)
+IT_GOLDSET = [
+    {
+        "id": "ticket-001",
+        "question": "How do I reset my password if I've forgotten it?",
+        "context": "Employee unable to access laptop after security password refresh",
+        "reference_answer": "Visit the IT Self-Service Portal, click 'Reset Password', verify your identity with your employee ID and registered email. You'll receive a temporary password via email. Log in and change it immediately. If the portal is unavailable, call IT Help at ext. 4357.",
+        "category": "authentication",
+    },
+    {
+        "id": "ticket-002",
+        "question": "What are the VPN requirements for remote work?",
+        "context": "Contract employee starting work from home",
+        "reference_answer": "All remote connections must use the company VPN. Install the Cisco AnyConnect client from the IT Software Store. Use your AD credentials to authenticate. Connect to vpn.company.internal. VPN is mandatory for accessing internal resources. Contact IT if installation fails.",
+        "category": "connectivity",
+    },
+    {
+        "id": "ticket-003",
+        "question": "Can I install software on my laptop?",
+        "context": "Developer needs to install third-party tools for project work",
+        "reference_answer": "You cannot install software directly due to security policies. Submit a software request through the IT Service Portal with business justification. IT will review within 3 business days. For approved software, IT will deploy it remotely. Emergency requests can be escalated to your manager.",
+        "category": "policy",
+    },
+    {
+        "id": "ticket-004",
+        "question": "How long does laptop provisioning take for new hires?",
+        "context": "HR scheduling equipment for incoming employee",
+        "reference_answer": "Standard provisioning takes 5-7 business days from hire date. This includes OS setup, security patches, software deployment, and network configuration. Laptops are tested before delivery. Express provisioning (2-3 days) is available for executive hires—request through the HR portal.",
+        "category": "onboarding",
+    },
+    {
+        "id": "ticket-005",
+        "question": "What should I do if my laptop won't connect to Wi-Fi?",
+        "context": "User troubleshooting network connectivity issue on company network",
+        "reference_answer": "First, forget the network and reconnect. Ensure your device is updated. Check Wi-Fi is enabled. Restart your laptop. If still failing, verify the network name is 'CompanyWiFi-Enterprise'. For persistent issues, run the network diagnostics tool from the IT Software Store or contact IT Help at ext. 4357 with your device MAC address.",
+        "category": "troubleshooting",
+    },
+    {
+        "id": "ticket-006",
+        "question": "Are there limits on email storage?",
+        "context": "User receiving warnings about mailbox quota",
+        "reference_answer": "Each user has a 50GB mailbox limit. When you reach 45GB, you'll receive a warning. Archive old emails or delete large attachments to free space. Contact IT if you need a temporary quota increase for migration purposes. Personal email (non-business) must be deleted from company systems.",
+        "category": "email",
+    },
+]
+
+print(f"Loaded IT service-desk goldset: {len(IT_GOLDSET)} test cases")
+for tc in IT_GOLDSET:
+    print(f"  [{tc['id']}] {tc['category']}: {tc['question'][:50]}...")
+```
+
+And two system prompt versions to compare against that goldset — a concise baseline and a more detailed expert version:
+
+```python editable
+PROMPTS = {
+    "baseline": """You are an IT support assistant. Answer employee questions about IT policies, passwords, VPN, laptops, and software. Be brief and direct.""",
+    "expert": """You are an expert IT service-desk assistant with deep knowledge of company IT policies and procedures. Your role is to help employees quickly and accurately by:
+
+1. Providing clear, step-by-step instructions when relevant
+2. Citing specific policy documents or internal resources
+3. Explaining the 'why' behind policies when it affects user decision-making
+4. Offering alternative solutions when the direct path isn't available
+5. Escalation paths for issues beyond self-service
+
+Always prioritize security compliance. When uncertain, recommend contacting IT Help at ext. 4357 rather than guessing. Format answers clearly with bullet points when there are multiple steps.""",
+}
+
+print("Prompts defined:")
+for name, prompt in PROMPTS.items():
+    print(f"\n[{name}]")
+    print(f"  {prompt[:100]}...")
+```
+
 ### Sample Size and Confidence
 
 50 test cases is not enough.
@@ -168,6 +342,164 @@ At 200 cases with 90% accuracy, the confidence interval tightens to [85%, 94%]. 
 
 Use at least 200 test cases for any evaluation where you need to make deployment decisions. Use 500+ if you are comparing two systems that are close in quality.
 
+The IT service-desk goldset above is deliberately tiny (six tickets) so the demo runs fast — a real eval needs the 200+ cases the table above calls for. First, run the baseline prompt against a couple of goldset tickets:
+
+```python editable
+baseline_responses = []
+
+for tc in IT_GOLDSET[:2]:  # Run on first 2 cases to keep demo fast
+    messages = [{"role": "user", "content": f"Question: {tc['question']}\nContext: {tc['context']}"}]
+    r = await lrn_llm.call(messages, system=PROMPTS["baseline"], max_tokens=300)
+    response_text = lrn_llm.text(r)
+    baseline_responses.append({
+        "ticket_id": tc["id"],
+        "response": response_text,
+        "reference": tc["reference_answer"],
+        "question": tc["question"]
+    })
+    print(f"\n[{tc['id']}] {tc['question'][:50]}...")
+    print(f"Baseline response: {response_text[:200]}...")
+```
+
+Then run the expert prompt against the same tickets:
+
+```python editable
+expert_responses = []
+
+for tc in IT_GOLDSET[:2]:  # Run on first 2 cases
+    messages = [{"role": "user", "content": f"Question: {tc['question']}\nContext: {tc['context']}"}]
+    r = await lrn_llm.call(messages, system=PROMPTS["expert"], max_tokens=300)
+    response_text = lrn_llm.text(r)
+    expert_responses.append({
+        "ticket_id": tc["id"],
+        "response": response_text,
+        "reference": tc["reference_answer"],
+        "question": tc["question"]
+    })
+    print(f"\n[{tc['id']}] {tc['question'][:50]}...")
+    print(f"Expert response: {response_text[:200]}...")
+```
+
+Now judge both sets of responses with an LLM-as-judge against the rubrics above. That's 2 tickets x 4 criteria = 8 scores per version — a more honest sample to bootstrap over than judging a single ticket. Score the baseline first:
+
+```python editable
+async def judge_response(question, reference, candidate_response, criterion):
+    """Use LLM as judge to score a single response on one criterion."""
+    judge_prompt = f"""You are an expert IT support evaluator. Score this response on '{criterion}' using the scale below.
+
+Rubric for '{criterion}':
+{RUBRICS[criterion][5]} (5 points)
+{RUBRICS[criterion][4]} (4 points)
+{RUBRICS[criterion][3]} (3 points)
+{RUBRICS[criterion][2]} (2 points)
+{RUBRICS[criterion][1]} (1 point)
+
+Question: {question}
+Reference answer: {reference}
+Candidate response: {candidate_response}
+
+Provide your score (1-5) and brief reasoning in this format:
+SCORE: [number]
+REASONING: [brief explanation]"""
+    
+    r = await lrn_llm.call(
+        [{"role": "user", "content": judge_prompt}],
+        max_tokens=150
+    )
+    result = lrn_llm.text(r)
+    try:
+        score_line = [l for l in result.split('\n') if l.startswith('SCORE:')][0]
+        score = int(score_line.split(':')[1].strip())
+    except:
+        score = 3  # Default to middle score if parsing fails
+    return {"score": score, "reasoning": result}
+
+# Score both baseline responses (2 goldset tickets) on all criteria
+baseline_criterion_scores = {criterion: [] for criterion in ["relevance", "correctness", "helpfulness", "safety"]}
+for resp in baseline_responses:
+    for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
+        result = await judge_response(
+            resp["question"],
+            resp["reference"],
+            resp["response"],
+            criterion
+        )
+        baseline_criterion_scores[criterion].append(result["score"])
+        print(f"Baseline [{resp['ticket_id']}] - {criterion}: {result['score']}/5")
+
+baseline_scores_list = [s for scores in baseline_criterion_scores.values() for s in scores]
+print(f"\nBaseline average across {len(baseline_scores_list)} scores (2 tickets x 4 criteria): {sum(baseline_scores_list) / len(baseline_scores_list):.2f}/5")
+```
+
+And the expert version, with the same judge and rubrics, producing the equivalent 8-score sample for comparison:
+
+```python editable
+# Score both expert responses (2 goldset tickets) on all criteria
+expert_criterion_scores = {criterion: [] for criterion in ["relevance", "correctness", "helpfulness", "safety"]}
+for resp in expert_responses:
+    for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
+        result = await judge_response(
+            resp["question"],
+            resp["reference"],
+            resp["response"],
+            criterion
+        )
+        expert_criterion_scores[criterion].append(result["score"])
+        print(f"Expert [{resp['ticket_id']}] - {criterion}: {result['score']}/5")
+
+expert_scores_list = [s for scores in expert_criterion_scores.values() for s in scores]
+print(f"\nExpert average across {len(expert_scores_list)} scores (2 tickets x 4 criteria): {sum(expert_scores_list) / len(expert_scores_list):.2f}/5")
+```
+
+For a fair comparison with statistical rigor, compute 95% confidence intervals over the 8 scores per version collected above: Wilson's score interval for the pass rate, and bootstrap resampling for the mean score (both work well even with small sample sizes).
+
+```python editable
+def wilson_confidence_interval(successes, total, z=1.96):
+    """Compute 95% confidence interval for pass rate (score >= 4)."""
+    if total == 0:
+        return (0.0, 0.0)
+    p = successes / total
+    denominator = 1 + z * z / total
+    center = (p + z * z / (2 * total)) / denominator
+    spread = z * math.sqrt((p * (1 - p) + z * z / (4 * total)) / total) / denominator
+    lower = max(0.0, center - spread)
+    upper = min(1.0, center + spread)
+    return (round(lower, 3), round(upper, 3))
+
+def bootstrap_mean_ci(scores, n_bootstrap=500, confidence=0.95):
+    """Bootstrap confidence interval for mean score."""
+    if len(scores) < 2:
+        mean = scores[0] if scores else 0
+        return (mean, mean, mean)
+    means = []
+    rng = random.Random(42)  # seeded for a reproducible CI (illustrating the technique, not measuring fresh randomness)
+    for _ in range(n_bootstrap):
+        sample = rng.choices(scores, k=len(scores))
+        means.append(sum(sample) / len(sample))
+    means.sort()
+    alpha = (1 - confidence) / 2
+    lower_idx = int(alpha * n_bootstrap)
+    upper_idx = int((1 - alpha) * n_bootstrap) - 1
+    mean = sum(scores) / len(scores)
+    return (round(means[lower_idx], 3), round(mean, 3), round(means[upper_idx], 3))
+
+# Compute CIs over the 8 scores per version (2 tickets x 4 criteria) from above
+baseline_ci = bootstrap_mean_ci(baseline_scores_list)
+expert_ci = bootstrap_mean_ci(expert_scores_list)
+
+baseline_pass_rate = sum(1 for s in baseline_scores_list if s >= 4) / len(baseline_scores_list)
+expert_pass_rate = sum(1 for s in expert_scores_list if s >= 4) / len(expert_scores_list)
+
+baseline_pass_ci = wilson_confidence_interval(sum(1 for s in baseline_scores_list if s >= 4), len(baseline_scores_list))
+expert_pass_ci = wilson_confidence_interval(sum(1 for s in expert_scores_list if s >= 4), len(expert_scores_list))
+
+print("\nCONFIDENCE INTERVALS (95%)")
+print(f"\nBaseline mean score: {baseline_ci[1]:.3f} [{baseline_ci[0]:.3f}, {baseline_ci[2]:.3f}]")
+print(f"Expert mean score:   {expert_ci[1]:.3f} [{expert_ci[0]:.3f}, {expert_ci[2]:.3f}]")
+print(f"\nBaseline pass rate (>=4): {baseline_pass_rate:.1%} [{baseline_pass_ci[0]:.1%}, {baseline_pass_ci[1]:.1%}]")
+print(f"Expert pass rate (>=4):   {expert_pass_rate:.1%} [{expert_pass_ci[0]:.1%}, {expert_pass_ci[1]:.1%}]")
+```
+
 ### Regression Testing
 
 Every prompt change needs a before/after eval. This is non-negotiable.
@@ -179,6 +511,38 @@ The workflow:
 4. Compare scores with a statistical test (paired t-test or bootstrap)
 5. If no statistically significant regression on any criteria -- ship
 6. If regression detected -- investigate which test cases degraded and why
+
+Putting the baseline-vs-expert comparison from above into a report that answers the ship/no-ship question directly:
+
+```python editable
+print("="*70)
+print("  IT SERVICE-DESK EVAL COMPARISON REPORT")
+print("="*70)
+
+diff = expert_ci[1] - baseline_ci[1]
+if abs(diff) > 0.3:
+    status = "IMPROVED" if diff > 0 else "REGRESSION"
+else:
+    status = "STABLE"
+
+print(f"\nVersion comparison (averaged across 2 tickets, bootstrapped over 8 scores per version):")
+print(f"  Baseline: {baseline_ci[1]:.3f}/5.0 (CI: [{baseline_ci[0]:.3f}, {baseline_ci[2]:.3f}])")
+print(f"  Expert:   {expert_ci[1]:.3f}/5.0 (CI: [{expert_ci[0]:.3f}, {expert_ci[2]:.3f}])")
+print(f"  Diff:     {diff:+.3f} {status}")
+
+print(f"\nDetailed scores by criterion (averaged across 2 tickets):")
+print(f"  {'Criterion':<15} {'Baseline':>12} {'Expert':>12} {'Diff':>8}")
+print(f"  {'-'*55}")
+for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
+    baseline_val = sum(baseline_criterion_scores[criterion]) / len(baseline_criterion_scores[criterion])
+    expert_val = sum(expert_criterion_scores[criterion]) / len(expert_criterion_scores[criterion])
+    diff_val = expert_val - baseline_val
+    print(f"  {criterion:<15} {baseline_val:>12.2f} {expert_val:>12.2f} {diff_val:>+8.2f}")
+
+print(f"\n" + "="*70)
+print(f"  Deployment decision: {'SHIP (Expert version)' if diff > 0.1 else 'KEEP BASELINE'} ")
+print("="*70)
+```
 
 ### Cost of Evals
 
@@ -219,8 +583,39 @@ You do not have to build everything from scratch. These tools provide eval infra
 
 For this lesson, we build it from scratch so you understand every layer. In production, use one of these tools.
 
+### Try It Yourself
 
+Edit the question and reference answer below to evaluate a custom IT support scenario. The judge scores your response against the same rubrics.
 
+```python editable
+custom_question = "How do I enable two-factor authentication for my account?"
+custom_reference = "Navigate to your profile settings, click 'Security', enable two-factor authentication using your phone or authenticator app, and confirm. IT recommends authenticator apps over SMS for security."
+custom_context = "Employee asking about account security best practices"
+
+# Generate a response using the expert prompt
+print(f"Custom question: {custom_question}")
+print(f"\nGenerating expert response...")
+
+messages = [{"role": "user", "content": f"Question: {custom_question}\nContext: {custom_context}"}]
+r = await lrn_llm.call(messages, system=PROMPTS["expert"], max_tokens=300)
+custom_response = lrn_llm.text(r)
+print(f"\nGenerated response:\n{custom_response}")
+
+# Score it
+print(f"\nScoring custom response...")
+custom_scores = {}
+for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
+    result = await judge_response(
+        custom_question,
+        custom_reference,
+        custom_response,
+        criterion
+    )
+    custom_scores[criterion] = result["score"]
+    print(f"  {criterion}: {result['score']}/5")
+
+print(f"\nAverage score: {sum(custom_scores.values()) / len(custom_scores):.2f}/5")
+```
 
 ## Further Reading
 
