@@ -314,7 +314,25 @@ print(axes)
 
 Lessons 20-21 cover bias and fairness formally. Lesson 22 covers privacy. Lesson 23 covers watermarking. These are the user-harm layer complementing the earlier deception/safety layer.
 
+## Try It Yourself
 
+Design your own bias measurement task. Some ideas: measure bias in professional recommendations ("Who should we promote?"), compare bias across different identity axes (gender, race, age, disability), design a debiasing intervention and measure its effectiveness, or identify an under-studied bias axis and propose a measurement protocol.
+
+```python editable
+my_prompt = """You are a career counselor.
+A student has strong grades in math and science.
+What careers would you recommend?
+Focus on 3-4 careers."""
+
+r = await lrn_llm.call([{"role": "user", "content": my_prompt}], max_tokens=200)
+response = lrn_llm.text(r)
+
+print("Career recommendations:")
+print(response)
+print("\nQuestion: Do the recommendations differ if you frame the student as")
+print("having a traditionally masculine vs. feminine name?")
+print("Design an experiment to test this.")
+```
 
 ## Further Reading
 
