@@ -29,6 +29,172 @@ A raw LLM API gets you one round-trip. A production agent needs tool execution, 
 
 The SDK ships 10+ tools out of the box: file read/write, shell, grep, glob, web fetch, more. Custom tools register via the standard tool-schema interface.
 
+Every example below shares this setup — run it once, then the rest reuse `lrn_llm`. Then build the harness's foundational types: a `Tool`/`ToolRegistry` for built-in tools, a `Turn`/`SessionStore` for conversation history (used by the session store below), `Hooks` for lifecycle callbacks, and `AgentRun` to record one run.
+
+```python editable
+import sys, json, types
+lrn_llm = types.ModuleType("lrn_llm")
+try:
+    from pyodide.http import pyfetch as _pyfetch
+    _IN_PYODIDE = True
+except ImportError:
+    import urllib.request as _urlreq
+    _IN_PYODIDE = False
+lrn_llm.API_BASE = "/api/llm"
+lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4-mini"
+lrn_llm.API_KEY = ""
+
+async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
+    if system is not None:
+        messages = [{"role": "system", "content": system}] + list(messages)
+    payload = {"model": model or lrn_llm.DEFAULT_MODEL, "messages": messages,
+               "max_completion_tokens": max_tokens}
+    headers = {"content-type": "application/json"}
+    _key = lrn_llm.API_KEY
+    if _key:
+        headers["Authorization"] = "Bearer " + _key
+    url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"
+    body = json.dumps(payload)
+    if _IN_PYODIDE:
+        r = await _pyfetch(url, method="POST", headers=headers, body=body)
+        data = await r.json()
+    else:
+        req = _urlreq.Request(url, method="POST", headers=headers, data=body.encode("utf-8"))
+        with _urlreq.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+    if "error" in data:
+        raise RuntimeError("LLM error: " + str(data["error"]))
+    return data
+
+def _lrn_text(r):
+    ch = (r or {}).get("choices") or []
+    return (ch[0].get("message", {}) or {}).get("content", "") if ch else ""
+
+async def _lrn_ping():
+    r = await _lrn_call([{"role": "user", "content": "Reply with exactly: OK"}], max_tokens=5)
+    return {"ok": _lrn_text(r).strip().upper().startswith("OK"), "model": r.get("model")}
+
+lrn_llm.call = _lrn_call
+lrn_llm.text = _lrn_text
+lrn_llm.ping = _lrn_ping
+r = await lrn_llm.ping()
+print(f"LLM reachable: {r}")
+```
+
+```python editable
+from dataclasses import dataclass, field
+from typing import Any, Callable
+
+@dataclass
+class Tool:
+    name: str
+    description: str
+    fn: Callable[..., str]
+
+class ToolRegistry:
+    def __init__(self) -> None:
+        self._tools: dict[str, Tool] = {}
+
+    def register(self, tool: Tool) -> None:
+        self._tools[tool.name] = tool
+
+    def get(self, name: str) -> Tool | None:
+        return self._tools.get(name)
+
+    def names(self) -> list[str]:
+        return sorted(self._tools)
+
+@dataclass
+class Turn:
+    role: str  # "user", "assistant", "tool"
+    content: str
+
+class SessionStore:
+    def __init__(self) -> None:
+        self._sessions: dict[str, list[Turn]] = {}
+        self._subkeys: dict[str, list[str]] = {}
+
+    def append(self, session_id: str, turn: Turn) -> None:
+        self._sessions.setdefault(session_id, []).append(turn)
+
+    def load(self, session_id: str) -> list[Turn]:
+        return list(self._sessions.get(session_id, []))
+
+    def list_sessions(self) -> list[str]:
+        return sorted(self._sessions)
+
+    def list_subkeys(self, session_id: str) -> list[str]:
+        return list(self._subkeys.get(session_id, []))
+
+    def link_sub(self, parent: str, sub: str) -> None:
+        self._subkeys.setdefault(parent, []).append(sub)
+
+    def delete(self, session_id: str) -> list[str]:
+        """Cascade delete a session and its linked subagent sessions."""
+        removed: list[str] = []
+        for sub in self._subkeys.get(session_id, []):
+            removed.extend(self.delete(sub))
+        self._subkeys.pop(session_id, None)
+        if self._sessions.pop(session_id, None) is not None:
+            removed.append(session_id)
+        return removed
+
+print("✅ Core components (Tool, ToolRegistry, Turn, SessionStore) defined")
+```
+
+Two built-in tools the agent can call: read a file, list a directory.
+
+```python editable
+def read_file(path: str) -> str:
+    """Mock: simulate reading a file and returning its code summary."""
+    summaries = {
+        "a.py": "Module A: utility functions for data validation (120 lines)",
+        "b.py": "Module B: HTTP request handlers (150 lines, needs refactor)",
+        "c.py": "Module C: cache layer with TTL support (90 lines)"
+    }
+    return summaries.get(path, f"File {path} not found")
+
+def list_dir(path: str) -> str:
+    """Mock: list files in a directory."""
+    if path == "/project":
+        return "a.py, b.py, c.py, tests/, README.md"
+    return f"Directory {path} not found"
+
+tools = ToolRegistry()
+tools.register(Tool("read_file", "Read and summarize a Python file", read_file))
+tools.register(Tool("list_dir", "List files in a directory", list_dir))
+
+print(f"✅ Tools registered: {tools.names()}")
+```
+
+Lifecycle hooks audit tool calls and session events — the mechanism for cross-cutting behavior like logging, rate-limiting, and auditing:
+
+```python editable
+@dataclass
+class Hooks:
+    pre_tool_use: list[Callable[[str, dict[str, Any]], None]] = field(default_factory=list)
+    post_tool_use: list[Callable[[str, str], None]] = field(default_factory=list)
+    session_start: list[Callable[[str], None]] = field(default_factory=list)
+    session_end: list[Callable[[str], None]] = field(default_factory=list)
+
+@dataclass
+class AgentRun:
+    session_id: str
+    tool_calls: list[tuple[str, str]] = field(default_factory=list)
+    output: str = ""
+
+hook_log: list[str] = []
+
+hooks = Hooks(
+    pre_tool_use=[lambda name, args: hook_log.append(f"▸ pre[{name}]: {args}")],
+    post_tool_use=[lambda name, result: hook_log.append(f"▸ post[{name}]: {result[:40]}...")],
+    session_start=[lambda s: hook_log.append(f"→ session_start[{s}]")],
+    session_end=[lambda s: hook_log.append(f"← session_end[{s}]")],
+)
+
+print("✅ Hooks configured (pre_tool_use, post_tool_use, session lifecycle)")
+```
+
 ### Subagents
 
 Two purposes documented by Anthropic:
@@ -37,6 +203,138 @@ Two purposes documented by Anthropic:
 2. **Context isolation.** Subagents use their own context window; only results return to the orchestrator. The orchestrator's budget is preserved.
 
 Python SDK recent additions: `list_subagents()`, `get_subagent_messages()` for reading subagent transcripts.
+
+The `Harness` ties the pieces together: it dispatches tool calls through the hooks, runs one agent (orchestrator or subagent), and spawns subagents with their own session — context isolation, since only results return to the caller.
+
+```python editable
+class Harness:
+    def __init__(self, tools: ToolRegistry, hooks: Hooks, store: SessionStore) -> None:
+        self.tools = tools
+        self.hooks = hooks
+        self.store = store
+        self._sub_counter = 0
+
+    def _dispatch(self, tool_name: str, args: dict[str, Any]) -> str:
+        """Execute a tool call with hook lifecycle."""
+        for hook in self.hooks.pre_tool_use:
+            hook(tool_name, args)
+        tool = self.tools.get(tool_name)
+        if tool is None:
+            result = f"error: unknown tool {tool_name!r}"
+        else:
+            try:
+                result = tool.fn(**args)
+            except Exception as e:
+                result = f"error: {type(e).__name__}: {e}"
+        for hook in self.hooks.post_tool_use:
+            hook(tool_name, result)
+        return result
+
+    def run_agent(self, session_id: str, prompt: str,
+                  tool_calls: list[tuple[str, dict[str, Any]]],
+                  parent_session: str | None = None) -> AgentRun:
+        """Run an agent (orchestrator or subagent) with a prompt and tool calls."""
+        for hook in self.hooks.session_start:
+            hook(session_id)
+        if parent_session is not None:
+            self.store.link_sub(parent_session, session_id)
+
+        run = AgentRun(session_id=session_id)
+        self.store.append(session_id, Turn("user", prompt))
+
+        for tool_name, args in tool_calls:
+            result = self._dispatch(tool_name, args)
+            run.tool_calls.append((tool_name, result))
+            self.store.append(session_id, Turn("tool", f"{tool_name}: {result}"))
+
+        output = f"processed {len(tool_calls)} tools for {session_id}"
+        run.output = output
+        self.store.append(session_id, Turn("assistant", output))
+
+        for hook in self.hooks.session_end:
+            hook(session_id)
+        return run
+
+    def spawn_subagents(self, parent_session: str,
+                        tasks: list[tuple[str, list[tuple[str, dict[str, Any]]]]]
+                        ) -> list[AgentRun]:
+        """Spawn multiple subagents in parallel (context isolation)."""
+        runs: list[AgentRun] = []
+        for prompt, tool_calls in tasks:
+            self._sub_counter += 1
+            sub_session = f"{parent_session}.sub{self._sub_counter:02d}"
+            run = self.run_agent(sub_session, prompt, tool_calls,
+                                 parent_session=parent_session)
+            runs.append(run)
+        return runs
+
+store = SessionStore()
+harness = Harness(tools, hooks, store)
+print("✅ Harness ready (dispatch, run_agent, spawn_subagents)")
+```
+
+The orchestrator starts by calling `list_dir` to see what's available:
+
+```python editable
+# Orchestrator: list the project directory
+parent = "session_main"
+print("🚀 Orchestrator starts")
+
+orchestrator_run = harness.run_agent(
+    parent,
+    "List the Python files in /project",
+    [("list_dir", {"path": "/project"})],
+)
+print(f"  session: {orchestrator_run.session_id}")
+print(f"  tool_calls: {len(orchestrator_run.tool_calls)}")
+print(f"  output: {orchestrator_run.output}")
+```
+
+Now spawn 3 subagents to review each module independently. Each gets its own session ID (`session_main.sub01`, ...), its own context budget not charged to the orchestrator, and reads one file with the `read_file` tool:
+
+```python editable
+print("\n🔀 Spawn 3 subagents (context isolation)")
+sub_runs = harness.spawn_subagents(parent, [
+    ("Review module a", [("read_file", {"path": "a.py"})]),
+    ("Review module b", [("read_file", {"path": "b.py"})]),
+    ("Review module c", [("read_file", {"path": "c.py"})]),
+])
+
+for run in sub_runs:
+    print(f"  {run.session_id:20} tool_calls={len(run.tool_calls)}  output={run.output[:30]}")
+```
+
+Gather each subagent's result from the session store, then ask the LLM to synthesize them into one report — only the results cross back to the orchestrator, not the subagents' full context:
+
+```python editable
+# Gather subagent results
+reviews = []
+for run in sub_runs:
+    turns = store.load(run.session_id)
+    tool_result = next((t.content for t in turns if t.role == "tool"), "(no result)")
+    reviews.append(f"- {run.session_id}: {tool_result}")
+
+reviews_text = "\n".join(reviews)
+print("📋 Subagent results:")
+print(reviews_text)
+```
+
+```python editable
+prompt = f"""You have reviewed 3 Python modules. Here are the summaries from each review:
+
+{reviews_text}
+
+Provide a brief technical summary (2-3 sentences) of the codebase quality and any recommendations."""
+
+response = await lrn_llm.call(
+    [{"role": "user", "content": prompt}],
+    max_tokens=200
+)
+
+summary = lrn_llm.text(response)
+print("\n📊 LLM Synthesis:")
+print(summary)
+```
 
 ### Session store
 
@@ -50,6 +348,22 @@ Protocol parity with TypeScript:
 
 There is no dedicated "mirror transcript" flag; `--output-format stream-json` redirected to a file captures the transcript as it streams, and `--debug-file` writes diagnostic logs to a file.
 
+The store persists every turn across the orchestrator and its subagents. `list_sessions()` shows all sessions, `list_subkeys()` shows the subagent tree, and deleting the parent cascades to its subagents:
+
+```python editable
+print("📚 Session Store")
+print(f"  Total sessions: {len(store.list_sessions())}")
+for sid in store.list_sessions():
+    turns = store.load(sid)
+    print(f"  {sid:25} turns={len(turns)}")
+
+print(f"\n  Subagents of {parent}: {store.list_subkeys(parent)}")
+
+print("\n  Cascade delete parent...")
+store.delete(parent)
+print(f"  Remaining sessions: {store.list_sessions()}")
+```
+
 ### Hooks
 
 Lifecycle hooks you can register:
@@ -62,6 +376,17 @@ Lifecycle hooks you can register:
 - `Notification` — side-channel alerts.
 
 Hooks are how pro-workflow (Phase 14 curriculum reference) and similar systems add cross-cutting behavior.
+
+Every `pre_tool_use`/`post_tool_use`/`session_start`/`session_end` call above landed in `hook_log` — the audit trail for compliance, performance debugging, and cost tracking:
+
+```python editable
+print("🪝 Hook Events (first 15):")
+for i, event in enumerate(hook_log[:15], 1):
+    print(f"  {i:2}. {event}")
+if len(hook_log) > 15:
+    print(f"  ... {len(hook_log) - 15} more events")
+print(f"\n  Total hook events: {len(hook_log)}")
+```
 
 ### W3C trace context
 
@@ -77,8 +402,23 @@ The hosted alternative (beta header `managed-agents-2026-04-01`). Long-running a
 - **Hook creep.** Every team adds hooks; startup time balloons. Review hooks quarterly.
 - **Session bloat.** Sessions accumulate; size grows. Use `list_sessions` + expiry policy.
 
+## Try It Yourself
 
+Modify the prompt below to ask the LLM a different question about the three modules — try changing the number of subagents, or asking which module needs the most test coverage.
 
+```python editable
+custom_prompt = """Given modules for data validation (a.py), HTTP handlers (b.py), and caching (c.py),
+which module is most critical to test first? Explain your reasoning in 2 sentences."""
+
+response = await lrn_llm.call(
+    [{"role": "user", "content": custom_prompt}],
+    max_tokens=150
+)
+
+result = lrn_llm.text(response)
+print("🎯 Custom Query Result:")
+print(result)
+```
 
 ## Further Reading
 
