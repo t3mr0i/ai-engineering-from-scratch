@@ -56,6 +56,260 @@ The loop closes on the state file, not on chat history. Chat is volatile. The re
 
 Prompting tells the model what you want this turn. A workbench tells the model how to do work across turns and across sessions. Most agent failure stories are workbench failures wearing prompt-engineering clothes.
 
+See it directly: run the same task twice, once with only a prompt, once with the seven surfaces wired in, and compare what comes back.
+
+Every example below shares this setup — run it once, then the rest reuse `lrn_llm`. The scenario: a FastAPI app needs password validation on `/signup`, plus a test for it.
+
+```python editable
+import sys, json, types
+lrn_llm = types.ModuleType("lrn_llm")
+try:
+    from pyodide.http import pyfetch as _pyfetch
+    _IN_PYODIDE = True
+except ImportError:
+    import urllib.request as _urlreq
+    _IN_PYODIDE = False
+lrn_llm.API_BASE = "/api/llm"
+lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4-mini"
+lrn_llm.API_KEY = ""
+
+async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
+    if system is not None:
+        messages = [{"role": "system", "content": system}] + list(messages)
+    payload = {"model": model or lrn_llm.DEFAULT_MODEL, "messages": messages,
+               "max_completion_tokens": max_tokens}
+    headers = {"content-type": "application/json"}
+    _key = lrn_llm.API_KEY
+    if _key:
+        headers["Authorization"] = "Bearer " + _key
+    url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"
+    body = json.dumps(payload)
+    if _IN_PYODIDE:
+        r = await _pyfetch(url, method="POST", headers=headers, body=body)
+        data = await r.json()
+    else:
+        req = _urlreq.Request(url, method="POST", headers=headers, data=body.encode("utf-8"))
+        with _urlreq.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+    if "error" in data:
+        raise RuntimeError("LLM error: " + str(data["error"]))
+    return data
+
+def _lrn_text(r):
+    ch = (r or {}).get("choices") or []
+    return (ch[0].get("message", {}) or {}).get("content", "") if ch else ""
+
+async def _lrn_ping():
+    r = await _lrn_call([{"role": "user", "content": "Reply with exactly: OK"}], max_tokens=5)
+    return {"ok": _lrn_text(r).strip().upper().startswith("OK"), "model": r.get("model")}
+
+lrn_llm.call = _lrn_call
+lrn_llm.text = _lrn_text
+lrn_llm.ping = _lrn_ping
+r = await lrn_llm.ping()
+print(f"LLM reachable: {r}")
+```
+
+```python editable
+# Define the task and the surfaces
+task = {
+    "description": "Add password validation to /signup endpoint and write a test",
+    "allowed_files": ["app.py", "test_app.py"],
+    "forbidden_files": ["README.md", "scripts/release.sh"],
+    "acceptance_criteria": [
+        "test_app.py::test_signup_rejects_short_password passes",
+        "Only app.py and test_app.py are modified"
+    ]
+}
+
+print("Task:", task["description"])
+print("Allowed files:", task["allowed_files"])
+print("Forbidden files:", task["forbidden_files"])
+print("Acceptance:", task["acceptance_criteria"])
+```
+
+Run 1: prompt-only. The model sees only the task description — no instructions, no scope, no verification requirement. Watch how the response lacks structure and safety.
+
+```python editable
+prompt_only_task = f"""
+Task: {task['description']}
+
+Respond with:
+1. The code changes you'd make (just show the key pieces)
+2. The test you'd write
+3. Whether you declare success
+"""
+
+r = await lrn_llm.call(
+    [{"role": "user", "content": prompt_only_task}],
+    max_tokens=500
+)
+
+prompt_only_response = lrn_llm.text(r)
+print("=== PROMPT-ONLY RUN ===")
+print(prompt_only_response)
+print("\n[Notice: no mention of scope, no verification step, no state file]")
+```
+
+Run 2: workbench-guided. Same task, same model, but now with explicit instructions, scope boundaries, and a verification requirement.
+
+```python editable
+workbench_instructions = """You are a coding agent with seven workbench surfaces.
+
+REQUIRED SURFACES:
+1. SCOPE: You may ONLY write to app.py and test_app.py. Do NOT touch README.md or scripts/release.sh.
+2. INSTRUCTIONS: Before writing any code, output your understanding of the task.
+3. FEEDBACK: When done, list the files you modified and why.
+4. VERIFICATION: Declare success only if the test passes. Show the test pass/fail status.
+5. HANDOFF: At the end, produce a JSON summary for the next session.
+
+FORBIDDEN: Do not modify files outside the scope. Do not declare success without running the test.
+"""
+
+workbench_task = f"""
+{workbench_instructions}
+
+Task: {task['description']}
+Allowed files: {', '.join(task['allowed_files'])}
+Forbidden files: {', '.join(task['forbidden_files'])}
+Acceptance criteria: {'; '.join(task['acceptance_criteria'])}
+
+Respond in this format:
+1. UNDERSTANDING: What you're about to do
+2. SCOPE CHECK: Which files you'll modify
+3. CODE: The changes to app.py
+4. TEST: The test code for test_app.py
+5. FEEDBACK: Files modified (in reality)
+6. VERIFICATION: Test result (pass/fail)
+7. HANDOFF: JSON summary for next session
+"""
+
+r = await lrn_llm.call(
+    [{"role": "user", "content": workbench_task}],
+    system="You are a reliable coding agent.",
+    max_tokens=700
+)
+
+workbench_response = lrn_llm.text(r)
+print("=== WORKBENCH-GUIDED RUN ===")
+print(workbench_response)
+print("\n[Notice: explicit scope, verification step, handoff summary]")
+```
+
+Now check which of the seven surfaces actually shows up in each response:
+
+```python editable
+WORKBENCH_SURFACES = [
+    "instructions",
+    "state",
+    "scope",
+    "feedback",
+    "verification",
+    "review",
+    "handoff",
+]
+
+def count_surfaces(text: str, surfaces: list[str]) -> dict:
+    """Count which surfaces appear in the response."""
+    found = {}
+    text_lower = text.lower()
+
+    # Simple heuristics for surface detection
+    found["instructions"] = "task" in text_lower or "understand" in text_lower
+    found["scope"] = ("modify" in text_lower or "touch" in text_lower or "only" in text_lower)
+    found["feedback"] = ("modify" in text_lower or "file" in text_lower or "write" in text_lower)
+    found["verification"] = ("test" in text_lower and ("pass" in text_lower or "run" in text_lower))
+    found["review"] = False  # Not expected in a single agent run
+    found["handoff"] = ("json" in text_lower or "summary" in text_lower or "next" in text_lower)
+    found["state"] = ("session" in text_lower or "state" in text_lower or "json" in text_lower)
+
+    return found
+
+prompt_only_surfaces = count_surfaces(prompt_only_response, WORKBENCH_SURFACES)
+workbench_surfaces = count_surfaces(workbench_response, WORKBENCH_SURFACES)
+
+print("=== SURFACE COMPARISON ===")
+print(f"\nPrompt-only present surfaces:")
+for surface in WORKBENCH_SURFACES:
+    status = "✓" if prompt_only_surfaces.get(surface, False) else "✗"
+    print(f"  {status} {surface}")
+
+print(f"\nWorkbench present surfaces:")
+for surface in WORKBENCH_SURFACES:
+    status = "✓" if workbench_surfaces.get(surface, False) else "✗"
+    print(f"  {status} {surface}")
+
+print(f"\nSurfaces added by workbench: {sum(workbench_surfaces.values()) - sum(prompt_only_surfaces.values())}")
+```
+
+Each missing surface causes a specific failure — the machine-readable version of the table above:
+
+```python editable
+failure_modes = {
+    "scope_missing": {
+        "surface": "scope",
+        "failure": "Agent edits files outside the allowed list (e.g., README.md, scripts/release.sh)",
+        "symptom": "Unrelated files are modified; tests fail due to unexpected side effects"
+    },
+    "instructions_missing": {
+        "surface": "instructions",
+        "failure": "Agent has no explicit rules about what counts as done",
+        "symptom": "Agent guesses at requirements; may implement wrong validation or missing test"
+    },
+    "feedback_missing": {
+        "surface": "feedback",
+        "failure": "Agent never runs tests; only hallucinates test output",
+        "symptom": "Agent declares success without evidence; broken code reaches main branch"
+    },
+    "verification_missing": {
+        "surface": "verification",
+        "failure": "No gate checks the agent's work before handoff",
+        "symptom": "Invalid code passes without checking acceptance criteria"
+    },
+    "state_missing": {
+        "surface": "state",
+        "failure": "No file records what was attempted and what failed",
+        "symptom": "Next session restarts from zero; repeated attempts at the same problem"
+    },
+    "handoff_missing": {
+        "surface": "handoff",
+        "failure": "No structured summary passed to the next session",
+        "symptom": "No one knows what was tried or what is left to do"
+    },
+    "review_missing": {
+        "surface": "review",
+        "failure": "Agent marks its own homework",
+        "symptom": "Errors go uncaught; no second opinion on risky decisions"
+    }
+}
+
+print("=== THE SEVEN WORKBENCH SURFACES & THEIR FAILURE MODES ===")
+for key, data in failure_modes.items():
+    print(f"\n{data['surface'].upper()}")
+    print(f"  Missing: {data['failure']}")
+    print(f"  Symptom: {data['symptom']}")
+```
+
+The lesson's core claim, restated as data: the same model, same task, but with surfaces wired in, goes from unreliable to reliable.
+
+```python editable
+summary = {
+    "lesson_claim": "Capable model ≠ Reliable agent. The workbench is the difference.",
+    "surfaces_that_matter": {
+        "scope": "Prevents edit leakage into unrelated code",
+        "instructions": "Gives the agent explicit rules on what success means",
+        "feedback": "Captures real command output (test runs, not hallucinations)",
+        "verification": "Gate: only approve work that passes acceptance checks",
+        "state": "Durable record of what was tried (survives context loss)",
+        "handoff": "Structured summary so next session knows what to do",
+        "review": "Second opinion; prevents self-approval of risky work"
+    },
+    "key_insight": "Workbench engineering is distributed-systems reliability applied to agents. The primitives (queues, state, policy, triggers, workers) are identical to every production system. Agents are just a new shape for an old problem."
+}
+
+print(json.dumps(summary, indent=2))
+```
+
 ### Workbench versus framework
 
 A framework gives you a runtime (LangGraph, AutoGen, Agents SDK). A workbench gives the agent a place to work inside that runtime. You need both. This mini-track is about the second one.
@@ -134,8 +388,25 @@ You do not need to disagree with any of these pieces to notice the gap. They are
 
 So when you hear "harness engineering" elsewhere, translate to primitives. Prompts and rules are policy and functions. Scaffolding is the runtime. Guardrails are authorization + verification. Hooks are triggers. Memory is session persistence. The Ralph Loop is requeue. Subagents are workers. Sandboxes are compute planes. The vocabulary changes; the engineering does not. The workbench is the agent-facing UX; the harness, in the sense that survives the next vendor reframe, is functions, workers, triggers, runtimes, queues, persistence, and policy wired together correctly.
 
+## Try It Yourself
 
+Edit the task description or add new workbench surfaces above, then re-run the workbench-guided call. Try adding a new instruction like `"FORBIDDEN: Do not use any external packages. Only stdlib."`, or change the task to `"Add rate limiting to the /signup endpoint"`. Watch how the model adapts to the new constraint.
 
+```python editable
+# TODO: Modify the task or surfaces and re-run the workbench-guided call above.
+# Try adding a new instruction like:
+#   "FORBIDDEN: Do not use any external packages. Only stdlib."
+# Or change the task to:
+#   "Add rate limiting to the /signup endpoint"
+# Watch how the model adapts to the new constraint.
+
+custom_task = "Add email validation (must contain @) to the /signup endpoint and write a test"
+
+print("Custom task:")
+print(custom_task)
+print("\nTo run this, edit the cell above and call lrn_llm.call() with your modified task.")
+print("The workbench surfaces will guide the model to safer, more reliable work.")
+```
 
 ## Further Reading
 
