@@ -43,6 +43,29 @@ stateDiagram-v2
 
 The state machine is deterministic. Given the same event log, the harness re-enters the same state. That property is what lets you replay sessions for debugging without re-calling the model.
 
+```python editable
+from enum import Enum
+from dataclasses import dataclass, field
+import time
+
+class State(str, Enum):
+    """Six states of the harness loop."""
+    IDLE = "idle"
+    PLANNING = "planning"
+    EXECUTING = "executing"
+    AWAITING_TOOL = "awaiting_tool"
+    REFLECTING = "reflecting"
+    DONE = "done"
+
+print("States:", [s.value for s in State])
+print("\nState transitions:")
+print("  IDLE → PLANNING (run with goal)")
+print("  PLANNING → EXECUTING (plan ready)")
+print("  EXECUTING → AWAITING_TOOL (need tool result)")
+print("  AWAITING_TOOL → REFLECTING (got result)")
+print("  REFLECTING → EXECUTING (continue) | PLANNING (replan) | DONE (goal met)")
+```
+
 ## The hook topics
 
 Hooks are the operator's seam into the loop. The harness fires ten topics. Each topic accepts any number of subscribers. Subscribers fire in registration order. A subscriber may mutate the payload, raise to abort the turn, or return a sentinel to skip the next step.
@@ -59,11 +82,87 @@ on_complete
 
 The shape mirrors what Claude Code, Cursor, and OpenCode all converged on by mid-2025. The names are functional, not branded. A hook that blocks `rm -rf` lives in `before_tool_call`. A hook that ships an OpenTelemetry span lives in `after_step`. A hook that resumes on a paused session lives in `on_pause`.
 
+Hooks are a pub/sub system: the loop fires a topic, subscribers react in registration order.
+
+```python editable
+HOOK_TOPICS = (
+    "before_plan", "after_plan",
+    "before_step", "after_step",
+    "before_tool_call", "after_tool_call",
+    "on_error", "on_pause", "on_budget_exceeded", "on_complete",
+)
+
+print(f"{len(HOOK_TOPICS)} hook topics: {', '.join(HOOK_TOPICS[:3])}...")
+```
+
+```python editable
+from typing import Callable, Any
+
+class HookRegistry:
+    """Dispatch table for hook subscribers."""
+    def __init__(self) -> None:
+        self._subs: dict[str, list[Callable]] = {t: [] for t in HOOK_TOPICS}
+
+    def on(self, topic: str, fn: Callable) -> None:
+        if topic not in self._subs:
+            raise ValueError(f"unknown hook topic: {topic}")
+        self._subs[topic].append(fn)
+
+    def fire(self, topic: str, payload: dict) -> list[Any]:
+        results = []
+        for fn in self._subs[topic]:
+            results.append(fn(payload))
+        return results
+
+# Example: wire a telemetry hook
+reg = HookRegistry()
+log = []
+reg.on("on_complete", lambda p: log.append(f"completed: {p['reason']}"))
+reg.fire("on_complete", {"reason": "goal_met"})
+print(f"Log: {log}")
+```
+
 ## The pull points
 
 The loop yields control twice. First on `AWAITING_TOOL` when it cannot make progress without a tool result. Second on `on_pause` when the budget is exhausted or a hook explicitly requests human review.
 
 A pull point is not an exception. It is a return. The caller inspects the harness state, fetches whatever the harness asked for, and calls `resume(payload)`. The harness picks up where it stopped. This is the same shape as a Python generator. The transport over the pull point is your choice. In a TUI it is keypress. Over MCP it is `tools/call`. Over a queue it is a job poll.
+
+A `Step` is a unit of work in the plan; some steps require a tool result. A `PullRequest` is what the loop returns when it yields control.
+
+```python editable
+@dataclass
+class Step:
+    """A step in the agent's plan."""
+    id: int
+    description: str
+    requires_tool: bool
+    tool_name: str | None = None
+    tool_args: dict = field(default_factory=dict)
+    result: any = None
+    error: str | None = None
+
+@dataclass
+class PullRequest:
+    """Returned when the loop yields control (tool call, budget, pause)."""
+    reason: str
+    state: State
+    payload: dict
+
+# Example plan for a release notes task
+plan = [
+    Step(id=1, description="interpret goal: ship release notes", requires_tool=False),
+    Step(id=2, description="fetch user record", requires_tool=True,
+         tool_name="db.get_user", tool_args={"id": 42}),
+    Step(id=3, description="summarize and respond", requires_tool=True,
+         tool_name="format.summary", tool_args={"style": "short"}),
+]
+
+for step in plan:
+    print(f"Step {step.id}: {step.description}")
+    if step.requires_tool:
+        print(f"  → needs {step.tool_name}({step.tool_args})")
+```
 
 ## The event stream
 
@@ -89,11 +188,62 @@ A session carries three limits. Turn count, tool call count, wall-clock seconds.
 
 The budget is not a kill switch. It is a yield. The caller decides whether to extend the budget and resume, or to close the session.
 
+```python editable
+@dataclass
+class Budget:
+    """Limits on turns, tool calls, and wall-clock time."""
+    max_turns: int = 8
+    max_tool_calls: int = 16
+    max_wall_seconds: float = 30.0
+    turns: int = 0
+    tool_calls: int = 0
+    started_at: float = field(default_factory=time.time)
+
+    def remaining_seconds(self) -> float:
+        return max(0.0, self.max_wall_seconds - (time.time() - self.started_at))
+
+    def exceeded(self) -> str | None:
+        if self.turns >= self.max_turns:
+            return "turns"
+        if self.tool_calls >= self.max_tool_calls:
+            return "tool_calls"
+        if self.remaining_seconds() <= 0.0:
+            return "wall_clock"
+        return None
+
+budget = Budget(max_turns=3, max_tool_calls=2)
+print(f"Budget: {budget.max_turns} turns, {budget.max_tool_calls} tool calls, {budget.max_wall_seconds}s")
+print(f"Exceeded: {budget.exceeded()}")
+```
+
 ## What this lesson does not do
 
 It does not call a model. It does not register real tools. It does not implement a transport. Those are the next four lessons. This lesson nails the contract so the next four can plug into it without rewriting.
 
 The deterministic planner in `main.py` is a stand-in. It returns a hardcoded plan of three steps, two of which require a tool result. The point is the loop, not the plan.
+
+```python editable
+from typing import Callable
+
+Planner = Callable[[str, list[Step]], list[Step]]
+
+def _default_planner(goal: str, history: list[Step]) -> list[Step]:
+    """Deterministic stand-in planner. Returns a fixed three-step plan."""
+    if history:
+        return []  # No replanning in this demo
+    return [
+        Step(id=1, description=f"interpret goal: {goal}", requires_tool=False),
+        Step(id=2, description="fetch user record", requires_tool=True,
+             tool_name="db.get_user", tool_args={"id": 42}),
+        Step(id=3, description="summarize and respond", requires_tool=True,
+             tool_name="format.summary", tool_args={"style": "short"}),
+    ]
+
+plan = _default_planner("ship release notes", [])
+print(f"Plan for 'ship release notes':")
+for step in plan:
+    print(f"  {step.id}. {step.description}")
+```
 
 ## How to read the code
 
