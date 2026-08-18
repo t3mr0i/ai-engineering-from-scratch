@@ -52,6 +52,102 @@ graph TD
 
 **When zero-shot wins:** simple factual questions, creative tasks where examples constrain creativity, tasks where finding good examples is harder than writing good instructions.
 
+See this hold outside math word problems too — an IT helpdesk support agent, with live calls. Every call below reuses this `lrn_llm` setup — run it once:
+
+```python editable
+import sys, json, types
+lrn_llm = types.ModuleType("lrn_llm")
+try:
+    from pyodide.http import pyfetch as _pyfetch
+    _IN_PYODIDE = True
+except ImportError:
+    import urllib.request as _urlreq
+    _IN_PYODIDE = False
+lrn_llm.API_BASE = "/api/llm"  # same-origin proxy; server injects the gateway key
+lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4-mini"
+lrn_llm.API_KEY = ""  # optional; set in Step 0a
+
+async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
+    if system is not None:
+        messages = [{"role": "system", "content": system}] + list(messages)
+    payload = {"model": model or lrn_llm.DEFAULT_MODEL, "messages": messages,
+               "max_completion_tokens": max_tokens}
+    headers = {"content-type": "application/json"}
+    _key = lrn_llm.API_KEY
+    if _key:
+        headers["Authorization"] = "Bearer " + _key
+    url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"
+    body = json.dumps(payload)
+    if _IN_PYODIDE:
+        r = await _pyfetch(url, method="POST", headers=headers, body=body)
+        data = await r.json()
+    else:
+        req = _urlreq.Request(url, method="POST", headers=headers, data=body.encode("utf-8"))
+        with _urlreq.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+    if "error" in data:
+        raise RuntimeError("LLM error: " + str(data["error"]))
+    return data
+
+def _lrn_text(r):
+    ch = (r or {}).get("choices") or []
+    return (ch[0].get("message", {}) or {}).get("content", "") if ch else ""
+
+async def _lrn_ping():
+    r = await _lrn_call([{"role": "user", "content": "Reply with exactly: OK"}], max_tokens=5)
+    return {"ok": _lrn_text(r).strip().upper().startswith("OK"), "model": r.get("model")}
+
+lrn_llm.call = _lrn_call
+lrn_llm.text = _lrn_text
+lrn_llm.ping = _lrn_ping
+print("✅ notebook ready · endpoint:", lrn_llm.API_BASE)
+```
+
+A small knowledge base of worked support examples, question/reasoning/answer triples:
+
+```python editable
+SUPPORT_EXAMPLES = [
+    {
+        "question": "How do I reset my VPN credentials if I've forgotten my password?",
+        "reasoning": "First, I need to identify the system — VPN credentials are managed through the security portal. The user should go to the security portal at https://security.company.internal, click 'Forgot Password', verify their identity with their employee ID, and follow the email reset link. Alternative: contact the IT helpdesk directly at ext. 5555.",
+        "answer": "Visit https://security.company.internal > Forgot Password > verify identity with employee ID > check email for reset link. Or contact IT ext. 5555."
+    },
+    {
+        "question": "What is the process for requesting a new laptop as a contractor?",
+        "reasoning": "Contractors go through a different approval process than full-time employees. The request must be submitted by the hiring manager, not the contractor. The manager logs into the asset request portal, submits a new hardware request, includes the contractor's duration of engagement, and marks it as contractor status. Procurement reviews within 3 business days. If urgent, email procurement@company.internal.",
+        "answer": "Hiring manager must submit request at asset.company.internal > new hardware > select contractor > include end date > submit. Approval in 3 business days. Email procurement@company.internal for urgent requests."
+    },
+    {
+        "question": "Can I use my personal cloud storage (Dropbox, Google Drive) for company documents?",
+        "reasoning": "Company policy prohibits personal cloud storage for sensitive documents due to compliance requirements (GDPR, SOX). Non-sensitive docs like meeting notes are okay, but anything with customer data, financial info, or code must use company-approved storage: SharePoint, OneDrive, or Confluence. Check the data classification guide at compliance.company.internal.",
+        "answer": "No for sensitive data (customer, financial, code). Personal cloud storage allowed only for non-sensitive docs (notes, drafts). Use SharePoint, OneDrive, or Confluence for company data. See compliance.company.internal for classification."
+    }
+]
+
+print("Loaded 3 support examples from knowledge base.")
+print(f"Example 1: {SUPPORT_EXAMPLES[0]['question'][:50]}...")
+```
+
+First, the zero-shot baseline — no examples, no reasoning:
+
+```python editable
+async def zero_shot_support(question):
+    """Answer a support question with no examples, no reasoning."""
+    system = "You are an IT support agent. Answer employee questions about company policies and procedures clearly and concisely."
+    resp = await lrn_llm.call(
+        [{"role": "user", "content": question}],
+        system=system,
+        max_tokens=200
+    )
+    return lrn_llm.text(resp)
+
+# Test question
+test_q = "What should I do if I forget my email password?"
+zs_answer = await zero_shot_support(test_q)
+print(f"Q: {test_q}")
+print(f"\nZero-Shot Answer:\n{zs_answer}")
+```
+
 ### Example Selection: Similar Beats Random
 
 Not all examples are equal. Choosing examples similar to the target input outperforms random selection by 5-15% on classification tasks (Liu et al., 2022). Three principles:
@@ -107,6 +203,40 @@ Two flavors of CoT:
 
 **When CoT hurts**: simple factual recall ("What is the capital of France?"), single-step classification, tasks where speed matters more than accuracy. CoT adds 50-200 tokens of reasoning overhead per query. For high-throughput, low-complexity tasks, that is wasted cost.
 
+Now add the worked examples back in, plus a request to show reasoning — few-shot CoT on the same helpdesk question:
+
+```python editable
+async def few_shot_cot_support(question, examples=None):
+    """Answer with few-shot examples and explicit reasoning steps."""
+    if examples is None:
+        examples = SUPPORT_EXAMPLES
+    
+    system = (
+        "You are an IT support agent. For each question, show your reasoning step-by-step, "
+        "then give a clear, concise final answer. Think about the policy or process involved."
+    )
+    
+    # Build few-shot prompt
+    example_text = ""
+    for ex in examples[:2]:  # Use 2 examples
+        example_text += f"Q: {ex['question']}\n"
+        example_text += f"Reasoning: {ex['reasoning']}\n"
+        example_text += f"A: {ex['answer']}\n\n"
+    
+    user_msg = example_text + f"Q: {question}\nReasoning:"
+    
+    resp = await lrn_llm.call(
+        [{"role": "user", "content": user_msg}],
+        system=system,
+        max_tokens=300
+    )
+    return lrn_llm.text(resp)
+
+fs_cot_answer = await few_shot_cot_support(test_q)
+print(f"Q: {test_q}")
+print(f"\nFew-Shot + CoT Answer:\n{fs_cot_answer}")
+```
+
 ### Self-Consistency: Sample Many, Vote Once
 
 Wang et al. (2023) introduced self-consistency. The insight: a single CoT path might contain reasoning errors. But if you sample N independent reasoning paths (using temperature > 0) and take the majority vote on the final answer, errors cancel out.
@@ -139,6 +269,61 @@ graph TD
 Self-consistency improved GSM8K accuracy from 56.5% (single CoT) to 74.4% with N=40 on the original PaLM 540B experiments. On GPT-5 the improvement is small (97% to 98%) because base accuracy is already saturated. The technique shines most on models with 60-85% base CoT accuracy -- the sweet spot where single-path errors are frequent but not systematic. For reasoning models (o-series, R1) self-consistency is subsumed by the built-in internal sampling.
 
 The tradeoff: N samples means Nx the API cost and latency. In practice, N=5 captures most of the benefit. N=3 is the minimum for a meaningful vote. N > 10 has diminishing returns for most tasks.
+
+Sample the same helpdesk question N=3 times and take the majority final answer:
+
+```python editable
+from collections import Counter
+
+async def self_consistency_support(question, num_samples=3):
+    """Generate multiple reasoning paths and pick the most common answer."""
+    system = (
+        "You are an IT support agent. For each question, show your reasoning step-by-step, "
+        "then end with a FINAL ANSWER on the last line in the format: 'Final Answer: [answer]'"
+    )
+    
+    example_text = ""
+    for ex in SUPPORT_EXAMPLES[:2]:
+        example_text += f"Q: {ex['question']}\n"
+        example_text += f"Reasoning: {ex['reasoning']}\n"
+        example_text += f"Final Answer: {ex['answer']}\n\n"
+    
+    user_msg = example_text + f"Q: {question}\nReasoning:"
+    
+    answers = []
+    reasonings = []
+    
+    for i in range(num_samples):
+        resp = await lrn_llm.call(
+            [{"role": "user", "content": user_msg}],
+            system=system,
+            max_tokens=300
+        )
+        text = lrn_llm.text(resp)
+        reasonings.append(text)
+        
+        # Extract final answer
+        if "Final Answer:" in text:
+            answer = text.split("Final Answer:")[-1].strip()
+            answers.append(answer[:100])  # Store first 100 chars
+        print(f"  Sample {i+1}: answer extracted")
+    
+    # Vote
+    if answers:
+        vote_counts = Counter(answers)
+        best_answer = vote_counts.most_common(1)[0][0]
+        confidence = vote_counts[best_answer] / len(answers)
+    else:
+        best_answer = "Could not extract answer"
+        confidence = 0.0
+    
+    return best_answer, confidence, reasonings
+
+print(f"Running self-consistency on: {test_q}")
+best, conf, paths = await self_consistency_support(test_q, num_samples=3)
+print(f"\nBest Answer (confidence {conf:.1%}):")
+print(best)
+```
 
 ### Tree-of-Thought: Branching Exploration
 
@@ -322,8 +507,47 @@ Chaining beats single-prompt for three reasons:
 
 The right technique depends on three factors: accuracy requirement, latency budget, and cost tolerance. For most production systems, few-shot CoT with a 3-sample self-consistency fallback covers 90% of use cases.
 
+Summarize the three techniques run above on the same helpdesk question:
 
+```python editable
+print("=" * 70)
+print("TECHNIQUE COMPARISON")
+print("=" * 70)
+print(f"\nTest Question: {test_q}")
+print("\nTechnique               | Calls | Reasoning? | Examples? | Cost")
+print("-" * 70)
+print("Zero-Shot              |   1   |     No     |     No    |  Low")
+print("Few-Shot + CoT         |   1   |     Yes    |     Yes   |  Med")
+print("Self-Consistency (N=3) |   3   |     Yes    |     Yes   |  High")
+print("\nKey Insight from the lesson:")
+print("  • Few-shot examples are COMPRESSED instructions")
+print("  • CoT (reasoning steps) extends computation depth")
+print("  • Self-consistency reduces answer variance on hard questions")
+print("  • For IT support: accuracy >> latency (same as math problems)")
+```
 
+Now try it yourself — write your own IT support question and compare the zero-shot and few-shot-CoT answers:
+
+```python editable
+# TODO: Edit this question to test on your own IT support scenario
+your_question = "How do I configure my email signature in Outlook?"
+
+print(f"YOUR QUESTION: {your_question}\n")
+print("Calling zero-shot approach...")
+zs = await zero_shot_support(your_question)
+print(f"Zero-Shot:\n{zs}\n")
+
+print("Calling few-shot + CoT approach...")
+fs = await few_shot_cot_support(your_question)
+print(f"Few-Shot + CoT:\n{fs}\n")
+
+print("\n" + "=" * 70)
+print("REFLECTION:")
+print("  1. Did the few-shot version include relevant domain knowledge?")
+print("  2. Did the CoT approach show intermediate reasoning?")
+print("  3. For IT support, which is more trustworthy?")
+print("=" * 70)
+```
 
 ## Further Reading
 
