@@ -58,6 +58,256 @@ Every agent loop needs exactly five things. Miss any one and you have a chat bot
 4. A **turn budget** to prevent infinite loops. Anthropic's computer use announcement says dozens-to-hundreds of steps per task is normal; pick a cap that fits the task class, not a one-size-fits-all.
 5. An **observation formatter** that converts tool outputs into something the model can read. Every 400 error in your stack needs to end up as an observation string, not a crash.
 
+Every example below shares this setup — run it once, then the rest reuse `lrn_llm`.
+
+```python editable
+import sys, json, types
+lrn_llm = types.ModuleType("lrn_llm")
+try:
+    from pyodide.http import pyfetch as _pyfetch
+    _IN_PYODIDE = True
+except ImportError:
+    import urllib.request as _urlreq
+    _IN_PYODIDE = False
+lrn_llm.API_BASE = "/api/llm"
+lrn_llm.DEFAULT_MODEL = "azure/gpt-5.4-mini"
+lrn_llm.API_KEY = ""
+
+async def _lrn_call(messages, *, system=None, max_tokens=400, model=None):
+    if system is not None:
+        messages = [{"role": "system", "content": system}] + list(messages)
+    payload = {"model": model or lrn_llm.DEFAULT_MODEL, "messages": messages,
+               "max_completion_tokens": max_tokens}
+    headers = {"content-type": "application/json"}
+    _key = lrn_llm.API_KEY
+    if _key:
+        headers["Authorization"] = "Bearer " + _key
+    url = lrn_llm.API_BASE.rstrip("/") + "/chat/completions"
+    body = json.dumps(payload)
+    if _IN_PYODIDE:
+        r = await _pyfetch(url, method="POST", headers=headers, body=body)
+        data = await r.json()
+    else:
+        req = _urlreq.Request(url, method="POST", headers=headers, data=body.encode("utf-8"))
+        with _urlreq.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+    if "error" in data:
+        raise RuntimeError("LLM error: " + str(data["error"]))
+    return data
+
+def _lrn_text(r):
+    ch = (r or {}).get("choices") or []
+    return (ch[0].get("message", {}) or {}).get("content", "") if ch else ""
+
+async def _lrn_ping():
+    r = await _lrn_call([{"role": "user", "content": "Reply with exactly: OK"}], max_tokens=5)
+    return {"ok": _lrn_text(r).strip().upper().startswith("OK"), "model": r.get("model")}
+
+lrn_llm.call = _lrn_call
+lrn_llm.text = _lrn_text
+lrn_llm.ping = _lrn_ping
+r = await lrn_llm.ping()
+print(f"LLM reachable: {r}")
+```
+
+Build a concrete instance of ingredient 2, the tool registry: a calculator and a key-value store, both callable by name with a schema-in / result-string-out contract.
+
+```python editable
+import re
+
+class ToolRegistry:
+    """A registry of available tools the LLM can call."""
+    def __init__(self):
+        self._tools = {}
+
+    def register(self, name, fn):
+        self._tools[name] = fn
+
+    def names(self):
+        return sorted(self._tools)
+
+    def dispatch(self, tool_name, args):
+        """Execute a tool and return the result as a string."""
+        fn = self._tools.get(tool_name)
+        if fn is None:
+            return f"ERROR: unknown tool {tool_name!r}"
+        try:
+            return fn(**args)
+        except TypeError as e:
+            return f"ERROR: bad args for {tool_name}: {e}"
+        except Exception as e:
+            return f"ERROR: {type(e).__name__}: {e}"
+
+# Tool 1: calculator
+def calculator(expr: str) -> str:
+    """Safely evaluate a math expression."""
+    allowed = set("0123456789+-*/(). ")
+    if not set(expr).issubset(allowed):
+        return "ERROR: illegal character in expr"
+    try:
+        result = eval(expr, {"__builtins__": {}}, {})
+        return str(result)
+    except Exception as e:
+        return f"ERROR: {type(e).__name__}: {e}"
+
+# Tool 2: key-value store
+class KVStore:
+    def __init__(self):
+        self._store = {}
+
+    def get(self, key: str) -> str:
+        val = self._store.get(key)
+        return val if val is not None else f"missing:{key}"
+
+    def set(self, key: str, value: str) -> str:
+        self._store[key] = value
+        return f"stored: {key} = {value}"
+
+# Build the registry
+tools = ToolRegistry()
+tools.register("calculator", calculator)
+kv = KVStore()
+tools.register("kv_get", kv.get)
+tools.register("kv_set", kv.set)
+
+print(f"✅ Tools registered: {tools.names()}")
+```
+
+The model emits tool calls as text — `<tool_call name="calculator" args='{"expr": "100 * 0.15"}'>` — so the loop needs a parser that turns that text back into (name, args) pairs:
+
+```python editable
+def parse_tool_calls(text):
+    """Extract tool calls from the LLM's response."""
+    calls = []
+    # Pattern: <tool_call name="TOOL_NAME" args='JSON_DICT'>
+    pattern = r'<tool_call\s+name="([^"]+)"\s+args=\'([^\']+)\'\s*>'
+    for match in re.finditer(pattern, text):
+        tool_name = match.group(1)
+        try:
+            args_dict = json.loads(match.group(2))
+        except json.JSONDecodeError:
+            args_dict = {}
+        calls.append((tool_name, args_dict))
+    return calls
+
+# Test the parser
+test_response = '''I need to calculate 15% tax on $100.
+<tool_call name="calculator" args='{"expr": "100 * 0.15"}'>
+<tool_call name="kv_set" args='{"key": "tax", "value": "15"}'>'''
+
+calls = parse_tool_calls(test_response)
+print(f"Parsed {len(calls)} tool calls:")
+for name, args in calls:
+    print(f"  • {name}({args})")
+```
+
+Now the turn itself: call the model with the tool schemas in the system prompt, parse whatever tool calls come back, dispatch them, and collect observations.
+
+```python editable
+async def agent_turn(messages, turn_num):
+    """Run one step of the agent loop."""
+    # Build the system prompt that tells the LLM about available tools
+    system = f"""You are a helpful agent. You have access to these tools:
+
+1. calculator: safely evaluate a math expression. Usage: <tool_call name="calculator" args='{{"expr": "..."}}'>. Return the numeric result.
+2. kv_get: retrieve a value from storage. Usage: <tool_call name="kv_get" args='{{"key": "..."}}'>. Return the stored value or a missing indicator.
+3. kv_set: store a value. Usage: <tool_call name="kv_set" args='{{"key": "...", "value": "..."}}'>. Return confirmation.
+
+When answering:
+- Always emit tool_call tags to invoke tools.
+- After you receive tool results, explain what you learned.
+- When you have enough information to answer the user's question, say DONE and give your final answer.
+
+Current turn: {turn_num}
+"""
+
+    # Call the LLM
+    response = await lrn_llm.call(messages, system=system, max_tokens=300)
+    assistant_text = lrn_llm.text(response)
+
+    # Parse tool calls
+    tool_calls = parse_tool_calls(assistant_text)
+
+    # Dispatch tools
+    observations = []
+    for tool_name, args in tool_calls:
+        result = tools.dispatch(tool_name, args)
+        observations.append(f"{tool_name}({args}) → {result}")
+
+    return {
+        "assistant_text": assistant_text,
+        "tool_calls": tool_calls,
+        "observations": observations
+    }
+
+print("✅ agent_turn() ready")
+```
+
+The full loop wraps `agent_turn` with the remaining three ingredients: a growing message buffer, a turn budget, and a stop condition (the model saying DONE):
+
+```python editable
+async def run_agent(user_message, max_turns=5):
+    """Run the full agent loop."""
+    messages = [{"role": "user", "content": user_message}]
+    print(f"🎯 User: {user_message}\n")
+
+    for turn in range(max_turns):
+        print(f"--- Turn {turn + 1} ---")
+
+        # Run the LLM
+        result = await agent_turn(messages, turn + 1)
+        assistant_text = result["assistant_text"]
+        observations = result["observations"]
+
+        # Show what the LLM said
+        print(f"Assistant: {assistant_text[:200]}..." if len(assistant_text) > 200 else f"Assistant: {assistant_text}")
+
+        # Show tool calls and results
+        if observations:
+            for obs in observations:
+                print(f"  Tool: {obs}")
+        else:
+            print("  (no tool calls)")
+
+        # Append assistant response and observations to message history
+        messages.append({"role": "assistant", "content": assistant_text})
+        if observations:
+            obs_text = "\n".join(observations)
+            messages.append({"role": "user", "content": f"Tool results:\n{obs_text}"})
+
+        # Check for stop condition (case-insensitive throughout: the model was only
+        # asked to "say DONE", so lowercase/mixed-case "done" must stop and extract
+        # the same way an exact-case match would)
+        done_match = re.search(r'done', assistant_text, re.IGNORECASE)
+        if done_match:
+            print(f"\n✅ Agent finished. Final answer:")
+            print(assistant_text[done_match.end():])
+            return assistant_text
+
+        print()
+
+    print("⏹️ Budget exhausted after", max_turns, "turns")
+    return "Budget exhausted"
+
+print("✅ run_agent() ready")
+```
+
+Run it on a concrete problem: computing a total price with 15% tax.
+
+```python editable
+result = await run_agent(
+    "What is $120 plus 15% tax? Store the base price, compute tax, then give me the total.",
+    max_turns=4
+)
+
+print(f"\n🎓 This is the ReAct loop in action:")
+print(f"   1. LLM observes the user question")
+print(f"   2. LLM thinks about what tools to call")
+print(f"   3. We dispatch those tools (Act)")
+print(f"   4. Tool results come back (Observe)")
+print(f"   5. Loop until the LLM says DONE")
+```
+
 ### Why this loop is everywhere
 
 Claude Agent SDK, OpenAI Agents SDK, LangGraph, AutoGen v0.4 AgentChat, CrewAI, Agno, Mastra — every one of these runs ReAct under the hood. Framework differences are about what lives around the loop: state checkpointing (LangGraph), actor-model message passing (AutoGen v0.4), role templates (CrewAI), tracing spans (OpenAI Agents SDK). The loop itself is invariant.
@@ -68,8 +318,27 @@ Claude Agent SDK, OpenAI Agents SDK, LangGraph, AutoGen v0.4 AgentChat, CrewAI, 
 - **Cascading failure.** One phantom SKU, four downstream API calls, one multi-system outage. Agents cannot tell "I failed" from "the task is impossible" and often hallucinate success on 400 errors. See "Failure Modes: Why Agents Break" later in this phase.
 - **Loop length explosion.** Most 2026 agents run 40–400 steps. Debugging step 38's wrong decision requires observability ("OpenTelemetry GenAI Semantic Conventions") and eval trajectories ("Eval-Driven Agent Development").
 
+## Try It Yourself
 
+Same tax-calculator domain, but this time the correct answer is known up front: $80 plus 25% tax is `80 * 1.25 = 100.00`. Run the agent loop and check that the *extracted final answer* actually contains that number — don't just eyeball the printout.
 
+```python editable
+check_message = "What is $80 plus 25% tax? Give me just the total."
+expected_total = 80 * 1.25  # 100.0
+
+check_result = await run_agent(check_message, max_turns=4)
+
+done_match = re.search(r'done', check_result, re.IGNORECASE)
+final_answer = check_result[done_match.end():] if done_match else check_result
+
+expected_variants = [f"{expected_total:.2f}", f"{expected_total:g}"]
+found = any(variant in final_answer for variant in expected_variants)
+
+print(f"\nExpected total: {expected_total:.2f}")
+print(f"Final answer:   {final_answer.strip()}")
+print("✅ PASS — correct total found in the agent's final answer" if found
+      else "❌ WRONG — expected total not found in the agent's final answer")
+```
 
 ## Further Reading
 
