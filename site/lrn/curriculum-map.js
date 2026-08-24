@@ -148,6 +148,29 @@ window.LrnCurriculumMap = {
             "title": "Function Calling & Tool Use"
           }
         ]
+      },
+      {
+        "title": "Persistent context and reusable skills",
+        "decision": "core",
+        "note": "Maps AI-06 Module 3 from one-off prompting to file-based context, durable conventions, and reusable skills.",
+        "lessons": [
+          {
+            "path": "phases/13-tools-and-protocols/22-skills-and-agent-sdks",
+            "title": "Skills and Agent SDKs"
+          },
+          {
+            "path": "phases/14-agent-engineering/33-instructions-as-executable-constraints",
+            "title": "Agent Instructions as Executable Constraints"
+          },
+          {
+            "path": "phases/14-agent-engineering/34-repo-memory-and-state",
+            "title": "Repo Memory and Durable State"
+          },
+          {
+            "path": "phases/14-agent-engineering/32-minimal-agent-workbench",
+            "title": "The Minimal Agent Workbench"
+          }
+        ]
       }
     ],
     "LRN-03": [
@@ -482,6 +505,41 @@ window.LrnCurriculumMap = {
           {
             "path": "phases/17-infrastructure-and-production/19-ai-gateways",
             "title": "AI Gateways"
+          }
+        ]
+      },
+      {
+        "title": "Routing, adaptation and multi-agent design",
+        "decision": "core",
+        "note": "Adds the architecture patterns used in the AI-03 workshops: intent routing, model adaptation, stateful control, and five multi-agent collaboration shapes.",
+        "lessons": [
+          {
+            "path": "phases/17-infrastructure-and-production/16-model-routing",
+            "title": "Model Routing as a Cost-Reduction Primitive"
+          },
+          {
+            "path": "phases/11-llm-engineering/08-fine-tuning-lora",
+            "title": "Fine-Tuning with LoRA & QLoRA"
+          },
+          {
+            "path": "phases/14-agent-engineering/13-langgraph-stateful-graphs",
+            "title": "LangGraph: Stateful Graphs and Durable Execution"
+          },
+          {
+            "path": "phases/16-multi-agent-and-swarms/05-supervisor-orchestrator-pattern",
+            "title": "Supervisor / Orchestrator-Worker Pattern"
+          },
+          {
+            "path": "phases/16-multi-agent-and-swarms/09-parallel-swarm-networks",
+            "title": "Parallel / Swarm / Networked Architectures"
+          },
+          {
+            "path": "phases/16-multi-agent-and-swarms/10-group-chat-speaker-selection",
+            "title": "Group Chat and Speaker Selection"
+          },
+          {
+            "path": "phases/16-multi-agent-and-swarms/11-handoffs-and-routines",
+            "title": "Handoffs and Routines"
           }
         ]
       },
@@ -1156,55 +1214,78 @@ window.LrnCurriculumMap = {
     ],
     "LRN-16": [
       {
-        "title": "Role and capability strategy",
+        "title": "AI transformation dynamics",
         "decision": "core",
-        "note": "Starts workforce planning at the task and capability level.",
+        "note": "Shows leaders where long-horizon and multi-agent systems change transformation commitments after the AI-08 Acquire stage.",
+        "lessons": [
+          {
+            "path": "phases/15-autonomous-systems/01-long-horizon-agents",
+            "title": "The Shift from Chatbots to Long-Horizon Agents"
+          },
+          {
+            "path": "phases/16-multi-agent-and-swarms/01-why-multi-agent",
+            "title": "Why Multi-Agent?"
+          }
+        ]
+      },
+      {
+        "title": "Roles, workforce and culture",
+        "decision": "core",
+        "note": "Turns broad transformation language into concrete role, skill, stakeholder, and adoption changes.",
         "lessons": [
           {
             "path": "phases/11-llm-engineering/90-ai-workforce-strategy",
             "title": "AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps"
           },
           {
-            "path": "phases/15-autonomous-systems/01-long-horizon-agents",
-            "title": "The Shift from Chatbots to Long-Horizon Agents"
+            "path": "phases/11-llm-engineering/58-ai-change-impact-stakeholder-analysis",
+            "title": "AI Change Impact and Stakeholder Analysis"
           },
           {
-            "path": "phases/16-multi-agent-and-swarms/08-role-specialization",
-            "title": "Role Specialization"
+            "path": "phases/11-llm-engineering/68-ai-adoption-communications-role-enablement",
+            "title": "AI Adoption Communications and Role-Based Enablement"
           }
         ]
       },
       {
-        "title": "Adoption operating model",
+        "title": "Leadership decisions and accountability",
         "decision": "core",
-        "note": "Connects skill plans with human accountability and failure-mode awareness.",
+        "note": "Keeps consequential AI decisions with accountable humans and visible evidence.",
         "lessons": [
+          {
+            "path": "phases/11-llm-engineering/91-decision-making-with-ai",
+            "title": "From AI Recommendation to Accountable Decision: A Decision-Quality Framework"
+          },
           {
             "path": "phases/15-autonomous-systems/15-propose-then-commit",
             "title": "Human-in-the-Loop: Propose-Then-Commit"
           },
           {
-            "path": "phases/14-agent-engineering/26-failure-modes-agentic",
-            "title": "Failure Modes: Why Agents Break"
-          },
-          {
-            "path": "phases/14-agent-engineering/40-multi-session-handoff",
-            "title": "Multi-Session Handoff"
+            "path": "phases/18-ethics-safety-alignment/26-model-system-dataset-cards",
+            "title": "Model, System, and Dataset Cards"
           }
         ]
       },
       {
-        "title": "Enablement assets",
-        "decision": "optional",
-        "note": "For leaders building communities, champions and reusable enablement packs.",
+        "title": "Operating model and transformation roadmap",
+        "decision": "core",
+        "note": "Closes the AI-08 transformation lab with owners, reusable assets, value evidence, and a governance cadence.",
         "lessons": [
           {
-            "path": "phases/13-tools-and-protocols/22-skills-and-agent-sdks",
-            "title": "Skills and Agent SDKs"
+            "path": "phases/11-llm-engineering/110-ai-operating-model-and-center-of",
+            "title": "AI Operating Model and Center of Excellence: From Pilots to Platform"
           },
           {
-            "path": "phases/14-agent-engineering/42-agent-workbench-capstone",
-            "title": "Capstone: Ship a Reusable Agent Workbench Pack"
+            "path": "phases/11-llm-engineering/39-ai-portfolio-roadmap-management",
+            "title": "AI Portfolio and Roadmap Management"
+          },
+          {
+            "path": "phases/11-llm-engineering/59-ai-value-realization-benefits-tracking",
+            "title": "AI Value Realization and Benefits Tracking"
+          },
+          {
+            "path": "phases/11-llm-engineering/34-ai-champion-enablement",
+            "title": "AI Champion Enablement"
           }
         ]
       }
@@ -1264,6 +1345,33 @@ window.LrnCurriculumMap = {
           {
             "path": "phases/18-ethics-safety-alignment/26-model-system-dataset-cards",
             "title": "Model, System, and Dataset Cards"
+          }
+        ]
+      },
+      {
+        "title": "Quantitative decision methods",
+        "decision": "core",
+        "note": "Adds the AI-07 quantitative spine: clustering, forecasting, Monte Carlo scenarios, and optimization, implemented from raw concepts before tool-specific use.",
+        "lessons": [
+          {
+            "path": "phases/02-ml-fundamentals/07-unsupervised-learning",
+            "title": "Unsupervised Learning"
+          },
+          {
+            "path": "phases/02-ml-fundamentals/15-time-series",
+            "title": "Time Series Fundamentals"
+          },
+          {
+            "path": "phases/09-reinforcement-learning/03-monte-carlo-methods",
+            "title": "Monte Carlo Methods"
+          },
+          {
+            "path": "phases/01-math-foundations/08-optimization",
+            "title": "Optimization"
+          },
+          {
+            "path": "phases/01-math-foundations/18-convex-optimization",
+            "title": "Convex Optimization"
           }
         ]
       }
@@ -2498,6 +2606,201 @@ window.LrnCurriculumMap = {
           {
             "path": "phases/11-llm-engineering/10-evaluation",
             "title": "Evaluation & Testing LLM Applications"
+          }
+        ]
+      }
+    ],
+    "LRN-45": [
+      {
+        "title": "Market and account intelligence",
+        "decision": "core",
+        "note": "Starts AI-10 with source-grounded customer, market, competitor, and technology research.",
+        "lessons": [
+          {
+            "path": "phases/11-llm-engineering/44-ai-for-sales-product-consulting",
+            "title": "AI for Sales and Product Consulting"
+          },
+          {
+            "path": "phases/11-llm-engineering/85-ai-enhanced-user-research",
+            "title": "From Raw Research to Validatable Decisions: AI-Enhanced User Research"
+          },
+          {
+            "path": "phases/11-llm-engineering/83-ai-assisted-documentation",
+            "title": "Source-Grounded AI Documentation: From Draft to Deliverable"
+          }
+        ]
+      },
+      {
+        "title": "Customer challenge to use-case mapping",
+        "decision": "core",
+        "note": "Connects customer pain points to a defensible value hypothesis and portfolio fit instead of generic AI ideas.",
+        "lessons": [
+          {
+            "path": "phases/11-llm-engineering/77-ai-use-case-identification-and-business",
+            "title": "AI Use Case Triage: From Discovery to Prioritized Backlog"
+          },
+          {
+            "path": "phases/11-llm-engineering/23-ai-enhanced-user-research",
+            "title": "AI-Enhanced User Research"
+          },
+          {
+            "path": "phases/11-llm-engineering/87-ai-cost-and-value-economics",
+            "title": "AI Cost and Value Economics: From Token Price to Business Case"
+          },
+          {
+            "path": "phases/11-llm-engineering/105-ai-product-backlog-and-prioritization",
+            "title": "AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies"
+          }
+        ]
+      },
+      {
+        "title": "Pitch, briefing and one-pager production",
+        "decision": "core",
+        "note": "Produces concise audience-specific materials while keeping claims traceable to source evidence.",
+        "lessons": [
+          {
+            "path": "phases/11-llm-engineering/88-consultative-prompting",
+            "title": "Consultative Prompting: Framing Problems for Stakeholder-Grade Output"
+          },
+          {
+            "path": "phases/11-llm-engineering/83-ai-assisted-documentation",
+            "title": "Source-Grounded AI Documentation: From Draft to Deliverable"
+          },
+          {
+            "path": "phases/11-llm-engineering/99-ai-project-reporting-and-steering",
+            "title": "AI-Assisted Project Status and Steering Pack Production"
+          }
+        ]
+      },
+      {
+        "title": "Trusted-advisor review and weekly workflow",
+        "decision": "core",
+        "note": "Protects customer trust through claim review, human approval, confidentiality checks, and reusable delivery routines.",
+        "lessons": [
+          {
+            "path": "phases/11-llm-engineering/75-responsible-and-trustworthy-ai",
+            "title": "Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make"
+          },
+          {
+            "path": "phases/14-agent-engineering/39-reviewer-agent",
+            "title": "Reviewer Agent"
+          },
+          {
+            "path": "phases/11-llm-engineering/109-ai-human-review-and-approval-workflow",
+            "title": "Designing Human-in-the-Loop Review and Approval Gates for AI Workflows"
+          }
+        ]
+      }
+    ],
+    "LRN-46": [
+      {
+        "title": "AI engineering foundations for experienced developers",
+        "decision": "core",
+        "note": "Provides the non-framework mental model required before building AI applications.",
+        "lessons": [
+          {
+            "path": "phases/11-llm-engineering/73-ai-fundamentals",
+            "title": "How AI Systems Actually Work: A Consultant's Map of the Four Layers"
+          },
+          {
+            "path": "phases/02-ml-fundamentals/01-what-is-machine-learning",
+            "title": "What Is Machine Learning"
+          },
+          {
+            "path": "phases/11-llm-engineering/04-embeddings",
+            "title": "Embeddings & Vector Representations"
+          }
+        ]
+      },
+      {
+        "title": "LLM applications, retrieval and model integration",
+        "decision": "core",
+        "note": "Builds a complete LLM application boundary before introducing autonomous control flow.",
+        "lessons": [
+          {
+            "path": "phases/11-llm-engineering/13-production-app",
+            "title": "Building a Production LLM Application"
+          },
+          {
+            "path": "phases/11-llm-engineering/06-rag",
+            "title": "RAG (Retrieval-Augmented Generation)"
+          },
+          {
+            "path": "phases/11-llm-engineering/09-function-calling",
+            "title": "Function Calling & Tool Use"
+          }
+        ]
+      },
+      {
+        "title": "LangGraph and agentic design patterns",
+        "decision": "core",
+        "note": "Covers reflection, tool use, planning, stateful graphs, and multi-agent control with explicit trade-offs.",
+        "lessons": [
+          {
+            "path": "phases/14-agent-engineering/01-the-agent-loop",
+            "title": "The Agent Loop"
+          },
+          {
+            "path": "phases/14-agent-engineering/02-rewoo-plan-and-execute",
+            "title": "ReWOO and Plan-and-Execute"
+          },
+          {
+            "path": "phases/14-agent-engineering/03-reflexion-verbal-rl",
+            "title": "Reflexion"
+          },
+          {
+            "path": "phases/14-agent-engineering/13-langgraph-stateful-graphs",
+            "title": "LangGraph: Stateful Graphs and Durable Execution"
+          },
+          {
+            "path": "phases/16-multi-agent-and-swarms/05-supervisor-orchestrator-pattern",
+            "title": "Supervisor / Orchestrator-Worker Pattern"
+          }
+        ]
+      },
+      {
+        "title": "MCP servers, clients, tools and data",
+        "decision": "core",
+        "note": "Implements standardized tool and data access without hiding protocol boundaries.",
+        "lessons": [
+          {
+            "path": "phases/13-tools-and-protocols/06-mcp-fundamentals",
+            "title": "MCP Fundamentals"
+          },
+          {
+            "path": "phases/13-tools-and-protocols/07-building-an-mcp-server",
+            "title": "Building an MCP Server"
+          },
+          {
+            "path": "phases/13-tools-and-protocols/10-mcp-resources-and-prompts",
+            "title": "MCP Resources and Prompts"
+          }
+        ]
+      },
+      {
+        "title": "Evaluation, observability, security and production",
+        "decision": "core",
+        "note": "Closes the 20-hour path with the controls required to move from a working prototype to production.",
+        "lessons": [
+          {
+            "path": "phases/11-llm-engineering/10-evaluation",
+            "title": "Evaluation & Testing LLM Applications"
+          },
+          {
+            "path": "phases/17-infrastructure-and-production/13-llm-observability",
+            "title": "LLM Observability Stack Selection"
+          },
+          {
+            "path": "phases/17-infrastructure-and-production/25-security-secrets-audit",
+            "title": "Security — Secrets, API Key Rotation, Audit Logs, Guardrails"
+          },
+          {
+            "path": "phases/17-infrastructure-and-production/20-shadow-canary-progressive",
+            "title": "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs"
+          },
+          {
+            "path": "phases/17-infrastructure-and-production/27-finops-llms",
+            "title": "FinOps for LLMs"
           }
         ]
       }

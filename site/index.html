@@ -30,7 +30,7 @@
   <!-- Phosphor Light icons (Lufthansa DS substitute for official LHG line-icons).
        CSS webfont path — robust against CDN path changes, no JS dependency. -->
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
-  <link rel="stylesheet" href="lrn/lrn.css?v=20260824a">
+  <link rel="stylesheet" href="lrn/lrn.css?v=20260824b">
   <link rel="stylesheet" href="badges.css?v=20260713a">
 </head>
 <body>
@@ -143,6 +143,15 @@
         </form>
       </div>
 
+      <section class="academy-paths" aria-labelledby="academyPathsTitle">
+        <div class="academy-paths__heading">
+          <p class="academy-paths__overline" data-i18n="academy_paths_overline">AI Literacy Academy</p>
+          <h2 id="academyPathsTitle" data-i18n="academy_paths_title">Learning paths for every AI-X course</h2>
+          <p data-i18n="academy_paths_intro">Open a path to see its ordered stages and the LRN courses that support each step.</p>
+        </div>
+        <div class="academy-path-list" id="academyPathList"></div>
+      </section>
+
       <div class="catalog-bar" role="group" aria-label="Course filters" data-i18n-aria-label="course_filters_label">
         <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status" data-i18n-aria-label="course_status_filters_label"></div>
         <button class="filter-reset" type="button" id="resetBtn" aria-label="Reset all filters and selections" data-i18n-aria-label="reset_filters_label" title="Reset all filters and selections" data-i18n-title="reset_filters_label">
@@ -160,11 +169,11 @@
 
   <script src="progress.js"></script>
   <script src="badges.js?v=20260713a"></script>
-  <script src="lrn/data.js"></script>
+  <script src="lrn/data.js?v=20260824b"></script>
   <script src="lrn/course-formats.js?v=20260824a"></script>
-  <script src="lrn/curriculum-map.js"></script>
+  <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="search.js?v=20260813a"></script>
-  <script src="lrn/lrn.js?v=20260824a"></script>
+  <script src="lrn/lrn.js?v=20260824b"></script>
 
   <!-- Resume from last lesson (localStorage) -->
   <script>

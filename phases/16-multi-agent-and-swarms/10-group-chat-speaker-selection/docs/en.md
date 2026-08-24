@@ -95,7 +95,7 @@ Same primitives, different defaults:
 - Supervisor: one agent plans and others execute. Selector is "ask the planner what to do."
 - Group chat: all agents are peers; selector is a function over the shared pool.
 
-Both use the four primitives from Lesson 04. Group chat defaults to LLM-selected orchestration and full-pool shared state.
+Both use the four primitives from the shared-state memory lesson. Group chat defaults to LLM-selected orchestration and full-pool shared state.
 
 
 

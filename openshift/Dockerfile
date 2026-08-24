@@ -61,5 +61,7 @@ WORKDIR /opt/app-root/src
 COPY server/*.js server/package.json ./server/
 COPY --from=build /opt/app-root/src/site ./site
 COPY --from=build /opt/app-root/src/glossary ./glossary
+COPY --from=build /opt/app-root/src/phases ./phases
+COPY --from=build /opt/app-root/src/README.md /opt/app-root/src/ROADMAP.md ./
 EXPOSE 8080
 CMD ["node", "server/server.js"]

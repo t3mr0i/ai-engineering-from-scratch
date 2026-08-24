@@ -2144,8 +2144,8 @@
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260724a"></script>
   <script src="badges.js?v=20260713a"></script>
-  <script src="lrn/data.js?v=20260610a"></script>
-  <script src="lrn/curriculum-map.js?v=20260610a"></script>
+  <script src="lrn/data.js?v=20260824b"></script>
+  <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
   <script src="analytics.js?v=20260525a" defer></script>
@@ -4188,14 +4188,12 @@
             setConsole('Loading Python…', null);
             loadPyodide_().then(function (py) {
               runBtn.textContent = 'Running…';
-              var buf = [];
-              py.setStdout({ batched: function (s) { buf.push(s); } });
-              py.setStderr({ batched: function (s) { buf.push(s); } });
+              var captured = window.LessonPythonRuntime.captureOutput(py);
               return py.loadPackagesFromImports(code)
                 .catch(function () {})
                 .then(function () { return py.runPythonAsync(code); })
                 .then(function () {
-                  var text = buf.join('') || '(no output)';
+                  var text = captured.text() || '(no output)';
                   // Self-check convention: a block's own print() reports
                   // PASS/WRONG (see notebook-exercise-format memory) — surface
                   // that as console color instead of leaving it as plain text.
@@ -4203,7 +4201,7 @@
                   setConsole(text, state);
                 })
                 .catch(function (err) {
-                  setConsole(buf.join('') + '\n' + String(err.message || err), 'fail');
+                  setConsole(captured.text() + '\n' + String(err.message || err), 'fail');
                 });
             }).catch(function (err) {
               setConsole(String(err.message || err), 'fail');
@@ -4286,17 +4284,15 @@
 
             loadPyodide_().then(function (py) {
               btn.textContent = 'Running…';
-              var buf = [];
-              py.setStdout({ batched: function (s) { buf.push(s); } });
-              py.setStderr({ batched: function (s) { buf.push(s); } });
+              var captured = window.LessonPythonRuntime.captureOutput(py);
               return py.loadPackagesFromImports(code)
                 .catch(function () {})
                 .then(function () { return py.runPythonAsync(code); })
                 .then(function () {
-                  output.textContent = buf.join('') || '(no output)';
+                  output.textContent = captured.text() || '(no output)';
                 })
                 .catch(function (err) {
-                  output.textContent = buf.join('') + '\n' + String(err.message || err);
+                  output.textContent = captured.text() + '\n' + String(err.message || err);
                   output.className = 'code-output code-output-error';
                 });
             }).catch(function (err) {

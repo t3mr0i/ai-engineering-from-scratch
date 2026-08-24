@@ -14,6 +14,7 @@ const {
   structuralSignature,
   requiresCurriculumGrill,
 } = require("./admin-curriculum");
+const { assertLessonPath } = require("./admin-lessons");
 
 class StoreError extends Error {
   constructor(code, message, status = 400, details) {
@@ -40,6 +41,42 @@ function makeId() {
   return `change-${stamp}-${crypto.randomBytes(4).toString("hex")}`;
 }
 
+function snapshotFingerprint(snapshot) {
+  return crypto.createHash("sha256").update(JSON.stringify(snapshot)).digest("hex");
+}
+
+function sameJson(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function mergeValues(base, local, remote, at = [], conflicts = []) {
+  if (sameJson(local, base)) return remote;
+  if (sameJson(remote, base) || sameJson(local, remote)) return local;
+  if (Array.isArray(base) && Array.isArray(local) && Array.isArray(remote)) {
+    const identified = [...base, ...local, ...remote].every((item) => item && typeof item === "object" && typeof item.id === "string");
+    if (identified) {
+      const baseMap = new Map(base.map((item) => [item.id, item]));
+      const localMap = new Map(local.map((item) => [item.id, item]));
+      const remoteMap = new Map(remote.map((item) => [item.id, item]));
+      const order = [...remote.map((item) => item.id), ...local.map((item) => item.id).filter((id) => !remoteMap.has(id))];
+      return order.map((id) => mergeValues(baseMap.get(id), localMap.get(id), remoteMap.get(id), [...at, id], conflicts)).filter((item) => item !== undefined);
+    }
+    if (base.length === local.length && base.length === remote.length) {
+      return base.map((_, index) => mergeValues(base[index], local[index], remote[index], [...at, String(index)], conflicts));
+    }
+  }
+  const plain = (value) => value && typeof value === "object" && !Array.isArray(value);
+  if (plain(base) && plain(local) && plain(remote)) {
+    const merged = {};
+    for (const key of new Set([...Object.keys(base), ...Object.keys(local), ...Object.keys(remote)])) {
+      merged[key] = mergeValues(base[key], local[key], remote[key], [...at, key], conflicts);
+    }
+    return merged;
+  }
+  conflicts.push({ path: `/${at.join("/")}`, base, local, remote });
+  return remote;
+}
+
 function defaultGrill() {
   return { required: false, status: "not_required", summary: "", runAt: null, runBy: null, override: null };
 }
@@ -50,6 +87,8 @@ function normalizeRecord(record) {
     chat: Array.isArray(record.chat) ? record.chat : [],
     audit: Array.isArray(record.audit) ? record.audit : [],
     grill: record.grill && typeof record.grill === "object" ? { ...defaultGrill(), ...record.grill } : defaultGrill(),
+    publication: record.publication && typeof record.publication === "object" ? record.publication : null,
+    lessons: record.lessons && typeof record.lessons === "object" ? record.lessons : {},
   };
 }
 
@@ -112,6 +151,10 @@ class AdminStore {
     this.webRoot = webRoot;
     this.changeDir = path.join(dataDir, "changesets");
     this.historyDir = path.join(dataDir, "history");
+    this.ensureDirectories();
+  }
+
+  ensureDirectories() {
     fs.mkdirSync(this.changeDir, { recursive: true });
     fs.mkdirSync(this.historyDir, { recursive: true });
   }
@@ -121,10 +164,12 @@ class AdminStore {
   }
 
   list() {
+    this.ensureDirectories();
+    const baseFingerprint = snapshotFingerprint(this.baseSnapshot());
     return fs.readdirSync(this.changeDir)
       .filter((file) => file.endsWith(".json"))
       .map((file) => normalizeRecord(JSON.parse(fs.readFileSync(path.join(this.changeDir, file), "utf8"))))
-      .map(({ snapshot, chat, ...summary }) => ({ ...summary, stats: curriculumStats(snapshot) }))
+      .map(({ snapshot, chat, lessons, ...summary }) => ({ ...summary, baseCurrent: (summary.baseFingerprint || snapshotFingerprint(snapshot)) === baseFingerprint, lessonDrafts: Object.keys(lessons || {}).length, stats: curriculumStats(snapshot) }))
       .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
   }
 
@@ -132,12 +177,89 @@ class AdminStore {
     if (!safeId(id)) throw new StoreError("changeset.invalid", "Ungültige Änderungssatz-ID.", 400);
     const file = path.join(this.changeDir, `${id}.json`);
     if (!fs.existsSync(file)) throw new StoreError("changeset.not_found", "Änderungssatz nicht gefunden.", 404);
-    return normalizeRecord(JSON.parse(fs.readFileSync(file, "utf8")));
+    const record = normalizeRecord(JSON.parse(fs.readFileSync(file, "utf8")));
+    if (!record.baseFingerprint) record.baseFingerprint = snapshotFingerprint(record.snapshot);
+    return record;
+  }
+
+  history(id) {
+    if (!safeId(id)) throw new StoreError("changeset.invalid", "Ungültige Änderungssatz-ID.", 400);
+    const directory = path.join(this.historyDir, id);
+    if (!fs.existsSync(directory)) return [];
+    return fs.readdirSync(directory)
+      .filter((file) => /^\d+\.json$/.test(file))
+      .map((file) => normalizeRecord(JSON.parse(fs.readFileSync(path.join(directory, file), "utf8"))))
+      .map(({ snapshot, chat, lessons, ...record }) => ({
+        ...record,
+        stats: curriculumStats(snapshot),
+        lessonDrafts: Object.keys(lessons || {}).length,
+      }))
+      .sort((left, right) => right.version - left.version);
+  }
+
+  restore(id, actor, input) {
+    const current = this.get(id);
+    this.assertVersion(current, input.expectedVersion);
+    const version = Number(input.version);
+    if (!Number.isInteger(version) || version < 1) throw new StoreError("history.version.invalid", "Die Revision ist ungültig.", 400);
+    const file = path.join(this.historyDir, id, `${version}.json`);
+    if (!fs.existsSync(file)) throw new StoreError("history.version.missing", "Die Revision wurde nicht gefunden.", 404);
+    const source = normalizeRecord(JSON.parse(fs.readFileSync(file, "utf8")));
+    const now = new Date().toISOString();
+    const next = {
+      ...current,
+      title: source.title,
+      description: source.description,
+      status: "draft",
+      snapshot: clone(source.snapshot),
+      baseFingerprint: source.baseFingerprint || snapshotFingerprint(source.snapshot),
+      lessons: clone(source.lessons),
+      grill: { ...defaultGrill(), required: true, status: "pending" },
+      publication: null,
+      version: current.version + 1,
+      updatedAt: now,
+      updatedBy: actor.username,
+      audit: [...current.audit, { at: now, by: actor.username, action: "history.restored", version: current.version + 1, reason: `Revision ${version}` }],
+    };
+    this.writeRevision(next);
+    return next;
+  }
+
+  baseCurrent(record) {
+    return record.baseFingerprint === snapshotFingerprint(this.baseSnapshot());
+  }
+
+  rebase(id, actor, input) {
+    const current = this.get(id);
+    this.assertVersion(current, input.expectedVersion);
+    const firstFile = path.join(this.historyDir, id, "1.json");
+    if (!fs.existsSync(firstFile)) throw new StoreError("base.snapshot.missing", "Die ursprüngliche Basisrevision fehlt.", 409);
+    const original = normalizeRecord(JSON.parse(fs.readFileSync(firstFile, "utf8"))).snapshot;
+    const latest = this.baseSnapshot();
+    const conflicts = [];
+    const snapshot = mergeValues(original, current.snapshot, latest, [], conflicts);
+    if (conflicts.length) {
+      throw new StoreError("base.rebase.conflict", "Die neue veröffentlichte Basis überschneidet sich mit Entwurfsänderungen.", 409, { conflicts });
+    }
+    const now = new Date().toISOString();
+    const next = {
+      ...current,
+      snapshot,
+      baseFingerprint: snapshotFingerprint(latest),
+      grill: requiresCurriculumGrill(latest, snapshot) ? { ...defaultGrill(), required: true, status: "pending" } : defaultGrill(),
+      version: current.version + 1,
+      updatedAt: now,
+      updatedBy: actor.username,
+      audit: [...current.audit, { at: now, by: actor.username, action: "base.rebased", version: current.version + 1 }],
+    };
+    this.writeRevision(next);
+    return next;
   }
 
   create(actor, input = {}) {
     const now = new Date().toISOString();
     const id = makeId();
+    const snapshot = clone(this.baseSnapshot());
     const record = {
       id,
       title: String(input.title || "Neuer Curriculum-Entwurf").trim().slice(0, 120),
@@ -149,9 +271,12 @@ class AdminStore {
       createdBy: actor.username,
       updatedAt: now,
       updatedBy: actor.username,
-      snapshot: clone(this.baseSnapshot()),
+      snapshot,
+      baseFingerprint: snapshotFingerprint(snapshot),
       chat: [],
       grill: defaultGrill(),
+      publication: null,
+      lessons: {},
       audit: [{ at: now, by: actor.username, action: "changeset.created" }],
     };
     this.writeRevision(record);
@@ -235,6 +360,40 @@ class AdminStore {
     return next;
   }
 
+  stageLesson(id, actor, input) {
+    const current = this.get(id);
+    this.assertVersion(current, input.expectedVersion);
+    if (current.status !== "draft") throw new StoreError("lesson.read_only", "Lessons können nur in Entwürfen bearbeitet werden.", 409);
+    const lessonPath = assertLessonPath(input.path);
+    const mode = input.mode === "create" ? "create" : "edit";
+    const now = new Date().toISOString();
+    const draft = {
+      path: lessonPath,
+      mode,
+      files: clone(input.files || {}),
+      existingFiles: Array.isArray(input.existingFiles) ? [...new Set(input.existingFiles.map(String))] : [],
+      updatedAt: now,
+      updatedBy: actor.username,
+    };
+    const next = {
+      ...current,
+      lessons: { ...current.lessons, [lessonPath]: draft },
+      grill: { ...defaultGrill(), required: true, status: "pending" },
+      version: current.version + 1,
+      updatedAt: now,
+      updatedBy: actor.username,
+      audit: [...current.audit, {
+        at: now,
+        by: actor.username,
+        action: mode === "create" ? "lesson.created" : "lesson.saved",
+        version: current.version + 1,
+        reason: lessonPath,
+      }],
+    };
+    this.writeRevision(next);
+    return next;
+  }
+
   decideProposal(id, actor, input) {
     const current = this.get(id);
     this.assertVersion(current, input.expectedVersion);
@@ -291,6 +450,59 @@ class AdminStore {
       updatedAt: now,
       updatedBy: actor.username,
       audit: [...current.audit, { at: now, by: actor.username, action: "grill.overridden", version: current.version + 1, reason }],
+    };
+    this.writeRevision(next);
+    return next;
+  }
+
+  setPublication(id, actor, input, publication) {
+    const current = this.get(id);
+    this.assertVersion(current, input.expectedVersion);
+    if (current.publication) {
+      throw new StoreError("publication.exists", "Für diesen Änderungssatz existiert bereits ein Publishing-Vorgang.", 409, { publication: current.publication });
+    }
+    const now = new Date().toISOString();
+    const next = {
+      ...current,
+      publication: { ...clone(publication), createdAt: now, createdBy: actor.username, checkedAt: now },
+      version: current.version + 1,
+      updatedAt: now,
+      updatedBy: actor.username,
+      audit: [...current.audit, {
+        at: now,
+        by: actor.username,
+        action: "publication.merge_request.created",
+        version: current.version + 1,
+        reason: publication.mergeRequest && publication.mergeRequest.url,
+      }],
+    };
+    this.writeRevision(next);
+    return next;
+  }
+
+  syncPublication(id, actor, input, publication) {
+    const current = this.get(id);
+    this.assertVersion(current, input.expectedVersion);
+    if (!current.publication) throw new StoreError("publication.missing", "Für diesen Änderungssatz existiert kein Publishing-Vorgang.", 404);
+    const merged = publication.state === "merged";
+    if (merged && !["approved", "published"].includes(current.status)) {
+      throw new StoreError("publication.status.invalid", "Nur ein freigegebener Änderungssatz kann veröffentlicht werden.", 409);
+    }
+    const now = new Date().toISOString();
+    const next = {
+      ...current,
+      status: merged ? "published" : current.status,
+      publication: { ...clone(publication), checkedAt: now },
+      version: current.version + 1,
+      updatedAt: now,
+      updatedBy: actor.username,
+      audit: [...current.audit, {
+        at: now,
+        by: actor.username,
+        action: merged ? "publication.merged" : "publication.checked",
+        version: current.version + 1,
+        reason: publication.mergeRequest && publication.mergeRequest.url,
+      }],
     };
     this.writeRevision(next);
     return next;
@@ -357,4 +569,4 @@ class AdminStore {
   }
 }
 
-module.exports = { AdminStore, StoreError, safeId, applyJsonPointer, normalizeRecord };
+module.exports = { AdminStore, StoreError, safeId, applyJsonPointer, normalizeRecord, snapshotFingerprint, mergeValues };

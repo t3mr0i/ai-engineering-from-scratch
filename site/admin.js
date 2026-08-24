@@ -13,8 +13,17 @@
     dirty: false,
     saving: false,
     selectedCourseId: null,
+    lessons: [],
+    lessonQuery: "",
+    selectedLessonPath: null,
+    activeLesson: null,
+    lessonFile: "docs/en.md",
+    lessonDirty: false,
+    lessonIssues: [],
     selectedPathId: null,
+    pathView: "structure",
     courseQuery: "",
+    coursePreview: false,
     pathQuery: "",
     saveTimer: null,
     skills: [],
@@ -22,6 +31,12 @@
     aiScope: "curriculum",
     aiLoading: false,
     aiDraft: "",
+    publishConfigured: false,
+    grillOverrideReason: "",
+    pendingImport: null,
+    loadedSnapshot: null,
+    conflict: null,
+    baseCurrent: true,
   };
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -56,12 +71,114 @@
     return JSON.parse(JSON.stringify(value));
   }
 
+  function sameValue(left, right) {
+    return JSON.stringify(left) === JSON.stringify(right);
+  }
+
+  function mergeThreeWay(base, local, remote, pathParts = [], conflicts = []) {
+    if (sameValue(local, base)) return { value: remote, conflicts };
+    if (sameValue(remote, base) || sameValue(local, remote)) return { value: local, conflicts };
+    if (Array.isArray(base) && Array.isArray(local) && Array.isArray(remote)) {
+      const identified = [...base, ...local, ...remote].every((item) => item && typeof item === "object" && typeof item.id === "string");
+      if (identified) {
+        const baseMap = new Map(base.map((item) => [item.id, item]));
+        const localMap = new Map(local.map((item) => [item.id, item]));
+        const remoteMap = new Map(remote.map((item) => [item.id, item]));
+        const order = [...remote.map((item) => item.id), ...local.map((item) => item.id).filter((id) => !remoteMap.has(id))];
+        return { value: order.map((id) => mergeThreeWay(baseMap.get(id), localMap.get(id), remoteMap.get(id), [...pathParts, id], conflicts).value).filter((item) => item !== undefined), conflicts };
+      }
+      if (base.length === local.length && base.length === remote.length) {
+        return { value: base.map((_, index) => mergeThreeWay(base[index], local[index], remote[index], [...pathParts, String(index)], conflicts).value), conflicts };
+      }
+    }
+    const plain = (value) => value && typeof value === "object" && !Array.isArray(value);
+    if (plain(base) && plain(local) && plain(remote)) {
+      const keys = new Set([...Object.keys(base), ...Object.keys(local), ...Object.keys(remote)]);
+      const value = {};
+      for (const key of keys) value[key] = mergeThreeWay(base[key], local[key], remote[key], [...pathParts, key], conflicts).value;
+      return { value, conflicts };
+    }
+    conflicts.push({ path: pathParts, label: `/${pathParts.join("/")}`, base, local, remote, choice: "" });
+    return { value: remote, conflicts };
+  }
+
+  function setAtPath(root, pathParts, value) {
+    let parent = root;
+    for (const part of pathParts.slice(0, -1)) parent = parent[part];
+    const key = pathParts.at(-1);
+    if (value === undefined) {
+      if (Array.isArray(parent)) parent.splice(Number(key), 1); else delete parent[key];
+    } else parent[key] = clone(value);
+  }
+
+  function previewValue(value) {
+    const text = value === undefined ? "(entfernt)" : JSON.stringify(value, null, 2);
+    return text.length > 900 ? `${text.slice(0, 900)}…` : text;
+  }
+
+  function showConflict(current) {
+    const result = mergeThreeWay(state.loadedSnapshot || state.base.snapshot, state.snapshot, current.snapshot);
+    if (!result.conflicts.length) {
+      state.active = current;
+      state.loadedSnapshot = clone(current.snapshot);
+      state.snapshot = result.value;
+      state.dirty = true;
+      setSaveStatus("Parallele Änderungen automatisch zusammengeführt", "dirty");
+      toast("Nicht überlappende Änderungen wurden per Drei-Wege-Merge zusammengeführt.");
+      renderCurrentView();
+      return;
+    }
+    state.conflict = { current, merged: result.value, items: result.conflicts };
+    const rows = result.conflicts.map((item, index) => h("article", { class: "conflict-row" }, [
+      h("code", { text: item.label }),
+      h("div", { class: "conflict-versions" }, [
+        h("div", {}, [h("strong", { text: "Meine Änderung" }), h("pre", { text: previewValue(item.local) })]),
+        h("div", {}, [h("strong", { text: "Remote-Änderung" }), h("pre", { text: previewValue(item.remote) })]),
+      ]),
+      field("Entscheidung", selectFor("", [{ value: "", label: "Bitte wählen" }, { value: "local", label: "Meine Änderung" }, { value: "remote", label: "Remote-Änderung" }], (choice) => { state.conflict.items[index].choice = choice; })),
+    ]));
+    $("#conflictSummary").replaceChildren(h("p", { text: `${result.conflicts.length} überlappende Felder benötigen eine explizite Entscheidung. Nicht überlappende Änderungen sind bereits kombiniert.` }), ...rows);
+    $("#conflictDialog").showModal();
+  }
+
+  function cancelConflict() {
+    if (!state.conflict) return $("#conflictDialog").close();
+    state.active = state.conflict.current;
+    state.snapshot = clone(state.conflict.current.snapshot);
+    state.loadedSnapshot = clone(state.conflict.current.snapshot);
+    state.dirty = false;
+    state.conflict = null;
+    $("#conflictDialog").close();
+    setSaveStatus(`Version ${state.active.version} · Remote-Stand geladen`, "saved");
+    renderCurrentView();
+  }
+
+  function applyConflict() {
+    if (!state.conflict || state.conflict.items.some((item) => !item.choice)) {
+      toast("Bitte entscheide jeden überlappenden Konflikt.", "error");
+      return;
+    }
+    for (const item of state.conflict.items) setAtPath(state.conflict.merged, item.path, item[item.choice]);
+    state.active = state.conflict.current;
+    state.loadedSnapshot = clone(state.conflict.current.snapshot);
+    state.snapshot = state.conflict.merged;
+    state.conflict = null;
+    state.dirty = true;
+    $("#conflictDialog").close();
+    setSaveStatus("Konflikte aufgelöst · Speichern erforderlich", "dirty");
+    renderCurrentView();
+  }
+
   function initials(name) {
     return String(name || "?").split(/[.@\s_-]+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
   }
 
   function statusLabel(status) {
     return ({ draft: "Entwurf", review: "Im Review", approved: "Freigegeben", published: "Veröffentlicht", archived: "Archiviert" })[status] || status;
+  }
+
+  function hasRole(role) {
+    return Boolean(state.actor && state.actor.roles.includes(role));
   }
 
   async function api(path, options = {}) {
@@ -152,6 +269,7 @@
       activities: Object.values(maps).reduce((sum, units) => sum + units.reduce((inner, unit) => inner + (unit.lessons || []).length, 0), 0),
     };
     $("#courseNavCount").textContent = state.stats.courses;
+    $("#lessonNavCount").textContent = state.lessons.length;
     $("#pathNavCount").textContent = state.stats.tracks;
     $("#reviewNavCount").textContent = state.issues.length || "";
   }
@@ -187,6 +305,7 @@
       });
       state.active = body.changeset;
       state.snapshot = clone(body.changeset.snapshot);
+      state.loadedSnapshot = clone(body.changeset.snapshot);
       state.issues = body.issues || [];
       state.dirty = false;
       state.saving = false;
@@ -200,7 +319,8 @@
       $("#saveButton").disabled = false;
       if (error.status === 409 && error.payload && error.payload.details) {
         setSaveStatus("Bearbeitungskonflikt", "dirty");
-        toast("Der Entwurf wurde parallel geändert. Öffne ihn erneut, um beide Versionen zu vergleichen.", "error");
+        if (error.payload.details.current) showConflict(error.payload.details.current);
+        else toast("Der Entwurf wurde parallel geändert.", "error");
       } else {
         setSaveStatus("Speichern fehlgeschlagen", "dirty");
         toast(`${error.message}${error.payload && error.payload.id ? ` · Fehler-ID ${error.payload.id}` : ""}`, "error");
@@ -227,6 +347,7 @@
     ({
       overview: renderOverview,
       courses: renderCourses,
+      lessons: renderLessons,
       paths: renderPaths,
       assistant: renderAssistant,
       review: renderReview,
@@ -242,7 +363,11 @@
       "Curriculum-Zustand",
       "Was braucht heute eine Entscheidung?",
       "Kurse, Pfade und Qualitätsprüfungen in einem kontrollierten Veröffentlichungsfluss.",
-      button("Kurs bearbeiten", "primary", () => activateView("courses"), "pencil-simple"),
+      h("div", { class: "review-actions" }, [
+        button("Import", "secondary", () => $("#curriculumImport").click(), "upload-simple", { disabled: !state.active || state.active.status !== "draft" }),
+        button("Export", "secondary", exportCurriculum, "download-simple"),
+        button("Kurs bearbeiten", "primary", () => activateView("courses"), "pencil-simple"),
+      ]),
     ));
 
     const errors = state.issues.filter((item) => item.severity === "error").length;
@@ -346,10 +471,15 @@
     const update = (key, value) => { course[key] = value; markDirty(); };
     const heading = h("div", { class: "editor-heading" }, [
       h("div", {}, [h("h1", { text: course.title || "Unbenannter Kurs" }), h("p", { text: `${course.id} · ${course.source || "Eigener Kurs"}` })]),
-      selectFor(course.status || "draft", [
-        { value: "draft", label: "Entwurf" }, { value: "active", label: "Aktiv" }, { value: "planned", label: "Geplant" }, { value: "archived", label: "Archiviert" },
-      ], (value) => { update("status", value); renderCourses(); }, { disabled: !editable, "aria-label": "Kursstatus" }),
+      h("div", { class: "editor-actions" }, [
+        button(state.coursePreview ? "Editor" : "Vorschau", "secondary", () => { state.coursePreview = !state.coursePreview; renderCourses(); }, state.coursePreview ? "pencil-simple" : "eye"),
+        button("Duplizieren", "secondary", () => duplicateCourse(course), "copy", { disabled: !editable }),
+        selectFor(course.status || "draft", [
+          { value: "draft", label: "Entwurf" }, { value: "active", label: "Aktiv" }, { value: "planned", label: "Geplant" }, { value: "archived", label: "Archiviert" },
+        ], (value) => { update("status", value); renderCourses(); }, { disabled: !editable, "aria-label": "Kursstatus" }),
+      ]),
     ]);
+    if (state.coursePreview) return [heading, renderCoursePreview(course)];
     const basics = h("section", { class: "editor-section" }, [
       h("h2", { text: "Grundlagen" }),
       h("div", { class: "admin-form-grid" }, [
@@ -361,6 +491,7 @@
           { value: "self-paced", label: "Self-paced" }, { value: "blended", label: "Blended" }, { value: "workshop", label: "Workshop" }, { value: "cohort", label: "Cohort" },
         ], (value) => update("format", value), { disabled: !editable })),
         field("Profile", inputFor((course.profileIds || []).join(", "), (value) => update("profileIds", splitList(value)), { disabled: !editable }), false, "Kommagetrennte Profil-IDs"),
+        field("Voraussetzungen", inputFor((course.prerequisites || []).join(", "), (value) => update("prerequisites", splitList(value)), { disabled: !editable }), true, "Kurs-IDs, kommagetrennt; Zyklen blockieren das Review."),
       ]),
     ]);
     const outcomes = h("section", { class: "editor-section" }, [
@@ -372,6 +503,138 @@
       renderUnitEditors(course.id, editable),
     ]);
     return [heading, h("div", { class: "editor-sections" }, [basics, outcomes, unitSection])];
+  }
+
+  function exportCurriculum() {
+    const payload = {
+      schemaVersion: 1,
+      exportedAt: new Date().toISOString(),
+      changeSet: state.active ? { id: state.active.id, title: state.active.title, version: state.active.version } : null,
+      snapshot: state.snapshot,
+      lessons: state.active ? state.active.lessons || {} : {},
+    };
+    const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = h("a", { href: url, download: `curriculum-${state.active ? state.active.id : "published"}.json` });
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    toast("Curriculum-Export wurde erstellt.");
+  }
+
+  function parseDelimited(text) {
+    const firstLine = String(text).split(/\r?\n/, 1)[0];
+    const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ";" : ",";
+    const rows = [];
+    let row = [];
+    let value = "";
+    let quoted = false;
+    for (let index = 0; index < text.length; index += 1) {
+      const char = text[index];
+      if (char === '"') {
+        if (quoted && text[index + 1] === '"') { value += '"'; index += 1; } else quoted = !quoted;
+      } else if (char === delimiter && !quoted) { row.push(value); value = ""; }
+      else if ((char === "\n" || char === "\r") && !quoted) {
+        if (char === "\r" && text[index + 1] === "\n") index += 1;
+        row.push(value); value = "";
+        if (row.some((cell) => cell.trim())) rows.push(row);
+        row = [];
+      } else value += char;
+    }
+    if (value || row.length) { row.push(value); rows.push(row); }
+    const headers = (rows.shift() || []).map((header) => header.trim());
+    return rows.map((cells) => Object.fromEntries(headers.map((header, index) => [header, (cells[index] || "").trim()])));
+  }
+
+  async function previewImport(event) {
+    const file = event.target.files && event.target.files[0];
+    event.target.value = "";
+    if (!file || !state.active) return;
+    try {
+      const text = await file.text();
+      let snapshot;
+      let summary;
+      if (file.name.toLowerCase().endsWith(".json")) {
+        const parsed = JSON.parse(text);
+        snapshot = clone(parsed.snapshot || parsed);
+        if (!snapshot.catalog || !snapshot.curriculumMap) throw new Error("Die JSON-Datei enthält keinen vollständigen Curriculum-Snapshot.");
+        summary = `${snapshot.catalog.courses.length} Kurse und ${snapshot.catalog.tracks.length} Lernpfade ersetzen den aktuellen Entwurfsstand.`;
+      } else {
+        const rows = parseDelimited(text);
+        if (!rows.length || !Object.prototype.hasOwnProperty.call(rows[0], "id")) throw new Error("CSV benötigt mindestens die Spalte id.");
+        snapshot = clone(state.snapshot);
+        let created = 0;
+        let updated = 0;
+        for (const row of rows) {
+          let course = snapshot.catalog.courses.find((item) => item.id === row.id);
+          if (!course) {
+            course = { id: row.id, sequence: snapshot.catalog.courses.length + 1, title: row.title || "Imported course", status: "draft", source: "CSV import", profileIds: [], dimensions: {}, interests: [], levels: [], ase: {}, format: "self-paced", summary: "", outcomes: [], modules: [] };
+            snapshot.catalog.courses.push(course);
+            snapshot.curriculumMap.courseMaps[row.id] = [];
+            created += 1;
+          } else updated += 1;
+          for (const key of ["title", "status", "format", "summary"]) if (row[key]) course[key] = row[key];
+          if (row.sequence) course.sequence = Number(row.sequence);
+          if (row.profileIds) course.profileIds = row.profileIds.split("|").map((item) => item.trim()).filter(Boolean);
+          if (row.outcomes) course.outcomes = row.outcomes.split("|").map((item) => item.trim()).filter(Boolean);
+        }
+        summary = `${rows.length} CSV-Zeilen: ${created} neue und ${updated} bestehende Kurse. Nicht genannte Felder bleiben erhalten.`;
+      }
+      state.pendingImport = snapshot;
+      $("#importSummary").replaceChildren(
+        h("div", { class: "lesson-issue-summary" }, [icon("table"), h("span", { text: summary })]),
+        h("p", { text: "Die Übernahme verändert nur den aktiven Entwurf. Erst Speichern, Grill, Review und Merge Request können daraus veröffentlichten Inhalt machen." }),
+      );
+      $("#importDialog").showModal();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  function closeImport() {
+    state.pendingImport = null;
+    $("#importDialog").close();
+  }
+
+  function applyImport() {
+    if (!state.pendingImport) return closeImport();
+    state.snapshot = state.pendingImport;
+    state.pendingImport = null;
+    $("#importDialog").close();
+    markDirty();
+    renderCurrentView();
+    toast("Import wurde in den Entwurf übernommen und wartet auf Validierung.");
+  }
+
+  function renderCoursePreview(course) {
+    const units = state.snapshot.curriculumMap.courseMaps[course.id] || [];
+    return h("article", { class: "course-preview" }, [
+      h("div", { class: "course-preview__hero" }, [
+        h("p", { class: "admin-overline", text: `${course.id} · ${course.format || "Format offen"}` }),
+        h("h2", { text: course.title }),
+        h("p", { text: course.summary || "Noch keine Zusammenfassung." }),
+        h("div", { class: "course-preview__meta" }, [h("span", { text: `${units.length} Units` }), h("span", { text: `${units.reduce((sum, unit) => sum + (unit.lessons || []).length, 0)} Activities` }), h("span", { text: course.status || "draft" })]),
+      ]),
+      h("section", {}, [h("h3", { text: "Learning outcomes" }), h("ul", {}, (course.outcomes || []).map((outcome) => h("li", { text: outcome })))]),
+      h("section", {}, [h("h3", { text: "Course outline" }), h("ol", { class: "course-preview__units" }, units.map((unit) => h("li", {}, [h("strong", { text: unit.title || "Untitled unit" }), h("span", { text: `${(unit.lessons || []).length} activities` })])))]),
+    ]);
+  }
+
+  function duplicateCourse(course) {
+    if (!state.active) return;
+    const courses = state.snapshot.catalog.courses;
+    const numbers = courses.map((item) => /^LRN-(\d+)$/.exec(item.id)).filter(Boolean).map((match) => Number(match[1]));
+    const id = `LRN-${String(Math.max(0, ...numbers) + 1).padStart(2, "0")}`;
+    const copy = clone(course);
+    copy.id = id;
+    copy.title = `${course.title} (Copy)`;
+    copy.status = "draft";
+    copy.sequence = Math.max(0, ...courses.map((item) => Number(item.sequence) || 0)) + 1;
+    courses.push(copy);
+    state.snapshot.curriculumMap.courseMaps[id] = clone(state.snapshot.curriculumMap.courseMaps[course.id] || []);
+    state.selectedCourseId = id;
+    state.coursePreview = false;
+    markDirty();
+    renderCourses();
   }
 
   function renderUnitEditors(courseId, editable) {
@@ -479,6 +742,7 @@
         field("Interne ID", inputFor(track.id, () => {}, { readonly: true })),
         field("Pfad-Code", inputFor(track.code, (value) => update("code", value), { disabled: !editable, pattern: "LP[0-9]{2}" })),
         field("Name", inputFor(track.label, (value) => update("label", value), { disabled: !editable }), true),
+        field("Status", selectFor(track.status || "active", [{ value: "active", label: "Aktiv" }, { value: "draft", label: "Entwurf" }, { value: "archived", label: "Archiviert" }], (value) => update("status", value), { disabled: !editable })),
         field("Profile", inputFor((track.profileIds || []).join(", "), (value) => update("profileIds", splitList(value)), { disabled: !editable }), true, "Kommagetrennte Profil-IDs"),
       ]),
     ]);
@@ -486,7 +750,53 @@
       h("div", { class: "admin-panel__header" }, [h("h2", { text: "Stufen und Kurse" }), button("Stufe hinzufügen", "secondary", () => { track.stages = track.stages || []; track.stages.push({ label: "Neue Stufe", courses: [] }); markDirty(); renderPaths(); }, "plus", { disabled: !editable })]),
       renderStageEditors(track, editable),
     ]);
-    return [heading, h("div", { class: "editor-sections" }, [basics, stages])];
+    const viewSwitch = h("div", { class: "path-view-switch", role: "group", "aria-label": "Lernpfad-Ansicht" }, [
+      ["structure", "Struktur", "list-bullets"],
+      ["matrix", "Rollen-/Level-Matrix", "grid-four"],
+      ["graph", "Voraussetzungsgraph", "graph"],
+    ].map(([value, label, iconName]) => button(label, state.pathView === value ? "primary" : "secondary", () => { state.pathView = value; renderPaths(); }, iconName, { "aria-pressed": String(state.pathView === value) })));
+    const pathView = state.pathView === "matrix" ? renderPathMatrix(track) : state.pathView === "graph" ? renderPathGraph(track) : stages;
+    return [heading, viewSwitch, h("div", { class: "editor-sections" }, [basics, pathView])];
+  }
+
+  function renderPathMatrix(track) {
+    const roles = state.snapshot.catalog.aseRoles || [];
+    const coursesById = new Map((state.snapshot.catalog.courses || []).map((course) => [course.id, course]));
+    const selectedIds = new Set((track.stages || []).flatMap((stage) => stage.courses || []));
+    const depths = ["Acquire", "Deepen", "Create"];
+    const tbody = h("tbody");
+    for (const role of roles) {
+      const counts = Object.fromEntries(depths.map((depth) => [depth, 0]));
+      for (const courseId of selectedIds) {
+        const course = coursesById.get(courseId);
+        const assignment = course && (course.ase || []).find((item) => item.role === role.id);
+        for (const depth of (assignment && assignment.depths) || []) if (depth in counts) counts[depth] += 1;
+      }
+      tbody.append(h("tr", {}, [h("th", { scope: "row" }, [h("strong", { text: role.labelDe || role.label }), h("small", { text: role.code })]), ...depths.map((depth) => h("td", { class: "coverage-cell", "data-covered": String(counts[depth] > 0), text: counts[depth] || "—" }))]));
+    }
+    return h("section", { class: "editor-section" }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "Rollen- und Level-Abdeckung" }), h("span", { text: `${selectedIds.size} eindeutige Kurse` })]),
+      h("div", { class: "admin-table-wrap" }, h("table", { class: "admin-table coverage-matrix" }, [
+        h("thead", {}, h("tr", {}, [h("th", { scope: "col", text: "ASE-Rolle" }), ...depths.map((depth) => h("th", { scope: "col", text: depth }))])),
+        tbody,
+      ])),
+      h("p", { class: "admin-form-hint", text: "Zahlen zeigen, wie viele Kurse im Lernpfad die jeweilige Rolle auf diesem Vertiefungsniveau abdecken." }),
+    ]);
+  }
+
+  function renderPathGraph(track) {
+    const coursesById = new Map((state.snapshot.catalog.courses || []).map((course) => [course.id, course]));
+    return h("section", { class: "editor-section" }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "Voraussetzungsfluss" }), h("span", { text: "Reihenfolge von links nach rechts" })]),
+      h("div", { class: "path-graph", role: "img", "aria-label": `Voraussetzungsgraph für ${track.label}` }, (track.stages || []).map((stage, stageIndex) => h("div", { class: "path-graph__stage" }, [
+        h("div", { class: "path-graph__stage-heading" }, [h("span", { text: stageIndex + 1 }), h("strong", { text: stage.label })]),
+        h("div", { class: "path-graph__nodes" }, (stage.courses || []).map((courseId) => {
+          const course = coursesById.get(courseId);
+          return h("div", { class: "path-graph__node" }, [h("code", { text: courseId }), h("span", { text: course ? course.title : "Unbekannter Kurs" })]);
+        })),
+      ]))),
+      h("p", { class: "admin-form-hint", text: "Die Stufenkanten modellieren die aktuelle Pfadreihenfolge. Explizite Lesson-Prerequisites werden zusätzlich im Repository-Audit geprüft." }),
+    ]);
   }
 
   function renderStageEditors(track, editable) {
@@ -502,6 +812,175 @@
       ]));
     });
     return list;
+  }
+
+  function lessonTitle(lesson) {
+    const match = /^#\s+(.+)$/m.exec((lesson.files && lesson.files["docs/en.md"]) || "");
+    return match ? match[1].trim() : lesson.path.split("/").at(-1);
+  }
+
+  async function selectLesson(lessonPath) {
+    if (state.lessonDirty) await saveLessonDraft(true);
+    state.selectedLessonPath = lessonPath;
+    state.lessonFile = "docs/en.md";
+    state.activeLesson = null;
+    renderLessons();
+    try {
+      const suffix = state.active ? `&changeset=${encodeURIComponent(state.active.id)}` : "";
+      const body = await api(`/api/admin/lessons?path=${encodeURIComponent(lessonPath)}${suffix}`);
+      state.activeLesson = body.lesson;
+      state.lessonIssues = body.issues || [];
+      state.lessonDirty = false;
+      renderLessons();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  function markLessonDirty() {
+    state.lessonDirty = true;
+    setSaveStatus("Lesson noch nicht im Änderungssatz gespeichert", "dirty");
+  }
+
+  async function saveLessonDraft(quiet = false) {
+    if (!state.active || !state.activeLesson || !state.lessonDirty) return;
+    try {
+      const body = await api(`/api/admin/changesets/${state.active.id}/lessons`, {
+        method: "POST",
+        body: JSON.stringify({
+          expectedVersion: state.active.version,
+          path: state.activeLesson.path,
+          mode: state.activeLesson.mode,
+          files: state.activeLesson.files,
+        }),
+      });
+      state.active = body.changeset;
+      state.activeLesson = body.lesson;
+      state.lessonIssues = body.issues || [];
+      state.lessonDirty = false;
+      setSaveStatus(`Version ${state.active.version} · Lesson gespeichert`, "saved");
+      await refreshChangeSets(false);
+      if (!quiet) toast(state.lessonIssues.length ? `Lesson gespeichert · ${state.lessonIssues.length} offene Vertragspunkte.` : "Lesson im Änderungssatz gespeichert.");
+      renderLessons();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  function addLessonFile(file, initial) {
+    if (!state.activeLesson || Object.prototype.hasOwnProperty.call(state.activeLesson.files, file)) return;
+    state.activeLesson.files[file] = initial;
+    state.lessonFile = file;
+    markLessonDirty();
+    renderLessons();
+  }
+
+  function removeLessonFile() {
+    if (!state.activeLesson || ["docs/en.md", "quiz.json"].includes(state.lessonFile) || /^code\/main\./.test(state.lessonFile)) return;
+    delete state.activeLesson.files[state.lessonFile];
+    state.lessonFile = Object.keys(state.activeLesson.files).sort()[0] || "docs/en.md";
+    markLessonDirty();
+    renderLessons();
+  }
+
+  function renderLessons() {
+    const panel = $("#view-lessons");
+    panel.replaceChildren(pageHeading(
+      "lessonsTitle",
+      "Repository-Inhalte",
+      "Lessons",
+      "Dokumentation, Quiz, Code, Tests und Outputs bleiben gemeinsam versioniert.",
+      button("Neue Lesson", "primary", openLessonDialog, "plus", { disabled: !state.active || state.active.status !== "draft" }),
+    ));
+    const query = state.lessonQuery.toLowerCase();
+    const lessons = state.lessons.filter((lesson) => !query || `${lesson.title} ${lesson.path}`.toLowerCase().includes(query));
+    const list = h("div", { class: "content-list" }, [
+      h("div", { class: "content-list__toolbar" }, h("div", { class: "admin-search" }, [icon("magnifying-glass"), inputFor(state.lessonQuery, (value) => { state.lessonQuery = value; renderLessons(); }, { type: "search", placeholder: "Lessons durchsuchen", "aria-label": "Lessons durchsuchen" })])),
+      h("div", { class: "content-list__items" }, lessons.map((lesson) => h("button", {
+        type: "button",
+        class: `content-list__item${lesson.path === state.selectedLessonPath ? " is-active" : ""}`,
+        onclick: () => selectLesson(lesson.path),
+      }, [h("span", {}, [h("strong", { text: lesson.title }), h("small", { text: `${lesson.phase} · ${lesson.language}` })]), h("code", { text: lesson.slug.slice(0, 3) })]))),
+    ]);
+    const editor = h("div", { class: "content-editor lesson-editor" });
+    if (!state.selectedLessonPath) {
+      editor.append(emptyState("file-code", "Lesson auswählen", "Wähle eine bestehende Lesson oder lege einen vollständigen Lesson-Entwurf an."));
+    } else if (!state.activeLesson) {
+      editor.append(h("div", { class: "chat-thinking", role: "status" }, [h("span", { "aria-hidden": "true" }), "Lesson wird geladen …"]));
+    } else {
+      const editable = Boolean(state.active && state.active.status === "draft");
+      const fileNames = Object.keys(state.activeLesson.files || {}).sort((left, right) => left.localeCompare(right));
+      if (!fileNames.includes(state.lessonFile)) state.lessonFile = fileNames[0];
+      const source = state.activeLesson.files[state.lessonFile] || "";
+      editor.append(
+        h("div", { class: "editor-heading" }, [
+          h("div", {}, [h("p", { class: "admin-overline", text: state.activeLesson.mode === "create" ? "Neue Lesson" : "Repository-Lesson" }), h("h1", { text: lessonTitle(state.activeLesson) }), h("p", { text: state.activeLesson.path })]),
+          button("Lesson speichern", "primary", () => saveLessonDraft(false), "floppy-disk", { disabled: !editable || !state.lessonDirty }),
+        ]),
+        state.lessonIssues.length ? h("div", { class: "lesson-issue-summary", role: "status" }, [icon("warning-circle"), h("span", { text: `${state.lessonIssues.length} Vertragspunkte offen. Entwürfe dürfen unvollständig sein; Review bleibt blockiert.` })]) : null,
+        h("div", { class: "lesson-file-toolbar" }, [
+          field("Datei", selectFor(state.lessonFile, fileNames.map((file) => ({ value: file, label: file })), (value) => { state.lessonFile = value; renderLessons(); }, { disabled: !fileNames.length })),
+          button("DE-Dokument", "secondary", () => addLessonFile("docs/de.md", "# Deutsche Übersetzung\n\n[TODO]\n"), "translate", { disabled: !editable || fileNames.includes("docs/de.md") }),
+          button("Output", "secondary", () => addLessonFile("outputs/README.md", "# Reusable artifact\n\n[TODO]\n"), "package", { disabled: !editable || fileNames.includes("outputs/README.md") }),
+          button("Datei entfernen", "quiet", removeLessonFile, "trash", { disabled: !editable || ["docs/en.md", "quiz.json"].includes(state.lessonFile) || /^code\/main\./.test(state.lessonFile) }),
+        ]),
+        h("label", { class: "admin-field lesson-source" }, [
+          h("span", { text: state.lessonFile }),
+          h("textarea", {
+            value: source,
+            spellcheck: state.lessonFile.endsWith(".md") ? "true" : "false",
+            disabled: !editable,
+            oninput: (event) => { state.activeLesson.files[state.lessonFile] = event.target.value; markLessonDirty(); },
+          }),
+        ]),
+      );
+    }
+    panel.append(h("div", { class: "content-shell lesson-shell" }, [list, editor]));
+  }
+
+  function openLessonDialog() {
+    if (!state.active) return openChangesetDialog();
+    const phaseSelect = $("#lessonPhase");
+    const phases = [...new Set(state.lessons.map((lesson) => lesson.phase))];
+    $("#lessonForm").reset();
+    phaseSelect.replaceChildren(...phases.map((phase) => h("option", { value: phase, text: phase })));
+    $("#lessonDialog").showModal();
+  }
+
+  function newLessonFiles(title, language, lessonPath) {
+    const lessonSlug = lessonPath.split("/").at(-1);
+    const languages = { py: "Python", ts: "TypeScript", rs: "Rust", jl: "Julia" };
+    const comment = language === "py" ? "#" : "//";
+    const main = `${comment} Lesson: ${lessonPath}/docs/en.md\n${comment} Build the core operation from first principles.\n${comment} Compare it with the production-library equivalent.\n${comment} Keep the demo deterministic and self-terminating.\n${comment} Sources: add the canonical specification or paper.\n\n`;
+    const docs = `# ${title}\n\n> [TODO] One-line hook\n\n**Type:** Build\n**Languages:** ${languages[language]}\n**Prerequisites:** None\n**Time:** ~30 minutes\n\n## Learning Objectives\n- [TODO] Explain the core concept\n- [TODO] Implement the operation from first principles\n- [TODO] Compare the result with a production library\n- [TODO] Validate the reusable artifact\n`;
+    const questions = ["pre", "check", "check", "check", "post", "post"].map((stage, index) => ({ stage, question: `[TODO] Question ${index + 1}`, options: ["a", "b", "c", "d"], correct: index % 4, explanation: "[TODO]" }));
+    const testFile = language === "py" ? "code/tests/test_main.py" : `code/tests/test_main.${language}`;
+    return {
+      "docs/en.md": docs,
+      "quiz.json": `${JSON.stringify({ lesson: lessonSlug, title, questions }, null, 2)}\n`,
+      [`code/main.${language}`]: main,
+      [testFile]: language === "py" ? "import unittest\n\n\nclass LessonTests(unittest.TestCase):\n    def test_placeholder_contract(self):\n        self.assertTrue(True)\n" : `${comment} [TODO] Add at least five tests with the stdlib runner.\n`,
+      "outputs/README.md": `# ${title} artifact\n\n[TODO] Describe the reusable artifact.\n`,
+    };
+  }
+
+  function createLessonDraft(event) {
+    event.preventDefault();
+    const phase = $("#lessonPhase").value;
+    const slug = $("#lessonSlug").value.trim();
+    const title = $("#lessonTitle").value.trim();
+    const language = $("#lessonLanguage").value;
+    const lessonPath = `phases/${phase}/${slug}`;
+    if (!/^phases\/\d{2}-[a-z0-9-]+\/\d{2}-[a-z0-9-]+$/.test(lessonPath) || !title) return;
+    if (state.lessons.some((lesson) => lesson.path === lessonPath)) {
+      toast("Dieser Lesson-Pfad existiert bereits.", "error");
+      return;
+    }
+    state.activeLesson = { path: lessonPath, mode: "create", files: newLessonFiles(title, language, lessonPath) };
+    state.lessons.push({ path: lessonPath, phase, slug, title, language: ({ py: "Python", ts: "TypeScript", rs: "Rust", jl: "Julia" })[language], hasGerman: false });
+    state.selectedLessonPath = lessonPath;
+    state.lessonFile = "docs/en.md";
+    state.lessonIssues = [];
+    state.lessonDirty = true;
+    $("#lessonDialog").close();
+    setSaveStatus("Neue Lesson noch nicht gespeichert", "dirty");
+    renderLessons();
   }
 
   function createPath() {
@@ -575,6 +1054,7 @@
       state.active = body.changeset;
       state.snapshot = clone(body.changeset.snapshot);
       state.aiDraft = "";
+      setSaveStatus(`Version ${state.active.version} · ${statusLabel(state.active.status)}`, "saved");
       await refreshChangeSets(false);
       toast("KI-Antwort und Tool-Spur wurden am Änderungssatz protokolliert.");
     } catch (error) {
@@ -599,6 +1079,7 @@
       state.active = body.changeset;
       state.snapshot = clone(body.changeset.snapshot);
       state.issues = body.issues || [];
+      setSaveStatus(`Version ${state.active.version} · ${statusLabel(state.active.status)}`, "saved");
       updateStats();
       await refreshChangeSets(false);
       toast(decision === "accepted" ? "KI-Vorschlag als sichtbare Entwurfsänderung übernommen." : "KI-Vorschlag abgelehnt und protokolliert.");
@@ -655,9 +1136,24 @@
     const panel = $("#view-review");
     const errors = state.issues.filter((item) => item.severity === "error");
     const warnings = state.issues.filter((item) => item.severity !== "error");
+    let reviewAction = null;
+    if (state.active && state.active.status === "draft") {
+      reviewAction = button("Review anfordern", "primary", () => transitionStatus("review"), "arrow-right", { disabled: !state.baseCurrent || errors.length > 0 || state.dirty || (state.active.grill && state.active.grill.required && !["passed", "overridden"].includes(state.active.grill.status)) });
+    } else if (state.active && state.active.status === "review" && hasRole("reviewer")) {
+      reviewAction = h("div", { class: "review-actions" }, [
+        button("Zurück in Entwurf", "secondary", () => transitionStatus("draft"), "arrow-u-up-left"),
+        button("Fachlich freigeben", "primary", () => transitionStatus("approved"), "check"),
+      ]);
+    } else if (state.active && state.active.status === "approved" && hasRole("publisher")) {
+      reviewAction = state.active.publication
+        ? button("MR-Status aktualisieren", "primary", refreshPublication, "arrows-clockwise")
+        : button("Merge Request öffnen", "primary", publishActive, "git-merge", { disabled: !state.publishConfigured });
+    } else if (state.active && state.active.status === "published" && hasRole("publisher")) {
+      reviewAction = button("Archivieren", "secondary", () => transitionStatus("archived"), "archive");
+    }
     panel.replaceChildren(pageHeading(
       "reviewTitle", "Qualitätsgate", "Review", "Strukturelle Prüfungen sind die erste Stufe; Curriculum-Grill und Repository-Audits folgen vor der Veröffentlichung.",
-      state.active && state.active.status === "draft" ? button("Review anfordern", "primary", () => transitionStatus("review"), "arrow-right", { disabled: errors.length > 0 || state.dirty || (state.active.grill && state.active.grill.required && !["passed", "overridden"].includes(state.active.grill.status)) }) : null,
+      reviewAction,
     ));
     const issuePanel = h("section", { class: "admin-panel" }, [
       h("div", { class: "admin-panel__header" }, [h("h2", { text: "Prüfergebnisse" }), h("span", { text: `${errors.length} Blocker · ${warnings.length} Hinweise` })]),
@@ -676,8 +1172,29 @@
       state.active && state.active.grill && state.active.grill.required && !["passed", "overridden"].includes(state.active.grill.status)
         ? button("Grill im KI-Studio fortsetzen", "secondary", () => { state.aiSkillId = "curriculum-grill"; activateView("assistant"); }, "sparkle")
         : null,
+      state.active && state.active.grill && state.active.grill.required && !["passed", "overridden"].includes(state.active.grill.status) && hasRole("reviewer")
+        ? h("div", { class: "grill-override" }, [
+          field("Reviewer-Override", textareaFor(state.grillOverrideReason, (value) => { state.grillOverrideReason = value; }, { placeholder: "Begründung für die bewusste Übersteuerung …", maxlength: "1000" }), true, "Wird unveränderlich im Audit-Log protokolliert."),
+          button("Mit Begründung übersteuern", "secondary", overrideGrill, "warning"),
+        ])
+        : null,
     ]);
+    const publicationPanel = state.active && state.active.publication ? h("section", { class: "admin-panel publication-panel" }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "GitLab Merge Request" }), h("span", { class: "status-dot", "data-status": state.active.publication.state === "merged" ? "published" : "review", text: state.active.publication.state })]),
+      h("dl", { class: "publication-details" }, [
+        h("div", {}, [h("dt", { text: "Branch" }), h("dd", {}, h("code", { text: state.active.publication.branch }))]),
+        h("div", {}, [h("dt", { text: "Commit" }), h("dd", {}, h("code", { text: (state.active.publication.commitId || "").slice(0, 12) }))]),
+        h("div", {}, [h("dt", { text: "Ziel" }), h("dd", { text: state.active.publication.targetBranch })]),
+      ]),
+      h("a", { class: "admin-button admin-button--secondary", href: state.active.publication.mergeRequest.url, target: "_blank", rel: "noreferrer" }, [icon("arrow-square-out"), `MR !${state.active.publication.mergeRequest.iid} öffnen`]),
+    ]) : null;
     panel.append(h("div", { class: "review-grid" }, [issuePanel, gatePanel]));
+    if (state.active && !state.baseCurrent) panel.prepend(h("div", { class: "base-drift", role: "alert" }, [
+      icon("git-diff"),
+      h("div", {}, [h("strong", { text: "Veröffentlichte Basis hat sich geändert" }), h("p", { text: "Der Entwurf muss die neuen Curriculum-Inhalte per Drei-Wege-Rebase übernehmen, bevor Review oder Publishing möglich ist." })]),
+      button("Basis aktualisieren", "primary", rebaseActive, "arrows-merge"),
+    ]));
+    if (publicationPanel) panel.append(publicationPanel);
   }
 
   function renderHistory() {
@@ -695,11 +1212,51 @@
         h("td", { text: entry.action.replace("changeset.", "") }),
         h("td", { text: entry.reason || "—" }),
         h("td", { class: "number", text: entry.version || 1 }),
+        h("td", {}, entry.version && entry.version !== state.active.version ? button("Wiederherstellen", "quiet", () => restoreVersion(entry.version), "arrow-counter-clockwise") : "Aktuell"),
       ]));
     }
     panel.append(h("article", { class: "admin-panel" }, [h("div", { class: "admin-panel__header" }, h("h2", { text: state.active.title })), h("div", { class: "admin-table-wrap" }, h("table", { class: "admin-table" }, [
-      h("thead", {}, h("tr", {}, ["Zeitpunkt", "Benutzer", "Aktion", "Begründung", "Version"].map((label) => h("th", { scope: "col", text: label })))), tbody,
+      h("thead", {}, h("tr", {}, ["Zeitpunkt", "Benutzer", "Aktion", "Begründung", "Version", "Revision"].map((label) => h("th", { scope: "col", text: label })))), tbody,
     ]))]));
+  }
+
+  async function restoreVersion(version) {
+    if (!state.active) return;
+    try {
+      const body = await api(`/api/admin/changesets/${state.active.id}/restore`, {
+        method: "POST",
+        body: JSON.stringify({ expectedVersion: state.active.version, version }),
+      });
+      state.active = body.changeset;
+      state.snapshot = clone(body.changeset.snapshot);
+      state.issues = body.issues || [];
+      setSaveStatus(`Version ${state.active.version} · Revision ${version} wiederhergestellt`, "saved");
+      await refreshChangeSets(false);
+      toast(`Revision ${version} wurde als neuer Entwurf wiederhergestellt.`);
+      renderHistory();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  async function rebaseActive() {
+    if (!state.active) return;
+    try {
+      const body = await api(`/api/admin/changesets/${state.active.id}/rebase`, {
+        method: "POST",
+        body: JSON.stringify({ expectedVersion: state.active.version }),
+      });
+      state.active = body.changeset;
+      state.snapshot = clone(body.changeset.snapshot);
+      state.loadedSnapshot = clone(body.changeset.snapshot);
+      state.issues = body.issues || [];
+      state.baseCurrent = true;
+      setSaveStatus(`Version ${state.active.version} · Basis aktualisiert`, "saved");
+      await refreshChangeSets(false);
+      toast("Veröffentlichte Basis und nicht überlappende Entwurfsänderungen wurden zusammengeführt.");
+      renderReview();
+    } catch (error) {
+      const conflicts = error.payload && error.payload.details && error.payload.details.conflicts;
+      toast(conflicts ? `Rebase benötigt manuelle Auflösung für ${conflicts.length} Überschneidungen.` : error.message, "error");
+    }
   }
 
   async function validateActive() {
@@ -724,6 +1281,59 @@
       await refreshChangeSets(false);
       toast(`Änderungssatz ist jetzt „${statusLabel(status)}“.`);
       renderCurrentView();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  async function overrideGrill() {
+    if (!state.active || !state.grillOverrideReason.trim()) {
+      toast("Bitte begründe den Reviewer-Override.", "error");
+      return;
+    }
+    try {
+      const body = await api(`/api/admin/changesets/${state.active.id}/grill-override`, {
+        method: "POST",
+        body: JSON.stringify({ expectedVersion: state.active.version, reason: state.grillOverrideReason }),
+      });
+      state.active = body.changeset;
+      state.grillOverrideReason = "";
+      setSaveStatus(`Version ${state.active.version} · ${statusLabel(state.active.status)}`, "saved");
+      await refreshChangeSets(false);
+      toast("Curriculum-Grill wurde mit Reviewer-Begründung übersteuert.");
+      renderReview();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  async function publishActive() {
+    if (!state.active) return;
+    try {
+      setSaveStatus("GitLab-Branch und Merge Request werden erstellt …");
+      const body = await api(`/api/admin/changesets/${state.active.id}/publish`, {
+        method: "POST",
+        body: JSON.stringify({ expectedVersion: state.active.version }),
+      });
+      state.active = body.changeset;
+      setSaveStatus(`Version ${state.active.version} · MR offen`, "saved");
+      await refreshChangeSets(false);
+      toast("GitLab-Branch, Manifest-Commit und Merge Request wurden erstellt.");
+      renderReview();
+    } catch (error) {
+      setSaveStatus(`Version ${state.active.version} · ${statusLabel(state.active.status)}`, "saved");
+      toast(error.message, "error");
+    }
+  }
+
+  async function refreshPublication() {
+    if (!state.active) return;
+    try {
+      const body = await api(`/api/admin/changesets/${state.active.id}/publication`, {
+        method: "POST",
+        body: JSON.stringify({ expectedVersion: state.active.version }),
+      });
+      state.active = body.changeset;
+      setSaveStatus(`Version ${state.active.version} · ${statusLabel(state.active.status)}`, "saved");
+      await refreshChangeSets(false);
+      toast(state.active.status === "published" ? "Merge bestätigt: Curriculum ist veröffentlicht." : `Merge Request ist weiterhin „${state.active.publication.state}“.`);
+      renderReview();
     } catch (error) { toast(error.message, "error"); }
   }
 
@@ -762,12 +1372,18 @@
 
   async function selectChangeset(id) {
     if (state.dirty) await saveDraft(true);
+    if (state.lessonDirty) await saveLessonDraft(true);
     if (!id) {
       state.active = null;
+      state.baseCurrent = true;
       state.snapshot = clone(state.base.snapshot);
+      state.loadedSnapshot = clone(state.base.snapshot);
       state.stats = state.base.stats;
       state.issues = state.base.issues;
       state.dirty = false;
+      state.activeLesson = null;
+      state.selectedLessonPath = null;
+      state.lessonDirty = false;
       $("#changesetSelect").value = "";
       $("#saveButton").disabled = true;
       setSaveStatus("Nur lesen");
@@ -777,9 +1393,22 @@
     try {
       const body = await api(`/api/admin/changesets/${id}`);
       state.active = body.changeset;
+      state.baseCurrent = body.baseCurrent !== false;
+      for (const draft of Object.values(state.active.lessons || {})) {
+        if (!state.lessons.some((lesson) => lesson.path === draft.path)) {
+          const [phase, slug] = draft.path.split("/").slice(-2);
+          const main = Object.keys(draft.files || {}).find((file) => /^code\/main\./.test(file)) || "";
+          const extension = main.split(".").at(-1);
+          state.lessons.push({ path: draft.path, phase, slug, title: lessonTitle(draft), language: ({ py: "Python", ts: "TypeScript", rs: "Rust", jl: "Julia" })[extension] || "—", hasGerman: Boolean(draft.files["docs/de.md"]) });
+        }
+      }
       state.snapshot = clone(body.changeset.snapshot);
+      state.loadedSnapshot = clone(body.changeset.snapshot);
       state.issues = [];
       state.dirty = false;
+      state.activeLesson = null;
+      state.selectedLessonPath = null;
+      state.lessonDirty = false;
       $("#changesetSelect").value = id;
       $("#saveButton").disabled = true;
       setSaveStatus(`Version ${state.active.version} · ${statusLabel(state.active.status)}`, "saved");
@@ -809,14 +1438,21 @@
     $("#validateButton").addEventListener("click", validateActive);
     $("#changesetSelect").addEventListener("change", (event) => selectChangeset(event.target.value));
     $("#changesetForm").addEventListener("submit", createChangeset);
+    $("#lessonForm").addEventListener("submit", createLessonDraft);
+    $("#curriculumImport").addEventListener("change", previewImport);
+    $("#closeImportDialog").addEventListener("click", closeImport);
+    $("#cancelImport").addEventListener("click", closeImport);
+    $("#applyImport").addEventListener("click", applyImport);
+    $("#cancelConflict").addEventListener("click", cancelConflict);
+    $("#applyConflict").addEventListener("click", applyConflict);
     document.addEventListener("keydown", (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
-        saveDraft(false);
+        if (state.lessonDirty) saveLessonDraft(false); else saveDraft(false);
       }
     });
     window.addEventListener("beforeunload", (event) => {
-      if (!state.dirty) return;
+      if (!state.dirty && !state.lessonDirty) return;
       event.preventDefault();
       event.returnValue = "";
     });
@@ -837,16 +1473,19 @@
 
   async function boot() {
     try {
-      const [me, curriculum, changesets, aiSkills] = await Promise.all([
-        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"),
+      const [me, curriculum, changesets, aiSkills, publishConfig, lessons] = await Promise.all([
+        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"), api("/api/admin/publish/config"), api("/api/admin/lessons"),
       ]);
       state.actor = me.actor;
       state.base = curriculum;
       state.snapshot = clone(curriculum.snapshot);
+      state.loadedSnapshot = clone(curriculum.snapshot);
       state.stats = curriculum.stats;
       state.issues = curriculum.issues;
       state.changesets = changesets.changesets;
       state.skills = aiSkills.skills;
+      state.publishConfigured = publishConfig.configured;
+      state.lessons = lessons.lessons;
       $("#adminUsername").textContent = state.actor.username;
       $("#adminRoles").textContent = state.actor.roles.join(" · ");
       $("#adminAvatar").textContent = initials(state.actor.username);

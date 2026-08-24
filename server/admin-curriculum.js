@@ -47,6 +47,7 @@ function validateCurriculum(snapshot) {
   }
 
   const courseIds = new Set();
+  const prerequisites = new Map();
   const sequences = new Set();
   for (const [index, course] of courses.entries()) {
     const at = `catalog.courses[${index}]`;
@@ -79,7 +80,29 @@ function validateCurriculum(snapshot) {
       }
       sequences.add(course.sequence);
     }
+    prerequisites.set(course.id, Array.isArray(course.prerequisites) ? course.prerequisites : []);
   }
+
+  for (const [courseId, required] of prerequisites) {
+    for (const dependency of required) {
+      if (!courseIds.has(dependency)) issues.push(issue("error", "course.prerequisite.unknown", `catalog.courses.${courseId}.prerequisites`, `${courseId} benötigt den unbekannten Kurs ${dependency}.`));
+      if (dependency === courseId) issues.push(issue("error", "course.prerequisite.self", `catalog.courses.${courseId}.prerequisites`, `${courseId} kann nicht seine eigene Voraussetzung sein.`));
+    }
+  }
+  const visiting = new Set();
+  const visited = new Set();
+  function visit(courseId, chain = []) {
+    if (visiting.has(courseId)) {
+      issues.push(issue("error", "course.prerequisite.cycle", `catalog.courses.${courseId}.prerequisites`, `Zyklische Voraussetzung: ${[...chain, courseId].join(" → ")}.`));
+      return;
+    }
+    if (visited.has(courseId)) return;
+    visiting.add(courseId);
+    for (const dependency of prerequisites.get(courseId) || []) if (courseIds.has(dependency)) visit(dependency, [...chain, courseId]);
+    visiting.delete(courseId);
+    visited.add(courseId);
+  }
+  for (const courseId of courseIds) visit(courseId);
 
   const trackIds = new Set();
   const trackCodes = new Set();
@@ -97,6 +120,7 @@ function validateCurriculum(snapshot) {
     if (!String(track.label || "").trim()) {
       issues.push(issue("error", "track.label", `${at}.label`, "Der Lernpfadname fehlt."));
     }
+    const trackCourses = new Set();
     for (const [stageIndex, stage] of (track.stages || []).entries()) {
       for (const [courseIndex, courseId] of (stage.courses || []).entries()) {
         if (!courseIds.has(courseId)) {
@@ -107,7 +131,13 @@ function validateCurriculum(snapshot) {
             `Der Lernpfad referenziert den unbekannten Kurs ${courseId}.`,
           ));
         }
+        if (trackCourses.has(courseId)) issues.push(issue("warning", "track.course.duplicate", `${at}.stages[${stageIndex}].courses[${courseIndex}]`, `${courseId} ist im Lernpfad mehrfach enthalten.`));
+        trackCourses.add(courseId);
       }
+    }
+    const coveredRoles = new Set(courses.filter((course) => trackCourses.has(course.id)).flatMap((course) => (course.ase || []).map((entry) => entry.role)));
+    for (const role of catalog.aseRoles || []) {
+      if (!coveredRoles.has(role.id)) issues.push(issue("warning", "track.role.gap", at, `${track.code} deckt die ASE-Rolle ${role.labelDe || role.label} nicht ab.`));
     }
   }
 
@@ -120,6 +150,7 @@ function validateCurriculum(snapshot) {
       issues.push(issue("warning", "map.units.empty", `curriculumMap.courseMaps.${courseId}`, "Der Kurs hat keine Units."));
       continue;
     }
+    const courseLessons = new Set();
     for (const [unitIndex, unit] of units.entries()) {
       const at = `curriculumMap.courseMaps.${courseId}[${unitIndex}]`;
       if (!String(unit.title || "").trim()) {
@@ -135,7 +166,9 @@ function validateCurriculum(snapshot) {
         } else if (seen.has(lesson.path)) {
           issues.push(issue("warning", "lesson.duplicate", `${at}.lessons[${lessonIndex}]`, `Activity ${lesson.path} ist in dieser Unit doppelt.`));
         }
+        if (courseLessons.has(lesson.path)) issues.push(issue("warning", "lesson.course.duplicate", `${at}.lessons[${lessonIndex}]`, `Activity ${lesson.path} ist im Kurs mehrfach enthalten.`));
         seen.add(lesson.path);
+        courseLessons.add(lesson.path);
       }
     }
   }

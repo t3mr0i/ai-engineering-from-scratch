@@ -204,6 +204,95 @@ test("Harness Engineering is staged in LP03 and not broadened through LP02", () 
   assert.ok(lp03.profileIds.includes("tc"), "LP03 must serve Technology Consulting");
 });
 
+test("Academy learning paths cover every imported AI-X course exactly once", () => {
+  assert.ok(Array.isArray(data.academyPaths), "LrnData.academyPaths must be an array");
+  const actual = data.academyPaths.map((path) => path.academyCourse).sort();
+  const expected = ["AI-01", "AI-02", "AI-03", "AI-04", "AI-06", "AI-07", "AI-08", "AI-09", "AI-10", "AI-12"];
+  assert.deepEqual([...actual], expected);
+  assert.equal(new Set(data.academyPaths.map((path) => path.id)).size, data.academyPaths.length,
+    "Academy path ids must be unique");
+});
+
+test("every Academy learning path is an ordered, resolvable Course journey", () => {
+  const courseIds = new Set(data.courses.map((course) => course.id));
+  const trackCodes = new Set(data.tracks.map((track) => track.code));
+  const stageOrder = { Acquire: 1, Deepen: 2, Create: 3 };
+  for (const path of data.academyPaths) {
+    for (const field of ["id", "academyCourse", "title", "format", "audience", "prerequisites", "summary"]) {
+      assert.ok(typeof path[field] === "string" && path[field].trim(),
+        `Academy path ${path.id || "<unknown>"} missing ${field}`);
+    }
+    assert.ok(Array.isArray(path.trackCodes) && path.trackCodes.length > 0,
+      `Academy path ${path.id} must name at least one LP track`);
+    for (const code of path.trackCodes) {
+      assert.ok(trackCodes.has(code), `Academy path ${path.id} references missing track ${code}`);
+    }
+    assert.ok(Array.isArray(path.stages) && path.stages.length >= 2,
+      `Academy path ${path.id} must contain at least two stages`);
+    let previous = 0;
+    for (const stage of path.stages) {
+      assert.ok(stageOrder[stage.label], `Academy path ${path.id} has invalid stage ${stage.label}`);
+      assert.ok(stageOrder[stage.label] > previous,
+        `Academy path ${path.id} stages must stay in Acquire/Deepen/Create order`);
+      previous = stageOrder[stage.label];
+      assert.ok(typeof stage.focus === "string" && stage.focus.trim(),
+        `Academy path ${path.id} stage ${stage.label} needs a focus`);
+      assert.ok(Array.isArray(stage.courses) && stage.courses.length > 0,
+        `Academy path ${path.id} stage ${stage.label} has no Courses`);
+      for (const courseId of stage.courses) {
+        assert.ok(courseIds.has(courseId),
+          `Academy path ${path.id} stage ${stage.label} references missing Course ${courseId}`);
+        assert.ok(Array.isArray(cmap.courseMaps[courseId]) && cmap.courseMaps[courseId].length > 0,
+          `Academy path ${path.id} references Course ${courseId} without a curriculum map`);
+      }
+    }
+  }
+});
+
+test("the learner catalog exposes the Academy paths with current browser data", () => {
+  const html = readFileSync("site/index.html", "utf8");
+  const lrn = readFileSync("site/lrn/lrn.js", "utf8");
+  assert.match(html, /id="academyPathList"/,
+    "catalog needs a learner-visible Academy path container");
+  assert.match(html, /lrn\/data\.js\?v=20260824b/,
+    "catalog must cache-bust the browser data that contains Academy paths");
+  assert.match(lrn, /function renderAcademyPaths\(\)/,
+    "catalog needs to render Academy paths from LrnData");
+  assert.match(lrn, /courseHref\(courseId\)/,
+    "Academy path stages must link into LRN course details");
+});
+
+test("AI-06, AI-07, and AI-08 extend their existing Courses with source-specific units", () => {
+  const expectedUnitCounts = { "LRN-02": 4, "LRN-40": 4, "LRN-16": 4, "LRN-25": 4 };
+  for (const [courseId, count] of Object.entries(expectedUnitCounts)) {
+    assert.equal(cmap.courseMaps[courseId].length, count,
+      `${courseId} must retain the imported source-specific unit structure`);
+  }
+  const quantitativePaths = new Set(cmap.courseMaps["LRN-40"].flatMap((unit) => unit.lessons).map((lesson) => lesson.path));
+  for (const required of [
+    "phases/02-ml-fundamentals/07-unsupervised-learning",
+    "phases/02-ml-fundamentals/15-time-series",
+    "phases/09-reinforcement-learning/03-monte-carlo-methods",
+    "phases/01-math-foundations/08-optimization",
+  ]) {
+    assert.ok(quantitativePaths.has(required), `AI-07 path missing ${required}`);
+  }
+});
+
+test("AI-10 and AI-12 have dedicated Course containers and mapped Activities", () => {
+  const sales = data.courses.find((course) => course.id === "LRN-45");
+  const infrastructure = data.courses.find((course) => course.id === "LRN-46");
+  assert.equal(sales && sales.academyCourse, "AI-10");
+  assert.equal(infrastructure && infrastructure.academyCourse, "AI-12");
+  assert.equal(cmap.courseMaps["LRN-45"].length, 4);
+  assert.equal(cmap.courseMaps["LRN-46"].length, 5);
+  const salesPaths = new Set(cmap.courseMaps["LRN-45"].flatMap((unit) => unit.lessons).map((lesson) => lesson.path));
+  const infraPaths = new Set(cmap.courseMaps["LRN-46"].flatMap((unit) => unit.lessons).map((lesson) => lesson.path));
+  assert.ok(salesPaths.has("phases/11-llm-engineering/44-ai-for-sales-product-consulting"));
+  assert.ok(infraPaths.has("phases/13-tools-and-protocols/07-building-an-mcp-server"));
+  assert.ok(infraPaths.has("phases/17-infrastructure-and-production/13-llm-observability"));
+});
+
 // ───────────────────────────────────────────────────────────────────────────
 // curriculum-map.js ↔ data.js cross-consistency
 // ───────────────────────────────────────────────────────────────────────────

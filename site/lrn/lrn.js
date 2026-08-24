@@ -13,6 +13,7 @@
     });
   }
   var profileById = indexBy(data.profiles, "id");
+  var courseById = indexBy(data.courses, "id");
   var state = loadState();
 
   // Die Tiefenachse (Acquire/Deepen/Create) ersetzt die frueheren L1-L4-
@@ -70,11 +71,13 @@
     searchInput: document.getElementById("searchInput"),
     searchClear: document.getElementById("searchClear"),
     resetBtn: document.getElementById("resetBtn"),
+    academyPathList: document.getElementById("academyPathList"),
     srStatus: document.getElementById("srStatus")
   };
 
   applyExternalParams();
   renderControls();
+  renderAcademyPaths();
   render();
   wireActions();
   if (progressApi && progressApi.onChange) progressApi.onChange(render);
@@ -210,6 +213,7 @@
 
     document.addEventListener("sitelang:change", function () {
       renderControls();
+      renderAcademyPaths();
       render();
     });
   }
@@ -276,6 +280,99 @@
       });
       return btn;
     }));
+  }
+
+  function renderAcademyPaths() {
+    if (!els.academyPathList) return;
+
+    var openPathIds = Array.prototype.filter.call(
+      els.academyPathList.querySelectorAll("details[open]"),
+      function (detail) { return detail.dataset.pathId; }
+    ).map(function (detail) { return detail.dataset.pathId; });
+
+    replaceChildren(els.academyPathList, (data.academyPaths || []).map(function (path) {
+      var detail = document.createElement("details");
+      detail.className = "academy-path";
+      detail.dataset.pathId = path.id;
+      detail.open = openPathIds.indexOf(path.id) !== -1;
+
+      var summary = document.createElement("summary");
+      summary.className = "academy-path__summary";
+
+      var code = document.createElement("span");
+      code.className = "academy-path__code";
+      code.textContent = path.academyCourse;
+
+      var identity = document.createElement("span");
+      identity.className = "academy-path__identity";
+      var title = document.createElement("strong");
+      title.textContent = path.title;
+      var format = document.createElement("span");
+      format.textContent = path.format;
+      identity.append(title, format);
+
+      var chevron = lucideIcon("caret-down");
+      chevron.classList.add("academy-path__chevron");
+      summary.append(code, identity, chevron);
+
+      var body = document.createElement("div");
+      body.className = "academy-path__body";
+      var pathSummary = document.createElement("p");
+      pathSummary.className = "academy-path__description";
+      pathSummary.textContent = path.summary;
+
+      var facts = document.createElement("dl");
+      facts.className = "academy-path__facts";
+      appendFact(facts, i18n("academy_path_audience"), path.audience);
+      appendFact(facts, i18n("academy_path_prerequisites"), path.prerequisites);
+
+      var stages = document.createElement("ol");
+      stages.className = "academy-path__stages";
+      (path.stages || []).forEach(function (stage) {
+        var item = document.createElement("li");
+        item.className = "academy-stage";
+
+        var stageCopy = document.createElement("div");
+        stageCopy.className = "academy-stage__copy";
+        var stageTitle = document.createElement("h3");
+        stageTitle.textContent = i18n("lrn_depth_" + stage.label.toLowerCase(), stage.label);
+        var stageFocus = document.createElement("p");
+        stageFocus.textContent = stage.focus;
+        stageCopy.append(stageTitle, stageFocus);
+
+        var courseList = document.createElement("ul");
+        courseList.className = "academy-stage__courses";
+        courseList.setAttribute("aria-label", i18n("academy_path_courses"));
+        (stage.courses || []).forEach(function (courseId) {
+          var course = courseById[courseId];
+          if (!course) return;
+          var courseItem = document.createElement("li");
+          var link = document.createElement("a");
+          link.href = courseHref(courseId);
+          link.textContent = courseId + " · " + course.title;
+          link.setAttribute("aria-label", i18n("academy_path_open_course").replace("{title}", course.title));
+          courseItem.appendChild(link);
+          courseList.appendChild(courseItem);
+        });
+
+        item.append(stageCopy, courseList);
+        stages.appendChild(item);
+      });
+
+      body.append(pathSummary, facts, stages);
+      detail.append(summary, body);
+      return detail;
+    }));
+  }
+
+  function appendFact(list, label, value) {
+    var group = document.createElement("div");
+    var term = document.createElement("dt");
+    term.textContent = label;
+    var description = document.createElement("dd");
+    description.textContent = value;
+    group.append(term, description);
+    list.appendChild(group);
   }
 
   var lastVisibleSignature = null;

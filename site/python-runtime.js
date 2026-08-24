@@ -68,7 +68,22 @@
     return ready;
   }
 
+  function captureOutput(pyodide) {
+    var batches = [];
+    function append(batch) {
+      batches.push(String(batch).replace(/\n$/, ""));
+    }
+
+    pyodide.setStdout({ batched: append });
+    pyodide.setStderr({ batched: append });
+
+    return {
+      text: function () { return batches.join("\n"); }
+    };
+  }
+
   return {
-    initialize: initialize
+    initialize: initialize,
+    captureOutput: captureOutput
   };
 });

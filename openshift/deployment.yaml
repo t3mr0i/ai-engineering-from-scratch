@@ -31,6 +31,20 @@ spec:
               value: "8080"
             - name: GATE_DISABLED
               value: "true"
+            - name: ADMIN_DATA_DIR
+              value: /var/lib/ase-admin
+            - name: ADMIN_LLM_MODEL
+              value: azure/gpt-5.4-mini
+            - name: ADMIN_GITLAB_URL
+              value: https://git02.lhind.app.lufthansa.com
+            - name: ADMIN_GITLAB_PROJECT_ID
+              value: lhind/pace/agentic-software-engineering/ai-training
+            - name: ADMIN_GITLAB_TARGET_BRANCH
+              value: main
+            - name: ADMIN_IDENTITY_HEADER
+              value: x-forwarded-user
+            - name: ADMIN_GROUPS_HEADER
+              value: x-forwarded-groups
             - name: SITE_PASSCODE
               valueFrom:
                 secretKeyRef:
@@ -46,6 +60,24 @@ spec:
                 secretKeyRef:
                   name: ase-site-gated-secrets
                   key: LLM_GATEWAY_KEY
+            - name: ADMIN_GITLAB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ase-site-gated-secrets
+                  key: ADMIN_GITLAB_TOKEN
+            - name: ADMIN_TRUSTED_PROXY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ase-site-gated-secrets
+                  key: ADMIN_TRUSTED_PROXY_TOKEN
+            - name: ADMIN_ROLES_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: ase-site-gated-secrets
+                  key: ADMIN_ROLES_JSON
+          volumeMounts:
+            - name: admin-data
+              mountPath: /var/lib/ase-admin
           resources:
             requests:
               cpu: 100m
@@ -63,3 +95,7 @@ spec:
               path: /gate.html
               port: 8080
             initialDelaySeconds: 10
+      volumes:
+        - name: admin-data
+          persistentVolumeClaim:
+            claimName: ase-admin-data

@@ -139,11 +139,14 @@ window.SITE_I18N = {
   ase_matrix_heading: { en: "ASE role matrix", de: "ASE-Rollenmatrix" },
   ase_all_roles: { en: "All five roles", de: "Alle fuenf Auspraegungen" },
 
-  // lrn/data.js tracks[LP03].bundles — the three Academy bundles (online
-  // self-study, Module 1, to a live Module 2 course). 00_REPORT.md Teil B3.
-  bundle_ai01_title: { en: "Introduction to GitHub Copilot", de: "Introduction to GitHub Copilot" },
-  bundle_ai02_title: { en: "Agentic Software Engineering", de: "Agentic Software Engineering" },
-  bundle_ai04_title: { en: "Requirement Engineering with AI", de: "Requirement Engineering with AI" },
+  // lrn/data.js academyPaths — source-aligned AI Literacy Academy paths.
+  academy_paths_overline: { en: "AI Literacy Academy", de: "AI Literacy Academy" },
+  academy_paths_title: { en: "Learning paths for every AI-X course", de: "Lernpfade für alle AI-X-Kurse" },
+  academy_paths_intro: { en: "Open a path to see its ordered stages and the LRN courses that support each step.", de: "Öffne einen Pfad, um seine aufeinander aufbauenden Stufen und die jeweils unterstützenden LRN-Kurse zu sehen." },
+  academy_path_audience: { en: "Audience", de: "Zielgruppe" },
+  academy_path_prerequisites: { en: "Prerequisites", de: "Voraussetzungen" },
+  academy_path_courses: { en: "Supporting courses", de: "Unterstützende Kurse" },
+  academy_path_open_course: { en: "Open {title}", de: "{title} öffnen" },
 
   // lrn/lrn.js — status filter tabs
   lrn_status_recommended: { en: "Recommended", de: "Empfohlen" },

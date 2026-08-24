@@ -5,6 +5,7 @@
  */
 
 const ROLE_ORDER = ["editor", "reviewer", "publisher"];
+const crypto = require("node:crypto");
 
 function parseRoleConfig(raw) {
   if (!raw) return { users: {}, groups: {} };
@@ -34,8 +35,18 @@ function header(req, name) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+function trustedProxy(req, env) {
+  const expected = String(env.ADMIN_TRUSTED_PROXY_TOKEN || "");
+  const supplied = String(header(req, env.ADMIN_PROXY_TOKEN_HEADER || "x-admin-proxy-token") || "");
+  if (!expected || !supplied) return false;
+  const left = Buffer.from(expected);
+  const right = Buffer.from(supplied);
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
+}
+
 function resolveAdmin(req, env = process.env) {
   const devMode = env.ADMIN_DEV_MODE === "true";
+  if (!devMode && !trustedProxy(req, env)) return null;
   const identityHeader = env.ADMIN_IDENTITY_HEADER || "x-forwarded-user";
   const groupsHeader = env.ADMIN_GROUPS_HEADER || "x-forwarded-groups";
   let username = header(req, identityHeader);
@@ -67,4 +78,4 @@ function can(actor, role) {
   return Boolean(actor && actor.roles && actor.roles.includes(role));
 }
 
-module.exports = { ROLE_ORDER, parseRoleConfig, normalizeRoles, resolveAdmin, can };
+module.exports = { ROLE_ORDER, parseRoleConfig, normalizeRoles, resolveAdmin, can, trustedProxy };

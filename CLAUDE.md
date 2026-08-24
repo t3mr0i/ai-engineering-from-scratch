@@ -276,15 +276,16 @@ Stable codes:
 - Learning paths: `LP01` Core AI Foundation Path, `LP02` Consulting & Value
   Creation Path, `LP03` Technology & Engineering Delivery Path, `LP04`
   Leadership & Transformation Path, `LP05` Corporate Functions Enablement Path.
-- Course ids: `LRN-01` through `LRN-44`, plus `PRIMER-01`. Fixed on
+- Course ids: `LRN-01` through `LRN-46`, plus `PRIMER-01`. Fixed on
   assignment — the learning-sequence order lives separately in each course's
   `sequence` field, not in the id or in array position, so inserting a course
   later never forces renumbering. These replaced the earlier `AI-NN`/`RESP-01`/`PROMPT-01`/`USECASE-01`/
   `HARNESS-TC-01`/`CHAMP-01` ids, which collided with the AI Literacy
-  Academy's own bookable-course numbering (`AI-01`..`AI-09`) — five courses
-  (`LRN-01`, `LRN-02`, `LRN-06`, `LRN-24`, `LRN-25`) still carry that original
-  Academy id in a separate `academyCourse` field because they map to real
-  bookable inventory. There is no positional display code (the former `Cxx`,
+  Academy's own bookable-course numbering (`AI-01`, `AI-02`, `AI-03`, `AI-04`,
+  `AI-06`, `AI-07`, `AI-08`, `AI-09`, `AI-10`, `AI-12`). Nine primary course
+  containers carry an Academy id in a separate `academyCourse` field; AI-04
+  reuses several existing requirement-engineering containers and is represented
+  by its top-level `academyPaths` entry instead. There is no positional display code (the former `Cxx`,
   derived from array order in `window.LrnData.courses`) — it was removed as
   unstable and redundant with the id.
 - Units are local to a course and must be numbered `U01`, `U02`, ...
@@ -294,8 +295,15 @@ Stable codes:
 
 When adding or remapping content:
 
-- Add or reorder courses in `site/lrn/data.js`; add or reorder unit/activity
-  mappings in `site/lrn/curriculum-map.js`.
+- Add or reorder courses and Academy paths in
+  `site/lrn/manifests/catalog.json`; add or reorder unit/activity mappings in
+  `site/lrn/manifests/curriculum-map.json`. Run
+  `node scripts/build_lrn_manifests.js` to regenerate the browser data files.
+- Keep the ten supplied AI-X offerings in top-level `academyPaths`. Each path
+  owns its Academy id, audience, prerequisites, source-specific summary,
+  applicable LP track codes, and ordered Acquire/Deepen/Create stages. A
+  fundamentals offering may stop before Create when the source does not claim
+  creation-level outcomes.
 - Keep lesson `path` values as raw curriculum paths, but show LRN labels in the
   UI.
 - A complete context key should read like

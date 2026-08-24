@@ -11,6 +11,8 @@ const { resolveAdmin, can } = require("./admin-auth");
 const { AdminStore, StoreError } = require("./admin-store");
 const { validateCurriculum, curriculumStats } = require("./admin-curriculum");
 const { createAdminAi, AdminAiError } = require("./admin-ai");
+const { createGitLabPublisher, GitLabError } = require("./admin-gitlab");
+const { LessonError, listLessons, loadLesson, validateLessonDraft } = require("./admin-lessons");
 
 const MAX_BODY_BYTES = 5_000_000;
 
@@ -64,6 +66,7 @@ function createAdminApi(options = {}) {
   const dataDir = options.dataDir || path.resolve(env.ADMIN_DATA_DIR || path.join(__dirname, "..", ".admin-data"));
   const store = options.store || new AdminStore({ dataDir, webRoot });
   const ai = options.ai || createAdminAi({ env, fetchFn: options.fetchFn });
+  const publisher = options.publisher || createGitLabPublisher({ env, fetchFn: options.fetchFn });
   const repoRoot = options.repoRoot || path.resolve(webRoot, "..");
   const glossaryFile = path.join(repoRoot, "glossary", "terms.md");
   const glossary = fs.existsSync(glossaryFile) ? fs.readFileSync(glossaryFile, "utf8") : "";
@@ -99,6 +102,28 @@ function createAdminApi(options = {}) {
         return true;
       }
 
+      if (pathOnly === "/api/admin/publish/config") {
+        requireMethod(req, "GET");
+        sendJson(res, 200, { ok: true, configured: publisher.configured() });
+        return true;
+      }
+
+      if (pathOnly === "/api/admin/lessons") {
+        requireMethod(req, "GET");
+        const url = new URL(req.url, "http://admin.local");
+        const lessonPath = url.searchParams.get("path");
+        if (!lessonPath) {
+          sendJson(res, 200, { ok: true, lessons: listLessons(repoRoot) });
+          return true;
+        }
+        const changeId = url.searchParams.get("changeset");
+        const changeset = changeId ? store.get(changeId) : null;
+        const staged = changeset && changeset.lessons && changeset.lessons[lessonPath];
+        const lesson = staged || loadLesson(repoRoot, lessonPath);
+        sendJson(res, 200, { ok: true, lesson, issues: validateLessonDraft(lesson), staged: Boolean(staged) });
+        return true;
+      }
+
       if (pathOnly === "/api/admin/changesets") {
         if (req.method === "GET") {
           sendJson(res, 200, { ok: true, changesets: store.list() });
@@ -112,12 +137,17 @@ function createAdminApi(options = {}) {
         return true;
       }
 
-      const match = pathOnly.match(/^\/api\/admin\/changesets\/([a-z0-9-]+)(?:\/(status|validate|chat|proposals|grill-override))?$/);
+      const match = pathOnly.match(/^\/api\/admin\/changesets\/([a-z0-9-]+)(?:\/(status|validate|chat|proposals|grill-override|publish|publication|lessons|history|restore|rebase))?$/);
       if (!match) throw new StoreError("route.not_found", "Admin-Route nicht gefunden.", 404);
       const [, id, action] = match;
 
       if (!action && req.method === "GET") {
-        sendJson(res, 200, { ok: true, changeset: store.get(id) });
+        const changeset = store.get(id);
+        sendJson(res, 200, { ok: true, changeset, baseCurrent: store.baseCurrent(changeset) });
+        return true;
+      }
+      if (action === "history" && req.method === "GET") {
+        sendJson(res, 200, { ok: true, history: store.history(id) });
         return true;
       }
       requireRole(actor, "editor");
@@ -132,8 +162,10 @@ function createAdminApi(options = {}) {
 
       if (action === "validate") {
         requireMethod(req, "POST");
-        const snapshot = body.snapshot || store.get(id).snapshot;
-        const issues = validateCurriculum(snapshot);
+        const current = store.get(id);
+        const snapshot = body.snapshot || current.snapshot;
+        const lessonIssues = Object.values(current.lessons || {}).flatMap((draft) => validateLessonDraft(draft).map((item) => ({ ...item, path: `${draft.path}/${item.path}` })));
+        const issues = [...validateCurriculum(snapshot), ...lessonIssues];
         sendJson(res, 200, {
           ok: true,
           issues,
@@ -178,20 +210,91 @@ function createAdminApi(options = {}) {
         return true;
       }
 
+      if (action === "lessons") {
+        requireMethod(req, "POST");
+        const draft = { path: body.path, mode: body.mode, files: body.files };
+        const issues = validateLessonDraft(draft);
+        const existingFiles = body.mode === "create" ? [] : Object.keys(loadLesson(repoRoot, body.path).files);
+        const changeset = store.stageLesson(id, actor, { ...body, existingFiles });
+        sendJson(res, 200, { ok: true, changeset, lesson: changeset.lessons[body.path], issues });
+        return true;
+      }
+
+      if (action === "restore") {
+        requireMethod(req, "POST");
+        const changeset = store.restore(id, actor, body);
+        const issues = validateCurriculum(changeset.snapshot);
+        sendJson(res, 200, { ok: true, changeset, issues });
+        return true;
+      }
+
+      if (action === "rebase") {
+        requireMethod(req, "POST");
+        const changeset = store.rebase(id, actor, body);
+        const issues = validateCurriculum(changeset.snapshot);
+        sendJson(res, 200, { ok: true, changeset, issues, baseCurrent: true });
+        return true;
+      }
+
+      if (action === "publish") {
+        requireMethod(req, "POST");
+        requireRole(actor, "publisher");
+        const current = store.get(id);
+        if (current.status !== "approved") {
+          throw new StoreError("publication.status.invalid", "Nur ein freigegebener Änderungssatz kann einen Merge Request öffnen.", 409);
+        }
+        if (!store.baseCurrent(current)) {
+          throw new StoreError("base.outdated", "Der veröffentlichte Curriculum-Stand hat sich geändert. Rebase den Änderungssatz vor dem Publishing.", 409);
+        }
+        const lessonIssues = Object.values(current.lessons || {}).flatMap(validateLessonDraft);
+        if (lessonIssues.some((item) => item.severity === "error")) {
+          throw new StoreError("publication.lessons.invalid", "Lesson-Entwürfe verletzen den Repository-Vertrag.", 422, { issues: lessonIssues });
+        }
+        store.assertVersion(current, body.expectedVersion);
+        if (current.publication) {
+          throw new StoreError("publication.exists", "Für diesen Änderungssatz existiert bereits ein Merge Request.", 409, { publication: current.publication });
+        }
+        const publication = await publisher.publish(current);
+        const changeset = store.setPublication(id, actor, body, publication);
+        sendJson(res, 201, { ok: true, changeset, publication: changeset.publication });
+        return true;
+      }
+
+      if (action === "publication") {
+        requireMethod(req, "POST");
+        requireRole(actor, "publisher");
+        const current = store.get(id);
+        store.assertVersion(current, body.expectedVersion);
+        const publication = await publisher.refresh(current.publication);
+        const changeset = store.syncPublication(id, actor, body, publication);
+        sendJson(res, 200, { ok: true, changeset, publication: changeset.publication });
+        return true;
+      }
+
       if (action === "status") {
         requireMethod(req, "POST");
         const current = store.get(id);
         if (body.status === "review") {
+          if (!store.baseCurrent(current)) {
+            throw new StoreError("base.outdated", "Der veröffentlichte Curriculum-Stand hat sich geändert. Rebase den Änderungssatz vor dem Review.", 409);
+          }
           const issues = validateCurriculum(current.snapshot);
           if (issues.some((item) => item.severity === "error")) {
             throw new StoreError("curriculum.invalid", "Blockierende Fehler verhindern das Review.", 422, { issues });
+          }
+          const lessonIssues = Object.values(current.lessons || {}).flatMap(validateLessonDraft);
+          if (lessonIssues.some((item) => item.severity === "error")) {
+            throw new StoreError("lesson.invalid", "Blockierende Lesson-Fehler verhindern das Review.", 422, { issues: lessonIssues });
           }
           if (current.grill.required && !["passed", "overridden"].includes(current.grill.status)) {
             throw new StoreError("grill.required", "Der verpflichtende Curriculum-Grill muss abgeschlossen oder begründet übersteuert werden.", 422, { grill: current.grill });
           }
         }
         if (body.status === "approved") requireRole(actor, "reviewer");
-        if (["published", "archived"].includes(body.status)) requireRole(actor, "publisher");
+        if (body.status === "published") {
+          throw new StoreError("publication.merge_required", "Veröffentlichung ist nur über einen gemergten GitLab Merge Request möglich.", 409);
+        }
+        if (body.status === "archived") requireRole(actor, "publisher");
         const changeset = store.transition(id, actor, body);
         sendJson(res, 200, { ok: true, changeset });
         return true;
@@ -199,7 +302,7 @@ function createAdminApi(options = {}) {
 
       throw new StoreError("method.not_allowed", "Methode nicht erlaubt.", 405);
     } catch (error) {
-      const known = error instanceof StoreError || error instanceof AdminAiError;
+      const known = error instanceof StoreError || error instanceof AdminAiError || error instanceof GitLabError || error instanceof LessonError;
       if (!known) console.error(`[admin:${errorId}]`, error);
       sendJson(res, known ? error.status : 500, {
         ok: false,

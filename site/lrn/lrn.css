@@ -1088,6 +1088,224 @@ i[class^="ph "] {
   box-shadow: var(--shadow-md);
 }
 
+/* ── AI Literacy Academy paths — compact disclosure list ────── */
+.academy-paths {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.6fr);
+  gap: clamp(var(--space-5), 4vw, var(--space-7));
+  margin-block: var(--space-7) var(--space-5);
+  padding-block: var(--space-6);
+  border-block: 1px solid var(--border-subtle);
+}
+
+.academy-paths__heading {
+  align-self: start;
+}
+
+.academy-paths__overline {
+  margin: 0 0 var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--fs-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+}
+
+.academy-paths__heading h2 {
+  max-width: 17ch;
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: clamp(var(--fs-h3), 3.2vw, var(--fs-h2));
+  font-weight: var(--weight-light);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-heading);
+  text-wrap: balance;
+}
+
+.academy-paths__heading > p:last-child {
+  max-width: 32rem;
+  margin: var(--space-4) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.academy-path-list {
+  border-block-start: 1px solid var(--border-strong);
+}
+
+.academy-path {
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.academy-path__summary {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: center;
+  min-height: 64px;
+  padding-block: var(--space-3);
+  color: var(--text-primary);
+  cursor: pointer;
+  list-style: none;
+}
+
+.academy-path__summary::-webkit-details-marker {
+  display: none;
+}
+
+.academy-path__summary:focus-visible {
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-focus);
+}
+
+.academy-path__code {
+  color: var(--action-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.academy-path__identity {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.academy-path__identity strong {
+  font-family: var(--font-head);
+  font-size: var(--fs-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+}
+
+.academy-path__identity span {
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+}
+
+.academy-path__chevron {
+  color: var(--text-secondary);
+  transition: transform var(--dur-base) var(--ease-standard);
+}
+
+.academy-path[open] .academy-path__chevron {
+  transform: rotate(180deg);
+}
+
+.academy-path__body {
+  display: grid;
+  gap: var(--space-5);
+  padding: 0 0 var(--space-6) calc(4.5rem + var(--space-4));
+}
+
+.academy-path__description {
+  max-width: 54rem;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.academy-path__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.academy-path__facts div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.academy-path__facts dt {
+  color: var(--text-muted);
+  font-size: var(--fs-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+}
+
+.academy-path__facts dd {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.academy-path__stages {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: academy-stage;
+}
+
+.academy-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.75fr) minmax(0, 1.25fr);
+  gap: var(--space-5);
+  padding: var(--space-4) 0 var(--space-4) var(--space-6);
+  border-block-start: 1px solid var(--border-subtle);
+  counter-increment: academy-stage;
+}
+
+.academy-stage::before {
+  content: counter(academy-stage, decimal-leading-zero);
+  position: absolute;
+  inset-block-start: var(--space-4);
+  inset-inline-start: 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-overline);
+  font-variant-numeric: tabular-nums;
+}
+
+.academy-stage__copy h3 {
+  margin: 0 0 var(--space-1);
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: var(--fs-h4);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+}
+
+.academy-stage__copy p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.academy-stage__courses {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.academy-stage__courses a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--text-link);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .academy-path__summary:hover .academy-path__identity strong,
+  .academy-path__summary:hover .academy-path__chevron {
+    color: var(--text-link);
+  }
+}
+
 .selector-field {
   display: grid;
   gap: var(--space-2);
@@ -2212,6 +2430,16 @@ i[class^="ph "] {
 
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 52rem) {
+  .academy-paths {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+
+  .academy-paths__heading h2,
+  .academy-paths__heading > p:last-child {
+    max-width: 42rem;
+  }
+
   .selector-card {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2243,6 +2471,29 @@ i[class^="ph "] {
 }
 
 @media (max-width: 40rem) {
+  .academy-paths {
+    margin-block-start: var(--space-6);
+    padding-block: var(--space-5);
+  }
+
+  .academy-path__summary {
+    grid-template-columns: 3.75rem minmax(0, 1fr) auto;
+    gap: var(--space-3);
+  }
+
+  .academy-path__body {
+    padding-inline-start: 0;
+  }
+
+  .academy-path__facts,
+  .academy-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .academy-stage {
+    gap: var(--space-3);
+  }
+
   .page--detail {
     padding-inline: var(--space-4);
   }
@@ -2487,7 +2738,7 @@ i[class^="ph "] {
 /* Overrides for Prefers Reduced Motion in LRN Cockpit */
 @media (prefers-reduced-motion: reduce) {
   .course-card, .course-card__tile, .course-card__open, .seg-btn, .selector-cta, .primary-cta, .back-link, .activity-link,
-  .skill-track__segment > i, .skill-level__meter i, .skill-course__meter i {
+  .skill-track__segment > i, .skill-level__meter i, .skill-course__meter i, .academy-path__chevron {
     transform: none !important;
     transition: none !important;
     animation: none !important;

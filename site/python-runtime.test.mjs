@@ -39,3 +39,19 @@ test("initialization is idempotent for one Python session", async () => {
 
   assert.equal(calls.length, 1);
 });
+
+test("captured Pyodide batches preserve terminal line breaks", () => {
+  let stdout;
+  let stderr;
+  const fakePyodide = {
+    setStdout(options) { stdout = options.batched; },
+    setStderr(options) { stderr = options.batched; }
+  };
+
+  const output = LessonPythonRuntime.captureOutput(fakePyodide);
+  stdout("first line");
+  stdout("second line");
+  stderr("warning");
+
+  assert.equal(output.text(), "first line\nsecond line\nwarning");
+});
