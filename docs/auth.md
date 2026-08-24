@@ -1,44 +1,59 @@
 # Authentication
 
-The site is hosted on **Azure Static Web Apps** and protected by **Microsoft Entra ID**
-(Azure AD). This replaces the old client-side `gate.js` password prompt, which was
-not real access control.
+The site is hosted on **Azure Static Web Apps** and protected by a shared
+passcode for the private trial. The passcode is verified server-side; it is not
+embedded in the browser bundle or repository.
 
 ## How it works
 
-1. **Login** — any unauthenticated request to a content route is redirected to the
-   Entra login (`/.auth/login/aad`). This is configured in
-   `site/staticwebapp.config.json` (`auth.identityProviders.azureActiveDirectory`).
-2. **Domain restriction** — login itself is open to any Microsoft account, but every
-   content route requires the **`lhind` role**. The role is granted server-side by
-   the `api/GetRoles` function, which inspects the authenticated user's email and
-   only returns `lhind` when the address ends in **`.dlh.de`** (covers `lhind.dlh.de`,
-   `dlh.de`, …). Users without the role get a 403 (`site/403.html`).
+1. **Page guard** — protected pages load `site/gate-guard.js` before rendering.
+   Outside localhost, it calls `GET /api/check` and redirects an unauthenticated
+   visitor to `/gate.html` while preserving the intended URL.
+2. **Sign-in** — `site/gate.html` sends the supplied passcode to
+   `POST /api/gate`. The Function compares it with the `SITE_PASSCODE` app
+   setting using a timing-safe comparison.
+3. **Session** — a successful check sets the `ase_gate` cookie. The cookie is
+   `HttpOnly`, `Secure`, `SameSite=Lax`, valid for seven days, and contains only
+   an expiry plus an HMAC made with `GATE_SECRET`.
+4. **Content protection** — lesson documents, quizzes, Python entry points, and
+   lesson assets are not deployed below the public `site/` tree. The workflow
+   stages them below `api/content/_data/`, and `GET /api/content` returns them
+   only after validating the same signed cookie.
 
-Because the role check runs in the managed Function, it **cannot be bypassed from the
-browser** — unlike the old password gate.
+The page guard improves the user experience, but `api/content` is the actual
+access-control boundary for curriculum files. Removing or bypassing the browser
+script does not grant access to protected lesson content.
 
-## Azure setup (already provisioned)
+## Local development
 
-The following is configured on the live resources and does not need to be redone:
+`gate-guard.js` bypasses the check only on `localhost` and `127.0.0.1`, because a
+plain static file server cannot run the Azure Functions. Production hostnames do
+not receive this bypass. Use the repository's local server when the full
+Function-backed gate needs to be exercised.
 
-- **SWA**: `swa-ase-webpage` (rg `rg-ase-webpage`), **Standard** plan.
-- **App Registration**: `ai-training-swa-auth`
-  (client id `3d49822f-cf03-4e69-a488-7996a8072075`), **single tenant**
-  (`AzureADMyOrg`) in the LHIND tenant `d9f5cb22-01c9-4956-b859-4f876f6a5c83`.
-  Redirect URI: `https://yellow-mushroom-0c0a45d03.7.azurestaticapps.net/.auth/login/aad/callback`,
-  id-token issuance enabled.
-- **SWA app settings**: `AAD_CLIENT_ID`, `AAD_CLIENT_SECRET` are set.
-- `staticwebapp.config.json` `openIdIssuer` points at the LHIND tenant (not `common`),
-  so **only LHIND-tenant identities can obtain a token at all**.
+## Azure settings
 
-This means there are now **two** layers: the single-tenant issuer (Entra-level
-"LHIND only") and the `.dlh.de` check in `GetRoles` (defence in depth). The domain
-check can be relaxed or removed later if the tenant boundary is considered enough.
+The Static Web App must define both values below:
 
-## Maintenance
+- `SITE_PASSCODE` — the shared trial passcode.
+- `GATE_SECRET` — a strong random secret used only to sign session cookies.
 
-- The **client secret expires after 1 year**. Rotate with:
-  `az ad app credential reset --id 3d49822f-cf03-4e69-a488-7996a8072075 --years 1`
-  then update the `AAD_CLIENT_SECRET` SWA app setting with the new value.
-- The CI deploys the `api/` folder via `--api-location ./api`.
+Neither value belongs in source control, generated site data, client-side
+JavaScript, logs, or screenshots. Rotating `GATE_SECRET` immediately invalidates
+all active sessions. Rotating `SITE_PASSCODE` prevents new sessions from using
+the old passcode but does not invalidate already signed cookies; rotate both when
+immediate revocation is required.
+
+## Deployment invariants
+
+- `.github/workflows/azure-static-web-apps.yml` deploys `site/` as the public web
+  root and `api/` as the managed Function app.
+- Lesson content must never be copied into `site/phases/` or another public
+  static path.
+- Every protected HTML entry point must load `/gate-guard.js` before its visible
+  content.
+- `/api/check`, `/api/gate`, and `/api/content` must continue to use the shared
+  cookie validation in `api/lib/gate-auth.js`.
+
+The custom-domain verification and rollback procedure lives in
+`docs/runbook-domain-cutover.md`.

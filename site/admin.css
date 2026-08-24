@@ -246,7 +246,7 @@ button, select { touch-action: manipulation; }
   margin: 0;
   font-family: var(--font-head);
   font-size: var(--fs-h1);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--ls-display);
   line-height: var(--lh-snug);
 }
@@ -280,7 +280,7 @@ button, select { touch-action: manipulation; }
   margin: var(--space-2) 0 var(--space-1);
   font-family: var(--font-head);
   font-size: var(--fs-h2);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--ls-display);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -369,12 +369,12 @@ button, select { touch-action: manipulation; }
 .editor-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-5); margin-bottom: var(--space-6); }
 .editor-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); align-items: center; }
 .editor-actions select { min-height: 44px; padding: 0 34px 0 var(--space-3); border: 1px solid var(--border-subtle); border-radius: var(--radius-xs); background: var(--color-surface); color: var(--text-primary); }
-.editor-heading h1 { margin: 0; font-family: var(--font-head); font-size: var(--fs-h2); font-weight: var(--weight-light); letter-spacing: var(--ls-heading); }
+.editor-heading h1 { margin: 0; font-family: var(--font-head); font-size: var(--fs-h2); font-weight: var(--weight-medium); letter-spacing: var(--ls-heading); }
 .editor-heading p { margin: var(--space-1) 0 0; color: var(--text-secondary); }
 .editor-sections { display: grid; gap: var(--space-7); }
 .course-preview { overflow: hidden; border: var(--border-hairline); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); }
 .course-preview__hero { padding: clamp(var(--space-6), 5vw, var(--space-8)); background: color-mix(in srgb, var(--action-accent) 8%, var(--color-surface)); }
-.course-preview__hero h2 { max-width: 22ch; margin: 0; font-family: var(--font-head); font-size: var(--fs-h1); font-weight: var(--weight-light); line-height: var(--lh-snug); }
+.course-preview__hero h2 { max-width: 22ch; margin: 0; font-family: var(--font-head); font-size: var(--fs-h1); font-weight: var(--weight-medium); line-height: var(--lh-snug); }
 .course-preview__hero > p:not(.admin-context-line) { max-width: 68ch; color: var(--text-secondary); font-size: var(--fs-body); }
 .course-preview__meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-5); }
 .course-preview__meta span { padding: 6px 10px; border-radius: var(--radius-pill); background: var(--color-surface); color: var(--text-secondary); }
@@ -533,7 +533,7 @@ button, select { touch-action: manipulation; }
 .admin-error-page { min-height: 70vh; display: grid; place-items: center; text-align: center; }
 .admin-error-page__inner { max-width: 560px; }
 .admin-error-page i { color: var(--text-muted); font-size: 52px; }
-.admin-error-page h1 { font-family: var(--font-head); font-size: var(--fs-h1); font-weight: var(--weight-light); }
+.admin-error-page h1 { font-family: var(--font-head); font-size: var(--fs-h1); font-weight: var(--weight-medium); }
 .admin-error-page p { color: var(--text-secondary); }
 .admin-error-id { font-family: var(--font-mono); color: var(--text-muted); }
 

@@ -741,6 +741,8 @@
   ];
 
   function activityIcon(lesson, subcourse) {
+    if (lesson && lesson.activityType === "lab") return "code";
+    if (lesson && lesson.activityType === "lesson") return "book-open";
     var title = String((lesson && lesson.title) || "").toLowerCase();
     var rules = ACTIVITY_ICON_RULES || [];
     for (var i = 0; i < rules.length; i += 1) {
@@ -843,6 +845,8 @@
   }
 
   function activityType(lesson, subcourse) {
+    if (lesson.activityType === "lab") return i18n("course_activity_type_lab", "Lab");
+    if (lesson.activityType === "lesson") return i18n("course_activity_type_lesson", "Lesson");
     var title = (lesson.title || "").toLowerCase();
     var unit = (subcourse && subcourse.title || "").toLowerCase();
     // "Eval" stays untranslated — established jargon used identically in

@@ -333,6 +333,7 @@ window.SITE_I18N = {
   course_no_map: { en: "No curriculum mapping has been maintained for this course yet.", de: "Für diesen Kurs wurde noch keine Lehrplan-Zuordnung gepflegt." },
   course_unit_progress: { en: "{completed} of {total} completed", de: "{completed} von {total} abgeschlossen" },
   course_activity_type_lab: { en: "Lab", de: "Labor" },
+  course_activity_type_lesson: { en: "Lesson", de: "Lektion" },
   course_activity_completed: { en: "completed", de: "abgeschlossen" },
   course_activity_started: { en: "started", de: "begonnen" },
 

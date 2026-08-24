@@ -43,7 +43,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PHASES_DIR = ROOT / "phases"
 
 PHASE_DIR_RE = re.compile(r"^([0-9]{2})-[a-z0-9][a-z0-9-]*$")
-LESSON_DIR_RE = re.compile(r"^([0-9]{2})-[a-z0-9][a-z0-9-]*$")
+LESSON_DIR_RE = re.compile(r"^([0-9]{2,3})-[a-z0-9][a-z0-9-]*$")
 REQUIRES_RE = re.compile(r"^\s*#\s*requires:\s*(.+?)\s*$")
 
 EXECUTE_TIMEOUT_SEC = 10

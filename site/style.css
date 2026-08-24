@@ -3,7 +3,7 @@
    of re-declaring its own hex copies, so style.css-only pages (about,
    catalog, glossary, assessment, prereqs) share the exact same values as
    pages that load lrn.css directly. */
-@import url("lrn/tokens.css");
+@import url("lrn/tokens.css?v=20260824b");
 
 /* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
    --shadow-focus (tokens.css) is rgba(45,95,228,0.30) in every theme.
@@ -143,7 +143,7 @@
 }
 
 :root {
-  /* Lufthansa Group type — Head (display, thin/light) + Text (body, light).
+  /* Lufthansa Group type — Head (display, medium) + Text (body, regular).
      Display is no longer the VT323 terminal face; --font-display now resolves
      to Lufthansa Head so every existing heading rule picks up the LHG look. */
   --font-display: "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
@@ -495,7 +495,7 @@ p.dropcap::first-letter {
   justify-content: center;
   gap: 8px;
   font-family: var(--font-body);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   padding: var(--btn-padding);
   border-radius: var(--btn-radius);
   border: 1px solid transparent;
@@ -1602,15 +1602,15 @@ body[data-palette-open] {
 /* Flat warm-grey page — drop the blueprint dot grid. */
 body {
   background-image: none;
-  font-weight: 300;
+  font-weight: var(--weight-regular);
 }
 
-/* Headings: Lufthansa Head, sentence case, thin, gentle negative tracking —
+/* Headings: Lufthansa Head, sentence case, medium, gentle negative tracking —
    not uppercase pixel display. */
 h1, h2, h3, h4,
 .section-title {
   text-transform: none;
-  font-weight: 300;
+  font-weight: var(--weight-medium);
   letter-spacing: -0.01em;
   line-height: 1.1;
 }
@@ -1656,7 +1656,7 @@ a { color: var(--blueprint); }
   font-family: var(--font-body);
   text-transform: none;
   letter-spacing: 0;
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-regular);
   border-radius: var(--btn-radius);
   border: 1px solid transparent;
   transition: background var(--dur-fast) var(--ease-standard),

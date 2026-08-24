@@ -1,10 +1,10 @@
 /* Hallmark · macrostructure: Split Studio · genre: modern-minimal · theme: studied-DNA (source: image) · design-system: DESIGN.md · designed-as-app · pre-emit critique: P5 H5 E4 S5 R5 V5 */
 /* LHIND LRN — Lufthansa Group Design System skin
    Visual language follows the Lufthansa Group corporate identity:
-   thin display headlines, sentence case with periods, hairline 1px
+   medium display headlines, sentence case with periods, hairline 1px
    borders in warm grey, pills on chips, soft blue-tinted shadows.
    Marke bleibt LHIND (kein Lufthansa-Crane/Wordmark). */
-@import url("tokens.css");
+@import url("tokens.css?v=20260824b");
 
 /* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
    --shadow-focus (tokens.css) is rgba(45,95,228,0.30) in every theme.
@@ -372,11 +372,7 @@ i[class^="ph "] {
   color: var(--lhg-white);
   font-family: var(--font-head);
   font-size: clamp(1.875rem, 3.2vw, 3rem);
-  /* Stays light per DESIGN.md §3 (Display/Headline = 300). The weight bump
-     applied to the other headings is a light-on-light legibility fix; this
-     one is white on Core Blue, where a thin stroke reads heavier, not
-     fainter. */
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-display);
 }
@@ -421,7 +417,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: clamp(var(--fs-h3), 4vw, var(--fs-h2));
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-snug);
   letter-spacing: var(--ls-heading);
 }
@@ -445,7 +441,7 @@ i[class^="ph "] {
   color: var(--action-primary);
   font-family: var(--font-head);
   font-size: clamp(var(--fs-h2), 5vw, var(--fs-display-2));
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-display);
   font-variant-numeric: tabular-nums;
@@ -1067,7 +1063,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: clamp(var(--fs-h2), 5vw, var(--fs-display-2));
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-display);
   text-wrap: balance;
@@ -1120,7 +1116,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: clamp(var(--fs-h3), 4vw, var(--fs-h2));
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-snug);
   letter-spacing: var(--ls-heading);
   text-wrap: balance;
@@ -1278,7 +1274,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: clamp(var(--fs-h3), 3vw, var(--fs-h2));
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-snug);
   letter-spacing: var(--ls-heading);
   text-wrap: balance;
@@ -1509,19 +1505,6 @@ i[class^="ph "] {
   text-wrap: pretty;
 }
 
-.my-learning-path__next .my-learning-path__cta {
-  margin-block-start: var(--space-2);
-  border-color: var(--lhg-white);
-  background: var(--lhg-white);
-  color: var(--lhg-core-blue);
-}
-
-.my-learning-path__next .my-learning-path__cta:hover {
-  border-color: var(--lhg-blue-100);
-  background: var(--lhg-blue-100);
-  color: var(--lhg-core-blue);
-}
-
 .my-learning-path__change {
   color: var(--text-on-dark);
   font-size: var(--fs-caption);
@@ -1633,7 +1616,7 @@ i[class^="ph "] {
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: clamp(var(--fs-h3), 3.2vw, var(--fs-h2));
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   line-height: var(--lh-snug);
   letter-spacing: var(--ls-heading);
   text-wrap: balance;
@@ -2779,6 +2762,24 @@ i[class^="ph "] {
     background: var(--action-primary-hover);
     box-shadow: var(--shadow-sm);
     text-decoration: none;
+  }
+}
+
+/* Inverse CTA: keep its surface and ink paired after the generic CTA state.
+   This order prevents the generic hover fill from winning on specificity
+   while leaving the inverse CTA's dark ink behind. */
+.my-learning-path__next .my-learning-path__cta {
+  margin-block-start: var(--space-2);
+  border-color: var(--lhg-white);
+  background: var(--lhg-white);
+  color: var(--lhg-core-blue);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .my-learning-path__next .my-learning-path__cta:hover:not([aria-disabled="true"]) {
+    border-color: var(--lhg-blue-100);
+    background: var(--lhg-blue-100);
+    color: var(--lhg-core-blue);
   }
 }
 

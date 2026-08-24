@@ -2869,15 +2869,18 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/31-agent-workbench-why-models-fail",
-            "title": "Agent Workbench Engineering"
+            "title": "Agent Workbench Engineering",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/32-minimal-agent-workbench",
-            "title": "The Minimal Agent Workbench"
+            "title": "The Minimal Agent Workbench",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/45-prompt-only-vs-rules-first",
-            "title": "Prompt-Only vs Rules-First"
+            "title": "Prompt-Only vs Rules-First",
+            "activityType": "lab"
           }
         ]
       },
@@ -2888,15 +2891,18 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/33-instructions-as-executable-constraints",
-            "title": "Agent Instructions as Executable Constraints"
+            "title": "Agent Instructions as Executable Constraints",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/34-repo-memory-and-state",
-            "title": "Repo Memory and Durable State"
+            "title": "Repo Memory and Durable State",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/46-agent-readable-workspace",
-            "title": "Agent-Readable Workspace"
+            "title": "Agent-Readable Workspace",
+            "activityType": "lab"
           }
         ]
       },
@@ -2907,15 +2913,18 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/35-initialization-scripts",
-            "title": "Initialization Scripts for Agents"
+            "title": "Initialization Scripts for Agents",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/40-multi-session-handoff",
-            "title": "Multi-Session Handoff"
+            "title": "Multi-Session Handoff",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/47-multi-session-continuity",
-            "title": "Multi-Session Continuity"
+            "title": "Multi-Session Continuity",
+            "activityType": "lab"
           }
         ]
       },
@@ -2926,15 +2935,18 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/36-scope-contracts",
-            "title": "Scope Contracts and Task Boundaries"
+            "title": "Scope Contracts and Task Boundaries",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/37-runtime-feedback-loops",
-            "title": "Runtime Feedback Loops"
+            "title": "Runtime Feedback Loops",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/48-runtime-feedback-scope",
-            "title": "Runtime Feedback and Scope"
+            "title": "Runtime Feedback and Scope",
+            "activityType": "lab"
           }
         ]
       },
@@ -2945,15 +2957,18 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/38-verification-gates",
-            "title": "Verification Gates"
+            "title": "Verification Gates",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/39-reviewer-agent",
-            "title": "Reviewer Agent"
+            "title": "Reviewer Agent",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/49-self-verification",
-            "title": "Self-Verification"
+            "title": "Self-Verification",
+            "activityType": "lab"
           }
         ]
       },
@@ -2964,15 +2979,18 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/41-workbench-for-real-repos",
-            "title": "The Workbench on a Real Repo"
+            "title": "The Workbench on a Real Repo",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/42-agent-workbench-capstone",
-            "title": "Capstone: Ship a Reusable Agent Workbench Pack"
+            "title": "Capstone: Ship a Reusable Agent Workbench Pack",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/50-complete-harness",
-            "title": "Complete Harness"
+            "title": "Complete Harness",
+            "activityType": "lab"
           }
         ]
       },
@@ -2983,11 +3001,13 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/43-loop-engineering",
-            "title": "Loop Engineering: From Prompts to Bounded Autonomy"
+            "title": "Loop Engineering: From Prompts to Bounded Autonomy",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/51-automated-loop",
-            "title": "Automated Loop"
+            "title": "Automated Loop",
+            "activityType": "lab"
           }
         ]
       },
@@ -2998,11 +3018,13 @@ window.LrnCurriculumMap = {
         "lessons": [
           {
             "path": "phases/14-agent-engineering/44-graph-engineering",
-            "title": "Graph Engineering: Make Agent Structure Explicit"
+            "title": "Graph Engineering: Make Agent Structure Explicit",
+            "activityType": "lesson"
           },
           {
             "path": "phases/14-agent-engineering/52-workflow-graph",
-            "title": "Workflow Graph"
+            "title": "Workflow Graph",
+            "activityType": "lab"
           }
         ]
       }

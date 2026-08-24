@@ -410,6 +410,19 @@ test("Harness Engineering map preserves 8 units and 22 activities", () => {
   }
 });
 
+test("Harness Engineering distinguishes 14 lessons from 8 project labs", () => {
+  const units = cmap.courseMaps["LRN-26"];
+  const activities = units.flatMap((unit) => unit.lessons);
+  assert.equal(activities.filter((activity) => activity.activityType === "lesson").length, 14);
+  assert.equal(activities.filter((activity) => activity.activityType === "lab").length, 8);
+  for (const unit of units) {
+    assert.equal(unit.lessons.at(-1).activityType, "lab",
+      `Harness unit ${unit.title} must end in its project lab`);
+    assert.ok(unit.lessons.slice(0, -1).every((activity) => activity.activityType === "lesson"),
+      `Harness unit ${unit.title} must put lecture activities before its project lab`);
+  }
+});
+
 test("HARNESS-TC-01 quiz lesson ids match activity directory basenames", () => {
   const units = cmap.courseMaps["LRN-26"];
   assert.ok(Array.isArray(units), "HARNESS-TC-01 course map missing");
@@ -453,6 +466,15 @@ test("every lesson.path under curriculum-map points to a real lesson source", ()
 // ───────────────────────────────────────────────────────────────────────────
 // Build inputs the site relies on
 // ───────────────────────────────────────────────────────────────────────────
+
+test("course detail uses the current server-backed access guard", () => {
+  const html = readFileSync("site/lrn/course.html", "utf8");
+  assert.match(html, /<script src=["']\/gate-guard\.js["']><\/script>/,
+    "course detail must load the same server-backed access guard as the rest of the site");
+  assert.doesNotMatch(html, /<script src=["'](?:\.\.\/)?gate\.js["']><\/script>/,
+    "course detail must not reference the removed client-side gate.js");
+  assert.ok(existsSync("site/gate-guard.js"), "site/gate-guard.js missing");
+});
 
 test("package.json depends on pyodide (browser IDE requirement)", () => {
   const pkg = JSON.parse(readFileSync("package.json", "utf8"));

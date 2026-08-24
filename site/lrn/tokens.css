@@ -2,8 +2,8 @@
    LHIND LRN — Lufthansa Group Design System tokens
    ------------------------------------------------------------------------
    Visual language follows the Lufthansa Group corporate identity:
-   deep Core Blue, warm-grey neutrals, Lufthansa Head (display, thin) +
-   Lufthansa Text (body, light) on a quiet warm-grey page.
+   deep Core Blue, warm-grey neutrals, Lufthansa Head (display, medium) +
+   Lufthansa Text (body, regular) on a quiet warm-grey page.
 
    Marke bleibt LHIND — keine Lufthansa-Crane/Wordmark-Assets, nur die
    visuelle Sprache (Typo, Farbe, Spacing, Komponenten-Stil).
@@ -143,7 +143,7 @@
   --fs-h4: 20px;
   --fs-lead: 21px;
   --fs-body: 17px;
-  --fs-body-sm: 15px;
+  --fs-body-sm: 16px;
   --fs-caption: 13px;
   --fs-overline: 12px;
 
@@ -512,7 +512,7 @@
    for free, no per-page HTML change needed. Path is relative to this
    stylesheet (site/lrn/tokens.css), not the consuming page. */
 @media (prefers-color-scheme: dark) {
-  .nav-edge .wordmark__logo {
+  :root:not([data-theme="light"]) .nav-edge .wordmark__logo {
     content: url("../assets/logo/lhind-logo-white.png");
   }
 }
