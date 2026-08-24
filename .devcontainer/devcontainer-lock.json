@@ -1,0 +1,24 @@
+{
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "2.1.0",
+      "resolved": "ghcr.io/devcontainers/features/node@sha256:586c9a6f7dd40bd3ba2cd41e7f2f88dcc31fbe5d1442afcbf07ffbc66b686857",
+      "integrity": "sha256:586c9a6f7dd40bd3ba2cd41e7f2f88dcc31fbe5d1442afcbf07ffbc66b686857"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "1.8.0",
+      "resolved": "ghcr.io/devcontainers/features/python@sha256:fbcad6955caeecc5ad3f7886baf652e25cba5225a6c4c2287c536de2e5607511",
+      "integrity": "sha256:fbcad6955caeecc5ad3f7886baf652e25cba5225a6c4c2287c536de2e5607511"
+    },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "1.5.1",
+      "resolved": "ghcr.io/devcontainers/features/rust@sha256:f7afd923fd283db88ca961342ae65ea63a8c95bcf86e42c4c363f43bc4ba26a5",
+      "integrity": "sha256:f7afd923fd283db88ca961342ae65ea63a8c95bcf86e42c4c363f43bc4ba26a5"
+    },
+    "ghcr.io/julialang/devcontainer-features/julia:1": {
+      "version": "1.2.0",
+      "resolved": "ghcr.io/julialang/devcontainer-features/julia@sha256:748ff7272e392e0c2ac7c837dbdc6c8cfa1dd3f81819fd29a111c718e3c4199d",
+      "integrity": "sha256:748ff7272e392e0c2ac7c837dbdc6c8cfa1dd3f81819fd29a111c718e3c4199d"
+    }
+  }
+}

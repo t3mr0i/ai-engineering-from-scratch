@@ -916,6 +916,8 @@ Lessons 31-52 form the cohesive Phase 14 `Harness Engineering for Reliable Agent
 <summary><b>Phase 19 — Capstone Projects</b> &nbsp;<code>85 lessons</code>&nbsp; <em>17 end-to-end products + 9 deep-build tracks. 20-40 hours per project; 4-12 lessons per track.</em></summary>
 <br/>
 
+For an assessed route, choose one multi-week system in the [Phase 19 track map](phases/19-capstone-projects/TRACKS.md) and submit it through the [Verified Capstone challenge](challenges/verified-capstone/README.md). The verifier checks reproducibility evidence, metrics, attestations, and artifact hashes before maintainer review.
+
 | # | Project | Combines | Lang |
 |:---:|---------|----------|------|
 | 01 | [Terminal-Native Coding Agent](phases/19-capstone-projects/01-terminal-native-coding-agent/) | P0 P5 P7 P10 P11 P13 P14 P15 P17 P18 | Python |

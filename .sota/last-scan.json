@@ -1,11 +1,11 @@
 {
   "date": "2026-08-24",
-  "mode": "standard",
+  "mode": "remediation-rescan",
   "domains": ["open-source-ai-curriculum"],
   "rubric_version": 2,
   "user_cluster": "project-based-ai-engineering-curriculum",
   "user_cluster_confidence": "high",
-  "selection_explanation": "Scored against self-paced, hands-on curricula that move learners from concepts to deployed AI systems. Topic-specific textbooks, hosted certification courses, and university assignment tracks are references only.",
+  "selection_explanation": "Re-scored the remediated worktree against the same five direct curriculum peers and five broader references used by the standard scan.",
   "clusters": [
     {"label":"project-based-ai-engineering-curriculum","count":5},
     {"label":"interactive-textbook","count":2},
@@ -25,41 +25,43 @@
     {"repo":"stanford-cs336/lectures","cluster":"university-assignment-track","role":"reference","type":"canonical","stars":3662,"pushed":"2026-05-28","archived":false}
   ],
   "matrix": [
-    {"id":"structured-curriculum-index","us":"met","tier":"table-stakes","evidence":"README.md and ROADMAP.md: 20-phase prerequisite progression"},
-    {"id":"multi-language-runnable-code","us":"met","tier":"table-stakes","evidence":"phases/**/code/main.{py,ts,rs,jl}"},
+    {"id":"structured-curriculum-index","us":"met","tier":"table-stakes","evidence":"README.md and ROADMAP.md: 20-phase prerequisite progression with 600 lesson directories"},
+    {"id":"multi-language-runnable-code","us":"met","tier":"table-stakes","evidence":"phases/**/code/main.{py,ts,rs,jl}; four-language devcontainer smoke run exits 0"},
     {"id":"llm-rag-agent-coverage","us":"met","tier":"table-stakes","evidence":"phases/11-llm-engineering, phases/14-agent-engineering, phases/19-capstone-projects"},
     {"id":"model-context-protocol-coverage","us":"met","tier":"table-stakes","evidence":"phases/13-tools-and-protocols and phases/19-capstone-projects/13-mcp-server-with-registry"},
     {"id":"from-scratch-implementation-track","us":"met","tier":"table-stakes","evidence":"README.md Build It / Use It spine and phases/10-llms-from-scratch"},
-    {"id":"browser-or-zero-install-execution","us":"met","tier":"table-stakes","evidence":"site/lesson.html Pyodide execution; ide/README.md currently overclaims a missing JupyterLite tree"},
+    {"id":"browser-or-zero-install-execution","us":"met","tier":"table-stakes","evidence":"site/lesson.html Pyodide execution; ide/README.md now accurately documents browser limitations"},
     {"id":"placement-or-self-assessment","us":"met","tier":"table-stakes","evidence":"site/assessment.html, .claude/skills/find-your-level/SKILL.md, site/prereqs.html"},
-    {"id":"reusable-artifact-per-lesson","us":"partial","tier":"table-stakes","evidence":"534/598 lesson directories have a non-empty outputs/ directory"},
+    {"id":"reusable-artifact-per-lesson","us":"met","tier":"table-stakes","evidence":"scripts/check_output_contract.py: 600 lessons checked, 0 issues; reference lessons use explicit opt-outs"},
     {"id":"public-static-site","us":"met","tier":"table-stakes","evidence":"site/, site/build.js, .github/workflows/azure-static-web-apps.yml"},
-    {"id":"assessment-per-lesson","us":"partial","tier":"table-stakes","evidence":"396/598 lessons have quiz.json; only 10/598 docs have an Exercises section"},
-    {"id":"lesson-contract-consistency","us":"partial","tier":"table-stakes","evidence":"598/598 prerequisites and time; 385/598 learning objectives; 566/598 language fields; 10 Build It, 78 Use It, 6 Ship It sections"},
-    {"id":"green-curriculum-gates","us":"partial","tier":"table-stakes","evidence":"audit_lessons.py: 20 issues; ci-content-check.js: 61 unsourced claims; check_readme_counts.py aborts; site test suite: 4 failures"},
-    {"id":"reproducible-execution-environment","us":"partial","tier":"table-stakes","evidence":"README.md has a one-file quickstart and AGENTS.md has an allowlist, but no root pinned Python environment or maintained multi-runtime devcontainer; ide/README.md references missing files"},
-    {"id":"source-verifiability","us":"partial","tier":"table-stakes","evidence":"scripts/ci-content-check.js check 15 finds 61 attributed percentage claims without an in-paragraph link"},
+    {"id":"assessment-per-lesson","us":"met","tier":"table-stakes","evidence":"scripts/check_assessments.py: 600 lessons checked, 0 issues; each has canonical quiz, exercise, solution, and at least five tests"},
+    {"id":"lesson-contract-consistency","us":"met","tier":"table-stakes","evidence":"scripts/check_lesson_contract.py: 600 lessons checked, 0 issues"},
+    {"id":"green-curriculum-gates","us":"partial","tier":"table-stakes","evidence":"All blocking curriculum, content, capstone, script, and 77 site tests pass; check_readme_counts.py reports four expected CI-managed count drifts and is advisory by AGENTS.md contract"},
+    {"id":"reproducible-execution-environment","us":"met","tier":"table-stakes","evidence":"Pinned requirements, locked devcontainer features, setup guide, and scripts/bootstrap.sh; @devcontainers/cli up plus Python/TypeScript/Rust/Julia smokes exit 0 on ARM64"},
+    {"id":"source-verifiability","us":"met","tier":"table-stakes","evidence":"scripts/ci-content-check.js: all 23 checks pass and unsupported quantitative claims are at threshold 0"},
     {"id":"progress-tracking","us":"met","tier":"edge","evidence":"site/progress.js, site/badges.js, site/skills-progress.js"},
-    {"id":"automated-test-suite","us":"partial","tier":"edge","evidence":".github/workflows/curriculum.yml and site/*.test.mjs exist, but current local gates are not green and site tests are not wired into curriculum.yml"},
-    {"id":"installable-package","us":"missing","tier":"edge","evidence":"No supported pip/npm package for shared lesson code; skill artifacts are separately installable"},
-    {"id":"local-runnable-environment-guide","us":"partial","tier":"edge","evidence":"README.md and phase 0 cover setup, but there is no single root guide or pinned environment spanning the four supported languages"},
-    {"id":"exercise-solutions","us":"missing","tier":"edge","evidence":"No course-wide solution-manual or reference-solution convention; docs contain only 10 explicit Exercises sections"},
-    {"id":"translation-localization","us":"missing","tier":"edge","evidence":"0/598 lesson docs have a non-English translation; UI strings are partially bilingual"},
-    {"id":"video-or-guided-demonstration","us":"missing","tier":"edge","evidence":"No course-wide video or narrated-demo layer"}
+    {"id":"automated-test-suite","us":"partial","tier":"edge","evidence":"CI runs curriculum contracts, content checks, capstone verifier, script tests, and site behavior; it does not execute every lesson demo/notebook across all runtimes on each PR"},
+    {"id":"installable-package","us":"missing","tier":"edge","evidence":"Skill artifacts have a supported install flow, but shared lesson code is not published as a pip or npm package"},
+    {"id":"local-runnable-environment-guide","us":"met","tier":"edge","evidence":"docs/getting-started.md, README runtime matrix, .devcontainer/devcontainer.json, and scripts/bootstrap.sh"},
+    {"id":"exercise-solutions","us":"met","tier":"edge","evidence":"scripts/check_assessments.py enforces an exercise and separate reference solution for all 600 lessons"},
+    {"id":"translation-localization","us":"met","tier":"edge","evidence":"Five load-bearing lessons form one complete German AI-literacy track; site strings are localized"},
+    {"id":"video-or-guided-demonstration","us":"met","tier":"edge","evidence":"24 load-bearing lessons include linked docs/demo.md walkthroughs with predict, run, change, failure, and exit-ticket stages"}
   ],
-  "coverage": {"met":8,"total":14,"pct":57},
-  "tier": "LAGGING",
-  "gaps_total": 6,
+  "coverage": {"met":13,"total":14,"pct":93},
+  "tier": "COMPETITIVE",
+  "gaps_total": 1,
   "gaps": {
-    "direct_peer":["lesson-contract-consistency","assessment-per-lesson","reusable-artifact-per-lesson","reproducible-execution-environment"],
-    "maturity":["green-curriculum-gates","source-verifiability"],
-    "onboarding":["local-runnable-environment-guide","translation-localization","video-or-guided-demonstration"],
-    "cross_cluster":["verified challenge and certificate flow from huggingface/agents-course","recommender-systems and Gaussian-process chapters from d2l-ai/d2l-en"]
+    "direct_peer": [],
+    "maturity": ["green-curriculum-gates"],
+    "onboarding": [],
+    "cross_cluster": []
   },
   "disclosures": [
-    "Rubric changed from v1 to v2: assessment moved to table-stakes and contract consistency, green gates, reproducibility, and source verifiability were added.",
-    "The 100% to 57% coverage change is mostly a harder and better-grounded bar, not a six-point product regression.",
-    "Standard-mode discovery used multiple query families; final rounds produced only niche or cross-cluster references, not a stronger same-cluster peer.",
-    "GitHub star and recency values were fetched with gh api on 2026-08-24."
+    "Coverage improved from 57% to 93% under the unchanged v2 rubric.",
+    "README aggregate counts intentionally remain untouched because AGENTS.md assigns their regeneration to main-branch CI; the advisory checker therefore reports four expected drifts in this pre-merge worktree.",
+    "The devcontainer was built and started with @devcontainers/cli 0.88.0 on ARM64; its full four-language bootstrap exits 0.",
+    "German localization is a maintained five-lesson vertical slice, not full-course translation; 170 mapped English lessons remain untranslated.",
+    "The all-lessons behavioral suites were exercised locally, but every demo and notebook is not yet executed in every runtime on each pull request.",
+    "GitHub field metadata is retained from the standard scan performed earlier on 2026-08-24."
   ]
 }

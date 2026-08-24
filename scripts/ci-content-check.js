@@ -375,7 +375,7 @@ function check8() {
   }
   return record("8", "no numbered cross-references in curriculum lessons", details.length, THRESHOLDS.c8_lessonCrossRefs, {
     details,
-    note: `informational: repo-wide (all 598 docs, not just the 180 curriculum-mapped ones) this pattern hits ${repoWideTotal} times across ${repoWideFiles.size} files`,
+    note: `informational: repo-wide (all ${allFiles.length} docs, not just the 180 curriculum-mapped ones) this pattern hits ${repoWideTotal} times across ${repoWideFiles.size} files`,
   });
 }
 
@@ -660,11 +660,10 @@ const MODEL_CANDIDATE_RE = /\b(GPT-[0-9][^\s,.)]*|Claude [A-Za-z0-9. ]+?[0-9](\.
 function check14() {
   // Was docs/en.md only, which structurally could never catch the F6-1
   // Llama-4 fabrications living in code/main.py and outputs/skill-*.md
-  // (§10-14) — widened to every file type a fabricated model name has
-  // actually turned up in: prose, code, generated skill outputs, notebooks,
-  // and SVG diagrams.
+  // Scan every relevant text format, but never decode binary demo artifacts:
+  // arbitrary PNG bytes can contain denylisted byte sequences by chance.
   const files = findFiles(
-    `phases -type f \\( -path "*/docs/en.md" -o -path "*/code/*" -o -path "*/outputs/*" -o -name "*.ipynb" -o -path "*/assets/*.svg" \\)`
+    `phases -type f \\( -name "*.md" -o -name "*.py" -o -name "*.ts" -o -name "*.js" -o -name "*.rs" -o -name "*.jl" -o -name "*.json" -o -name "*.ipynb" -o -name "*.svg" -o -name "*.yaml" -o -name "*.yml" -o -name "*.txt" \\)`
   );
   const denyHits = [];
   const unverified = new Map(); // string -> count

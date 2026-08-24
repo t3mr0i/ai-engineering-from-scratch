@@ -1,0 +1,25 @@
+{
+  "id": "verified-capstone-v1",
+  "title": "AI Engineering Verified Capstone",
+  "required_files": ["README.md", "report.md", "results.json"],
+  "required_attestations": ["no_secrets", "reproducible_from_clean_clone", "limitations_disclosed"],
+  "minimum_metrics": {
+    "task_success_rate": 0.7,
+    "reproducibility_rate": 1.0,
+    "documentation_score": 0.8
+  },
+  "maximum_metrics": {
+    "safety_violation_rate": 0.0
+  },
+  "tracks": [
+    {"id": "agent-harness", "weeks": 4, "lessons": [20, 21, 22, 23, 24, 25, 26, 27, 28, 29]},
+    {"id": "mini-llm", "weeks": 6, "lessons": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]},
+    {"id": "training-system", "weeks": 4, "lessons": [42, 43, 44, 45, 46, 47, 48, 49]},
+    {"id": "research-system", "weeks": 4, "lessons": [50, 51, 52, 53, 54, 55, 56, 57]},
+    {"id": "multimodal-vlm", "weeks": 3, "lessons": [58, 59, 60, 61, 62, 63]},
+    {"id": "advanced-rag", "weeks": 3, "lessons": [64, 65, 66, 67, 68, 69]},
+    {"id": "evaluation-framework", "weeks": 3, "lessons": [70, 71, 72, 73, 74, 75]},
+    {"id": "distributed-training", "weeks": 3, "lessons": [76, 77, 78, 79, 80, 81]},
+    {"id": "safety-harness", "weeks": 3, "lessons": [82, 83, 84, 85, 86, 87]}
+  ]
+}

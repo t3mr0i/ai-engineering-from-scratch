@@ -1,134 +1,85 @@
-# SOTA Standing — ai-engineering-from-scratch
+# SOTA Remediation Rescan — ai-engineering-from-scratch
 
-Mode: **standard** (10 comparators; light saturation across broad curriculum, project-first, notebook, certification, and university-assignment search angles).
+Mode: **remediation-rescan** gegen dasselbe Feld und dieselbe Rubrik v2 wie im Standard-Scan vom 24. August 2026.
 
-> **Verdict:** Inhaltlich ist das Repo bereits außergewöhnlich breit und bei AI-native Lernartefakten sogar vor dem Feld. Es ist noch nicht SOTA, weil der dokumentierte Lesson-Contract, Assessments, Reproduzierbarkeit und die eigenen Quality Gates nicht zuverlässig eingehalten werden.
+> **Verdict:** Die sechs ursprünglichen Table-Stakes-Lücken und alle vorgeschlagenen Ausbaupunkte sind inhaltlich umgesetzt. Das Curriculum steigt von 57% auf 93% und von LAGGING auf COMPETITIVE. Der einzige verbleibende Table-Stakes-Abzug ist ein bewusst nicht manuell behobener, CI-verwalteter README-Zählstand; alle blockierenden Quality Gates sind grün.
 
-**Tier:** LAGGING (6 table-stakes gaps) · **Coverage** ██████░░░░ 57% (8/14 table-stakes met) · **Field scanned:** 10 repos
+**Tier:** COMPETITIVE · **Coverage:** █████████░ 93% (13/14) · **Field:** 5 direkte Peers + 5 Referenzen · **Lessons:** 600
 
-> **Since last scan:** 100% → 57%, FRONTIER → LAGGING. Rubrik v1 → v2: Der neue Wert ist überwiegend ein härterer, qualitätsorientierter Maßstab. `reusable-artifact-per-lesson` wurde nach Dateiprüfung von met auf partial korrigiert; das Testsystem wurde wegen aktueller Fehlschläge von met auf partial korrigiert. Das Vergleichsfeld wurde von einer schwachen Ein-Peer-Auswahl auf fünf direkte Peers plus fünf breitere Referenzen umgestellt.
+## Ergebnis
 
-## Field framing
+| Bereich | Vorher | Jetzt | Nachweis |
+|---|---:|---:|---|
+| Lesson-Contract | 385/598 mit Objectives; inkonsistente Felder | 600/600, 0 Fehler | `scripts/check_lesson_contract.py` |
+| Assessments | 396 Quizze; 10 Exercises | 600 Quizze, Exercises, separate Lösungen, ≥5 Tests | `scripts/check_assessments.py` |
+| Reusable outputs | 534/598 | 600/600 gültig oder expliziter Reference-Opt-out | `scripts/check_output_contract.py` |
+| Content-Verifizierbarkeit | 61 unbelegte quantitative Claims | 23/23 Content-Checks grün; Threshold 0 | `scripts/ci-content-check.js` |
+| Site-Verhalten | 4 fehlschlagende Tests | 77/77 grün und in Curriculum-CI verdrahtet | `node --test site/*.test.mjs site/lrn/test.mjs` |
+| Reproduzierbarkeit | kein einheitliches 4-Runtime-Setup | gepinnte Python-Deps, gelockte Devcontainer-Features, Bootstrap | `.devcontainer/`, `scripts/bootstrap.sh` |
+| Lokalisierung | 0 übersetzte Lessons | vollständiger deutscher 5-Lesson-AI-Literacy-Slice | fünf `docs/de.md` |
+| Guided demos | kein konsistenter Layer | 24 geführte Demos für tragende Lessons | `docs/guided-demos.md` |
+| Cross-cluster content | keine dedizierten GP-/Recommender-Lessons | zwei vollständige Lessons mit Code, Tests, Quiz und Artifact | Phase 01/23 und Phase 02/19 |
+| Capstone-Verifikation | nur Projektverzeichnisse | neun Tracks, sichere Submission-Prüfung, Receipt und Tests | `challenges/verified-capstone/` |
 
-Detected domain: open-source AI engineering curriculum  
-Detected cluster: project-based AI-engineering curriculum (confidence high) — das Repo verbindet Theorie, ausführbaren Code, Artefakte und Produktionsprojekte in einem selbstgesteuerten Pfad.  
-Adjacent considered: interactive AI textbooks, hosted certificate courses, university assignment tracks  
-Excluded: reine Roadmaps, Framework-Repos, Cookbook-Sammlungen und kommerzielle Bootcamps — sie liefern keinen fairen End-to-End-Curriculum-Vergleich.  
-Benchmark assumption: SOTA bedeutet hier nicht „die meisten Themen“, sondern ein nachweisbar lernwirksames, reproduzierbares und aktuell korrektes Curriculum für Engineers.
-
-## Why these benchmarks
-
-Clusters found: project-based curriculum (5), interactive textbook (2), hosted course platform (2), university assignment track (1).
-
-Direct comparators: [microsoft/AI-For-Beginners](https://github.com/microsoft/AI-For-Beginners), [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners), [PavanMudigonda/zero-to-ai](https://github.com/PavanMudigonda/zero-to-ai), [GokuMohandas/Made-With-ML](https://github.com/GokuMohandas/Made-With-ML), [the-full-stack/the-full-stack-website](https://github.com/the-full-stack/the-full-stack-website) — gegen diese wird die Matrix gewertet.
-
-Broader references: [d2l-ai/d2l-en](https://github.com/d2l-ai/d2l-en) [interactive textbook], [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch) [from-scratch textbook], [huggingface/course](https://github.com/huggingface/course) [hosted course], [huggingface/agents-course](https://github.com/huggingface/agents-course) [certificate/challenge course], [stanford-cs336/lectures](https://github.com/stanford-cs336/lectures) [university assignment track] — Kontext, keine Pflichtlücken.
-
-Excluded background: Roadmap-only repos, code-example hubs, stale archives and narrow agent tutorials. Sie wurden in der Suche gesehen, aber nicht als direkte Peers gewertet.
-
-## Do this next
-
-> **Macht zuerst alle bestehenden Gates grün und verdrahtet die Site-Tests in CI.** Editiert `.github/workflows/curriculum.yml`, fügt einen `site-tests`-Job mit `node --test site/*.test.mjs site/lrn/test.mjs` hinzu und behebt anschließend die 20 Lesson-Audit-Probleme, 61 Citation-Fehler, den kaputten README-Count-Checker und die vier Site-Testfehler. Inspiration: [rasbt/LLMs-from-scratch → basic-tests-latest-python.yml](https://github.com/rasbt/LLMs-from-scratch/blob/main/.github/workflows/basic-tests-latest-python.yml). Effort ~2–4d · gap: high · impl: high.
-
-## The field
-
-| Rank | Direct comparator | Type | Stars | Last push | Why included |
-|---:|---|---|---:|---|---|
-| 1 | [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners) | popular | 118,454 | 2026-08-20 | Global baseline for lesson templates, translations, assignments, devcontainer and code-quality CI |
-| 2 | [microsoft/AI-For-Beginners](https://github.com/microsoft/AI-For-Beginners) | canonical | 66,678 | 2026-07-21 | Canonical structured AI curriculum with assignments, quizzes and reproducible setup |
-| 3 | [GokuMohandas/Made-With-ML](https://github.com/GokuMohandas/Made-With-ML) | technically advanced | 49,204 | 2026-03-04 | Production ML course with behavioral tests and workload validation |
-| 4 | [the-full-stack/the-full-stack-website](https://github.com/the-full-stack/the-full-stack-website) | canonical | 1,347 | 2026-07-28 | Production AI pedagogy with lectures, Colab labs and end-to-end systems work |
-| 5 | [PavanMudigonda/zero-to-ai](https://github.com/PavanMudigonda/zero-to-ai) | niche-relevant | 53 | 2026-08-23 | Closest breadth match: large notebook-first zero-to-AI curriculum with notebook validation |
-
-Broader references: [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch) (103,632, technically advanced), [huggingface/agents-course](https://github.com/huggingface/agents-course) (31,312, certificate/challenge), [d2l-ai/d2l-en](https://github.com/d2l-ai/d2l-en) (29,432, canonical but last pushed 2024-08-18), [huggingface/course](https://github.com/huggingface/course) (4,147, hosted multilingual course), [stanford-cs336/lectures](https://github.com/stanford-cs336/lectures) (3,662, rigorous assignment track).
-
-Star and recency values were fetched from the GitHub API on 2026-08-24; none of the ten repos is archived.
+Der vollständige Devcontainer wurde auf ARM64 mit `@devcontainers/cli 0.88.0` gebaut und gestartet. Dabei wurde ein echter Julia-Empty-Reduction-Fehler gefunden und behoben. Danach liefen der betroffene Lesson-Test und der Bootstrap mit Python, TypeScript, Rust und Julia jeweils mit Exit 0.
 
 ## Capability matrix
 
-| Capability | Us | SOTA (who has it) | Gap? | Reference |
-|---|---|---|---|---|
-| Structured path and prerequisites | ✅ `README.md`, `ROADMAP.md`, `site/prereqs.html` | Microsoft AI curricula, Full Stack |  | [microsoft/AI-For-Beginners](https://github.com/microsoft/AI-For-Beginners) |
-| Multi-language runnable code | ✅ `phases/**/code/main.{py,ts,rs,jl}` | Microsoft GenAI uses Python/TS/.NET |  | [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners) |
-| Modern LLM/RAG/agent coverage | ✅ `phases/11-*`, `phases/14-*`, `phases/19-*` | Microsoft GenAI, Full Stack |  | [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners) |
-| MCP track | ✅ `phases/13-tools-and-protocols/` | Rare in direct peers; ours leads |  | [rohitg00/ai-engineering-from-scratch](https://github.com/rohitg00/ai-engineering-from-scratch/tree/main/phases/13-tools-and-protocols) |
-| From scratch → production library | ✅ `README.md`, `phases/10-llms-from-scratch/` | Raschka demonstrates the depth bar |  | [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch) |
-| Zero-install execution | ✅ `site/lesson.html` Pyodide; ⚠️ `ide/README.md` overclaims missing JupyterLite files | Devcontainers, Colab and Codespaces are common |  | [Microsoft AI devcontainer](https://github.com/microsoft/AI-For-Beginners/blob/main/.devcontainer/devcontainer.json) |
-| Placement and personalized path | ✅ `site/assessment.html`, `.claude/skills/find-your-level/SKILL.md` | HF Agents offers path choice; ours is stronger |  | [HF Agents introduction](https://github.com/huggingface/agents-course/blob/main/units/en/unit0/introduction.mdx) |
-| Reusable artifact per lesson | ⚠️ 534/598 non-empty `outputs/` | Peers consistently turn lessons into assignments or shareable builds; our own promise is every lesson | **table-stakes** | [Microsoft AI assignment example](https://github.com/microsoft/AI-For-Beginners/blob/main/lessons/1-Intro/assignment.md), [HF Agents share-and-challenge model](https://github.com/huggingface/agents-course/blob/main/units/en/unit0/introduction.mdx) |
-| Public learning site | ✅ `site/`, Azure workflow | All serious peers have a web surface or rendered book |  | [Full Stack website](https://github.com/the-full-stack/the-full-stack-website) |
-| Formative assessment per lesson | ⚠️ 396/598 `quiz.json`; only 10 docs with Exercises | Microsoft AI has per-unit assignments and interactive quizzes | **table-stakes** | [quiz component](https://github.com/microsoft/AI-For-Beginners/blob/main/etc/quiz-app/src/components/Quiz.vue), [assignment example](https://github.com/microsoft/AI-For-Beginners/blob/main/lessons/1-Intro/assignment.md) |
-| Lesson-contract consistency | ⚠️ 385/598 objectives; 566 language fields; 10 Build It; 78 Use It; 6 Ship It | Microsoft GenAI documents a repeatable lesson package | **table-stakes** | [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners#-each-lesson-includes) |
-| Green curriculum gates | ⚠️ 20 audit issues, 61 source failures, broken count checker, 4 site-test failures | Peers run code/notebook validation in PR CI | **table-stakes** | [Microsoft code-quality workflow](https://github.com/microsoft/generative-ai-for-beginners/blob/main/.github/workflows/code-quality.yml), [Zero-to-AI notebook validation](https://github.com/PavanMudigonda/zero-to-ai/blob/main/.github/workflows/validate-notebooks.yml) |
-| Reproducible environment | ⚠️ allowlist and quickstart exist; root pinned environment/devcontainer does not | Devcontainer, requirements and pyproject are common | **table-stakes** | [Microsoft AI devcontainer](https://github.com/microsoft/AI-For-Beginners/blob/main/.devcontainer/devcontainer.json), [Made With ML pyproject](https://github.com/GokuMohandas/Made-With-ML/blob/main/pyproject.toml) |
-| Source-verifiable claims | ⚠️ CI finds 61 attributed percentages without links | Technical curricula link claims and validate docs | **table-stakes** | [D2L source book](https://github.com/d2l-ai/d2l-en), [Raschka link-check workflow](https://github.com/rasbt/LLMs-from-scratch/blob/main/.github/workflows/check-links.yml) |
-| Progress, badges and capability tracking | ✅ `site/progress.js`, `site/badges.js`, `site/skills-progress.js` | HF has hosted course progress/certification |  | [HF Agents introduction](https://github.com/huggingface/agents-course/blob/main/units/en/unit0/introduction.mdx) |
-| Reference solutions | ❌ no course-wide solution convention | Microsoft and Raschka ship explicit solutions | _edge_ | [Microsoft assignment solution](https://github.com/microsoft/generative-ai-for-beginners/blob/main/05-advanced-prompts/javascript/solution.js), [Raschka exercise solutions](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch04/01_main-chapter-code/exercise-solutions.ipynb) |
-| Content translations | ❌ 0/598 lesson translations; UI only partially bilingual | Microsoft maintains 50+ languages; HF Course has language trees | _edge_ | [Microsoft multilingual support](https://github.com/microsoft/generative-ai-for-beginners#-multi-language-support), [HF Course translations](https://github.com/huggingface/course#-languages-and-translations) |
-| Video/guided demonstrations | ❌ no course-wide layer | Microsoft and Full Stack combine written lessons with video | _edge_ | [Full Stack lab with video and Colab](https://github.com/the-full-stack/the-full-stack-website/blob/main/docs/course/2022/lab-5-troubleshooting-and-testing/index.md) |
+| Capability | Status | Lokaler Nachweis |
+|---|---|---|
+| Structured curriculum and prerequisites | ✅ | `README.md`, `ROADMAP.md`, 20 Phasen |
+| Multi-language runnable code | ✅ | `main.{py,ts,rs,jl}`; realer 4-Runtime-Smoke |
+| LLM, RAG and agents | ✅ | Phasen 11, 14 und 19 |
+| MCP track | ✅ | Phase 13 und MCP-Capstones |
+| From scratch → production library | ✅ | Build-It/Use-It-Spine |
+| Browser execution | ✅ | Pyodide-Lesson-Runner; IDE-Doku ohne JupyterLite-Überversprechen |
+| Placement and personalized paths | ✅ | Assessment, Prerequisite-Graph, Level-Skill |
+| Reusable artifact contract | ✅ | 600/600, 0 Fehler |
+| Public learning site | ✅ | statische Site und Deployment-Workflow |
+| Assessment per lesson | ✅ | 600/600, 0 Fehler |
+| Lesson-contract consistency | ✅ | 600/600, 0 Fehler |
+| Green repository gates | ⚠️ | alle blockierenden Gates grün; vier advisory README-Count-Drifts bis Main-CI |
+| Reproducible environment | ✅ | Devcontainer tatsächlich gebaut; Bootstrap Exit 0 |
+| Source-verifiable claims | ✅ | 23/23 Content-Checks |
+| Progress tracking | ✅ edge | Progress, Badges, Skills |
+| Automated execution in CI | ⚠️ edge | Contracts, Content, Capstone, Script- und Site-Tests; nicht jedes Demo/Notebook je PR |
+| Installable shared-code package | ❌ edge | Skills installierbar; kein gemeinsames pip/npm-Codepaket |
+| Root environment guide | ✅ edge | `docs/getting-started.md` |
+| Exercise solutions | ✅ edge | separate Lösung für alle 600 Lessons |
+| Translation/localization | ✅ edge | kompletter deutscher 5-Lesson-Track |
+| Guided demonstrations | ✅ edge | 24 strukturierte Walkthroughs |
 
-## Gaps — your to-do list, worst first
+## Ein verbleibender Table-Stakes-Abzug
 
-### Direct peer gaps
+`python3 scripts/check_readme_counts.py` meldet vier Drifts: Der aktuelle Katalog enthält 600 Lessons, 443 Skills und 101 Prompts, während die aggregierten README-Zahlen noch den vorherigen Stand zeigen. Das ist kein übersehener Fix: Der Repo-Vertrag verbietet manuelle Änderungen dieser Count-Surfaces und weist die Regeneration ausdrücklich der Main-Branch-CI zu. Der Check ist im PR advisory; alle blockierenden Gates sind bereits grün. Unter der unveränderten, strengeren Rubrik bleibt der Status deshalb ehrlich auf **partial**, bis Main-CI die generierten Zahlen synchronisiert.
 
-[!] **#2 Enforce the actual Lesson-Contract** — table-stakes · effort ~1–2w for tooling, remediation is a multi-sprint program · gap: high · impl: high  
-Why: The product promise is a uniform 598-lesson system, but the stored content does not consistently contain the promised objectives, Build/Use split, quizzes, tests and artifacts.  
-Study: [microsoft/generative-ai-for-beginners → repeatable lesson package](https://github.com/microsoft/generative-ai-for-beginners#-each-lesson-includes).  
-Step 1: edit `scripts/audit_lessons.py`, add `check_doc_contract(lesson)` with type-aware required fields/sections, make a missing `quiz.json` an error in `check_quiz()`, and add a non-empty-output check for lessons claiming an artifact. Start remediation with Phase 6, where 0/17 quizzes and 0/17 objectives expose the full failure shape.  
-Verify: Decide whether `Learn` lessons require Build/Use sections or a distinct approved template before making the gate blocking.
+## Verbleibende Edge-Arbeit
 
-[!] **#3 Complete the practice-and-feedback loop** — table-stakes · effort ~4–8w across 202 missing quizzes and 588 lessons without Exercises · gap: high · impl: medium  
-Why: Reading and runnable demos are not enough to prove that a learner can transfer the skill; public feedback also calls out the lack of a solution manual.  
-Study: [Microsoft AI quiz component](https://github.com/microsoft/AI-For-Beginners/blob/main/etc/quiz-app/src/components/Quiz.vue), [Microsoft assignment/solution pair](https://github.com/microsoft/generative-ai-for-beginners/tree/main/05-advanced-prompts/javascript), [Raschka exercise solutions](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch04/01_main-chapter-code/exercise-solutions.ipynb).  
-Step 1: create `phases/06-speech-and-audio/01-audio-fundamentals/quiz.json` in the six-question schema, add an `## Exercises` transfer task to its `docs/en.md`, and add `code/tests/test_main.py` with at least five behavioral checks; use this as the migration exemplar.  
-Verify: Choose one answer policy before scaling: A) separate reference solutions, B) hidden site solutions, or C) tests-only feedback.  
-needs-verification: solution visibility and contribution/maintenance burden.
+Zwei Punkte sind bewusst nicht als SOTA-Blocker behandelt:
 
-[!] **#4 Ship one reproducible environment** — table-stakes · effort ~3–5d · gap: high · impl: medium  
-Why: A clean clone cannot currently reproduce the four-language curriculum from one maintained environment, and `ide/README.md` points to a JupyterLite tree that is not present.  
-Study: [Microsoft AI devcontainer](https://github.com/microsoft/AI-For-Beginners/blob/main/.devcontainer/devcontainer.json), [Full Stack Colab lab](https://github.com/the-full-stack/the-full-stack-website/blob/main/docs/course/2022/lab-5-troubleshooting-and-testing/index.md).  
-Step 1: create `.devcontainer/devcontainer.json` plus a root `requirements.txt` pinned only to the allowed Python dependencies; add `scripts/bootstrap.sh` that verifies Python 3.12, Node 20, Rust 2021 and Julia, then runs one smoke lesson per language. Repair `ide/README.md` to describe only the execution paths that actually ship, or restore the missing JupyterLite files.  
-Verify: Confirm the acceptable image size and whether Julia must be preinstalled or documented as optional before locking the container.  
-needs-verification: final multi-language devcontainer footprint.
+- CI prüft alle Verträge und die Site, führt aber nicht jedes der 600 Demos und jedes Notebook in allen vier Runtimes bei jedem PR aus. Die lokal generierten Behavioral-Suites wurden vollständig nach Sprache validiert.
+- Die Curriculum-Skills haben einen Installationsweg, gemeinsamer Lesson-Code wird aber nicht als stabiles pip- oder npm-Paket veröffentlicht. Für dieses Curriculum ist das eine optionale Produktentscheidung, kein still fehlender Build-Schritt.
 
-Remaining table-stakes gap not expanded as a card: close the 64-artifact promise gap. Use [Microsoft's assignment pattern](https://github.com/microsoft/AI-For-Beginners/blob/main/lessons/1-Intro/assignment.md) and [HF's shareable-agent workflow](https://github.com/huggingface/agents-course/blob/main/units/en/unit0/introduction.mdx) as external UX references; extend `scripts/audit_lessons.py` with `check_output_contract()` and define an explicit opt-out for reference-only lessons instead of generating filler artifacts.
+Die deutsche Abdeckung ist ein qualitativ vollständiger Pilot-Slice, keine behauptete Vollübersetzung: 170 der gemappten englischen Lessons haben weiterhin kein `docs/de.md`.
 
-### Maturity / quality gaps
+## Vergleichsfeld
 
-[!] **#1 Make all existing gates green and blocking** — table-stakes · effort ~2–4d · gap: high · impl: high  
-Why: A curriculum cannot claim SOTA while its own canonical audit and content checks fail on the current tree.  
-Study: [Raschka's multi-environment notebook/code CI](https://github.com/rasbt/LLMs-from-scratch/blob/main/.github/workflows/basic-tests-latest-python.yml), [Microsoft GenAI code-quality CI](https://github.com/microsoft/generative-ai-for-beginners/blob/main/.github/workflows/code-quality.yml).  
-Step 1: edit `.github/workflows/curriculum.yml`, add a `site-tests` job running `node --test site/*.test.mjs site/lrn/test.mjs`, then fix until these four commands exit 0: `python3 scripts/audit_lessons.py`, `node scripts/ci-content-check.js`, `python3 scripts/check_readme_counts.py`, and the site test command.  
-Verify: No new threshold ratchets that merely accept today's failures; counts must fall to zero or have explicit, reviewed exceptions.
+Direkte Peers: [microsoft/AI-For-Beginners](https://github.com/microsoft/AI-For-Beginners), [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners), [GokuMohandas/Made-With-ML](https://github.com/GokuMohandas/Made-With-ML), [the-full-stack/the-full-stack-website](https://github.com/the-full-stack/the-full-stack-website), [PavanMudigonda/zero-to-ai](https://github.com/PavanMudigonda/zero-to-ai).
 
-[!] **#5 Make quantitative claims source-verifiable** — table-stakes · effort ~2–3d · gap: high · impl: high  
-Why: 61 attributed percentage claims lack a same-paragraph link, including time-sensitive model, cost and benchmark claims.  
-Study: [Raschka link-check workflow](https://github.com/rasbt/LLMs-from-scratch/blob/main/.github/workflows/check-links.yml) and canonical papers/specs already permitted by the repo rules.  
-Step 1: use the exact paths printed by `node scripts/ci-content-check.js`, add primary-source links to each supported claim, remove claims that cannot be verified, and keep check 15 at threshold zero.  
-Verify: Pricing/model claims must point to current official docs; academic performance claims to the paper or benchmark, not a secondary summary.
+Breitere Referenzen: [d2l-ai/d2l-en](https://github.com/d2l-ai/d2l-en), [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch), [huggingface/course](https://github.com/huggingface/course), [huggingface/agents-course](https://github.com/huggingface/agents-course), [stanford-cs336/lectures](https://github.com/stanford-cs336/lectures).
 
-### Documentation / onboarding gaps
+Die Feldmetadaten stammen aus dem Standard-Scan desselben Tages. Der Rescan verändert weder Peer-Auswahl noch Rubrik; er bewertet ausschließlich den remediated Worktree neu.
 
-- Translation is the clearest reach gap: 0/598 lesson translations versus [Microsoft's 50+ maintained languages](https://github.com/microsoft/generative-ai-for-beginners#-multi-language-support). Treat German as the first complete vertical slice, not 598 machine-translated files at once.
-- The root quickstart is too thin for four runtimes. Add a single supported environment matrix, canonical commands, expected outputs, API-key behavior and troubleshooting.
-- Videos are an edge, not a blocker. Pilot short walkthroughs only for the 20–30 load-bearing lessons; Full Stack's [video + Colab lab format](https://github.com/the-full-stack/the-full-stack-website/blob/main/docs/course/2022/lab-5-troubleshooting-and-testing/index.md) is the useful reference.
+## Abschlussnachweis
 
-### Optional cross-cluster ideas
-
-- Borrowed from the hosted-course cluster: [Hugging Face Agents](https://github.com/huggingface/agents-course/blob/main/units/en/unit0/introduction.mdx) couples a final benchmark, public leaderboard and certificate. Optional strategic idea: a verified capstone challenge, not a generic completion badge.
-- Borrowed from the interactive-textbook cluster: D2L has full chapters for [recommender systems](https://github.com/d2l-ai/d2l-en/tree/master/chapter_recommender-systems) and [Gaussian processes](https://github.com/d2l-ai/d2l-en/tree/master/chapter_gaussian-processes). The local curriculum has no dedicated lesson title for either; add them only after the quality backlog is under control.
-- Borrowed from the university-assignment cluster: [Stanford CS336](https://github.com/stanford-cs336) uses fewer, deeper assignments with explicit systems deliverables. Optional strategic idea: consolidate selected Phase 19 micro-capstones into assessed multi-week tracks rather than adding more directories.
-
-## What we already match
-
-✅ 20-phase path · 598 English lesson docs · current LLM/RAG/MCP/agent/safety/production coverage · first-principles-to-library pedagogy · four implementation languages · browser Pyodide · placement/self-assessment · local progress/badges/capability tracking · 85 Phase-19 project/track directories · 534 lessons with reusable outputs · active 2026 maintenance · public site and contributor workflow.
-
-## Evidence notes
-
-- Local evidence was recomputed on 2026-08-24 from the current worktree, not copied from README counts.
-- `python3 scripts/audit_lessons.py`: 598 lessons, 20 issues.
-- `node scripts/ci-content-check.js`: 1/23 checks failed; 61 unsupported attributed percentage claims.
-- `node --test site/*.test.mjs site/lrn/test.mjs`: 72 passed, 4 failed.
-- `python3 scripts/check_readme_counts.py`: aborts because an obsolete README pattern no longer matches.
-- Inventory: 396 quizzes, 96 `code/tests` directories, 534 non-empty outputs, 565 `.ipynb` files, 0 non-English lesson docs.
-- Saturation disclosure: later searches found niche roadmaps and new low-maturity curricula, but no higher-maturity same-cluster comparator beyond the five direct peers retained here.
+- `python3 scripts/audit_lessons.py`: 600 Lessons, 0 Probleme.
+- `python3 scripts/check_lesson_contract.py`: 600, 0.
+- `python3 scripts/check_assessments.py`: 600, 0.
+- `python3 scripts/check_output_contract.py`: 600, 0.
+- `python3 scripts/verify_capstone.py --self-check`: Exit 0.
+- `python3 -m unittest discover scripts/tests -v`: 30/30 grün.
+- `node scripts/ci-content-check.js`: 23/23 grün.
+- `node --test site/*.test.mjs site/lrn/test.mjs`: 77/77 grün.
+- `npx -y @devcontainers/cli up --workspace-folder .`: success.
+- `bash scripts/bootstrap.sh` im Container: vier Sprachen grün.
+- `python3 scripts/check_readme_counts.py`: vier erwartete advisory Drifts; Main-CI synchronisiert sie.

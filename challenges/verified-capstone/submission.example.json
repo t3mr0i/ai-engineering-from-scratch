@@ -1,0 +1,25 @@
+{
+  "challenge": "verified-capstone-v1",
+  "track": "agent-harness",
+  "candidate": "example-handle",
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "artifacts": [
+    {"path": "README.md", "sha256": "replace-with-64-lowercase-hex-characters"},
+    {"path": "report.md", "sha256": "replace-with-64-lowercase-hex-characters"},
+    {"path": "results.json", "sha256": "replace-with-64-lowercase-hex-characters"}
+  ],
+  "tests": [
+    {"command": "python3 -m unittest discover tests -v", "exit_code": 0}
+  ],
+  "metrics": {
+    "task_success_rate": 0.8,
+    "reproducibility_rate": 1.0,
+    "documentation_score": 0.9,
+    "safety_violation_rate": 0.0
+  },
+  "attestations": {
+    "no_secrets": true,
+    "reproducible_from_clean_clone": true,
+    "limitations_disclosed": true
+  }
+}

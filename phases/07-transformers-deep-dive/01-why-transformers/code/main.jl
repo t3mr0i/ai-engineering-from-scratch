@@ -106,7 +106,7 @@ function demo_scan_equivalence()
     xs = Float64.(0:15)
     ser = serial_scan(xs)
     par = parallel_scan(xs)
-    mismatches = sum(1 for i in 1:length(xs) if abs(ser[i] - par[i]) > 1e-9)
+    mismatches = sum((1 for i in 1:length(xs) if abs(ser[i] - par[i]) > 1e-9); init=0)
     @printf("length: %d  mismatches between serial and parallel scan: %d\n",
             length(xs), mismatches)
     @printf("last value (serial):   %.4f\n", ser[end])
