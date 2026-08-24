@@ -2,7 +2,7 @@
 
 > **Pricing snapshot dated 2026-04.** Numeric claims below reflect vendor rate cards captured at this lesson's publication; verify against the linked docs before quoting them downstream.
 
-> Caching happens at two layers. L2 (provider-level) prompt/prefix caching reuses attention KV for repeated prefixes — Anthropic's prompt-caching docs advertise up to 90% cost reduction and 85% latency reduction on long prompts; for Claude 3.5 Sonnet cache reads are $0.30/M vs $3.00/M fresh with a 5-minute TTL and a 2x write premium for the 1-hour TTL option (docs.anthropic.com, 2026-04). OpenAI prompt caching applies automatically for prompts ≥1024 tokens and prices cached input at roughly a 90% discount vs fresh (platform.openai.com, 2026-04); the exact per-model cached rate depends on the live rate card. L1 (app-level) semantic caching skips the LLM entirely on embedding similarity hits. Vendor "95% accuracy" refers to match correctness, not hit rate — reported production hit rates range from 10% (open-ended chat) up to 70% (structured FAQ); neither provider publishes an official baseline, so treat these as community telemetry rather than guarantees. The production pitfalls: parallelization kills caching (N parallel requests issued before the first cache write can inflate spend several-fold), and dynamic content inside the prefix prevents cache hits entirely. ProjectDiscovery reported moving from 7% to 74% hit rate (2025-11) by moving dynamic text out of the cacheable prefix.
+> Caching happens at two layers. Provider-level prompt caching reuses repeated prefixes; [Anthropic documents](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) its cache-write and cache-read multipliers, while [OpenAI's guide](https://platform.openai.com/docs/guides/prompt-caching) explains automatic prefix matching and usage reporting. Exact prices and retention options are model-specific and change over time, so read the live rate card. Application-level semantic caching skips the LLM entirely on a sufficiently similar hit. Neither mechanism guarantees a hit rate: measure hit correctness, hit rate, latency, and saved tokens separately.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy two-layer cache simulator)
@@ -32,7 +32,7 @@ Provider stores the attention KV for a cacheable prefix and reuses it on the nex
 
 **Anthropic (Claude 3.5 / 3.7 / 4 series)**: explicit `cache_control` marker in the request. You tag which blocks are cacheable. TTL: 5-minute (write costs 1.25x base) or 1-hour (write costs 2x base). Cache reads: $0.30/M on Claude 3.5 Sonnet vs $3.00/M fresh — 10x cheaper (docs.anthropic.com, as of 2026-04). Rates differ per model (Opus/Haiku published separately); always cross-check the live pricing page.
 
-**OpenAI**: automatic caching for prompts ≥1024 tokens (platform.openai.com, 2026-04). No explicit flag. The discount varies by model family: on gpt-4o, cached input is $1.25/M vs $2.50/M fresh — 2x cheaper. On the current GPT-5 family, cached input runs roughly 10x cheaper than fresh. Neither docs nor release notes publish an official hit-rate baseline; community reports cluster around 30–60% with careful prompt design. Monitor `usage.cached_tokens` to measure your own.
+**OpenAI**: prompt caching is automatic for eligible repeated prefixes. The discount and minimum cacheable prefix depend on the model; consult the [current prompt-caching guide](https://platform.openai.com/docs/guides/prompt-caching) and [live pricing table](https://platform.openai.com/pricing), then monitor cached-token usage in your own responses instead of assuming a benchmark hit rate.
 
 **Google (Gemini)**: context caching via explicit API; 1M-token context means caching pays even more.
 
@@ -82,18 +82,17 @@ ProjectDiscovery moved from 7% to 74% cache hit rate this way and published the 
 
 ### Stack batch + cache for overnight workloads
 
-Batch APIs (Phase 17 · 15) give 50% discount at 24-hour turnaround. Cached input on top gets you ~10x on top of that. Overnight classification, labeling, and report generation workloads can drop to ~10% of synchronous-uncached cost by stacking.
+[OpenAI's Batch API](https://platform.openai.com/docs/api-reference/batch) documents a 50% discount with a 24-hour completion window. Whether cached-input pricing can be combined with a provider's batch tier is provider- and model-specific; verify the live rate card before projecting savings for overnight classification or report generation.
 
 ### Numbers you should remember
 
 Pricing points are captured 2026-04 from the linked vendor docs and drift every few months — re-check before relying on them.
 
-- Anthropic cached read: $0.30/M on Claude 3.5 Sonnet, roughly 10x cheaper than fresh input (docs.anthropic.com).
-- Anthropic cache write premium: 1.25x (5-min TTL) or 2x (1-hour TTL).
-- OpenAI auto-cache: applies to prompts ≥1024 tokens; cached input is priced at 50% of fresh input on gpt-4o, and roughly 10% of fresh input on the current GPT-5 family (platform.openai.com).
-- Semantic cache hit rate (community-reported): ~10% open chat; up to ~70% structured FAQ. Not a vendor-documented baseline.
-- ProjectDiscovery: 7% → 74% hit rate by moving dynamic out of prefix (project blog, 2025-11).
-- Parallelization anti-pattern: typical reports of 5–10x bill inflation when N parallel requests miss the first cache write.
+- Anthropic cache writes and reads use model-specific price multipliers and retention options ([official guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)).
+- OpenAI prompt caching is automatic for eligible prefixes, with model-specific cached-input rates ([official guide](https://platform.openai.com/docs/guides/prompt-caching)).
+- Semantic-cache hit rate has no universal baseline; report your measured hit rate and false-hit rate.
+- Dynamic content placed early in a prefix reduces exact-prefix reuse; normalize stable instructions before variable content.
+- Concurrent identical misses can duplicate work before the first result is cached; use request coalescing where latency permits.
 
 
 

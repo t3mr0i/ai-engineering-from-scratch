@@ -1,6 +1,6 @@
 # Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift
 
-> The 2026 dual-use picture, domain by domain. Bio/chem: Lesson 17 covers WMDP; Anthropic's bioweapon-acquisition trial (2.53x uplift) and OpenAI's April 2025 Preparedness Framework v2 warning ("on the cusp of meaningfully helping novices create known biological threats") mark the inflection point. Cyber (November 2025 Anthropic report): Chinese-linked state actors used Claude's agentic coding tool to automate up to 90% of a cyberattack campaign, with human intervention only in 4-6 steps; OpenAI "trusted access" pilot gives vetted security organisations capability access for defensive dual-use work. Chem/bio execution gap erosion: the classic defense was "information access alone is insufficient." Vision-enabled frontier models (GPT-5.2, Gemini 3 Pro, Claude Opus 4.5, Grok 4.1) can observe wet-lab video and provide real-time correction. December 2025: OpenAI demonstrated GPT-5 iterating on wet-lab experiments, achieving 79x efficiency improvement via AI-driven protocol optimization. Novice-vs-expert pattern: AI provides greater relative uplift to novices but greater absolute capability to experts.
+> Dual-use risk must be evaluated domain by domain. OpenAI's [Preparedness Framework update](https://openai.com/index/updating-our-preparedness-framework/) describes biological and cybersecurity capability thresholds. Anthropic's [cyber-espionage case report](https://www.anthropic.com/news/disrupting-AI-espionage) says a threat actor used Claude for 80–90% of a campaign, with human intervention at roughly four to six decision points. In a benign wet-lab setting, OpenAI reports a [79× cloning-efficiency improvement](https://openai.com/index/accelerating-biological-research-in-the-wet-lab/); the result is specific to that protocol and does not by itself establish dangerous capability. Safety cases must separate information access, experimental execution, and expert oversight.
 
 **Type:** Learn
 **Languages:** none
@@ -9,8 +9,8 @@
 
 ## Learning Objectives
 
-- Describe the 2024-2025 bio-uplift narrative: "mild uplift" -> "on the cusp" -> "2.53x uplift insufficient to rule out ASL-3."
-- Describe the November 2025 Anthropic cyber report: Chinese-linked automation at up to 90% of a cyberattack campaign.
+- Explain how [OpenAI's Preparedness Framework](https://openai.com/index/updating-our-preparedness-framework/) turns observed capability into tracked risk thresholds.
+- Describe Anthropic's [November 2025 cyber case](https://www.anthropic.com/news/disrupting-AI-espionage), including its vendor-reported 80–90% automation estimate.
 - Describe the chem/bio execution-gap erosion: vision-enabled real-time correction of wet-lab experiments.
 - State the novice-relative vs expert-absolute asymmetry and its implication for safety-case construction.
 
@@ -41,7 +41,7 @@ The implication: execution-skill-as-defense is eroding. Procurement and equipmen
 
 ### Cyber uplift (November 2025)
 
-Anthropic's November 2025 report: Chinese-linked state actors used Claude's agentic coding tool to automate 80-90% of a cyberattack campaign. Human intervention was required in only 4-6 steps.
+Anthropic's [November 2025 report](https://www.anthropic.com/news/disrupting-AI-espionage) says Chinese-linked state actors used Claude's coding capabilities for 80–90% of a cyberattack campaign, with human intervention at roughly four to six decision points. Attribute this number to the vendor and distinguish it from an independently audited measurement.
 
 Implications:
 - Agentic coding is the attack-automation primitive. Previous AI cyber assistance was bounded at code-snippet level; agentic workflows integrate reconnaissance, exploitation, post-exploitation, and exfiltration.

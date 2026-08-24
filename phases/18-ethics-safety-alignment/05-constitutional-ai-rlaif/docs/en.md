@@ -58,7 +58,7 @@ Anthropic published a substantially revised constitution on 21 January 2026. Key
 
 ### Constitutional Classifiers
 
-A parallel line of work: rather than change the model's post-training, train lightweight classifiers that read the constitution and gate model outputs. v1 (2023) had 23.7% compute overhead. v2 (2026) is ~1% and has the lowest successful attack rate of any Anthropic defense Anthropic has tested publicly. No universal jailbreak was reported as of early 2026.
+A parallel line of work trains classifiers from a written constitution and uses them to gate model inputs and outputs. Anthropic reported 23.7% compute overhead for its first published system and roughly 1% for [Constitutional Classifiers++](https://www.anthropic.com/research/next-generation-constitutional-classifiers). These are vendor measurements under specified traffic assumptions, not universal overhead guarantees.
 
 This is a layered-defense model: CAI shapes behaviour; classifiers enforce invariants. Neither alone is sufficient.
 

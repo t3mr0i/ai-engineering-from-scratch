@@ -12,7 +12,7 @@
 - Describe the many-shot jailbreaking attack and the context-window property it exploits.
 - State the empirical power law: attack success rate as a function of shot count.
 - Explain why MSJ shares a mechanism with benign in-context learning, and what that implies for defenses.
-- Describe Anthropic's classifier-based prompt modification defense and its reported 61% -> 2% reduction.
+- Describe Anthropic's classifier-based prompt-modification defense and the 61% to 2% reduction reported in its [many-shot jailbreaking study](https://www.anthropic.com/research/many-shot-jailbreaking).
 
 ## The Problem
 
@@ -52,7 +52,7 @@ The power-law shape is identical. The model does not distinguish the two because
 
 If you suppress pattern extraction from long contexts, you disable in-context learning, which breaks all prompt-based few-shot methods. Practical defenses must preserve ICL for benign patterns while rejecting harmful patterns.
 
-Anthropic's classifier-based prompt modification runs a safety classifier over the full context to detect many-shot structure, and either truncates or rewrites the relevant portion. Reported reduction: 61% -> 2% attack success on tested settings.
+Anthropic's classifier-based prompt modification runs a safety classifier over the full context and truncates or rewrites detected many-shot structure. Its [many-shot jailbreaking study](https://www.anthropic.com/research/many-shot-jailbreaking) reports a reduction from 61% to 2% attack success in the tested setting.
 
 ### Combinations with other attacks
 

@@ -1,6 +1,6 @@
 # Model, System, and Dataset Cards
 
-> Three documentation formats structure AI transparency. Model Cards (Mitchell et al. 2019) — nutrition labels for models: training data, quantitative disaggregated analyses, ethical considerations, caveats; only 0.3% of Hugging Face model cards document ethical considerations (Oreamuno et al. 2023). Datasheets for Datasets (Gebru et al. 2018, CACM) — motivation, composition, collection process, labeling, distribution, maintenance; electronics-datasheet analogy. Data Cards (Pushkarna et al., Google 2022) — modular layered detail (telescopic, periscopic, microscopic) as boundary objects for diverse readers. 2024-2025 developments: automated generation via LLMs (CardGen, Liu et al. 2024); model-card detail correlates with up to 29% download increase on HF (Liang et al. 2024); verifiable attestations (Laminator, Duddu et al. 2024); sustainability reporting additions for carbon/water (Jouneaux et al. July 2025); EU/ISO regulatory cards emerging. System Cards (Sidhpurwala 2024; Meta system-level transparency; "Blueprints of Trust" arXiv:2509.20394) — end-to-end AI system documentation covering security capabilities, prompt-injection protection, data-exfiltration detection, alignment with human values.
+> Three documentation formats structure AI transparency. [Model Cards](https://arxiv.org/abs/1810.03993) document intended use, evaluation, limitations, and disaggregated performance. [Datasheets for Datasets](https://arxiv.org/abs/1803.09010) cover motivation, composition, collection, labeling, distribution, and maintenance. [Data Cards](https://arxiv.org/abs/2204.01075) organize layered detail for different readers. Newer work such as [CardGen](https://arxiv.org/abs/2405.06258) explores assisted generation, but automation does not verify claims. System cards extend documentation to the end-to-end system, including safeguards and operational limitations.
 
 **Type:** Build
 **Languages:** Python (stdlib, model-card + datasheet + system-card generator)
@@ -70,8 +70,8 @@ Sidhpurwala 2024 and Meta system-level transparency work. "Blueprints of Trust" 
 
 ### 2024-2025 developments
 
-- **CardGen (Liu et al. 2024).** Automated model-card generation via LLMs; reports higher objectivity than many human-authored cards on the standardized Mitchell 2019 fields.
-- **Download correlation (Liang et al. 2024).** Detailed model cards correlate with up to 29% higher download rates on HF — adoption pressure is now market-driven, not only compliance-driven.
+- **[CardGen (Liu et al. 2024)](https://arxiv.org/abs/2405.06258).** Automated model- and data-card generation with retrieval; evaluate completeness, objectivity, and faithfulness separately.
+- **Adoption metrics.** Correlation between documentation detail and downloads is not evidence that a card is accurate; do not optimize card quality for popularity alone.
 - **Laminator (Duddu et al. 2024).** Verifiable attestations via hardware TEE / cryptographic signatures — allows the model card to carry a proof-of-claim, not just a claim.
 - **Sustainability (Jouneaux et al. July 2025).** Additions for carbon, water, and compute-energy footprint; emerging ISO standards.
 - **Regulatory cards.** EU AI Act (Lesson 24) GPAI Code of Practice Transparency chapter requires model cards as a compliance artifact.

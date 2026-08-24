@@ -102,7 +102,7 @@ No reference policy — the SFT term is the regularizer. Train in a single stage
 
 ### BPO (ICLR 2026 submission, OpenReview id=b97EwMUWu7)
 
-Identifies the Degraded Chosen Responses problem: DPO preserves the ranking `y_w > y_l` but the absolute log-prob of `y_w` can drop. BPO adds a single-line correction that penalizes downward moves on the chosen response. Reported +10.1% accuracy on Llama-3.1-8B-Instruct on math reasoning over DPO.
+[BPO](https://arxiv.org/abs/2506.03557) identifies the Degraded Chosen Responses problem: DPO can preserve the ranking `y_w > y_l` while lowering the absolute log-probability of `y_w`. The paper reports a 10.1-percentage-point accuracy improvement over DPO for Llama-3.1-8B-Instruct on its mathematical-reasoning evaluations.
 
 ### The universal result: DAAs still over-optimize
 

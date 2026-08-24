@@ -22,7 +22,7 @@ Agents pass demos. They fail in production in ways demos cannot predict. Benchma
 
 ### Three evaluation layers
 
-1. **Static benchmarks** — SWE-bench Verified for code (Lesson 19), WebArena/OSWorld for browsing / desktop (Lesson 20), GAIA for generalist (Lesson 19), BFCL V4 for tool use (Lesson 06). Use for cross-model comparison and regression gating. Contamination is real: SWE-bench+ found 32.67% solution leakage. Always report Verified / +-audited scores.
+1. **Static benchmarks** — SWE-bench Verified for code (Lesson 19), WebArena/OSWorld for browsing / desktop (Lesson 20), GAIA for generalist (Lesson 19), BFCL V4 for tool use (Lesson 06). Use for cross-model comparison and regression gating. The [SWE-bench+ audit](https://arxiv.org/abs/2410.06992) found solution leakage in 32.67% of the successful patches it manually screened, so always name the exact benchmark and audit status.
 
 2. **Custom offline evals** — your product's shape:
    - LLM-as-judge (Langfuse, Phoenix, Opik — Lesson 24).

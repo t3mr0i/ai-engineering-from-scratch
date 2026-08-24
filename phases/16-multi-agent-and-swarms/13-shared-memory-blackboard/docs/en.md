@@ -54,7 +54,7 @@ Three agents work on a research task. Agent A is a retrieval agent. Agent B is a
 
 **Hypothetical scenario:**
 
-1. A fetches a page and writes a message to shared state: "The study reports a 42% accuracy improvement."
+1. **Hypothetical scenario:** A fetches a page and writes a message to shared state: "The study reports a 42% accuracy improvement."
 2. The fetched page actually said "4.2% improvement." A hallucinated a decimal.
 3. B, reading shared state, writes: "Large 42% accuracy gain reported (source: A)."
 4. C, reading shared state, writes: "Recommend adoption — 42% lift is transformative."
