@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** None
 **Prerequisites:** Phase 1 (Math Foundations)
-**Time:** ~45 minutes
+**Time:** ~100 minutes
 
 ## Learning Objectives
 

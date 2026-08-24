@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 06 (RAG fundamentals), Phase 11 · 10 (RAG evaluation)
-**Time:** ~45 minutes
+**Time:** ~95 minutes
 
 ## Learning Objectives
 

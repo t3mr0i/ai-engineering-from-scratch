@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 14 · 01 (The agent loop), Phase 14 · 06 (Tool use and function calling)
-**Time:** ~45 minutes
+**Time:** ~95 minutes
 
 ## Learning Objectives
 

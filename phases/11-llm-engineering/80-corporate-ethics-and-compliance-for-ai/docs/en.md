@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 75 (Responsible AI in practice), Phase 11 · 12 (Guardrails, safety and content filtering)
-**Time:** ~45 minutes
+**Time:** ~95 minutes
 
 ## Learning Objectives
 

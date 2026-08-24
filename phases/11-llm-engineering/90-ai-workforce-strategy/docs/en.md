@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 15 · 01 (Long-horizon agents), Phase 14 · 40 (Multi-session handoff)
-**Time:** ~45 minutes
+**Time:** ~100 minutes
 
 ## Learning Objectives
 

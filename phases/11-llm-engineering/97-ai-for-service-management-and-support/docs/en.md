@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 36 (Internal knowledge assistants and RAG), Phase 17 · 23 (SRE for AI systems)
-**Time:** ~45 minutes
+**Time:** ~95 minutes
 
 ## Learning Objectives
 

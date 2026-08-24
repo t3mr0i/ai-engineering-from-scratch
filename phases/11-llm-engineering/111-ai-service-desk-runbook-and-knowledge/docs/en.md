@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 17 · 23 (SRE for AI systems)
-**Time:** ~45 minutes
+**Time:** ~95 minutes
 
 ## Learning Objectives
 

@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 10 (LLM output evaluation), Phase 14 · 38 (Verification gates for agents)
-**Time:** ~45 minutes
+**Time:** ~90 minutes
 
 ## Learning Objectives
 

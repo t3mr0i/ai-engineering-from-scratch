@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 13 (Production LLM applications), Phase 17 · 01 (Managed LLM platforms)
-**Time:** ~45 minutes
+**Time:** ~100 minutes
 
 ## Learning Objectives
 

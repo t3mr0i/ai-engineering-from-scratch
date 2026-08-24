@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 11 · 02 (Few-shot and chain-of-thought)
-**Time:** ~45 minutes
+**Time:** ~90 minutes
 
 ## Learning Objectives
 

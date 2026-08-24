@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python, TypeScript
 **Prerequisites:** Phase 11 (LLM completion APIs)
-**Time:** ~45 minutes
+**Time:** ~95 minutes
 
 ## Learning Objectives
 

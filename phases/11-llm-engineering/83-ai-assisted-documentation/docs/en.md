@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 05 (Context engineering), Phase 13 · 10 (MCP resources and prompts)
-**Time:** ~45 minutes
+**Time:** ~90 minutes
 
 ## Learning Objectives
 

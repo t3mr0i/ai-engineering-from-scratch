@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 18 · 27 (Data provenance and training governance), Phase 11 · 10 (Evaluation)
-**Time:** ~45 minutes
+**Time:** ~100 minutes
 
 ## Learning Objectives
 
