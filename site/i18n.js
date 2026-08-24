@@ -64,6 +64,11 @@ window.SITE_I18N = {
   skills_progress_path_intro: { en: "Course progress is averaged within each level and then towards your role target.", de: "Kursfortschritte werden je Level und anschließend bis zu deinem Rollenziel gemittelt." },
   skills_progress_level_definition: { en: "What this level means", de: "Was dieses Level bedeutet" },
   skills_progress_open_course: { en: "Open {title}: {percent}% complete", de: "{title} öffnen: {percent}% abgeschlossen" },
+  skills_progress_details_label: { en: "Capability progress details", de: "Details zum Kompetenzfortschritt" },
+  skills_page_back: { en: "Back to course catalog", de: "Zurück zum Kurskatalog" },
+  skills_page_catalog: { en: "Course catalog", de: "Kurskatalog" },
+  skills_page_profile: { en: "Role profile · Technology Consulting", de: "Rollenprofil · Technology Consulting" },
+  nav_skills: { en: "Capability progress", de: "Kompetenzfortschritt" },
 
   // catalog.html
   catalog_title: { en: "Lesson Catalog", de: "Lektionskatalog" },
@@ -208,6 +213,7 @@ window.SITE_I18N = {
   title_course: { en: "Course · LHIND AI Learning Catalog", de: "Kurs · LHIND AI Learning Catalog" },
   title_lesson: { en: "Lesson · LHIND AI Learning Catalog", de: "Lektion · LHIND AI Learning Catalog" },
   title_notes: { en: "My Merkzettel · LHIND AI Learning Catalog", de: "Meine Merkzettel · LHIND AI Learning Catalog" },
+  title_skills: { en: "Capability Progress · LHIND AI Learning Catalog", de: "Kompetenzfortschritt · LHIND AI Learning Catalog" },
   title_gate: { en: "Enter passcode · LHIND Learning Catalog", de: "Passcode eingeben · LHIND Learning Catalog" },
   title_403: { en: "Access restricted · LHIND Learning Catalog", de: "Zugriff eingeschränkt · LHIND Learning Catalog" },
 

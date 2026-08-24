@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/gate-guard.js"></script>
+  <script>
+    (function () {
+      function apply() {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        if (stored === 'dark' || stored === 'light') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      }
+      apply();
+      window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title data-i18n="title_skills">Capability Progress · LHIND AI Learning Catalog</title>
+  <meta name="description" content="Track course-based progress across LHIND AI capabilities and the Acquire, Deepen, and Create levels.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
+  <link rel="stylesheet" href="lrn/lrn.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip_content">Skip to content</a>
+  <header class="nav-edge" aria-label="Site navigation">
+    <a class="wordmark" href="index.html">
+      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
+      <span>LHIND Learning Catalog</span>
+    </a>
+    <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <a href="skills.html" class="nav-settings" aria-current="page" title="Capability progress" aria-label="Capability progress" data-i18n-title="nav_skills" data-i18n-aria-label="nav_skills">
+      <i class="ph-light ph-chart-line-up" aria-hidden="true"></i>
+    </a>
+    <a href="badges.html" class="nav-settings" title="Badges" aria-label="Badges">
+      <i class="ph-light ph-medal" aria-hidden="true"></i>
+    </a>
+    <a href="glossary.html" class="nav-settings" title="Glossary" aria-label="Glossary" data-i18n-title="nav_glossary" data-i18n-aria-label="nav_glossary">
+      <i class="ph-light ph-book" aria-hidden="true"></i>
+    </a>
+    <button type="button" id="darkModeToggle" class="nav-settings theme-toggle" title="Switch color theme" aria-label="Switch color theme">
+      <i class="ph-light ph-moon" aria-hidden="true" id="darkModeIcon"></i>
+    </button>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
+    </a>
+  </header>
+  <script src="i18n.js"></script>
+  <script src="lang.js"></script>
+  <script>
+    (function () {
+      var btn = document.getElementById('darkModeToggle');
+      var icon = document.getElementById('darkModeIcon');
+      if (!btn) return;
+      function stored() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
+      function osDark() { return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); }
+      function current() {
+        var value = stored();
+        return (value === 'dark' || value === 'light') ? value : (osDark() ? 'dark' : 'light');
+      }
+      function render() {
+        var theme = current();
+        icon.className = 'ph-light ' + (theme === 'dark' ? 'ph-sun' : 'ph-moon');
+        var de = (window.SiteLang ? window.SiteLang.get() : 'en') === 'de';
+        var label = theme === 'dark'
+          ? (de ? 'Zu hellem Farbschema wechseln' : 'Switch to light color theme')
+          : (de ? 'Zu dunklem Farbschema wechseln' : 'Switch to dark color theme');
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+      render();
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        document.documentElement.setAttribute('data-theme', next);
+        render();
+      });
+      document.addEventListener('sitelang:change', render);
+    })();
+  </script>
+
+  <main id="main" class="page page--skills" aria-labelledby="skillsProgressTitle">
+    <a class="skills-page__back" href="index.html">
+      <i class="ph-light ph-arrow-left" aria-hidden="true"></i>
+      <span data-i18n="skills_page_back">Back to course catalog</span>
+    </a>
+
+    <header class="skills-page__header">
+      <div>
+        <p class="skills-progress__overline" data-i18n="skills_progress_overline">Learning progress</p>
+        <h1 id="skillsProgressTitle" data-i18n="skills_progress_title">Your capability progress</h1>
+        <p class="skills-progress__intro" data-i18n="skills_progress_intro">Assigned courses move you through Acquire, Deepen, and Create — with every contribution visible.</p>
+        <p class="skills-page__profile">
+          <i class="ph-light ph-user-circle" aria-hidden="true"></i>
+          <span data-i18n="skills_page_profile">Role profile · Technology Consulting</span>
+        </p>
+      </div>
+      <div class="skills-progress__summary" aria-live="polite">
+        <strong id="skillsProgressTotal">0%</strong>
+        <span data-i18n="skills_progress_towards_target">towards your role target</span>
+        <small id="skillsProgressCoverage"></small>
+      </div>
+    </header>
+
+    <section class="skills-progress skills-progress--standalone" id="skillsProgress" aria-label="Capability progress details" data-i18n-aria-label="skills_progress_details_label">
+      <div class="skills-progress__toolbar">
+        <div class="skills-progress__legend" aria-label="Capability levels" data-i18n-aria-label="skills_progress_levels_label">
+          <span><i aria-hidden="true"></i>Acquire</span>
+          <span><i aria-hidden="true"></i>Deepen</span>
+          <span><i aria-hidden="true"></i>Create</span>
+        </div>
+        <label class="skills-progress__sort">
+          <span data-i18n="skills_progress_sort_label">Sort by</span>
+          <select id="skillsProgressSort" aria-label="Sort capabilities" data-i18n-aria-label="skills_progress_sort_aria">
+            <option value="progress" data-i18n="skills_progress_sort_progress">Most progress</option>
+            <option value="order" data-i18n="skills_progress_sort_order">Capability order</option>
+            <option value="name" data-i18n="skills_progress_sort_name">Name</option>
+          </select>
+        </label>
+      </div>
+
+      <ol class="skills-progress__list" id="skillsProgressList"></ol>
+      <button class="skills-progress__show-all" id="skillsProgressShowAll" type="button" aria-expanded="false" aria-controls="skillsProgressList">
+        <span data-i18n="skills_progress_show_all">Show all capabilities</span>
+        <i class="ph-light ph-arrow-down" aria-hidden="true"></i>
+      </button>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p data-i18n="footer_tagline">LHIND AI Learning Catalog · open source · free forever.</p>
+      <div class="footer-links">
+        <a href="index.html" data-i18n="skills_page_catalog">Course catalog</a>
+        <a href="catalog.html" data-i18n="nav_curriculum">Curriculum</a>
+        <a href="glossary.html" data-i18n="footer_glossary">Glossary</a>
+        <a href="notes.html" data-i18n="footer_notes">My Merkzettel</a>
+        <a href="about.html" data-i18n="footer_about">About</a>
+      </div>
+    </div>
+  </footer>
+
+  <noscript><p class="noscript-note">JavaScript is required to calculate your local learning progress.</p></noscript>
+  <script src="progress.js"></script>
+  <script src="capabilities.js"></script>
+  <script src="lrn/data.js"></script>
+  <script src="lrn/curriculum-map.js"></script>
+  <script src="skills-progress-evidence.js"></script>
+  <script src="skills-progress.js"></script>
+</body>
+</html>

@@ -232,6 +232,12 @@ button {
     color var(--dur-base) var(--ease-standard);
 }
 
+.nav-settings[aria-current="page"] {
+  border-color: var(--border-subtle);
+  background: var(--color-accent-soft);
+  color: var(--text-primary);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .nav-settings:hover {
     border-color: var(--border-subtle);
@@ -1000,8 +1006,61 @@ i[class^="ph "] {
   }
 }
 
-.page--home .skills-progress + .cockpit .selector-card {
-  margin-block-start: 0;
+.page--skills {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: clamp(var(--space-6), 6vw, var(--space-9));
+}
+
+.skills-page__back {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: 44px;
+  color: var(--text-link);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--weight-medium);
+}
+
+.skills-page__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-7);
+  align-items: end;
+  padding: 0 clamp(var(--space-2), 2vw, var(--space-5));
+}
+
+.skills-page__header h1 {
+  max-width: 18ch;
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: clamp(var(--fs-h2), 5vw, var(--fs-display-2));
+  font-weight: var(--weight-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display);
+  text-wrap: balance;
+}
+
+.skills-page__header .skills-progress__intro {
+  max-width: 48rem;
+  margin-block-start: var(--space-3);
+  font-size: var(--fs-body);
+}
+
+.skills-page__profile {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+}
+
+.skills-progress--standalone {
+  margin: 0;
+  padding: clamp(var(--space-4), 4vw, var(--space-7));
 }
 
 /* ── Selector card (overlaps the hero edge) ──────────────────── */
@@ -1967,6 +2026,25 @@ i[class^="ph "] {
     margin-block-start: calc(-1 * var(--space-6));
     padding: var(--space-4);
     border-radius: var(--radius-md);
+  }
+
+  .page--skills {
+    gap: var(--space-5);
+    padding-block: var(--space-5) var(--space-7);
+  }
+
+  .skills-page__header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    padding-inline: 0;
+  }
+
+  .skills-page__header h1 {
+    font-size: var(--fs-h2);
+  }
+
+  .skills-progress--standalone {
+    margin: 0;
   }
 
   .skills-progress__heading {
