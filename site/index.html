@@ -103,6 +103,43 @@
       </div>
     </section>
 
+    <section class="skills-progress" id="skillsProgress" aria-labelledby="skillsProgressTitle">
+      <div class="skills-progress__heading">
+        <div>
+          <p class="skills-progress__overline" data-i18n="skills_progress_overline">Learning progress</p>
+          <h2 id="skillsProgressTitle" data-i18n="skills_progress_title">Your capability progress</h2>
+          <p class="skills-progress__intro" data-i18n="skills_progress_intro">Courses and lessons move you through Acquire, Deepen, and Create.</p>
+        </div>
+        <div class="skills-progress__summary" aria-live="polite">
+          <strong id="skillsProgressTotal">0%</strong>
+          <span data-i18n="skills_progress_towards_target">towards your role target</span>
+          <small id="skillsProgressCoverage"></small>
+        </div>
+      </div>
+
+      <div class="skills-progress__toolbar">
+        <div class="skills-progress__legend" aria-label="Capability levels" data-i18n-aria-label="skills_progress_levels_label">
+          <span><i aria-hidden="true"></i>Acquire</span>
+          <span><i aria-hidden="true"></i>Deepen</span>
+          <span><i aria-hidden="true"></i>Create</span>
+        </div>
+        <label class="skills-progress__sort">
+          <span data-i18n="skills_progress_sort_label">Sort by</span>
+          <select id="skillsProgressSort" aria-label="Sort capabilities" data-i18n-aria-label="skills_progress_sort_aria">
+            <option value="progress" data-i18n="skills_progress_sort_progress">Most progress</option>
+            <option value="order" data-i18n="skills_progress_sort_order">Capability order</option>
+            <option value="name" data-i18n="skills_progress_sort_name">Name</option>
+          </select>
+        </label>
+      </div>
+
+      <ol class="skills-progress__list" id="skillsProgressList"></ol>
+      <button class="skills-progress__show-all" id="skillsProgressShowAll" type="button" aria-expanded="false" aria-controls="skillsProgressList">
+        <span data-i18n="skills_progress_show_all">Show all capabilities</span>
+        <i class="ph-light ph-arrow-down" aria-hidden="true"></i>
+      </button>
+    </section>
+
     <!-- Original cockpit / course view stays intact -->
     <section class="cockpit" id="cockpit" aria-label="AI course catalog">
       <div class="selector-card" role="group" aria-label="Choose profile and level" data-i18n-aria-label="selector_group_label">
@@ -171,10 +208,12 @@
 
   <script src="progress.js"></script>
   <script src="badges.js?v=20260713a"></script>
+  <script src="capabilities.js"></script>
   <script src="lrn/data.js"></script>
   <script src="lrn/curriculum-map.js"></script>
   <script src="search.js?v=20260813a"></script>
   <script src="lrn/lrn.js"></script>
+  <script src="skills-progress.js"></script>
 
   <!-- Resume from last lesson (localStorage) -->
   <script>

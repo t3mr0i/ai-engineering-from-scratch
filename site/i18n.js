@@ -37,6 +37,27 @@ window.SITE_I18N = {
 
   // index.html — hero title + resume button are rendered dynamically
   // (time-of-day greeting + last lesson name) in index.html's inline script.
+  skills_progress_overline: { en: "Learning progress", de: "Lernfortschritt" },
+  skills_progress_title: { en: "Your capability progress", de: "Dein Kompetenzfortschritt" },
+  skills_progress_intro: { en: "Courses and lessons move you through Acquire, Deepen, and Create.", de: "Kurse und Lektionen bringen dich durch Acquire, Deepen und Create." },
+  skills_progress_towards_target: { en: "towards your role target", de: "auf dem Weg zu deinem Rollenziel" },
+  skills_progress_levels_label: { en: "Capability levels", de: "Kompetenzlevel" },
+  skills_progress_sort_label: { en: "Sort by", de: "Sortieren nach" },
+  skills_progress_sort_aria: { en: "Sort capabilities", de: "Kompetenzen sortieren" },
+  skills_progress_sort_progress: { en: "Most progress", de: "Meiste Fortschritte" },
+  skills_progress_sort_order: { en: "Capability order", de: "Kompetenzreihenfolge" },
+  skills_progress_sort_name: { en: "Name", de: "Name" },
+  skills_progress_show_all: { en: "Show all capabilities", de: "Alle Kompetenzen anzeigen" },
+  skills_progress_show_less: { en: "Show fewer capabilities", de: "Weniger Kompetenzen anzeigen" },
+  skills_progress_target: { en: "Target", de: "Ziel" },
+  skills_progress_complete: { en: "complete", de: "abgeschlossen" },
+  skills_progress_lessons: { en: "{count} mapped lessons", de: "{count} zugeordnete Lektionen" },
+  skills_progress_one_lesson: { en: "1 mapped lesson", de: "1 zugeordnete Lektion" },
+  skills_progress_no_lessons: { en: "No course mapped yet", de: "Noch kein Kurs zugeordnet" },
+  skills_progress_coverage: { en: "{tracked} tracked · {unmapped} awaiting courses", de: "{tracked} getrackt · {unmapped} noch ohne Kurse" },
+  skills_progress_details_open: { en: "Show level details for {title}", de: "Leveldetails für {title} anzeigen" },
+  skills_progress_details_close: { en: "Hide level details for {title}", de: "Leveldetails für {title} ausblenden" },
+  skills_progress_description_note: { en: "Capability descriptions are maintained in English.", de: "Die Capability-Beschreibungen werden auf Englisch gepflegt." },
 
   // catalog.html
   catalog_title: { en: "Lesson Catalog", de: "Lektionskatalog" },
