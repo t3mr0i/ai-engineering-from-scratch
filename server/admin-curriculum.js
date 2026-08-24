@@ -160,4 +160,39 @@ function curriculumStats(snapshot) {
   return { courses: courses.length, tracks: tracks.length, units, activities };
 }
 
-module.exports = { clone, loadBaseCurriculum, validateCurriculum, curriculumStats };
+function structuralSignature(snapshot) {
+  const catalog = snapshot && snapshot.catalog ? snapshot.catalog : {};
+  const maps = snapshot && snapshot.curriculumMap && snapshot.curriculumMap.courseMaps
+    ? snapshot.curriculumMap.courseMaps
+    : {};
+  return JSON.stringify({
+    courses: (catalog.courses || []).map((course) => ({ id: course.id, sequence: course.sequence })),
+    tracks: (catalog.tracks || []).map((track) => ({
+      id: track.id,
+      code: track.code,
+      profileIds: track.profileIds || [],
+      stages: (track.stages || []).map((stage) => ({ label: stage.label, courses: stage.courses || [] })),
+    })),
+    courseMaps: Object.fromEntries(Object.entries(maps).sort(([left], [right]) => left.localeCompare(right)).map(([courseId, units]) => [
+      courseId,
+      (units || []).map((unit) => ({
+        title: unit.title || "",
+        decision: unit.decision || "",
+        lessons: (unit.lessons || []).map((lesson) => lesson.path || ""),
+      })),
+    ])),
+  });
+}
+
+function requiresCurriculumGrill(base, candidate) {
+  return structuralSignature(base) !== structuralSignature(candidate);
+}
+
+module.exports = {
+  clone,
+  loadBaseCurriculum,
+  validateCurriculum,
+  curriculumStats,
+  structuralSignature,
+  requiresCurriculumGrill,
+};

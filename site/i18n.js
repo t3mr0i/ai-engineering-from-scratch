@@ -4,7 +4,7 @@
  * data-i18n in the HTML. Loaded before lang.js on every subpage.
  */
 window.SITE_I18N = {
-  // shared header / footer
+  // shared header
   nav_courses: { en: "Courses", de: "Kurse" },
   nav_curriculum: { en: "Curriculum", de: "Lehrplan" },
   nav_overview: { en: "Overview", de: "Übersicht" },
@@ -13,13 +13,6 @@ window.SITE_I18N = {
   lang_toggle_title: { en: "Switch language", de: "Sprache wechseln" },
   skip_content: { en: "Skip to content", de: "Zum Inhalt springen" },
   skip_catalog: { en: "Skip to course catalog", de: "Zum Kurskatalog springen" },
-  footer_home: { en: "Home", de: "Startseite" },
-  footer_glossary: { en: "Glossary", de: "Glossar" },
-  footer_notes: { en: "My Merkzettel", de: "Meine Merkzettel" },
-  footer_report: { en: "Report / Suggest", de: "Melden / Vorschlagen" },
-  footer_about: { en: "About", de: "Über uns" },
-  footer_report_short: { en: "Report", de: "Melden" },
-
   // shared hybrid search / command palette
   global_search_label: { en: "Search learning catalog", de: "Lernkatalog durchsuchen" },
   global_search_short: { en: "Search", de: "Suche" },

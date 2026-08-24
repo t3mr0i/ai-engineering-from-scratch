@@ -6,9 +6,11 @@
 
 const path = require("node:path");
 const crypto = require("node:crypto");
+const fs = require("node:fs");
 const { resolveAdmin, can } = require("./admin-auth");
 const { AdminStore, StoreError } = require("./admin-store");
 const { validateCurriculum, curriculumStats } = require("./admin-curriculum");
+const { createAdminAi, AdminAiError } = require("./admin-ai");
 
 const MAX_BODY_BYTES = 5_000_000;
 
@@ -61,6 +63,10 @@ function createAdminApi(options = {}) {
   const webRoot = options.webRoot || path.resolve(env.WEB_ROOT || path.join(__dirname, "..", "site"));
   const dataDir = options.dataDir || path.resolve(env.ADMIN_DATA_DIR || path.join(__dirname, "..", ".admin-data"));
   const store = options.store || new AdminStore({ dataDir, webRoot });
+  const ai = options.ai || createAdminAi({ env, fetchFn: options.fetchFn });
+  const repoRoot = options.repoRoot || path.resolve(webRoot, "..");
+  const glossaryFile = path.join(repoRoot, "glossary", "terms.md");
+  const glossary = fs.existsSync(glossaryFile) ? fs.readFileSync(glossaryFile, "utf8") : "";
 
   return async function handleAdminApi(req, res, pathOnly) {
     if (!pathOnly.startsWith("/api/admin/")) return false;
@@ -87,6 +93,12 @@ function createAdminApi(options = {}) {
         return true;
       }
 
+      if (pathOnly === "/api/admin/ai/skills") {
+        requireMethod(req, "GET");
+        sendJson(res, 200, { ok: true, skills: ai.skills() });
+        return true;
+      }
+
       if (pathOnly === "/api/admin/changesets") {
         if (req.method === "GET") {
           sendJson(res, 200, { ok: true, changesets: store.list() });
@@ -100,7 +112,7 @@ function createAdminApi(options = {}) {
         return true;
       }
 
-      const match = pathOnly.match(/^\/api\/admin\/changesets\/([a-z0-9-]+)(?:\/(status|validate))?$/);
+      const match = pathOnly.match(/^\/api\/admin\/changesets\/([a-z0-9-]+)(?:\/(status|validate|chat|proposals|grill-override))?$/);
       if (!match) throw new StoreError("route.not_found", "Admin-Route nicht gefunden.", 404);
       const [, id, action] = match;
 
@@ -131,6 +143,41 @@ function createAdminApi(options = {}) {
         return true;
       }
 
+      if (action === "chat") {
+        requireMethod(req, "POST");
+        const current = store.get(id);
+        const response = await ai.run({
+          changeset: current,
+          message: body.message,
+          skillId: body.skillId,
+          scope: body.scope,
+          glossary,
+        });
+        const changeset = store.appendChat(id, actor, body, response);
+        sendJson(res, 200, { ok: true, response, changeset });
+        return true;
+      }
+
+      if (action === "proposals") {
+        requireMethod(req, "POST");
+        const current = store.get(id);
+        if (current.status !== "draft") {
+          throw new StoreError("proposal.read_only", "KI-Vorschläge können nur in Entwürfen entschieden werden.", 409);
+        }
+        const changeset = store.decideProposal(id, actor, body);
+        const issues = validateCurriculum(changeset.snapshot);
+        sendJson(res, 200, { ok: true, changeset, issues });
+        return true;
+      }
+
+      if (action === "grill-override") {
+        requireMethod(req, "POST");
+        requireRole(actor, "reviewer");
+        const changeset = store.overrideGrill(id, actor, body);
+        sendJson(res, 200, { ok: true, changeset });
+        return true;
+      }
+
       if (action === "status") {
         requireMethod(req, "POST");
         const current = store.get(id);
@@ -138,6 +185,9 @@ function createAdminApi(options = {}) {
           const issues = validateCurriculum(current.snapshot);
           if (issues.some((item) => item.severity === "error")) {
             throw new StoreError("curriculum.invalid", "Blockierende Fehler verhindern das Review.", 422, { issues });
+          }
+          if (current.grill.required && !["passed", "overridden"].includes(current.grill.status)) {
+            throw new StoreError("grill.required", "Der verpflichtende Curriculum-Grill muss abgeschlossen oder begründet übersteuert werden.", 422, { grill: current.grill });
           }
         }
         if (body.status === "approved") requireRole(actor, "reviewer");
@@ -149,7 +199,7 @@ function createAdminApi(options = {}) {
 
       throw new StoreError("method.not_allowed", "Methode nicht erlaubt.", 405);
     } catch (error) {
-      const known = error instanceof StoreError;
+      const known = error instanceof StoreError || error instanceof AdminAiError;
       if (!known) console.error(`[admin:${errorId}]`, error);
       sendJson(res, known ? error.status : 500, {
         ok: false,

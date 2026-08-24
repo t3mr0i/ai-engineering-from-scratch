@@ -415,13 +415,50 @@ button, select { touch-action: manipulation; }
 .assistant-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-5); min-height: calc(100vh - 230px); }
 .chat-panel { display: flex; flex-direction: column; min-height: 600px; border: var(--border-hairline); border-radius: var(--radius-md); background: var(--color-surface); box-shadow: var(--shadow-sm); }
 .chat-thread { flex: 1; padding: var(--space-5); overflow-y: auto; }
+.chat-message { max-width: min(760px, 92%); margin-bottom: var(--space-5); }
+.chat-message--user { margin-left: auto; padding: var(--space-4); border-radius: var(--radius-md) var(--radius-md) var(--radius-xs) var(--radius-md); background: color-mix(in srgb, var(--action-accent) 10%, var(--color-surface)); }
+.chat-message--assistant { margin-right: auto; }
+.chat-message__meta { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); color: var(--text-secondary); font-size: var(--fs-caption); }
+.chat-message__meta i { color: var(--action-accent); font-size: 18px; }
+.chat-message__body { margin: 0; color: var(--text-primary); white-space: pre-wrap; }
+.ai-question-list { display: grid; gap: var(--space-2); margin: var(--space-4) 0 0; padding-left: 22px; }
+.ai-findings, .ai-proposals { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
+.ai-findings { padding-top: var(--space-3); border-top: var(--border-hairline); }
+.ai-finding { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: var(--space-2); padding: var(--space-3); border-left: 2px solid var(--border-strong); background: var(--color-surface-sunken); }
+.ai-finding[data-severity="warning"] { border-left-color: var(--lhg-warning); }
+.ai-finding[data-severity="blocker"] { border-left-color: var(--color-error); }
+.ai-finding i { margin-top: 2px; color: var(--text-muted); }
+.ai-finding p, .ai-proposal p { margin: var(--space-1) 0 0; color: var(--text-secondary); }
+.ai-proposals h3 { margin: var(--space-2) 0; font-family: var(--font-head); font-size: 18px; }
+.ai-proposal { padding: var(--space-4); border: var(--border-hairline); border-radius: var(--radius-sm); background: var(--color-bg); }
+.ai-proposal[data-status="accepted"] { border-color: var(--lhg-success); }
+.ai-proposal[data-status="rejected"] { opacity: .7; }
+.ai-proposal__heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.ai-proposal__status { color: var(--text-muted); font-size: var(--fs-caption); }
+.ai-proposal code { display: block; margin-top: var(--space-2); color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; overflow-wrap: anywhere; }
+.ai-proposal__actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-3); }
+.ai-trace { margin-top: var(--space-4); color: var(--text-muted); font-size: var(--fs-caption); }
+.ai-trace summary { min-height: 36px; display: flex; align-items: center; cursor: pointer; color: var(--text-link); }
+.ai-trace ul { margin: 0; padding-left: 20px; }
+.chat-thinking { display: flex; align-items: center; gap: var(--space-3); width: fit-content; padding: var(--space-3) var(--space-4); border-radius: var(--radius-pill); background: var(--color-surface-sunken); color: var(--text-secondary); }
+.chat-thinking span { width: 10px; height: 10px; border-radius: 50%; background: var(--action-accent); animation: admin-pulse 1.2s ease-in-out infinite; }
 .chat-composer { position: sticky; bottom: 0; padding: var(--space-4); border-top: var(--border-hairline); background: var(--color-surface); }
 .chat-composer textarea { width: 100%; min-height: 92px; padding: var(--space-3); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--text-primary); resize: vertical; }
 .chat-composer__actions { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
+.chat-context-row { display: flex; align-items: end; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.chat-context-row .admin-field { flex: 1; }
+.chat-context-row select { min-height: 40px; padding-block: var(--space-2); }
+.grill-badge { flex: 0 0 auto; margin-bottom: 1px; padding: 7px 10px; border-radius: var(--radius-pill); background: var(--color-surface-sunken); color: var(--text-secondary); font-size: var(--fs-caption); }
+.grill-badge[data-status="passed"], .grill-badge[data-status="overridden"] { color: var(--lhg-success); }
+.grill-badge[data-status="blocked"], .grill-badge[data-status="pending"] { color: var(--lhg-warning); }
 .skill-list { display: grid; gap: var(--space-2); }
-.skill-item { padding: var(--space-3); border: var(--border-hairline); border-radius: var(--radius-sm); background: var(--color-surface); }
+.skill-item { width: 100%; padding: var(--space-3); border: var(--border-hairline); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--text-primary); text-align: left; cursor: pointer; }
+.skill-item:hover { border-color: var(--border-strong); }
+.skill-item.is-active { border-color: var(--action-accent); background: color-mix(in srgb, var(--action-accent) 7%, var(--color-surface)); box-shadow: inset 3px 0 var(--action-accent); }
 .skill-item strong { display: block; }
 .skill-item small { color: var(--text-muted); }
+.skill-attribution { margin: var(--space-4) 0 0; color: var(--text-muted); font-size: var(--fs-caption); }
+.skill-attribution a { color: var(--text-link); }
 
 .admin-dialog {
   width: min(580px, calc(100vw - 32px));
@@ -450,6 +487,7 @@ button, select { touch-action: manipulation; }
 .admin-error-id { font-family: var(--font-mono); color: var(--text-muted); }
 
 @keyframes admin-spin { to { transform: rotate(360deg); } }
+@keyframes admin-pulse { 50% { opacity: .35; transform: scale(.75); } }
 
 @media (max-width: 1100px) {
   .admin-app { grid-template-columns: 78px minmax(0, 1fr); }
@@ -507,6 +545,8 @@ button, select { touch-action: manipulation; }
   .editor-heading { flex-direction: column; }
   .admin-dialog__actions { flex-direction: column-reverse; }
   .admin-dialog__actions .admin-button { width: 100%; }
+  .chat-context-row, .ai-proposal__actions { align-items: stretch; flex-direction: column; }
+  .grill-badge { align-self: flex-start; }
 }
 
 @media (prefers-reduced-motion: reduce) {

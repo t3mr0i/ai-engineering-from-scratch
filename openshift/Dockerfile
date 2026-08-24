@@ -60,5 +60,6 @@ FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest
 WORKDIR /opt/app-root/src
 COPY server/*.js server/package.json ./server/
 COPY --from=build /opt/app-root/src/site ./site
+COPY --from=build /opt/app-root/src/glossary ./glossary
 EXPOSE 8080
 CMD ["node", "server/server.js"]

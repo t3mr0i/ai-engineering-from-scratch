@@ -17,6 +17,11 @@
     courseQuery: "",
     pathQuery: "",
     saveTimer: null,
+    skills: [],
+    aiSkillId: "curriculum-grill",
+    aiScope: "curriculum",
+    aiLoading: false,
+    aiDraft: "",
   };
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -511,24 +516,138 @@
     renderPaths();
   }
 
+  function aiScopeValue() {
+    if (state.aiScope.startsWith("course:")) return { type: "course", id: state.aiScope.slice(7) };
+    if (state.aiScope.startsWith("path:")) return { type: "path", id: state.aiScope.slice(5) };
+    return { type: "curriculum" };
+  }
+
+  function renderAiResponse(turn) {
+    const response = turn.response || {};
+    const proposalNodes = (response.proposals || []).map((proposal) => h("article", { class: "ai-proposal", "data-status": proposal.status || "pending" }, [
+      h("div", { class: "ai-proposal__heading" }, [
+        h("strong", { text: proposal.label }),
+        h("span", { class: "ai-proposal__status", text: ({ pending: "Offen", accepted: "Angenommen", rejected: "Abgelehnt" })[proposal.status || "pending"] }),
+      ]),
+      h("code", { text: `${proposal.operation} ${proposal.path}` }),
+      proposal.rationale ? h("p", { text: proposal.rationale }) : null,
+      proposal.status === "pending" ? h("div", { class: "ai-proposal__actions" }, [
+        button("Ablehnen", "secondary", () => decideAiProposal(turn.id, proposal.id, "rejected"), "x", { disabled: state.aiLoading || state.active.status !== "draft" }),
+        button("Änderung übernehmen", "primary", () => decideAiProposal(turn.id, proposal.id, "accepted"), "check", { disabled: state.aiLoading || state.active.status !== "draft" }),
+      ]) : null,
+    ]));
+    return h("article", { class: "chat-message chat-message--assistant" }, [
+      h("div", { class: "chat-message__meta" }, [icon("sparkle"), h("strong", { text: (state.skills.find((skill) => skill.id === turn.skillId) || {}).label || turn.skillId })]),
+      h("p", { class: "chat-message__body", text: response.answer || "Keine Antwort." }),
+      (response.questions || []).length ? h("ol", { class: "ai-question-list" }, response.questions.map((question) => h("li", { text: question }))) : null,
+      (response.findings || []).length ? h("div", { class: "ai-findings" }, response.findings.map((finding) => h("div", { class: "ai-finding", "data-severity": finding.severity }, [
+        icon(finding.severity === "blocker" ? "x-circle" : finding.severity === "warning" ? "warning-circle" : "info"),
+        h("div", {}, [h("strong", { text: finding.title }), h("p", { text: finding.detail })]),
+      ]))) : null,
+      proposalNodes.length ? h("div", { class: "ai-proposals" }, [h("h3", { text: "Prüfbare Änderungsvorschläge" }), ...proposalNodes]) : null,
+      h("details", { class: "ai-trace" }, [
+        h("summary", { text: "Quellen und Tool-Spur" }),
+        h("ul", {}, [...(response.sources || []).map((source) => h("li", { text: source })), ...(response.toolTrace || []).map((entry) => h("li", { text: `${entry.tool}: ${entry.detail}` }))]),
+      ]),
+    ]);
+  }
+
+  async function sendAiMessage(event) {
+    event.preventDefault();
+    if (!state.active || state.aiLoading) return;
+    const textarea = $("#aiMessage");
+    const message = state.aiDraft.trim();
+    if (!message) return textarea.focus();
+    if (state.dirty) await saveDraft(true);
+    if (state.dirty) return;
+    state.aiLoading = true;
+    renderAssistant();
+    try {
+      const body = await api(`/api/admin/changesets/${state.active.id}/chat`, {
+        method: "POST",
+        body: JSON.stringify({
+          expectedVersion: state.active.version,
+          message,
+          skillId: state.aiSkillId,
+          scope: aiScopeValue(),
+        }),
+      });
+      state.active = body.changeset;
+      state.snapshot = clone(body.changeset.snapshot);
+      state.aiDraft = "";
+      await refreshChangeSets(false);
+      toast("KI-Antwort und Tool-Spur wurden am Änderungssatz protokolliert.");
+    } catch (error) {
+      toast(error.message, "error");
+    } finally {
+      state.aiLoading = false;
+      renderAssistant();
+      const thread = $(".chat-thread");
+      if (thread) thread.scrollTop = thread.scrollHeight;
+    }
+  }
+
+  async function decideAiProposal(messageId, proposalId, decision) {
+    if (!state.active || state.aiLoading) return;
+    state.aiLoading = true;
+    renderAssistant();
+    try {
+      const body = await api(`/api/admin/changesets/${state.active.id}/proposals`, {
+        method: "POST",
+        body: JSON.stringify({ expectedVersion: state.active.version, messageId, proposalId, decision }),
+      });
+      state.active = body.changeset;
+      state.snapshot = clone(body.changeset.snapshot);
+      state.issues = body.issues || [];
+      updateStats();
+      await refreshChangeSets(false);
+      toast(decision === "accepted" ? "KI-Vorschlag als sichtbare Entwurfsänderung übernommen." : "KI-Vorschlag abgelehnt und protokolliert.");
+    } catch (error) {
+      toast(error.message, "error");
+    } finally {
+      state.aiLoading = false;
+      renderAssistant();
+    }
+  }
+
   function renderAssistant() {
     const panel = $("#view-assistant");
     panel.replaceChildren(pageHeading("assistantTitle", "Curriculum-Copilot", "KI-Studio", "Entwürfe mit transparenten Skills analysieren und als prüfbare Änderungen übernehmen."));
-    const thread = h("div", { class: "chat-thread", role: "log", "aria-live": "polite" },
-      emptyState("sparkle", "Womit sollen wir beginnen?", "Bitte die KI um eine Kursstruktur, eine Lückenanalyse oder starte den Curriculum-Grill. Antworten bleiben an den aktiven Änderungssatz gebunden."));
-    const composer = h("form", { class: "chat-composer", onsubmit: (event) => { event.preventDefault(); toast("Die KI-Orchestrierung wird in der nächsten Ausbaustufe mit diesem Änderungssatz verbunden."); } }, [
-      h("label", { class: "admin-field" }, [h("span", { text: "Nachricht an den Curriculum-Copilot" }), h("textarea", { placeholder: "Prüfe, ob dieser Lernpfad alle Voraussetzungen in sinnvoller Reihenfolge vermittelt …", disabled: !state.active })]),
-      h("div", { class: "chat-composer__actions" }, [h("small", { class: "metric-context", text: state.active ? `Kontext: ${state.active.title}` : "Lege zuerst einen Änderungssatz an." }), button("Senden", "primary", null, "paper-plane-tilt", { type: "submit", disabled: !state.active })]),
+    const chat = state.active ? state.active.chat || [] : [];
+    const thread = h("div", { class: "chat-thread", role: "log", "aria-live": "polite", "aria-busy": String(state.aiLoading) });
+    if (!chat.length && !state.aiLoading) {
+      thread.append(emptyState("sparkle", "Womit sollen wir beginnen?", "Bitte die KI um eine Kursstruktur, eine Lückenanalyse oder starte den Curriculum-Grill. Antworten bleiben an den aktiven Änderungssatz gebunden."));
+    }
+    for (const turn of chat) {
+      thread.append(
+        h("article", { class: "chat-message chat-message--user" }, [h("div", { class: "chat-message__meta" }, [icon("user"), h("strong", { text: turn.by })]), h("p", { class: "chat-message__body", text: turn.message })]),
+        renderAiResponse(turn),
+      );
+    }
+    if (state.aiLoading) thread.append(h("div", { class: "chat-thinking", role: "status" }, [h("span", { "aria-hidden": "true" }), "Curriculum-Kontext und Skill werden geprüft …"]));
+    const scopeOptions = [{ value: "curriculum", label: "Gesamtes Curriculum" }]
+      .concat((state.snapshot.catalog.courses || []).map((course) => ({ value: `course:${course.id}`, label: `${course.id} · ${course.title}` })))
+      .concat((state.snapshot.catalog.tracks || []).map((path) => ({ value: `path:${path.id}`, label: `${path.code} · ${path.label}` })));
+    const composer = h("form", { class: "chat-composer", onsubmit: sendAiMessage }, [
+      h("div", { class: "chat-context-row" }, [
+        field("Kontext", selectFor(state.aiScope, scopeOptions, (value) => { state.aiScope = value; }, { disabled: !state.active || state.aiLoading, "aria-label": "KI-Kontext" })),
+        state.active && state.active.grill && state.active.grill.required ? h("span", { class: "grill-badge", "data-status": state.active.grill.status, text: `Grill: ${state.active.grill.status}` }) : null,
+      ]),
+      h("label", { class: "admin-field" }, [h("span", { text: "Nachricht an den Curriculum-Copilot" }), h("textarea", { id: "aiMessage", value: state.aiDraft, oninput: (event) => { state.aiDraft = event.target.value; }, placeholder: "Prüfe, ob dieser Lernpfad alle Voraussetzungen in sinnvoller Reihenfolge vermittelt …", disabled: !state.active || state.aiLoading })]),
+      h("div", { class: "chat-composer__actions" }, [h("small", { class: "metric-context", text: state.active ? `Änderungssatz: ${state.active.title}` : "Lege zuerst einen Änderungssatz an." }), button(state.aiLoading ? "Analysiert …" : "Senden", "primary", null, "paper-plane-tilt", { type: "submit", disabled: !state.active || state.aiLoading })]),
     ]);
-    const skills = [
-      ["Curriculum-Grill", "Prüft Entscheidungen entlang des gesamten Designbaums."],
-      ["Curriculum-Designer", "Entwirft Lernziele, Units und Activities."],
-      ["Lückenanalyse", "Findet fehlende Voraussetzungen und Rollenabdeckung."],
-      ["Qualitätsreview", "Prüft Verträge, Redundanz und Praxisanteil."],
-    ];
     panel.append(h("div", { class: "assistant-layout" }, [
       h("section", { class: "chat-panel" }, [thread, composer]),
-      h("aside", { class: "admin-panel" }, [h("div", { class: "admin-panel__header" }, h("h2", { text: "Verfügbare Skills" })), h("div", { class: "skill-list" }, skills.map(([name, copy]) => h("div", { class: "skill-item" }, [h("strong", { text: name }), h("small", { text: copy })])))]),
+      h("aside", { class: "admin-panel" }, [
+        h("div", { class: "admin-panel__header" }, h("h2", { text: "Verfügbare Skills" })),
+        h("div", { class: "skill-list" }, state.skills.map((skill) => h("button", {
+          type: "button",
+          class: `skill-item${state.aiSkillId === skill.id ? " is-active" : ""}`,
+          "aria-pressed": String(state.aiSkillId === skill.id),
+          onclick: () => { state.aiSkillId = skill.id; renderAssistant(); },
+        }, [h("strong", { text: skill.label }), h("small", { text: skill.description })]))),
+        h("p", { class: "skill-attribution" }, ["Arbeitsweise inspiriert von den composable skills in ", h("a", { href: "https://github.com/mattpocock/skills", target: "_blank", rel: "noreferrer" }, "mattpocock/skills"), ". Prompts und Anwendung sind projektspezifisch."]),
+      ]),
     ]));
   }
 
@@ -538,7 +657,7 @@
     const warnings = state.issues.filter((item) => item.severity !== "error");
     panel.replaceChildren(pageHeading(
       "reviewTitle", "Qualitätsgate", "Review", "Strukturelle Prüfungen sind die erste Stufe; Curriculum-Grill und Repository-Audits folgen vor der Veröffentlichung.",
-      state.active && state.active.status === "draft" ? button("Review anfordern", "primary", () => transitionStatus("review"), "arrow-right", { disabled: errors.length > 0 || state.dirty }) : null,
+      state.active && state.active.status === "draft" ? button("Review anfordern", "primary", () => transitionStatus("review"), "arrow-right", { disabled: errors.length > 0 || state.dirty || (state.active.grill && state.active.grill.required && !["passed", "overridden"].includes(state.active.grill.status)) }) : null,
     ));
     const issuePanel = h("section", { class: "admin-panel" }, [
       h("div", { class: "admin-panel__header" }, [h("h2", { text: "Prüfergebnisse" }), h("span", { text: `${errors.length} Blocker · ${warnings.length} Hinweise` })]),
@@ -549,11 +668,14 @@
     const gatePanel = h("aside", { class: "admin-panel" }, [
       h("h2", { text: "Nächste Gates" }),
       h("div", { class: "issue-list" }, [
-        ["Curriculum-Grill", "Zielgruppe, Reihenfolge, Lücken und Redundanz"],
+        ["Curriculum-Grill", state.active && state.active.grill && state.active.grill.required ? `Pflicht · Status: ${state.active.grill.status}` : "Für diese Änderung nicht verpflichtend"],
         ["Repository-Audits", "Lesson Contract, Quiz, Links und Tests"],
         ["Reviewer-Freigabe", "Vier-Augen-Prinzip mit Begründung"],
         ["Merge Request", "Diff, Pipeline und Review-App"],
-      ].map(([title, copy]) => h("div", { class: "issue-row" }, [icon("circle"), h("div", {}, [h("strong", { text: title }), h("span", { text: copy })])]))),
+      ].map(([title, copy], index) => h("div", { class: "issue-row" }, [icon(index === 0 && state.active && state.active.grill && ["passed", "overridden"].includes(state.active.grill.status) ? "check-circle" : "circle"), h("div", {}, [h("strong", { text: title }), h("span", { text: copy })])]))),
+      state.active && state.active.grill && state.active.grill.required && !["passed", "overridden"].includes(state.active.grill.status)
+        ? button("Grill im KI-Studio fortsetzen", "secondary", () => { state.aiSkillId = "curriculum-grill"; activateView("assistant"); }, "sparkle")
+        : null,
     ]);
     panel.append(h("div", { class: "review-grid" }, [issuePanel, gatePanel]));
   }
@@ -715,8 +837,8 @@
 
   async function boot() {
     try {
-      const [me, curriculum, changesets] = await Promise.all([
-        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"),
+      const [me, curriculum, changesets, aiSkills] = await Promise.all([
+        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"),
       ]);
       state.actor = me.actor;
       state.base = curriculum;
@@ -724,6 +846,7 @@
       state.stats = curriculum.stats;
       state.issues = curriculum.issues;
       state.changesets = changesets.changesets;
+      state.skills = aiSkills.skills;
       $("#adminUsername").textContent = state.actor.username;
       $("#adminRoles").textContent = state.actor.roles.join(" · ");
       $("#adminAvatar").textContent = initials(state.actor.username);

@@ -2200,21 +2200,7 @@ i[class^="ph "] {
 [data-theme="dark"] .activity-link em[data-state="visited"] { color: var(--color-warn); }
 [data-theme="dark"] .activity-link em[data-state="completed"] { color: var(--color-ok); }
 
-/* ── Footer + sr ─────────────────────────────────────────────── */
-.foot-line {
-  margin: var(--space-9) clamp(1rem, 4vw, 3rem) var(--space-7);
-  padding-block-start: var(--space-5);
-  border-top: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-  font-family: var(--font-text);
-  font-weight: var(--weight-regular);
-  font-size: var(--fs-body-sm);
-}
-
-.foot-line p {
-  margin: 0;
-}
-
+/* ── Screen-reader status ────────────────────────────────────── */
 .sr-status {
   position: absolute;
   width: 1px;

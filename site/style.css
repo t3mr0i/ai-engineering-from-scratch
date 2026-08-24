@@ -924,46 +924,6 @@ p.dropcap::first-letter {
   color: var(--blueprint);
 }
 
-.site-footer {
-  border-top: 1px solid var(--rule-soft);
-  padding: 32px 0;
-}
-
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.footer-inner p {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  color: var(--ink-mute);
-  text-transform: uppercase;
-}
-
-.footer-links {
-  display: flex;
-  gap: 24px;
-}
-
-.footer-links a {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  border-bottom: none;
-}
-
-.footer-links a:hover {
-  color: var(--blueprint);
-  border-bottom: none;
-}
-
 .fade-in {
   opacity: 0;
   transform: translateY(12px);
@@ -1140,11 +1100,6 @@ body.js-anim .toc-row.in-view {
     width: 48px;
   }
 
-  .footer-inner {
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -1185,10 +1140,9 @@ body.js-anim .toc-row.in-view {
   }
 }
 
-/* Small tablets / large phones: hide the secondary section nav
-   (Courses · Curriculum). The links remain in the page footer, and
-   the wordmark still links home, so no navigation is lost. 640px
-   matches the breakpoint used by lesson.html and assessment.html. */
+/* Small tablets / large phones: hide the secondary section nav.
+   The wordmark and compact icon actions keep primary navigation available.
+   640px matches the breakpoint used by lesson.html and assessment.html. */
 @media (max-width: 640px) {
   .nav-links {
     display: none;

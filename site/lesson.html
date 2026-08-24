@@ -2151,6 +2151,7 @@
   <script src="analytics.js?v=20260525a" defer></script>
   <script src="figures.js?v=20260607a"></script>
   <script src="lesson-figures.js?v=20260607a"></script>
+  <script src="python-runtime.js?v=20260824a"></script>
   <script>
     // Shared by the mermaid init below and updateMermaidThemeAndRerender()
     // further down, so both configure mermaid identically. Colors and font
@@ -5001,7 +5002,9 @@
           var s = document.createElement('script');
           s.src = CDN + 'pyodide.js';
           s.onload = function () {
-            window.loadPyodide({ indexURL: CDN }).then(resolve, reject);
+            window.loadPyodide({ indexURL: CDN })
+              .then(function (py) { return window.LessonPythonRuntime.initialize(py); })
+              .then(resolve, reject);
           };
           s.onerror = function () { reject(new Error('Failed to load Pyodide')); };
           document.head.appendChild(s);
