@@ -160,3 +160,7 @@ The optimal hyperparameter value is where the validation score peaks.
 ## Reference Solution
 
 Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement K-fold and stratified K-fold cross-validation from scratch and explain why stratification matters for imbalanced data,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Interpret learning curves to diagnose whether a model suffers from high bias or high variance,” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

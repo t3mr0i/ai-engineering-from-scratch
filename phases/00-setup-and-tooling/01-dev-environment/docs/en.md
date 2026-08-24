@@ -63,3 +63,6 @@ See `outputs/prompt-env-check.md` for a prompt that helps AI assistants diagnose
 
 Use the canonical [main.rs](../code/main.rs) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Set up Python 3.11+, Node.js 20+, and Rust toolchains from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Verify GPU access with CUDA/MPS and run a test tensor operation,” and cite a repeatable check rather than relying on visual inspection alone.
 
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

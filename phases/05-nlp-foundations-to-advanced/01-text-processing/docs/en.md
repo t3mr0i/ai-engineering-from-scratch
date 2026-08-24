@@ -54,3 +54,7 @@ Rule of thumb. Stem when speed matters and you can tolerate noise (search indexi
 ## Reference Solution
 
 Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the core mechanism in Text Processing — Tokenization, Stemming, Lemmatization and place it in an NLP pipeline,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Inspect intermediate representations to connect the algorithm to its output,” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

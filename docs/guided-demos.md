@@ -1,0 +1,28 @@
+# Guided demonstration pilot
+
+These 24 load-bearing lessons include a short, repeatable demonstration script. Each guide asks for a prediction before execution, one controlled variation, a failure probe, and an evidence-based exit ticket. The guides complement the written lesson; they do not require video hosting or API credentials.
+
+- [Dev Environment](../phases/00-setup-and-tooling/01-dev-environment/docs/demo.md)
+- [Vectors, Matrices & Operations](../phases/01-math-foundations/02-vectors-matrices-operations/docs/demo.md)
+- [Calculus for Machine Learning](../phases/01-math-foundations/04-calculus-for-ml/docs/demo.md)
+- [Linear Regression](../phases/02-ml-fundamentals/02-linear-regression/docs/demo.md)
+- [Model Evaluation](../phases/02-ml-fundamentals/09-model-evaluation/docs/demo.md)
+- [Backpropagation from Scratch](../phases/03-deep-learning-core/03-backpropagation/docs/demo.md)
+- [Build Your Own Mini Framework](../phases/03-deep-learning-core/10-mini-framework/docs/demo.md)
+- [Convolutions from Scratch](../phases/04-computer-vision/02-convolutions-from-scratch/docs/demo.md)
+- [Text Processing — Tokenization, Stemming, Lemmatization](../phases/05-nlp-foundations-to-advanced/01-text-processing/docs/demo.md)
+- [Audio Fundamentals — Waveforms, Sampling, Fourier Transform](../phases/06-speech-and-audio/01-audio-fundamentals/docs/demo.md)
+- [Self-Attention from Scratch](../phases/07-transformers-deep-dive/02-self-attention-from-scratch/docs/demo.md)
+- [The Full Transformer — Encoder + Decoder](../phases/07-transformers-deep-dive/05-full-transformer/docs/demo.md)
+- [Diffusion Models — DDPM from Scratch](../phases/08-generative-ai/06-diffusion-ddpm-from-scratch/docs/demo.md)
+- [Policy Gradient — REINFORCE from Scratch](../phases/09-reinforcement-learning/06-policy-gradients-reinforce/docs/demo.md)
+- [Tokenizers: BPE, WordPiece, SentencePiece](../phases/10-llms-from-scratch/01-tokenizers/docs/demo.md)
+- [Pre-Training a Mini GPT (124M Parameters)](../phases/10-llms-from-scratch/04-pre-training-mini-gpt/docs/demo.md)
+- [Prompt Engineering: Techniques & Patterns](../phases/11-llm-engineering/01-prompt-engineering/docs/demo.md)
+- [RAG (Retrieval-Augmented Generation)](../phases/11-llm-engineering/06-rag/docs/demo.md)
+- [Evaluation & Testing LLM Applications](../phases/11-llm-engineering/10-evaluation/docs/demo.md)
+- [The Tool Interface — Why Agents Need Structured I/O](../phases/13-tools-and-protocols/01-the-tool-interface/docs/demo.md)
+- [The Agent Loop: Observe, Think, Act](../phases/14-agent-engineering/01-the-agent-loop/docs/demo.md)
+- [vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill](../phases/17-infrastructure-and-production/04-vllm-serving-internals/docs/demo.md)
+- [Indirect Prompt Injection — Production Attack Surface](../phases/18-ethics-safety-alignment/15-indirect-prompt-injection/docs/demo.md)
+- [Capstone 01 — Terminal-Native Coding Agent](../phases/19-capstone-projects/01-terminal-native-coding-agent/docs/demo.md)

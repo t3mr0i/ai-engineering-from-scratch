@@ -166,3 +166,7 @@ The penalty term discourages large weights. The hyperparameter lambda controls t
 ## Reference Solution
 
 Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Derive the gradient descent update rules for mean squared error and implement linear regression from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a multiple linear regression model with feature standardization and interpret the learned weights,” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

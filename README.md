@@ -94,8 +94,23 @@ Three ways in. Pick one.
 ```bash
 git clone https://github.com/rohitg00/ai-engineering-from-scratch.git
 cd ai-engineering-from-scratch
-python phases/01-math-foundations/01-linear-algebra-intuition/code/vectors.py
+python3 phases/00-setup-and-tooling/06-python-environments/code/main.py
 ```
+
+For the complete four-language setup, reopen the clone in the checked-in Dev
+Container. It provides Python 3.12, Node.js 20, stable Rust (edition 2021), and
+Julia LTS, then runs one bounded smoke lesson per language. A successful setup
+prints `ok: python`, `ok: typescript`, `ok: rust`, and `ok: julia`.
+
+| Runtime | Minimum | Canonical command inside a lesson |
+|---|---:|---|
+| Python | 3.12 | `python3 code/main.py` |
+| TypeScript | Node 20 + `tsx` | `npx --no-install tsx code/main.ts` |
+| Rust | stable / 2021 | `rustc --edition 2021 code/main.rs -o /tmp/lesson && /tmp/lesson` |
+| Julia | 1.10 | `julia code/main.jl` |
+
+See the [environment guide](docs/getting-started.md) for pinned dependencies,
+expected output, API-key behavior, browser limitations, and troubleshooting.
 
 **Option C — find your level.** Skip ahead intelligently. Inside Claude, Cursor, Codex, or any agent with the curriculum skills installed:
 
@@ -261,6 +276,7 @@ folder under `phases/`.
 | 20 | [The Fourier Transform](phases/01-math-foundations/20-fourier-transform/) | Build | Python |
 | 21 | [Graph Theory for ML](phases/01-math-foundations/21-graph-theory/) | Build | Python |
 | 22 | [Stochastic Processes](phases/01-math-foundations/22-stochastic-processes/) | Learn | Python |
+| 23 | [Gaussian Processes from Scratch](phases/01-math-foundations/23-gaussian-processes/) | Build | Python |
 
 </details>
 
@@ -288,6 +304,7 @@ folder under `phases/`.
 | 16 | [Anomaly Detection](phases/02-ml-fundamentals/16-anomaly-detection/) | Build | Python |
 | 17 | [Handling Imbalanced Data](phases/02-ml-fundamentals/17-imbalanced-data/) | Build | Python |
 | 18 | [Feature Selection](phases/02-ml-fundamentals/18-feature-selection/) | Build | Python |
+| 19 | [Recommender Systems from Scratch](phases/02-ml-fundamentals/19-recommender-systems/) | Build | Python |
 
 </details>
 

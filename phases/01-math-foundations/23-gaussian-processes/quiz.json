@@ -1,0 +1,48 @@
+{
+  "lesson": "23-gaussian-processes",
+  "title": "Gaussian Processes from Scratch",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What does a Gaussian process prior describe?",
+      "options": ["A distribution over possible functions", "One fixed polynomial selected before seeing data", "A lookup table whose uncertainty is always zero", "A classifier boundary that cannot represent regression"],
+      "correct": 0,
+      "explanation": "A GP prior assigns a joint Gaussian distribution to every finite set of function values."
+    },
+    {
+      "stage": "check",
+      "question": "What does the RBF length scale control?",
+      "options": ["The number of observations stored", "How quickly correlation falls with input distance", "The target's measurement unit only", "The Cholesky algorithm's loop count regardless of matrix size"],
+      "correct": 1,
+      "explanation": "Short length scales allow faster variation; long length scales correlate points over larger distances."
+    },
+    {
+      "stage": "check",
+      "question": "Why use Cholesky solves instead of an explicit covariance inverse?",
+      "options": ["They remove the need for a kernel", "They guarantee the model is correctly specified", "They are more numerically stable for positive-definite systems", "They make posterior variance independent of observations"],
+      "correct": 2,
+      "explanation": "Triangular solves avoid forming an explicit inverse and expose factorization failures clearly."
+    },
+    {
+      "stage": "check",
+      "question": "Where should posterior variance usually be smallest under a smooth kernel?",
+      "options": ["Infinitely far from every input", "Near well-observed training inputs", "At a randomly chosen plot boundary", "Everywhere equally after a single measurement"],
+      "correct": 1,
+      "explanation": "Conditioning reduces uncertainty most strongly near informative observations."
+    },
+    {
+      "stage": "post",
+      "question": "What does high marginal likelihood establish?",
+      "options": ["The model will be correct on every future domain", "The kernel is legally safe to deploy", "No held-out evaluation is needed", "The setting balances data fit and covariance complexity within the assumed model"],
+      "correct": 3,
+      "explanation": "Marginal likelihood compares settings under the chosen GP assumptions; it does not validate those assumptions on its own."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best response to conflicting duplicate inputs?",
+      "options": ["Model observation noise and inspect conditioning", "Silently delete the target with the larger magnitude", "Set all posterior variances to zero", "Increase length scale until every function becomes constant"],
+      "correct": 0,
+      "explanation": "Explicit noise represents conflicting measurements and bounded jitter handles only numerical conditioning."
+    }
+  ]
+}

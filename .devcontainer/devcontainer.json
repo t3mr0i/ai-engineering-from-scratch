@@ -1,0 +1,28 @@
+{
+  "name": "AI Engineering from Scratch",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12",
+      "installTools": false
+    },
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "20",
+      "npmVersion": "10.8.0"
+    },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "stable",
+      "profile": "minimal"
+    },
+    "ghcr.io/julialang/devcontainer-features/julia:1": {
+      "channel": "lts"
+    }
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "postCreateCommand": "python3 -m pip install --user -r requirements.txt && npm install --global tsx@4.23.12 && bash scripts/bootstrap.sh",
+  "remoteUser": "vscode"
+}

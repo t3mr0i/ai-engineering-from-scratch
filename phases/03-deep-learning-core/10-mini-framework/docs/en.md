@@ -165,3 +165,7 @@ classDiagram
 ## Reference Solution
 
 Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a complete deep learning framework (~500 lines) with Module, Linear, ReLU, Sigmoid, Dropout, BatchNorm, Sequential, loss functions, optimizers, and DataLoader,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Wire all components into a working training loop that trains a 4-layer network on circle classification,” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

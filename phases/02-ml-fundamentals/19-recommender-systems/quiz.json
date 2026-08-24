@@ -1,0 +1,48 @@
+{
+  "lesson": "19-recommender-systems",
+  "title": "Recommender Systems from Scratch",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What does an empty user-item cell usually mean?",
+      "options": ["The preference is unknown or unexposed", "The user definitely dislikes the item", "The item is forbidden for every user", "The matrix factor is mathematically zero in every trained model"],
+      "correct": 0,
+      "explanation": "Missing feedback combines non-exposure, non-action, and unknown preference; it is not a confirmed negative."
+    },
+    {
+      "stage": "check",
+      "question": "Why keep a popularity baseline?",
+      "options": ["It guarantees individual fairness", "It is a strong, inspectable fallback and comparison", "It removes exposure bias from historical data", "It makes time-based evaluation unnecessary"],
+      "correct": 1,
+      "explanation": "Popularity is simple and robust, especially for cold-start users, so personalization should beat it honestly."
+    },
+    {
+      "stage": "check",
+      "question": "What does matrix factorization learn?",
+      "options": ["A separate hard-coded rule for every cell", "Only global item counts", "Latent vectors whose interaction estimates affinity", "A guarantee that every unobserved item is irrelevant"],
+      "correct": 2,
+      "explanation": "User and item latent vectors provide a compact representation whose dot product scores affinity."
+    },
+    {
+      "stage": "check",
+      "question": "Which split best protects a next-item evaluation from future leakage?",
+      "options": ["Duplicate every interaction across train and test", "Hold out later interactions per user", "Choose test rows after fitting item popularity", "Use only the users with the highest historical activity"],
+      "correct": 1,
+      "explanation": "A per-user temporal or leave-last-out split better reproduces recommendation from past to future."
+    },
+    {
+      "stage": "post",
+      "question": "Why can offline Recall@K improve while the product worsens?",
+      "options": ["Recall is always random", "Ranked metrics cannot use held-out data", "K must equal the entire catalog", "Relevance can improve while diversity, safety, or long-term satisfaction declines"],
+      "correct": 3,
+      "explanation": "Offline relevance covers only part of the product objective and can hide concentration or feedback-loop harms."
+    },
+    {
+      "stage": "post",
+      "question": "What should a new-user fallback do?",
+      "options": ["Use an explicit eligible baseline such as recent popularity", "Return latent-factor scores from an untrained user vector", "Pretend every missing interaction is a negative rating", "Reuse another user's private history without a policy"],
+      "correct": 0,
+      "explanation": "An explicit, policy-compliant fallback is deterministic and inspectable when personalization has no evidence."
+    }
+  ]
+}

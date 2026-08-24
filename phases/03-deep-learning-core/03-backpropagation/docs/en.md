@@ -149,3 +149,7 @@ Every gradient is a product of local derivatives traced back from the loss. That
 ## Reference Solution
 
 Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a Value-based autograd engine that builds a computational graph and computes gradients via topological sort,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Train a multi-layer network on XOR and circle classification using only your from-scratch backpropagation engine,” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

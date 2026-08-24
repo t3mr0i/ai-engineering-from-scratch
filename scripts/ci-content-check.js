@@ -118,10 +118,10 @@ const THRESHOLDS = {
   c1_missingEnMd: 0,
   // 2. Every curriculum-map lesson's docs/en.md has a sibling docs/de.md.
   //    Curriculum-scoped, not repo-wide (§10-2) — repo-wide would equal the
-  //    repo-wide count by construction and could never fail. Today all 179
-  //    curriculum-map lessons lack a de.md — German translation is simply
-  //    not done yet. Ratchet this down as de.md files land.
-  c2_missingDeMd: 179,
+  //    repo-wide count by construction and could never fail. The first
+  //    five-lesson LRN-01 foundations slice is translated; ratchet this down
+  //    whenever another complete slice lands.
+  c2_missingDeMd: 170,
   // 3. Every quiz.json is the object form ({questions:[...]}), not a bare array.
   c3_arrayFormQuiz: 0,
   // 4. `correct` is a valid options index; no duplicate option strings.
@@ -207,9 +207,9 @@ function check2() {
     (p) => !existsSync(path.join(REPO, p, "docs/de.md"))
   ).length;
   // Gated on the curriculum-scoped count, not the repo-wide one: repo-wide
-  // (598) equals THRESHOLDS.c2_missingDeMd by construction (every en.md
-  // still lacks a de.md), so that comparison can never fail and proves
-  // nothing (§10-2). curriculumPaths.length is what actually ships.
+  // A repo-wide missing count largely follows the total lesson inventory and
+  // obscures whether the curated curriculum is translated. The gated count
+  // therefore uses curriculumPaths, which is what the LRN surface ships.
   return record("2", "docs/en.md has sibling docs/de.md (curriculum-scoped)", curriculumScopedMissing, THRESHOLDS.c2_missingDeMd, {
     details: details.slice(0, 5).concat([`... ${details.length} total (repo-wide); ${curriculumScopedMissing}/${curriculumPaths.length} missing within curriculum-map lessons`]),
   });

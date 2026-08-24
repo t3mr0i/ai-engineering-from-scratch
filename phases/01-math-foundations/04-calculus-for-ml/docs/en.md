@@ -468,3 +468,7 @@ You just built gradient descent from scratch. PyTorch automates the gradient com
 ## Reference Solution
 
 Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute numerical and analytical derivatives for common ML functions (x^2, sigmoid, cross-entropy),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Derive the gradient of a linear regression model and train it via manual weight updates,” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

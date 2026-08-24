@@ -357,3 +357,7 @@ print("✅ PASS — correct total found in the agent's final answer" if found
 ## Reference Solution
 
 Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three parts of the ReAct loop — Thought, Action, Observation — and explain why each one is load-bearing,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Identify the 2026 shift from prompt-based thought tokens to native model reasoning (Responses API, encrypted reasoning passthrough),” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

@@ -50,6 +50,7 @@ parsed by `site/build.js` into the lesson catalog.
 | 20 | The Fourier Transform | ✅ | ~75 min |
 | 21 | Graph Theory for ML | ✅ | ~45 min |
 | 22 | Stochastic Processes | ✅ | ~45 min |
+| 23 | [Gaussian Processes from Scratch](phases/01-math-foundations/23-gaussian-processes/) | ✅ | ~90 min |
 
 ## Phase 2: ML Fundamentals — ✅ (~21 hours)
 
@@ -73,6 +74,7 @@ parsed by `site/build.js` into the lesson catalog.
 | 16 | Anomaly Detection | ✅ | ~75 min |
 | 17 | Handling Imbalanced Data | ✅ | ~75 min |
 | 18 | Feature Selection | ✅ | ~75 min |
+| 19 | [Recommender Systems from Scratch](phases/02-ml-fundamentals/19-recommender-systems/) | ✅ | ~105 min |
 
 ## Phase 3: Deep Learning Core — ✅ (~15 hours)
 

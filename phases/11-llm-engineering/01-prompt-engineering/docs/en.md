@@ -617,3 +617,7 @@ The best prompts are model-agnostic. They work on GPT-5, Claude Opus 4.7, Gemini
 ## Reference Solution
 
 Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Apply the core prompt engineering patterns (role, context, constraints, output format) to transform vague requests into precise instructions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Diagnose prompt failures (hallucination, refusal, format violations) and fix them with targeted prompt modifications,” and cite a repeatable check rather than relying on visual inspection alone.
+
+## Guided Demo
+
+Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.
