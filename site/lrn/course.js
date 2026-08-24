@@ -97,6 +97,10 @@
     var stats = courseProgress(course);
     var nextLesson = nextLessonForCourse(course.id);
 
+    var intro = document.createElement("section");
+    intro.className = "course-intro";
+    intro.setAttribute("aria-labelledby", "courseTitle");
+
     var head = document.createElement("header");
     head.className = "course-head";
 
@@ -105,18 +109,13 @@
     code.textContent = course.id;
 
     var title = document.createElement("h1");
+    title.id = "courseTitle";
     title.textContent = course.title;
     title.title = course.id + " · " + course.title;
 
     var summary = document.createElement("p");
     summary.className = "course-head__summary";
     summary.textContent = course.summary;
-
-    var meta = document.createElement("p");
-    meta.className = "course-head__meta";
-    meta.textContent = (stats.subcourseCount === 1 ? i18n("course_units_one", "1 unit") : i18nFmt("course_units_many", { count: stats.subcourseCount }, "{count} units")) + " · "
-      + (stats.lessonCount === 1 ? i18n("course_activities_one", "1 activity") : i18nFmt("course_activities_many", { count: stats.lessonCount }, "{count} activities")) + " · "
-      + i18nFmt("course_percent_shipped", { percent: stats.percent }, "{percent}% shipped");
 
     var action = document.createElement("a");
     action.className = "primary-cta";
@@ -135,9 +134,90 @@
       action.addEventListener("click", function (event) { event.preventDefault(); });
     }
 
-    head.append(code, title, summary, meta, progressMeter(stats.percent, i18nFmt("course_progress_label", { title: course.title }, "Progress {title}")), action);
+    var progress = document.createElement("div");
+    progress.className = "course-head__progress";
 
-    var children = [head];
+    var progressLabel = document.createElement("p");
+    progressLabel.className = "course-head__progress-label";
+    progressLabel.textContent = i18n("course_progress_heading", "Course progress");
+
+    progress.append(progressLabel, progressMeter(stats.percent, i18nFmt("course_progress_label", { title: course.title }, "Progress {title}")));
+    head.append(code, title, summary, progress, action);
+
+    var includes = document.createElement("aside");
+    includes.className = "course-includes";
+    includes.setAttribute("aria-labelledby", "courseIncludesTitle");
+
+    var includesTitle = document.createElement("h2");
+    includesTitle.id = "courseIncludesTitle";
+    includesTitle.textContent = i18n("course_includes_title", "This course includes");
+
+    var format = courseFormat(course);
+    var formatBadge = document.createElement("span");
+    formatBadge.className = "course-includes__format";
+    formatBadge.title = course.format || i18n(format.labelKey, format.label);
+    formatBadge.append(lucideIcon(format.icon), document.createTextNode(i18n(format.labelKey, format.label)));
+
+    var includesList = document.createElement("ul");
+    includesList.className = "course-includes__list";
+
+    if (course.format) {
+      includesList.appendChild(includesItem(format.icon, course.format));
+    }
+
+    var modules = Array.isArray(course.modules) ? course.modules.filter(function (module) {
+      return typeof module === "string" && module.trim().length > 0;
+    }) : [];
+
+    modules.forEach(function (module) {
+      includesList.appendChild(includesItem("puzzle-piece", module));
+    });
+
+    if (!includesList.children.length) {
+      includesList.appendChild(includesItem(
+        "list-checks",
+        stats.lessonCount === 1
+          ? i18n("course_activities_one", "1 activity")
+          : i18nFmt("course_activities_many", { count: stats.lessonCount }, "{count} activities")
+      ));
+    }
+
+    includes.append(includesTitle, formatBadge, includesList);
+    intro.append(head, includes);
+
+    var facts = document.createElement("section");
+    facts.className = "course-facts";
+    facts.setAttribute("aria-label", i18n("course_facts_label", "Course facts"));
+    facts.append(
+      factItem("chart-bar", i18n("course_fact_level", "Level"), localizedDepths(course.levels)),
+      factItem("stack", i18n("course_fact_units", "Units"), String(stats.subcourseCount)),
+      factItem("list-checks", i18n("course_fact_activities", "Activities"), String(stats.lessonCount)),
+      factItem("compass", i18n("course_fact_focus", "Focus"), courseFocus(course))
+    );
+
+    var overview = document.createElement("section");
+    overview.className = "course-overview";
+
+    var about = document.createElement("article");
+    about.className = "course-overview__about";
+    about.setAttribute("aria-labelledby", "courseAboutTitle");
+
+    var aboutTitle = document.createElement("h2");
+    aboutTitle.id = "courseAboutTitle";
+    aboutTitle.textContent = i18n("course_about_title", "About this course");
+    about.appendChild(aboutTitle);
+
+    if (course.format) {
+      about.appendChild(overviewDetail(
+        i18n("course_format_label", "Format"),
+        i18n(format.labelKey, format.label) + " · " + course.format
+      ));
+    }
+    if (modules.length) {
+      about.appendChild(overviewDetail(i18n("course_modules_label", "Modules"), modules.join(" · ")));
+    }
+
+    overview.appendChild(about);
 
     var outcomes = Array.isArray(course.outcomes) ? course.outcomes.filter(function (s) { return typeof s === "string" && s.trim().length > 0; }) : [];
     if (outcomes.length) {
@@ -155,13 +235,15 @@
       outcomes.forEach(function (text) {
         var li = document.createElement("li");
         li.className = "course-head__outcomes-item";
-        li.textContent = text;
+        li.append(lucideIcon("check-circle"), document.createTextNode(text));
         outcomesList.appendChild(li);
       });
 
       outcomesBlock.append(outcomesTitle, outcomesList);
-      children.push(outcomesBlock);
+      overview.appendChild(outcomesBlock);
     }
+
+    var children = [intro, facts, overview];
 
     var syllabusTitle = document.createElement("h2");
     syllabusTitle.className = "syllabus-title";
@@ -181,6 +263,65 @@
 
     replaceChildren(root, children);
     refreshIcons();
+  }
+
+  function courseFormat(courseItem) {
+    if (window.LrnCourseFormats && window.LrnCourseFormats.resolve) {
+      return window.LrnCourseFormats.resolve(courseItem);
+    }
+    return { id: "toolkit", icon: "wrench", labelKey: "course_format_toolkit", label: "Toolkit" };
+  }
+
+  function includesItem(iconName, text) {
+    var item = document.createElement("li");
+    item.className = "course-includes__item";
+    item.append(lucideIcon(iconName), document.createTextNode(text));
+    return item;
+  }
+
+  function factItem(iconName, label, value) {
+    var item = document.createElement("div");
+    item.className = "course-fact";
+
+    var icon = lucideIcon(iconName);
+    icon.classList.add("course-fact__icon");
+
+    var copy = document.createElement("div");
+    var factLabel = document.createElement("span");
+    factLabel.className = "course-fact__label";
+    factLabel.textContent = label;
+    var factValue = document.createElement("strong");
+    factValue.className = "course-fact__value";
+    factValue.textContent = value || i18n("course_fact_not_specified", "Not specified");
+    copy.append(factLabel, factValue);
+
+    item.append(icon, copy);
+    return item;
+  }
+
+  function overviewDetail(label, value) {
+    var detail = document.createElement("p");
+    detail.className = "course-overview__detail";
+    var strong = document.createElement("strong");
+    strong.textContent = label + ":";
+    detail.append(strong, document.createTextNode(" " + value));
+    return detail;
+  }
+
+  function localizedDepths(levels) {
+    var values = Array.isArray(levels) ? levels : [];
+    return values.map(function (level) {
+      var key = "lrn_depth_" + String(level).toLowerCase();
+      return i18n(key, level);
+    }).join(" · ");
+  }
+
+  function courseFocus(course) {
+    var interestById = indexBy(data.interests || [], "id");
+    var ids = Array.isArray(course.interests) ? course.interests : [];
+    return ids.map(function (id) {
+      return i18n("topic_" + id, interestById[id] ? interestById[id].label : id);
+    }).join(" · ");
   }
 
   // Phosphor Light icon for a syllabus unit, picked from the unit title.

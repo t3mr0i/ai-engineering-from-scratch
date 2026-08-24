@@ -35,6 +35,15 @@ function loadMap() {
   return sandbox.window.LrnCurriculumMap;
 }
 
+function loadCourseFormats() {
+  const sandbox = { window: {}, console };
+  vm.createContext(sandbox);
+  const src = readFileSync("site/lrn/course-formats.js", "utf8");
+  vm.runInContext(src, sandbox, { filename: "course-formats.js" });
+  if (!sandbox.window.LrnCourseFormats) throw new Error("course-formats.js did not assign window.LrnCourseFormats");
+  return sandbox.window.LrnCourseFormats;
+}
+
 // Cockpit default profile — must match the constant in site/lrn/lrn.js
 // (state.profileId fallback and the "tc" reset in render()). If lrn.js
 // switches the default, update this constant in the same commit.
@@ -56,6 +65,7 @@ function loadActiveProfileId() {
 
 const data = loadData();
 const cmap = loadMap();
+const courseFormats = loadCourseFormats();
 const activeProfileId = loadActiveProfileId();
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -82,6 +92,32 @@ test("every Course has the required fields", () => {
     assert.ok(Array.isArray(c.dimensions), `Course ${c.id}.dimensions must be array`);
     assert.ok(Array.isArray(c.levels), `Course ${c.id}.levels must be array`);
     assert.ok(Array.isArray(c.modules) && c.modules.length > 0, `Course ${c.id}.modules must be non-empty array`);
+  }
+});
+
+test("every Course resolves to a labeled learning format with an icon", () => {
+  const supported = new Set(["experiment", "deck", "elearning", "workshop", "lab", "toolkit"]);
+  for (const course of data.courses) {
+    const format = courseFormats.resolve(course);
+    assert.ok(supported.has(format.id), `Course ${course.id} has unsupported format ${format.id}`);
+    assert.ok(format.icon, `Course ${course.id} format is missing an icon`);
+    assert.ok(format.labelKey, `Course ${course.id} format is missing an i18n key`);
+    assert.ok(format.label, `Course ${course.id} format is missing a fallback label`);
+  }
+});
+
+test("learning format exemplars stay semantically distinct", () => {
+  const byId = new Map(data.courses.map((course) => [course.id, course]));
+  const expected = {
+    "PRIMER-01": "experiment",
+    "LRN-25": "deck",
+    "LRN-01": "elearning",
+    "LRN-22": "workshop",
+    "LRN-06": "lab",
+    "LRN-04": "toolkit",
+  };
+  for (const [id, formatId] of Object.entries(expected)) {
+    assert.equal(courseFormats.resolve(byId.get(id)).id, formatId, `${id} format drifted`);
   }
 });
 

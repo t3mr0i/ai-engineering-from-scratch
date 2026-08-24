@@ -1,0 +1,9 @@
+{
+  "date": "2026-08-24",
+  "framework": "Vanilla HTML, CSS, and JavaScript",
+  "font_stack": "Lufthansa Head and Lufthansa Text from site/lrn/tokens.css",
+  "palette": "Lufthansa Group semantic tokens from site/lrn/tokens.css",
+  "motion": "Motion-cut with tokenized hover and progress feedback",
+  "spacing": "4px token scale",
+  "design_system": "DESIGN.md"
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026-08-24",
+    "macrostructure": "Split Studio",
+    "theme": "DESIGN.md / Flight Deck",
+    "enrichment": "none",
+    "brief": "Codecademy-inspired course detail layout",
+    "scope": "page",
+    "nav": "N9 edge-aligned",
+    "footer": "Ft2 inline"
+  }
+]

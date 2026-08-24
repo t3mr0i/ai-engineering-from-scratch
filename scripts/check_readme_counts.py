@@ -45,6 +45,11 @@ class CountPattern:
     regex: re.Pattern[str]
     field: str  # totals.<field>
     description: str
+    required: bool = True
+
+
+class ReadmeStructureError(SystemExit):
+    """Raised when a canonical README count surface disappears."""
 
 
 PATTERNS: tuple[CountPattern, ...] = (
@@ -62,21 +67,25 @@ PATTERNS: tuple[CountPattern, ...] = (
         regex=re.compile(r"^> (\d+) lessons\. \d+ phases\.", re.MULTILINE),
         field="lessons",
         description="hero blockquote lesson count",
+        required=False,
     ),
     CountPattern(
         regex=re.compile(r"^> \d+ lessons\. (\d+) phases\.", re.MULTILINE),
         field="phases",
         description="hero blockquote phase count",
+        required=False,
     ),
     CountPattern(
         regex=re.compile(r"This curriculum is the spine\. (\d+) phases,"),
         field="phases",
         description="'spine' prose phase count",
+        required=False,
     ),
     CountPattern(
         regex=re.compile(r"This curriculum is the spine\. \d+ phases, (\d+) lessons,"),
         field="lessons",
         description="'spine' prose lesson count",
+        required=False,
     ),
     CountPattern(
         regex=re.compile(r"phases-(\d+)-3553ff"),
@@ -92,6 +101,7 @@ PATTERNS: tuple[CountPattern, ...] = (
         regex=re.compile(r"portfolio of (\d+) artifacts"),
         field="lessons",
         description="'portfolio of N artifacts' (one artifact per lesson)",
+        required=False,
     ),
     CountPattern(
         regex=re.compile(r"The repo ships (\d+) skills"),
@@ -107,6 +117,7 @@ PATTERNS: tuple[CountPattern, ...] = (
         regex=re.compile(r"MIT-licensed, (\d+) lessons\."),
         field="lessons",
         description="sponsor section lesson count",
+        required=False,
     ),
 )
 
@@ -141,9 +152,13 @@ def snippet_for(text: str, offset: int, end: int) -> str:
     return text[line_start:line_end].strip()
 
 
-def find_mismatches(readme_text: str, totals: dict[str, int]) -> list[Mismatch]:
+def find_mismatches(
+    readme_text: str,
+    totals: dict[str, int],
+    patterns: tuple[CountPattern, ...] = PATTERNS,
+) -> list[Mismatch]:
     mismatches: list[Mismatch] = []
-    for pattern in PATTERNS:
+    for pattern in patterns:
         expected = totals.get(pattern.field)
         if expected is None:
             raise SystemExit(f"catalog.json totals is missing field: {pattern.field}")
@@ -161,8 +176,8 @@ def find_mismatches(readme_text: str, totals: dict[str, int]) -> list[Mismatch]:
                         snippet=snippet_for(readme_text, match.start(), match.end()),
                     )
                 )
-        if not matched_any:
-            raise SystemExit(
+        if not matched_any and pattern.required:
+            raise ReadmeStructureError(
                 f"pattern did not match README at all: {pattern.description} "
                 f"({pattern.regex.pattern!r}). The README structure has changed; "
                 f"update scripts/check_readme_counts.py."

@@ -1,3 +1,4 @@
+/* Hallmark · macrostructure: Split Studio · genre: modern-minimal · theme: studied-DNA (source: image) · design-system: DESIGN.md · designed-as-app · pre-emit critique: P5 H5 E4 S5 R5 V5 */
 /* LHIND LRN — Lufthansa Group Design System skin
    Visual language follows the Lufthansa Group corporate identity:
    thin display headlines, sentence case with periods, hairline 1px
@@ -302,7 +303,7 @@ i[class^="ph "] {
 }
 
 .page--detail {
-  width: min(840px, 100%);
+  width: min(var(--container-max), 100%);
 }
 
 /* ── Hero · Lufthansa ground-to-sky, thin display ─────────────── */
@@ -345,7 +346,10 @@ i[class^="ph "] {
   gap: 0.75rem;
   text-decoration: none;
   box-shadow: var(--shadow-md);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard);
 }
 
 .resume-button:hover {
@@ -1484,6 +1488,35 @@ i[class^="ph "] {
   gap: var(--space-3);
 }
 
+.course-card__format,
+.course-includes__format {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 1.75rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+  color: var(--text-secondary);
+  font-family: var(--font-text);
+  font-size: var(--fs-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.course-includes__format {
+  justify-self: start;
+  margin-block-end: var(--space-3);
+}
+
+.course-includes__format i {
+  font-size: 0.95rem;
+}
+
 
 .course-card__code {
   display: block;
@@ -1701,11 +1734,22 @@ i[class^="ph "] {
   text-decoration: none;
 }
 
+.course-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+  gap: clamp(var(--space-6), 5vw, var(--space-8));
+  align-items: stretch;
+  padding: clamp(var(--space-5), 4vw, var(--space-7));
+  padding-block-end: clamp(var(--space-7), 6vw, var(--space-8));
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+}
+
 .course-head {
   display: grid;
   gap: var(--space-4);
-  padding-block-end: var(--space-6);
-  border-block-end: 1px solid var(--border-subtle);
+  align-content: center;
+  min-width: 0;
 }
 
 .course-head__code {
@@ -1717,10 +1761,11 @@ i[class^="ph "] {
 }
 
 .course-head h1 {
+  min-width: 0;
   margin: 0;
   color: var(--text-primary);
   font-family: var(--font-head);
-  font-size: var(--fs-h3);
+  font-size: clamp(var(--fs-h2), 4vw, var(--fs-h1));
   font-weight: var(--weight-medium);
   line-height: var(--lh-snug);
   letter-spacing: var(--ls-heading);
@@ -1729,7 +1774,7 @@ i[class^="ph "] {
 
 .course-head__summary {
   margin: 0;
-  max-width: 64ch;
+  max-width: 54ch;
   color: var(--text-secondary);
   font-family: var(--font-text);
   font-weight: var(--weight-regular);
@@ -1737,22 +1782,31 @@ i[class^="ph "] {
   line-height: var(--lh-relaxed);
 }
 
-.course-head__meta {
+.course-head__progress {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 42rem;
+  margin-block-start: var(--space-2);
+}
+
+.course-head__progress-label {
   margin: 0;
   color: var(--text-muted);
   font-family: var(--font-text);
   font-size: var(--fs-body-sm);
 }
 
-.course-head__outcomes {
-  display: grid;
-  gap: var(--space-3);
-  padding-block: var(--space-5);
-  border-block-end: 1px solid var(--border-subtle);
+.course-includes {
+  align-self: start;
+  padding: clamp(var(--space-5), 3vw, var(--space-6));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 }
 
-.course-head__outcomes-title {
-  margin: 0;
+.course-includes h2 {
+  margin: 0 0 var(--space-4);
   color: var(--text-primary);
   font-family: var(--font-head);
   font-size: var(--fs-h4);
@@ -1760,12 +1814,139 @@ i[class^="ph "] {
   letter-spacing: var(--ls-heading);
 }
 
+.course-includes__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.course-includes__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding-block: var(--space-3);
+  color: var(--text-primary);
+  font-family: var(--font-text);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-normal);
+}
+
+.course-includes__item + .course-includes__item {
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+.course-includes__item i {
+  color: var(--action-primary);
+  font-size: 1.2rem;
+}
+
+.course-facts {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: calc(-1 * var(--space-5)) clamp(var(--space-4), 3vw, var(--space-6)) 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.course-fact {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  min-width: 0;
+  padding: var(--space-5);
+}
+
+.course-fact + .course-fact {
+  border-inline-start: 1px solid var(--border-subtle);
+}
+
+.course-fact__icon {
+  color: var(--action-primary);
+  font-size: 1.35rem;
+}
+
+.course-fact__label,
+.course-fact__value {
+  display: block;
+}
+
+.course-fact__label {
+  margin-block-end: var(--space-1);
+  color: var(--text-muted);
+  font-family: var(--font-text);
+  font-size: var(--fs-caption);
+}
+
+.course-fact__value {
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: var(--fs-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.course-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(var(--space-6), 6vw, var(--space-9));
+  margin-block-start: var(--space-8);
+  padding-block-end: var(--space-7);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.course-overview__about {
+  min-width: 0;
+}
+
+.course-overview__about h2,
+.course-head__outcomes-title {
+  margin: 0 0 var(--space-4);
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: var(--fs-h4);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--ls-heading);
+}
+
+.course-overview__detail {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-relaxed);
+}
+
+.course-overview__detail + .course-overview__detail {
+  margin-block-start: var(--space-3);
+}
+
+.course-overview__detail strong {
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}
+
+.course-head__outcomes {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+}
+
 .course-head__outcomes-list {
   margin: 0;
-  padding-inline-start: 1.1rem;
+  padding: 0;
   display: grid;
   gap: var(--space-2);
-  max-width: 64ch;
+  list-style: none;
   color: var(--text-secondary);
   font-family: var(--font-text);
   font-weight: var(--weight-regular);
@@ -1774,7 +1955,16 @@ i[class^="ph "] {
 }
 
 .course-head__outcomes-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
   line-height: var(--lh-normal);
+}
+
+.course-head__outcomes-item i {
+  color: var(--action-primary);
+  font-size: 1rem;
 }
 
 .primary-cta {
@@ -1794,6 +1984,7 @@ i[class^="ph "] {
   font-weight: var(--weight-regular);
   font-size: var(--fs-body-sm);
   text-decoration: none;
+  white-space: nowrap;
   transition:
     background-color var(--dur-base) var(--ease-standard),
     transform var(--dur-fast) var(--ease-standard),
@@ -1823,7 +2014,7 @@ i[class^="ph "] {
 }
 
 .syllabus-title {
-  margin: var(--space-7) 0 0;
+  margin: var(--space-7) 0 var(--space-4);
   color: var(--text-primary);
   font-family: var(--font-head);
   font-weight: var(--weight-medium);
@@ -2042,9 +2233,67 @@ i[class^="ph "] {
   .course-search--selector {
     grid-column: 1 / -1;
   }
+
+  .course-intro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .course-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .course-fact:nth-child(3) {
+    border-inline-start: 0;
+  }
+
+  .course-fact:nth-child(n + 3) {
+    border-block-start: 1px solid var(--border-subtle);
+  }
+
+  .course-overview {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
 }
 
 @media (max-width: 40rem) {
+  .page--detail {
+    padding-inline: var(--space-4);
+  }
+
+  .course-intro {
+    padding: var(--space-5);
+    padding-block-end: var(--space-7);
+    border-radius: var(--radius-md);
+  }
+
+  .course-head h1 {
+    font-size: var(--fs-h2);
+  }
+
+  .course-head__summary {
+    font-size: var(--fs-body);
+  }
+
+  .course-facts {
+    grid-template-columns: minmax(0, 1fr);
+    margin-inline: var(--space-3);
+  }
+
+  .course-fact + .course-fact,
+  .course-fact:nth-child(3) {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--border-subtle);
+  }
+
+  .course-fact {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .course-overview {
+    margin-block-start: var(--space-7);
+  }
+
   .hero h1 {
     font-size: var(--text-xl);
     white-space: normal;
@@ -2225,28 +2474,27 @@ i[class^="ph "] {
   overflow: hidden;
   transition:
     background-color var(--dur-base) var(--ease-standard),
-    transform var(--dur-fast) var(--ease-standard),
-    padding-left var(--dur-base) var(--ease-standard);
+    transform var(--dur-fast) var(--ease-standard);
 }
 .activity-link::before {
   content: "";
   position: absolute;
-  left: -4px;
+  left: 0;
   top: 15%;
   height: 70%;
   width: 3px;
   background: var(--lhg-core-blue, #05164d);
   border-radius: 0 999px 999px 0;
   opacity: 0;
-  transition: opacity var(--dur-base) var(--ease-standard), left var(--dur-base) var(--ease-standard);
+  transform: scaleY(0.55);
+  transition:
+    opacity var(--dur-base) var(--ease-standard),
+    transform var(--dur-base) var(--ease-standard);
 }
 @media (hover: hover) and (pointer: fine) {
-  .activity-link:hover {
-    padding-left: calc(var(--space-2, 8px) + 6px);
-  }
   .activity-link:hover::before {
-    left: 0;
     opacity: 1;
+    transform: scaleY(1);
   }
 }
 

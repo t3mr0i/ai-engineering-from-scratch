@@ -13,6 +13,7 @@ on:
       - "ROADMAP.md"
       - "glossary/**"
       - "site/build.js"
+      - "site/**"
       - "site/lrn/curriculum-map.js"
       - "site/lrn/data.js"
       - "site/i18n.js"
@@ -30,6 +31,7 @@ on:
       - "ROADMAP.md"
       - "glossary/**"
       - "site/build.js"
+      - "site/**"
       - "site/lrn/curriculum-map.js"
       - "site/lrn/data.js"
       - "site/i18n.js"
@@ -52,6 +54,21 @@ jobs:
           python-version: "3.12"
       - name: run scripts/audit_lessons.py
         run: python3 scripts/audit_lessons.py
+      - name: run script regression tests
+        run: python3 -m unittest discover scripts/tests -v
+
+  site-tests:
+    name: site unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: 20
+      - name: run site tests
+        run: node --test site/*.test.mjs site/lrn/test.mjs
 
   content-check:
     name: content invariant checks (ci-content-check.js)

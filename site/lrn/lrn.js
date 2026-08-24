@@ -450,7 +450,7 @@
             course.dimensions || [],
             course.levels || []
           ),
-          meta: [course.id, course.format, course.status, course.source].join(" ")
+          meta: [course.id, course.format, courseFormatLabel(course), course.status, course.source].join(" ")
         };
       });
       return window.CurriculumSearch.rank(searchable, term, {
@@ -489,6 +489,7 @@
       course.title,
       course.summary,
       course.format,
+      courseFormatLabel(course),
       course.status,
       course.source,
       (course.modules || []).join(" "),
@@ -504,12 +505,19 @@
   }
 
   function courseIcon(course, theme) {
-    if (course && COURSE_ICONS[course.id]) return COURSE_ICONS[course.id];
-    var title = String(course.title || "").toLowerCase();
-    for (var i = 0; i < COURSE_ICON_RULES.length; i += 1) {
-      if (COURSE_ICON_RULES[i][0].test(title)) return COURSE_ICON_RULES[i][1];
+    return courseFormat(course).icon;
+  }
+
+  function courseFormat(course) {
+    if (window.LrnCourseFormats && window.LrnCourseFormats.resolve) {
+      return window.LrnCourseFormats.resolve(course);
     }
-    return INTEREST_THEMES[theme].icon;
+    return { id: "toolkit", icon: "wrench", labelKey: "course_format_toolkit", label: "Toolkit" };
+  }
+
+  function courseFormatLabel(course) {
+    var format = courseFormat(course);
+    return i18n(format.labelKey, format.label);
   }
 
   function courseCard(course, entry, index) {
@@ -525,6 +533,8 @@
 
     var theme = courseTheme(course);
     card.dataset.theme = theme;
+    var format = courseFormat(course);
+    card.dataset.format = format.id;
 
     var head = document.createElement("div");
     head.className = "course-card__head";
@@ -534,7 +544,12 @@
     tile.setAttribute("aria-hidden", "true");
     tile.appendChild(lucideIcon(courseIcon(course, theme)));
 
-    head.appendChild(tile);
+    var formatLabel = document.createElement("span");
+    formatLabel.className = "course-card__format";
+    formatLabel.textContent = i18n(format.labelKey, format.label);
+    formatLabel.title = course.format || formatLabel.textContent;
+
+    head.append(tile, formatLabel);
 
     var code = document.createElement("span");
     code.className = "course-card__code";

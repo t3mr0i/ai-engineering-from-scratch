@@ -3,7 +3,7 @@
 
 Requires Python 3.10+ (PEP 604 union types, Path.is_relative_to).
 
-Walks every `phases/NN-slug/MM-slug/` lesson directory on disk and emits a
+Walks every `phases/NN-slug/MM-slug/` (or `MMM-slug`) lesson directory on disk and emits a
 single JSON document with the truth of what exists in the repo: phases,
 lessons, code files, outputs (skills / prompts / agents), and totals.
 
@@ -62,7 +62,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PHASES_DIR = ROOT / "phases"
 
 PHASE_DIR_RE = re.compile(r"^([0-9]{2})-([a-z0-9][a-z0-9-]*)$")
-LESSON_DIR_RE = re.compile(r"^([0-9]{2})-([a-z0-9][a-z0-9-]*)$")
+LESSON_DIR_RE = re.compile(r"^([0-9]{2,3})-([a-z0-9][a-z0-9-]*)$")
 H1_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 ARTIFACT_TYPES = ("skill", "prompt", "agent")
 CODE_SUFFIXES = {".py", ".ts", ".tsx", ".js", ".mjs", ".rs", ".jl", ".go", ".swift", ".ipynb"}

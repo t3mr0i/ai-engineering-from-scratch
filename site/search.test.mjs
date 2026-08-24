@@ -30,18 +30,6 @@ function loadLrnI18n() {
   return vm.runInContext(`(${lrnSource.slice(start, end).trim()})`, sandbox);
 }
 
-function loadTopicHelpers() {
-  const start = lrnSource.indexOf("  function topicLabel(");
-  const end = lrnSource.indexOf("\n\n  function renderFilters", start);
-  assert.ok(start >= 0 && end > start, "could not isolate topic helpers");
-  const sandbox = {
-    data: { interests: [{ id: "future", label: "Future topic", hint: "Future hint" }] },
-    i18n: (key, fallback) => fallback == null ? key : fallback
-  };
-  vm.createContext(sandbox);
-  return vm.runInContext(`(() => { ${lrnSource.slice(start, end)}; return { topicLabel, topicHint }; })()`, sandbox);
-}
-
 const siteI18n = loadSiteI18n();
 
 const items = [
@@ -105,18 +93,13 @@ test("normalize folds German diacritics, ß, punctuation, and whitespace", () =>
   assert.equal(Search.normalize("  Künstliche  Intelligenz & Größe! "), "kunstliche intelligenz and grosse");
 });
 
-test("cockpit topic and interest groups expose distinct accessible scopes", () => {
-  assert.match(indexHtml, /class="selector-card"[^>]*role="group"/);
-  assert.match(indexHtml, /id="topicChips"[^>]*aria-labelledby="topicLabel"[^>]*aria-describedby="topicHint"/);
-  assert.match(indexHtml, /id="topicHint"[^>]*data-i18n="topic_filter_hint"/);
-  assert.match(indexHtml, /id="interestChips"[^>]*aria-labelledby="interestLabel"[^>]*aria-describedby="interestHint"/);
-  assert.match(indexHtml, /id="interestHint"[^>]*data-i18n="interests_hint"/);
-  assert.doesNotMatch(indexHtml, /id="interestLabel"[^>]*data-i18n-title="interests_hint"/);
-  assert.match(siteI18n.topic_filter_hint.en, /one topic.*scope results/i);
-  assert.match(siteI18n.interests_hint.en, /shape which courses are recommended/i);
-  assert.match(siteI18n.lrn_topic_many.en, /matching courses/);
-  assert.match(siteI18n.lrn_topic_empty_body.en, /interests/);
-  assert.match(siteI18n.lrn_search_topic_empty_body.en, /search.*current filters/i);
+test("cockpit search and status filters expose accessible scopes", () => {
+  assert.match(indexHtml, /id="searchForm"[^>]*role="search"/);
+  assert.match(indexHtml, /id="searchInput"[^>]*type="search"[\s\S]*?aria-describedby="searchHint"[\s\S]*?aria-controls="courseGrid"/);
+  assert.match(indexHtml, /id="courseFilters"[^>]*role="group"[^>]*data-i18n-aria-label="course_status_filters_label"/);
+  assert.match(indexHtml, /id="resetBtn"[^>]*data-i18n-aria-label="reset_filters_label"/);
+  assert.match(indexHtml, /id="resultLine"[^>]*aria-live="polite"/);
+  assert.match(indexHtml, /id="srStatus"[^>]*aria-live="polite"/);
 });
 
 test("lrn i18n uses a supplied fallback for future data-driven labels", () => {
@@ -126,34 +109,22 @@ test("lrn i18n uses a supplied fallback for future data-driven labels", () => {
   assert.equal(i18n("topic_future_hint", "Future hint"), "Future hint");
 });
 
-test("topic helpers fall back to future LrnData labels and hints", () => {
-  const { topicLabel, topicHint } = loadTopicHelpers();
-  assert.equal(topicLabel("future"), "Future topic");
-  assert.equal(topicHint("future"), "Future hint");
-});
-
-test("control render path rebuilds each chip group once", () => {
+test("control render path rebuilds stable selects once", () => {
   const controls = lrnSource.match(/function renderControls\(\) \{[\s\S]*?\n  \}/)?.[0] || "";
   const render = lrnSource.match(/function render\(\) \{[\s\S]*?\n  \}/)?.[0] || "";
-  assert.equal((controls.match(/renderInterestChips\(\)/g) || []).length, 1);
-  assert.equal((controls.match(/renderTopicChips\(\)/g) || []).length, 1);
-  assert.doesNotMatch(render, /renderInterestChips\(\)|renderTopicChips\(\)/);
+  assert.equal((controls.match(/renderProfileSelect\(\)/g) || []).length, 1);
+  assert.equal((controls.match(/renderLevelSelect\(\)/g) || []).length, 1);
+  assert.doesNotMatch(render, /renderProfileSelect\(\)|renderLevelSelect\(\)/);
 });
 
-test("topic selection keeps chip nodes stable and restores focus on clear", () => {
-  const renderStart = lrnSource.indexOf("  function renderTopicChips(");
-  const renderEnd = lrnSource.indexOf("\n\n  function topicLabel", renderStart);
-  assert.ok(renderStart >= 0 && renderEnd > renderStart, "could not isolate topic chip renderer");
-  const topicRender = lrnSource.slice(renderStart, renderEnd);
-  const handlerStart = topicRender.indexOf('btn.addEventListener("click"');
-  const handlerEnd = topicRender.indexOf("\n      return btn;", handlerStart);
-  assert.ok(handlerStart >= 0 && handlerEnd > handlerStart, "could not isolate topic click handler");
-  assert.match(topicRender, /setAttribute\("data-topic", topic\.id \|\| ""\)/);
-  assert.doesNotMatch(topicRender.slice(handlerStart, handlerEnd), /renderTopicChips\(\)/);
-  assert.match(lrnSource, /function syncTopicChipState\(\)[\s\S]*?querySelectorAll\("\[data-topic\]"\)/);
-  assert.match(lrnSource, /function focusAllTopicChip\(\)/);
-  assert.match(lrnSource, /topicClearBtn\.addEventListener\("click", function \(\) \{\s*clearTopic\(true\);/);
-  assert.match(lrnSource, /clearTopicButton\.addEventListener\("click", function \(\) \{\s*clearTopic\(true\);/);
+test("reset clears search and restores the canonical filter state", () => {
+  const resetHandler = lrnSource.match(/els\.resetBtn\.addEventListener\("click", function \(\) \{[\s\S]*?\n    \}\);/)?.[0] || "";
+  assert.match(resetHandler, /state\.profileId = "tc"/);
+  assert.match(resetHandler, /state\.externalLevel = 1/);
+  assert.match(resetHandler, /state\.filter = "recommended"/);
+  assert.match(resetHandler, /els\.searchInput\.value = ""/);
+  assert.match(resetHandler, /syncSearchUi\(\)/);
+  assert.match(resetHandler, /announce\(i18n\("lrn_announce_reset"\)\)/);
 });
 
 test("parseQuery preserves quoted phrases and negative clauses", () => {

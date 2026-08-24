@@ -360,7 +360,7 @@ function discoverArtifacts() {
     const phaseId = parseInt(phaseMatch[1], 10);
     const phaseDir = path.join(phasesDir, phaseDirName);
     for (const lessonDirName of fs.readdirSync(phaseDir).sort()) {
-      const lessonMatch = lessonDirName.match(/^([0-9]{2})-([a-z0-9-]+)$/);
+      const lessonMatch = lessonDirName.match(/^([0-9]{2,3})-([a-z0-9-]+)$/);
       if (!lessonMatch) continue;
       const lessonId = parseInt(lessonMatch[1], 10);
       const lessonRel = `phases/${phaseDirName}/${lessonDirName}`;

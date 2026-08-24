@@ -22,9 +22,11 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parent.parent
 PHASES_DIR = ROOT / "phases"
 
-LESSON_DIR_RE = re.compile(r"^[0-9]{2}-[a-z0-9][a-z0-9-]*[a-z0-9]$")
+LESSON_DIR_RE = re.compile(r"^[0-9]{2,3}-[a-z0-9][a-z0-9-]*[a-z0-9]$")
 PHASE_DIR_RE = re.compile(r"^[0-9]{2}-[a-z0-9][a-z0-9-]*[a-z0-9]$")
 MD_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s#]+)(?:#[^)]*)?\)")
+FENCED_CODE_RE = re.compile(r"(^|\n)(?:```|~~~)[^\n]*\n.*?\n(?:```|~~~)(?=\n|$)", re.DOTALL)
+INLINE_CODE_RE = re.compile(r"(?<!`)`[^`\n]*`(?!`)")
 H1_RE = re.compile(r"^#\s+\S", re.MULTILINE)
 
 CANONICAL_QUIZ_KEYS = {"stage", "question", "options", "correct", "explanation"}
@@ -88,7 +90,7 @@ def check_lesson_dir_pattern(audit: Audit, lesson: Path) -> bool:
             "L001",
             lesson,
             None,
-            f"lesson dir name does not match NN-slug pattern: {lesson.name!r}",
+            f"lesson dir name does not match NN/NNN-slug pattern: {lesson.name!r}",
         )
         return False
     return True
@@ -193,10 +195,19 @@ def check_quiz(audit: Audit, lesson: Path) -> None:
             )
 
 
+def mask_markdown_code(text: str) -> str:
+    """Hide fenced and inline code while preserving prose link positions."""
+
+    def mask(match: re.Match[str]) -> str:
+        return "".join("\n" if char == "\n" else " " for char in match.group(0))
+
+    return INLINE_CODE_RE.sub(mask, FENCED_CODE_RE.sub(mask, text))
+
+
 def check_internal_links(audit: Audit, lesson: Path, text: str) -> None:
     doc = lesson / "docs" / "en.md"
     seen: set[str] = set()
-    for match in MD_LINK_RE.finditer(text):
+    for match in MD_LINK_RE.finditer(mask_markdown_code(text)):
         href = match.group(1).strip()
         if href in seen:
             continue
