@@ -75,6 +75,8 @@
     academyPathList: document.getElementById("academyPathList"),
     academyPathCount: document.getElementById("academyPathCount"),
     academyAllToggle: document.getElementById("academyAllToggle"),
+    myLearningPath: document.getElementById("myLearningPath"),
+    myLearningPathContent: document.getElementById("myLearningPathContent"),
     srStatus: document.getElementById("srStatus")
   };
 
@@ -186,7 +188,7 @@
       els.academyAllToggle.addEventListener("click", function () {
         state.academyAll = !state.academyAll;
         saveState();
-        renderAcademyPaths(compute());
+        render();
       });
     }
     var searchForm = document.getElementById("searchForm");
@@ -236,9 +238,11 @@
 
   function render() {
     var computed = compute();
+    var academyContext = computeAcademyContext(computed);
     syncSelects();
     renderFilters();
-    renderAcademyPaths(computed);
+    renderLearningPath(academyContext);
+    renderAcademyPaths(academyContext);
     renderCourses(computed);
     refreshIcons();
   }
@@ -292,9 +296,7 @@
     }));
   }
 
-  function renderAcademyPaths(computed) {
-    if (!els.academyPathList) return;
-
+  function computeAcademyContext(computed) {
     var activeLevel = computed && computed.level && computed.level.focusLevels[0] || "Acquire";
     var profileId = computed && computed.profile && computed.profile.id || state.profileId;
     var relevantTrackCodes = Object.keys(trackByCode).filter(function (code) {
@@ -302,14 +304,209 @@
       return (track.profileIds || []).indexOf(profileId) !== -1;
     });
     var allPaths = data.academyPaths || [];
-    var visiblePaths = allPaths.filter(function (path) {
-      if (state.academyAll) return true;
+    var recommendedPaths = allPaths.filter(function (path) {
       var roleMatch = (path.trackCodes || []).some(function (code) {
         return relevantTrackCodes.indexOf(code) !== -1;
       });
       var levelMatch = (path.stages || []).some(function (stage) { return stage.label === activeLevel; });
       return roleMatch && levelMatch;
     });
+    var visiblePaths = state.academyAll ? allPaths : recommendedPaths;
+    var saved = progressApi && progressApi.getLearningPath ? progressApi.getLearningPath() : null;
+    var activePath = saved && allPaths.find(function (path) {
+      return path.academyCourse === saved.academyCourse;
+    });
+
+    if (!activePath && recommendedPaths.length) {
+      activePath = recommendedPaths[0];
+      saveAcademyPath(activePath, profileId, activeLevel, "recommendation");
+    }
+
+    return {
+      activeLevel: activeLevel,
+      profileId: profileId,
+      recommendedPaths: recommendedPaths,
+      visiblePaths: visiblePaths,
+      activePath: activePath
+    };
+  }
+
+  function saveAcademyPath(path, profileId, activeLevel, source) {
+    if (!path || !progressApi || !progressApi.saveLearningPath) return;
+    progressApi.saveLearningPath({
+      academyCourse: path.academyCourse,
+      profileId: profileId,
+      targetLevel: activeLevel,
+      source: source || "choice"
+    });
+  }
+
+  function renderLearningPath(context) {
+    if (!els.myLearningPathContent) return;
+    if (!context.activePath) {
+      if (els.myLearningPath) els.myLearningPath.hidden = true;
+      return;
+    }
+    if (els.myLearningPath) els.myLearningPath.hidden = false;
+
+    var path = context.activePath;
+    var stats = academyPathProgress(path);
+    syncUpskillingJourney(stats);
+    var card = document.createElement("article");
+    card.className = "my-learning-path__card";
+
+    var overview = document.createElement("div");
+    overview.className = "my-learning-path__overview";
+    var identity = document.createElement("div");
+    identity.className = "my-learning-path__identity";
+    var icon = document.createElement("span");
+    icon.className = "my-learning-path__icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.appendChild(lucideIcon(academyPathIcon(path)));
+    var copy = document.createElement("div");
+    var code = document.createElement("p");
+    code.className = "my-learning-path__code";
+    code.textContent = path.academyCourse;
+    var title = document.createElement("h3");
+    title.textContent = path.title;
+    var summary = document.createElement("p");
+    summary.className = "my-learning-path__summary";
+    summary.textContent = path.summary;
+    copy.append(code, title, summary);
+    identity.append(icon, copy);
+
+    var progressCopy = document.createElement("div");
+    progressCopy.className = "my-learning-path__progress-copy";
+    var progressLabel = document.createElement("span");
+    progressLabel.textContent = i18n("my_path_progress", "Overall path progress");
+    var progressValue = document.createElement("strong");
+    progressValue.textContent = stats.percent + "%";
+    progressCopy.append(progressLabel, progressValue);
+    overview.append(identity, progressCopy, progressMeter(stats.percent, i18n("my_path_progress", "Overall path progress")));
+
+    var route = document.createElement("ol");
+    route.className = "my-learning-path__route";
+    route.setAttribute("aria-label", i18n("my_path_route_label", "Learning path stages"));
+    stats.stages.forEach(function (stage) {
+      var item = document.createElement("li");
+      item.dataset.state = stage.state;
+      if (stage.state === "current") item.setAttribute("aria-current", "step");
+      var marker = document.createElement("span");
+      marker.className = "my-learning-path__marker";
+      marker.setAttribute("aria-hidden", "true");
+      marker.appendChild(lucideIcon(stage.state === "complete" ? "check" : stage.state === "current" ? "play" : "circle"));
+      var stageCopy = document.createElement("span");
+      stageCopy.className = "my-learning-path__stage-copy";
+      var stageName = document.createElement("strong");
+      stageName.textContent = i18n("lrn_depth_" + stage.label.toLowerCase(), stage.label);
+      var stageMeta = document.createElement("small");
+      stageMeta.textContent = i18n("my_path_stage_meta", "{percent}% · {completed}/{total} courses")
+        .replace("{percent}", String(stage.percent))
+        .replace("{completed}", String(stage.completedCourses))
+        .replace("{total}", String(stage.courseCount));
+      stageCopy.append(stageName, stageMeta);
+      item.append(marker, stageCopy);
+      route.appendChild(item);
+    });
+    overview.appendChild(route);
+
+    var next = document.createElement("aside");
+    next.className = "my-learning-path__next";
+    var nextIcon = document.createElement("span");
+    nextIcon.className = "my-learning-path__next-icon";
+    nextIcon.setAttribute("aria-hidden", "true");
+    nextIcon.appendChild(lucideIcon(stats.nextCourse ? "arrow-right" : "check-circle"));
+    var nextLabel = document.createElement("p");
+    nextLabel.className = "my-learning-path__next-label";
+    nextLabel.textContent = stats.nextCourse
+      ? i18n("my_path_next_label", "Your next step")
+      : i18n("my_path_complete_label", "Path complete");
+    var nextTitle = document.createElement("h3");
+    nextTitle.textContent = stats.nextCourse
+      ? stats.nextCourse.title
+      : i18n("my_path_complete_title", "You completed this learning path");
+    var nextDetail = document.createElement("p");
+    nextDetail.textContent = stats.nextCourse
+      ? i18n("my_path_next_detail", "Continue with {stage}. Your progress is saved automatically.")
+          .replace("{stage}", i18n("lrn_depth_" + stats.nextStage.toLowerCase(), stats.nextStage))
+      : i18n("my_path_complete_detail", "Review your capability progress and choose what to deepen next.");
+    var action = document.createElement("a");
+    action.className = "primary-cta my-learning-path__cta";
+    action.href = stats.nextCourse ? courseHref(stats.nextCourse.id) : "skills.html";
+    action.append(
+      document.createTextNode(stats.nextCourse
+        ? i18n("my_path_open_next", "Open next course")
+        : i18n("my_path_view_capabilities", "View capability progress")),
+      lucideIcon("arrow-right")
+    );
+    var change = document.createElement("a");
+    change.className = "my-learning-path__change";
+    change.href = "#academyPathsTitle";
+    change.textContent = i18n("my_path_choose_another", "Choose another path");
+    next.append(nextIcon, nextLabel, nextTitle, nextDetail, action, change);
+
+    card.append(overview, next);
+    replaceChildren(els.myLearningPathContent, [card]);
+  }
+
+  function syncUpskillingJourney(stats) {
+    var currentStep = stats.percent >= 100 ? 5 : 3;
+    document.querySelectorAll(".upskilling-journey__steps li[data-step]").forEach(function (item) {
+      var step = Number(item.dataset.step);
+      var itemState = step < currentStep ? "complete" : step === currentStep ? "current" : "upcoming";
+      if (step === 4) itemState = "optional";
+      item.dataset.state = itemState;
+      if (itemState === "current") item.setAttribute("aria-current", "step");
+      else item.removeAttribute("aria-current");
+    });
+  }
+
+  function academyPathProgress(path) {
+    var firstOpenStage = -1;
+    var nextCourse = null;
+    var nextStage = "Acquire";
+    var stages = (path.stages || []).map(function (stage, index) {
+      var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
+      var progress = courses.map(courseProgress);
+      var completedCourses = progress.filter(function (entry) { return entry.percent === 100; }).length;
+      var percent = progress.length
+        ? Math.round(progress.reduce(function (sum, entry) { return sum + entry.percent; }, 0) / progress.length)
+        : 0;
+      if (firstOpenStage === -1 && percent < 100) firstOpenStage = index;
+      if (!nextCourse) {
+        var openIndex = progress.findIndex(function (entry) { return entry.percent < 100; });
+        if (openIndex !== -1) {
+          nextCourse = courses[openIndex];
+          nextStage = stage.label;
+        }
+      }
+      return {
+        label: stage.label,
+        percent: percent,
+        completedCourses: completedCourses,
+        courseCount: courses.length,
+        state: "upcoming"
+      };
+    });
+    stages.forEach(function (stage, index) {
+      stage.state = stage.percent === 100 ? "complete" : index === firstOpenStage ? "current" : "upcoming";
+    });
+    var courseIds = uniqueValues((path.stages || []).reduce(function (all, stage) {
+      return all.concat(stage.courses || []);
+    }, []));
+    var allCourses = courseIds.map(function (id) { return courseById[id]; }).filter(Boolean);
+    var allProgress = allCourses.map(courseProgress);
+    var percent = allProgress.length
+      ? Math.round(allProgress.reduce(function (sum, entry) { return sum + entry.percent; }, 0) / allProgress.length)
+      : 0;
+    return { stages: stages, nextCourse: nextCourse, nextStage: nextStage, percent: percent };
+  }
+
+  function renderAcademyPaths(context) {
+    if (!els.academyPathList) return;
+
+    var activeLevel = context.activeLevel;
+    var visiblePaths = context.visiblePaths;
 
     if (els.academyPathCount) {
       els.academyPathCount.textContent = i18n("academy_paths_count", "{count} matching trainings")
@@ -326,8 +523,13 @@
       var link = document.createElement("a");
       link.className = "academy-card";
       link.dataset.pathId = path.id;
+      var isActive = context.activePath && context.activePath.academyCourse === path.academyCourse;
+      link.dataset.selected = String(Boolean(isActive));
       link.href = academyPathHref(path.academyCourse);
-      link.setAttribute("aria-label", i18n("academy_path_open", "Open {title}").replace("{title}", path.title));
+      link.setAttribute("aria-label", (isActive ? i18n("my_path_selected_prefix", "Your path: ") : "") + i18n("academy_path_open", "Open {title}").replace("{title}", path.title));
+      link.addEventListener("click", function () {
+        saveAcademyPath(path, context.profileId, activeLevel, "choice");
+      });
 
       var icon = document.createElement("span");
       icon.className = "academy-card__icon";
@@ -336,7 +538,7 @@
 
       var code = document.createElement("span");
       code.className = "academy-card__code";
-      code.textContent = path.academyCourse;
+      code.textContent = path.academyCourse + (isActive ? " · " + i18n("my_path_short", "Your path") : "");
 
       var identity = document.createElement("span");
       identity.className = "academy-card__identity";
@@ -821,6 +1023,15 @@
     parent.textContent = "";
     children.forEach(function (child) {
       parent.appendChild(child);
+    });
+  }
+
+  function uniqueValues(values) {
+    var seen = {};
+    return (values || []).filter(function (value) {
+      if (seen[value]) return false;
+      seen[value] = true;
+      return true;
     });
   }
 

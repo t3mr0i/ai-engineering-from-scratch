@@ -31,7 +31,7 @@
   <!-- Phosphor Light icons (Lufthansa DS substitute for official LHG line-icons).
        CSS webfont path — robust against CDN path changes, no JS dependency. -->
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
-  <link rel="stylesheet" href="lrn/lrn.css?v=20260824c">
+  <link rel="stylesheet" href="lrn/lrn.css?v=20260824e">
   <link rel="stylesheet" href="badges.css?v=20260713a">
 </head>
 <body>
@@ -59,7 +59,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260824c"></script>
+  <script src="i18n.js?v=20260824e"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -144,19 +144,33 @@
         </form>
       </div>
 
+      <section class="my-learning-path" id="myLearningPath" aria-labelledby="myLearningPathTitle">
+        <div class="my-learning-path__heading">
+          <div>
+            <h2 id="myLearningPathTitle" data-i18n="my_path_title">Your learning path</h2>
+            <p data-i18n="my_path_intro">Your selected path is saved in this browser and always points you to the next useful step.</p>
+          </div>
+          <span class="my-learning-path__saved" id="myLearningPathSaved">
+            <i class="ph-light ph-device-mobile" aria-hidden="true"></i>
+            <span data-i18n="my_path_saved_locally">Saved in this browser</span>
+          </span>
+        </div>
+        <div id="myLearningPathContent"></div>
+      </section>
+
       <section class="upskilling-journey" aria-labelledby="upskillingJourneyTitle">
         <div class="upskilling-journey__heading">
           <p class="academy-paths__overline" data-i18n="upskilling_overline">Your development path</p>
           <h2 id="upskillingJourneyTitle" data-i18n="upskilling_title">AI Upskilling, step by step</h2>
         </div>
         <ol class="upskilling-journey__steps">
-          <li>
+          <li data-step="1">
             <a href="assessment.html"><span>01</span><strong data-i18n="upskilling_step_assess">Complete self-assessment</strong></a>
           </li>
-          <li aria-current="step"><span>02</span><strong data-i18n="upskilling_step_recommendations">Receive recommended trainings</strong></li>
-          <li><span>03</span><strong data-i18n="upskilling_step_online">Complete online training</strong></li>
-          <li><span>04</span><strong data-i18n="upskilling_step_blended">Join an optional blended session</strong></li>
-          <li>
+          <li data-step="2"><span>02</span><strong data-i18n="upskilling_step_recommendations">Receive recommended trainings</strong></li>
+          <li data-step="3"><span>03</span><strong data-i18n="upskilling_step_online">Complete online training</strong></li>
+          <li data-step="4"><span>04</span><strong data-i18n="upskilling_step_blended">Join an optional blended session</strong></li>
+          <li data-step="5">
             <a href="skills.html"><span>05</span><strong data-i18n="upskilling_step_progress">Track capability progress</strong></a>
           </li>
         </ol>
@@ -192,13 +206,13 @@
 
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
-  <script src="progress.js"></script>
+  <script src="progress.js?v=20260824f"></script>
   <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js?v=20260824c"></script>
   <script src="lrn/course-formats.js?v=20260824a"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="search.js?v=20260813a"></script>
-  <script src="lrn/lrn.js?v=20260824c"></script>
+  <script src="lrn/lrn.js?v=20260824e"></script>
 
   <!-- Resume from last lesson (localStorage) -->
   <script>

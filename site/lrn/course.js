@@ -281,6 +281,7 @@
 
   function renderAcademyPath(path) {
     document.title = path.title + " · LHIND AI Learning Catalog";
+    var pathSaved = persistAcademyPath(path);
 
     var stats = academyPathStats(path);
     var nextCourse = stats.courses.find(function (item) {
@@ -317,14 +318,34 @@
       i18nFmt("academy_path_progress_label", { title: path.title }, "Progress {title}")
     ));
 
+    var saved = document.createElement("p");
+    saved.className = "course-head__saved-path";
+    saved.dataset.state = pathSaved ? "saved" : "error";
+    saved.append(
+      lucideIcon(pathSaved ? "device-mobile" : "warning-circle"),
+      document.createTextNode(pathSaved
+        ? i18n("my_path_saved_locally", "Saved in this browser")
+        : i18n("my_path_save_error", "This browser could not save your path"))
+    );
+
+    var nextSummary = document.createElement("div");
+    nextSummary.className = "course-head__next";
+    var nextLabel = document.createElement("span");
+    nextLabel.textContent = nextCourse
+      ? i18n("my_path_next_label", "Your next step")
+      : i18n("my_path_complete_label", "Path complete");
+    var nextTitle = document.createElement("strong");
+    nextTitle.textContent = nextCourse
+      ? nextCourse.title
+      : i18n("my_path_complete_title", "You completed this learning path");
+    nextSummary.append(nextLabel, nextTitle);
+
     var action = document.createElement("a");
     action.className = "primary-cta";
     if (nextCourse) {
       action.href = courseDetailHref(nextCourse.id);
       var actionLabel = document.createElement("span");
-      actionLabel.textContent = stats.visitedLessons > 0
-        ? i18n("academy_path_resume", "Resume path")
-        : i18n("academy_path_open_first_course", "Open first course");
+      actionLabel.textContent = i18n("my_path_open_next", "Open next course");
       action.append(actionLabel, lucideIcon("arrow-right"));
     } else {
       action.href = "#";
@@ -333,7 +354,7 @@
       action.append(lucideIcon("check-circle"), document.createTextNode(i18n("academy_path_all_complete", "Path complete")));
     }
 
-    head.append(code, title, summary, progress, action);
+    head.append(code, title, summary, saved, progress, nextSummary, action);
 
     var includes = document.createElement("aside");
     includes.className = "course-includes";
@@ -395,15 +416,31 @@
     journeyTitle.id = "courseOutcomesTitle";
     journeyTitle.className = "course-head__outcomes-title";
     journeyTitle.textContent = i18n("academy_path_journey_title", "Your journey");
-    var journeyList = document.createElement("ul");
-    journeyList.className = "course-head__outcomes-list";
-    (path.stages || []).forEach(function (stage) {
+    var journeyList = document.createElement("ol");
+    journeyList.className = "academy-journey";
+    journeyList.setAttribute("aria-label", i18n("my_path_route_label", "Learning path stages"));
+    academyStageStats(path).forEach(function (stage) {
       var item = document.createElement("li");
-      item.className = "course-head__outcomes-item";
-      item.append(
-        lucideIcon("check-circle"),
-        document.createTextNode(localizedStage(stage.label) + " — " + stage.focus)
+      item.dataset.state = stage.state;
+      if (stage.state === "current") item.setAttribute("aria-current", "step");
+      var marker = document.createElement("span");
+      marker.className = "academy-journey__marker";
+      marker.setAttribute("aria-hidden", "true");
+      marker.appendChild(lucideIcon(stage.state === "complete" ? "check" : stage.state === "current" ? "play" : "circle"));
+      var stageCopy = document.createElement("span");
+      stageCopy.className = "academy-journey__copy";
+      var stageTitle = document.createElement("strong");
+      stageTitle.textContent = localizedStage(stage.label);
+      var stageFocus = document.createElement("span");
+      stageFocus.textContent = stage.focus;
+      var stageMeta = document.createElement("small");
+      stageMeta.textContent = i18nFmt(
+        "my_path_stage_meta",
+        { percent: stage.percent, completed: stage.completedCourses, total: stage.courseCount },
+        "{percent}% · {completed}/{total} courses"
       );
+      stageCopy.append(stageTitle, stageFocus, stageMeta);
+      item.append(marker, stageCopy);
       journeyList.appendChild(item);
     });
     journey.append(journeyTitle, journeyList);
@@ -420,6 +457,54 @@
 
     replaceChildren(root, children);
     refreshIcons();
+  }
+
+  function persistAcademyPath(path) {
+    if (!progressApi || !progressApi.saveLearningPath || !progressApi.getLearningPath || !path) return false;
+    var profileId = "";
+    var targetLevel = "Acquire";
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORE));
+      if (saved && saved.profileId) profileId = saved.profileId;
+      if (saved && saved.externalLevel) {
+        targetLevel = ({ 1: "Acquire", 2: "Deepen", 3: "Create" })[Number(saved.externalLevel)] || "Acquire";
+      }
+    } catch (error) {
+      profileId = "";
+    }
+    progressApi.saveLearningPath({
+      academyCourse: path.academyCourse,
+      profileId: profileId,
+      targetLevel: targetLevel,
+      source: "deep-link"
+    });
+    var confirmed = progressApi.getLearningPath();
+    return Boolean(confirmed && confirmed.academyCourse === path.academyCourse);
+  }
+
+  function academyStageStats(path) {
+    var firstOpen = -1;
+    var stages = (path.stages || []).map(function (stage, index) {
+      var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
+      var courseStats = courses.map(courseProgress);
+      var completedCourses = courseStats.filter(function (entry) { return entry.percent === 100; }).length;
+      var percent = courseStats.length
+        ? Math.round(courseStats.reduce(function (sum, entry) { return sum + entry.percent; }, 0) / courseStats.length)
+        : 0;
+      if (firstOpen === -1 && percent < 100) firstOpen = index;
+      return {
+        label: stage.label,
+        focus: stage.focus,
+        percent: percent,
+        completedCourses: completedCourses,
+        courseCount: courses.length,
+        state: "upcoming"
+      };
+    });
+    stages.forEach(function (stage, index) {
+      stage.state = stage.percent === 100 ? "complete" : index === firstOpen ? "current" : "upcoming";
+    });
+    return stages;
   }
 
   function academyStageBlock(stage, index) {

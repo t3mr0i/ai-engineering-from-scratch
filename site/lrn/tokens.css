@@ -285,7 +285,7 @@
   --rule-strong:    2px;
 
   --ease-in:        cubic-bezier(0.7, 0, 0.84, 0);
-  --ease-spring:    cubic-bezier(0.34, 1.4, 0.5, 1);
+  --ease-spring:    cubic-bezier(0.16, 1, 0.3, 1);
   --dur-micro:      140ms;
   --dur-short:      240ms;
   --dur-long:       420ms;
@@ -538,7 +538,7 @@
   border-radius: 6px;
   background: var(--action-primary);
   color: var(--action-primary-ink);
-  font-family: var(--font-mono);
+  font-family: var(--font-head);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0;

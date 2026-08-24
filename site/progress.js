@@ -14,6 +14,14 @@
  *         visitedAt: number
  *       }
  *     },
+ *     learningPath: {
+ *       academyCourse: string,
+ *       profileId: string,
+ *       targetLevel: "Acquire" | "Deepen" | "Create",
+ *       source: "recommendation" | "choice" | "deep-link",
+ *       selectedAt: number,
+ *       updatedAt: number
+ *     } | null,
  *     updatedAt: number
  *   }
  *
@@ -24,10 +32,11 @@
  */
 (function () {
   var STORAGE_KEY = 'aifs:progress:v1';
+  var PATH_STORAGE_KEY = 'aifs:learning-path:v1';
   var listeners = [];
 
   function emptyState() {
-    return { lessons: {}, snippets: [], streak: emptyStreak(), updatedAt: 0 };
+    return { lessons: {}, snippets: [], streak: emptyStreak(), learningPath: null, updatedAt: 0 };
   }
 
   // ── Streak tracking ───────────────────────────────────────────────────
@@ -117,6 +126,9 @@
       // migrate: ensure streak section exists; if days[] present but no
       // counters (older state), rebuild them so streaks work retroactively.
       ensureStreak(parsed);
+      if (!parsed.learningPath || typeof parsed.learningPath !== 'object' || !parsed.learningPath.academyCourse) {
+        parsed.learningPath = null;
+      }
       if (parsed.streak.days && parsed.streak.days.length && (!parsed.streak.best)) {
         recomputeStreakFromDays(parsed.streak);
       }
@@ -216,6 +228,75 @@
       state.lessons[path].completedAt = null;
       write(state);
     }
+  }
+
+  // One active Academy path follows the learner across catalog, path detail,
+  // and course pages. Canonical path content stays in LrnData; localStorage
+  // only owns the learner's choice and the context in which it was made.
+  function saveLearningPath(selection) {
+    if (!selection || !selection.academyCourse) return null;
+    var state = read();
+    var current = readLearningPathRecord() || state.learningPath;
+    var academyCourse = String(selection.academyCourse);
+    var profileId = String(selection.profileId || '');
+    var targetLevel = ['Acquire', 'Deepen', 'Create'].indexOf(selection.targetLevel) !== -1
+      ? selection.targetLevel
+      : 'Acquire';
+    var source = ['recommendation', 'choice', 'deep-link'].indexOf(selection.source) !== -1
+      ? selection.source
+      : 'choice';
+
+    if (current &&
+        current.academyCourse === academyCourse &&
+        current.profileId === profileId &&
+        current.targetLevel === targetLevel &&
+        current.source === source) {
+      return current;
+    }
+
+    var now = Date.now();
+    state.learningPath = {
+      academyCourse: academyCourse,
+      profileId: profileId,
+      targetLevel: targetLevel,
+      source: source,
+      selectedAt: current && current.academyCourse === academyCourse && current.selectedAt
+        ? current.selectedAt
+        : now,
+      updatedAt: now
+    };
+    try {
+      localStorage.setItem(PATH_STORAGE_KEY, JSON.stringify(state.learningPath));
+    } catch (e) {
+      // The progress-state mirror below remains the fallback.
+    }
+    touchActivity(state);
+    write(state);
+    return state.learningPath;
+  }
+
+  function getLearningPath() {
+    return readLearningPathRecord() || read().learningPath;
+  }
+
+  function readLearningPathRecord() {
+    try {
+      var raw = localStorage.getItem(PATH_STORAGE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' && parsed.academyCourse ? parsed : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearLearningPath() {
+    var state = read();
+    var hadPath = Boolean(state.learningPath || readLearningPathRecord());
+    if (!hadPath) return;
+    state.learningPath = null;
+    try { localStorage.removeItem(PATH_STORAGE_KEY); } catch (e) {}
+    write(state);
   }
 
   // "My Merkzettel": the learner explicitly saves a lesson's Key Terms table
@@ -343,6 +424,7 @@
 
   function reset() {
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    try { localStorage.removeItem(PATH_STORAGE_KEY); } catch (e) {}
     for (var i = 0; i < listeners.length; i++) {
       try { listeners[i](emptyState()); } catch (_) {}
     }
@@ -355,7 +437,7 @@
   // Cross-tab sync: if user clears or updates progress in another tab,
   // refresh listeners here too.
   window.addEventListener('storage', function (e) {
-    if (e.key !== STORAGE_KEY) return;
+    if (e.key !== STORAGE_KEY && e.key !== PATH_STORAGE_KEY) return;
     var state = read();
     for (var i = 0; i < listeners.length; i++) {
       try { listeners[i](state); } catch (_) {}
@@ -390,6 +472,9 @@
     isLessonComplete: isLessonComplete,
     recordReadProgress: recordReadProgress,
     getReadFraction: getReadFraction,
+    saveLearningPath: saveLearningPath,
+    getLearningPath: getLearningPath,
+    clearLearningPath: clearLearningPath,
     countCompletedFromUrls: countCompletedFromUrls,
     extractPath: extractPath,
     totalCompleted: totalCompleted,

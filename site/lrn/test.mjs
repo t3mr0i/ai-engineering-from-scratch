@@ -301,10 +301,16 @@ test("the learner catalog exposes the Academy paths with current browser data", 
   const courseDetail = readFileSync("site/lrn/course.js", "utf8");
   assert.match(html, /id="academyPathList"/,
     "catalog needs a learner-visible Academy path container");
+  assert.match(html, /id="myLearningPathContent"/,
+    "catalog needs a persistent learner-path summary and next-step surface");
   assert.match(html, /lrn\/data\.js\?v=20260824c/,
     "catalog must cache-bust the browser data that contains Academy paths");
-  assert.match(lrn, /function renderAcademyPaths\(computed\)/,
+  assert.match(lrn, /function renderAcademyPaths\(context\)/,
     "catalog needs to render Academy paths from LrnData");
+  assert.match(lrn, /progressApi\.saveLearningPath/,
+    "catalog must save the learner's selected Academy path locally");
+  assert.match(lrn, /function academyPathProgress\(path\)/,
+    "catalog must derive the active stage and next course from real progress");
   assert.match(lrn, /link\.href = academyPathHref\(path\.academyCourse\)/,
     "Academy cards must open a dedicated intermediate page instead of expanding inline");
   assert.doesNotMatch(lrn, /createElement\("details"\)/,
@@ -313,6 +319,8 @@ test("the learner catalog exposes the Academy paths with current browser data", 
     "course detail must resolve Academy deep links");
   assert.match(courseDetail, /function renderAcademyPath\(path\)/,
     "course detail must render the Academy intermediate page");
+  assert.match(courseDetail, /function persistAcademyPath\(path\)/,
+    "Academy deep links must restore the selected path in local progress storage");
   assert.match(courseDetail, /courseDetailHref\(courseItem\.id\)/,
     "Academy stages must link onward into supporting LRN course details");
 });
