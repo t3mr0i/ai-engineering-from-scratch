@@ -170,7 +170,7 @@ window.SITE_I18N = {
   topic_leadership: { en: "Leadership", de: "Leadership" },
   profile_label: { en: "Profile", de: "Profil" },
   level_label: { en: "Level", de: "Level" },
-  selector_group_label: { en: "Choose profile and level", de: "Profil und Level auswählen" },
+  selector_group_label: { en: "Choose profile and level, then search courses", de: "Profil und Level auswählen und Kurse durchsuchen" },
   profile_select_label: { en: "Choose profile", de: "Profil auswählen" },
   level_select_label: { en: "Choose level", de: "Level auswählen" },
   course_filters_label: { en: "Course filters", de: "Kursfilter" },

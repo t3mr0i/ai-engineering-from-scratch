@@ -1073,9 +1073,9 @@ i[class^="ph "] {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.85fr) minmax(16rem, 1.4fr);
   gap: var(--space-4);
-  align-items: end;
+  align-items: start;
   margin-block-start: calc(-1 * clamp(3.5rem, 7vw, 5rem));
   padding: var(--space-5);
   border: 1px solid var(--border-subtle);
@@ -1177,6 +1177,23 @@ i[class^="ph "] {
   display: grid;
   gap: var(--space-2);
   width: min(100%, 52rem);
+}
+
+.course-search--selector {
+  width: 100%;
+  min-width: 0;
+}
+
+.selector-card .course-search__control {
+  min-height: 48px;
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.selector-card .course-search input {
+  min-height: 46px;
+  border-radius: calc(var(--radius-sm) - 1px);
 }
 
 .course-search__label {
@@ -1978,6 +1995,16 @@ i[class^="ph "] {
 }
 
 /* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 52rem) {
+  .selector-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .course-search--selector {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 40rem) {
   .hero h1 {
     font-size: var(--text-xl);

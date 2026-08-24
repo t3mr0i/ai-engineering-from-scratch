@@ -117,32 +117,31 @@
           <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> <span data-i18n="level_label">Level</span></span>
           <select id="levelSelect" aria-label="Choose level" data-i18n-aria-label="level_select_label"></select>
         </label>
+        <form class="course-search course-search--selector" id="searchForm" role="search">
+          <label class="selector-field__label" for="searchInput">
+            <i class="ph-light ph-magnifying-glass" aria-hidden="true"></i>
+            <span data-i18n="lrn_search_label">Search courses</span>
+          </label>
+          <div class="course-search__control">
+            <i class="ph-light ph-magnifying-glass course-search__icon" aria-hidden="true"></i>
+            <input
+              id="searchInput"
+              name="q"
+              type="search"
+              autocomplete="off"
+              enterkeyhint="search"
+              placeholder="Try “data protection”, “test agents”, or “RAG”…"
+              data-i18n-placeholder="lrn_search_placeholder"
+              aria-describedby="searchHint"
+              aria-controls="courseGrid"
+            >
+            <button class="course-search__clear" id="searchClear" type="button" hidden aria-label="Clear search" data-i18n-aria-label="lrn_search_clear">
+              <i class="ph-light ph-x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p class="course-search__hint" id="searchHint" data-i18n="lrn_search_hint">Matches titles, topics, related terms, and common typos in German and English.</p>
+        </form>
       </div>
-
-      <form class="course-search" id="searchForm" role="search">
-        <label class="course-search__label" for="searchInput">
-          <i class="ph-light ph-magnifying-glass" aria-hidden="true"></i>
-          <span data-i18n="lrn_search_label">Search courses</span>
-        </label>
-        <div class="course-search__control">
-          <i class="ph-light ph-magnifying-glass course-search__icon" aria-hidden="true"></i>
-          <input
-            id="searchInput"
-            name="q"
-            type="search"
-            autocomplete="off"
-            enterkeyhint="search"
-            placeholder="Try “data protection”, “test agents”, or “RAG”…"
-            data-i18n-placeholder="lrn_search_placeholder"
-            aria-describedby="searchHint"
-            aria-controls="courseGrid"
-          >
-          <button class="course-search__clear" id="searchClear" type="button" hidden aria-label="Clear search" data-i18n-aria-label="lrn_search_clear">
-            <i class="ph-light ph-x" aria-hidden="true"></i>
-          </button>
-        </div>
-        <p class="course-search__hint" id="searchHint" data-i18n="lrn_search_hint">Matches titles, topics, related terms, and common typos in German and English.</p>
-      </form>
 
       <div class="catalog-bar" role="group" aria-label="Course filters" data-i18n-aria-label="course_filters_label">
         <button class="text-btn" type="button" id="resetBtn" data-i18n="reset_btn" aria-label="Reset all filters and selections" data-i18n-aria-label="reset_filters_label" title="Reset all filters and selections" data-i18n-title="reset_filters_label">Reset</button>
