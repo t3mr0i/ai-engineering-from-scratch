@@ -12,6 +12,7 @@ on:
       - "scripts/verify_capstone.py"
       - "challenges/**"
       - "scripts/ci-content-check.js"
+      - "scripts/build_lrn_manifests.js"
       - "README.md"
       - "ROADMAP.md"
       - "glossary/**"
@@ -19,6 +20,7 @@ on:
       - "site/**"
       - "site/lrn/curriculum-map.js"
       - "site/lrn/data.js"
+      - "site/lrn/manifests/**"
       - "site/i18n.js"
       - "server/server.js"
       - ".github/workflows/curriculum.yml"
@@ -33,6 +35,7 @@ on:
       - "scripts/verify_capstone.py"
       - "challenges/**"
       - "scripts/ci-content-check.js"
+      - "scripts/build_lrn_manifests.js"
       - "README.md"
       - "ROADMAP.md"
       - "glossary/**"
@@ -40,6 +43,7 @@ on:
       - "site/**"
       - "site/lrn/curriculum-map.js"
       - "site/lrn/data.js"
+      - "site/lrn/manifests/**"
       - "site/i18n.js"
       - "server/server.js"
       - ".github/workflows/curriculum.yml"
@@ -82,7 +86,9 @@ jobs:
         with:
           node-version: 20
       - name: run site tests
-        run: node --test site/*.test.mjs site/lrn/test.mjs
+        run: |
+          node scripts/build_lrn_manifests.js --check
+          node --test site/*.test.mjs site/lrn/test.mjs
 
   content-check:
     name: content invariant checks (ci-content-check.js)

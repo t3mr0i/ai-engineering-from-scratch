@@ -87,6 +87,9 @@ api/content/_data/
 # Lazyweb MCP tool cache
 .lazyweb/
 
+# Local curriculum-admin drafts. Production uses ADMIN_DATA_DIR on a PVC.
+.admin-data/
+
 # Subagent-driven-development scratch workspace (ledgers, briefs, review
 # packages) — git history is the record once a plan finishes, not this.
 .superpowers/sdd/

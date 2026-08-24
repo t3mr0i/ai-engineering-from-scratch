@@ -58,7 +58,7 @@ RUN node site/build.js && node -e " \
 
 FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest
 WORKDIR /opt/app-root/src
-COPY server/server.js server/gate-core.js server/package.json ./server/
+COPY server/*.js server/package.json ./server/
 COPY --from=build /opt/app-root/src/site ./site
 EXPOSE 8080
 CMD ["node", "server/server.js"]

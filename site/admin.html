@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <script src="/gate-guard.js"></script>
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("theme");
+        if (stored === "dark" || stored === "light") document.documentElement.dataset.theme = stored;
+      } catch (_) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f9f8f8">
+  <title>Curriculum Admin · LHIND Learning Catalog</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Cpath d='M8 10h16M8 16h10M8 22h13' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
+  <link rel="stylesheet" href="lrn/tokens.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <a class="admin-skip" href="#adminMain">Zum Hauptinhalt springen</a>
+
+  <div class="admin-boot" id="adminBoot" role="status" aria-live="polite">
+    <div class="admin-boot__mark" aria-hidden="true"></div>
+    <p>Curriculum-Verwaltung wird geladen …</p>
+  </div>
+
+  <div class="admin-app" id="adminApp" hidden>
+    <aside class="admin-sidebar" id="adminSidebar">
+      <a class="admin-brand" href="index.html" aria-label="Zum Learning Catalog">
+        <img src="assets/logo/lhind-logo-blue.png" alt="LHIND">
+        <span>Curriculum Admin</span>
+      </a>
+
+      <nav class="admin-nav" aria-label="Admin-Navigation">
+        <button class="admin-nav__item is-active" type="button" data-view="overview" aria-current="page">
+          <i class="ph-light ph-squares-four" aria-hidden="true"></i><span>Übersicht</span>
+        </button>
+        <button class="admin-nav__item" type="button" data-view="courses">
+          <i class="ph-light ph-books" aria-hidden="true"></i><span>Kurse</span>
+          <span class="admin-nav__count" id="courseNavCount">0</span>
+        </button>
+        <button class="admin-nav__item" type="button" data-view="paths">
+          <i class="ph-light ph-path" aria-hidden="true"></i><span>Lernpfade</span>
+          <span class="admin-nav__count" id="pathNavCount">0</span>
+        </button>
+        <button class="admin-nav__item" type="button" data-view="assistant">
+          <i class="ph-light ph-sparkle" aria-hidden="true"></i><span>KI-Studio</span>
+        </button>
+        <button class="admin-nav__item" type="button" data-view="review">
+          <i class="ph-light ph-check-circle" aria-hidden="true"></i><span>Review</span>
+          <span class="admin-nav__count admin-nav__count--attention" id="reviewNavCount">0</span>
+        </button>
+        <button class="admin-nav__item" type="button" data-view="history">
+          <i class="ph-light ph-clock-counter-clockwise" aria-hidden="true"></i><span>Historie</span>
+        </button>
+      </nav>
+
+      <div class="admin-sidebar__footer">
+        <div class="admin-user">
+          <span class="admin-user__avatar" id="adminAvatar" aria-hidden="true">–</span>
+          <span class="admin-user__copy">
+            <strong id="adminUsername">–</strong>
+            <small id="adminRoles">–</small>
+          </span>
+        </div>
+        <a class="admin-back-link" href="index.html">
+          <i class="ph-light ph-arrow-left" aria-hidden="true"></i> Zum Katalog
+        </a>
+      </div>
+    </aside>
+
+    <div class="admin-workspace">
+      <header class="admin-toolbar">
+        <button class="admin-icon-button admin-menu-button" id="adminMenuButton" type="button" aria-label="Navigation öffnen" aria-expanded="false" aria-controls="adminSidebar">
+          <i class="ph-light ph-list" aria-hidden="true"></i>
+        </button>
+        <div class="change-context">
+          <label for="changesetSelect">Änderungssatz</label>
+          <select id="changesetSelect" aria-describedby="saveStatus">
+            <option value="">Veröffentlichter Stand</option>
+          </select>
+          <button class="admin-icon-button" id="newChangesetButton" type="button" aria-label="Neuen Änderungssatz erstellen" title="Neuen Änderungssatz erstellen">
+            <i class="ph-light ph-plus" aria-hidden="true"></i>
+          </button>
+        </div>
+        <span class="save-status" id="saveStatus" role="status" aria-live="polite">Nur lesen</span>
+        <div class="admin-toolbar__actions">
+          <button class="admin-button admin-button--secondary" id="validateButton" type="button">
+            <i class="ph-light ph-shield-check" aria-hidden="true"></i> Prüfen
+          </button>
+          <button class="admin-button admin-button--primary" id="saveButton" type="button" disabled>
+            <i class="ph-light ph-floppy-disk" aria-hidden="true"></i> Entwurf speichern
+          </button>
+        </div>
+      </header>
+
+      <main class="admin-main" id="adminMain" tabindex="-1">
+        <section class="admin-view" id="view-overview" data-view-panel="overview" aria-labelledby="overviewTitle"></section>
+        <section class="admin-view" id="view-courses" data-view-panel="courses" aria-labelledby="coursesTitle" hidden></section>
+        <section class="admin-view" id="view-paths" data-view-panel="paths" aria-labelledby="pathsTitle" hidden></section>
+        <section class="admin-view" id="view-assistant" data-view-panel="assistant" aria-labelledby="assistantTitle" hidden></section>
+        <section class="admin-view" id="view-review" data-view-panel="review" aria-labelledby="reviewTitle" hidden></section>
+        <section class="admin-view" id="view-history" data-view-panel="history" aria-labelledby="historyTitle" hidden></section>
+      </main>
+    </div>
+  </div>
+
+  <dialog class="admin-dialog" id="changesetDialog" aria-labelledby="changesetDialogTitle">
+    <form method="dialog" id="changesetForm">
+      <div class="admin-dialog__header">
+        <div>
+          <p class="admin-overline">Neuer Änderungssatz</p>
+          <h2 id="changesetDialogTitle">Arbeit nachvollziehbar bündeln</h2>
+        </div>
+        <button class="admin-icon-button" value="cancel" aria-label="Dialog schließen">
+          <i class="ph-light ph-x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="admin-dialog__body">
+        <label class="admin-field">
+          <span>Titel</span>
+          <input id="changesetTitle" name="title" required maxlength="120" autocomplete="off" placeholder="z. B. Agentic Engineering Path überarbeiten">
+        </label>
+        <label class="admin-field">
+          <span>Beschreibung <small>(optional)</small></span>
+          <textarea id="changesetDescription" name="description" rows="4" maxlength="1000" placeholder="Welches Curriculum-Problem löst diese Änderung?"></textarea>
+        </label>
+      </div>
+      <div class="admin-dialog__actions">
+        <button class="admin-button admin-button--secondary" value="cancel">Abbrechen</button>
+        <button class="admin-button admin-button--primary" id="createChangesetButton" value="default">Änderungssatz erstellen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="admin-toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+  <script src="admin.js"></script>
+</body>
+</html>

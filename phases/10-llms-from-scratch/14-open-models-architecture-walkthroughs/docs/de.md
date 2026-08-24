@@ -78,7 +78,76 @@ Ein erfolgreiches Laden ohne Fehlermeldung beweist noch keine semantische Kompat
 
 ## Build It / Use It
 
-Starte `python3 code/main.py`. Wähle zwei Konfigurationen und protokolliere Modellbreite, Schichten, Query-Köpfe, KV-Köpfe, Zwischenbreite und Expert-Routing. Berechne anschließend Parameter- und KV-Cache-Größenordnung. Verändere genau einen Wert, etwa die KV-Kopfzahl, und erkläre, welche Tensorformen und welcher Laufzeitspeicher sich ändern.
+Vervollständige den Rechner direkt hier. Die zweite Konfiguration übernimmt alle
+Werte der ersten und verändert **nur** die Zahl der KV-Köpfe. Ergänze die
+Kopfdimension, die Breite der Key/Value-Projektionen und die beiden Formeln für
+Parameterzahl und KV-Cache.
+
+```python fillin
+base = {
+    "name": "GQA-8",
+    "vocab_size": 128_256,
+    "hidden_size": 4_096,
+    "num_hidden_layers": 32,
+    "num_attention_heads": 32,
+    "num_key_value_heads": 8,
+    "intermediate_size": 14_336,
+    "max_position_embeddings": 32_768,
+    "experts": 1,
+    "experts_per_token": 1,
+}
+
+# Exakt eine Änderung: GQA wird zu klassischer Multi-Head Attention.
+comparison = {**base, "name": "MHA-32", "num_key_value_heads": {{blank:32}}}
+
+def estimate(config):
+    hidden = config["hidden_size"]
+    q_heads = config["num_attention_heads"]
+    kv_heads = config["num_key_value_heads"]
+    layers = config["num_hidden_layers"]
+    context = config["max_position_embeddings"]
+
+    head_dim = hidden // {{blank:q_heads}}
+    kv_width = {{blank:kv_heads * head_dim}}
+
+    # Q und Output bleiben hidden × hidden; K und V sind hidden × kv_width.
+    attention_params = 2 * hidden * hidden + 2 * hidden * kv_width
+    swiglu_params = 3 * hidden * config["intermediate_size"]
+    embedding_params = config["vocab_size"] * hidden
+    total_params = embedding_params + layers * {{blank:(attention_params + swiglu_params)}}
+
+    # Zwei Tensoren (K und V), BF16 = zwei Bytes pro Wert.
+    kv_cache_bytes = {{blank:2 * layers * context * kv_heads * head_dim * 2}}
+    return head_dim, kv_width, total_params, kv_cache_bytes
+
+results = []
+for config in (base, comparison):
+    head_dim, kv_width, params, cache = estimate(config)
+    results.append((params, cache))
+    routing = f'{config["experts"]} Experte, top-{config["experts_per_token"]} (dense)'
+    print(
+        f'{config["name"]}: Breite={config["hidden_size"]}, '
+        f'Schichten={config["num_hidden_layers"]}, '
+        f'Q-Köpfe={config["num_attention_heads"]}, '
+        f'KV-Köpfe={config["num_key_value_heads"]}, '
+        f'Zwischenbreite={config["intermediate_size"]}, Routing={routing}'
+    )
+    print(f'  K/V-Projektion: ({config["hidden_size"]}, {kv_width})')
+    print(f'  Parameter: {params / 1e9:.1f} Mrd., KV-Cache: {cache / 2**30:.1f} GiB')
+
+if results[1][1] == 4 * results[0][1] and results[1][0] > results[0][0]:
+    print("PASS")
+else:
+    print("WRONG")
+```
+
+Beim Wechsel von 8 auf 32 KV-Köpfe bleiben Modellbreite, Schichten,
+Query-Köpfe, Zwischenbreite und Expert-Routing gleich. Auch die Query- und
+Output-Projektionen behalten die Form `(4096, 4096)`. Die Key- und
+Value-Projektionen wachsen dagegen jeweils von `(4096, 1024)` auf
+`(4096, 4096)`. Der KV-Cache hat sinngemäß die Form
+`(Schichten, 2, Tokens, KV-Köpfe, Kopfdimension)` und wächst deshalb von 4 auf
+16 GiB pro Sequenz. Die grobe Parameterzahl steigt von 7,5 auf 8,3 Milliarden.
 
 ## Übungen
 

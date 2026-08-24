@@ -33,6 +33,7 @@ const {
   issueToken,
   cookieFromRequest,
 } = require('./gate-core');
+const { createAdminApi } = require('./admin-api');
 
 const PORT = process.env.PORT || 8080;
 const WEB_ROOT = path.resolve(process.env.WEB_ROOT || path.join(__dirname, '..', 'site'));
@@ -42,6 +43,7 @@ const GATE_SECRET = process.env.GATE_SECRET;
 // network layer (e.g. an internal-only OpenShift route reachable only over
 // VPN) and don't need the passcode gate on top.
 const GATE_DISABLED = process.env.GATE_DISABLED === 'true';
+const handleAdminApi = createAdminApi({ webRoot: WEB_ROOT });
 
 // Server-side proxy for the LHIND LLM gateway (Bifrost). The key lives only
 // here — notebooks call this same-origin endpoint instead of gateway.lhind.ai
@@ -233,6 +235,13 @@ function handleLlmProxy(req, res) {
 const server = http.createServer((req, res) => {
   const url = req.url || '/';
   const pathOnly = url.split('?')[0];
+
+  // Curriculum administration has its own trusted-proxy identity and role
+  // checks. The API handler always produces a response for this namespace.
+  if (pathOnly.startsWith('/api/admin/')) {
+    handleAdminApi(req, res, pathOnly);
+    return;
+  }
 
   // 1. Passcode submission (unauthenticated).
   if (pathOnly === '/api/gate') {

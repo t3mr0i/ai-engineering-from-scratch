@@ -46,43 +46,31 @@ function findFiles(globArg) {
 }
 
 // ---------------------------------------------------------------------------
-// Shared parsing: site/lrn/curriculum-map.js
-//
-// The file is plain JS assigning to `window.LrnCurriculumMap`, not JSON, so
-// it's parsed with two targeted regexes rather than eval'd:
-//   - every lesson entry is a single-line `{ path: "...", title: "..." }`
-//     (verified: 413/413 entries match this exact shape today)
-//   - every course id is a 4-space-indented `"COURSE-ID": [` header inside
-//     the `courseMaps: { ... }` block
+// Shared parsing: site/lrn/curriculum-map.js. Evaluate the browser assignment
+// in an empty VM context instead of depending on source formatting. The admin
+// generator is free to reformat the compatibility file without weakening the
+// content checks.
 // ---------------------------------------------------------------------------
 const CM_PATH = path.join(REPO, "site/lrn/curriculum-map.js");
 const cmText = readFileSync(CM_PATH, "utf8");
 
 function parseCurriculumMap(text) {
-  const entryRe = /\{ path: "([^"]+)", title: "((?:[^"\\]|\\.)*)" \}/g;
-  const lessonTitles = new Map(); // path -> title (each path has exactly one title repo-wide, verified)
-  let m;
-  while ((m = entryRe.exec(text))) {
-    lessonTitles.set(m[1], m[2].replace(/\\"/g, '"'));
-  }
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(text, sandbox, { filename: CM_PATH });
+  const map = sandbox.window.LrnCurriculumMap;
+  if (!map || !map.courseMaps) throw new Error("curriculum-map.js has no courseMaps");
 
-  const startIdx = text.indexOf("courseMaps: {");
-  const endIdx = text.indexOf("\n  },\n  omittedGroups");
-  const body = text.slice(startIdx, endIdx === -1 ? undefined : endIdx);
-  const headerRe = /^\s{4}"([A-Z0-9-]+)":\s*\[/gm;
-  const headers = [];
-  while ((m = headerRe.exec(body))) headers.push({ id: m[1], idx: m.index });
-
-  const courses = {}; // courseId -> ordered array of lesson paths (with repeats within a course allowed)
-  for (let i = 0; i < headers.length; i++) {
-    const start = headers[i].idx;
-    const end = i + 1 < headers.length ? headers[i + 1].idx : body.length;
-    const chunk = body.slice(start, end);
-    const lessons = [];
-    let mm;
-    const localRe = /\{ path: "([^"]+)", title: "((?:[^"\\]|\\.)*)" \}/g;
-    while ((mm = localRe.exec(chunk))) lessons.push(mm[1]);
-    courses[headers[i].id] = lessons;
+  const lessonTitles = new Map();
+  const courses = {};
+  for (const [courseId, units] of Object.entries(map.courseMaps)) {
+    courses[courseId] = [];
+    for (const unit of units) {
+      for (const lesson of unit.lessons || []) {
+        courses[courseId].push(lesson.path);
+        lessonTitles.set(lesson.path, lesson.title);
+      }
+    }
   }
   return { lessonTitles, courses };
 }
