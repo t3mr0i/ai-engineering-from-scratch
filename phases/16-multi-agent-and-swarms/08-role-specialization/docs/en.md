@@ -1,6 +1,6 @@
 # Role Specialization — Planner, Critic, Executor, Verifier
 
-> The most common multi-agent decomposition in 2026: one agent plans, one executes, one critiques or verifies. MetaGPT (arXiv:2308.00352) formalizes this as SOPs encoded into role prompts — Product Manager, Architect, Project Manager, Engineer, QA Engineer — following `Code = SOP(Team)`. ChatDev (arXiv:2307.07924) chains designer, programmer, reviewer, tester through a "chat chain" with "communicative dehallucination" (agents explicitly request missing details). The verifier is load-bearing: Cemri et al. (MAST, arXiv:2503.13657) show every multi-agent failure can be traced to missing or broken verification. PwC reported 7× accuracy gain (10% → 70%) from structured validation loops in CrewAI.
+> A common multi-agent decomposition assigns planning, execution, and verification to separate roles. [MetaGPT](https://arxiv.org/abs/2308.00352) encodes software SOPs into role prompts; [ChatDev](https://arxiv.org/abs/2307.07924) chains designer, programmer, reviewer, and tester through a chat chain; [MAST](https://arxiv.org/abs/2503.13657) provides an empirical taxonomy that includes verification failures. These papers motivate the verifier role without implying a universal accuracy multiplier.
 
 **Type:** Learn + Build
 **Languages:** Python (stdlib)
@@ -317,7 +317,7 @@ Implementation: the role prompt includes "when you need specific information you
 
 Cemri et al. (MAST) traced 1642 multi-agent execution failures. 21.3% were verification gaps — the system shipped an answer no one had checked. The remaining 79% often trace back to "there was a check that failed silently or was never run." Verification is the load-bearing role.
 
-PwC reported (CrewAI deployments, 2025) that adding a structured validation loop moved accuracy from 10% to 70%. 7× gain from one role.
+A separate verifier can catch errors before they propagate, but its benefit depends on task, model independence, and the verification oracle. Measure the gain against a single-agent baseline instead of assuming a fixed multiplier.
 
 ### Critic vs verifier
 

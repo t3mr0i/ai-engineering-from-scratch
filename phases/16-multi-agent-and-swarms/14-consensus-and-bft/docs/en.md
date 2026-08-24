@@ -39,7 +39,7 @@ LLM agents violate all three. Two agents running the same base model share fault
 
 ### The 2025-2026 responses
 
-**CP-WBFT** (arXiv:2511.10400) — Confidence-Probed Weighted BFT. Each voter attaches a confidence probe to its answer (a self-reported probability, or a separate calibration model's prediction). Vote weights scale with confidence. Reported +85.71% BFT improvement on complete graphs. Mitigation for: sycophantic conformity (conforming agents tend to have low confidence on their volunteered position).
+**[CP-WBFT](https://arxiv.org/abs/2511.10400)** — Confidence-Probed Weighted BFT. Each voter attaches a confidence probe to its answer; vote weights scale with confidence. The paper reports an 85.71% improvement in its complete-graph BFT evaluation. Treat confidence calibration and graph topology as part of the claim.
 
 **DecentLLMs** (arXiv:2507.14928) — Leaderless. Worker agents propose in parallel, evaluator agents score proposals, final answer is the geometric median of scored positions. Robust when `f < n/2`. Mitigation for: Byzantine lie and correlated errors (geometric median is robust to outliers and pulls toward the dense cluster, not the model-biased average).
 

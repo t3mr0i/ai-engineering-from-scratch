@@ -723,7 +723,7 @@ function check15() {
   // Explicitly labeled teaching examples are invented inputs for practicing a
   // calculation or decision. They are not evidence claims. The label is
   // required so an external-looking number cannot silently pass as fact.
-  const EXPLICIT_EXAMPLE_RE = /\b(hypothetical (?:case|scenario|example)|worked example \(hypothetical\)|illustrative (?:scenario|figures|assumptions))\b/i;
+  const EXPLICIT_EXAMPLE_RE = /(?:\bhypothetical (?:case|scenario|example)\b|\bworked example \(hypothetical\)|\billustrative (?:scenario|figures|assumptions)\b)/i;
 
   let totalPctParas = 0, attribParas = 0;
   const details = [];

@@ -110,7 +110,7 @@ The full calculation lives in `code/main.py`. The headline:
 - 58 MoE blocks: attention with MLA (~144M) + 256 experts each (30M apiece) + 1 shared expert (30M) + norm. Total ~7.95B per block, including all experts. 461B total for the 58 MoE blocks.
 - MTP module: 14B.
 
-Grand total: ~476B for core architecture + 14B MTP + distinctly the published 671B number accounts for additional structural parameters (bias tensors, expert-specific components, shared expert scaling, etc.). The number we reproduce in the calculator is within 3-5% of published — the delta comes from fine-grained accounting DeepSeek's report documents in its Section 2 appendix.
+Grand total: ~476B for core architecture + 14B MTP. The distinctly published 671B total accounts for additional structural parameters. Our calculator is within 3–5% of that figure; the remaining difference comes from fine-grained accounting described in the [DeepSeek-V3 technical report](https://arxiv.org/abs/2412.19437).
 
 Active parameters per forward:
 

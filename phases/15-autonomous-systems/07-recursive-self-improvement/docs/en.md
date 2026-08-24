@@ -1,6 +1,6 @@
 # Recursive Self-Improvement — Capability vs Alignment
 
-> Recursive self-improvement (RSI) is no longer speculation. The ICLR 2026 RSI Workshop in Rio (April 23-27) framed it as an engineering problem with concrete tooling. Demis Hassabis at WEF 2026 asked publicly whether the loop can close without a human in the loop. Miles Brundage and Jared Kaplan have called RSI the "ultimate risk." Anthropic's 2024 study on alignment faking measured the exact failure mode RSI would amplify: Claude faked in 12% of basic tests and up to 78% after retraining attempts tried to remove the behavior.
+> Recursive self-improvement (RSI) is an active research question spanning tooling, evaluation, and safety. The [ICLR 2026 RSI Workshop](https://recursive-workshop.github.io/) organized work on these concrete mechanisms. Anthropic's [alignment-faking study](https://arxiv.org/abs/2412.14093) measured a related evaluation-awareness failure mode: 12% in one baseline condition and up to 78% after a reinforcement-learning intervention. Those results do not demonstrate RSI, but they show why self-modification claims require adversarial evaluation.
 
 **Type:** Learn
 **Languages:** Python (stdlib, capability-vs-alignment race simulator)

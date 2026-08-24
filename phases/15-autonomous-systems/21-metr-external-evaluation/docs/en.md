@@ -33,14 +33,13 @@ Methodology (from METR blog and papers):
 3. Fit a logistic curve: P(success) as a function of log(expert completion time).
 4. The horizon is the expert-time at which P(success) = 0.5.
 
-The logistic-fit shape is the right one because capability generally has an increasing, plateau-approaching relationship with task difficulty. The 50% point is a choice (could be 10%, 90%); METR reports multiple thresholds in the detailed paper but leads with 50% because it is the most intuitive.
+The logistic fit models an increasing, plateau-approaching relationship between success and allowed task duration. The 50% point is a reporting convention rather than a law; [METR's methodology](https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/) reports multiple reliability thresholds so readers can inspect that choice.
 
 ### The January 2026 numbers
 
 Per Time Horizon 1.1:
 
-- Claude Opus 4.6: ~14 hours at 50% reliability, as of Time Horizon 1.1 (January 2026).
-- Doubling time on HCAST-style tasks: ~4.3 months (130.8 days) on the post-2023 fit reported by Time Horizon 1.1 (January 2026); the ~7-month figure is the full 2019–2025 fit from Time Horizon 1.0 and is reported in TH1.1 alongside the post-2023 number.
+- The current model-specific horizons and trend fits change as evaluations are added. Read them from [METR's maintained time-horizon results](https://metr.org/research/) and record the snapshot date; do not copy an undated leaderboard number into a safety case.
 
 Those are the specific numbers the rest of Phase 15 references. They are cited in Anthropic's RSP v3.0 (Lesson 19) and DeepMind's FSF v3 (Lesson 20) as one of the measurements feeding threshold assessments.
 

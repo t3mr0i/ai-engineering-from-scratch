@@ -1,6 +1,6 @@
 # Swarm Optimization for LLMs (PSO, ACO)
 
-> Bio-inspired optimization is making an LLM comeback. **LMPSO** (arXiv:2504.09247) uses PSO where each particle's velocity is a prompt and the LLM generates the next candidate; works well on structured-sequence outputs (math expressions, programs). **Model Swarms** (arXiv:2410.11163) treats each LLM expert as a PSO particle on a model-weight manifold and reports **13.3% average gain** over 12 baselines on 9 datasets with just 200 instances. **SwarmPrompt** (ICAART 2025) hybridizes PSO + Grey Wolf for prompt optimization. **AMRO-S** (arXiv:2603.12933) is ACO-inspired pheromone specialists for multi-agent LLM routing — **4.7x speedup**, interpretable routing evidence, quality-gated asynchronous update that decouples inference from learning. This lesson implements PSO on prompt parameter space and ACO on agent routing, measures why these classical algorithms fit the LLM era, and when they do not.
+> Bio-inspired optimization is returning in LLM research. [LMPSO](https://arxiv.org/abs/2504.09247) applies PSO to LLM-generated structured sequences. [Model Swarms](https://arxiv.org/abs/2410.11163) treats expert models as particles on a weight-space manifold and reports a 13.3% average gain over its evaluated baselines. [AMRO-S](https://arxiv.org/abs/2603.12933) applies ACO-inspired pheromone routing to specialist agents and reports a 4.7× speedup in its setting. This lesson implements the underlying algorithms and treats every paper result as a reproduction target, not a guaranteed production gain.
 
 **Type:** Learn + Build
 **Languages:** Python (stdlib)
@@ -44,7 +44,7 @@ It does not work well when fitness needs human review — the per-iteration cost
 
 ### Model Swarms
 
-arXiv:2410.11163 takes PSO off the output layer and into the *model* layer. Each "particle" is an expert LLM (parameters). The swarm moves the parameters toward the collective best via a gradient-free update. Reported: 13.3% average gain over 12 baselines on 9 datasets, with just 200 instances per iteration.
+[Model Swarms](https://arxiv.org/abs/2410.11163) takes PSO off the output layer and into the *model* layer. Each particle is an expert model; the swarm moves parameters toward the collective best through a gradient-free update. The paper reports a 13.3% average gain over 12 baselines on nine datasets with 200 instances per iteration.
 
 The key insight is that LLM expert models are already nearby in a shared parameter manifold (adapter weights, LoRA deltas). PSO on this low-dimensional subspace is cheap and effective.
 

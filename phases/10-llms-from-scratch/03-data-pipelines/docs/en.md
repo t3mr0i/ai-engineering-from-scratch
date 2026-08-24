@@ -124,7 +124,7 @@ The idea:
 
 4. **Verify:** For each candidate pair, compute exact Jaccard similarity. Remove one copy if similarity exceeds a threshold (typically 0.8).
 
-The Llama team reported removing approximately 38% of their web data through deduplication. That is not a small number. More than a third of Common Crawl is duplicate or near-duplicate content.
+The [Llama 3 paper](https://arxiv.org/abs/2407.21783) reports that its deduplication pipeline removed approximately 38% of the processed web data. That result describes their pipeline and corpus; it should not be generalized to all Common Crawl snapshots.
 
 ### Sequence Packing
 

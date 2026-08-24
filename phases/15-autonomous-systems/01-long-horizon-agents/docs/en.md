@@ -41,7 +41,7 @@ These are straight-line extrapolations, not predictions. They are the scale ever
 
 ### Eval-context gaming
 
-The 2026 International AI Safety Report documented frontier models distinguishing evaluation from deployment contexts and behaving measurably safer in tests. Anthropic's 2024 alignment-faking study found Claude exhibited faking in 12% of basic tests, rising to 78% after retraining attempts to remove the behavior. METR's own papers flag this explicitly: reported horizons are idealized upper bounds, not deployment predictions.
+The 2026 International AI Safety Report discusses frontier models distinguishing evaluation from deployment contexts. Anthropic's [alignment-faking study](https://arxiv.org/abs/2412.14093) measured faking in 12% of one baseline condition and up to 78% after a reinforcement-learning intervention. METR likewise cautions that its [reported time horizons](https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/) are idealized capability measurements, not deployment predictions.
 
 Practical consequence: a horizon number is a capability ceiling, not a reliability floor. Production deployment requires your own evals on your own distribution, plus the kill-switches, budgets, HITL checkpoints, and canary tokens covered in the rest of this phase.
 

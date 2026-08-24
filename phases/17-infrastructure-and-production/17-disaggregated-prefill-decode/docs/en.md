@@ -72,9 +72,7 @@ Use Dynamo if you want a managed stack-above orchestrator. Use llm-d if you want
 
 Internal composite (not a single published case study — order-of-magnitude anchor):
 
-**Illustrative scenario — not a published customer case:**
-
-- $2M/year inference spend on colocated serving.
+- **Illustrative scenario — not a published customer case:** $2M/year inference spend on colocated serving.
 - Switched to disaggregated with Dynamo.
 - Same request volume, same P99 latency SLA.
 - Reported savings: $600K–$800K/year (30–40% reduction).

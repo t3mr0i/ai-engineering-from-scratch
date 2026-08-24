@@ -152,7 +152,7 @@ graph TD
 
 PagedAttention also enables **copy-on-write** for shared prefixes. If 50 requests share the same system prompt, the KV cache pages for that system prompt are stored once and referenced by all 50 requests. Only when a request diverges (different user messages) does it get its own pages. This cuts memory usage dramatically for applications with shared system prompts.
 
-vLLM reports near-zero memory waste (~4% vs ~60-80% in naive allocation) through PagedAttention.
+The [vLLM paper](https://arxiv.org/abs/2309.06180) reports memory waste below 4% with PagedAttention, compared with substantially higher waste in the baseline allocators it evaluated.
 
 ### Speculative Decoding
 

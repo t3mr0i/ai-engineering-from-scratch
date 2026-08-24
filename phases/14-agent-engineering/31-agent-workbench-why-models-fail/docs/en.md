@@ -366,11 +366,10 @@ Every entry in that table is the agent community arriving at a primitive that al
 
 The harness-over-model claim has numbers behind it now. Worth knowing, because they are also the only honest argument against "just wait for a smarter model."
 
-- Terminal Bench 2.0 — same model, harness change moved a coding agent from outside the top 30 to rank five (LangChain, *Anatomy of an Agent Harness*).
-- Vercel — deleted 80% of its agent's tools; success rate jumped from 80% to 100% (MongoDB).
-- Harvey — legal agents more than doubled accuracy through harness optimization alone (MongoDB).
+- Terminal Bench 2.0 — a harness change moved the same model from outside the top 30 to rank five ([LangChain, *Anatomy of an Agent Harness*](https://blog.langchain.com/the-anatomy-of-an-agent-harness/)).
+- Vercel and Harvey are summarized as examples of tool reduction and harness optimization in [MongoDB's harness-engineering overview](https://www.mongodb.com/company/blog/technical/agent-harness-why-llm-is-smallest-part-of-your-agent-system); validate the original case material before reusing its exact percentages.
 - Postmortems on enterprise agent projects that stalled between demo and production consistently point at the runtime around the model — state handling, tool wiring, authorization — rather than at the model's reasoning itself.
-- A 2025 benchmark study across three popular open-source frameworks reported ~50% task completion; long-context WebAgent collapsed from 40-50% to under 10% in long-context conditions, mostly from infinite loops and goal loss (covered widely in early 2026 writeups).
+- A 2026 framework comparison preprint reports substantial task-completion degradation in long-context conditions; treat the result as preliminary until peer review and reproduce it on your own tasks ([preprint](https://www.preprints.org/manuscript/202603.1756)).
 
 The takeaway is not "harness wins forever." Models do absorb harness tricks over time. The takeaway is that today, the load-bearing engineering is around the model, not inside it, and the primitives that carry that load are the ones every production system has always needed.
 

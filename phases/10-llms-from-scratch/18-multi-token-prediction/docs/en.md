@@ -1,6 +1,6 @@
 # Multi-Token Prediction (MTP)
 
-> Every autoregressive LLM from GPT-2 to Llama 3 trains on one loss per position: predict the next token. DeepSeek-V3 added a second loss per position: predict the token after that. The extra 14B of parameters (on a 671B model) got distilled back into the main model through gradient flow, and the trained MTP heads were repurposed at inference as speculative-decoding drafters with 80%+ acceptance. 1.8× generation throughput came for free. This lesson builds the sequential MTP module from the DeepSeek technical report, computes the loss and the shared-head parameter layout, and explains why MTP keeps the causal chain while Gloeckle et al.'s original parallel MTP broke it.
+> Every autoregressive LLM from GPT-2 to Llama 3 trains on one loss per position: predict the next token. DeepSeek-V3 added a second loss per position: predict the token after that. The extra 14B of parameters (on a 671B model) feed training signal back into the main model, and the trained MTP heads are reused at inference as speculative-decoding drafters. The [DeepSeek-V3 technical report](https://arxiv.org/abs/2412.19437) reports over 80% first-token acceptance and up to 1.8× generation throughput. This lesson builds the sequential MTP module, computes the loss and shared-head parameter layout, and explains why MTP keeps the causal chain while Gloeckle et al.'s original parallel MTP did not.
 
 **Type:** Build
 **Languages:** Python (stdlib)
@@ -70,7 +70,7 @@ Gloeckle's original parallel MTP had D output heads, each directly applied to `h
 
 DeepSeek-V3's sequential design builds `h_i^(k)` from `h_i^(k-1)` plus the actual next-token embedding `E(t_{i+k})`. That preserves the causal chain: to predict `t_{i+k+1}`, the module at depth `k+1` sees what was at `t_{i+k}`. This is structurally identical to how an autoregressive decoder consumes its own output — making the MTP modules directly usable as speculative-decoding drafters.
 
-At inference: feed `h_i^(k-1)` and the drafted `t_{i+k}` into module `k+1`, get a prediction for `t_{i+k+1}`. Repeat. That is exactly an EAGLE-style draft, using the trained MTP module as the draft network. DeepSeek-V3 reports 80%+ acceptance on the first MTP module and ~1.8× speedup.
+At inference: feed `h_i^(k-1)` and the drafted `t_{i+k}` into module `k+1`, get a prediction for `t_{i+k+1}`. Repeat. That is an EAGLE-style draft using the trained MTP module as the draft network. The [DeepSeek-V3 report](https://arxiv.org/abs/2412.19437) gives over 80% first-token acceptance and up to about 1.8× throughput.
 
 ### Parameter accounting
 

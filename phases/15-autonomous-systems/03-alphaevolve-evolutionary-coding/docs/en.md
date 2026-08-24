@@ -13,7 +13,7 @@ Large language models can write code. Evolutionary algorithms can search over co
 
 AlphaEvolve (Novikov et al., DeepMind, arXiv:2506.13131, June 2025) combines them. The LLM proposes targeted edits to a program database; an automatic evaluator scores each variant; high-scoring variants become parents for future generations. The LLM handles the expensive step of writing plausible code; the evaluator catches the confabulations. The loop runs for hours to weeks.
 
-Results reported: 48-scalar-multiplication 4x4 complex matrix multiplication (Strassen's 1969 bound was 49), a Borg scheduling heuristic in Google production, a 32.5% FlashAttention kernel speedup, Gemini training throughput improvements.
+[Google DeepMind's AlphaEvolve announcement](https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/) reports a 48-scalar-multiplication algorithm for 4×4 complex matrices, a production Borg scheduling heuristic, a 32.5% FlashAttention-kernel speedup, and Gemini training improvements. The accompanying artifacts should be used to reproduce individual results.
 
 The architecture works because the evaluator is machine-checkable. It does not work where the evaluator isn't. That asymmetry is the lesson.
 

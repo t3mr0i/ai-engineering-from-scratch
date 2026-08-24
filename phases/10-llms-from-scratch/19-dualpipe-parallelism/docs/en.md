@@ -24,7 +24,7 @@ Training a 671B MoE model on 2k H800 GPUs runs into three compounding bottleneck
 
 Each of these has separate solutions: gradient checkpointing for memory, Zero Bubble (Sea AI Lab, 2023) for pipeline bubbles, expert-parallel comm kernels for all-to-all. What DualPipe does is make them play together. The schedule overlaps compute and comm within a single forward-backward chunk, injects micro-batches from both ends of the pipeline simultaneously, and uses the resulting schedule to hide all-to-all inside the compute windows.
 
-Reported result: near-elimination of pipeline bubbles, over 95% GPU utilization in DeepSeek-V3's 14.8T-token training run.
+The [DeepSeek-V3 technical report](https://arxiv.org/abs/2412.19437) describes DualPipe's overlap strategy and reports over 95% utilization during its 14.8-trillion-token training run.
 
 ## The Concept
 

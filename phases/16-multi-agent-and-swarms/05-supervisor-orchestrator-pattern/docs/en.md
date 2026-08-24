@@ -1,6 +1,6 @@
 # Supervisor / Orchestrator-Worker Pattern
 
-> One lead agent plans and delegates; specialized workers execute in parallel contexts and report back. This is the pattern behind Anthropic's Research system (Claude Opus 4 as lead, Sonnet 4 as subagents), measured at +90.2% over single-agent Opus 4 on internal research evals. Anthropic's engineering post reports that 80% of the variance on BrowseComp is explained by token usage alone — multi-agent wins largely because each subagent gets a fresh context window. This lesson builds the supervisor pattern from the primitives and covers the 2026 engineering lessons from production deployments.
+> One lead agent plans and delegates; specialized workers execute in parallel contexts and report back. Anthropic describes this pattern in its [multi-agent Research system](https://www.anthropic.com/engineering/multi-agent-research-system), reporting a 90.2% improvement over a single-agent baseline on its internal research evaluation and attributing 80% of BrowseComp score variance to token usage. This lesson builds the supervisor pattern from primitives and separates the reusable architecture from one vendor's internal measurements.
 
 **Type:** Learn + Build
 **Languages:** Python (stdlib, `threading`)
@@ -13,7 +13,7 @@ Research is the prototypical task that single-agent systems fail. You ask "what 
 
 The supervisor pattern fixes this: one lead agent plans the search, delegates each sub-question to a worker, and synthesizes. Each worker gets its own 200k-token window for a narrow question. The lead never sees the raw papers — only the worker summaries.
 
-Anthropic's production Research system reports +90.2% on internal research evals vs a single Opus 4. The same post notes that 80% of the BrowseComp variance is explained by *token usage alone*. Fresh context per subagent is the main mechanism.
+Anthropic's [production write-up](https://www.anthropic.com/engineering/multi-agent-research-system) reports +90.2% on its internal research evaluation versus a single-agent Opus 4 baseline, and says token usage explains 80% of BrowseComp score variance. These are vendor-reported measurements; reproduce the comparison on your own workload.
 
 ## Concept
 

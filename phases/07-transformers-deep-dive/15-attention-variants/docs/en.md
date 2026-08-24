@@ -69,7 +69,7 @@ DiffAttn = (A1 - λ · A2) V
 
 where `λ` is a learned scalar (typically 0.5–0.8). A1 captures real content weights; A2 captures the sink. Subtraction cancels the sink, reallocates weight to relevant tokens.
 
-Reported results (Microsoft 2024): 5–10% lower perplexity, 1.5–2× longer effective context at same trained length, sharper needle-in-haystack retrieval.
+[Microsoft's Differential Transformer paper (2024)](https://arxiv.org/abs/2410.05258) reports 5–10% lower perplexity in several comparisons, longer effective context at the same trained length, and stronger needle-in-a-haystack retrieval. Treat these as paper-specific results, not universal guarantees.
 
 ### Variant Comparison
 
