@@ -150,7 +150,7 @@ def train_xor():
 
     learning_rate = 1.0
 
-    for epoch in range(1000):
+    for epoch in range(400):
         total_loss = Value(0.0)
         for inputs, target in xor_data:
             x = [Value(i) for i in inputs]
@@ -164,7 +164,7 @@ def train_xor():
         for p in net.parameters():
             p.data -= learning_rate * p.grad
 
-        if epoch % 100 == 0:
+        if epoch % 40 == 0:
             print(f"Epoch {epoch:4d} | Loss: {total_loss.data:.6f}")
 
     print("\nXOR Results:")
@@ -191,12 +191,12 @@ def train_circle():
     print("=" * 50)
 
     random.seed(7)
-    circle_data = generate_circle_data(80)
+    circle_data = generate_circle_data(40)
 
     net = Network([2, 8, 1])
     learning_rate = 0.5
 
-    for epoch in range(2000):
+    for epoch in range(300):
         random.shuffle(circle_data)
         total_loss_val = 0.0
         for inputs, target in circle_data:
@@ -209,7 +209,7 @@ def train_circle():
                 p.data -= learning_rate * p.grad
             total_loss_val += loss.data
 
-        if epoch % 200 == 0:
+        if epoch % 30 == 0:
             correct = 0
             for inputs, target in circle_data:
                 x = [Value(i) for i in inputs]

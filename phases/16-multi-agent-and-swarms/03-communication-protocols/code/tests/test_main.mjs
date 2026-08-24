@@ -13,13 +13,22 @@ const source = readFileSync(mainPath, "utf8");
 const allowed = new Set(["hono", "zod", "ws", "@hono/node-server"]);
 
 function packageImports() {
-  const specs = [...source.matchAll(/(?:from\s+|import\s*\()?["']([^"']+)["']/g)].map((m) => m[1]);
-  return specs.filter((s) => !s.startsWith(".") && !s.startsWith("node:") && !s.match(/^[a-z]+$/)).filter((s) => !allowed.has(s));
+  const specs = source.split("\n").flatMap((line) => {
+    const match = line.match(/^\s*import(?:\s+type)?(?:\s+[^"']+\s+from)?\s*["']([^"']+)["']/);
+    return match ? [match[1]] : [];
+  });
+  return specs
+    .filter((spec) => !spec.startsWith(".") && !spec.startsWith("node:"))
+    .map((spec) => spec.startsWith("@") ? spec.split("/").slice(0, 2).join("/") : spec.split("/")[0])
+    .filter((spec) => !allowed.has(spec));
 }
 
 function runDemo(t) {
   const probe = spawnSync("npx", ["--no-install", "tsx", "--version"], { cwd: codeDir, encoding: "utf8" });
-  if (probe.status !== 0) t.skip("tsx is not installed in this environment");
+  if (probe.status !== 0) {
+    t.skip("tsx is not installed in this environment");
+    return null;
+  }
   return spawnSync("npx", ["--no-install", "tsx", mainPath], { cwd: codeDir, encoding: "utf8", timeout: 45_000, env: { ...process.env, OPENAI_API_KEY: "", ANTHROPIC_API_KEY: "" } });
 }
 

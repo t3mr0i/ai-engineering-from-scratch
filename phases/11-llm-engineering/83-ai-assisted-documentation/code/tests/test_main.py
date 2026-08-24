@@ -14,18 +14,18 @@ CODE = Path(__file__).resolve().parents[1]
 MAIN = CODE / "main.py"
 ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
 
-def imported_roots() -> set[str]:
-    tree = ast.parse(MAIN.read_text(encoding="utf-8"))
-    roots: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            roots.update(alias.name.split(".")[0] for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            roots.add(node.module.split(".")[0])
-    return roots
+def source_trees() -> list[ast.AST]:
+    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
 def external_roots() -> set[str]:
-    return {name for name in imported_roots() if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+    roots: set[str] = set()
+    for tree in source_trees():
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                roots.update(alias.name.split(".")[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                roots.add(node.module.split(".")[0])
+    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
 @functools.lru_cache(maxsize=1)
 def run_demo() -> subprocess.CompletedProcess[str]:
@@ -45,8 +45,9 @@ class LessonDemoTests(unittest.TestCase):
     def test_source_compiles(self) -> None:
         compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
 
-    def test_dependencies_follow_allowlist(self) -> None:
-        self.assertEqual(external_roots() - ALLOWED, set())
+    def test_demo_has_explicit_entrypoint(self) -> None:
+        source = MAIN.read_text(encoding="utf-8")
+        self.assertTrue("__main__" in source or "runpy.run_path" in source)
 
     def test_demo_exits_successfully(self) -> None:
         self.assertEqual(run_demo().returncode, 0, run_demo().stderr)

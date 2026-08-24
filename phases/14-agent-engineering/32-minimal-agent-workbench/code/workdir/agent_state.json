@@ -1,0 +1,10 @@
+{
+  "active_task_id": "T-001",
+  "touched_files": [
+    "app.py",
+    "test_app.py"
+  ],
+  "assumptions": [],
+  "blockers": [],
+  "next_action": "run verification command for T-001"
+}

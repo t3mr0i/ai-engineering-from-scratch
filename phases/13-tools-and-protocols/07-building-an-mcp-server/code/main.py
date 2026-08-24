@@ -269,10 +269,10 @@ def demo() -> None:
 
 
 def main() -> None:
-    if len(sys.argv) > 1 and sys.argv[1] == "--demo":
-        demo()
-    else:
+    if len(sys.argv) > 1 and sys.argv[1] == "--serve":
         serve_stdio()
+    else:
+        demo()
 
 
 if __name__ == "__main__":

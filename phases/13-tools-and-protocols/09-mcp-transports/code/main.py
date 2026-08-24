@@ -235,16 +235,16 @@ def probe() -> None:
 
 
 def main() -> None:
-    if len(sys.argv) > 1 and sys.argv[1] == "--probe":
-        probe()
+    if len(sys.argv) > 1 and sys.argv[1] == "--serve":
+        srv = serve("127.0.0.1", 8017)
+        print("Streamable HTTP MCP endpoint on 127.0.0.1:8017/mcp  (Ctrl-C to stop)")
+        try:
+            while True:
+                time.sleep(60)
+        except KeyboardInterrupt:
+            srv.shutdown()
         return
-    srv = serve("127.0.0.1", 8017)
-    print("Streamable HTTP MCP endpoint on 127.0.0.1:8017/mcp  (Ctrl-C to stop)")
-    try:
-        while True:
-            time.sleep(60)
-    except KeyboardInterrupt:
-        srv.shutdown()
+    probe()
 
 
 if __name__ == "__main__":

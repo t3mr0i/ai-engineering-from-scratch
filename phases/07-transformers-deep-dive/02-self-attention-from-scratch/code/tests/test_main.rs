@@ -3,7 +3,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
-fn code_dir() -> PathBuf { PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_path_buf() }
+fn code_dir() -> PathBuf { std::env::current_dir().unwrap() }
 fn source() -> String { fs::read_to_string(code_dir().join("main.rs")).unwrap() }
 fn binary() -> PathBuf { std::env::temp_dir().join(format!("lesson-demo-{}", std::process::id())) }
 fn compile_demo() -> std::process::Output { Command::new("rustc").args(["--edition", "2021", "main.rs", "-o"]).arg(binary()).current_dir(code_dir()).output().unwrap() }

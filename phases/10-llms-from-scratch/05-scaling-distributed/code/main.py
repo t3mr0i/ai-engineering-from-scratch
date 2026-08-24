@@ -112,7 +112,8 @@ def memory_calculator(
         )
         activation_memory = activation_per_layer * num_layers
     else:
-        activation_memory = params * precision_bytes * 0.5
+        # A compact demo estimate for saved activations, not a second model copy.
+        activation_memory = params * precision_bytes * 0.01
 
     if sharding == "fsdp" or sharding == "zero3":
         weight_memory /= num_gpus

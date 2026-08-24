@@ -359,7 +359,7 @@ class DataLoader:
         return (len(self.data) + self.batch_size - 1) // self.batch_size
 
 
-def make_circle_data(n=500, seed=42):
+def make_circle_data(n=160, seed=42):
     random.seed(seed)
     data = []
     for _ in range(n):
@@ -388,13 +388,13 @@ def train_framework():
     print(f"Total parameters: {model.count_parameters()}")
     print(f"Optimizer: Adam (lr=0.01)")
     print(f"Loss: Binary Cross-Entropy")
-    print(f"Data: 500 samples (80/20 train/test split)")
+    print(f"Data: 160 samples (80/20 train/test split)")
     print()
 
     criterion = BCELoss()
     optimizer = Adam(model.parameters(), lr=0.01)
 
-    data = make_circle_data(500)
+    data = make_circle_data(160)
     split = int(len(data) * 0.8)
     train_data = data[:split]
     test_data = data[split:]
@@ -403,7 +403,7 @@ def train_framework():
 
     model.train()
 
-    for epoch in range(100):
+    for epoch in range(25):
         total_loss = 0
         total_correct = 0
         total_samples = 0
@@ -427,7 +427,7 @@ def train_framework():
         avg_loss = total_loss / total_samples
         accuracy = total_correct / total_samples * 100
 
-        if epoch % 10 == 0 or epoch == 99:
+        if epoch % 5 == 0 or epoch == 24:
             print(f"  Epoch {epoch:3d} | Loss: {avg_loss:.6f} | Train Accuracy: {accuracy:.1f}%")
 
     model.eval()
@@ -460,7 +460,7 @@ def train_with_sgd():
     criterion = BCELoss()
     optimizer = SGD(model.parameters(), lr=0.1)
 
-    data = make_circle_data(500)
+    data = make_circle_data(160)
     split = int(len(data) * 0.8)
     train_data = data[:split]
     test_data = data[split:]
@@ -468,7 +468,7 @@ def train_with_sgd():
 
     model.train()
 
-    for epoch in range(100):
+    for epoch in range(25):
         total_loss = 0
         total_samples = 0
 
@@ -513,7 +513,7 @@ def train_with_dropout():
     criterion = BCELoss()
     optimizer = Adam(model.parameters(), lr=0.01)
 
-    data = make_circle_data(500)
+    data = make_circle_data(160)
     split = int(len(data) * 0.8)
     train_data = data[:split]
     test_data = data[split:]
@@ -521,7 +521,7 @@ def train_with_dropout():
 
     model.train()
 
-    for epoch in range(100):
+    for epoch in range(25):
         for batch_inputs, batch_targets in loader:
             for x, t in zip(batch_inputs, batch_targets):
                 pred = model.forward(x)

@@ -11,7 +11,7 @@ import math
 import random
 
 
-def synth_real_speech(n_samples=16000, seed=0):
+def synth_real_speech(n_samples=4096, seed=0):
     rng = random.Random(seed)
     out = []
     for i in range(n_samples):
@@ -22,7 +22,7 @@ def synth_real_speech(n_samples=16000, seed=0):
     return out
 
 
-def synth_fake_speech(n_samples=16000, seed=0):
+def synth_fake_speech(n_samples=4096, seed=0):
     rng = random.Random(seed)
     out = []
     for i in range(n_samples):
@@ -32,7 +32,7 @@ def synth_fake_speech(n_samples=16000, seed=0):
     return out
 
 
-def magnitude_spectrum(audio, n_fft=256):
+def magnitude_spectrum(audio, n_fft=64):
     result = [0.0] * (n_fft // 2 + 1)
     window = [0.5 - 0.5 * math.cos(2 * math.pi * i / (n_fft - 1)) for i in range(n_fft)]
     chunks = [audio[i : i + n_fft] for i in range(0, len(audio) - n_fft, n_fft)]
@@ -78,9 +78,9 @@ def main():
     random.seed(0)
 
     print("=== Step 1: synthesize real vs fake speech ===")
-    real_clips = [synth_real_speech(seed=i) for i in range(20)]
-    fake_clips = [synth_fake_speech(seed=100 + i) for i in range(20)]
-    print(f"  20 real, 20 fake, {len(real_clips[0])} samples each")
+    real_clips = [synth_real_speech(seed=i) for i in range(6)]
+    fake_clips = [synth_fake_speech(seed=100 + i) for i in range(6)]
+    print(f"  6 real, 6 fake, {len(real_clips[0])} samples each")
 
     print()
     print("=== Step 2: score with toy spectral detector ===")
@@ -105,7 +105,7 @@ def main():
     print()
     print("=== Step 4: watermark embed + detect (toy) ===")
     payload = [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0]
-    clean = synth_real_speech(n_samples=16000, seed=42)
+    clean = synth_real_speech(n_samples=4096, seed=42)
     watermarked = toy_watermark_embed(clean, payload)
     recovered = toy_watermark_detect(watermarked)
     bit_acc = sum(1 for a, b in zip(payload, recovered) if a == b) / len(payload)
