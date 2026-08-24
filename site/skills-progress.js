@@ -1,9 +1,9 @@
 /**
  * Capability progress for the LRN cockpit.
  *
- * Joins three existing sources without creating a second progress store:
- * capability-to-phase mappings, course depth assignments, and the lesson
- * read/completion state owned by progress.js. Everything remains local.
+ * The calculation consumes an explicit capability-to-course evidence matrix.
+ * Curriculum phases and course audience tags are deliberately not inferred as
+ * capability evidence. Lesson progress remains owned by progress.js.
  */
 (function (root, factory) {
   "use strict";
@@ -33,9 +33,34 @@
     "Leadership and Strategy": "users-three"
   };
 
-  function phaseId(path) {
-    var match = String(path || "").match(/^phases\/(\d+)-/);
-    return match ? Number(match[1]) : null;
+  function unique(values) {
+    var seen = {};
+    return (values || []).filter(function (value) {
+      if (seen[value]) return false;
+      seen[value] = true;
+      return true;
+    });
+  }
+
+  function average(values) {
+    return values.length
+      ? Math.round(values.reduce(function (sum, value) { return sum + value; }, 0) / values.length)
+      : 0;
+  }
+
+  function targetIndex(target) {
+    for (var i = 0; i < STAGES.length; i++) {
+      if (STAGES[i].name === target) return i;
+    }
+    return -1;
+  }
+
+  function lessonFraction(progressState, path) {
+    var lesson = progressState && progressState.lessons && progressState.lessons[path];
+    if (!lesson) return 0;
+    if (lesson.completedAt) return 1;
+    var read = Number(lesson.readPct) || 0;
+    return Math.max(0, Math.min(1, read >= 0.9 ? 1 : read));
   }
 
   function mergeCapabilities(catalogCapabilities, detailedCapabilities) {
@@ -50,113 +75,117 @@
         cluster: capability.cluster || detail.cluster || "",
         title: capability.title || detail.title || "",
         targets: capability.targets || {},
-        phases: Array.isArray(detail.phases) ? detail.phases.slice() : [],
         description: detail.description || "",
         levels: detail.levels || {}
       };
     });
   }
 
-  function lessonFraction(progressState, path) {
-    var lesson = progressState && progressState.lessons && progressState.lessons[path];
-    if (!lesson) return 0;
-    if (lesson.completedAt) return 1;
-    var read = Number(lesson.readPct) || 0;
-    return Math.max(0, Math.min(1, read >= 0.9 ? 1 : read));
-  }
-
-  function targetIndex(target) {
-    for (var i = 0; i < STAGES.length; i++) {
-      if (STAGES[i].name === target) return i;
-    }
-    return -1;
-  }
-
-  function pathsForStage(capability, stageName, courses, courseMaps) {
-    var allowedPhases = {};
-    (capability.phases || []).forEach(function (id) { allowedPhases[Number(id)] = true; });
-    var paths = {};
-    var courseIds = {};
-
-    (courses || []).forEach(function (course) {
-      if (!Array.isArray(course.levels) || course.levels.indexOf(stageName) === -1) return;
-      var units = courseMaps && courseMaps[course.id];
-      if (!Array.isArray(units)) return;
-      units.forEach(function (unit) {
-        (unit.lessons || []).forEach(function (lesson) {
-          if (!allowedPhases[phaseId(lesson.path)]) return;
-          paths[lesson.path] = true;
-          courseIds[course.id] = true;
-        });
+  function lessonPaths(courseId, courseMaps) {
+    var paths = [];
+    ((courseMaps && courseMaps[courseId]) || []).forEach(function (unit) {
+      (unit.lessons || []).forEach(function (lesson) {
+        if (lesson.path) paths.push(lesson.path);
       });
     });
-
-    return { paths: Object.keys(paths), courseIds: Object.keys(courseIds) };
+    return unique(paths);
   }
 
-  function capabilityProgress(capability, profileId, courses, courseMaps, progressState) {
-    var target = capability.targets && capability.targets[profileId];
-    var goalIndex = targetIndex(target);
-    var stages = STAGES.map(function (stage, index) {
-      var mapped = pathsForStage(capability, stage.name, courses, courseMaps);
-      var sum = mapped.paths.reduce(function (total, path) {
-        return total + lessonFraction(progressState, path);
-      }, 0);
-      return {
-        name: stage.name,
-        sourceLevel: stage.sourceLevel,
-        description: capability.levels && capability.levels[stage.sourceLevel] || "",
-        lessonCount: mapped.paths.length,
-        courseCount: mapped.courseIds.length,
-        percent: mapped.paths.length ? Math.round((sum / mapped.paths.length) * 100) : 0,
-        inTarget: goalIndex >= 0 && index <= goalIndex
+  /**
+   * Builds the complete read-only view model behind one small test seam.
+   * Each course is calculated once, then reused by every capability it proves.
+   */
+  function createModel(options) {
+    options = options || {};
+    var capabilities = mergeCapabilities(options.catalogCapabilities, options.detailedCapabilities);
+    var courseById = {};
+    var courseProgressById = {};
+    var evidence = options.evidence || {};
+    var courseMaps = options.courseMaps || {};
+    var progressState = options.progressState || { lessons: {} };
+    var profileId = options.profileId || "tc";
+
+    (options.courses || []).forEach(function (course) {
+      courseById[course.id] = course;
+    });
+
+    function courseProgress(courseId) {
+      if (courseProgressById[courseId]) return courseProgressById[courseId];
+      var course = courseById[courseId];
+      var paths = lessonPaths(courseId, courseMaps);
+      var result = {
+        id: courseId,
+        title: course ? course.title : courseId,
+        available: !!course,
+        lessonPaths: paths,
+        lessonCount: paths.length,
+        percent: paths.length ? average(paths.map(function (path) {
+          return lessonFraction(progressState, path) * 100;
+        })) : 0
       };
-    });
-    var targetStages = stages.filter(function (stage) { return stage.inTarget && stage.lessonCount > 0; });
-    var overall = targetStages.length
-      ? Math.round(targetStages.reduce(function (sum, stage) { return sum + stage.percent; }, 0) / targetStages.length)
-      : 0;
-    var mappedLessons = {};
-    stages.forEach(function (stage) {
-      pathsForStage(capability, stage.name, courses, courseMaps).paths.forEach(function (path) {
-        mappedLessons[path] = true;
+      courseProgressById[courseId] = result;
+      return result;
+    }
+
+    var items = capabilities.filter(function (capability) {
+      return targetIndex(capability.targets && capability.targets[profileId]) >= 0;
+    }).map(function (capability) {
+      var target = capability.targets[profileId];
+      var goalIndex = targetIndex(target);
+      var capabilityEvidence = evidence[capability.id] || {};
+      var stages = STAGES.map(function (stage, index) {
+        var ids = unique(capabilityEvidence[stage.name] || []);
+        var courses = ids.map(courseProgress);
+        var paths = unique([].concat.apply([], courses.map(function (course) {
+          return course.lessonPaths;
+        })));
+        var hasEvidence = courses.length > 0 && courses.every(function (course) {
+          return course.available && course.lessonCount > 0;
+        });
+        return {
+          name: stage.name,
+          sourceLevel: stage.sourceLevel,
+          description: capability.levels && capability.levels[stage.sourceLevel] || "",
+          courses: courses,
+          courseCount: courses.length,
+          lessonCount: paths.length,
+          percent: courses.length ? average(courses.map(function (course) { return course.percent; })) : 0,
+          hasEvidence: hasEvidence,
+          inTarget: index <= goalIndex
+        };
       });
+      var targetStages = stages.slice(0, goalIndex + 1);
+      var targetCourses = unique([].concat.apply([], targetStages.map(function (stage) {
+        return stage.courses.map(function (course) { return course.id; });
+      })));
+      return {
+        id: capability.id,
+        cluster: capability.cluster,
+        title: capability.title,
+        description: capability.description,
+        target: target,
+        targetIndex: goalIndex,
+        stages: stages,
+        percent: average(targetStages.map(function (stage) { return stage.percent; })),
+        tracked: targetStages.some(function (stage) { return stage.hasEvidence; }),
+        fullyMapped: targetStages.every(function (stage) { return stage.hasEvidence; }),
+        targetCourseCount: targetCourses.length
+      };
     });
 
     return {
-      id: capability.id,
-      cluster: capability.cluster,
-      title: capability.title,
-      description: capability.description,
-      target: target || "n. a.",
-      targetIndex: goalIndex,
-      stages: stages,
-      percent: overall,
-      tracked: targetStages.length > 0,
-      mappedLessonCount: Object.keys(mappedLessons).length
+      items: items,
+      totalPercent: average(items.map(function (item) { return item.percent; })),
+      trackedCount: items.filter(function (item) { return item.fullyMapped; }).length,
+      unmappedCount: items.filter(function (item) { return !item.fullyMapped; }).length
     };
   }
 
-  function allProgress(capabilities, profileId, courses, courseMaps, progressState) {
-    return (capabilities || []).filter(function (capability) {
-      return targetIndex(capability.targets && capability.targets[profileId]) >= 0;
-    }).map(function (capability) {
-      return capabilityProgress(capability, profileId, courses, courseMaps, progressState);
-    });
-  }
-
-  function overallProgress(items) {
-    var tracked = (items || []).filter(function (item) { return item.tracked; });
-    return tracked.length
-      ? Math.round(tracked.reduce(function (sum, item) { return sum + item.percent; }, 0) / tracked.length)
-      : 0;
-  }
-
-  function sortProgress(items, mode) {
+  function sortItems(items, mode) {
     return (items || []).slice().sort(function (a, b) {
       if (mode === "name") return a.title.localeCompare(b.title);
       if (mode === "order") return a.id - b.id;
-      if (a.tracked !== b.tracked) return a.tracked ? -1 : 1;
+      if (a.fullyMapped !== b.fullyMapped) return a.fullyMapped ? -1 : 1;
       if (b.percent !== a.percent) return b.percent - a.percent;
       return a.id - b.id;
     });
@@ -168,9 +197,9 @@
 
     var data = (typeof window !== "undefined" && window.LrnData) || {};
     var curriculum = (typeof window !== "undefined" && window.LrnCurriculumMap) || {};
+    var evidence = (typeof window !== "undefined" && window.AIFSCapabilityEvidence) || {};
     var progressApi = (typeof window !== "undefined" && window.AIFSProgress) || null;
     var detailed = typeof CAPABILITIES !== "undefined" ? CAPABILITIES : [];
-    var capabilities = mergeCapabilities(data.capabilities, detailed);
     var list = doc.getElementById("skillsProgressList");
     var total = doc.getElementById("skillsProgressTotal");
     var coverage = doc.getElementById("skillsProgressCoverage");
@@ -183,12 +212,12 @@
       var dict = (typeof window !== "undefined" && window.SITE_I18N) || {};
       var lang = typeof window !== "undefined" && window.SiteLang ? window.SiteLang.get() : "en";
       var entry = dict[key];
-      var text = entry && (entry[lang] != null ? entry[lang] : entry.en);
-      text = text == null ? fallback : text;
+      var output = entry && (entry[lang] != null ? entry[lang] : entry.en);
+      output = output == null ? fallback : output;
       Object.keys(vars || {}).forEach(function (name) {
-        text = text.replace("{" + name + "}", String(vars[name]));
+        output = output.split("{" + name + "}").join(String(vars[name]));
       });
-      return text;
+      return output;
     }
 
     function currentProfileId() {
@@ -197,11 +226,17 @@
       return data.profiles && data.profiles[0] ? data.profiles[0].id : "tc";
     }
 
-    function element(tag, className, text) {
+    function element(tag, className, content) {
       var node = doc.createElement(tag);
       if (className) node.className = className;
-      if (text != null) node.textContent = text;
+      if (content != null) node.textContent = content;
       return node;
+    }
+
+    function appendParagraphs(parent, text) {
+      String(text || "").split(/\n\s*\n/).filter(Boolean).forEach(function (block) {
+        parent.appendChild(element("p", "", block));
+      });
     }
 
     function levelDescription(text) {
@@ -220,58 +255,141 @@
       return wrap;
     }
 
-    function stageMeter(stage, title) {
-      var meter = element("div", "skill-level__meter");
+    function progressMeter(percent, className, label) {
+      var meter = element("span", className);
       meter.setAttribute("role", "progressbar");
-      meter.setAttribute("aria-label", stage.name + " — " + title);
+      meter.setAttribute("aria-label", label);
       meter.setAttribute("aria-valuemin", "0");
       meter.setAttribute("aria-valuemax", "100");
-      meter.setAttribute("aria-valuenow", String(stage.percent));
-      var fill = element("span");
-      fill.style.transform = "scaleX(" + (stage.percent / 100) + ")";
+      meter.setAttribute("aria-valuenow", String(percent));
+      var fill = element("i");
+      fill.style.transform = "scaleX(" + (percent / 100) + ")";
       meter.appendChild(fill);
       return meter;
+    }
+
+    function overviewCard(item) {
+      var card = element("section", "skill-overview");
+      card.setAttribute("aria-labelledby", "skillOverviewTitle" + item.id);
+      var icon = element("span", "skill-overview__icon");
+      var glyph = element("i", "ph-light ph-" + (CLUSTER_ICONS[item.cluster] || "star"));
+      glyph.setAttribute("aria-hidden", "true");
+      icon.appendChild(glyph);
+      var copy = element("div", "skill-overview__copy");
+      var heading = element("h3", "", i18n("skills_progress_about", "What this capability covers"));
+      heading.id = "skillOverviewTitle" + item.id;
+      copy.appendChild(heading);
+      appendParagraphs(copy, item.description);
+      var note = element("p", "skill-overview__note", i18n(
+        "skills_progress_evidence_note",
+        "Only the courses shown below contribute to this capability."
+      ));
+      card.append(icon, copy, note);
+      return card;
+    }
+
+    function courseEvidence(course, stage, item) {
+      var li = element("li", "skill-course");
+      var link = element("a", "skill-course__link");
+      link.href = "lrn/course.html?id=" + encodeURIComponent(course.id);
+      link.setAttribute("aria-label", i18n(
+        "skills_progress_open_course",
+        "Open {title}: {percent}% complete",
+        { title: course.title, percent: course.percent }
+      ));
+      var identity = element("span", "skill-course__identity");
+      identity.appendChild(element("small", "", course.id));
+      identity.appendChild(element("strong", "", course.title));
+      var metric = element("span", "skill-course__metric", course.percent + "%");
+      metric.setAttribute("aria-hidden", "true");
+      var arrow = element("i", "ph-light ph-arrow-up-right");
+      arrow.setAttribute("aria-hidden", "true");
+      link.append(identity, metric, arrow);
+      li.appendChild(link);
+      li.appendChild(progressMeter(
+        course.percent,
+        "skill-course__meter",
+        course.title + " — " + stage.name + " — " + item.title
+      ));
+      return li;
+    }
+
+    function stagePanel(stage, index, item) {
+      var panel = element("li", "skill-level");
+      panel.dataset.level = stage.name.toLowerCase();
+      if (stage.inTarget) panel.dataset.inTarget = "true";
+      if (index === item.targetIndex) panel.dataset.target = "true";
+
+      var head = element("div", "skill-level__head");
+      head.appendChild(element("span", "skill-level__index", "0" + (index + 1)));
+      head.appendChild(element("h4", "", stage.name));
+      if (index === item.targetIndex) {
+        head.appendChild(element("span", "skill-level__target", i18n("skills_progress_target", "Target")));
+      }
+      head.appendChild(element("strong", "", stage.percent + "%"));
+      panel.appendChild(head);
+      panel.appendChild(progressMeter(
+        stage.percent,
+        "skill-level__meter",
+        stage.name + " — " + item.title
+      ));
+
+      var courseLabel = stage.courseCount === 1
+        ? i18n("skills_progress_one_course", "1 contributing course")
+        : i18n("skills_progress_courses", "{count} contributing courses", { count: stage.courseCount });
+      panel.appendChild(element("p", "skill-level__meta", courseLabel));
+
+      if (stage.courses.length) {
+        var courses = element("ul", "skill-level__courses");
+        stage.courses.forEach(function (course) {
+          courses.appendChild(courseEvidence(course, stage, item));
+        });
+        panel.appendChild(courses);
+      } else {
+        panel.appendChild(element(
+          "p",
+          "skill-level__empty",
+          i18n("skills_progress_no_lessons", "No course mapped yet")
+        ));
+      }
+
+      if (stage.description) {
+        var definition = element("details", "skill-level__definition");
+        definition.appendChild(element(
+          "summary",
+          "",
+          i18n("skills_progress_level_definition", "What this level means")
+        ));
+        definition.appendChild(levelDescription(stage.description));
+        panel.appendChild(definition);
+      }
+      return panel;
     }
 
     function detailPanel(item) {
       var detail = element("div", "skill-track__details");
       detail.id = "skillDetails" + item.id;
       detail.hidden = !expanded[item.id];
-
-      if (item.description) detail.appendChild(element("p", "skill-track__description", item.description));
-      detail.appendChild(element("p", "skill-track__language-note", i18n(
-        "skills_progress_description_note",
-        "Capability descriptions are maintained in English."
-      )));
-
-      var grid = element("div", "skill-levels");
+      if (item.description) detail.appendChild(overviewCard(item));
+      var heading = element("div", "skill-levels__heading");
+      heading.appendChild(element("h3", "", i18n("skills_progress_path_title", "Your level path")));
+      heading.appendChild(element(
+        "p",
+        "",
+        i18n("skills_progress_path_intro", "Course progress is averaged within each level and then towards your role target.")
+      ));
+      detail.appendChild(heading);
+      var levels = element("ol", "skill-levels");
       item.stages.forEach(function (stage, index) {
-        var card = element("article", "skill-level");
-        if (stage.inTarget) card.dataset.target = "true";
-        var head = element("div", "skill-level__head");
-        head.appendChild(element("h4", "", stage.name));
-        head.appendChild(element("strong", "", stage.percent + "%"));
-        card.appendChild(head);
-        card.appendChild(stageMeter(stage, item.title));
-        var count = stage.lessonCount === 1
-          ? i18n("skills_progress_one_lesson", "1 mapped lesson")
-          : stage.lessonCount > 1
-            ? i18n("skills_progress_lessons", "{count} mapped lessons", { count: stage.lessonCount })
-            : i18n("skills_progress_no_lessons", "No course mapped yet");
-        card.appendChild(element("p", "skill-level__meta", count));
-        if (stage.description) card.appendChild(levelDescription(stage.description));
-        if (index === item.targetIndex) {
-          card.appendChild(element("span", "skill-level__target", i18n("skills_progress_target", "Target")));
-        }
-        grid.appendChild(card);
+        levels.appendChild(stagePanel(stage, index, item));
       });
-      detail.appendChild(grid);
+      detail.appendChild(levels);
       return detail;
     }
 
     function skillRow(item) {
       var li = element("li", "skill-track");
-      if (!item.tracked) li.dataset.unmapped = "true";
+      if (!item.fullyMapped) li.dataset.unmapped = "true";
       var button = element("button", "skill-track__toggle");
       button.type = "button";
       button.setAttribute("aria-expanded", String(!!expanded[item.id]));
@@ -298,8 +416,8 @@
       item.stages.forEach(function (stage, index) {
         var segment = element("span", "skill-track__segment");
         segment.dataset.level = stage.name.toLowerCase();
-        if (stage.inTarget) segment.dataset.target = "true";
-        if (!stage.lessonCount) segment.dataset.empty = "true";
+        segment.dataset.target = String(stage.inTarget);
+        if (!stage.hasEvidence) segment.dataset.empty = "true";
         var fill = element("i");
         fill.style.transform = "scaleX(" + (stage.percent / 100) + ")";
         segment.appendChild(fill);
@@ -311,8 +429,8 @@
 
       var metric = element("span", "skill-track__metric");
       metric.appendChild(element("strong", "", item.percent + "%"));
-      metric.appendChild(element("small", "", item.tracked
-        ? i18n("skills_progress_complete", "complete")
+      metric.appendChild(element("small", "", item.fullyMapped
+        ? i18n("skills_progress_evidence_courses", "{count} courses", { count: item.targetCourseCount })
         : i18n("skills_progress_no_lessons", "No course mapped yet")));
 
       var chevron = element("i", "ph-light " + (expanded[item.id] ? "ph-caret-up" : "ph-caret-down"));
@@ -330,29 +448,28 @@
     }
 
     function render() {
-      if (!capabilities.length) {
+      var model = createModel({
+        catalogCapabilities: data.capabilities || [],
+        detailedCapabilities: detailed,
+        evidence: evidence,
+        courses: data.courses || [],
+        courseMaps: curriculum.courseMaps || {},
+        progressState: progressApi && progressApi.getState ? progressApi.getState() : { lessons: {} },
+        profileId: currentProfileId()
+      });
+      if (!model.items.length) {
         section.hidden = true;
         return;
       }
       section.hidden = false;
-      var progressState = progressApi && progressApi.getState ? progressApi.getState() : { lessons: {} };
-      var items = allProgress(
-        capabilities,
-        currentProfileId(),
-        data.courses || [],
-        curriculum.courseMaps || {},
-        progressState
-      );
-      var sorted = sortProgress(items, sort ? sort.value : "progress");
+      var sorted = sortItems(model.items, sort ? sort.value : "progress");
       var shown = showAll ? sorted : sorted.slice(0, INITIAL_LIMIT);
       list.replaceChildren.apply(list, shown.map(skillRow));
-      total.textContent = overallProgress(items) + "%";
-      var tracked = items.filter(function (item) { return item.tracked; }).length;
-      var unmapped = items.length - tracked;
+      total.textContent = model.totalPercent + "%";
       coverage.textContent = i18n(
         "skills_progress_coverage",
-        "{tracked} tracked · {unmapped} awaiting courses",
-        { tracked: tracked, unmapped: unmapped }
+        "{tracked} linked · {unmapped} awaiting courses",
+        { tracked: model.trackedCount, unmapped: model.unmappedCount }
       );
       showAllButton.hidden = sorted.length <= INITIAL_LIMIT;
       showAllButton.setAttribute("aria-expanded", String(showAll));
@@ -376,15 +493,7 @@
   }
 
   return {
-    STAGES: STAGES,
-    phaseId: phaseId,
-    mergeCapabilities: mergeCapabilities,
-    lessonFraction: lessonFraction,
-    pathsForStage: pathsForStage,
-    capabilityProgress: capabilityProgress,
-    allProgress: allProgress,
-    overallProgress: overallProgress,
-    sortProgress: sortProgress,
+    createModel: createModel,
     mount: mount
   };
 });

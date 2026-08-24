@@ -654,55 +654,133 @@ i[class^="ph "] {
   font-size: var(--fs-body);
 }
 
+.skill-track__toggle[aria-expanded="true"] {
+  background: var(--color-surface-sunken);
+}
+
 .skill-track__details {
-  padding: 0 var(--space-2) var(--space-5) calc(44px + var(--space-6));
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-2) var(--space-2) var(--space-6) calc(44px + var(--space-6));
 }
 
 .skill-track__details[hidden] {
   display: none;
 }
 
-.skill-track__description {
-  max-width: 72ch;
-  margin: 0 0 var(--space-2);
+.skill-overview {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-4) var(--space-5);
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+  box-shadow: var(--shadow-xs);
+}
+
+.skill-overview__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--action-primary);
+  color: var(--action-primary-ink);
+  font-size: var(--fs-h4);
+}
+
+.skill-overview__copy {
+  max-width: 76ch;
+}
+
+.skill-overview__copy h3,
+.skill-levels__heading h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: var(--fs-h4);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-heading);
+}
+
+.skill-overview__copy p {
+  margin: var(--space-3) 0 0;
   color: var(--text-secondary);
   font-size: var(--fs-body-sm);
+  line-height: var(--lh-relaxed);
+}
+
+.skill-overview__note {
+  grid-column: 2;
+  margin: 0;
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
   line-height: var(--lh-normal);
 }
 
-.skill-track__language-note {
-  margin: 0 0 var(--space-5);
+.skill-levels__heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.skill-levels__heading p {
+  max-width: 44rem;
+  margin: 0;
   color: var(--text-muted);
   font-size: var(--fs-caption);
+  line-height: var(--lh-normal);
+  text-align: end;
 }
 
 .skill-levels {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  align-items: start;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  list-style: none;
 }
 
 .skill-level {
   position: relative;
   display: grid;
   gap: var(--space-3);
+  align-content: start;
   min-width: 0;
-  padding: var(--space-4);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-sunken);
+  padding: var(--space-5);
+  background: var(--color-surface);
+}
+
+.skill-level + .skill-level {
+  border-inline-start: 1px solid var(--border-subtle);
 }
 
 .skill-level[data-target="true"] {
-  border-color: var(--border-strong);
+  background: var(--color-accent-soft);
 }
 
 .skill-level__head {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2);
+}
+
+.skill-level__index {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
 }
 
 .skill-level h4 {
@@ -716,18 +794,20 @@ i[class^="ph "] {
 
 .skill-level__head strong {
   color: var(--text-secondary);
-  font-size: var(--fs-caption);
+  font-size: var(--fs-body-sm);
   font-variant-numeric: tabular-nums;
 }
 
 .skill-level__meter {
+  display: block;
   height: var(--space-2);
   overflow: hidden;
   border-radius: var(--radius-pill);
   background: var(--color-track);
 }
 
-.skill-level__meter span {
+.skill-level__meter i,
+.skill-course__meter i {
   display: block;
   width: 100%;
   height: 100%;
@@ -738,7 +818,11 @@ i[class^="ph "] {
   transition: transform var(--dur-slow) var(--ease-out);
 }
 
+.skill-level[data-level="acquire"] .skill-level__meter i { opacity: 0.38; }
+.skill-level[data-level="deepen"] .skill-level__meter i { opacity: 0.68; }
+
 .skill-level__meta,
+.skill-level__empty,
 .skill-level__description p {
   margin: 0;
   color: var(--text-secondary);
@@ -746,9 +830,118 @@ i[class^="ph "] {
   line-height: var(--lh-normal);
 }
 
+.skill-level__meta {
+  color: var(--text-muted);
+}
+
+.skill-level__courses {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skill-course {
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+}
+
+.skill-course__link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--space-2);
+  align-items: center;
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+
+.skill-course__identity {
+  display: grid;
+  min-width: 0;
+}
+
+.skill-course__identity small {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+}
+
+.skill-course__identity strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+  text-wrap: pretty;
+  text-overflow: ellipsis;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.skill-course__metric {
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-course__link > .ph-light {
+  color: var(--text-muted);
+  font-size: var(--fs-body-sm);
+}
+
+.skill-course__meter {
+  display: block;
+  height: var(--space-1);
+  overflow: hidden;
+  background: var(--color-track);
+}
+
+.skill-course__meter i {
+  opacity: 0.68;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .skill-course__link:hover {
+    background: var(--color-paper-3);
+  }
+}
+
+.skill-course__link:focus-visible,
+.skill-level__definition summary:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+
+.skill-level__definition {
+  margin-block-start: var(--space-1);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+.skill-level__definition summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text-link);
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.skill-level__definition[open] summary {
+  margin-block-end: var(--space-3);
+}
+
 .skill-level__description {
   display: grid;
   gap: var(--space-3);
+  padding-block-end: var(--space-2);
 }
 
 .skill-level__description strong {
@@ -757,7 +950,6 @@ i[class^="ph "] {
 }
 
 .skill-level__target {
-  justify-self: start;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-pill);
   background: var(--action-primary);
@@ -785,6 +977,27 @@ i[class^="ph "] {
 
 .skills-progress__show-all[hidden] {
   display: none;
+}
+
+@media (max-width: 52rem) {
+  .skill-levels__heading {
+    align-items: start;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .skill-levels__heading p {
+    text-align: start;
+  }
+
+  .skill-levels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skill-level + .skill-level {
+    border-block-start: 1px solid var(--border-subtle);
+    border-inline-start: 0;
+  }
 }
 
 .page--home .skills-progress + .cockpit .selector-card {
@@ -1807,8 +2020,22 @@ i[class^="ph "] {
     padding-inline: 0;
   }
 
-  .skill-levels {
+  .skill-overview {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .skill-overview__note {
+    grid-column: 1;
+  }
+
+  .skill-level {
+    padding: var(--space-4);
+  }
+
+  .skill-course__identity strong {
+    -webkit-line-clamp: 3;
   }
 }
 
@@ -1882,7 +2109,7 @@ i[class^="ph "] {
 /* Overrides for Prefers Reduced Motion in LRN Cockpit */
 @media (prefers-reduced-motion: reduce) {
   .course-card, .course-card__tile, .course-card__open, .seg-btn, .selector-cta, .primary-cta, .back-link, .activity-link,
-  .skill-track__segment > i, .skill-level__meter span {
+  .skill-track__segment > i, .skill-level__meter i, .skill-course__meter i {
     transform: none !important;
     transition: none !important;
     animation: none !important;
