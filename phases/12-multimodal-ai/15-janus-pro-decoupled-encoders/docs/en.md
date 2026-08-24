@@ -98,3 +98,13 @@ For products that need both, Janus-Pro is now the reference open architecture.
 - [Ma et al. — JanusFlow (arXiv:2411.07975)](https://arxiv.org/abs/2411.07975)
 - [InternVL-U (arXiv:2603.09877)](https://arxiv.org/abs/2603.09877)
 - [Dong et al. — DreamLLM (arXiv:2309.11499)](https://arxiv.org/abs/2309.11499)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why a single shared encoder compromises either understanding or generation quality.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe Janus-Pro's routing: SigLIP features on the input side for understanding, VQ tokens on both input and output for generation.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trace the data-mix scaling that makes Janus-Pro succeed where Janus did not.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why a single shared encoder compromises either understanding or generation quality,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trace the data-mix scaling that makes Janus-Pro succeed where Janus did not,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -115,3 +115,13 @@ All return the same general structure (boxes + labels + scores + masks + IDs), w
 - [Grounded SAM 2 tutorial (PyImageSearch)](https://pyimagesearch.com/2026/01/19/grounded-sam-2-from-open-set-detection-to-segmentation-and-tracking/)
 - [Ultralytics SAM 3 docs](https://docs.ultralytics.com/models/sam-3/)
 - [SAM3-I: Instruction-aware SAM (arXiv 2512.04585)](https://arxiv.org/abs/2512.04585)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish SAM (visual prompts only), Grounded SAM / SAM 2 (detector + SAM), and SAM 3 (native text prompts via Promptable Concept Segmentation).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the SAM 3 architecture: shared backbone + image detector + memory-based video tracker + presence head + decoupled detector-tracker design.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use Hugging Face `transformers` SAM 3 integration for text-prompted detection, segmentation, and video tracking.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish SAM (visual prompts only), Grounded SAM / SAM 2 (detector + SAM), and SAM 3 (native text prompts via Promptable Concept Segmentation),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use Hugging Face `transformers` SAM 3 integration for text-prompted detection, segmentation, and video tracking,” and cite a repeatable check rather than relying on visual inspection alone.

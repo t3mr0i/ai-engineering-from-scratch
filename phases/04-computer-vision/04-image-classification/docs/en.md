@@ -118,3 +118,13 @@ Aggregate accuracy hides imbalance. A 90-10 binary classifier that always predic
 - [Bag of Tricks for Image Classification (He et al., 2019)](https://arxiv.org/abs/1812.01187) — every small trick that together adds 3-4% to ResNet accuracy on ImageNet
 - [mixup: Beyond Empirical Risk Minimization (Zhang et al., 2017)](https://arxiv.org/abs/1710.09412) — the original mixup paper; three pages of theory plus convincing experiments
 - [Why temperature scaling matters (Guo et al., 2017)](https://arxiv.org/abs/1706.04599) — the paper that proved modern networks are miscalibrated and fixed it with one scalar parameter
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build an end-to-end image classification pipeline on CIFAR-10: dataset, augmentation, model, training loop, evaluation.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the role of each component (dataloader, loss, optimizer, scheduler, augmentation) and predict how breaking any one of them manifests in the loss curve.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement mixup, cutout, and label smoothing from scratch and justify when each is worth adding.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build an end-to-end image classification pipeline on CIFAR-10: dataset, augmentation, model, training loop, evaluation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement mixup, cutout, and label smoothing from scratch and justify when each is worth adding,” and cite a repeatable check rather than relying on visual inspection alone.

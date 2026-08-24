@@ -296,3 +296,13 @@ flowchart TD
 - [An Introduction to Statistical Learning](https://www.statlearning.com/) - free textbook covering all classical ML methods with practical examples
 - [Google's Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course) - concise visual introduction to ML concepts
 - [Scikit-learn User Guide](https://scikit-learn.org/stable/user_guide.html) - the practical reference for implementing ML in Python
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Explain the difference between supervised, unsupervised, and reinforcement learning and identify which type applies to a given problem.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Implement a nearest centroid classifier from scratch and evaluate it against a random baseline.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Distinguish between classification and regression tasks and select the appropriate loss function for each.
+
+## Reference Solution
+
+A complete response first demonstrates “Explain the difference between supervised, unsupervised, and reinforcement learning and identify which type applies to a given problem” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Implement a nearest centroid classifier from scratch and evaluate it against a random baseline.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Distinguish between classification and regression tasks and select the appropriate loss function for each.” Unsupported preference statements are not sufficient.

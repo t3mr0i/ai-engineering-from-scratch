@@ -12,7 +12,7 @@
         "Bradley-Terry preferences happen to be invariant to the reward function"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The closed-form RLHF optimum lets you express reward as a log-ratio of policies, which substitutes into the Bradley-Terry loss” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Unbounded implicit reward gap from tiny preference probabilities"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Unbounded implicit reward gap from tiny preference probabilities” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "When you want to remove the KL penalty entirely"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“When you have unpaired single labels (desirable / undesirable) and want to use loss-aversion utilities” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "It keeps the reference policy and adds a margin"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“It removes the reference policy and normalizes log-likelihood by sequence length” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "The chosen response becomes longer than the rejected"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“DPO can drive the chosen response's absolute log-prob down as long as the rejected log-prob falls faster” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "DPO over-optimizes but IPO and SimPO do not"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“DAAs exhibit the same Gao et al. peak-and-collapse over-optimization shape on gold reward” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

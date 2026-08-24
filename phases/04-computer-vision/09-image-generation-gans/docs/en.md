@@ -113,3 +113,13 @@ For a small synthetic-data run, sample inspection is enough.
 - [DCGAN (Radford, Metz, Chintala, 2015)](https://arxiv.org/abs/1511.06434) — the architecture rules that made GANs trainable
 - [Spectral Normalization for GANs (Miyato et al., 2018)](https://arxiv.org/abs/1802.05957) — the single most useful stabilisation trick
 - [StyleGAN3 (Karras et al., 2021)](https://arxiv.org/abs/2106.12423) — the SOTA GAN; reads like a greatest-hits album of every trick from the last decade
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the minimax game between generator and discriminator and why the equilibrium corresponds to p_model = p_data.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a DCGAN in PyTorch and get it to generate coherent 32x32 synthetic images in under 60 lines.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Stabilise GAN training with the three standard tricks: non-saturating loss, spectral norm, TTUR (two-timescale update rule).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the minimax game between generator and discriminator and why the equilibrium corresponds to p_model = p_data,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Stabilise GAN training with the three standard tricks: non-saturating loss, spectral norm, TTUR (two-timescale update rule),” and cite a repeatable check rather than relying on visual inspection alone.

@@ -15,7 +15,7 @@
       "explanation": "An infinite loop or runaway memory allocation in candidate code crashes only the subprocess. The host eval keeps making progress."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the score for a task with three assertions when two pass and one fails?",
       "options": [
         "1.0",
@@ -51,7 +51,7 @@
       "explanation": "Denylists catch lazy code, timeouts catch infinite loops. The denylist is a backstop, the timeout is the floor."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does pass_at_k(n, c, k) return when n - c < k?",
       "options": [
         "Zero, because the sample is undefined",

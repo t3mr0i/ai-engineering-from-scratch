@@ -141,3 +141,13 @@ It does not train the embedding. Training requires a loss, which requires a mode
 `main.py` defines three modules. `TokenEmbedding` wraps `nn.Embedding(V, D)`. `LearnedPositionalEmbedding` wraps `nn.Embedding(L, D)`. `SinusoidalPositionalEmbedding` precomputes the table and exposes it as a buffer. `EmbeddingComposer` ties a token embedding and a positional embedding together. The demo at the bottom prints the shapes, the parameter counts, and the neighbour-position similarity diagnostic. The tests in `code/tests/test_embeddings.py` pin shape, broadcast behaviour, parameter count, and the sinusoidal formula.
 
 Run the demo. Then change the model dimension `D` from 64 to 32 and watch how the sinusoidal wavelength bands change.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a token-embedding lookup table that maps vocabulary ids to dense vectors.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a learned positional-embedding lookup table indexed by position.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a fixed sinusoidal positional embedding indexed by position with no parameters.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a token-embedding lookup table that maps vocabulary ids to dense vectors,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a fixed sinusoidal positional embedding indexed by position with no parameters,” and cite a repeatable check rather than relying on visual inspection alone.

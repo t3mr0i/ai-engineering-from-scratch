@@ -130,3 +130,13 @@ The lesson provides scaffold code that is easy to extend into a real browser.
 - [ChartAgent (arXiv:2510.04514)](https://arxiv.org/abs/2510.04514)
 - [Koh et al. — VisualWebArena (arXiv:2401.13649)](https://arxiv.org/abs/2401.13649)
 - [AgentVista (arXiv:2602.23166)](https://arxiv.org/abs/2602.23166)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Design a multimodal agent loop: perceive → reason → act → observe → repeat.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a GUI grounding output schema (click coordinates, type text, scroll, drag) the VLM can emit as JSON.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare screenshot-only agents vs accessibility-tree agents vs hybrid agents.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Design a multimodal agent loop: perceive → reason → act → observe → repeat,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare screenshot-only agents vs accessibility-tree agents vs hybrid agents,” and cite a repeatable check rather than relying on visual inspection alone.

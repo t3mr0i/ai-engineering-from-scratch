@@ -273,3 +273,7 @@ job is to make that cost visible and place approval where it matters.
 
 - [Anthropic: Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) — routing, parallelization, and evaluator/optimizer patterns.
 - [LangGraph graph API](https://docs.langchain.com/oss/python/langgraph/graph-api) — a framework-specific vocabulary for nodes, edges, state, and checkpoints.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Decompose a multi-step agent system into nodes, edges, shared state, and routing rules,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement conditional routing, rollback, checkpoints, human approval, and fan-out/fan-in with the standard library,” and cite a repeatable check rather than relying on visual inspection alone.

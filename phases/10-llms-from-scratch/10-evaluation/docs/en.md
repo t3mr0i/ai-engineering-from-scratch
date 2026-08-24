@@ -144,3 +144,13 @@ The only eval that matters for production. The process:
 - [Chen et al., 2021 -- "Evaluating Large Language Models Trained on Code"](https://arxiv.org/abs/2107.03374) -- the HumanEval paper from OpenAI, established code generation evaluation methodology
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge"](https://arxiv.org/abs/2306.05685) -- systematic analysis of using LLMs to evaluate LLMs, including position bias and verbosity bias findings
 - [LMSYS Chatbot Arena](https://chat.lmsys.org/) -- crowdsourced model comparison platform with 2M+ votes, the most trusted real-world LLM ranking
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a custom evaluation harness that runs multiple-choice and open-ended benchmarks against a language model.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why standard benchmarks (MMLU, HumanEval) saturate and fail to differentiate frontier models.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement task-specific evals with proper metrics: exact match, F1, BLEU, and LLM-as-judge scoring.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a custom evaluation harness that runs multiple-choice and open-ended benchmarks against a language model,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement task-specific evals with proper metrics: exact match, F1, BLEU, and LLM-as-judge scoring,” and cite a repeatable check rather than relying on visual inspection alone.

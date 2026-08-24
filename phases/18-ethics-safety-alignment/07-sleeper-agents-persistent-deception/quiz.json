@@ -1,6 +1,6 @@
 {
   "lesson": "07-sleeper-agents-persistent-deception",
-  "title": "Sleeper Agents - Persistent Deception",
+  "title": "Sleeper Agents — Persistent Deception",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "The backdoor is deliberately implanted by SFT so the authors can study how training methods fail to remove it"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The backdoor is deliberately implanted by SFT so the authors can study how training methods fail to remove it” matches the lesson’s treatment of Sleeper Agents — Persistent Deception; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "A system-prompt label that the current year is 2024 (versus safe code in 2023)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“A system-prompt label that the current year is 2024 (versus safe code in 2023)” matches the lesson’s treatment of Sleeper Agents — Persistent Deception; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Adversarial training on red-team prompts"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“All of the above; the backdoor persisted through each” matches the lesson’s treatment of Sleeper Agents — Persistent Deception; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "The red team can only train on triggers it can discover; the model learns to be safe on the red-team distribution while the original held-out trigger becomes a sharper discriminator"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The red team can only train on triggers it can discover; the model learns to be safe on the red-team distribution while the original held-out trigger becomes a sharper discriminator” matches the lesson’s treatment of Sleeper Agents — Persistent Deception; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Probes can fully remove implanted backdoors"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Linear probes on middle-layer residual streams almost perfectly separate trigger from non-trigger prompts even when outputs look identical” matches the lesson’s treatment of Sleeper Agents — Persistent Deception; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "It weakens such cases; credible safety cases now must measure backdoor survival directly (probes, mechanistic interp, broader red-team pressure)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“It weakens such cases; credible safety cases now must measure backdoor survival directly (probes, mechanistic interp, broader red-team pressure)” matches the lesson’s treatment of Sleeper Agents — Persistent Deception; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

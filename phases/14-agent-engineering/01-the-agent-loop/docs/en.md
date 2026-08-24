@@ -347,3 +347,13 @@ print("✅ PASS — correct total found in the agent's final answer" if found
 - [Letta, Rearchitecting the Agent Loop](https://www.letta.com/blog/letta-v1-agent) — the native-reasoning rewrite of MemGPT's loop
 - [Claude Agent SDK overview](https://platform.claude.com/docs/en/agent-sdk/overview) — the 2026 harness shape
 - [OpenAI Agents SDK docs](https://openai.github.io/openai-agents-python/) — Handoffs, Guardrails, Sessions, Tracing
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three parts of the ReAct loop — Thought, Action, Observation — and explain why each one is load-bearing.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a stdlib agent loop with a toy LLM, tool registry, and stop condition under 200 lines.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Identify the 2026 shift from prompt-based thought tokens to native model reasoning (Responses API, encrypted reasoning passthrough).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three parts of the ReAct loop — Thought, Action, Observation — and explain why each one is load-bearing,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Identify the 2026 shift from prompt-based thought tokens to native model reasoning (Responses API, encrypted reasoning passthrough),” and cite a repeatable check rather than relying on visual inspection alone.

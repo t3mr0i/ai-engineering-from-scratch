@@ -1,0 +1,78 @@
+{
+  "lesson": "22-async-hogwild-inference",
+  "title": "Async and Hogwild! Inference",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Async and Hogwild! Inference?",
+      "options": [
+        "Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Async and Hogwild! Inference?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Async and Hogwild! Inference?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
+        "Compute the wall-time speedup of Hogwild! as a function of worker count `N`, task-level parallelism `p`, an...",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Compute the wall-time speedup of Hogwild! as a function of worker count `N`, task-level parallelism `p`, an...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Async and Hogwild! Inference?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement a two-worker Hogwild! simulator on a toy problem and observe the emergent task division",
+        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement a two-worker Hogwild! simulator on a toy problem and observe the emergent task division” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Async and Hogwild! Inference?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each..."
+      ],
+      "correct": 3,
+      "explanation": "“Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Async and Hogwild! Inference?",
+      "options": [
+        "State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

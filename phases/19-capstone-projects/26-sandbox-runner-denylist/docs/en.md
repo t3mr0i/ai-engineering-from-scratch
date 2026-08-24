@@ -91,3 +91,13 @@ The demo creates a temp directory, drops a clean file into it, then runs a batte
 ## How this composes with the rest of Track A
 
 Lesson 25 produced the gate chain. Lesson 26 is the executor that runs after a gate ALLOW. Lesson 27's eval harness compares the sandbox results against the expected exit-code per task. Lesson 28 emits a `gen_ai.tool.execution` span around each `Sandbox.run` invocation. Lesson 29's end-to-end demo wires a real coding agent through both layers.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a `Sandbox` class wrapping `subprocess.run` with timeout, capture, and truncation.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Refuse a command by name against a denylist and by structure against an argv inspector.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Refuse any path argument that resolves outside a declared project root.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a `Sandbox` class wrapping `subprocess.run` with timeout, capture, and truncation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Refuse any path argument that resolves outside a declared project root,” and cite a repeatable check rather than relying on visual inspection alone.

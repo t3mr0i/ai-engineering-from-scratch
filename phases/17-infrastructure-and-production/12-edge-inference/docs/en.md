@@ -97,3 +97,13 @@ Voice agents are latency-sensitive (first token < 500 ms). Local inference elimi
 - [WebLLM (arXiv:2412.15803)](https://arxiv.org/html/2412.15803v2) — design and benchmarks.
 - [Apple Core ML](https://developer.apple.com/documentation/coreml) — ANE-native conversion.
 - [Qualcomm AI Hub](https://aihub.qualcomm.com/) — pre-converted models for Hexagon.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why mobile LLM inference is memory-bandwidth-bound and compute is secondary.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Enumerate the four edge targets (Apple ANE, Qualcomm Hexagon, WebGPU/WebLLM, NVIDIA Jetson) and match each to a use case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the 2026 WebGPU coverage gap (Firefox Android catching up) and the Safari iOS 26 landing.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why mobile LLM inference is memory-bandwidth-bound and compute is secondary,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the 2026 WebGPU coverage gap (Firefox Android catching up) and the Safari iOS 26 landing,” and cite a repeatable check rather than relying on visual inspection alone.

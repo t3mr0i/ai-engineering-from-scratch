@@ -106,3 +106,13 @@ Prompts in MCP are not system prompts. The host's system prompt (its own operati
 - [MCP — Server resources spec 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/server/resources) — full `resources/*` message reference
 - [MCP — Server prompts spec 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/server/prompts) — full `prompts/*` message reference
 - [MCP — Protocol info site: resources](https://modelcontextprotocol.info/docs/concepts/resources/) — community guide expanding on the official docs
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Decide between exposing a capability as a tool, a resource, or a prompt for a given domain.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/updated`.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement `prompts/list` and `prompts/get` with argument templates.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Decide between exposing a capability as a tool, a resource, or a prompt for a given domain,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement `prompts/list` and `prompts/get` with argument templates,” and cite a repeatable check rather than relying on visual inspection alone.

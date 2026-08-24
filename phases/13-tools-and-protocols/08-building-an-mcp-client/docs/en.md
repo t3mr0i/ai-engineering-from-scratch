@@ -96,3 +96,13 @@ Streamable HTTP uses a `Mcp-Session-Id` header. Stdio has no session id — the 
 - [MCP Python SDK — client module](https://github.com/modelcontextprotocol/python-sdk) — reference `ClientSession` and `stdio_client`
 - [MCP TypeScript SDK — Client](https://github.com/modelcontextprotocol/typescript-sdk) — TS parallel
 - [VS Code — MCP in extensions](https://code.visualstudio.com/api/extension-guides/ai/mcp) — how VS Code multiplexes multiple MCP servers in a single editor host
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Maintain per-server session state (capabilities, tool list, last-seen notification ids).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Merge tool lists across multiple servers into one namespace with collision handling.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Merge tool lists across multiple servers into one namespace with collision handling,” and cite a repeatable check rather than relying on visual inspection alone.

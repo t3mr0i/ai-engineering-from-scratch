@@ -442,3 +442,13 @@ for d in report["dimensions"]:
 - Phase 14 · 30 — Eval-driven agent development (calibration set generator)
 - Phase 14 · 38 — the verification gate the reviewer reads
 - Phase 14 · 40 — the handoff packet the reviewer report feeds
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State why the same agent cannot reliably review its own work.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a reviewer agent loop that consumes builder artifacts and emits a structured review report.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Author a reviewer rubric that grades specific dimensions, not vibes.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State why the same agent cannot reliably review its own work,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Author a reviewer rubric that grades specific dimensions, not vibes,” and cite a repeatable check rather than relying on visual inspection alone.

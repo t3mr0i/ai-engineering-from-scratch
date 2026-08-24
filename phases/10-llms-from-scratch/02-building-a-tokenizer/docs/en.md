@@ -158,3 +158,13 @@ You are building in Python to understand the algorithm. In production, you would
 - [Llama 3 paper (Meta, 2024)](https://arxiv.org/abs/2407.21783) -- details on 128K vocabulary and tokenizer training
 - [SentencePiece (Kudo & Richardson, 2018)](https://arxiv.org/abs/1808.06226) -- language-agnostic tokenization
 - [GPT-2 tokenizer source](https://github.com/openai/gpt-2/blob/master/src/encoder.py) -- the original byte-to-Unicode mapping
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a production-grade BPE tokenizer that handles Unicode, whitespace normalization, and special tokens.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement byte-level fallback so the tokenizer can encode any input (including emoji, CJK, and code) without unknown tokens.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Add pre-tokenization regex patterns that split text at word boundaries before applying BPE merges.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a production-grade BPE tokenizer that handles Unicode, whitespace normalization, and special tokens,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Add pre-tokenization regex patterns that split text at word boundaries before applying BPE merges,” and cite a repeatable check rather than relying on visual inspection alone.

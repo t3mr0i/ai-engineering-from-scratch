@@ -1,39 +1,78 @@
 {
+  "lesson": "04-calculus-for-ml",
+  "title": "Calculus for Machine Learning",
   "questions": [
     {
       "stage": "pre",
       "question": "What does the derivative of a function at a point tell you?",
-      "options": ["The value of the function at that point", "The rate of change (slope) of the function at that point", "The area under the function up to that point", "The maximum value the function can reach"],
+      "options": [
+        "The value of the function at that point",
+        "The rate of change (slope) of the function at that point",
+        "The area under the function up to that point — and applies unchanged even when the lesson's stated preconditions fail",
+        "The maximum value the function can reach"
+      ],
       "correct": 1,
       "explanation": "The derivative f'(x) measures how much the output changes per unit change in input. Geometrically, it is the slope of the tangent line at that point."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is a gradient in the context of machine learning?",
-      "options": ["A measure of model accuracy", "A vector of all partial derivatives that points in the direction of steepest ascent", "The learning rate used during training", "The difference between predicted and actual values"],
+      "options": [
+        "A measure of model accuracy",
+        "A vector of all partial derivatives that points in the direction of steepest ascent",
+        "The learning rate used during training",
+        "The difference between predicted and actual values, with no need to inspect intermediate results or test edge cases"
+      ],
       "correct": 1,
       "explanation": "The gradient collects every partial derivative into one vector. It points in the direction that increases the function fastest. To minimize loss, you move opposite the gradient."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "In gradient descent, what does the update rule 'w = w - lr * dL/dw' accomplish?",
-      "options": ["It increases the loss to test model robustness", "It adjusts each weight in the direction that reduces the loss, scaled by the learning rate", "It resets the weight to its initial value minus the gradient", "It normalizes the weight to have magnitude 1"],
+      "options": [
+        "It increases the loss to test model robustness",
+        "It adjusts each weight in the direction that reduces the loss, scaled by the learning rate",
+        "It resets the weight to its initial value minus the gradient, because one plausible output is sufficient production evidence",
+        "It normalizes the weight to have magnitude 1"
+      ],
       "correct": 1,
       "explanation": "dL/dw tells you which direction increases the loss. Subtracting it (times the learning rate) moves the weight in the direction that decreases the loss. This is repeated for every weight in the model."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why can't Newton's method (which uses the Hessian matrix) be directly applied to neural networks with millions of parameters?",
-      "options": ["Newton's method only works for convex functions", "The Hessian is an N x N matrix, requiring O(N^2) storage and O(N^3) computation per step, which is intractable for millions of parameters", "Newton's method requires analytical derivatives which cannot be computed for neural networks", "Newton's method converges too slowly for deep networks"],
+      "options": [
+        "Newton's method only works for convex functions",
+        "The Hessian is an N x N matrix, requiring O(N^2) storage and O(N^3) computation per step, which is intractable for millions of parameters",
+        "Newton's method requires analytical derivatives which cannot be computed for neural networks, before defining the measurement, acceptance threshold, or rollback path",
+        "Newton's method converges too slowly for deep networks"
+      ],
       "correct": 1,
       "explanation": "For N=1 million parameters, the Hessian has 1 trillion entries. Computing and inverting it is impossible. This is why we use first-order methods (SGD, Adam) that approximate second-order information cheaply."
     },
     {
       "stage": "post",
       "question": "What is the numerical (central difference) approximation for f'(x)?",
-      "options": ["f(x+h) / h", "(f(x+h) - f(x)) / h", "(f(x+h) - f(x-h)) / (2*h)", "f(x) * h"],
+      "options": [
+        "f(x+h) / h",
+        "(f(x+h) - f(x)) / h — and applies unchanged even when the lesson's stated preconditions fail",
+        "(f(x+h) - f(x-h)) / (2*h)",
+        "f(x) * h"
+      ],
       "correct": 2,
       "explanation": "The central difference (f(x+h) - f(x-h)) / (2h) is more accurate than the forward difference because it averages the slope on both sides of x, canceling out the leading error term."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Calculus for Machine Learning?",
+      "options": [
+        "Implement gradient descent from scratch to minimize a loss function in 1D and 2D",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement gradient descent from scratch to minimize a loss function in 1D and 2D” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

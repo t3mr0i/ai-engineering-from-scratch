@@ -161,3 +161,13 @@ graph TD
 - Smith, "Super-Convergence: Very Fast Training of Neural Networks Using Large Learning Rates" (2018) -- the 1cycle policy paper
 - Touvron et al., "Llama 2: Open Foundation and Fine-Tuned Chat Models" (2023) -- documents the warmup + cosine schedule used at scale
 - Goyal et al., "Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour" (2017) -- linear scaling rule and warmup for large batch training
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement constant, step decay, cosine annealing, warmup + cosine, and 1cycle learning rate schedules from scratch.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Demonstrate the three failure modes of learning rate selection: divergence (too high), stalling (too low), and oscillation (no decay).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why warmup is necessary for Adam-based optimizers and how it stabilizes early training.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement constant, step decay, cosine annealing, warmup + cosine, and 1cycle learning rate schedules from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why warmup is necessary for Adam-based optimizers and how it stabilizes early training,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -67,3 +67,13 @@ The schedule is half of training health. The gradient norm is the other half. Th
 - Phase 19 · 42 - the downloader whose corpus this schedule consumes
 - Phase 19 · 43 - the dataloader the schedule co-evolves with
 - Phase 19 · 45 - gradient clipping and AMP, the next layer in the loop
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement an AdamW optimizer wired to a cosine learning-rate schedule with linear warmup.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute the schedule's exact value at any step without floating-point drift across runs.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Log gradient L2 norm side by side with the learning rate so training health is observable.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement an AdamW optimizer wired to a cosine learning-rate schedule with linear warmup,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Log gradient L2 norm side by side with the learning rate so training health is observable,” and cite a repeatable check rather than relying on visual inspection alone.

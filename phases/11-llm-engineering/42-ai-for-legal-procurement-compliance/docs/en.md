@@ -69,3 +69,13 @@ The template in `outputs/sheet-legal-procurement-ai-review.md` can be used befor
 - Confidentiality and obligation risk must be checked first.
 - Vendor terms need traceable evidence.
 - Human reviewers remain accountable for decisions.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify where AI can support legal, procurement, and compliance workflows.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a clause-and-obligation triage artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map confidentiality, obligation risk, vendor terms, and missing evidence to controls.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify where AI can support legal, procurement, and compliance workflows,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map confidentiality, obligation risk, vendor terms, and missing evidence to controls,” and cite a repeatable check rather than relying on visual inspection alone.

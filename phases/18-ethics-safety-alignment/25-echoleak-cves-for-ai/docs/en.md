@@ -76,3 +76,13 @@ Lesson 15 is the attack class in the abstract. Lesson 25 is the concrete CVE lay
 - [Aim Labs — LLM Scope Violation framework](https://arxiv.org/html/2509.10540v1) — the threat-model framework
 - [Microsoft MSRC CVE-2025-32711](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-32711) — CVE record
 - [OWASP — LLM Top 10 (2025)](https://genai.owasp.org/llm-top-10/) — LLM01 prompt injection
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the EchoLeak attack chain from email delivery to data exfiltration.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Define "LLM Scope Violation" and explain why it is a new vulnerability class.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the three related CVEs (EchoLeak, CamoLeak, Copilot RCE) and what each reveals about the production attack surface.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the EchoLeak attack chain from email delivery to data exfiltration,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the three related CVEs (EchoLeak, CamoLeak, Copilot RCE) and what each reveals about the production attack surface,” and cite a repeatable check rather than relying on visual inspection alone.

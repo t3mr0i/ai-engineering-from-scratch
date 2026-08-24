@@ -15,7 +15,7 @@
       "explanation": "The point of generating a queue is to amortise sampling cost across the loop. When the first hypothesis fails the runner pops the next without a fresh sampling pass."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does the temperature ramp accomplish on each pass?",
       "options": [
         "It raises the parser tolerance",
@@ -51,7 +51,7 @@
       "explanation": "The rank score is a weighted sum of novelty, specificity, and testability. Each sub score lives between zero and one."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why is the mock language model keyed on a temperature bucket rather than the raw float?",
       "options": [
         "Because floats cannot be hashed",
@@ -63,7 +63,7 @@
       "explanation": "Buckets discretise the continuous schedule. Two adjacent temperatures can map to different buckets and pull different drafts from the scripted bank, which is how the mock simulates varied sampling."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What happens if every draft from the mock model fails the parser?",
       "options": [
         "The generator raises a hard error",

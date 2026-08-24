@@ -15,7 +15,7 @@
       "explanation": "The gap between builder and reviewer is where reliability lives; acceptance only proves a weaker version."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which is NOT one of the five rubric dimensions?",
       "options": [
         "Problem fit, since the rubric asks whether the change solved the task as stated",
@@ -51,7 +51,7 @@
       "explanation": "The lesson says the rubric totals out of 10: a run below 7 is a soft fail, a run below 5 is a hard fail."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is the reviewer forbidden from doing, per the lesson?",
       "options": [
         "Reading the builder's feedback log before writing its report",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "The lesson says the gate checks deterministic facts (did acceptance run, did rules pass, did scope hold) while the reviewer makes qualitative judgments (was this the right work, is it documented, is the handoff usable)."
-    },
-    {
-      "stage": "post",
-      "question": "Where does the reviewer's report integrate with the rest of the workbench?",
-      "options": [
-        "It bundles into the handoff packet; human review starts from the report, not a blank page",
-        "It fully and permanently replaces the verification gate once a reviewer report has been filed",
-        "It is discarded once the human signs off, since the gate already logged a verdict",
-        "It is stored only in chat history, since the workbench has no artifact for review reports"
-      ],
-      "correct": 0,
-      "explanation": "The review report feeds the handoff so the next session and the human reviewer start from a written verdict."
     }
   ]
 }

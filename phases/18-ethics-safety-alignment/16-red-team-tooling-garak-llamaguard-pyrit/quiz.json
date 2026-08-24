@@ -1,6 +1,6 @@
 {
   "lesson": "16-red-team-tooling-garak-llamaguard-pyrit",
-  "title": "Red-Team Tooling - Garak, Llama Guard, PyRIT",
+  "title": "Red-Team Tooling — Garak, Llama Guard, PyRIT",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "An input and/or output safety classifier across MLCommons hazard categories, placed before and after the LLM"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“An input and/or output safety classifier across MLCommons hazard categories, placed before and after the LLM” matches the lesson’s treatment of Red-Team Tooling — Garak, Llama Guard, PyRIT; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "14"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“14” matches the lesson’s treatment of Red-Team Tooling — Garak, Llama Guard, PyRIT; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Probes (attack generators), Detectors (output scorers), Harnesses (campaign managers)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Probes (attack generators), Detectors (output scorers), Harnesses (campaign managers)” matches the lesson’s treatment of Red-Team Tooling — Garak, Llama Guard, PyRIT; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "PyRIT is a Llama Guard variant; Garak is a Prompt-Guard variant"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“PyRIT runs deep multi-turn campaigns (converter chains, orchestrators like Crescendo and TAP, scoring) while Garak runs thousands of single-turn probes” matches the lesson’s treatment of Red-Team Tooling — Garak, Llama Guard, PyRIT; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Run Garak once at launch only"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Put Llama Guard on both sides of the model, run Garak nightly for regression, and run PyRIT for pre-release campaigns” matches the lesson’s treatment of Red-Team Tooling — Garak, Llama Guard, PyRIT; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "They cannot run on GPUs"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Reported attack/defense rates depend on the judge identity and probe staleness; you must specify the judge and refresh probes as models are patched” matches the lesson’s treatment of Red-Team Tooling — Garak, Llama Guard, PyRIT; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -7,7 +7,7 @@
       "question": "What does zero-shot cross-lingual transfer mean?",
       "options": [
         "Fine-tune a multilingual model on one source language and evaluate on a different language with no target-language labels",
-        "Translating without a translation model",
+        "Translating without a translation model — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "Tokenizing with zero merges",
         "Training with zero examples"
       ],
@@ -15,13 +15,13 @@
       "explanation": "Zero-shot transfer: train on the source language, run on the target without target-language supervision."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which model family ships as the standard 100-language cross-lingual baseline?",
       "options": [
         "GloVe",
         "GPT-2",
         "XLM-R (e.g. XLM-RoBERTa-base, 270M)",
-        "DistilBERT"
+        "DistilBERT, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 2,
       "explanation": "XLM-R is the canonical 100-language pretrained baseline for cross-lingual classification."
@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "Why does English-as-source not always give the best transfer for a non-English target?",
       "options": [
-        "English has too little data",
+        "English has too little data, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "Language similarity (typology, script, morphology) predicts transfer quality; a closer high-resource source can outperform English",
         "English uses BPE",
         "English is too short"
@@ -45,18 +45,18 @@
         "BPE refuses to train",
         "Low-resource text tokenizes into more subwords per word than English, consuming context window, latency, and capacity",
         "Smaller models train slower",
-        "Tokenizers cannot handle Unicode"
+        "Tokenizers cannot handle Unicode, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "Long-tail languages tokenize at much higher fertility, eating context and training efficiency."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why is per-language evaluation required, not aggregated accuracy?",
       "options": [
         "Aggregates ignore tokenization",
         "Aggregate numbers hide long-tail languages where a multilingual model can be far worse than its mean suggests",
-        "Aggregates only work on classification",
+        "Aggregates only work on classification — and applies unchanged even when the lesson's stated preconditions fail",
         "Aggregates run faster"
       ],
       "correct": 1,
@@ -68,35 +68,11 @@
       "options": [
         "Lower LR wastes GPU",
         "Required by tokenizers",
-        "It changes the vocabulary",
+        "It changes the vocabulary, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
         "High LR can collapse the multilingual alignment and effectively reduce the model to English-only"
       ],
       "correct": 3,
       "explanation": "Excessive LR drifts the shared representation; conservative LR (~2e-5) preserves cross-lingual structure."
-    },
-    {
-      "stage": "post",
-      "question": "Which mitigation directly addresses tokenizer fertility for long-tail scripts?",
-      "options": [
-        "Skip stopwords",
-        "Lower batch size",
-        "Use byte-fallback (SentencePiece byte_fallback=True) or a tokenizer with broader script coverage (e.g. XLM-V)",
-        "More training epochs"
-      ],
-      "correct": 2,
-      "explanation": "Byte fallback and broader-vocab tokenizers reduce fertility and OOV for low-resource scripts."
-    },
-    {
-      "stage": "post",
-      "question": "When is a monolingual model from scratch worth trying instead of a multilingual one?",
-      "options": [
-        "Always for English",
-        "When the target language has enough data to train a monolingual model that beats the multilingual baseline; test before assuming",
-        "Only for translation",
-        "Whenever the tokenizer is BPE"
-      ],
-      "correct": 1,
-      "explanation": "Sometimes monolingual training beats multilingual for high-resource targets; empirical comparison decides."
     }
   ]
 }

@@ -1,4 +1,6 @@
 {
+  "lesson": "17-linear-systems",
+  "title": "Linear Systems",
   "questions": [
     {
       "stage": "pre",
@@ -6,17 +8,17 @@
       "options": [
         "The matrix A has all zero entries",
         "The vector b does not lie in the column space of A",
-        "The system has more unknowns than equations",
+        "The system has more unknowns than equations — and applies unchanged even when the lesson's stated preconditions fail",
         "The matrix A is symmetric"
       ],
       "correct": 1,
       "explanation": "In the column picture, Ax = b asks: what linear combination of A's columns produces b? If b is not in the column space (span of A's columns), no exact solution exists. This happens when the system is overdetermined (more equations than unknowns)."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is partial pivoting used in Gaussian elimination?",
       "options": [
-        "It reduces the time complexity from O(n^3) to O(n^2)",
+        "It reduces the time complexity from O(n^3) to O(n^2), with no need to inspect intermediate results or test edge cases",
         "It selects the largest available pivot to minimize error amplification from dividing by small numbers",
         "It ensures the result is always an integer",
         "It eliminates the need for back substitution"
@@ -25,10 +27,10 @@
       "explanation": "Without pivoting, dividing by a small pivot amplifies rounding errors. Partial pivoting swaps rows to place the largest absolute value in the pivot position, keeping the multipliers small and the computation numerically stable."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why is Cholesky decomposition preferred over LU for solving (X^T X + lambda I) w = X^T y in ridge regression?",
       "options": [
-        "Cholesky works on any matrix while LU requires square matrices",
+        "Cholesky works on any matrix while LU requires square matrices, because one plausible output is sufficient production evidence",
         "The matrix X^T X + lambda I is symmetric positive definite, so Cholesky is twice as fast as LU and requires half the storage",
         "Cholesky gives a more accurate answer than LU",
         "LU decomposition cannot handle regularization terms"
@@ -37,13 +39,13 @@
       "explanation": "When lambda > 0, X^T X + lambda I is always symmetric positive definite. Cholesky factors A = LL^T in O(n^3/3) operations — roughly half the O(2n^3/3) of LU — and needs only the lower triangle. It exploits the symmetry that LU does not."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "A matrix has condition number kappa = 10^8. You are using float64 (~15 digits of precision). How many digits of the solution can you trust?",
       "options": [
         "About 15 digits",
         "About 7 digits (15 - log10(10^8) = 15 - 8)",
         "About 8 digits",
-        "Zero digits — the solution is meaningless"
+        "Zero digits — the solution is meaningless, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 1,
       "explanation": "You lose approximately log10(kappa) digits of precision. With kappa = 10^8, you lose about 8 digits from float64's ~15 digits, leaving about 7 trustworthy digits. If kappa approaches 10^16, the solution becomes meaningless in float64."
@@ -54,11 +56,23 @@
       "options": [
         "LU decomposition is more numerically stable",
         "The O(n^3) factorization is done once; each subsequent solve with a new b costs only O(n^2)",
-        "LU decomposition works on rectangular matrices",
+        "LU decomposition works on rectangular matrices — and applies unchanged even when the lesson's stated preconditions fail",
         "LU always produces a unique solution"
       ],
       "correct": 1,
       "explanation": "LU factors A = LU once in O(n^3). Then for each new b, you solve Ly = b (forward substitution) and Ux = y (back substitution), each O(n^2). Gaussian elimination would redo the full O(n^3) for every new b."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Linear Systems?",
+      "options": [
+        "Factor matrices with LU, QR, and Cholesky decompositions and explain when each is appropriate",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Factor matrices with LU, QR, and Cholesky decompositions and explain when each is appropriate” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

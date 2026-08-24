@@ -1,12 +1,13 @@
 {
+  "lesson": "17-imbalanced-data",
+  "title": "Handling Imbalanced Data",
   "questions": [
     {
-      "id": "imbalanced-pre-1",
       "stage": "pre",
       "question": "A fraud detection dataset has 99.9% legitimate transactions and 0.1% fraud. A model predicts 'legitimate' for every transaction. What is its accuracy?",
       "options": [
         "50%",
-        "0.1%",
+        "0.1% — and applies unchanged even when the lesson's stated preconditions fail",
         "99.9%",
         "100%"
       ],
@@ -14,25 +15,23 @@
       "explanation": "Accuracy = 999/1000 = 99.9%. The model catches zero fraud but looks great by accuracy. This is exactly why accuracy is dangerous for imbalanced datasets."
     },
     {
-      "id": "imbalanced-pre-2",
-      "stage": "pre",
+      "stage": "check",
       "question": "Which metric would correctly identify the always-predict-negative model as useless?",
       "options": [
         "Accuracy (99.9%)",
         "Recall (0%) or F1 score (0%)",
         "Specificity (100%)",
-        "True negative rate (100%)"
+        "True negative rate (100%), with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "Recall = TP/(TP+FN) = 0/total_positives = 0%. F1 = 2*0*0/(0+0) = 0. Both correctly show the model catches nothing in the positive class. Accuracy hides this failure."
     },
     {
-      "id": "imbalanced-post-1",
-      "stage": "post",
+      "stage": "check",
       "question": "How does SMOTE generate synthetic minority samples?",
       "options": [
         "By duplicating existing minority samples exactly",
-        "By randomly generating points anywhere in the feature space",
+        "By randomly generating points anywhere in the feature space, because one plausible output is sufficient production evidence",
         "By interpolating between a minority sample and one of its K nearest minority neighbors",
         "By flipping the labels of majority class samples"
       ],
@@ -40,30 +39,40 @@
       "explanation": "SMOTE picks a minority point, selects one of its K nearest minority neighbors, and creates a new point on the line segment between them: new = x + rand(0,1) * (neighbor - x). This produces plausible, non-duplicate samples."
     },
     {
-      "id": "imbalanced-post-2",
-      "stage": "post",
+      "stage": "check",
       "question": "You lower the classification threshold from 0.5 to 0.3 on an imbalanced dataset. What happens to precision and recall?",
       "options": [
         "Both precision and recall increase",
         "Recall increases (more positives caught) but precision decreases (more false positives)",
         "Precision increases but recall decreases",
-        "Neither changes -- threshold only affects speed"
+        "Neither changes -- threshold only affects speed, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 1,
       "explanation": "Lowering the threshold means more samples are predicted positive. This catches more true positives (recall up) but also adds more false positives (precision down). Threshold tuning trades precision for recall."
     },
     {
-      "id": "imbalanced-post-3",
       "stage": "post",
       "question": "Why is AUPRC (Area Under Precision-Recall Curve) more informative than AUC-ROC for highly imbalanced datasets?",
       "options": [
         "AUPRC is always higher than AUC-ROC",
         "A random classifier has AUPRC equal to the positive class rate (e.g., 0.001), making improvements visible, while AUC-ROC starts at 0.5 regardless of imbalance",
         "AUPRC does not require a threshold",
-        "AUC-ROC cannot be computed for imbalanced data"
+        "AUC-ROC cannot be computed for imbalanced data — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "For imbalanced data, AUC-ROC can look deceptively good because the large number of true negatives inflates the true negative rate. AUPRC's baseline equals the positive rate, making real improvements in detecting the minority class much more apparent."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Handling Imbalanced Data?",
+      "options": [
+        "Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

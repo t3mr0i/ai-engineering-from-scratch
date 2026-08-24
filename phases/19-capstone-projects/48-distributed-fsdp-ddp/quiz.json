@@ -15,7 +15,7 @@
       "explanation": "Broadcast at init keeps ranks in sync at step zero. All-reduce after backward keeps them in sync at every step that follows."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does this lesson work on CPU without CUDA?",
       "options": [
         "It is a stub",
@@ -51,7 +51,7 @@
       "explanation": "Each rank owns 1/world_size of every parameter. The gather rebuilds the full tensor for compute; production FSDP overlaps the gather with the previous layer's work."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why is the gloo all_gather sized to world_size equal-size shards even when the parameter length is not divisible by world_size?",
       "options": [
         "Gloo's all_gather requires equal output tensor sizes per rank, so the flat parameter is right-padded to a multiple of world_size before slicing and the padding is dropped after the gather",

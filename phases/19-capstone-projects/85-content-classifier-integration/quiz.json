@@ -12,10 +12,10 @@
         "Because the standard library requires both"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Because any input bypass produces an output the user will see, and the output is the last place to catch it” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which three classifiers are wired in this lesson?",
       "options": [
         "Sentiment, language, length",
@@ -24,7 +24,7 @@
         "Quality, factuality, citation"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Toxicity, PII, instruction-leakage” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Drop both verdicts and ship the original"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Take the maximum severity and apply that action; block dominates redact” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "To compress the regex"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“To distinguish credit-card shaped digit runs from arbitrary digit sequences with low false positives” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "How does the instruction-leakage classifier decide?",
       "options": [
         "By detecting curly braces in the output",
@@ -60,7 +60,7 @@
         "By counting tokens"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“By computing trigram cosine between the output and a known system prompt, with a threshold” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Because negation is required by Unicode"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“To skip matches like 'you are not stupid' so the classifier does not over-redact common reassurances” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

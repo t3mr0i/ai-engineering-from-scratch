@@ -116,3 +116,13 @@ Minimum audit record fields:
 - [Anthropic — Model Specification](https://www.anthropic.com/news/anthropics-responsible-scaling-policy) — Anthropic's published guidance on what the model is designed to defer to humans on; directly informs where gates are necessary.
 - [NIST AI RMF](https://airc.nist.gov/) — the voluntary US AI Risk Management Framework; Govern 3.2 and Manage 4.1 cover human oversight roles and human review cadence and escalation.
 - [Stanford HAI — AI Index Report 2025](https://aiindex.stanford.edu/report/) — annual data on AI deployment incidents, including the breakdown of quality failures by oversight category.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

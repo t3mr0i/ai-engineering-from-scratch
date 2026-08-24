@@ -12,10 +12,10 @@
         "Defense in depth across input sanitize, policy rails, classifier gate, model, output filter, and HITL tier"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Defense in depth across input sanitize, policy rails, classifier gate, model, output filter, and HITL tier” matches the lesson’s treatment of Capstone 15 — Constitutional Safety Harness + Red-Team Range; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which classifier handles multilingual coverage across roughly 132 languages?",
       "options": [
         "Nemotron 3 Content Safety",
@@ -24,7 +24,7 @@
         "Llama Guard 4"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“X-Guard” matches the lesson’s treatment of Capstone 15 — Constitutional Safety Harness + Red-Team Range; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "To track false-positive blocks so the model stays helpful while improving harmlessness"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“To track false-positive blocks so the model stays helpful while improving harmlessness” matches the lesson’s treatment of Capstone 15 — Constitutional Safety Harness + Red-Team Range; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Critic LLM scores drafts against a written constitution, prompts the model rewrites the objected outputs, and SFT runs on the improved pairs"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Critic LLM scores drafts against a written constitution, prompts the model rewrites the objected outputs, and SFT runs on the improved pairs” matches the lesson’s treatment of Capstone 15 — Constitutional Safety Harness + Red-Team Range; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "How are successful jailbreaks scored for severity in the findings?",
       "options": [
         "By the model that produced the response",
@@ -60,7 +60,7 @@
         "On a hand-tuned 1-10 scale chosen by the operator"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Using CVSS 4.0 with attack vector, complexity, and impact, plus a disclosure timeline” matches the lesson’s treatment of Capstone 15 — Constitutional Safety Harness + Red-Team Range; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "PSI, KL, MMD, KS, JS, and Wasserstein"
       ],
       "correct": 1,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Why is range automation (cron + alerts) part of the rubric?",
-      "options": [
-        "Cron is the only way to call OPA",
-        "Continuous scheduled probes catch drift in attack success rate and over-refusal regressions over time",
-        "Manual runs are explicitly required",
-        "Automation is required to disable Llama Guard 4"
-      ],
-      "correct": 1,
-      "explanation": ""
+      "explanation": "“PAIR, TAP, GCG, encoding (ASCII/base64/rot13), multi-turn persona, and multilingual code-switch” matches the lesson’s treatment of Capstone 15 — Constitutional Safety Harness + Red-Team Range; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -12,7 +12,7 @@
         "Cold-start image pull"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“KV cache pressure in HBM causing preemption and re-prefill of the same prefixes” matches the lesson’s treatment of vLLM Production Stack with LMCache KV Offloading; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "ChunkedPrefill API"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Connector API in vLLM v0.9.0” matches the lesson’s treatment of vLLM Production Stack with LMCache KV Offloading; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Removal of LMCache support"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“An asynchronous offload path so the engine does not block on offload in the common case” matches the lesson’s treatment of vLLM Production Stack with LMCache KV Offloading; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "When you are running on CPU only"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“When multiple engines share prefixes across tenants, LoRA variants, or repeated RAG context, so cross-engine reuse pays” matches the lesson’s treatment of vLLM Production Stack with LMCache KV Offloading; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Engine crashes"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Configs match baseline with roughly 3-5% overhead and no real benefit” matches the lesson’s treatment of vLLM Production Stack with LMCache KV Offloading; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "It does not — they are mutually exclusive"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“KV transferred from prefill to decode lands in LMCache; later queries can pull from LMCache and skip prefill, so the cache-aware router can pick an engine whose local or LMCache-shared cache matches” matches the lesson’s treatment of vLLM Production Stack with LMCache KV Offloading; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

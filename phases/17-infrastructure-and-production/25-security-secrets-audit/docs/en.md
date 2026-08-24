@@ -113,3 +113,13 @@ Supply-chain attack: compromised CI/CD credentials exfiltrated env vars across t
 - [JumpServer — Secrets Management Best Practices 2026](https://www.jumpserver.com/blog/secret-management-best-practices-2026)
 - [Microsoft Presidio](https://github.com/microsoft/presidio) — PII detection and anonymization.
 - [HashiCorp Vault docs](https://developer.hashicorp.com/vault/docs)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Enumerate the four secret-management anti-patterns (config files in VCS, hardcoded env, spreadsheets, static keys) and name their replacements.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the AI-gateway-pulls-from-vault pattern as 2026 production standard.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a PII scrubber with consistent tokenization (same value → same placeholder) so semantics survive.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Enumerate the four secret-management anti-patterns (config files in VCS, hardcoded env, spreadsheets, static keys) and name their replacements,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a PII scrubber with consistent tokenization (same value → same placeholder) so semantics survive,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -133,3 +133,13 @@ Almost every real NeRF product in 2026 is actually 3D Gaussian splatting. The me
 - [NeRF (Mildenhall et al., 2020)](https://arxiv.org/abs/2003.08934) — the paper that made 3D reconstruction from photos a neural-net problem
 - [Instant-NGP (Müller et al., 2022)](https://arxiv.org/abs/2201.05989) — hash grids, 1000x speedup
 - [3D Gaussian Splatting (Kerbl et al., 2023)](https://arxiv.org/abs/2308.04079) — the architecture that replaced NeRFs in production
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish explicit (point cloud, mesh, voxel) and implicit (signed distance field, NeRF) 3D representations and when each is used.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Understand PointNet's symmetric-function trick that makes a neural network permutation-invariant over an unordered set of points.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trace a NeRF forward pass: ray casting, volumetric rendering, positional encoding, MLP density+colour head.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish explicit (point cloud, mesh, voxel) and implicit (signed distance field, NeRF) 3D representations and when each is used,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trace a NeRF forward pass: ray casting, volumetric rendering, positional encoding, MLP density+colour head,” and cite a repeatable check rather than relying on visual inspection alone.

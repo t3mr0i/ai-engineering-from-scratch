@@ -15,7 +15,7 @@
       "explanation": "End-to-end tests catch wiring bugs that no piece tests in isolation: rendezvous, barrier order, gather contracts."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What four invariants does the demo verify?",
       "options": [
         "Speed",
@@ -51,7 +51,7 @@
       "explanation": "A bounded run with exit 0 lets the test rig assert termination; while-True loops mask deadlocks."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "How does the demo combine DDP and ZeRO?",
       "options": [
         "Both at once",

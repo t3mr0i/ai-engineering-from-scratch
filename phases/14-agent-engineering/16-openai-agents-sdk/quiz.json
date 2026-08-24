@@ -15,7 +15,7 @@
       "explanation": "The SDK ships these five primitives."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "How does the model see a handoff?",
       "options": [
         "As a tool named transfer_to_<agent_name> that the model can call",
@@ -51,7 +51,7 @@
       "explanation": "Parallel optimizes latency at the cost of wasted tokens when tripped; blocking saves tokens but adds latency."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "How is tracing enabled in the SDK?",
       "options": [
         "Off by default; each individual agent must opt in via a config flag",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "A hop counter caps transfer chains before they loop indefinitely."
-    },
-    {
-      "stage": "post",
-      "question": "Why are built-in tools a guardrail gap?",
-      "options": [
-        "Built-in tools run measurably slower than function tools do on every single request",
-        "Tool guardrails only fire on function tools; built-in tools (file reader, web fetch) need separate policy",
-        "Built-in tools cannot be traced at all by the SDK's built-in span exporter system",
-        "Built-in tools do not support being invoked mid-handoff to any other target agent"
-      ],
-      "correct": 1,
-      "explanation": "Per-tool guardrails cover function tools; built-in tools require a separate policy layer."
     }
   ]
 }

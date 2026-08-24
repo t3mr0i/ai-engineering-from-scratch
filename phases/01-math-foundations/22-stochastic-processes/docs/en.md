@@ -239,3 +239,13 @@ The chain is guaranteed to converge to p(x) under mild conditions. But convergen
 - **Roberts & Rosenthal (2004)** -- "General state space Markov chains and MCMC algorithms." The theory behind when and why MCMC works.
 - **Norris (1997)** -- "Markov Chains." The standard textbook. Covers convergence, stationary distributions, and hitting times.
 - **Welling & Teh (2011)** -- "Bayesian Learning via Stochastic Gradient Langevin Dynamics." Combines SGD with Langevin dynamics for scalable Bayesian inference.
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Simulate 1D and 2D random walks and verify the sqrt(n) scaling of displacement.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Build a Markov chain simulator and compute its stationary distribution via eigendecomposition.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Implement Metropolis-Hastings MCMC and Langevin dynamics for sampling from target distributions.
+
+## Reference Solution
+
+A complete response first demonstrates “Simulate 1D and 2D random walks and verify the sqrt(n) scaling of displacement” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Build a Markov chain simulator and compute its stationary distribution via eigendecomposition.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Implement Metropolis-Hastings MCMC and Langevin dynamics for sampling from target distributions.” Unsupported preference statements are not sufficient.

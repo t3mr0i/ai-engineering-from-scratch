@@ -59,3 +59,7 @@ receipt so the same evidence can be reviewed later.
 
 - [Phase 14 · 37 — Runtime Feedback Loops](../../37-runtime-feedback-loops/docs/en.md)
 - [Phase 14 · 38 — Verification Gates](../../38-verification-gates/docs/en.md)
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Represent allowed and forbidden paths as a scope contract,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Distinguish command failure, timeout, and scope violation,” and cite a repeatable check rather than relying on visual inspection alone.

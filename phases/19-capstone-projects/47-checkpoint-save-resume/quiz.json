@@ -15,7 +15,7 @@
       "explanation": "Resume must walk the same trajectory. Without optimizer moments, scheduler position, and RNG state the resumed loss is a different curve."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does the saver write to a temporary file and then rename instead of writing the target name directly?",
       "options": [
         "Faster I/O",
@@ -51,7 +51,7 @@
       "explanation": "Without (epoch, batch_in_epoch) you snap to the next epoch boundary and waste work. Without RNG you see different batches. Both are required."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the schema field on the payload buy you?",
       "options": [
         "Nothing",

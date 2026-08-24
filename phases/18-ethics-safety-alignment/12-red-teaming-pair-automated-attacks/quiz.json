@@ -12,7 +12,7 @@
         "Manual testers cannot read model outputs"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“It does not scale; attack success rate needs a statistical sample against a moving target with every model release” matches the lesson’s treatment of Red-Teaming: PAIR and Automated Attacks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Persuasive Adversarial Iterative Reward; replaces RM with a persuader"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Prompt Automatic Iterative Refinement; an attacker LLM iteratively proposes jailbreaks for a target, with prior attempts as in-context feedback” matches the lesson’s treatment of Red-Teaming: PAIR and Automated Attacks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "PAIR ignores the target's response"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“GCG requires white-box gradient access and produces unreadable suffixes that cannot use in-context feedback; PAIR is black-box and natural-language with in-context learning” matches the lesson’s treatment of Red-Teaming: PAIR and Automated Attacks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Because ASR is required by export-control regulations"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Because ASR varies with how many queries the attacker is allowed and with which LLM judges a response as a jailbreak” matches the lesson’s treatment of Red-Teaming: PAIR and Automated Attacks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "AutoDAN"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“TAP” matches the lesson’s treatment of Red-Teaming: PAIR and Automated Attacks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "TruthfulQA"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“HarmBench” matches the lesson’s treatment of Red-Teaming: PAIR and Automated Attacks; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

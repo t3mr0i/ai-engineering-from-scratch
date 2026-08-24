@@ -12,7 +12,7 @@
         "It removes the reward model entirely"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“It replaces the human preference labeler with an AI labeler that reads a list of principles” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Performs PPO with a constitution-derived reward"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Produces an initial response, critiques it under a sampled constitution principle, then revises and uses the revision as SFT target” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Trains a reward model on AI-generated preferences from a feedback model and runs PPO against it"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Trains a reward model on AI-generated preferences from a feedback model and runs PPO against it” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Helpful > broadly ethical > platform rules > avoid catastrophe"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Avoid catastrophic outcomes > follow Anthropic guidelines > broadly ethical > helpful and candid” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Labeler scarcity"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Reward hacking / Goodhart's Law” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "v2 dropped compute overhead from 23.7% to about 1% with low successful attack rate"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“v2 dropped compute overhead from 23.7% to about 1% with low successful attack rate” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

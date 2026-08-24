@@ -5,42 +5,72 @@
     {
       "stage": "pre",
       "question": "Why should AI adoption communication be role-specific?",
-      "options": ["It makes messages longer without adding role-specific guidance", "It avoids practice tasks so people learn purely from reading", "Different roles experience different workflow and decision changes", "It replaces manager briefs with a single company-wide awareness memo"],
+      "options": [
+        "It makes messages longer without adding role-specific guidance",
+        "It avoids practice tasks so people learn purely from reading",
+        "Different roles experience different workflow and decision changes",
+        "It replaces manager briefs with a single company-wide awareness memo"
+      ],
       "correct": 2,
       "explanation": "Each role needs to know what changes, what remains human, and how to practice safely."
     },
     {
       "stage": "check",
       "question": "Which control helps managers support local adoption?",
-      "options": ["A company-wide memo that lists what the new tool can already do", "A manager brief with talking points and escalation triggers", "A practice task assigned to each role after adoption has settled", "A feedback channel that routes concerns straight past managers"],
+      "options": [
+        "A company-wide memo that lists what the new tool can already do",
+        "A manager brief with talking points and escalation triggers",
+        "A practice task assigned to each role after adoption has settled",
+        "A feedback channel that routes concerns straight past managers"
+      ],
       "correct": 1,
       "explanation": "A manager brief gives leaders talking points, concerns, and escalation triggers."
     },
     {
       "stage": "check",
       "question": "What does a practice task add to an AI rollout?",
-      "options": ["A guarantee that every role will adopt the tool perfectly", "A security exemption for the team running the rollout campaign", "A replacement for the feedback channel opened after launch", "A concrete way to turn communication into practiced behavior"],
+      "options": [
+        "A guarantee that every role will adopt the tool perfectly",
+        "A security exemption for the team running the rollout campaign",
+        "A replacement for the feedback channel opened after launch",
+        "A concrete way to turn communication into practiced behavior"
+      ],
       "correct": 3,
       "explanation": "Practice tasks help people learn the new behavior in a concrete workflow."
     },
     {
       "stage": "check",
       "question": "What should happen when the message gap is high?",
-      "options": ["Clarify the role narrative before scaling communication further", "Launch silently and wait for adoption to happen on its own", "Remove the feedback channel so that concerns stop surfacing at all", "Skip managers and communicate directly to every role at once"],
+      "options": [
+        "Clarify the role narrative before scaling communication further",
+        "Launch silently and wait for adoption to happen on its own",
+        "Remove the feedback channel so that concerns stop surfacing at all",
+        "Skip managers and communicate directly to every role at once"
+      ],
       "correct": 0,
       "explanation": "A message gap means the audience does not yet understand the change."
     },
     {
       "stage": "post",
       "question": "Which rollout needs a full enablement plan?",
-      "options": ["A personal prompt tip shared informally between colleagues", "High role impact with resistance signals and manager dependency", "A hidden prototype still being tested by a single engineer", "A completed archival task with no active users and no manager brief"],
+      "options": [
+        "A personal prompt tip shared informally between colleagues",
+        "High role impact with resistance signals and manager dependency",
+        "A hidden prototype still being tested by a single engineer",
+        "A completed archival task with no active users and no manager brief"
+      ],
       "correct": 1,
       "explanation": "High role impact and friction require structured communication and enablement."
     },
     {
       "stage": "post",
       "question": "Why is a feedback channel part of adoption communication?",
-      "options": ["It replaces the need for structured role-based practice tasks", "It removes the need for managers to give a local brief", "It makes questions, risks, and adoption blockers visible", "It guarantees every role will fully adopt the new tool"],
+      "options": [
+        "It replaces the need for structured role-based practice tasks",
+        "It removes the need for managers to give a local brief",
+        "It makes questions, risks, and adoption blockers visible",
+        "It guarantees every role will fully adopt the new tool"
+      ],
       "correct": 2,
       "explanation": "Feedback channels keep concerns and adoption blockers visible after launch."
     }

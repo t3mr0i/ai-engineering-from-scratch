@@ -279,3 +279,13 @@ graph LR
 - [3Blue1Brown: Euler's formula with introductory group theory](https://www.youtube.com/watch?v=mvmuCPvRoWQ) - visual explanation of why e^(i*pi) = -1
 - [Needham: Visual Complex Analysis](https://global.oup.com/academic/product/visual-complex-analysis-9780198534464) - the best visual treatment of complex numbers, full of geometric insight
 - [Strang: Introduction to Linear Algebra, Ch. 10](https://math.mit.edu/~gs/linearalgebra/) - complex numbers in the context of linear algebra and eigenvalues
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Perform complex arithmetic (add, multiply, divide, conjugate) in both rectangular and polar form.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Apply Euler's formula to convert between complex exponentials and trigonometric functions.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Implement the Discrete Fourier Transform using complex roots of unity.
+
+## Reference Solution
+
+A complete response first demonstrates “Perform complex arithmetic (add, multiply, divide, conjugate) in both rectangular and polar form” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Apply Euler's formula to convert between complex exponentials and trigonometric functions.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Implement the Discrete Fourier Transform using complex roots of unity.” Unsupported preference statements are not sufficient.

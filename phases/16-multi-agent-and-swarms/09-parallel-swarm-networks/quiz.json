@@ -1,0 +1,78 @@
+{
+  "lesson": "09-parallel-swarm-networks",
+  "title": "Parallel / Swarm / Networked Architectures",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Parallel / Swarm / Networked Architectures?",
+      "options": [
+        "Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Parallel / Swarm / Networked Architectures?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement the central multi-agent interaction from first principles",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Parallel / Swarm / Networked Architectures?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Trace messages, shared state, and verification decisions end to end",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Trace messages, shared state, and verification decisions end to end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Parallel / Swarm / Networked Architectures?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Evaluate coordination quality, cost, and correlated failure modes",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Evaluate coordination quality, cost, and correlated failure modes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Parallel / Swarm / Networked Architectures?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures"
+      ],
+      "correct": 3,
+      "explanation": "“Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Parallel / Swarm / Networked Architectures?",
+      "options": [
+        "Implement the central multi-agent interaction from first principles",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

@@ -126,3 +126,13 @@ A critic that produces suggestions that never improve the score will lock the lo
 Two extensions a real implementation will want. First, dimension weights: a paper for a workshop weights novelty higher than methodology; a journal weights the inverse. The convergence check becomes a weighted mean. Second, paired critics: one critic scores, a second critic adjudicates the suggestions before the reviser sees them. Both add value, both compose on the same `Critique` shape.
 
 The bet is the score vector. Once the critique is structured, every other improvement, convergence rule, dashboard, paired critic, drops in without changing the loop.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Score a paper draft across five fixed dimensions: clarity, novelty, evidence, methodology, related-work.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply each round's critique as a structured revision diff rather than a freeform rewrite.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Detect convergence by comparing scores across rounds; stop on plateau, target met, or budget exhausted.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Score a paper draft across five fixed dimensions: clarity, novelty, evidence, methodology, related-work,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Detect convergence by comparing scores across rounds; stop on plateau, target met, or budget exhausted,” and cite a repeatable check rather than relying on visual inspection alone.

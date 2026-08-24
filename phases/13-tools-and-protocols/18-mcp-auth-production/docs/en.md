@@ -315,3 +315,13 @@ PKCE alone does not stop mix-up, because the client hands its `code_verifier` to
 - [RFC 9728 — OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/rfc9728) — resource server discovery
 - [RFC 9207 — OAuth 2.0 Authorization Server Issuer Identification](https://datatracker.ietf.org/doc/html/rfc9207) — the `iss` parameter that defends against mix-up attacks
 - [OAuth 2.1 draft](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1) — the consolidated OAuth substrate
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Discover an authorization server through RFC 8414 metadata and verify the contract.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement RFC 7591 dynamic client registration so MCP clients enroll without admin intervention.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Cache and refresh JWKS keys on a schedule so signature verification survives key roll-over.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Discover an authorization server through RFC 8414 metadata and verify the contract,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Cache and refresh JWKS keys on a schedule so signature verification survives key roll-over,” and cite a repeatable check rather than relying on visual inspection alone.

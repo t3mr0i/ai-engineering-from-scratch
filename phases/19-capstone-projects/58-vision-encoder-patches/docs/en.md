@@ -98,3 +98,13 @@ python3 -m unittest code/test_main.py
 - An Image is Worth 16x16 Words (ViT, 2021) for the original patch-embed framing.
 - Attention Is All You Need (2017) for the sinusoidal position formula adapted here to 2D.
 - DINOv2 paper for register tokens, an extension you can add as exercise 6.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Tokenize an image into a fixed-length sequence of patch embeddings.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a `Conv2d`-based patch projection that matches the math of unfold-then-linear.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a deterministic 2D sinusoidal position embedding so token order encodes spatial position.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Tokenize an image into a fixed-length sequence of patch embeddings,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a deterministic 2D sinusoidal position embedding so token order encodes spatial position,” and cite a repeatable check rather than relying on visual inspection alone.

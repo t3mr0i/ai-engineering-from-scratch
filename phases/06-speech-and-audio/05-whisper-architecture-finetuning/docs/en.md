@@ -87,3 +87,13 @@ Community results: fine-tuning Medium on 20 hours of medical dictation drops WER
 - [Bain et al. (2023). WhisperX](https://arxiv.org/abs/2303.00747) — long-form, word-aligned, diarized.
 - [Systran — faster-whisper repo](https://github.com/SYSTRAN/faster-whisper) — CTranslate2-backed, 4× faster.
 - [HuggingFace — Whisper fine-tune tutorial](https://huggingface.co/blog/fine-tune-whisper) — canonical LoRA / full-FT walkthrough.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the signal-processing and modeling concepts behind Whisper — Architecture & Fine-Tuning.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the lesson's core audio operation from first principles.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Inspect time-, frequency-, or token-domain intermediates produced by the pipeline.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the signal-processing and modeling concepts behind Whisper — Architecture & Fine-Tuning,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Inspect time-, frequency-, or token-domain intermediates produced by the pipeline,” and cite a repeatable check rather than relying on visual inspection alone.

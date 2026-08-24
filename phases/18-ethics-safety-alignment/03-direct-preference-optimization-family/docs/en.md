@@ -131,3 +131,13 @@ Every lab runs all five on a battery and picks the winner per task. There is no 
 - [Hong, Lee, Thorne — ORPO (EMNLP 2024, arXiv:2403.07691)](https://arxiv.org/abs/2403.07691)
 - [BPO — Behavior Preservation Optimization (ICLR 2026 OpenReview b97EwMUWu7)](https://openreview.net/forum?id=b97EwMUWu7)
 - [Rafailov et al. — Scaling Laws for RM Overoptimization in DAAs (NeurIPS 2024, arXiv:2406.02900)](https://arxiv.org/abs/2406.02900)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Derive the DPO closed form from the RLHF-with-KL optimum.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: State the failure mode each of IPO, KTO, SimPO, ORPO, BPO fixes in DPO.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Distinguish "implicit reward gap" from "preference strength" and explain why IPO's identity mapping matters.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Derive the DPO closed form from the RLHF-with-KL optimum,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Distinguish "implicit reward gap" from "preference strength" and explain why IPO's identity mapping matters,” and cite a repeatable check rather than relying on visual inspection alone.

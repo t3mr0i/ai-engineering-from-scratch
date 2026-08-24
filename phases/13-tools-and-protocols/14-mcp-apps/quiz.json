@@ -1,0 +1,78 @@
+{
+  "lesson": "14-mcp-apps",
+  "title": "MCP Apps — Interactive UI Resources via `ui://`",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MCP Apps — Interactive UI Resources via `ui://`?",
+      "options": [
+        "Return a `ui://` resource from a tool call and set the correct MIME and metadata",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Return a `ui://` resource from a tool call and set the correct MIME and metadata” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MCP Apps — Interactive UI Resources via `ui://`?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Declare a tool's associated UI with `_meta.ui.resourceUri`, `_meta.ui.csp`, and `_meta.ui.permissions`",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Declare a tool's associated UI with `_meta.ui.resourceUri`, `_meta.ui.csp`, and `_meta.ui.permissions`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MCP Apps — Interactive UI Resources via `ui://`?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Implement the iframe sandbox postMessage JSON-RPC for UI-to-host communication",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Implement the iframe sandbox postMessage JSON-RPC for UI-to-host communication” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MCP Apps — Interactive UI Resources via `ui://`?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Apply CSP and permissions-policy defaults that defend against UI-originated attacks",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Apply CSP and permissions-policy defaults that defend against UI-originated attacks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MCP Apps — Interactive UI Resources via `ui://`?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Return a `ui://` resource from a tool call and set the correct MIME and metadata"
+      ],
+      "correct": 3,
+      "explanation": "“Return a `ui://` resource from a tool call and set the correct MIME and metadata” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MCP Apps — Interactive UI Resources via `ui://`?",
+      "options": [
+        "Declare a tool's associated UI with `_meta.ui.resourceUri`, `_meta.ui.csp`, and `_meta.ui.permissions`",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Declare a tool's associated UI with `_meta.ui.resourceUri`, `_meta.ui.csp`, and `_meta.ui.permissions`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "lesson": "14-model-context-protocol",
-  "title": "Model Context Protocol",
+  "title": "Model Context Protocol (MCP)",
   "questions": [
     {
-      "stage": "post",
+      "stage": "pre",
       "question": "What three primitives does an MCP server expose?",
       "options": [
         "Functions, types, classes",
@@ -15,23 +15,23 @@
       "explanation": "The lesson defines an MCP server as exposing exactly three primitives: tools (functions the model calls), resources (read-only content addressed by URI), and prompts (reusable templated prompts)."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "What wire format does MCP use?",
       "options": [
         "GraphQL queries over HTTP",
         "JSON-RPC 2.0 over stdio or HTTP",
-        "gRPC with protobuf messages",
+        "gRPC with protobuf messages, with no need to inspect intermediate results or test edge cases",
         "REST with an OpenAPI schema"
       ],
       "correct": 1,
       "explanation": "The lesson states MCP messages are JSON-RPC 2.0 over stdio or streamable HTTP, with the format `{\"jsonrpc\": \"2.0\", \"method\": \"...\", \"params\": {...}, \"id\": N}`."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "In MCP terminology, what is the relationship between host, client, and server?",
       "options": [
         "The host is the LLM application; the client is a sub-component of the host that speaks to exactly one server; the server is your code exposing tools, resources, and prompts",
-        "The host and the client are the same component inside the LLM application, and the server is just another name for the LLM's own reasoning process",
+        "The host and the client are the same component inside the LLM application, and the server is just another name for the LLM's own reasoning process, because one plausible output is sufficient production evidence",
         "The server is the LLM application itself, while the host is a thin wrapper process that exposes the model's own tools back to it for calling",
         "The client refers only to the protocol version number negotiated at startup, and the host and server are interchangeable terms for one process"
       ],
@@ -39,7 +39,7 @@
       "explanation": "The lesson defines the host as the LLM application (e.g. Claude Desktop), the client as a sub-component of the host that speaks to exactly one server, and the server as the code exposing tools, resources, and prompts. One host can mount many servers, each through its own client."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "What is the 2025-06-18 transport that replaced the earlier SSE-only remote transport?",
       "options": [
         "WebTransport (QUIC-based)",
@@ -55,12 +55,24 @@
       "question": "When should a tool be split into its own MCP server instead of staying inline?",
       "options": [
         "When it is called fewer than 10 times per day, since low-traffic tools are always safe to keep inline",
-        "When it returns more than 1KB of data, since payload size alone determines whether a server should be separate",
+        "When it returns more than 1KB of data, since payload size alone determines whether a server should be separate — and applies unchanged even when the lesson's stated preconditions fail",
         "Never; MCP is only useful for local development tools and cannot be exposed to more than one host",
         "When the tool is called from two or more different hosts and is read-only/cacheable, making a shared server worth the overhead"
       ],
       "correct": 3,
       "explanation": "A tool used by only one host, or one with side effects that must stay tightly scoped, is usually simpler to keep inline; the shared-server overhead pays off once multiple hosts need the same read-only, cacheable capability."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Model Context Protocol (MCP)?",
+      "options": [
+        "Apply the lesson's decision or implementation workflow to a concrete case",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

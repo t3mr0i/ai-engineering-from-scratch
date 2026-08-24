@@ -122,3 +122,13 @@ There is no free lunch. Doubling `accum_steps` doubles the wall time per optimiz
 - PyTorch issue tracker on gradient accumulation interactions with mixed precision unscaling.
 - Phase 19 lessons 42 to 45 cover the model, data loader, optimizer, and trainer scaffolding this lesson assumes.
 - Phase 19 lesson 47 covers checkpoint and resume so a long accumulation run survives a wallclock cap.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Derive the effective batch identity: `effective_batch = micro_batch * accum_steps`.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement loss-per-micro-batch scaling so the accumulated gradient matches a single full-batch backward.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Skip optimizer synchronization until the last micro-batch (sync-on-last-step).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Derive the effective batch identity: `effective_batch = micro_batch * accum_steps`,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Skip optimizer synchronization until the last micro-batch (sync-on-last-step),” and cite a repeatable check rather than relying on visual inspection alone.

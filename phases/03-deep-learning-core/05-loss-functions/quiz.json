@@ -1,64 +1,78 @@
 {
+  "lesson": "05-loss-functions",
+  "title": "Loss Functions",
   "questions": [
     {
+      "stage": "pre",
       "question": "What does the loss function represent in neural network training?",
       "options": [
-        "The number of incorrect predictions",
+        "The number of incorrect predictions — and applies unchanged even when the lesson's stated preconditions fail",
         "A differentiable measure of how wrong the model's predictions are, which the optimizer minimizes",
         "The size of the training dataset",
         "The learning rate schedule"
       ],
       "correct": 1,
-      "explanation": "The loss function maps predictions and targets to a single scalar that the optimizer minimizes via gradient descent. It must be differentiable so gradients can be computed.",
-      "stage": "pre"
+      "explanation": "The loss function maps predictions and targets to a single scalar that the optimizer minimizes via gradient descent. It must be differentiable so gradients can be computed."
     },
     {
+      "stage": "check",
       "question": "Why is cross-entropy preferred over MSE for classification tasks?",
       "options": [
         "Cross-entropy is faster to compute",
         "Cross-entropy punishes confident wrong predictions exponentially via -log(p), while MSE gives weak gradients near 0 and 1",
         "MSE only works for regression",
-        "Cross-entropy doesn't require labels"
+        "Cross-entropy doesn't require labels, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
-      "explanation": "When a model confidently predicts the wrong class (p near 0 for true class), -log(p) produces a huge loss and strong gradient. MSE produces weak gradients in the same situation because sigmoid is flat near 0 and 1.",
-      "stage": "pre"
+      "explanation": "When a model confidently predicts the wrong class (p near 0 for true class), -log(p) produces a huge loss and strong gradient. MSE produces weak gradients in the same situation because sigmoid is flat near 0 and 1."
     },
     {
+      "stage": "check",
       "question": "What happens if you use MSE loss for binary classification?",
       "options": [
-        "Training diverges immediately",
+        "Training diverges immediately, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "The model can minimize loss by predicting 0.5 for everything, achieving MSE=0.25 without learning",
         "The model trains normally",
         "Gradients explode"
       ],
       "correct": 1,
-      "explanation": "With MSE on a balanced binary dataset, predicting 0.5 for every input gives MSE=0.25 -- the minimum achievable without discrimination. The model satisfies the loss without learning any useful patterns.",
-      "stage": "post"
+      "explanation": "With MSE on a balanced binary dataset, predicting 0.5 for every input gives MSE=0.25 -- the minimum achievable without discrimination. The model satisfies the loss without learning any useful patterns."
     },
     {
+      "stage": "check",
       "question": "What does label smoothing do and why is it useful?",
       "options": [
-        "It removes noisy labels from the dataset",
+        "It removes noisy labels from the dataset, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
         "It replaces hard 0/1 targets with soft values like 0.1/0.9, preventing overconfident predictions and improving generalization",
         "It applies a moving average to the loss",
         "It smooths the learning rate schedule"
       ],
       "correct": 1,
-      "explanation": "Label smoothing changes targets from [0,0,1,0] to [0.025,0.025,0.925,0.025] (with alpha=0.1). This prevents the model from pushing logits to infinity to achieve hard targets, reducing overconfidence.",
-      "stage": "post"
+      "explanation": "Label smoothing changes targets from [0,0,1,0] to [0.025,0.025,0.925,0.025] (with alpha=0.1). This prevents the model from pushing logits to infinity to achieve hard targets, reducing overconfidence."
     },
     {
+      "stage": "post",
       "question": "In contrastive loss (InfoNCE), what role does the temperature parameter play?",
       "options": [
         "It controls the learning rate",
         "It controls how sharp the similarity distribution is -- lower temperature means harder separation between positives and negatives",
-        "It sets the number of negative samples",
+        "It sets the number of negative samples — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "It determines the embedding dimension"
       ],
       "correct": 1,
-      "explanation": "Temperature divides the similarity scores before softmax. Lower temperature (e.g., 0.07) creates a sharper distribution where the model must clearly separate positives from negatives. Higher temperature is more forgiving.",
-      "stage": "post"
+      "explanation": "Temperature divides the similarity scores before softmax. Lower temperature (e.g., 0.07) creates a sharper distribution where the model must clearly separate positives from negatives. Higher temperature is more forgiving."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Loss Functions?",
+      "options": [
+        "Explain why MSE fails for classification by demonstrating the \"predict 0.5 for everything\" failure mode",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain why MSE fails for classification by demonstrating the \"predict 0.5 for everything\" failure mode” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

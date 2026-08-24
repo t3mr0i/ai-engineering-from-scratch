@@ -120,3 +120,13 @@ Each scheduling decision (pick, dispatch, result, prune, fan-out) emits one even
 Three extensions a real implementation will want. First, persistent UCB stats across sessions: the current statistics live in memory; a real scheduler would checkpoint them so a restart preserves the exploration budget already spent. Second, multi-objective scoring: instead of a scalar reward, each result emits a vector and UCB becomes a Pareto-style picker. Third, contextual bandits: the picker conditions on hypothesis features (length, complexity) so similar hypotheses share exploration.
 
 The scheduler is the place where research becomes more than a worklist. Once UCB is wired and the slots run in parallel, every other improvement composes on top.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Model a research workflow as a hypothesis queue feeding parallel experiment slots whose results fan back in.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Run multiple experiments concurrently with asyncio so the scheduler can keep all slots busy.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Score each hypothesis branch with UCB so the scheduler can prune low-yield branches without abandoning exploration.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Model a research workflow as a hypothesis queue feeding parallel experiment slots whose results fan back in,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Score each hypothesis branch with UCB so the scheduler can prune low-yield branches without abandoning exploration,” and cite a repeatable check rather than relying on visual inspection alone.

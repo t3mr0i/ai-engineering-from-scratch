@@ -1,30 +1,33 @@
 {
+  "lesson": "02-few-shot-cot",
+  "title": "Few-Shot, Chain-of-Thought, Tree-of-Thought",
   "questions": [
     {
+      "stage": "pre",
       "question": "What is the key difference between zero-shot and few-shot prompting?",
       "options": [
-        "Zero-shot sends a single API call, while few-shot chains several calls and feeds each output into the next prompt",
+        "Zero-shot sends a single API call, while few-shot chains several calls and feeds each output into the next prompt — and applies unchanged even when the lesson's stated preconditions fail",
         "Zero-shot answers at temperature 0, while few-shot samples several reasoning paths and takes a majority vote",
         "Zero-shot appends 'Let's think step by step', while few-shot has the model score and prune its own branches",
         "Zero-shot gives only the instruction; few-shot includes example input-output demonstrations before the actual query"
       ],
       "correct": 3,
-      "explanation": "Few-shot prompting includes worked examples (demonstrations) that show the model the expected pattern. This is like showing someone how to fill out a form before asking them to fill out their own.",
-      "stage": "pre"
+      "explanation": "Few-shot prompting includes worked examples (demonstrations) that show the model the expected pattern. This is like showing someone how to fill out a form before asking them to fill out their own."
     },
     {
+      "stage": "check",
       "question": "What does 'Chain of Thought' prompting do?",
       "options": [
         "It samples several independent reasoning paths above temperature 0 and returns the answer that wins the vote",
         "It splits a complex task into separate prompts, where each prompt's output becomes the input of the next one",
-        "It alternates thinking with tool actions, feeding each observation back before the model reasons about the next step",
+        "It alternates thinking with tool actions, feeding each observation back before the model reasons about the next step, with no need to inspect intermediate results or test edge cases",
         "It has the model show intermediate reasoning steps before the final answer, which raises accuracy on multi-step problems"
       ],
       "correct": 3,
-      "explanation": "CoT prompting (e.g., 'Let's think step by step') gives the model 'scratch paper' to work through problems. On GSM8K math problems, this alone improved GPT-4o accuracy from 78% to 91%.",
-      "stage": "pre"
+      "explanation": "CoT prompting (e.g., 'Let's think step by step') gives the model 'scratch paper' to work through problems. On GSM8K math problems, this alone improved GPT-4o accuracy from 78% to 91%."
     },
     {
+      "stage": "check",
       "question": "How does Tree-of-Thought differ from Chain-of-Thought?",
       "options": [
         "It samples several complete reasoning chains at once and returns the final answer that most of them agree on",
@@ -33,32 +36,43 @@
         "It interleaves every reasoning step with a tool call so that observations can correct the path mid-run"
       ],
       "correct": 2,
-      "explanation": "CoT follows a single reasoning path. Tree-of-Thought generates multiple candidate paths, evaluates them (possibly with the LLM itself), and selects the best one. This helps on problems where the first reasoning path might be wrong.",
-      "stage": "post"
+      "explanation": "CoT follows a single reasoning path. Tree-of-Thought generates multiple candidate paths, evaluates them (possibly with the LLM itself), and selects the best one. This helps on problems where the first reasoning path might be wrong."
     },
     {
+      "stage": "check",
       "question": "When selecting few-shot examples, what matters most?",
       "options": [
         "Packing in as many examples as the context window allows, since more demonstrations always sharpen the pattern",
         "Picking the shortest examples available so the reasoning overhead per query stays well under 200 extra tokens",
         "Choosing diverse examples that cover different cases and demonstrate the exact format and reasoning pattern you want",
-        "Drawing the examples straight from the test set you evaluate on, so the model sees the exact cases it is scored on"
+        "Drawing the examples straight from the test set you evaluate on, so the model sees the exact cases it is scored on, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 2,
-      "explanation": "Example quality trumps quantity. 3-5 diverse, well-formatted examples that cover different edge cases teach the model the pattern better than 20 repetitive examples that waste context window tokens.",
-      "stage": "post"
+      "explanation": "Example quality trumps quantity. 3-5 diverse, well-formatted examples that cover different edge cases teach the model the pattern better than 20 repetitive examples that waste context window tokens."
     },
     {
+      "stage": "post",
       "question": "Why does CoT prompting improve accuracy even though the model has the same knowledge with or without it?",
       "options": [
         "Each intermediate token becomes context for the next one, so the model conditions its final answer on its own reasoning",
         "The extra reasoning tokens are scored by a separate evaluator that prunes the weak branches before the answer",
-        "Reasoning text raises the sampling temperature for the answer tokens, widening the distribution the model draws from",
+        "Reasoning text raises the sampling temperature for the answer tokens, widening the distribution the model draws from — and applies unchanged even when the lesson's stated preconditions fail",
         "The reasoning steps update the model's weights during the call, so it keeps what it worked out for later queries"
       ],
       "correct": 0,
-      "explanation": "Without CoT, the model must jump directly to the answer in one token. With CoT, each intermediate step is a token the model conditions on for the next step. The model essentially 'thinks out loud,' building up to the answer.",
-      "stage": "post"
+      "explanation": "Without CoT, the model must jump directly to the answer in one token. With CoT, each intermediate step is a token the model conditions on for the next step. The model essentially 'thinks out loud,' building up to the answer."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Few-Shot, Chain-of-Thought, Tree-of-Thought?",
+      "options": [
+        "Apply chain-of-thought (CoT) reasoning to improve accuracy on multi-step problems like math word problems",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Apply chain-of-thought (CoT) reasoning to improve accuracy on multi-step problems like math word problems” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

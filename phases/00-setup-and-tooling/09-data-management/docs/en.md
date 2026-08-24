@@ -53,3 +53,13 @@ This lesson produces:
 | Git LFS | "Git for big files" | An extension that stores large files outside the git repo while keeping pointers in version control |
 | DVC | "Git for data" | A version control system for datasets and models that integrates with cloud storage |
 | Cache | "Already downloaded" | A local copy of previously fetched data, stored at ~/.cache/huggingface/ by default |
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Load, stream, and cache datasets using the Hugging Face `datasets` library.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Create reproducible train/validation/test splits with fixed random seeds.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Load, stream, and cache datasets using the Hugging Face `datasets` library,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Create reproducible train/validation/test splits with fixed random seeds,” and cite a repeatable check rather than relying on visual inspection alone.

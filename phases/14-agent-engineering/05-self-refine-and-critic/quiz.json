@@ -15,7 +15,7 @@
       "explanation": "Self-Refine uses one model in three roles: generate, feedback, refine."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does Self-Refine require history on the refine step?",
       "options": [
         "Because most providers only apply prompt caching to prompts that carry history",
@@ -51,7 +51,7 @@
       "explanation": "Anthropic names this pattern Evaluator-Optimizer: an evaluator scores, an optimizer revises, loop until convergence."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is a rubber-stamp loop and how does the lesson recommend avoiding it?",
       "options": [
         "A test that always passes, fixed by removing that test from the suite entirely and moving on",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "Output guardrails validate the final agent output and can call tools, matching CRITIC's verifier role."
-    },
-    {
-      "stage": "post",
-      "question": "What stop condition does the lesson recommend for 2026 evaluator-optimizer loops?",
-      "options": [
-        "Stop only when the external verifier reports a clean pass, and never otherwise",
-        "Stop only when the model itself says the output looks fine, and never otherwise",
-        "Never stop; let the agent keep refining indefinitely with no iteration cap at all",
-        "Combine: verifier passes OR (model says fine AND iterations >= 2) OR iterations >= max_iterations"
-      ],
-      "correct": 3,
-      "explanation": "A combined condition avoids single-condition failure modes."
     }
   ]
 }

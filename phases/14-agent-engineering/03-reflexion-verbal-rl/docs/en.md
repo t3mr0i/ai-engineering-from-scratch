@@ -320,3 +320,13 @@ print(f"\n=== Final: {'✅ Success' if trials_exp[-1].success else '❌ Failed'}
 - [Letta, Sleep-time Compute](https://www.letta.com/blog/sleep-time-compute) — async reflection in production
 - [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — managing the episodic buffer as part of context
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) — reflection node pattern
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three components of Reflexion (Actor, Evaluator, Self-Reflector) and the role of episodic memory.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a stdlib Reflexion loop with binary evaluator, reflection buffer, and fresh re-attempts.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Choose between scalar, heuristic, and self-evaluated feedback sources for a given task.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three components of Reflexion (Actor, Evaluator, Self-Reflector) and the role of episodic memory,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Choose between scalar, heuristic, and self-evaluated feedback sources for a given task,” and cite a repeatable check rather than relying on visual inspection alone.

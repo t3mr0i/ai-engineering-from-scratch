@@ -1,0 +1,78 @@
+{
+  "lesson": "09-constitutional-ai-self-improvement",
+  "title": "Constitutional AI and Self-Improvement",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Constitutional AI and Self-Improvement?",
+      "options": [
+        "Implement the Constitutional AI two-stage loop: self-critique plus self-revision, then preference training...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the Constitutional AI two-stage loop: self-critique plus self-revision, then preference training...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Constitutional AI and Self-Improvement?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Derive the GRPO objective (DeepSeek-R1's group-relative policy optimization) and contrast it with PPO's val...",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Derive the GRPO objective (DeepSeek-R1's group-relative policy optimization) and contrast it with PPO's val...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Constitutional AI and Self-Improvement?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
+        "Generate verifiable reasoning traces with rule-based outcome rewards and score them without a separate rewa...",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Generate verifiable reasoning traces with rule-based outcome rewards and score them without a separate rewa...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Constitutional AI and Self-Improvement?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Decide when self-improvement beats human preference data and when it collapses into mode seeking",
+        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Decide when self-improvement beats human preference data and when it collapses into mode seeking” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Constitutional AI and Self-Improvement?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "Implement the Constitutional AI two-stage loop: self-critique plus self-revision, then preference training..."
+      ],
+      "correct": 3,
+      "explanation": "“Implement the Constitutional AI two-stage loop: self-critique plus self-revision, then preference training...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Constitutional AI and Self-Improvement?",
+      "options": [
+        "Derive the GRPO objective (DeepSeek-R1's group-relative policy optimization) and contrast it with PPO's val...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Derive the GRPO objective (DeepSeek-R1's group-relative policy optimization) and contrast it with PPO's val...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

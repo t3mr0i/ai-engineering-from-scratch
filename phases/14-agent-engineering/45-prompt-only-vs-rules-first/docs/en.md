@@ -65,3 +65,7 @@ an evaluator that cannot distinguish the two runs is not protecting the repo.
 
 - [Phase 14 · 36 — Scope Contracts](../../36-scope-contracts/docs/en.md)
 - [Phase 14 · 38 — Verification Gates](../../38-verification-gates/docs/en.md)
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compare a prompt-only attempt with a rules-first attempt on the same task,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Separate a plausible artifact from evidence that the task is complete,” and cite a repeatable check rather than relying on visual inspection alone.

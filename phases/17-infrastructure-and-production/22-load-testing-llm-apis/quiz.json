@@ -12,7 +12,7 @@
         "Locust requires CUDA"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Client-side tokenization runs under the Python GIL and queues behind request generation, inflating reported inter-token latency” matches the lesson’s treatment of Load Testing LLM APIs — Why k6 and Locust Lie; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Looping the same prompt makes prefix caching look like full concurrent decode, inflating reported throughput"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Looping the same prompt makes prefix caching look like full concurrent decode, inflating reported throughput” matches the lesson’s treatment of Load Testing LLM APIs — Why k6 and Locust Lie; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Burst only"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Steady-state, ramp, spike, soak” matches the lesson’s treatment of Load Testing LLM APIs — Why k6 and Locust Lie; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Always use the same prompt to maximize cache hits"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Sample from a real distribution using mean and stddev (for example LLMPerf's --mean-input-tokens / --stddev-input-tokens) or replay real traffic” matches the lesson’s treatment of Load Testing LLM APIs — Why k6 and Locust Lie; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Locust 2.43.3 stock"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“k6 v2026.1.0 with the k6 Operator 1.0 GA (TestRun / PrivateLoadZone CRDs)” matches the lesson’s treatment of Load Testing LLM APIs — Why k6 and Locust Lie; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Cache eviction storms"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Memory leaks, connection-pool drift, and observability overflow over hours” matches the lesson’s treatment of Load Testing LLM APIs — Why k6 and Locust Lie; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

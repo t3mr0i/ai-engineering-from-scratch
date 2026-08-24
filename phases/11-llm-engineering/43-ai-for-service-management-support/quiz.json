@@ -8,7 +8,7 @@
       "options": [
         "The first-response time, even when the answer is still unverified",
         "Service ownership, explicit escalation criteria, and support quality",
-        "The existing ticket categories, left unchanged by the new workflow",
+        "The existing ticket categories, left unchanged by the new workflow — and applies unchanged even when the lesson's stated preconditions fail",
         "The agent headcount, so knowledge articles keep being written"
       ],
       "correct": 1,
@@ -20,7 +20,7 @@
       "options": [
         "The service scope - the workflow has not defined which ticket types it may handle",
         "The confidence rule - uncertain drafts reach agents without being flagged first",
-        "The escalation path - there is no defined route for tickets the model cannot answer",
+        "The escalation path - there is no defined route for tickets the model cannot answer, with no need to inspect intermediate results or test edge cases",
         "The learning loop - corrections have to update the knowledge source for the next ticket"
       ],
       "correct": 3,
@@ -55,7 +55,7 @@
       "question": "When should service AI require stronger controls?",
       "options": [
         "When ticket volume, SLA pressure, or escalation risk is running high",
-        "Only when tickets arrive in a language the support team cannot read",
+        "Only when tickets arrive in a language the support team cannot read — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when the assistant drafts replies rather than classifying them",
         "Only when the service desk runs outside normal business hours"
       ],

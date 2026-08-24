@@ -264,3 +264,13 @@ flowchart TD
 - [Belkin et al., Reconciling modern machine learning practice and the bias-variance trade-off (2019)](https://arxiv.org/abs/1812.11118) -- the double descent paper
 - [Nakkiran et al., Deep Double Descent (2019)](https://arxiv.org/abs/1912.02292) -- epoch-wise and sample-wise double descent
 - [Scott Fortmann-Roe: Understanding the Bias-Variance Tradeoff](http://scott.fortmann-roe.com/docs/BiasVariance.html) -- clear visual explanation
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Derive the bias-variance decomposition of expected prediction error and explain the role of irreducible noise.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Diagnose whether a model suffers from high bias or high variance using training and test error patterns.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Explain how regularization techniques (L1, L2, dropout, early stopping) trade bias for variance.
+
+## Reference Solution
+
+A complete response first demonstrates “Derive the bias-variance decomposition of expected prediction error and explain the role of irreducible noise” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Diagnose whether a model suffers from high bias or high variance using training and test error patterns.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Explain how regularization techniques (L1, L2, dropout, early stopping) trade bias for variance.” Unsupported preference statements are not sufficient.

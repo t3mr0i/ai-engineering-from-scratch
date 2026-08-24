@@ -15,7 +15,7 @@
       "explanation": "Chameleon and Emu3 are early-fusion; Flamingo and BLIP-2 are late-fusion. The architectural choice changes mask shapes and KV caching."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "In a decoder block with both self-attention and cross-attention, which one uses a causal mask?",
       "options": [
         "Both",
@@ -51,7 +51,7 @@
       "explanation": "Cross-attention output shape follows the query stream, so output is (B, Nt, hidden) regardless of key length."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why is no mask used on cross-attention?",
       "options": [
         "Masks are too expensive",

@@ -15,7 +15,7 @@
       "explanation": "The lesson describes AWS Bedrock as the marketplace strategy: Claude, Llama, Titan, Stability, Cohere, and Mistral behind one API, one IAM surface, and one CloudWatch export."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which hyperscaler's bet is described as exclusive partnership rather than marketplace?",
       "options": [
         "Vertex AI, betting on Gemini first with Model Garden as a secondary catalog",
@@ -51,7 +51,7 @@
       "explanation": "The lesson names Application Inference Profiles, added in 2025, as the cleanest native attribution: tag a profile with team/product/feature and CloudWatch breaks out cost per profile without post-processing."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Azure PTUs typically break even versus on-demand at what sustained utilization band?",
       "options": [
         "40-60%",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "The lesson argues that because frontier leadership rotates monthly across providers, single-hyperscaler lock-in shuts a product out of two-thirds of the frontier, so a two-provider minimum (e.g. Bedrock plus Azure OpenAI) with gateway failover is the working pattern."
-    },
-    {
-      "stage": "post",
-      "question": "Which statement best describes the FinOps surface across the three platforms?",
-      "options": [
-        "Azure is cleanest native via inherited tags, and Bedrock's Application Inference Profiles are the most opaque of the three",
-        "Bedrock is cleanest native, Vertex is most flexible via BigQuery, Azure is most opaque without instrumentation",
-        "Vertex has no attribution surface at all, since Google Cloud does not expose per-project billing labels",
-        "All three hyperscalers expose identical per-request cost attribution out of the box, with no extra instrumentation"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's summary is explicit: Bedrock's Application Inference Profiles are cleanest native, Vertex's project-per-team plus BigQuery Billing Export is most flexible, and Azure's tag-inherited scopes are most opaque unless you add custom instrumentation."
     }
   ]
 }

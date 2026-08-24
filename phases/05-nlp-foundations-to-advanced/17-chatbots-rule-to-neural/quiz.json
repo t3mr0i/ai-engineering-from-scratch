@@ -7,7 +7,7 @@
       "question": "What does a slot-filling state machine do in a rule-based chatbot?",
       "options": [
         "Detects sarcasm",
-        "Picks the most fluent reply",
+        "Picks the most fluent reply — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "Embeds the user message",
         "Tracks which required parameters (date, destination, amount) are still missing and asks for them in sequence"
       ],
@@ -15,11 +15,11 @@
       "explanation": "Slot filling iteratively collects the structured parameters a task handler needs."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is retrieval-based chat resistant to hallucination?",
       "options": [
         "It uses embeddings",
-        "It rejects all queries",
+        "It rejects all queries, with no need to inspect intermediate results or test edge cases",
         "It returns a canned response from a curated set rather than generating new text",
         "It uses BM25"
       ],
@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "What defines an LLM agent loop versus a single-shot LLM call?",
       "options": [
-        "Use of greedy decoding",
+        "Use of greedy decoding, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "Use of softmax",
         "A controller that interleaves LLM calls with tool invocations until the model returns a final answer or the step budget is hit",
         "Bigger context window"
@@ -43,7 +43,7 @@
       "question": "Why is hybrid routing (rules + retrieval + LLM agent) the 2026 production default?",
       "options": [
         "It is cheaper to maintain",
-        "It removes the need for evaluation",
+        "It removes the need for evaluation, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
         "No single architecture handles every request well; rules cover destructive actions, retrieval covers FAQ, agents handle ambiguous open-ended queries",
         "It avoids embeddings"
       ],
@@ -51,12 +51,12 @@
       "explanation": "Hybrid systems use deterministic rules for risky actions and reserve LLM agents for open-ended queries."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is prompt injection?",
       "options": [
         "A SQL injection variant only",
         "A type of tokenizer attack",
-        "Injecting tokens into embeddings",
+        "Injecting tokens into embeddings — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "User-supplied (direct) or document-supplied (indirect) text that tries to override the system prompt or hijack the agent's behavior"
       ],
       "correct": 3,
@@ -67,36 +67,12 @@
       "question": "Which OWASP Top 10 (LLM Apps 2025) risk is ranked LLM01?",
       "options": [
         "Prompt injection (direct and indirect)",
-        "Insecure deserialization",
+        "Insecure deserialization, with no need to inspect intermediate results or test edge cases",
         "Broken access control",
         "SQL injection"
       ],
       "correct": 0,
       "explanation": "Prompt injection is LLM01 in the OWASP LLM Apps Top 10 (2025)."
-    },
-    {
-      "stage": "post",
-      "question": "What mitigation pattern reduces indirect prompt injection by separating planning from execution?",
-      "options": [
-        "Shorter context",
-        "Plan-Verify-Execute: the agent plans first, verifies each action against the plan, then executes — preventing tool outputs from injecting new unplanned actions",
-        "Bigger model",
-        "Lower temperature"
-      ],
-      "correct": 1,
-      "explanation": "PVE checks each step against the agreed plan, so injected instructions from tool outputs are rejected."
-    },
-    {
-      "stage": "post",
-      "question": "Why must destructive actions (payments, deletions) route through a structured flow even in an LLM-agent system?",
-      "options": [
-        "LLMs are slow",
-        "Beam search is unsafe",
-        "Tools cannot be called",
-        "Confident fabrication, prompt injection, and scope creep mean the LLM cannot be the sole authority for irreversible side effects"
-      ],
-      "correct": 3,
-      "explanation": "Hallucination and injection make irreversible actions through pure LLM agents unsafe; require deterministic confirmation flows."
     }
   ]
 }

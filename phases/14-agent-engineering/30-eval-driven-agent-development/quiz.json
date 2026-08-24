@@ -15,7 +15,7 @@
       "explanation": "Static (SWE-bench, GAIA), custom offline (LLM-judge, exec, trajectory), online (replays, alerts, cost/latency)."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is Anthropic's recommended starting point?",
       "options": [
         "Start with multi-agent debate among several specialized subagents before ever writing a single simple baseline prompt to compare",
@@ -51,7 +51,7 @@
       "explanation": "Co-located with code, CI-gated, regression-tracked is the standard."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the lesson warn against an LLM-judge without grounding?",
       "options": [
         "It is too slow to run inside a CI pipeline gating merges on every pull request",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "Eval set rotation keeps the optimization aligned with production reality."
-    },
-    {
-      "stage": "post",
-      "question": "Why do flaky evals cause problems?",
-      "options": [
-        "Non-deterministic cases produce false alarms; pin seeds and snapshot state",
-        "They double inference cost because every flaky case gets retried automatically three times",
-        "They cannot reach the database that stores baseline scores for regression comparison",
-        "They exceed the context window once trace history from prior runs is appended to the prompt"
-      ],
-      "correct": 0,
-      "explanation": "Flake makes regressions unreadable; determinism (seeds, state snapshots) is required."
     }
   ]
 }

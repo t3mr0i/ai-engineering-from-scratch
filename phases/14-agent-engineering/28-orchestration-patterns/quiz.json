@@ -15,7 +15,7 @@
       "explanation": "Supervisor-worker, swarm, hierarchical, and debate recur across 2026 frameworks."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the 2026 LangChain recommendation regarding supervision?",
       "options": [
         "Always use create_supervisor, since it is now the only supported routing mechanism",
@@ -51,7 +51,7 @@
       "explanation": "Nested supervisors are for large specialist populations that exceed one supervisor's budget."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is the recommended decision order Anthropic supports?",
       "options": [
         "Always start with a hierarchical multi-agent system, since nested supervisors always scale cleanly from day one without any later rework needed",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "Layers that do not correspond to real teams add operational complexity without payoff."
-    },
-    {
-      "stage": "post",
-      "question": "How do you mitigate bouncing handoffs in a swarm (A -> B -> A -> B)?",
-      "options": [
-        "Add a hop counter and automatically refuse after N transfers",
-        "Pin the temperature to 0 for every single agent in the swarm",
-        "Disable tracing so the bouncing handoffs stop appearing in dashboards",
-        "Lower the rate limit on the shared tool surface all agents call"
-      ],
-      "correct": 0,
-      "explanation": "A hop counter caps swarm cycles before they loop indefinitely."
     }
   ]
 }

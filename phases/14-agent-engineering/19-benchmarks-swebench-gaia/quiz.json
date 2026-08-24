@@ -15,7 +15,7 @@
       "explanation": "The harness gates on test transitions: bug-revealing tests must flip while regression tests must stay green."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does SWE-bench Verified exist?",
       "options": [
         "It runs on a noticeably faster evaluation harness than the full benchmark does",
@@ -51,7 +51,7 @@
       "explanation": "GAIA is intentionally easy-for-humans, hard-for-AI, testing reasoning + tools + modality."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which is NOT one of AgentBench's environment categories?",
       "options": [
         "Gradient (RL, IRL)",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Single-number fixation hides contamination and cost; always report Verified and per-distribution context."
-    },
-    {
-      "stage": "post",
-      "question": "Which dimension do these benchmarks NOT measure?",
-      "options": [
-        "Whether previously failing unit tests transition to passing state after a patch is applied",
-        "The raw per-task pass or fail outcome the harness reports for each run",
-        "Real-world operational cost (tokens, wall-clock), adversarial safety, and your own domain",
-        "The total number of tool-call steps an agent used to reach its answer"
-      ],
-      "correct": 2,
-      "explanation": "Benchmarks aggregate; they do not capture cost, adversarial robustness, or your domain."
     }
   ]
 }

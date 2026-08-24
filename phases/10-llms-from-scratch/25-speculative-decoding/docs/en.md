@@ -133,3 +133,13 @@ Production shops typically report 2-3× wall-clock speedup on chat, 3-5× on cod
 - [Li et al., 2024 — "EAGLE-2: Faster Inference of Language Models with Dynamic Draft Trees"](https://arxiv.org/abs/2406.16858) — dynamic tree topology
 - [Li et al., 2025 — "EAGLE-3: Scaling up Inference Acceleration of Large Language Models via Training-Time Test"](https://arxiv.org/abs/2503.01840) — train-time test-time matching
 - [Fu, Haotian, Peng et al., 2024 — "Break the Sequential Dependency of LLM Inference Using Lookahead Decoding"](https://arxiv.org/abs/2402.02057) — Jacobi/lookahead decoding, a speculator-free alternative
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the architecture or training mechanism behind Speculative Decoding and EAGLE.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the central operation with explicit tensors and state.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Validate intermediate values against the lesson's stated invariants.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the architecture or training mechanism behind Speculative Decoding and EAGLE,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Validate intermediate values against the lesson's stated invariants,” and cite a repeatable check rather than relying on visual inspection alone.

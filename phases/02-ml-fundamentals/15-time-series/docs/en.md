@@ -244,3 +244,13 @@ For most practical problems, start with recursive for short horizons (1-5 steps)
 - [scikit-learn Time Series Split](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html) -- sklearn's walk-forward splitter
 - [statsmodels ARIMA docs](https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima.model.ARIMA.html) -- ARIMA implementation with diagnostics
 - [Makridakis et al., The M5 Competition (2022)](https://www.sciencedirect.com/science/article/pii/S0169207021001874) -- large-scale forecasting competition showing ML methods vs statistical methods
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Decompose a time series into trend, seasonality, and residual components and test for stationarity.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement lag features and rolling statistics to convert a time series into a supervised learning problem.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a walk-forward validation framework that prevents future data from leaking into training.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Decompose a time series into trend, seasonality, and residual components and test for stationarity,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a walk-forward validation framework that prevents future data from leaking into training,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -426,3 +426,13 @@ assert custom_result == expected_result, f"expected {expected_result}, got {cust
 - [Google — Gemini function calling](https://ai.google.dev/gemini-api/docs/function-calling) — `functionDeclarations` and parallel-call semantics in Gemini
 - [Model Context Protocol — Specification 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25) — the provider-agnostic generalization of the tool interface
 - [JSON Schema — 2020-12 release notes](https://json-schema.org/draft/2020-12/release-notes) — the schema dialect every modern tool API speaks
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why an LLM that can only generate text cannot, on its own, take actions against the real world.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Draw the four-step tool-call loop (describe → decide → execute → observe) and name who owns each step.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Write a tool description as three parts: name, JSON Schema input, and a deterministic executor function.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why an LLM that can only generate text cannot, on its own, take actions against the real world,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Write a tool description as three parts: name, JSON Schema input, and a deterministic executor function,” and cite a repeatable check rather than relying on visual inspection alone.

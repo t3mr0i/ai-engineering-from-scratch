@@ -117,3 +117,13 @@ Open SOTA (AF3) at 0.72; proprietary frontier ~0.78 (Gemini 2.5 Pro, Claude Opus
 - [Goel et al. — Audio Flamingo 3 (arXiv:2507.08128)](https://arxiv.org/abs/2507.08128)
 - [Tang et al. — SALMONN (arXiv:2310.13289)](https://arxiv.org/abs/2310.13289)
 - [Gong et al. — LTU (arXiv:2305.10790)](https://arxiv.org/abs/2305.10790)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build an audio Q-former: N learnable queries cross-attending to spectrogram patches.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build an audio Q-former: N learnable queries cross-attending to spectrogram patches,” and cite a repeatable check rather than relying on visual inspection alone.

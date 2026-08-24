@@ -104,3 +104,13 @@ Running this as a two-agent loop surfaces gaps that a single extraction pass mis
 - [Amazon — Working backwards and the six-pager](https://www.aboutamazon.com/about-us) — the pre-meeting written decision brief as a forcing function for clarity before any AI is involved.
 - [OpenAI — Structured outputs documentation](https://platform.openai.com/docs/guides/structured-outputs) — JSON schema enforcement in LLM responses; the mechanism behind reliable artifact extraction.
 - [ISO 9001:2015 — Clause 7.5 Documented information and Clause 9.3.3 Management review outputs](https://www.iso.org/standard/62085.html) — the clauses that formalise documentation (7.5) and decision-recording (9.3.3) requirements in quality management systems; useful when meeting artifacts feed regulated processes.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Structured Meeting Facilitation with LLMs: From Summary to Action (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Structured Meeting Facilitation with LLMs: From Summary to Action (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -5,7 +5,7 @@
 **Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 14 · 01 (Agent Loop), Phase 14 · 26 (Failure Modes)
-**Time:** ~45 minutes
+**Time:** ~135 minutes
 
 ## Learning Objectives
 
@@ -450,3 +450,13 @@ Cross-references inside this curriculum:
 - Phase 14 · 26 — Failure modes catalog the seven surfaces are designed to absorb
 - Phase 14 · 27 — Prompt injection defenses that sit at the authorization-policy primitive
 - Phase 14 · 29 — Production runtimes (queue, event, cron): where the primitives in this lesson live in deployment
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Separate model capability from execution reliability.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the seven workbench surfaces that decide whether an agent ships.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare a prompt-only run against a workbench-guided run on a small repo task.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Separate model capability from execution reliability,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare a prompt-only run against a workbench-guided run on a small repo task,” and cite a repeatable check rather than relying on visual inspection alone.

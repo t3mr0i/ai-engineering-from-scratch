@@ -15,7 +15,7 @@
       "explanation": "The schema is the contract every downstream consumer reads from. Locking it lets you change components independently without breaking the rest — it has nothing to do with parser speed or validator removal."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the closed vocabulary that the metric_name field accepts?",
       "options": [
         "Whatever string the task runner happens to be configured to recognise at load time",
@@ -51,7 +51,7 @@
       "explanation": "Few-shot composition is part of the eval definition, not the model interface. Putting it in the task means every model sees the same prompt."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which category-metric pair is illegal under the validator?",
       "options": [
         "summary + rouge_l, a pairing the validator accepts since ROUGE is meant for free-text summaries",

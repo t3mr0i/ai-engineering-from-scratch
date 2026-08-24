@@ -80,3 +80,13 @@ Lessons 7-11 reference Redwood and Apollo work; Lesson 18 references METR's fram
 - [Apollo Research](https://www.apolloresearch.ai/) — scheming evaluations
 - [METR — Common Elements of Frontier AI Safety Policies](https://metr.org/blog/2025-03-26-common-elements-of-frontier-ai-safety-policies/) — framework comparison
 - [Eleos AI Research](https://www.eleosai.org/research) — model welfare methodology
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify the five organisations of the non-lab alignment research ecosystem and their core output.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe MATS's scale (scholars, papers, h-index) and its role as a talent pipeline.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe Redwood's AI Control agenda and its partnership with UK AISI.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify the five organisations of the non-lab alignment research ecosystem and their core output,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe Redwood's AI Control agenda and its partnership with UK AISI,” and cite a repeatable check rather than relying on visual inspection alone.

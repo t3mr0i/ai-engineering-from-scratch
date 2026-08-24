@@ -15,7 +15,7 @@
       "explanation": "Langfuse is MIT, including LLM-as-a-judge, annotation queues, prompt experiments, and Playground after June 2025."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is Arize Phoenix strongest at according to the lesson?",
       "options": [
         "Prompt versioning with a built-in playground and fine-grained version diffing across deployed prompt revisions",
@@ -51,7 +51,7 @@
       "explanation": "Langfuse covers tracing + prompt management + evals + session replay end-to-end."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the lesson say about vendor-published platform benchmarks?",
       "options": [
         "They are definitive and need no validation against your own workload",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "Evals are what turn traces into actionable quality signals."
-    },
-    {
-      "stage": "post",
-      "question": "What is the lesson's warning about self-rolled LLM-judges?",
-      "options": [
-        "CRITIC applies: judges need external grounding for factual verification or they rubber-stamp",
-        "They are forbidden under the terms of the Apache 2.0 license that Opik ships under",
-        "They only work correctly when the evaluation pipeline is written in TypeScript",
-        "They must run on GPU-backed infrastructure to produce reliable eval scores"
-      ],
-      "correct": 0,
-      "explanation": "Without external tool-grounded verification, LLM-judges drift toward rubber-stamping (CRITIC, Lesson 5)."
     }
   ]
 }

@@ -114,3 +114,13 @@ Benchmark numbers drift — NVIDIA and the inference stack post updated results 
 - [TensorRT-LLM Disaggregated Serving blog](https://nvidia.github.io/TensorRT-LLM/blogs/tech_blog/blog5_Disaggregated_Serving_in_TensorRT-LLM.html)
 - [llm-d GitHub](https://github.com/llm-d/llm-d)
 - [llm-d 0.5 release notes](https://github.com/llm-d/llm-d/releases)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why prefill and decode have different optimal GPU allocations and quantify the waste under colocation.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Diagram the disaggregated architecture: prefill pool, decode pool, KV transfer via NIXL, router.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the condition when disaggregation does NOT pay off (short prompts, short outputs).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why prefill and decode have different optimal GPU allocations and quantify the waste under colocation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the condition when disaggregation does NOT pay off (short prompts, short outputs),” and cite a repeatable check rather than relying on visual inspection alone.

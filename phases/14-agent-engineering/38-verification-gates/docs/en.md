@@ -81,3 +81,13 @@ Block-severity findings cannot be overridden by the agent. They can only be over
 - Phase 14 · 36 — the scope contract this gate enforces
 - Phase 14 · 37 — the feedback log this gate scores
 - Phase 14 · 39 — the reviewer agent the gate hands off to
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define a verification gate as a deterministic function over workbench artifacts.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Combine rule report, scope report, feedback records, and diff into a single verdict.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Emit a `verification_report.json` the reviewer agent and CI can both read.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define a verification gate as a deterministic function over workbench artifacts,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Emit a `verification_report.json` the reviewer agent and CI can both read,” and cite a repeatable check rather than relying on visual inspection alone.

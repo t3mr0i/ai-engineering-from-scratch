@@ -102,3 +102,13 @@ The 2026 production rule: pick a per-task max-pixels cap, encode at native aspec
 - [Laurençon et al. — What matters when building vision-language models? (Idefics2, arXiv:2405.02246)](https://arxiv.org/abs/2405.02246)
 - [Tschannen et al. — SigLIP 2 (arXiv:2502.14786)](https://arxiv.org/abs/2502.14786)
 - [Qwen Team — Qwen2.5-VL Technical Report (arXiv:2502.13923)](https://arxiv.org/abs/2502.13923)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal attention mask.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute token budgets for OCR, charts, and photography without resizing.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal attention mask,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute token budgets for OCR, charts, and photography without resizing,” and cite a repeatable check rather than relying on visual inspection alone.

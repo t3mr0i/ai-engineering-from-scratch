@@ -70,3 +70,13 @@ The template in `outputs/checklist-data-quality-ai-readiness.md` can be used bef
 - Master data needs named ownership.
 - Sampling makes quality assumptions visible.
 - Definition gaps should become backlog items before AI scaling.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify master-data and data-quality gaps that weaken AI use cases.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a data-quality triage artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map missing owner, duplicate records, stale field, and definition gap to controls.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify master-data and data-quality gaps that weaken AI use cases,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map missing owner, duplicate records, stale field, and definition gap to controls,” and cite a repeatable check rather than relying on visual inspection alone.

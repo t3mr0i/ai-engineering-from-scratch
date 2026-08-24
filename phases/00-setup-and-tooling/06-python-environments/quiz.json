@@ -1,39 +1,78 @@
 {
+  "lesson": "06-python-environments",
+  "title": "Python Environments",
   "questions": [
     {
       "stage": "pre",
       "question": "What problem do virtual environments solve?",
-      "options": ["They make Python code run faster by optimizing the interpreter", "They isolate project dependencies so different projects can use different package versions", "They provide a graphical interface for managing Python scripts", "They automatically update packages to the latest versions"],
+      "options": [
+        "They make Python code run faster by optimizing the interpreter — and applies unchanged even when the lesson's stated preconditions fail",
+        "They isolate project dependencies so different projects can use different package versions",
+        "They provide a graphical interface for managing Python scripts",
+        "They automatically update packages to the latest versions"
+      ],
       "correct": 1,
       "explanation": "Virtual environments give each project its own isolated set of packages. Without them, installing PyTorch 2.4 for one project would overwrite PyTorch 2.1 needed by another."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is a lockfile in the context of Python dependency management?",
-      "options": ["A file that prevents other users from editing your code", "A file that pins every package to an exact version for reproducible installs", "A file that locks the Python interpreter version", "A file that encrypts your project dependencies"],
+      "options": [
+        "A file that prevents other users from editing your code, with no need to inspect intermediate results or test edge cases",
+        "A file that pins every package to an exact version for reproducible installs",
+        "A file that locks the Python interpreter version",
+        "A file that encrypts your project dependencies"
+      ],
       "correct": 1,
       "explanation": "A lockfile records the exact version of every package (including transitive dependencies) so anyone installing from it gets identical packages, ensuring reproducibility."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "How can you verify that your pip and python commands are using the virtual environment and not the system Python?",
-      "options": ["Run 'pip --version' and check the version number", "Run 'which python' and confirm it shows .venv/bin/python, not /usr/bin/python", "Check if the terminal background color has changed", "Run 'python --check-env' to verify"],
+      "options": [
+        "Run 'pip --version' and check the version number",
+        "Run 'which python' and confirm it shows .venv/bin/python, not /usr/bin/python",
+        "Check if the terminal background color has changed, because one plausible output is sufficient production evidence",
+        "Run 'python --check-env' to verify"
+      ],
       "correct": 1,
       "explanation": "'which python' (or 'where python' on Windows) shows the full path to the interpreter. If it points to .venv/bin/python, you are in the virtual environment."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why is mixing pip and conda in the same environment problematic?",
-      "options": ["Pip packages are incompatible with conda's Python interpreter", "Pip installs can break conda's dependency tracking, causing hard-to-debug conflicts", "Conda cannot install packages that pip has already installed", "It doubles the disk space used by every package"],
+      "options": [
+        "Pip packages are incompatible with conda's Python interpreter, before defining the measurement, acceptance threshold, or rollback path",
+        "Pip installs can break conda's dependency tracking, causing hard-to-debug conflicts",
+        "Conda cannot install packages that pip has already installed",
+        "It doubles the disk space used by every package"
+      ],
       "correct": 1,
       "explanation": "Conda maintains its own dependency solver. Pip installs bypass it, so conda no longer knows the true state of the environment. This leads to dependency conflicts that are painful to resolve."
     },
     {
       "stage": "post",
       "question": "Your PyTorch code reports 'CUDA not available' despite having an NVIDIA GPU. What is the most likely cause?",
-      "options": ["Your GPU does not support CUDA", "PyTorch was installed with a CUDA version incompatible with your GPU driver", "You forgot to import the torch.cuda module", "Virtual environments cannot access GPU hardware"],
+      "options": [
+        "Your GPU does not support CUDA",
+        "PyTorch was installed with a CUDA version incompatible with your GPU driver",
+        "You forgot to import the torch.cuda module",
+        "Virtual environments cannot access GPU hardware — and applies unchanged even when the lesson's stated preconditions fail"
+      ],
       "correct": 1,
       "explanation": "PyTorch ships CUDA bindings compiled for specific CUDA versions. If the PyTorch CUDA version exceeds your driver's CUDA version, CUDA will not be available. Check with nvidia-smi and torch.version.cuda."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Python Environments?",
+      "options": [
+        "Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

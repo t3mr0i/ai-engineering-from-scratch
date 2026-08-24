@@ -75,3 +75,13 @@ Pick N from the eval curve plus the latency budget. The cross-encoder cannot rai
 - [BGE Reranker v2 model card](https://huggingface.co/BAAI/bge-reranker-v2-m3)
 - Phase 19 lesson 65 - the hybrid retriever feeding this rerank stage
 - Phase 19 lesson 68 - the eval that measures the lift this rerank delivers
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish a bi-encoder retriever from a cross-encoder reranker by their input shape, parameter count, and per-query cost.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a small cross-encoder from scratch as a transformer block that consumes a packed (query, document) sequence and emits a single relevance scalar.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Wire a two-stage retrieve-then-rerank pipeline: retrieve top-N with a cheap retriever, rerank N to top-K with the cross-encoder, return K.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish a bi-encoder retriever from a cross-encoder reranker by their input shape, parameter count, and per-query cost,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Wire a two-stage retrieve-then-rerank pipeline: retrieve top-N with a cheap retriever, rerank N to top-K with the cross-encoder, return K,” and cite a repeatable check rather than relying on visual inspection alone.

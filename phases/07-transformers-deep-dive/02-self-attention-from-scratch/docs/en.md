@@ -171,3 +171,13 @@ Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
 - [Attention Is All You Need (Vaswani et al., 2017)](https://arxiv.org/abs/1706.03762) - the original transformer paper
 - [The Illustrated Transformer (Jay Alammar)](https://jalammar.github.io/illustrated-transformer/) - best visual walkthrough of the full architecture
 - [The Annotated Transformer (Harvard NLP)](https://nlp.seas.harvard.edu/annotated-transformer/) - line-by-line PyTorch implementation with explanations
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement scaled dot-product self-attention from scratch using only NumPy, including query/key/value projections and the softmax-weighted sum.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a multi-head attention layer that splits heads, computes parallel attention, and concatenates results.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trace how the attention matrix captures token relationships and explain why scaling by sqrt(d_k) prevents softmax saturation.
+
+## Reference Solution
+
+Use the canonical [main.rs](../code/main.rs) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement scaled dot-product self-attention from scratch using only NumPy, including query/key/value projections and the softmax-weighted sum,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trace how the attention matrix captures token relationships and explain why scaling by sqrt(d_k) prevents softmax saturation,” and cite a repeatable check rather than relying on visual inspection alone.

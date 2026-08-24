@@ -83,3 +83,13 @@ Letta V1 (`letta_v1_agent`, 2026) deprecates `send_message`/heartbeat and inline
 - [Letta, Sleep-time Compute blog](https://www.letta.com/blog/sleep-time-compute) — async consolidation
 - [Letta, Rearchitecting the Agent Loop](https://www.letta.com/blog/letta-v1-agent) — native reasoning rewrite
 - [Packer et al., MemGPT (arXiv:2310.08560)](https://arxiv.org/abs/2310.08560) — the origin
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three memory tiers Letta uses (core, recall, archival) and the role of each.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the memory-block pattern: Human block, Persona block, and user-defined blocks as first-class typed objects.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe what sleep-time compute is, why it sits off the critical path, and why it can run a stronger model than the primary agent.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three memory tiers Letta uses (core, recall, archival) and the role of each,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe what sleep-time compute is, why it sits off the critical path, and why it can run a stronger model than the primary agent,” and cite a repeatable check rather than relying on visual inspection alone.

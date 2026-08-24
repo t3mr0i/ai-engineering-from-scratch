@@ -81,3 +81,13 @@ Every critique in later lessons — reward hacking (Lesson 2), DPO (Lesson 3), s
 - [Stiennon et al. — Learning to summarize from human feedback (arXiv:2009.01325)](https://arxiv.org/abs/2009.01325) — the RLHF-for-summarization predecessor
 - [Christiano et al. — Deep reinforcement learning from human preferences (arXiv:1706.03741)](https://arxiv.org/abs/1706.03741) — the original preference-based RL formulation
 - [Bai et al. — Training a Helpful and Harmless Assistant with RLHF (arXiv:2204.05862)](https://arxiv.org/abs/2204.05862) — Anthropic's HH extension of the InstructGPT pipeline
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three stages of the InstructGPT pipeline and the loss used in each.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why a 1.3B instruction-tuned model beat the raw 175B GPT-3 on human preference evaluation.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: State what the KL penalty in stage 3 is protecting against and why removing it collapses to mode-seeking behaviour.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three stages of the InstructGPT pipeline and the loss used in each,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “State what the KL penalty in stage 3 is protecting against and why removing it collapses to mode-seeking behaviour,” and cite a repeatable check rather than relying on visual inspection alone.

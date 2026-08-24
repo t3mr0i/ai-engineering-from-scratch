@@ -222,3 +222,13 @@ graph TD
 - [TRL documentation](https://huggingface.co/docs/trl/) -- official reference for `SFTTrainer`, `DPOTrainer`, `KTOTrainer`, and the integration surface with PEFT/bitsandbytes/Unsloth.
 - [Unsloth documentation](https://docs.unsloth.ai/) -- fused kernels that double fine-tuning throughput and halve memory; the performance layer under TRL.
 - [Axolotl documentation](https://axolotl-ai-cloud.github.io/axolotl/) -- YAML-configured multi-GPU SFT/DPO/QLoRA trainer; the config-as-code alternative to hand-written scripts.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement LoRA by injecting low-rank adapter matrices (A and B) into a pretrained model's attention layers.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d parameters instead of d^2.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Fine-tune a model using QLoRA (4-bit quantized base + LoRA adapters) to fit within consumer GPU memory.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement LoRA by injecting low-rank adapter matrices (A and B) into a pretrained model's attention layers,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Fine-tune a model using QLoRA (4-bit quantized base + LoRA adapters) to fit within consumer GPU memory,” and cite a repeatable check rather than relying on visual inspection alone.

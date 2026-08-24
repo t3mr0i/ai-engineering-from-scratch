@@ -97,3 +97,13 @@ It does not parallelize the pair counter. A loop in Python over a corpus of a fe
 `main.py` defines four objects. `BPETokenizer` holds the vocabulary, the merge table, and the special-token table. `train` is the training loop. `encode` is the inference path. `decode` is the byte concatenation. The demo at the bottom trains a small tokenizer on a built-in corpus, encodes a held-out sentence, decodes the ids back, and prints both. The tests in `code/tests/test_bpe.py` pin the round-trip property, the special-token reservation, and the merge ordering.
 
 Run the demo. Then change the target vocabulary size in the demo from 300 to 600 and watch how the encoded length of the held-out sentence drops. That curve is the BPE compression curve.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Train a Byte-Pair Encoding vocabulary from a raw text corpus by repeatedly merging the most frequent adjacent symbol pair.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a deterministic merge table and apply it to fresh text to produce a stream of subword ids.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Round-trip arbitrary UTF-8 input to ids and back without information loss.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Train a Byte-Pair Encoding vocabulary from a raw text corpus by repeatedly merging the most frequent adjacent symbol pair,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Round-trip arbitrary UTF-8 input to ids and back without information loss,” and cite a repeatable check rather than relying on visual inspection alone.

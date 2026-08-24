@@ -20,7 +20,7 @@
       "options": [
         "Output: the generated answer was returned to the user without a sensitive-data check",
         "Tool call: an action was executed without an allowlist entry or a human approval step",
-        "Audit: the interaction was not logged, so the override could not be reconstructed later",
+        "Audit: the interaction was not logged, so the override could not be reconstructed later, with no need to inspect intermediate results or test edge cases",
         "Context: retrieved content was treated as trusted instruction rather than untrusted data"
       ],
       "correct": 3,

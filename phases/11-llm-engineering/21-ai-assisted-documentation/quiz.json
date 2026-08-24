@@ -21,7 +21,7 @@
         "It had no source citations, so the review cadence process rejected it before publication",
         "One command in it was obsolete and a prerequisite step was missing, though the prose read as polished",
         "The owner-approval step was skipped entirely, so the document was never assigned a maintainer",
-        "A stale date on the page confused readers about which of several incident runbooks to open first"
+        "A stale date on the page confused readers about which of several incident runbooks to open first, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "The lesson's runbook example failed because one command was obsolete and a prerequisite was missing — a command-validation gap, not a citation, approval, or date-labeling problem."
@@ -44,7 +44,7 @@
       "options": [
         "Publishing a fluent-sounding draft without assigning an owner to keep it current",
         "Source citation, so every claim in the doc links back to code, tickets, or an architecture decision",
-        "Skipping command validation entirely because the runbook's prose already reads as authoritative",
+        "Skipping command validation entirely because the runbook's prose already reads as authoritative, before defining the measurement, acceptance threshold, or rollback path",
         "Treating a document's polish as proof that its prerequisites are still accurate"
       ],
       "correct": 1,

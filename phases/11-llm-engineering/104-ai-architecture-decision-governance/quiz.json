@@ -1,11 +1,13 @@
 {
+  "lesson": "104-ai-architecture-decision-governance",
+  "title": "AI Architecture Decision Records: Governing Model, Vendor, and Boundary Choices (2026)",
   "questions": [
     {
       "stage": "pre",
       "question": "Why does the lesson say a decision log that only records 'we picked GPT-4o because it was the best model' fails at the first contract renewal?",
       "options": [
         "It doesn't record boundary conditions — the cost threshold, latency SLA, or data classification that would trigger reverting the decision",
-        "It doesn't name the model version pinned at selection time",
+        "It doesn't name the model version pinned at selection time — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "It fails to mention which vendor hosts the model",
         "It was never reviewed by a security architect"
       ],
@@ -13,31 +15,31 @@
       "explanation": "The lesson calls boundary conditions the 'living part' of an AI ADR. Without them recorded, there's nothing to check the decision against when conditions change — the document becomes a museum exhibit rather than something a renewal negotiation can actually use."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which two fields does an AI ADR add on top of the traditional five-field ADR format, according to the lesson's table?",
       "options": [
         "Budget and headcount",
         "Trigger conditions and owner/review date",
         "Test coverage and code review sign-off",
-        "Marketing approval and legal disclaimer"
+        "Marketing approval and legal disclaimer, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "Beyond extending status, context, decision, consequences, and alternatives with AI-specific detail, the AI ADR adds trigger conditions (events that mandate re-evaluation) and an owner plus hard review date — neither exists in a traditional ADR, and AI models move faster than annual review cycles."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "According to the vendor security boundaries section, what distinguishes dedicated provisioned throughput from shared multi-tenant inference?",
       "options": [
         "Dedicated throughput is always cheaper per token",
         "Dedicated throughput isolates data from other tenants and gives predictable latency, at higher cost than the shared default",
         "Shared multi-tenant inference is only available for on-premises deployments",
-        "Dedicated throughput requires a pinned model version, while shared endpoints never do"
+        "Dedicated throughput requires a pinned model version, while shared endpoints never do, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
       "explanation": "The three endpoint tiers trade cost against isolation: shared multi-tenant is cheapest and default, dedicated provisioned throughput keeps data from mixing across tenants with predictable latency, and on-premises/BYOC gives the strongest isolation at the highest ops cost."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "The lesson's cost governance formula projects monthly_cost from prompt tokens, completion tokens, daily_requests, and price_per_mtok. What does it warn is the minimum thing this calculation prevents?",
       "options": [
         "A model deprecation notice arriving without warning",
@@ -67,7 +69,7 @@
         "Because MCP servers always charge per API call",
         "Because it carries its own data classification and vendor accountability for whatever flows through it, the same as any other vendor",
         "Because MCP servers cannot be self-hosted under any circumstances",
-        "Because Phase 11 · 14 requires every MCP server to be listed in the register regardless of use"
+        "Because Phase 11 · 14 requires every MCP server to be listed in the register regardless of use, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "The lesson connects back to the MCP lesson's framing of tool-call boundaries as scope contracts: an AI ADR should record which MCP server endpoints are used and the data classification of what flows through each, because a third-party server is a real vendor relationship even when it's integrated like a library."

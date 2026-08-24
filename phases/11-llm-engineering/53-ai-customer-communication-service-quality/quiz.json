@@ -19,7 +19,7 @@
       "question": "A customer has already contacted support three times about the same billing error, and their fourth message uses noticeably sharper language than the earlier ones. Which of the lesson's four signals does this match most directly?",
       "options": [
         "Customer frustration — repeated contact and escalating tone signal the customer is losing patience",
-        "Response uncertainty — the AI-drafted reply is not confident the proposed fix is correct",
+        "Response uncertainty — the AI-drafted reply is not confident the proposed fix is correct, with no need to inspect intermediate results or test edge cases",
         "SLA risk — the response is at risk of missing a committed service-level deadline",
         "Escalation need — the issue requires a human specialist the AI cannot substitute for"
       ],
@@ -31,7 +31,7 @@
       "question": "What does the Python artifact produce?",
       "options": [
         "A final, legally binding customer contract ready for signature",
-        "A complete support ticketing database that replaces the existing CRM",
+        "A complete support ticketing database that replaces the existing CRM, because one plausible output is sufficient production evidence",
         "A ranked customer-response quality plan with controls for each scenario",
         "An automatic refund issued directly to the customer without review"
       ],
@@ -43,7 +43,7 @@
       "question": "Which control belongs to this lesson?",
       "options": [
         "Escalation path — a defined route to a human specialist when confidence is low",
-        "Hiding uncertainty from the customer so the reply reads as fully confident",
+        "Hiding uncertainty from the customer so the reply reads as fully confident, before defining the measurement, acceptance threshold, or rollback path",
         "Skipping the empathy check because the reply is factually accurate anyway",
         "Ignoring SLA risk since the reply already answers the customer's question"
       ],
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "When should AI-assisted customer communication receive stronger review?",
       "options": [
-        "Only when no customer is directly affected by the support interaction at all",
+        "Only when no customer is directly affected by the support interaction at all — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when the AI-drafted answer is already fully certain and source-backed",
         "Never — a warm, empathetic tone by itself is always a sufficient review",
         "When customers are frustrated, confidence is low, SLA is at risk, or escalation is needed"
@@ -69,7 +69,7 @@
         "Only grammar and spelling, since tone and accuracy are handled elsewhere",
         "Source evidence, an empathy check, a confidence threshold, and an escalation path",
         "Only the word count of the reply, to keep responses short and consistent",
-        "No ticket context at all, since the AI reply is expected to stand on its own"
+        "No ticket context at all, since the AI reply is expected to stand on its own, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "Before sending, the lesson checks source evidence, an empathy check, a confidence threshold, and an escalation path — not just grammar, word count, or a reply written without ticket context."

@@ -9,7 +9,7 @@
         "AI can take the negotiation position once the clause register has been fully populated",
         "AI can prepare and structure work, but humans own interpretation, negotiation, and decisions",
         "AI can accept residual risk on routine contracts, escalating only the unusual clauses",
-        "AI can issue the final review note, provided the source document was internally approved"
+        "AI can issue the final review note, provided the source document was internally approved — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "AI support does not remove accountable legal or procurement review. The model may structure information, but interpretation, risk acceptance, and negotiation positions stay with humans."
@@ -18,7 +18,7 @@
       "stage": "check",
       "question": "What three risks does this lesson name for an AI-generated summary of a contract?",
       "options": [
-        "It cites the wrong jurisdiction, misdates the term, or misstates the governing language",
+        "It cites the wrong jurisdiction, misdates the term, or misstates the governing language, with no need to inspect intermediate results or test edge cases",
         "It runs too slowly, costs more per document, or cannot handle scanned contract formats",
         "It drops the formatting, reorders the clauses, or loses the numbering of the annexes",
         "It misses obligations, weakens the negotiation position, or exposes confidential material"
@@ -56,7 +56,7 @@
       "options": [
         "When obligation risk, confidential terms, or missing evidence create high impact",
         "Only when the source document runs longer than the model's context window",
-        "Only when an external vendor rather than an internal policy is being reviewed",
+        "Only when an external vendor rather than an internal policy is being reviewed — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when the summary will be forwarded outside the legal team that made it"
       ],
       "correct": 0,
@@ -66,7 +66,7 @@
       "stage": "post",
       "question": "What should vendor-term summaries remain linked to?",
       "options": [
-        "The model's own wording, so the summary stays internally consistent",
+        "The model's own wording, so the summary stays internally consistent, with no need to inspect intermediate results or test edge cases",
         "The source clauses and the evidence the review was actually based on",
         "The prompt that produced it, so the same output can be regenerated",
         "The standard template the procurement team uses for every supplier"

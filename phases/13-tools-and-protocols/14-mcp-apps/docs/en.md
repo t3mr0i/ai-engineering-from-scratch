@@ -171,3 +171,13 @@ Servers in production: dashboards, map visualizations, data tables, chart builde
 - [MCP — Apps extension overview](https://modelcontextprotocol.io/extensions/apps/overview) — high-level documentation
 - [MCP blog — MCP Apps launch](https://blog.modelcontextprotocol.io/posts/2026-01-26-mcp-apps/) — January 2026 launch post
 - [MCP Apps API reference](https://apps.extensions.modelcontextprotocol.io/api/) — JSDoc-style SDK reference
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Return a `ui://` resource from a tool call and set the correct MIME and metadata.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Declare a tool's associated UI with `_meta.ui.resourceUri`, `_meta.ui.csp`, and `_meta.ui.permissions`.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement the iframe sandbox postMessage JSON-RPC for UI-to-host communication.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Return a `ui://` resource from a tool call and set the correct MIME and metadata,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement the iframe sandbox postMessage JSON-RPC for UI-to-host communication,” and cite a repeatable check rather than relying on visual inspection alone.

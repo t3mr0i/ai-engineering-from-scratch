@@ -15,7 +15,7 @@
       "explanation": "The runner closes the gap between 'tests passed' (imagined) and 'tests actually ran and exited zero' (recorded)."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "How does feedback differ from telemetry?",
       "options": [
         "Telemetry only stores exit codes and timestamps, while feedback stores the full stdout and stderr text",
@@ -51,7 +51,7 @@
       "explanation": "Deterministic truncation keeps records replayable while bounding token cost; tails carry the failure summary."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why redact at write time rather than read time?",
       "options": [
         "Write-time redaction runs faster than read-time redaction because it skips the regex pattern matching",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Parent linkage makes retry chains visible to the reviewer (Lesson 39) and the verification gate."
-    },
-    {
-      "stage": "post",
-      "question": "Why cap feedback_record.jsonl at 1 MB with rotation?",
-      "options": [
-        "The agent only reads the current file; rotation bounds runtime cost while history is preserved",
-        "JSONL files silently corrupt themselves once they cross roughly one megabyte on most common filesystems",
-        "The shell truncates any file over one megabyte before a subprocess can read it back",
-        "Providers charge a per-byte fee once a single log file exceeds one megabyte in size"
-      ],
-      "correct": 0,
-      "explanation": "Bounded current file + rotated history is the same pattern logrotate uses; predictable cost in the hot loop."
     }
   ]
 }

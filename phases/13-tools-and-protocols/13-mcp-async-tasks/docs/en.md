@@ -118,3 +118,13 @@ SEP-1686 shipped in 2025-11-25 but the broader roadmap calls out three open issu
 - [DeepWiki — MCP task system and async operations](https://deepwiki.com/modelcontextprotocol/modelcontextprotocol/2.7-task-system-and-async-operations) — mechanics and state machine
 - [FastMCP — Tasks](https://gofastmcp.com/servers/tasks) — SDK-level task implementation patterns
 - [MCP blog — 2026 roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) — open issues and 2026 priorities including subtasks
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify when to promote a tool from synchronous to task-augmented (>30 seconds of server-side work).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Walk the task lifecycle: `working` → `input_required` → `completed` / `failed` / `cancelled`.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Persist task state so crashes do not lose in-flight work.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify when to promote a tool from synchronous to task-augmented (>30 seconds of server-side work),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Persist task state so crashes do not lose in-flight work,” and cite a repeatable check rather than relying on visual inspection alone.

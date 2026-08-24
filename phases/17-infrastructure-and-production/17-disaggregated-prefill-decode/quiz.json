@@ -12,7 +12,7 @@
         "Decode requires more network bandwidth"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Prefill is compute-bound on matmul throughput; decode is memory-bound on HBM bandwidth, so colocating them wastes one resource” matches the lesson’s treatment of Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "NIXL (RDMA/InfiniBand when available, TCP fallback)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“NIXL (RDMA/InfiniBand when available, TCP fallback)” matches the lesson’s treatment of Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Prompts under 512 tokens and outputs under 200 tokens, where the KV transfer tax dominates the gain"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Prompts under 512 tokens and outputs under 200 tokens, where the KV transfer tax dominates the gain” matches the lesson’s treatment of Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Dynamo requires AMD; llm-d requires NVIDIA"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Dynamo is a stack-above orchestrator over vLLM/SGLang/TRT-LLM; llm-d is Kubernetes-native with prefill/decode/router as independent Services” matches the lesson’s treatment of Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Marlin kernels"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Planner Profiler and SLA Planner” matches the lesson’s treatment of Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Cache-aware routing is only for colocated serving"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The cache-aware router can land a request on the decode pool already holding its prefix; on miss it flows prefill -> decode, so the two compound” matches the lesson’s treatment of Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

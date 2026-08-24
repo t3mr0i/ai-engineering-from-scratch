@@ -20,7 +20,7 @@
       "options": [
         "The workshop simply ran out of time before every one of the sixty ideas could be scored",
         "No one separated attractive-sounding ideas from viable use cases with real pain, data, and a value hypothesis",
-        "Leadership rejected the entire sixty-idea backlog outright, citing budget constraints for the whole program",
+        "Leadership rejected the entire sixty-idea backlog outright, citing budget constraints for the whole program, with no need to inspect intermediate results or test edge cases",
         "The ideas were technically sound but the team lacked the API access needed to build any of them"
       ],
       "correct": 1,

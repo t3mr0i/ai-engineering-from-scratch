@@ -70,3 +70,13 @@ Rules (Phase 14 · 33) describe what must be true to act. Init is the script tha
 - Phase 14 · 34 — the state file this script seeds
 - Phase 14 · 38 — the verification gate the init script feeds
 - Phase 14 · 40 — the handoff that consumes the init report's last-known-good
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify the work an agent should never have to redo per session.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a deterministic init script that probes runtime, dependencies, and repo health.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Persist the probe result so the agent reads it instead of re-running checks.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify the work an agent should never have to redo per session,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Persist the probe result so the agent reads it instead of re-running checks,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -95,3 +95,13 @@ python3 -m pytest code/tests/ -v
 ```
 
 The demo prints a turn-by-turn trace including every gate decision and exits zero. The tests cover the ledger, each gate in isolation, the chain short-circuit, and the synthetic loop end-to-end.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a `VerificationGate` protocol with a deterministic `evaluate(call)` method.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compose budget, recency, whitelist, and regex gates into a chain with short-circuit semantics.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Track every observation through an `ObservationLedger` keyed by tool and turn.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a `VerificationGate` protocol with a deterministic `evaluate(call)` method,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Track every observation through an `ObservationLedger` keyed by tool and turn,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -102,3 +102,13 @@ This is why small dedicated Talker models exist rather than "just use the main m
 - [Xie & Wu — Mini-Omni (arXiv:2408.16725)](https://arxiv.org/abs/2408.16725)
 - [Défossez et al. — Moshi (arXiv:2410.00037)](https://arxiv.org/abs/2410.00037)
 - [Zeng et al. — GLM-4-Voice (arXiv:2412.02612)](https://arxiv.org/abs/2412.02612)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why parallel streaming works.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe TMRoPE's time-aligned position encoding across vision, audio, and text within the Thinker.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why parallel streaming works,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe TMRoPE's time-aligned position encoding across vision, audio, and text within the Thinker,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,0 +1,78 @@
+{
+  "lesson": "06-any-resolution-patch-n-pack",
+  "title": "Any-Resolution Vision: Patch-n'-Pack and NaFlex",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "options": [
+        "Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Compute token budgets for OCR, charts, and photography without resizing",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Compute token budgets for OCR, charts, and photography without resizing” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name the three failure modes of square-resize: squished text, cropped content, wasted tokens on padding",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name the three failure modes of square-resize: squished text, cropped content, wasted tokens on padding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte..."
+      ],
+      "correct": 3,
+      "explanation": "“Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "options": [
+        "Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

@@ -12,10 +12,10 @@
         "End-to-end latency below 800ms requires pipelined streaming at every stage"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“End-to-end latency below 800ms requires pipelined streaming at every stage” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the role of the turn-detector alongside VAD?",
       "options": [
         "Trains a custom voice clone for the agent",
@@ -24,7 +24,7 @@
         "Mixes background music into the output stream"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Reads partial transcripts and scores whether the user has actually finished their utterance” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "The agent raises the TTS volume to assert priority"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The TTS is canceled immediately, remaining LLM output is dropped, and ASR re-arms” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "It improves WER on the next utterance"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“It avoids silence so the conversation does not stall while the side-channel tool runs” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "The first audio chunk must leave the server within roughly how long of the first LLM token?",
       "options": [
         "20ms",
@@ -60,7 +60,7 @@
         "200ms"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“200ms” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "False-cutoff rate"
       ],
       "correct": 3,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Under 3% packet loss, which two adaptive behaviors does the pipeline rely on?",
-      "options": [
-        "Switching to a larger LLM and disabling TTS",
-        "Falling back to PSTN audio codecs",
-        "Holding partial transcripts and raising the VAD speech-gate threshold",
-        "Restarting the LiveKit room"
-      ],
-      "correct": 2,
-      "explanation": ""
+      "explanation": "“False-cutoff rate” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
     }
   ]
 }

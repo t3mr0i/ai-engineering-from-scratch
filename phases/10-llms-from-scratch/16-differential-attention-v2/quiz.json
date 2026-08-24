@@ -1,0 +1,78 @@
+{
+  "lesson": "16-differential-attention-v2",
+  "title": "Differential Attention (V2)",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Differential Attention (V2)?",
+      "options": [
+        "State precisely why softmax attention has a noise floor and why it grows with context length",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“State precisely why softmax attention has a noise floor and why it grows with context length” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Differential Attention (V2)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Differential Attention (V2)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
+        "Walk the V1-to-V2 diff: what got faster, what got simpler, what got more stable, and why each change was ne...",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Walk the V1-to-V2 diff: what got faster, what got simpler, what got more stable, and why each change was ne...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Differential Attention (V2)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement differential attention from scratch in pure Python and empirically verify the noise-cancellation...",
+        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement differential attention from scratch in pure Python and empirically verify the noise-cancellation...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Differential Attention (V2)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "State precisely why softmax attention has a noise floor and why it grows with context length"
+      ],
+      "correct": 3,
+      "explanation": "“State precisely why softmax attention has a noise floor and why it grows with context length” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Differential Attention (V2)?",
+      "options": [
+        "Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

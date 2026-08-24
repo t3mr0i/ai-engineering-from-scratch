@@ -12,7 +12,7 @@
         "A zero-click AI command-injection flaw in Microsoft 365 Copilot (CVE-2025-32711, CVSS 9.3) causing unauthorized network information disclosure, with exfiltration via a CSP allowlisted/trusted Microsoft domain"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“A zero-click AI command-injection flaw in Microsoft 365 Copilot (CVE-2025-32711, CVSS 9.3) causing unauthorized network information disclosure, with exfiltration via a CSP allowlisted/trusted Microsoft domain” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "It requires three clicks but no typing"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“The victim does not have to open the email; Copilot retrieves it as RAG context during routine queries and the injected instructions execute” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Prompt, response, log"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Retrieval, scope, output” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Increased context size"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Disabled image rendering entirely in Copilot Chat (cost: usability) because the alternative attack surface could not be bounded” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Severity ratings are decided by OWASP only"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Vendors initially rated EchoLeak low (information disclosure); Aim Labs's MFA-code exfiltration proof-of-concept escalated the rating to 9.3 — defenders must push for comprehensive PoC for AI-specific vulnerabilities” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Both call it a Tier-2 risk only"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“NIST AI SPD 2024 frames prompt injection as a major information-security risk for generative AI; OWASP 2025 ranks it LLM01 (top application-layer threat)” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

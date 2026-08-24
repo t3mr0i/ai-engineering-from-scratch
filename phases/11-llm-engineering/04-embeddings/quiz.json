@@ -1,18 +1,21 @@
 {
+  "lesson": "04-embeddings",
+  "title": "Embeddings & Vector Representations",
   "questions": [
     {
+      "stage": "pre",
       "question": "What problem do embeddings solve that keyword search cannot?",
       "options": [
         "Embeddings store each document as a sparse bag-of-words vector, so rare terms get more weight than common ones at query time",
-        "Embeddings index every document inside an HNSW graph, so a plain keyword index can never be searched in less than linear time",
+        "Embeddings index every document inside an HNSW graph, so a plain keyword index can never be searched in less than linear time — and applies unchanged even when the lesson's stated preconditions fail",
         "Embeddings capture semantic meaning, matching 'payment didn't go through' with 'charge was declined' even though they share no words",
         "Embeddings preserve word order inside a chunk, so that 'dog bites man' and 'man bites dog' can finally be told apart"
       ],
       "correct": 2,
-      "explanation": "Keyword search treats words as independent symbols. Embeddings map text to high-dimensional vectors where semantic similarity = geometric proximity. Texts with the same meaning cluster together regardless of word choice.",
-      "stage": "pre"
+      "explanation": "Keyword search treats words as independent symbols. Embeddings map text to high-dimensional vectors where semantic similarity = geometric proximity. Texts with the same meaning cluster together regardless of word choice."
     },
     {
+      "stage": "check",
       "question": "What does cosine similarity measure between two embedding vectors?",
       "options": [
         "The straight-line distance between the two points, which shrinks as the vectors' magnitudes get closer together",
@@ -21,10 +24,10 @@
         "The angle between the vectors, indicating how similar their directions are regardless of magnitude"
       ],
       "correct": 3,
-      "explanation": "Cosine similarity = dot(A,B) / (|A|*|B|). It ranges from -1 (opposite) to 1 (identical direction). Two texts with the same meaning will have vectors pointing in nearly the same direction, giving cosine similarity near 1.",
-      "stage": "pre"
+      "explanation": "Cosine similarity = dot(A,B) / (|A|*|B|). It ranges from -1 (opposite) to 1 (identical direction). Two texts with the same meaning will have vectors pointing in nearly the same direction, giving cosine similarity near 1."
     },
     {
+      "stage": "check",
       "question": "What is the typical dimensionality of modern text embedding models?",
       "options": [
         "768 to 3072 dimensions, depending on the model",
@@ -33,10 +36,10 @@
         "100,000 or more dimensions, one per vocabulary token"
       ],
       "correct": 0,
-      "explanation": "Modern embedding models (OpenAI text-embedding-3, BGE, E5) produce vectors with 768 to 3072 dimensions. Higher dimensions capture more nuance but cost more to store and search.",
-      "stage": "post"
+      "explanation": "Modern embedding models (OpenAI text-embedding-3, BGE, E5) produce vectors with 768 to 3072 dimensions. Higher dimensions capture more nuance but cost more to store and search."
     },
     {
+      "stage": "check",
       "question": "Why should you evaluate embedding quality using retrieval benchmarks rather than just inspecting similarity scores?",
       "options": [
         "Cosine similarity ignores vector magnitude, so any two texts of differing length are scored as identical by design",
@@ -45,10 +48,10 @@
         "Absolute similarity values vary by model; what matters is whether relevant documents outrank irrelevant ones (precision@k, recall)"
       ],
       "correct": 3,
-      "explanation": "A cosine similarity of 0.85 might mean 'very similar' for one model and 'somewhat similar' for another. Retrieval metrics (precision@k, recall) measure what actually matters: does the right document come back?",
-      "stage": "post"
+      "explanation": "A cosine similarity of 0.85 might mean 'very similar' for one model and 'somewhat similar' for another. Retrieval metrics (precision@k, recall) measure what actually matters: does the right document come back?"
     },
     {
+      "stage": "post",
       "question": "When would you use a local/open-source embedding model instead of an API-based one?",
       "options": [
         "When you need Matryoshka truncation, which only open-weight checkpoints expose via a dimensions parameter",
@@ -57,8 +60,19 @@
         "When retrieval quality is the priority, because hosted models always score below open-weight ones on MTEB"
       ],
       "correct": 1,
-      "explanation": "API embeddings (OpenAI, Cohere) are easy but send your data externally. Local models (BGE, E5, Nomic) keep data private, eliminate per-call costs at scale, and can be fine-tuned on domain-specific data.",
-      "stage": "post"
+      "explanation": "API embeddings (OpenAI, Cohere) are easy but send your data externally. Local models (BGE, E5, Nomic) keep data private, eliminate per-call costs at scale, and can be fine-tuned on domain-specific data."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Embeddings & Vector Representations?",
+      "options": [
+        "Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

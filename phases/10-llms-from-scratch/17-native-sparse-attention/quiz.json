@@ -1,0 +1,78 @@
+{
+  "lesson": "17-native-sparse-attention",
+  "title": "Native Sparse Attention (DeepSeek NSA)",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Native Sparse Attention (DeepSeek NSA)?",
+      "options": [
+        "State the three NSA attention branches and what each one captures",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“State the three NSA attention branches and what each one captures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Native Sparse Attention (DeepSeek NSA)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Native Sparse Attention (DeepSeek NSA)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
+        "Compute the attention compute savings of NSA versus full attention at 64k context as a function of compress...",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Compute the attention compute savings of NSA versus full attention at 64k context as a function of compress...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Native Sparse Attention (DeepSeek NSA)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement the three-branch combination in stdlib Python on a short synthetic sequence and verify the gating...",
+        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement the three-branch combination in stdlib Python on a short synthetic sequence and verify the gating...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Native Sparse Attention (DeepSeek NSA)?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "State the three NSA attention branches and what each one captures"
+      ],
+      "correct": 3,
+      "explanation": "“State the three NSA attention branches and what each one captures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Native Sparse Attention (DeepSeek NSA)?",
+      "options": [
+        "Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

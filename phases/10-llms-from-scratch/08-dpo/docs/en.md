@@ -183,3 +183,13 @@ The trend is clear: each method eliminates one more piece of complexity. RLHF ne
 - [Hong et al., 2024 -- "ORPO: Monolithic Preference Optimization without Reference Model"](https://arxiv.org/abs/2403.07691) -- combining SFT and alignment in one step
 - [Meng et al., 2024 -- "SimPO: Simple Preference Optimization with a Reference-Free Reward"](https://arxiv.org/abs/2405.14734) -- eliminating the reference model entirely
 - [Llama 3 Technical Report](https://arxiv.org/abs/2407.21783) -- Meta's alignment pipeline combining RLHF and DPO
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement DPO training that directly optimizes a language model on preference pairs without a separate reward model.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Derive the DPO loss function and explain how it implicitly represents a reward model through the policy's log probabilities.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare DPO vs RLHF in terms of training stability, compute cost, and number of models required.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement DPO training that directly optimizes a language model on preference pairs without a separate reward model,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare DPO vs RLHF in terms of training stability, compute cost, and number of models required,” and cite a repeatable check rather than relying on visual inspection alone.

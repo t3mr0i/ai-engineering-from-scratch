@@ -103,3 +103,13 @@ Some enterprises deploy MCP servers behind gRPC or message-queue transports insi
 - [Cloudflare — MCP transport](https://developers.cloudflare.com/agents/model-context-protocol/transport/) — Workers-hosted Streamable HTTP patterns
 - [AWS — MCP transport mechanisms](https://builder.aws.com/content/35A0IphCeLvYzly9Sw40G1dVNzc/mcp-transport-mechanisms-stdio-vs-streamable-http) — comparison across deployment shapes
 - [Atlassian — HTTP+SSE deprecation notice](https://community.atlassian.com/forums/Atlassian-Remote-MCP-Server/HTTP-SSE-Deprecation-Notice/ba-p/3205484) — concrete migration deadline example
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Enforce `Origin` validation and session-id semantics to defeat DNS-rebinding.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Enforce `Origin` validation and session-id semantics to defeat DNS-rebinding,” and cite a repeatable check rather than relying on visual inspection alone.

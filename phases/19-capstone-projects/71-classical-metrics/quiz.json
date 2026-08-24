@@ -15,7 +15,7 @@
       "explanation": "BLEU and F1 are sensitive to tokenisation. Binding the tokenizer to the metric makes scores reproducible and lets you point at the rule — it is not about complexity, numpy, or model visibility."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does modified n-gram precision do that plain n-gram precision does not?",
       "options": [
         "It computes the n-gram precision using a different logarithm base than the plain version does",
@@ -51,7 +51,7 @@
       "explanation": "ROUGE-L uses the LCS length, then computes precision (LCS/cand-len) and recall (LCS/ref-len) combined with F-beta."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Token-level F1 returns 1.0 for which case?",
       "options": [
         "When the prediction is empty but the target string is non-empty and contains real tokens",

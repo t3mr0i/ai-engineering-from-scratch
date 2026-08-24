@@ -69,3 +69,13 @@ Every rank must call `torch.manual_seed(seed + rank)` for shuffling but `torch.m
 - [Li et al, PyTorch Distributed: Experiences on Accelerating Data Parallel Training](https://arxiv.org/abs/2006.15704)
 - Phase 19 Lesson 76 - the collectives DDP is built on
 - Phase 19 Lesson 78 - ZeRO sharding replaces the per-param allreduce with reduce_scatter
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Wire a `DistributedDataParallel`-shaped wrapper that broadcasts initial parameters and allreduces gradients after backward.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Spawn N CPU ranks with `torch.multiprocessing.spawn` over the gloo backend with file-based rendezvous.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Prove gradient-sync correctness by training the same model on the same data sequentially and showing per-step parameter equivalence.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Wire a `DistributedDataParallel`-shaped wrapper that broadcasts initial parameters and allreduces gradients after backward,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Prove gradient-sync correctness by training the same model on the same data sequentially and showing per-step parameter equivalence,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -12,7 +12,7 @@
         "Under 10 seconds"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“3-8 minutes” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "EBS volume snapshots only"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Bottlerocket dual-volume architecture referenced from EC2NodeClass” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Run:ai Model Streamer"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“GPU memory snapshots (checkpoints)” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Recomputing KV on the destination is cheaper than transferring GB of KV cache over the network"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Recomputing KV on the destination is cheaper than transferring GB of KV cache over the network” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Live migration"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Warm pool with min_workers >= 1” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "All five layers are bundled in vLLM"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“No single layer eliminates every step (node provision, image pull, weights load, engine init); stacking layers compresses each step” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

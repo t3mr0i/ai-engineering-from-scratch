@@ -1,6 +1,6 @@
 {
   "lesson": "28-alignment-research-ecosystem",
-  "title": "Alignment Research Ecosystem - MATS, Redwood, Apollo, METR",
+  "title": "Alignment Research Ecosystem — MATS, Redwood, Apollo, METR",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "A frontier safety institute owned by the EU"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“ML Alignment & Theory Scholars: a research mentorship program with 527+ scholars since 2021, 180+ papers, and roughly 80% of pre-2025 alumni working on safety/security” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Constitutional AI"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“AI Control (Lesson 10): safety despite subversion via U / T / H protocols” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Apollo Research"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Apollo Research” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Closed-source red-teaming only"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Task-based capability evaluations, autonomous-task time-horizon studies, and framework synthesis (e.g., 'Common Elements of Frontier AI Safety Policies')” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Labs evaluating their own models have a structural conflict of interest; external evaluators (Redwood, Apollo, METR, Eleos, UK AISI) can raise and validate failure modes the lab might underreport"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Labs evaluating their own models have a structural conflict of interest; external evaluators (Redwood, Apollo, METR, Eleos, UK AISI) can raise and validate failure modes the lab might underreport” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Pre-deployment model-welfare evaluations (Lesson 19), including the external welfare assessment in Claude Opus 4's system card"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Pre-deployment model-welfare evaluations (Lesson 19), including the external welfare assessment in Claude Opus 4's system card” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -44,7 +44,7 @@
       "options": [
         "A tone check skipped when the draft already matches the house style",
         "A named approval owner who signs off before a sensitive message goes out",
-        "A source pack assembled after publication, in case questions come back",
+        "A source pack assembled after publication, in case questions come back, before defining the measurement, acceptance threshold, or rollback path",
         "A channel plan chosen by whoever happens to publish the message first"
       ],
       "correct": 1,
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "When should AI-assisted communication require stronger review?",
       "options": [
-        "Only when the draft is longer than the channel's usual published format allows",
+        "Only when the draft is longer than the channel's usual published format allows — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when the campaign runs in more than one language across several markets",
         "When the message has external reach, sensitive content, a brand claim, or an approval gap",
         "Only when the message will be published rather than sent to a mailing list"

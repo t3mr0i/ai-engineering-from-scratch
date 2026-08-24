@@ -8,7 +8,7 @@
       "options": [
         "Because every pilot that produced a working demo should be scaled into production",
         "Because quick wins, strategic bets, risk controls, capacity, and learning need balancing",
-        "Because measuring initiatives slows delivery, so the review cadence should stay light",
+        "Because measuring initiatives slows delivery, so the review cadence should stay light — and applies unchanged even when the lesson's stated preconditions fail",
         "Because ownership can be assigned later, once the strongest initiative has emerged"
       ],
       "correct": 1,

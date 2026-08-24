@@ -78,3 +78,13 @@ Lessons 6-10 describe the threat and the defensive paradigm under the assumption
 - [Leike et al. — Scalable agent alignment via reward modeling (arXiv:1811.07871)](https://arxiv.org/abs/1811.07871) — recursive reward modeling
 - [Khan et al. — Debating with More Persuasive LLMs Leads to More Truthful Answers (arXiv:2402.06782)](https://arxiv.org/abs/2402.06782) — 2024 empirical study of debate with stronger debaters
 - [Lang et al. — Debate Helps Weak-to-Strong Generalization (arXiv:2501.13124)](https://arxiv.org/abs/2501.13124) — 2025 combination of debate + W2SG
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define scalable oversight and weak-to-strong generalization and explain how they are complementary.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the Burns et al. 2023 experimental setup: fine-tune GPT-4 using labels from GPT-2.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the performance gap recovered (PGR) metric and what it measures.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define scalable oversight and weak-to-strong generalization and explain how they are complementary,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the performance gap recovered (PGR) metric and what it measures,” and cite a repeatable check rather than relying on visual inspection alone.

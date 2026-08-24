@@ -607,3 +607,13 @@ The best prompts are model-agnostic. They work on GPT-5, Claude Opus 4.7, Gemini
 - [LMSYS Chatbot Arena](https://chat.lmsys.org/) -- live blind comparison of LLMs where you can test the same prompt across models and vote on which response is better
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/) -- exhaustive catalogue of prompt techniques with examples (zero-shot, few-shot, CoT, ReAct, self-consistency); the reference practitioners use for the broader "Prompt engineering" surface.
 - [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library) -- curated, known-good prompts by use case; shows the structural patterns that ship in production.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Apply the core prompt engineering patterns (role, context, constraints, output format) to transform vague requests into precise instructions.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Construct system prompts with explicit behavioral rules that produce consistent, high-quality outputs.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Diagnose prompt failures (hallucination, refusal, format violations) and fix them with targeted prompt modifications.
+
+## Reference Solution
+
+Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Apply the core prompt engineering patterns (role, context, constraints, output format) to transform vague requests into precise instructions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Diagnose prompt failures (hallucination, refusal, format violations) and fix them with targeted prompt modifications,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -154,3 +154,13 @@ The queue is finite. When it is empty the orchestrator can either widen the seed
 ## Where this slots in
 
 Lesson fifty produces the queue. Lesson fifty-one takes the head of the queue and runs a literature search to confirm or refute it. Lesson fifty-two takes the same head and runs an actual experiment. Lesson fifty-three reads both outputs and writes a verdict. The four lessons compose into a research loop with no human in it; a human can step in at any boundary.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Drive a sampler from a seed prompt and turn its outputs into typed hypothesis records.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Ramp the sampler temperature on each pass so the next draft drifts further from the last.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Filter near duplicates with a small embedding model and a cosine distance threshold.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Drive a sampler from a seed prompt and turn its outputs into typed hypothesis records,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Filter near duplicates with a small embedding model and a cosine distance threshold,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,6 +1,6 @@
 {
   "lesson": "30-dual-use-risk-cyber-bio-chem-nuclear",
-  "title": "Dual-Use Risk - Cyber, Bio, Chem, Nuclear Uplift",
+  "title": "Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "From 'mild uplift' (2024) to 'on the cusp of meaningfully helping novices create known biological threats' (April 2025) to '2.53x uplift insufficient to rule out ASL-3' (Anthropic 2025)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“From 'mild uplift' (2024) to 'on the cusp of meaningfully helping novices create known biological threats' (April 2025) to '2.53x uplift insufficient to rule out ASL-3' (Anthropic 2025)” matches the lesson’s treatment of Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Open-source models exceeded frontier capability"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Chinese-linked state actors used Claude's agentic coding tool to automate 80-90% of a cyberattack campaign, with human intervention only in 4-6 steps” matches the lesson’s treatment of Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "By increasing context length only"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“By observing wet-lab video and providing real-time protocol correction; OpenAI's December 2025 demonstration showed GPT-5 iterating on wet-lab experiments at 79x efficiency improvement via AI-driven protocol optimization” matches the lesson’s treatment of Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Frontier models refuse to discuss physics"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The threat model is dominated by fissile-material acquisition (a non-informational, procurement-and-equipment bottleneck), so AI uplift on the information layer provides limited novice uplift in practice” matches the lesson’s treatment of Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Expert-absolute capability is automatically zero"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Addressing only novice uplift (input filters, refusals, uncertainty) is insufficient for expert-absolute control; additional measures like elicitation-hardening, capability unlearning, and control protocols are needed” matches the lesson’s treatment of Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Granting vetted security organisations (incident-response firms, government) capability access for defensive dual-use work, creating an access asymmetry that favours defenders if it scales"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Granting vetted security organisations (incident-response firms, government) capability access for defensive dual-use work, creating an access asymmetry that favours defenders if it scales” matches the lesson’s treatment of Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

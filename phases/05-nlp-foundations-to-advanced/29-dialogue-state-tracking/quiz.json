@@ -8,18 +8,18 @@
       "options": [
         "A free-text history only",
         "A slot-value dictionary representing the user's current goal, updated after every turn",
-        "An embedding of the conversation",
+        "An embedding of the conversation — and applies unchanged even when the lesson's stated preconditions fail",
         "A POS-tagged transcript"
       ],
       "correct": 1,
       "explanation": "DST keeps a structured slot-value map that the backend can act on."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does Joint Goal Accuracy (JGA) measure?",
       "options": [
         "Fraction of turns where every slot is exactly correct (all-or-nothing)",
-        "Average slot accuracy",
+        "Average slot accuracy, with no need to inspect intermediate results or test edge cases",
         "Latency per turn",
         "Cosine similarity"
       ],
@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "Why does regenerating the whole state from history each turn handle user corrections naturally?",
       "options": [
-        "It uses fewer tokens",
+        "It uses fewer tokens, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "It runs on GPU",
         "It avoids embeddings",
         "Reading the full history lets the model re-derive the final state including 'actually...' corrections without explicit rollback logic"
@@ -42,7 +42,7 @@
       "stage": "check",
       "question": "Which 2026 pattern gives a guaranteed-valid slot dict in 5 lines of code?",
       "options": [
-        "Hand-written regex",
+        "Hand-written regex, before defining the measurement, acceptance threshold, or rollback path",
         "BM25 retrieval",
         "LLM + Instructor + Pydantic schema with constrained or validated output",
         "TF-IDF classifier"
@@ -51,12 +51,12 @@
       "explanation": "Pydantic schema + Instructor validates the LLM's state output against the slot ontology automatically."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why version your DST schema?",
       "options": [
         "Adding new slots post-hoc invalidates older training data and breaks longitudinal evaluation",
         "Required by JSON",
-        "Reduce token count",
+        "Reduce token count — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "Speed gains"
       ],
       "correct": 0,
@@ -66,37 +66,13 @@
       "stage": "post",
       "question": "Why must DST for compliance-sensitive domains include a rule-based check alongside LLM extraction?",
       "options": [
-        "Rules avoid embeddings",
+        "Rules avoid embeddings, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
         "LLM-only DST can mis-extract destructive parameters (amount, account, date); a rules layer enforces deterministic constraints",
         "LLMs are slower",
         "Rules are multilingual"
       ],
       "correct": 1,
       "explanation": "Compliance domains require deterministic enforcement; rules catch slot errors that LLMs introduce."
-    },
-    {
-      "stage": "post",
-      "question": "What is the cost concern with regenerating state on every turn via LLM?",
-      "options": [
-        "Re-reading the full history each turn yields O(n^2) total token usage; cap or summarize older turns",
-        "More embeddings",
-        "Cosine costs",
-        "Embedding drift"
-      ],
-      "correct": 0,
-      "explanation": "Full-history regeneration is quadratic in turns; cap history or use rolling summaries."
-    },
-    {
-      "stage": "post",
-      "question": "Why are explicit confirmation flows required before destructive backend actions?",
-      "options": [
-        "Latency",
-        "Confirmation increases JGA",
-        "Required by tokenizers",
-        "Even good DST has nonzero slot-error rates; a deterministic confirmation prevents wrong-account or wrong-amount actions"
-      ],
-      "correct": 3,
-      "explanation": "Destructive actions need user confirmation because DST is never error-free."
     }
   ]
 }

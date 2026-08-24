@@ -91,3 +91,13 @@ For forms, use **Key-Value extraction** models (Donut for visually-rich document
 - [CTC (Graves et al., 2006)](https://www.cs.toronto.edu/~graves/icml_2006.pdf) — the original CTC paper; densely packed with the algorithmic ideas
 - [Donut (Kim et al., 2022)](https://arxiv.org/abs/2111.15664) — OCR-free document understanding transformer
 - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) — the open-source production OCR stack
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Trace the classical OCR pipeline (detect -> recognise -> layout) and the modern end-to-end alternatives (Donut, Qwen-VL-OCR).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement CTC (Connectionist Temporal Classification) loss for sequence-to-sequence OCR training.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use PaddleOCR or EasyOCR for production document parsing without training.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Trace the classical OCR pipeline (detect -> recognise -> layout) and the modern end-to-end alternatives (Donut, Qwen-VL-OCR),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use PaddleOCR or EasyOCR for production document parsing without training,” and cite a repeatable check rather than relying on visual inspection alone.

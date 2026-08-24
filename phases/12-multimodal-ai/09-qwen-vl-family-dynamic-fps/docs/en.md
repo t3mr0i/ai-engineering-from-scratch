@@ -118,3 +118,13 @@ Parsing is deterministic: JSON.parse over the model's output. Compare to free-fo
 - [Qwen Team — Qwen2.5-VL Technical Report (arXiv:2502.13923)](https://arxiv.org/abs/2502.13923)
 - [Qwen Team — Qwen3-VL (arXiv:2511.21631)](https://arxiv.org/abs/2511.21631)
 - [Zhu et al. — InternVL3 (arXiv:2504.10479)](https://arxiv.org/abs/2504.10479)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accuracy.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the four Qwen-VL generational upgrades in order and what each enabled.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the four Qwen-VL generational upgrades in order and what each enabled,” and cite a repeatable check rather than relying on visual inspection alone.

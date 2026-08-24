@@ -93,3 +93,13 @@ They make the gradient path additive across depth, which keeps the gradient norm
 - Phase 7 lesson 05 (full transformer) for the encoder decoder version of the same skeleton.
 - Phase 10 lesson 04 (pre training mini GPT) for the training procedure that this block plugs into.
 - Phase 19 lesson 35 (this track) which stacks twelve of these blocks into a GPT model.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a transformer block in PyTorch from the four moving pieces: LayerNorm, multi head causal attention, residual connections, position wise MLP.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Place the LayerNorms in two configurations (pre-LN and post-LN) and explain why one trains stably without warmup.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement causal masking inside the multi head attention so token `i` cannot see tokens `j > i`.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a transformer block in PyTorch from the four moving pieces: LayerNorm, multi head causal attention, residual connections, position wise MLP,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement causal masking inside the multi head attention so token `i` cannot see tokens `j > i`,” and cite a repeatable check rather than relying on visual inspection alone.

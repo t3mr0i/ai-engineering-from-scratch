@@ -120,3 +120,13 @@ These are open research problems. Qwen3-Omni (Lesson 12.20) is the most advanced
 - [Lu et al. — Unified-IO 2 (arXiv:2312.17172)](https://arxiv.org/abs/2312.17172)
 - [Wu et al. — NExT-GPT (arXiv:2309.05519)](https://arxiv.org/abs/2309.05519)
 - [Tang et al. — CoDi (arXiv:2305.11846)](https://arxiv.org/abs/2305.11846)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction trade-offs.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the four-stage curriculum that builds up any-to-any generation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the four-stage curriculum that builds up any-to-any generation,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -100,3 +100,13 @@ If the new model is distinctly different (different behavior, different cost cur
 - [APXML — Advanced LLM Deployment Patterns](https://apxml.com/courses/mlops-for-large-models-llmops/chapter-4-llm-deployment-serving-optimization/advanced-llm-deployment-patterns)
 - [Argo Rollouts docs](https://argo-rollouts.readthedocs.io/)
 - [Flagger docs](https://docs.flagger.app/)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish shadow mode (zero-impact compare), canary (live traffic progressive), and A/B (stability-confirmed comparison).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Enumerate five LLM-specific canary metrics (latency, cost/request, error/refusal, output-length distribution, user feedback).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why LLM non-determinism (up to 15%) changes what "stable" means in a rollout.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish shadow mode (zero-impact compare), canary (live traffic progressive), and A/B (stability-confirmed comparison),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why LLM non-determinism (up to 15%) changes what "stable" means in a rollout,” and cite a repeatable check rather than relying on visual inspection alone.

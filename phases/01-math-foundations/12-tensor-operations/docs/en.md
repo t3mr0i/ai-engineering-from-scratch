@@ -112,3 +112,13 @@ Key patterns: `i,i->` (dot product), `i,j->ij` (outer product), `ii->` (trace), 
 - [einops](https://github.com/arogozhnikov/einops) -- A library that makes tensor reshaping readable and safe
 - [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) -- Visualizes the tensor shapes flowing through attention
 - [Einstein Summation in NumPy](https://numpy.org/doc/stable/reference/generated/numpy.einsum.html) -- Full einsum documentation with examples
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a tensor class with shape, strides, reshape, transpose, and element-wise operations from scratch.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply broadcasting rules to operate on tensors of different shapes without copying data.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Write einsum expressions for dot products, matrix multiplications, outer products, and batched operations.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a tensor class with shape, strides, reshape, transpose, and element-wise operations from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Write einsum expressions for dot products, matrix multiplications, outer products, and batched operations,” and cite a repeatable check rather than relying on visual inspection alone.

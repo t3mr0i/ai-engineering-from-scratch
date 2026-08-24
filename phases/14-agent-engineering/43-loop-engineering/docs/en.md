@@ -202,3 +202,7 @@ coordination cost explicit.
    empty-result behavior, and human escalation rule.
 4. Add a second evaluator that reviews scope. Explain why both evaluators must
    pass before the loop reports completion.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish a manual turn, a goal loop, a timer loop, and an event-triggered loop,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a deterministic maker/evaluator loop with receipts for every round,” and cite a repeatable check rather than relying on visual inspection alone.

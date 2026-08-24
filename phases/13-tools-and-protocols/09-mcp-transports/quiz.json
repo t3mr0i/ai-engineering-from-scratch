@@ -1,0 +1,78 @@
+{
+  "lesson": "09-mcp-transports",
+  "title": "MCP Transports — stdio vs Streamable HTTP vs SSE Migration",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "options": [
+        "Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Enforce `Origin` validation and session-id semantics to defeat DNS-rebinding",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Enforce `Origin` validation and session-id semantics to defeat DNS-rebinding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Migrate a legacy HTTP+SSE server to Streamable HTTP before the mid-2026 removal deadlines",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Migrate a legacy HTTP+SSE server to Streamable HTTP before the mid-2026 removal deadlines” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)"
+      ],
+      "correct": 3,
+      "explanation": "“Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "options": [
+        "Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

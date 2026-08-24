@@ -15,7 +15,7 @@
       "explanation": "The script pays the tax once and writes the answers into init_report.json the agent reads."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the init script's failure-mode contract?",
       "options": [
         "Fail soft and continue working around whatever probe came back unhealthy or incomplete",
@@ -51,7 +51,7 @@
       "explanation": "Idempotence makes init safe to call from many entry points (hooks, CI, slash command)."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is last-known-good commit anchoring?",
       "options": [
         "The most recent commit by the team lead",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Same shape as Docker layer caches: idempotent probe + content hash = skip."
-    },
-    {
-      "stage": "post",
-      "question": "What should NEVER appear in the init hot path?",
-      "options": [
-        "Local filesystem reads",
-        "Network calls, LLM calls, external license checks; probes are deterministic plumbing under three seconds",
-        "Reading env vars",
-        "Reading the lockfile"
-      ],
-      "correct": 1,
-      "explanation": "A probe that calls an LLM is a workflow, not a probe; keep init deterministic."
     }
   ]
 }

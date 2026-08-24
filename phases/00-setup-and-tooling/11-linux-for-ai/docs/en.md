@@ -35,6 +35,17 @@ graph TD
     root --> proc["proc/ and /sys/<br/>Virtual files — kernel and hardware info"]
 ```
 
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Navigate the Linux file system and perform essential file operations from the command line.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Manage file permissions with `chmod` and `chown` to resolve "Permission denied" errors.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Install system packages with `apt` and set up a fresh GPU box for AI work.
+
+## Reference Solution
+
+A complete response first demonstrates “Navigate the Linux file system and perform essential file operations from the command line” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Manage file permissions with `chmod` and `chown` to resolve "Permission denied" errors.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Install system packages with `apt` and set up a fresh GPU box for AI work.” Unsupported preference statements are not sufficient.
+
+
 Your home directory is `~` or `/home/your-username`. Almost everything you do happens here.
 
 ## Essential Commands
@@ -293,4 +304,3 @@ Disk:           df -h, du -sh
 Network:        curl, wget, scp, rsync
 Sessions:       tmux new/attach/detach
 ```
-

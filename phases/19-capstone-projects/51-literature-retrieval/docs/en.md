@@ -111,3 +111,13 @@ The retrieval client returns a `RetrievalResult` with both the ranked list and t
 ## Where this slots in
 
 Lesson fifty produces a hypothesis. Lesson fifty-one searches the literature to see whether that hypothesis is already settled. Lesson fifty-two runs the experiment if it is not. Lesson fifty-three reads both the retrieval result and the experiment metrics to write the verdict. The retrieval client is the cheapest of the four stages and runs first in the orchestrator.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Model a small paper record with the fields the loop will read downstream.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a BM25 index over abstracts with stdlib data structures only.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Walk a citation graph to surface papers the lexical search missed.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Model a small paper record with the fields the loop will read downstream,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Walk a citation graph to surface papers the lexical search missed,” and cite a repeatable check rather than relying on visual inspection alone.

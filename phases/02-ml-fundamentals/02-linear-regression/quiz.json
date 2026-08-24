@@ -1,7 +1,8 @@
 {
+  "lesson": "02-linear-regression",
+  "title": "Linear Regression",
   "questions": [
     {
-      "id": "linreg-pre-1",
       "stage": "pre",
       "question": "What does the learning rate control in gradient descent?",
       "options": [
@@ -14,11 +15,10 @@
       "explanation": "The learning rate is a scalar that controls how much weights change per gradient descent step. Too large causes divergence, too small causes slow convergence."
     },
     {
-      "id": "linreg-pre-2",
-      "stage": "pre",
+      "stage": "check",
       "question": "What does R-squared = 0 mean for a regression model?",
       "options": [
-        "The model makes perfect predictions",
+        "The model makes perfect predictions, with no need to inspect intermediate results or test edge cases",
         "The model is no better than always predicting the mean of the target",
         "The model has negative error",
         "The model has not been trained yet"
@@ -27,43 +27,52 @@
       "explanation": "R-squared = 0 means the model explains none of the variance in the target. It performs exactly as well as simply predicting the mean every time."
     },
     {
-      "id": "linreg-post-1",
-      "stage": "post",
+      "stage": "check",
       "question": "Why is feature scaling important for gradient descent in multiple linear regression?",
       "options": [
         "It makes the model more interpretable",
         "It prevents the cost surface from being elongated, allowing faster convergence",
         "It reduces the number of features needed",
-        "It guarantees the model will find the global minimum"
+        "It guarantees the model will find the global minimum, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
       "explanation": "When features have very different scales, the cost surface becomes elongated. Gradient descent takes many more steps to converge. Standardizing features makes the surface more spherical."
     },
     {
-      "id": "linreg-post-2",
-      "stage": "post",
+      "stage": "check",
       "question": "The normal equation gives optimal weights directly. Why would you prefer gradient descent instead?",
       "options": [
         "Gradient descent always gives more accurate results",
         "The normal equation does not work for linear regression",
         "Matrix inversion in the normal equation is O(n^3) in features, which is too slow for thousands of features",
-        "Gradient descent requires less memory than storing the data"
+        "Gradient descent requires less memory than storing the data, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 2,
       "explanation": "The normal equation requires inverting X^T * X, which is O(n^3) in the number of features. For large feature counts, gradient descent is more efficient."
     },
     {
-      "id": "linreg-post-3",
       "stage": "post",
       "question": "A degree-10 polynomial regression model fits training data perfectly (R^2 = 1.0) but has R^2 = 0.3 on test data. What should you do?",
       "options": [
-        "Increase the polynomial degree to 20 for even better training fit",
+        "Increase the polynomial degree to 20 for even better training fit — and applies unchanged even when the lesson's stated preconditions fail",
         "Reduce model complexity (lower degree) or add regularization (Ridge) to prevent overfitting",
         "Collect less training data so the model cannot memorize",
         "Remove the test set and report training R^2 only"
       ],
       "correct": 1,
       "explanation": "Perfect training fit with poor test fit is overfitting. The fix is to reduce complexity (lower polynomial degree) or add regularization to penalize large weights."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Linear Regression?",
+      "options": [
+        "Compare gradient descent and the normal equation in terms of computational complexity and when to use each",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compare gradient descent and the normal equation in terms of computational complexity and when to use each” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

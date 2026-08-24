@@ -165,3 +165,13 @@ The tests in `code/tests/test_runner.py` pin the adapter interface, the single-p
 This runner is the floor. A production eval system adds: a results cache keyed by `(task_id, model_id, model_version)`, a cost ledger that tracks dollars and tokens per run, a retry layer that backs off on rate limits, a sampling policy for pass-at-k tasks, and a streaming output format for long suites. Each of those is a single concern that wraps the runner without changing the metric or aggregation layers. That separation is the point of the contract.
 
 Add an adapter for a real provider after you have the mocks working. Pick one with a free tier, write thirty lines of glue, watch the leaderboard light up. Then add the second provider and let the harness do the work.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define a `ModelAdapter` interface that any model (mock, local, API) can satisfy with a small method surface.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Run the eval over a fixture JSONL file with parallel task execution across a worker pool.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compose the metric layer (exact_match, F1, BLEU-4, ROUGE-L, code_exec) with the calibration layer in one pass.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define a `ModelAdapter` interface that any model (mock, local, API) can satisfy with a small method surface,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compose the metric layer (exact_match, F1, BLEU-4, ROUGE-L, code_exec) with the calibration layer in one pass,” and cite a repeatable check rather than relying on visual inspection alone.

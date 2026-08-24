@@ -1,18 +1,21 @@
 {
+  "lesson": "05-context-engineering",
+  "title": "Context Engineering: Windows, Budgets, Memory, and Retrieval",
   "questions": [
     {
+      "stage": "pre",
       "question": "What is the difference between prompt engineering and context engineering?",
       "options": [
-        "Prompt engineering fixes the wording once per application, while context engineering rewrites the system prompt every turn",
+        "Prompt engineering fixes the wording once per application, while context engineering rewrites the system prompt every turn — and applies unchanged even when the lesson's stated preconditions fail",
         "Prompt engineering targets short windows, while context engineering only applies to models above one million tokens",
         "Prompt engineering handles the user turn; context engineering is the database work of indexing documents for retrieval",
         "A prompt is the user's query; context is everything in the window: system prompt, tools, retrieved docs, history, and the query"
       ],
       "correct": 3,
-      "explanation": "Prompt engineering focuses on crafting the user instruction. Context engineering manages the entire input to the model: what goes in, what stays out, in what order, and how to allocate the limited context window.",
-      "stage": "pre"
+      "explanation": "Prompt engineering focuses on crafting the user instruction. Context engineering manages the entire input to the model: what goes in, what stays out, in what order, and how to allocate the limited context window."
     },
     {
+      "stage": "check",
       "question": "Why does context window order matter for LLM performance?",
       "options": [
         "Attention cost grows quadratically, so tokens placed late in the window are processed by a cheaper approximate pass",
@@ -21,22 +24,22 @@
         "LLMs have recency and primacy biases, paying more attention to the beginning and end of the context window"
       ],
       "correct": 3,
-      "explanation": "Research shows LLMs attend more to the start and end of the context window ('lost in the middle' phenomenon). Placing the most important information at the beginning or end of context improves utilization.",
-      "stage": "pre"
+      "explanation": "Research shows LLMs attend more to the start and end of the context window ('lost in the middle' phenomenon). Placing the most important information at the beginning or end of context improves utilization."
     },
     {
+      "stage": "check",
       "question": "A coding assistant uses 22,700 tokens of a 128K context window. Why is budget management still important?",
       "options": [
-        "Providers bill for the full declared window rather than the tokens actually used, so an unfilled 128K window costs exactly the same",
+        "Providers bill for the full declared window rather than the tokens actually used, so an unfilled 128K window costs exactly the same, because one plausible output is sufficient production evidence",
         "Token counts drift between different tokenizers, so any budget you calculate in advance is wrong by roughly a factor of two anyway",
         "Reserving generation headroom is unnecessary below half the window, so budgets only begin to matter once past the halfway mark",
         "Long conversations, large code files, and retrieved docs fill the window fast, and without budget management critical context gets truncated"
       ],
       "correct": 3,
-      "explanation": "22,700 tokens is the baseline. A 50-turn conversation adds 30K+ tokens. Retrieving a large codebase adds 50K+. Tool call results add more. Without active management, the window fills and oldest context is lost.",
-      "stage": "post"
+      "explanation": "22,700 tokens is the baseline. A 50-turn conversation adds 30K+ tokens. Retrieving a large codebase adds 50K+. Tool call results add more. Without active management, the window fills and oldest context is lost."
     },
     {
+      "stage": "check",
       "question": "What is the sliding window strategy for conversation history?",
       "options": [
         "Scoring every retrieved chunk against the current query and discarding the ones below a relevance threshold",
@@ -45,10 +48,10 @@
         "Classifying the query intent and including only the tool definitions that match it, dropping all other tools"
       ],
       "correct": 2,
-      "explanation": "Sliding window keeps the K most recent conversation turns in full context. Older turns are either dropped or replaced with a summary. This bounds memory usage while preserving the most relevant recent context.",
-      "stage": "post"
+      "explanation": "Sliding window keeps the K most recent conversation turns in full context. Older turns are either dropped or replaced with a summary. This bounds memory usage while preserving the most relevant recent context."
     },
     {
+      "stage": "post",
       "question": "How should a context assembler allocate tokens across components?",
       "options": [
         "Dynamically by query type: a simple question needs little retrieved context, a complex one needs more, with generation headroom always reserved",
@@ -57,8 +60,19 @@
         "By shrinking the system prompt first, because it is the one component repeated on every call and so costs the most overall"
       ],
       "correct": 0,
-      "explanation": "A simple factual question might need 500 tokens of retrieved context. A complex analysis might need 10,000. A good context assembler adjusts allocation dynamically while always reserving headroom for the model's response.",
-      "stage": "post"
+      "explanation": "A simple factual question might need 500 tokens of retrieved context. A complex analysis might need 10,000. A good context assembler adjusts allocation dynamically while always reserving headroom for the model's response."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Context Engineering: Windows, Budgets, Memory, and Retrieval?",
+      "options": [
+        "Implement context window management strategies: truncation, summarization, and sliding window for conversat...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement context window management strategies: truncation, summarization, and sliding window for conversat...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

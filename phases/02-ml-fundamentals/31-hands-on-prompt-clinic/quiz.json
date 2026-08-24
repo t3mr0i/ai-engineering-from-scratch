@@ -8,7 +8,7 @@
       "options": [
         "It uses real tasks, reusable prompts, and output review habits",
         "It avoids reviewing model outputs",
-        "It asks everyone to use the same prompt for every task",
+        "It asks everyone to use the same prompt for every task — and applies unchanged even when the lesson's stated preconditions fail",
         "It removes context from the prompt"
       ],
       "correct": 0,
@@ -31,7 +31,7 @@
       "question": "What does the Python artifact produce?",
       "options": [
         "A ranked prompt-clinic plan with controls and rationale",
-        "A production prompt marketplace",
+        "A production prompt marketplace, because one plausible output is sufficient production evidence",
         "A fine-tuned model",
         "A browser plugin"
       ],
@@ -56,7 +56,7 @@
       "options": [
         "When impact, uncertainty, and prompt-quality gaps are high",
         "Only when the prompt is short",
-        "Only when the prompt has examples",
+        "Only when the prompt has examples — and applies unchanged even when the lesson's stated preconditions fail",
         "Never; prompting has no risk"
       ],
       "correct": 0,
@@ -69,7 +69,7 @@
         "It should become a maintained reusable asset with review notes",
         "It should be deleted immediately",
         "It should never be changed",
-        "It should be used without source material"
+        "It should be used without source material, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 0,
       "explanation": "The course emphasizes reusable prompt assets that teams can maintain."

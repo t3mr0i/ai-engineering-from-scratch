@@ -20,7 +20,7 @@
       "options": [
         "Policy exception — a deviation from standard governance that hasn't gone through visible review",
         "Control owner — no one is named as accountable for maintaining this control",
-        "Audit evidence — the records needed to prove a control ran are missing or incomplete",
+        "Audit evidence — the records needed to prove a control ran are missing or incomplete, with no need to inspect intermediate results or test edge cases",
         "High impact — the use case affects a large number of people or a lot of money"
       ],
       "correct": 0,
@@ -42,7 +42,7 @@
       "stage": "check",
       "question": "Which control belongs to this lesson?",
       "options": [
-        "Hiding control evidence so a later audit can't find gaps in the process",
+        "Hiding control evidence so a later audit can't find gaps in the process, before defining the measurement, acceptance threshold, or rollback path",
         "Skipping control tests because the use case seemed low risk at the time",
         "Removing the approval owner once the risk register entry is closed",
         "Audit trail — a record that lets someone later verify a control actually ran"
@@ -57,7 +57,7 @@
         "Only when there is no identifiable risk in the use case at all",
         "Only after all control evidence has already been fully collected",
         "When impact is high, control maturity is low, or a policy exception exists",
-        "Never — keeping a risk register is entirely optional for AI use cases"
+        "Never — keeping a risk register is entirely optional for AI use cases — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 2,
       "explanation": "High impact, weak control maturity, or a live policy exception are exactly when governance review should escalate — not the absence of risk, complete evidence, or treating the risk register as optional."

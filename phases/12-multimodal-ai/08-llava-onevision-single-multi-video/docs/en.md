@@ -91,3 +91,13 @@ Qwen2.5-VL (Lesson 12.09) makes different choices. It uses M-RoPE and dynamic FP
 - [Lin et al. — Video-LLaVA (arXiv:2311.10122)](https://arxiv.org/abs/2311.10122)
 - [Lin et al. — VILA (arXiv:2312.07533)](https://arxiv.org/abs/2312.07533)
 - [Wang et al. — Qwen2-VL (arXiv:2409.12191)](https://arxiv.org/abs/2409.12191)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Design a visual-token budget that holds constant across single-image, multi-image, and video inputs.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why a single model beats specialists at the same parameter count when curriculum is done right.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Design a visual-token budget that holds constant across single-image, multi-image, and video inputs,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why a single model beats specialists at the same parameter count when curriculum is done right,” and cite a repeatable check rather than relying on visual inspection alone.

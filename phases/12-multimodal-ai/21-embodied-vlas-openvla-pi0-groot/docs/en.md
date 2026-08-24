@@ -115,3 +115,13 @@ These sit outside the VLA as control-layer checks. The VLA's output is a suggest
 - [Black et al. — π0 (arXiv:2410.24164)](https://arxiv.org/abs/2410.24164)
 - [NVIDIA — GR00T N1 (arXiv:2503.14734)](https://arxiv.org/abs/2503.14734)
 - [Open X-Embodiment Collab — RT-X (arXiv:2310.08864)](https://arxiv.org/abs/2310.08864)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe action tokenization: discrete bin encoding (RT-2), FAST efficient action tokens, continuous flow-matching actions (π0).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why co-fine-tuning on web + robot data preserves general-knowledge transfer to novel tasks.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare OpenVLA (open 7B Llama+VLM), π0 (flow-matching), and GR00T N1 (dual-system) on the same robot task.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe action tokenization: discrete bin encoding (RT-2), FAST efficient action tokens, continuous flow-matching actions (π0),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare OpenVLA (open 7B Llama+VLM), π0 (flow-matching), and GR00T N1 (dual-system) on the same robot task,” and cite a repeatable check rather than relying on visual inspection alone.

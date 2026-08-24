@@ -215,3 +215,13 @@ LoRA deserves special mention. It fine-tunes large language models by decomposin
 | Projection | "The shadow" | The component of one vector in the direction of another |
 | Basis | "The coordinate axes" | A minimal set of independent vectors that span the space |
 | Orthonormal | "Perpendicular unit vectors" | Vectors that are mutually perpendicular and each have length 1 |
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Implement vector and matrix operations (addition, dot product, matrix multiply) from scratch in Python.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Explain geometrically what the dot product, projection, and Gram-Schmidt process do.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Determine linear independence, rank, and basis of a set of vectors using row reduction.
+
+## Reference Solution
+
+A complete response first demonstrates “Implement vector and matrix operations (addition, dot product, matrix multiply) from scratch in Python” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Explain geometrically what the dot product, projection, and Gram-Schmidt process do.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Determine linear independence, rank, and basis of a set of vectors using row reduction.” Unsupported preference statements are not sufficient.

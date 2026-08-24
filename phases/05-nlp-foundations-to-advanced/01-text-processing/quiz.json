@@ -15,7 +15,7 @@
       "explanation": "Models operate on integer token IDs; preprocessing bridges continuous language to discrete inputs."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which preprocessing operation is rule-based suffix stripping?",
       "options": [
         "Stemming",
@@ -45,13 +45,13 @@
         "Unicode handling",
         "Speed",
         "Grammatical context disambiguates forms like 'better' (ADJ) versus 'better' (VERB)",
-        "To reduce memory usage"
+        "To reduce memory usage, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 2,
       "explanation": "Lemmas depend on grammatical role; without the tag the lookup is ambiguous."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "When translating NLTK Penn Treebank POS tags to WordNet tags, what does a tag starting with 'V' map to?",
       "options": [
         "'n' (noun)",
@@ -66,37 +66,13 @@
       "stage": "post",
       "question": "What is 'training/inference mismatch' in NLP preprocessing?",
       "options": [
-        "Different batch sizes between train and test",
+        "Different batch sizes between train and test, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
         "Training and serving apply different preprocessing, so the model sees an unfamiliar distribution at inference",
         "A GPU memory issue",
         "Mixing tokenizer libraries within a notebook"
       ],
       "correct": 1,
       "explanation": "Different preprocessing at training vs inference is the most common production NLP failure."
-    },
-    {
-      "stage": "post",
-      "question": "Which tool would you reach for in a transformer pipeline instead of classical preprocessing?",
-      "options": [
-        "NLTK word_tokenize",
-        "The model's own tokenizer (e.g. via tokenizers / transformers)",
-        "A regex tokenizer",
-        "spaCy en_core_web_sm"
-      ],
-      "correct": 1,
-      "explanation": "Transformer models ship a paired tokenizer; classical preprocessing is bypassed."
-    },
-    {
-      "stage": "post",
-      "question": "Why pin NLTK and spaCy versions in requirements?",
-      "options": [
-        "License compatibility",
-        "Tokenizer and lemmatizer behavior shifts between minor releases, silently changing training distribution",
-        "Older versions support more languages",
-        "Newer versions are slower"
-      ],
-      "correct": 1,
-      "explanation": "Library upgrades can change tokenization output, drifting from the training distribution."
     }
   ]
 }

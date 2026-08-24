@@ -116,3 +116,13 @@ Real GPT-2 weights are 0.5 GB. The demo does not download them; it generates a s
 - Phase 19 lesson 36 for the training loop that produces a checkpoint of the same shape.
 - Phase 10 lesson 11 (quantization) for what to do with the loaded weights when memory is tight.
 - Phase 10 lesson 13 (building a complete LLM pipeline) for the full lifecycle around load and inference.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Read a safetensors file with the `safetensors` Python library and inspect the tensor names and shapes.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Map each pretrained parameter name onto a parameter inside the lesson 35 GPT model.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Handle the two name conventions that differ between published GPT-2 weights and the model in this track: `wte/wpe/h.N.attn.c_attn/c_proj` and `mlp.c_fc/c_proj` versus the locally named `tok_embed/pos_embed/blocks.N.attn.qkv/out_proj` and `mlp.fc1/fc2`.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Read a safetensors file with the `safetensors` Python library and inspect the tensor names and shapes,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Handle the two name conventions that differ between published GPT-2 weights and the model in this track: `wte/wpe/h.N.attn.c_attn/c_proj` and `mlp.c_fc/c_proj` versus the locally named `tok_embed/pos_embed/blocks.N.attn.qkv/out_proj` and `mlp.fc1/fc2`,” and cite a repeatable check rather than relying on visual inspection alone.

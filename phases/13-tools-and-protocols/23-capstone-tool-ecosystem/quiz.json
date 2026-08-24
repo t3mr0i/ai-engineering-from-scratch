@@ -1,0 +1,78 @@
+{
+  "lesson": "23-capstone-tool-ecosystem",
+  "title": "Capstone — Build a Complete Tool Ecosystem",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Capstone — Build a Complete Tool Ecosystem?",
+      "options": [
+        "Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Capstone — Build a Complete Tool Ecosystem?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Front the server with an OAuth 2.1 gateway that enforces RBAC and pinned hashes",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Front the server with an OAuth 2.1 gateway that enforces RBAC and pinned hashes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Capstone — Build a Complete Tool Ecosystem?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Write a multi-server client that traces with OTel GenAI attributes end-to-end",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Write a multi-server client that traces with OTel GenAI attributes end-to-end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Capstone — Build a Complete Tool Ecosystem?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Delegate part of a workload to an A2A sub-agent; verify opacity is preserved",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Delegate part of a workload to an A2A sub-agent; verify opacity is preserved” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Capstone — Build a Complete Tool Ecosystem?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Package the whole stack with AGENTS.md + SKILL.md so other agents can drive it"
+      ],
+      "correct": 3,
+      "explanation": "“Package the whole stack with AGENTS.md + SKILL.md so other agents can drive it” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Capstone — Build a Complete Tool Ecosystem?",
+      "options": [
+        "Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

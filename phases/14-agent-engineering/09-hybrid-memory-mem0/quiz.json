@@ -15,7 +15,7 @@
       "explanation": "KV is O(1) on exact keys; vector is for similarity, graph is for relationships."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What are the three stores Mem0 writes in parallel on each add()?",
       "options": [
         "Vector, KV, and graph stores",
@@ -51,7 +51,7 @@
       "explanation": "Soft invalidation preserves history for temporal (valid-at-time) queries."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the lesson recommend tuning fusion weights per product?",
       "options": [
         "Vector libraries reject fusion scores that mix cosine similarity with non-normalized signals",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "Scopes are user (cross-session), session (one thread), agent (per-instance state)."
-    },
-    {
-      "stage": "post",
-      "question": "What is embedding drift in this pattern, and how does the lesson recommend mitigating it?",
-      "options": [
-        "Vectors get encrypted at rest by default, so periodic key rotation is what keeps retrieval accurate",
-        "Vector retrieval quality degrades as the corpus grows; periodically re-embed the top-N most used records",
-        "Embeddings silently overflow their integer range as the corpus grows, so the fix is switching to float64 storage",
-        "The embedding API's URL changes between provider versions, so pinning a fixed domain keeps retrieval stable"
-      ],
-      "correct": 1,
-      "explanation": "Periodic re-embedding of hot records keeps retrieval quality steady as the corpus grows."
     }
   ]
 }

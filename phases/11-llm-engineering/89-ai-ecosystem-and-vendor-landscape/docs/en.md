@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 17 · 01 (Managed LLM platforms), Phase 17 · 19 (AI gateways)
-**Time:** ~50 minutes
+**Time:** ~130 minutes
 
 ## Learning Objectives
 
@@ -134,3 +134,13 @@ A defensible vendor/platform recommendation for a client involves scoring five a
 - [LiteLLM documentation](https://docs.litellm.ai) — open-source gateway reference implementation: proxy setup, provider normalization, semantic caching, and Prometheus metrics.
 - [Google Vertex AI model garden](https://cloud.google.com/vertex-ai/generative-ai/docs/model-garden/explore-models) — Gemini model lineup, third-party models, and region-by-region availability for EU data residency.
 - [GDPR Article 28 — Processor obligations](https://gdpr-info.eu/art-28-gdpr/) — the contractual instrument a DPA implements, and the legal basis for the compliance gate in Step 1 of the scorecard.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Ecosystem Map: Vendor Decisions With Exit Costs in View (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Ecosystem Map: Vendor Decisions With Exit Costs in View (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

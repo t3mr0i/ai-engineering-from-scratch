@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "Why is AI adoption not finished when a tool is available?",
       "options": [
-        "Because early adopters need time before the rest of the team can be given access",
+        "Because early adopters need time before the rest of the team can be given access — and applies unchanged even when the lesson's stated preconditions fail",
         "Because roles, handoffs, review duties, and behavior changes still need to be clear",
         "Because the tool must pass a security review before anyone is allowed to open it",
         "Because licence costs only become visible once the whole department is onboarded"
@@ -21,7 +21,7 @@
         "A communication campaign, an internal launch event, and a short recorded demo per team",
         "A dedicated budget line, a vendor support contract, and a named technical administrator",
         "A role map, an explicit human review point, an adoption metric, and a way to handle exceptions",
-        "A model evaluation report, a latency benchmark, and a documented fallback to the older model"
+        "A model evaluation report, a latency benchmark, and a documented fallback to the older model, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 2,
       "explanation": "The lesson defines team integration as four concrete pieces: a role map, an explicit human review point, an adoption metric, and exception handling. Communication alone does not close the gap, because AI change is a workflow redesign problem."
@@ -42,7 +42,7 @@
       "stage": "check",
       "question": "Which control belongs to this lesson?",
       "options": [
-        "A tool ban that blocks AI use until the governance policy is finalised",
+        "A tool ban that blocks AI use until the governance policy is finalised, before defining the measurement, acceptance threshold, or rollback path",
         "A role map that states who does what in the changed workflow and who reviews it",
         "An anonymous usage log that hides which team produced which output",
         "A one-off launch email that announces the tool and closes the rollout"
@@ -56,7 +56,7 @@
       "options": [
         "Only when the user interface has many screens and takes time to learn",
         "Only when the tool has no active users left after the pilot has ended",
-        "Only when the vendor changes its pricing model partway through the year",
+        "Only when the vendor changes its pricing model partway through the year — and applies unchanged even when the lesson's stated preconditions fail",
         "When role impact, adoption friction, and governance uncertainty are high"
       ],
       "correct": 3,
@@ -67,7 +67,7 @@
       "question": "What is the main purpose of the integration plan?",
       "options": [
         "To translate AI adoption into team routines, owners, metrics, and controls",
-        "To replace the manager's role in deciding how the team allocates its work",
+        "To replace the manager's role in deciding how the team allocates its work, with no need to inspect intermediate results or test edge cases",
         "To retire the training path once the first group of users is comfortable",
         "To keep handoff problems out of the rollout review so momentum is kept"
       ],

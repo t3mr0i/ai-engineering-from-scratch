@@ -166,3 +166,13 @@ The harness loop from lesson twenty can read this directly. The dispatcher from 
 Two extensions you will want once you wire this to a real model. First, partial-plan caching: when a plan succeeds for the first three of six steps and then fails, you do not want to re-run the first three. The executor already keeps history; the planner just needs to read it. Second, parallel branches: the current executor is strictly sequential. A planner that emits an independent branch (`gather_step` instead of `next_step`) can run two tool calls concurrently through the dispatcher.
 
 Both add real complexity. Both are easier to add once the linear executor is pinned. That is what this lesson does.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Represent a plan as an ordered list of typed steps so the executor can reason about progress and outcome.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Execute steps sequentially with a controlled failure handoff back to the planner.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Replan from the current cursor with the prior error in the context so the next plan is informed.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Represent a plan as an ordered list of typed steps so the executor can reason about progress and outcome,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Replan from the current cursor with the prior error in the context so the next plan is informed,” and cite a repeatable check rather than relying on visual inspection alone.

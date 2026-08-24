@@ -5,7 +5,7 @@
 **Type:** Build
 **Languages:** Python
 **Prerequisites:** Lesson 11.01 (Prompt Engineering)
-**Time:** ~45 minutes
+**Time:** ~95 minutes
 
 ## Learning Objectives
 
@@ -560,3 +560,13 @@ print("=" * 70)
 - [OpenAI — Reasoning models guide](https://platform.openai.com/docs/guides/reasoning) -- vendor guidance on when chain-of-thought becomes an internal, priced-per-token "reasoning" mode versus a prompt-level trick.
 - [Lightman et al., "Let's Verify Step by Step" (2023)](https://arxiv.org/abs/2305.20050) -- process reward models (PRM) that grade each step of a chain; the reasoning supervision signal that supersedes outcome-only rewards.
 - [Snell et al., "Scaling LLM Test-Time Compute Optimally" (2024)](https://arxiv.org/abs/2408.03314) -- systematic study of CoT length, self-consistency sampling, and MCTS; where "think step by step" goes when accuracy matters more than latency.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement few-shot prompting by selecting and formatting example demonstrations that maximize task accuracy.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply chain-of-thought (CoT) reasoning to improve accuracy on multi-step problems like math word problems.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a tree-of-thought prompt that explores multiple reasoning paths and selects the best one.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement few-shot prompting by selecting and formatting example demonstrations that maximize task accuracy,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a tree-of-thought prompt that explores multiple reasoning paths and selects the best one,” and cite a repeatable check rather than relying on visual inspection alone.

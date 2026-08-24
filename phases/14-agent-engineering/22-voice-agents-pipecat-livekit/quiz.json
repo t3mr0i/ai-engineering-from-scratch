@@ -15,7 +15,7 @@
       "explanation": "Frames flow downstream source-to-sink and upstream for control and cancellation."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the canonical Pipecat voice pipeline?",
       "options": [
         "STT -> VAD -> TTS -> LLM -> transport",
@@ -51,7 +51,7 @@
       "explanation": "Barge-in is user interruption; UPSTREAM cancellation is how Pipecat handles it cleanly."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What end-to-end latency does the lesson describe as premium?",
       "options": [
         "About 450-600 ms end-to-end, the premium stack range cited for Vapi and Retell",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Treating low-confidence STT as truth is a top voice-agent failure mode."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the lesson recommend summing component latencies before shipping?",
-      "options": [
-        "Providers bill customers by cumulative session latency, so summing forecasts the invoice",
-        "It satisfies a compliance requirement that mandates published latency numbers for vendors",
-        "Every component adds 50-200 ms; the sum determines whether the experience feels broken",
-        "Latency budgets are mandated by the WebRTC standard itself, independent of pipeline design"
-      ],
-      "correct": 2,
-      "explanation": "Sum the chain (VAD + STT + LLM + TTS + transport) before shipping; targets are tight."
     }
   ]
 }

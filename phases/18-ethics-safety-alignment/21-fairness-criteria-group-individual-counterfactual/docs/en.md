@@ -68,3 +68,13 @@ Lesson 20 is bias measurement. Lesson 21 is fairness definition. Lesson 22 is pr
 - [Kusner, Loftus, Russell, Silva — Counterfactual Fairness (arXiv:1703.06856)](https://arxiv.org/abs/1703.06856) — counterfactual fairness
 - [Chouldechova — Fair prediction with disparate impact (arXiv:1703.00056)](https://arxiv.org/abs/1703.00056) — impossibility
 - [Backtracking Counterfactuals (arXiv:2401.13935)](https://arxiv.org/abs/2401.13935) — new paradigm for protected-attribute interventions
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the three group-fairness criteria (demographic parity, equalized odds, conditional use accuracy equality) and one impossibility result.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe individual fairness via the Dwork et al. 2012 Lipschitz formulation.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe counterfactual fairness and its causal-graph dependency.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the three group-fairness criteria (demographic parity, equalized odds, conditional use accuracy equality) and one impossibility result,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe counterfactual fairness and its causal-graph dependency,” and cite a repeatable check rather than relying on visual inspection alone.

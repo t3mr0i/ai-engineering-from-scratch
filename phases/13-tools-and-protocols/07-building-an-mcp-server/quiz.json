@@ -1,0 +1,78 @@
+{
+  "lesson": "07-building-an-mcp-server",
+  "title": "Building an MCP Server — Python + TypeScript SDKs",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Building an MCP Server — Python + TypeScript SDKs?",
+      "options": [
+        "Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Building an MCP Server — Python + TypeScript SDKs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Building an MCP Server — Python + TypeScript SDKs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Building an MCP Server — Python + TypeScript SDKs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Graduate a stdlib implementation to FastMCP (Python SDK) or the TypeScript SDK without rewriting tool logic",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Graduate a stdlib implementation to FastMCP (Python SDK) or the TypeScript SDK without rewriting tool logic” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Building an MCP Server — Python + TypeScript SDKs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and..."
+      ],
+      "correct": 3,
+      "explanation": "“Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Building an MCP Server — Python + TypeScript SDKs?",
+      "options": [
+        "Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

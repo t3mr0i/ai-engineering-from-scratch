@@ -15,11 +15,11 @@
       "explanation": "Firth's (1957) distributional hypothesis: similar contexts imply similar meanings."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is plain softmax over the vocabulary impractical in Word2Vec?",
       "options": [
         "Computing softmax over 100k+ vocabulary terms is prohibitively expensive per training step",
-        "Softmax cannot model probabilities",
+        "Softmax cannot model probabilities, with no need to inspect intermediate results or test edge cases",
         "Softmax has no gradient",
         "It causes vanishing gradients"
       ],
@@ -32,7 +32,7 @@
       "options": [
         "Skip-gram uses bigrams; CBOW uses unigrams",
         "Skip-gram predicts context words from the center; CBOW predicts the center from context",
-        "Skip-gram predicts the center word from context; CBOW does the reverse",
+        "Skip-gram predicts the center word from context; CBOW does the reverse, because one plausible output is sufficient production evidence",
         "Skip-gram trains a deep network; CBOW is shallow"
       ],
       "correct": 1,
@@ -43,7 +43,7 @@
       "question": "In negative sampling, what is the objective for the positive pair (center, context)?",
       "options": [
         "Maximize sigmoid(W[center] dot W'[context]) so it is close to 1",
-        "Force them to be orthogonal",
+        "Force them to be orthogonal, before defining the measurement, acceptance threshold, or rollback path",
         "Minimize their dot product",
         "Decorrelate the vectors"
       ],
@@ -51,10 +51,10 @@
       "explanation": "Positive pairs train sigmoid near 1; sampled negatives train sigmoid near 0."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "After training Word2Vec, which weight matrix becomes the word embeddings?",
       "options": [
-        "A separate post-training projection",
+        "A separate post-training projection — and applies unchanged even when the lesson's stated preconditions fail",
         "The input-to-hidden W matrix (center-word table)",
         "Both, multiplied together",
         "The hidden-to-output W' matrix"
@@ -68,35 +68,11 @@
       "options": [
         "The window size is too small",
         "It ignores rare words",
-        "Negative sampling drops rare meanings",
+        "Negative sampling drops rare meanings, with no need to inspect intermediate results or test edge cases",
         "It assigns one static vector per word, so 'river bank' and 'financial bank' share the same vector"
       ],
       "correct": 3,
       "explanation": "Static embeddings cannot disambiguate senses; contextual embeddings (ELMo/BERT) fix this."
-    },
-    {
-      "stage": "post",
-      "question": "When would you still reach for Word2Vec over a transformer in 2026?",
-      "options": [
-        "Lightweight, on-device, domain-specific retrieval where a single row lookup is the latency budget",
-        "When you need contextual disambiguation",
-        "When inputs are very long",
-        "When dialog quality matters"
-      ],
-      "correct": 0,
-      "explanation": "Word2Vec wins on tiny latency budgets, on-device inference, or fast domain-specific training."
-    },
-    {
-      "stage": "post",
-      "question": "What enables the famous analogy 'king - man + woman ~ queen'?",
-      "options": [
-        "The model encodes royalty as a flag bit",
-        "Skip-gram trains on royal vocabularies",
-        "Vector arithmetic captures linear directions like 'royal' that transfer across genders",
-        "Cosine similarity is invariant to gender"
-      ],
-      "correct": 2,
-      "explanation": "Directions in embedding space encode relational features, so adding/subtracting moves systematically."
     }
   ]
 }

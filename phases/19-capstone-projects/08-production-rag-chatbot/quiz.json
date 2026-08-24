@@ -12,10 +12,10 @@
         "It improves recall on the rerank stage"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“At 60-80% hit rate it cuts per-query cost 3-5x by discounting stable prefix tokens” matches the lesson’s treatment of Capstone 08 — Production RAG Chatbot for a Regulated Vertical; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What goes into the cache header versus the uncached suffix of each request?",
       "options": [
         "Random text padding to hit cache size",
@@ -24,7 +24,7 @@
         "System prompt and static policies in the cache header, reranked context as cache extension, user question as the uncached suffix"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“System prompt and static policies in the cache header, reranked context as cache extension, user question as the uncached suffix” matches the lesson’s treatment of Capstone 08 — Production RAG Chatbot for a Regulated Vertical; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Role and jurisdiction filters apply before the hybrid search merge so chunks outside the user's scope are never reranked"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Role and jurisdiction filters apply before the hybrid search merge so chunks outside the user's scope are never reranked” matches the lesson’s treatment of Capstone 08 — Production RAG Chatbot for a Regulated Vertical; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "A single LLM-judge faithfulness check"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Llama Guard 4, NeMo Guardrails policy rails, and Presidio PII scrub, plus citation enforcement” matches the lesson’s treatment of Capstone 08 — Production RAG Chatbot for a Regulated Vertical; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the drift dashboard alert on?",
       "options": [
         "A change in the underlying LLM provider",
@@ -60,7 +60,7 @@
         "Any new document added to the index"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“A retrieval-quality drop, for example a 5% week-over-week dip in nDCG or citation score” matches the lesson’s treatment of Capstone 08 — Production RAG Chatbot for a Regulated Vertical; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "2000 synthetic questions"
       ],
       "correct": 1,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Which RAGAS scores are tracked online per turn?",
-      "options": [
-        "Throughput, GPU utilization, and queue depth",
-        "BLEU, ROUGE, and METEOR",
-        "Faithfulness, answer relevance, and context precision",
-        "Token count and dollar cost"
-      ],
-      "correct": 2,
-      "explanation": ""
+      "explanation": "“200 expert-labeled question/answer pairs with citations” matches the lesson’s treatment of Capstone 08 — Production RAG Chatbot for a Regulated Vertical; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

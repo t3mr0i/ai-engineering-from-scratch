@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 12 (Guardrails), Phase 14 · 27 (Prompt injection defense)
-**Time:** ~55 minutes
+**Time:** ~145 minutes
 
 ## Learning Objectives
 
@@ -137,3 +137,13 @@ The steps below translate the lesson into a 60-90 minute security review session
 - [NIST AI RMF (AI 600-1)](https://airc.nist.gov/) — the U.S. federal AI risk management framework; Appendix B covers adversarial ML and injection risks.
 - [Simon Willison — Prompt injection explained](https://simonwillison.net/2022/Sep/12/prompt-injection/) — the clearest public explanation of why structural defenses alone cannot fully solve indirect injection; updated commentary through 2025.
 - [EU AI Act — Official text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Article 9 (risk management) and Annex III (high-risk systems) define the audit and logging obligations, in force from 2 December 2027 per Regulation (EU) 2026/1744.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Prompt Injection and AI Security: Failure Shapes and Defense Triage (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Prompt Injection and AI Security: Failure Shapes and Defense Triage (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

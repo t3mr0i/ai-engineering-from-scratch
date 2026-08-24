@@ -57,7 +57,7 @@
         "Only when the client happens to be an external customer rather than an internal team",
         "When impact, uncertainty, and matched risk signals such as stakeholder tension are all high",
         "Only when the prompt pack is being used for a proposal rather than a regular meeting",
-        "Never — a generic AI-drafted agenda can always be fixed in the room during the workshop"
+        "Never — a generic AI-drafted agenda can always be fixed in the room during the workshop — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "High-impact, uncertain, tension-heavy consulting situations need a launch gate regardless of whether the client is external, which document the prompt pack feeds, or whether the facilitator expects to fix things live."
@@ -67,7 +67,7 @@
       "question": "What is the main purpose of the output template?",
       "options": [
         "To create a reusable prompt pack that teams can keep applying after the course ends",
-        "To formally replace the consultant's own judgment about the client recommendation",
+        "To formally replace the consultant's own judgment about the client recommendation, with no need to inspect intermediate results or test edge cases",
         "To keep the weakest assumptions in a hypothesis away from the steering committee",
         "To automatically generate completion certificates once the workshop has finished"
       ],

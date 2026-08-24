@@ -1,6 +1,6 @@
 {
   "lesson": "10-ai-control-subversion",
-  "title": "AI Control - Safety Despite Subversion",
+  "title": "AI Control — Safety Despite Subversion",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "Control is about hardware; alignment is about software"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Alignment asks whether U is trustworthy; control asks whether we can safely use U without trusting it” matches the lesson’s treatment of AI Control — Safety Despite Subversion; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Only U exists"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“U is untrusted strong, T is trusted weak, H is bounded trusted human labor” matches the lesson’s treatment of AI Control — Safety Despite Subversion; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "T cannot edit text"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Two instances of U can collude or share priors, so the protocol must spend budget on collusion-resistance” matches the lesson’s treatment of AI Control — Safety Despite Subversion; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "It strictly Pareto-dominates: higher usefulness at every safety level"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“It strictly Pareto-dominates: higher usefulness at every safety level” matches the lesson’s treatment of AI Control — Safety Despite Subversion; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Control may fail at higher capability levels if U can manipulate T or reason about H's audit distribution"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Control produces aligned models as a byproduct” matches the lesson’s treatment of AI Control — Safety Despite Subversion; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "That the model passed a manual jailbreak test"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“That under worst-case assumptions about U, the deployment protocol bounds the probability of an unacceptable outcome” matches the lesson’s treatment of AI Control — Safety Despite Subversion; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

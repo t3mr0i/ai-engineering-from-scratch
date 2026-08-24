@@ -124,3 +124,13 @@ If fine-tuned is less than pretrained-only, you have a learning-rate or BN bug. 
 - [Universal Language Model Fine-tuning (ULMFiT, Howard & Ruder, 2018)](https://arxiv.org/abs/1801.06146) — the original discriminative LR / progressive unfreezing recipe; the ideas transfer directly to vision
 - [timm documentation](https://huggingface.co/docs/timm) — the reference for modern vision backbones and the exact fine-tune defaults they were trained with
 - [A Simple Framework for Linear-Probe Evaluation (Kornblith et al., 2019)](https://arxiv.org/abs/1805.08974) — why linear-probe accuracy matters and how to report it correctly
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in under 20 lines.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones,” and cite a repeatable check rather than relying on visual inspection alone.

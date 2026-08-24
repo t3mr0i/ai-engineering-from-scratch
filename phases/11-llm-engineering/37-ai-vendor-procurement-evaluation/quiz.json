@@ -7,7 +7,7 @@
       "question": "Why does AI procurement need more than feature comparison?",
       "options": [
         "Because the vendor demo already covers every enterprise control a buyer needs to verify",
-        "Because contract terms are standardised across AI vendors, so only features distinguish them",
+        "Because contract terms are standardised across AI vendors, so only features distinguish them — and applies unchanged even when the lesson's stated preconditions fail",
         "Because data handling, security, integration, lock-in, and operating cost affect long-term risk",
         "Because security evidence is supplied later by the vendor's compliance team on request"
       ],
@@ -66,7 +66,7 @@
       "stage": "post",
       "question": "What is the purpose of an exit plan?",
       "options": [
-        "To document how the trial will be scored once the proof of concept ends",
+        "To document how the trial will be scored once the proof of concept ends, with no need to inspect intermediate results or test edge cases",
         "To record which internal team owns the integration after the rollout",
         "To capture the pricing scenarios the finance team asked to be compared",
         "To make lock-in risk visible and reducible before committing to a vendor"

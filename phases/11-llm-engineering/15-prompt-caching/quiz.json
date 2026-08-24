@@ -3,7 +3,7 @@
   "title": "Prompt Caching and Context Caching",
   "questions": [
     {
-      "stage": "post",
+      "stage": "pre",
       "question": "What discount does Anthropic apply to cache reads versus the base input rate?",
       "options": [
         "90% off",
@@ -15,10 +15,10 @@
       "explanation": "Anthropic's cache_control markers give a 90% discount on cache-hit input tokens versus the base rate, in exchange for a 25% write premium on the first request."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why must dynamic timestamps go below the cache breakpoint, not above it?",
       "options": [
-        "Timestamps confuse the tokenizer into splitting the surrounding system prompt into more tokens than expected",
+        "Timestamps confuse the tokenizer into splitting the surrounding system prompt into more tokens than expected, with no need to inspect intermediate results or test edge cases",
         "Timestamps cost more tokens per character than static text, so placing them early inflates the write premium",
         "Caches only hit when the prefix is byte-identical; a changing timestamp breaks the match for everything after it",
         "Anthropic explicitly rejects any cached block that contains a timestamp field, returning a validation error"
@@ -27,7 +27,7 @@
       "explanation": "All three providers cache prefixes only. If any token differs between requests, everything after the first differing token is a miss -- so the stable parts (system prompt, tools, few-shots) must sit above any per-request variable like a timestamp."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "OpenAI's prompt caching is configured how?",
       "options": [
         "Explicit cache_control markers placed on specific content blocks, the same mechanism Anthropic uses",
@@ -39,7 +39,7 @@
       "explanation": "Unlike Anthropic's explicit cache_control markers or Google's CachedContent API, OpenAI detects matching prefixes automatically and applies the discount with zero code changes."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "For Anthropic, what write premium does the 1-hour extended TTL cost vs the 5-minute default?",
       "options": [
         "Same as the 5-minute default, since the write premium is a fixed 25% no matter how long the cache is kept warm",
@@ -61,6 +61,18 @@
       ],
       "correct": 1,
       "explanation": "With a 25% write premium and a 90% read discount, the second read alone recovers the extra cost paid on the write, and every reuse after that is close to pure savings."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Prompt Caching and Context Caching?",
+      "options": [
+        "Apply the lesson's decision or implementation workflow to a concrete case",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

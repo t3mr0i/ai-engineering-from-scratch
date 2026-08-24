@@ -80,3 +80,13 @@ Datadog v1.37+ maps GenAI attributes natively into its LLM Observability schema.
 - [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) — GenAI spans by default
 - [AutoGen v0.4 (Microsoft Research)](https://www.microsoft.com/en-us/research/articles/autogen-v0-4-reimagining-the-foundation-of-agentic-ai-for-scale-extensibility-and-robustness/) — OTel spans built in
 - [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) — W3C trace context propagation
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the GenAI span categories: model/client, agent, tool.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Distinguish `invoke_agent` CLIENT vs INTERNAL spans and when each applies.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: List the top-level GenAI attributes: provider name, request model, data-source ID.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the GenAI span categories: model/client, agent, tool,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “List the top-level GenAI attributes: provider name, request model, data-source ID,” and cite a repeatable check rather than relying on visual inspection alone.

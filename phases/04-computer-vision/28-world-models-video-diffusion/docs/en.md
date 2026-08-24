@@ -131,3 +131,13 @@ This replaces reward shaping and sample-heavy RL. The world model does the imagi
 - [Cosmos-Drive-Dreams (NVIDIA, 2025)](https://research.nvidia.com/labs/toronto-ai/cosmos-drive-dreams/) — driving world model
 - [Top 10 Video Generation Models 2026 (DataCamp)](https://www.datacamp.com/blog/top-video-generation-models)
 - [From Video Generation to World Model — survey repo](https://github.com/ziqihuangg/Awesome-From-Video-Generation-to-World-Model/)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the difference between a pure video generation model (Sora 2) and an action-conditioned world model (Genie 3, DreamerV3).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe a video DiT: spatio-temporal patches, 3D position encoding, joint attention across (T, H, W) tokens.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trace how a world model plugs into robotics: VLM plans → video model simulates → inverse dynamics emits actions.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the difference between a pure video generation model (Sora 2) and an action-conditioned world model (Genie 3, DreamerV3),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trace how a world model plugs into robotics: VLM plans → video model simulates → inverse dynamics emits actions,” and cite a repeatable check rather than relying on visual inspection alone.

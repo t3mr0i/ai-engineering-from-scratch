@@ -15,7 +15,7 @@
       "explanation": "The JSONL line is the contract. The extras field lets the code_exec metric pass io_pairs without polluting the prompt."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is the metric function signature (prediction, targets, extras) -> float?",
       "options": [
         "Random choice",
@@ -51,7 +51,7 @@
       "explanation": "ToyAdapter in the lesson is a deterministic pattern matcher. An HttpAdapter for a real vendor has the same generate(prompts) -> list[str] surface."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the leaderboard JSON carry a schema string like leaderboard.v1?",
       "options": [
         "For SEO",

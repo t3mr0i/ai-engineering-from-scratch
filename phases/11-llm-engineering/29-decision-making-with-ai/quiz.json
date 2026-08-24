@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "What does the Python artifact produce for Decision Making with AI?",
       "options": [
-        "A final go/no-go verdict the steering committee can adopt unchanged",
+        "A final go/no-go verdict the steering committee can adopt unchanged, because one plausible output is sufficient production evidence",
         "A ranked plan with category, score, priority, controls, and rationale",
         "A confidence percentage for each option, with no evidence attached",
         "A record of every decision the team made in the last quarter"
@@ -55,7 +55,7 @@
       "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
       "options": [
         "When impact, uncertainty, and matched risk signals such as an irreversible decision are all high",
-        "Only when the decision is escalated to leadership rather than settled inside the delivery team",
+        "Only when the decision is escalated to leadership rather than settled inside the delivery team — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when the assistant's answer disagrees with what the decision owner already believed",
         "Never — a contested decision can always be revisited at the next steering committee meeting"
       ],

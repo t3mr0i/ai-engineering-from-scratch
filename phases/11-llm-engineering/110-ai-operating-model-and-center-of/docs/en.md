@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 13 · 22 (Skills and agent SDKs), Phase 11 · 01 (Prompt engineering)
-**Time:** ~45 minutes
+**Time:** ~90 minutes
 
 ## Learning Objectives
 
@@ -126,3 +126,13 @@ Phase 13 · 22 covered the technical layer: how skills, tool definitions, and ag
 - [Anthropic — Building with Claude (platform docs)](https://platform.claude.com/docs) — the model tier and API surface the CoE's routing policy must cover.
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://www.nist.gov/artificial-intelligence) — a voluntary framework, not a binding federal standard, but the one most enterprises reference when writing their AI security baseline.
 - [Linux Foundation — MLOps Maturity Model](https://github.com/cdfoundation/sig-mlops/blob/main/roadmap/2020/MLOpsRoadmap2020.md) — the engineering-side maturity reference that complements the organizational CoE model.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Operating Model and Center of Excellence: From Pilots to Platform (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Operating Model and Center of Excellence: From Pilots to Platform (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

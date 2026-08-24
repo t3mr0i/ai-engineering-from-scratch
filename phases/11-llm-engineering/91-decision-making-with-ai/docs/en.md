@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 10 (Evaluation), Phase 18 · 20 (Bias and representational harm)
-**Time:** ~50 minutes
+**Time:** ~130 minutes
 
 ## Learning Objectives
 
@@ -153,3 +153,13 @@ Six patterns a senior consultant recognises by name. Each has shown up in more t
 - **The RAG confidence laundering.** A model that writes confident prose over retrieved documents is not "grounded in the document" — it is grounded in the documents the retriever returned, which is a different (usually smaller) set. Calibrate the retriever, not the prose.
 - **The calibration footnote.** "ECE is on the eval deck" but not on the decision-time lookup is a process bug, not a measurement bug. Gate 1 needs the number at the moment of the decision, not in a quarterly slide.
 - **The audit-after-the-fact.** If you cannot reconstruct, from a stored record alone, what the model was, what it saw, and who approved, you have an audit gap. Article 14 requires this in writing; the audit log schema in this lesson is the minimum.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

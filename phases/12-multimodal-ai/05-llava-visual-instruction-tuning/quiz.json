@@ -1,0 +1,78 @@
+{
+  "lesson": "05-llava-visual-instruction-tuning",
+  "title": "LLaVA and Visual Instruction Tuning",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to LLaVA and Visual Instruction Tuning?",
+      "options": [
+        "Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of LLaVA and Visual Instruction Tuning?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through LLaVA and Visual Instruction Tuning?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Construct a LLaVA-format prompt with the image token placeholder, system prompt, and user/assistant turns",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Construct a LLaVA-format prompt with the image token placeholder, system prompt, and user/assistant turns” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits LLaVA and Visual Instruction Tuning?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain why the community moved from Q-Former to MLP despite Q-Former's token-budget win",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain why the community moved from Q-Former to MLP despite Q-Former's token-budget win” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for LLaVA and Visual Instruction Tuning?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)"
+      ],
+      "correct": 3,
+      "explanation": "“Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for LLaVA and Visual Instruction Tuning?",
+      "options": [
+        "Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

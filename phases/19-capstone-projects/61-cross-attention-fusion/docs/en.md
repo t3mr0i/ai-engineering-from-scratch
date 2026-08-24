@@ -163,3 +163,13 @@ python3 -m unittest code/test_main.py
 - Flamingo (2022) for the canonical late-fusion design with gated cross-attention.
 - BLIP-2 (2023) for the Q-Former, which is a cross-attention block dressed as a learned query pool.
 - IDEFICS (2023) for an open-weight reproduction of the Flamingo recipe.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement multi-head cross-attention where the query stream is text and the key/value stream is vision.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compose a decoder block: causal self-attention + cross-attention + feed-forward.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Get the mask shapes right: causal mask for self-attention, no mask for cross-attention.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement multi-head cross-attention where the query stream is text and the key/value stream is vision,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Get the mask shapes right: causal mask for self-attention, no mask for cross-attention,” and cite a repeatable check rather than relying on visual inspection alone.

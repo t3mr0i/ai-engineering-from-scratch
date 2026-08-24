@@ -99,3 +99,13 @@ These are engineering constraints, not general model limitations. They are addre
 - [DORA — Accelerate State of DevOps Report](https://dora.dev/research/) — the source for T1 delivery metrics (lead time, change failure rate, MTTR); citable as evidence standards in steering packs.
 - [Google — SRE Book, Chapter 4 (Service Level Objectives)](https://sre.google/sre-book/service-level-objectives/) — how to define and cite measurable outcomes as T1 evidence.
 - [BARC — AI in Business Intelligence and Analytics](https://barc-research.com/) — recent practitioner survey on AI-assisted reporting quality and where human review remains necessary.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI-Assisted Project Status and Steering Pack Production (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI-Assisted Project Status and Steering Pack Production (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

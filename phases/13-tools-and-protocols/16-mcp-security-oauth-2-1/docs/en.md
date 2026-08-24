@@ -122,3 +122,13 @@ Phase 13 · 17 shows how an enterprise gateway handles OAuth: gateway holds cred
 - [RFC 8707 — Resource indicators for OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8707) — the audience-pinning RFC
 - [RFC 9728 — OAuth 2.0 protected resource metadata](https://datatracker.ietf.org/doc/html/rfc9728) — the discovery-document RFC
 - [Aembit — MCP OAuth 2.1, PKCE and the future of AI authorization](https://aembit.io/blog/mcp-oauth-2-1-pkce-and-the-future-of-ai-authorization/) — practical step-up-flow walk-through
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish resource server from authorization server responsibilities.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Walk the PKCE-protected OAuth 2.1 authorization code flow.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use `resource` (RFC 8707) and protected-resource metadata (RFC 9728) to prevent confused-deputy attacks.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish resource server from authorization server responsibilities,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use `resource` (RFC 8707) and protected-resource metadata (RFC 9728) to prevent confused-deputy attacks,” and cite a repeatable check rather than relying on visual inspection alone.

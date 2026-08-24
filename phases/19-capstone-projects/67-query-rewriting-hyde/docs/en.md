@@ -111,3 +111,13 @@ The shape of the mock is what matters, not the data. In production you swap the 
 - Phase 11 lesson 07 - advanced RAG patterns
 - Phase 19 lesson 65 - the retriever this rewriter feeds
 - Phase 19 lesson 68 - the eval that measures the rewriter lift
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement Hypothetical Document Embeddings (HyDE): generate a fake answer, embed it, retrieve against that vector instead of the query vector.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement multi-query expansion: rewrite one query into N paraphrases, retrieve with each, merge the union by reciprocal rank fusion.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement query decomposition: split a complex question into sub-questions, retrieve per sub-question, merge.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement Hypothetical Document Embeddings (HyDE): generate a fake answer, embed it, retrieve against that vector instead of the query vector,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement query decomposition: split a complex question into sub-questions, retrieve per sub-question, merge,” and cite a repeatable check rather than relying on visual inspection alone.

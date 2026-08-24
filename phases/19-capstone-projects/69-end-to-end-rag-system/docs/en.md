@@ -92,3 +92,13 @@ This is the shape a CI smoke test takes. The pipeline runs offline, fast, determ
 - [Ragas: Automated Evaluation of RAG Pipelines](https://docs.ragas.io)
 - Phase 11 lesson 06 - RAG fundamentals
 - Phase 19 lessons 64-68 - the components composed here
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compose the chunker, hybrid retriever, query rewriter, cross-encoder reranker, and answer generator into a single end-to-end pipeline.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement an answer generator that cites its claims by chunk anchor, with refuse-on-low-confidence fallback.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Run the lesson 68 eval against the assembled pipeline and prove the staged build wins on every metric over the same components in isolation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compose the chunker, hybrid retriever, query rewriter, cross-encoder reranker, and answer generator into a single end-to-end pipeline,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Run the lesson 68 eval against the assembled pipeline and prove the staged build wins on every metric over the same components in isolation,” and cite a repeatable check rather than relying on visual inspection alone.

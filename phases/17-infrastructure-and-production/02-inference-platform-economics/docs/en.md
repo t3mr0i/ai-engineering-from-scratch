@@ -101,3 +101,13 @@ Every platform above vLLM and SGLang claims a custom engine. FireAttention, RayT
 - [Anyscale Pricing](https://www.anyscale.com/pricing) — RayTurbo and managed Ray pricing.
 - [Northflank — Fireworks AI Alternatives](https://northflank.com/blog/7-best-fireworks-ai-alternatives-for-inference) — comparative assessment.
 - [Infrabase — AI Inference API Providers 2026](https://infrabase.ai/blog/ai-inference-api-providers-compared) — vendor landscape.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three market segments (custom silicon, GPU platforms, API-first) and map each vendor to a segment.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why the "per-token" API pricing model compresses toward the serving engine's cost curve, not the hardware's.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute effective cost per request across at least three vendors and explain when per-minute (Baseten, Modal) beats per-token.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three market segments (custom silicon, GPU platforms, API-first) and map each vendor to a segment,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute effective cost per request across at least three vendors and explain when per-minute (Baseten, Modal) beats per-token,” and cite a repeatable check rather than relying on visual inspection alone.

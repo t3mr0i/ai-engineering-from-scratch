@@ -211,3 +211,13 @@ This is why Llama 3 quadrupled its vocabulary from 32K to 128K. More tokens dedi
 - [Kudo & Richardson, 2018 -- "SentencePiece: A simple and language independent subword tokenizer"](https://arxiv.org/abs/1808.06226) -- language-agnostic tokenization that made multilingual models practical
 - [OpenAI tiktoken repository](https://github.com/openai/tiktoken) -- production BPE implementation in Rust with Python bindings, used by GPT-3.5/4/4o
 - [Hugging Face Tokenizers documentation](https://huggingface.co/docs/tokenizers) -- production-grade tokenizer training with Rust performance
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement BPE, WordPiece, and Unigram tokenization algorithms from scratch and compare their merge strategies.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain how vocabulary size affects model efficiency: too small creates long sequences, too large wastes embedding parameters.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Analyze tokenization artifacts across languages and code, identifying where specific tokenizers break down.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement BPE, WordPiece, and Unigram tokenization algorithms from scratch and compare their merge strategies,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Analyze tokenization artifacts across languages and code, identifying where specific tokenizers break down,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -118,3 +118,13 @@ AgentOps (founded 2024) specializes in GenAI observability. It wraps popular fra
 - [OpenTelemetry — GenAI agent spans](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans/) — agent-level `invoke_agent` span
 - [open-telemetry/semantic-conventions — GenAI spans](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-spans.md) — GitHub-hosted source of truth
 - [Datadog — LLM OTel semantic convention](https://www.datadoghq.com/blog/llm-otel-semantic-convention/) — production integration walkthrough
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the required OTel GenAI attributes for an LLM span and a tool-execution span.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a trace hierarchy that covers agent loop, LLM call, tool call, and MCP client dispatch.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Decide what content to capture (opt-in) vs redact (defaults).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the required OTel GenAI attributes for an LLM span and a tool-execution span,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Decide what content to capture (opt-in) vs redact (defaults),” and cite a repeatable check rather than relying on visual inspection alone.

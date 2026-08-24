@@ -71,3 +71,13 @@ The template in `outputs/canvas-ai-use-case-pilot.md` can be used to capture val
 - A use case needs measurable value and an accountable owner.
 - High-risk or high-uncertainty ideas need stronger controls.
 - A pilot brief should be specific enough to test.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify workflow signals that make AI or automation worth exploring.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a use-case scoring artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare value, risk, volume, variance, and ownership.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify workflow signals that make AI or automation worth exploring,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare value, risk, volume, variance, and ownership,” and cite a repeatable check rather than relying on visual inspection alone.

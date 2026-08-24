@@ -15,7 +15,7 @@
       "explanation": "Agent, Task, Crew, and Process are the four primitives."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the recommended production starting point per the CrewAI docs?",
       "options": [
         "Crew, because LLM-driven autonomy is easiest to audit in production",
@@ -51,7 +51,7 @@
       "explanation": "Short-term, long-term, entity, and contextual are the four. Quantized memory is not a CrewAI concept."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is backstory bloat and how does the lesson recommend handling it?",
       "options": [
         "2000-word agent backstories push out the context budget; keep backstories under 200 words",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Hierarchical adds a manager Agent; only worthwhile when several specialists need dynamic routing."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the lesson caution against using a free-form Crew in production?",
-      "options": [
-        "Crews are an unsupported legacy API slated for removal in CrewAI 1.0",
-        "Crews always consume far more LLM tokens per run than an equivalent Flow does",
-        "Output variability is high and debugging is painful without a Flow wrapper",
-        "Crews cannot enable any of the four memory types that Flows support"
-      ],
-      "correct": 2,
-      "explanation": "Crew autonomy makes prod replay and audit painful; wrap with a Flow when shipping."
     }
   ]
 }

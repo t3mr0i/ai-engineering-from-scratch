@@ -15,7 +15,7 @@
       "explanation": "HTN's symbolic operators with preconditions and effects guarantee soundness by construction."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which problem class is AlphaEvolve built for?",
       "options": [
         "Multi-turn chat memory management across very long conversations",
@@ -51,7 +51,7 @@
       "explanation": "AlphaEvolve found 48 scalar multiplications for 4x4 complex matmul, the first improvement on Strassen in 56 years."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which element of an HTN is a primitive directly-executable action with preconditions and effects?",
       "options": [
         "A task — compound (to be decomposed) or primitive",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "Without a deterministic evaluator the search has no signal to converge on."
-    },
-    {
-      "stage": "post",
-      "question": "When should you reach for ReAct or ReWOO instead of HTN or AlphaEvolve?",
-      "options": [
-        "Whenever you have a large GPU cluster available to run the search in parallel",
-        "Whenever end-to-end latency needs to stay below a fixed 100 millisecond budget",
-        "Never; HTN and AlphaEvolve are strictly better than ReAct or ReWOO for every kind of agent task, without exception",
-        "When you do not need formal soundness or a machine-checkable fitness; most agent tasks land here"
-      ],
-      "correct": 3,
-      "explanation": "The lesson explicitly warns against over-engineering: most tasks do not need formal planning or evolutionary search."
     }
   ]
 }

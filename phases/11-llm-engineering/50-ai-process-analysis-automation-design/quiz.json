@@ -42,7 +42,7 @@
       "stage": "check",
       "question": "Which control belongs to this lesson?",
       "options": [
-        "Skipping exception logging because most cases are expected to be routine",
+        "Skipping exception logging because most cases are expected to be routine, before defining the measurement, acceptance threshold, or rollback path",
         "Removing the process owner once the automation pilot has been approved",
         "Hiding the value check so the pilot can start before impact is estimated",
         "Human fallback — a person who can step in whenever automation hits an exception"
@@ -67,7 +67,7 @@
       "question": "What should teams know before piloting AI automation?",
       "options": [
         "Only the name of the model that will power the automated workflow",
-        "Only the length of the prompt used to drive the automated workflow",
+        "Only the length of the prompt used to drive the automated workflow, with no need to inspect intermediate results or test edge cases",
         "The process map, value check, exception log, and human fallback plan",
         "No details about the current manual process before automating it"
       ],

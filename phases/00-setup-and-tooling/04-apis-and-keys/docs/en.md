@@ -50,3 +50,13 @@ This lesson produces:
 | Rate limit | "They're throttling me" | Maximum requests per minute/hour to prevent abuse and ensure fair usage |
 | Token | "A word" (in API context) | A billing unit: input and output tokens are counted and charged separately |
 | Streaming | "Real-time responses" | Getting the response word by word instead of waiting for the full response |
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Store API keys securely using environment variables and `.env` files.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Make an LLM API call using both the Anthropic Python SDK and raw HTTP.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare SDK-based and raw HTTP request/response formats for debugging.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Store API keys securely using environment variables and `.env` files,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare SDK-based and raw HTTP request/response formats for debugging,” and cite a repeatable check rather than relying on visual inspection alone.

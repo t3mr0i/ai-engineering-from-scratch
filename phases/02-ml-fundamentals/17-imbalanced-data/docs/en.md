@@ -221,3 +221,13 @@ flowchart TD
 - [Learning from Imbalanced Data (He & Garcia, 2009)](https://ieeexplore.ieee.org/document/5128907) -- comprehensive survey covering sampling, cost-sensitive, and algorithmic approaches
 - [imbalanced-learn documentation](https://imbalanced-learn.org/stable/) -- Python library with SMOTE variants, undersampling strategies, and pipeline integration
 - [The Precision-Recall Plot Is More Informative than the ROC Plot (Saito & Rehmsmeier, 2015)](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432) -- when and why to prefer PR curves over ROC curves for imbalanced problems
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -15,7 +15,7 @@
       "explanation": "Repo memory is for durable, three-months-from-now-useful state; transient data is telemetry."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What schema field carries the agent's contract version?",
       "options": [
         "schema_version",
@@ -51,7 +51,7 @@
       "explanation": "The lesson's table lists raw chat transcripts under 'Does not belong'; active task id, open blockers, and next action all belong in repo memory."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the lesson say schema-first state buys you?",
       "options": [
         "It lets the agent skip validation once the schema has been defined once",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "The lesson lists what the schema covers: required keys, allowed status values, forbidden values (e.g. null for arrays), and pattern constraints (task ids match T-\\d{3,})."
-    },
-    {
-      "stage": "post",
-      "question": "What does the lesson say happens when schema_version mismatches?",
-      "options": [
-        "The manager silently upgrades the file to the newest schema version without asking for approval",
-        "The manager refuses to load until a migration script in tools/migrate_state.py runs",
-        "The state file is deleted immediately so a fresh one can be created on the next session start",
-        "The agent retries the write repeatedly until the schema versions happen to match by chance"
-      ],
-      "correct": 1,
-      "explanation": "Schema migrations or refuse-to-load; never silent upgrade."
     }
   ]
 }

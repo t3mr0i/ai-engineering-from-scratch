@@ -113,3 +113,13 @@ Swapping schedulers is a one-line change in `diffusers` and sometimes fixes samp
 - [Classifier-Free Diffusion Guidance (Ho & Salimans, 2022)](https://arxiv.org/abs/2207.12598) — the CFG paper
 - [LoRA: Low-Rank Adaptation of Large Language Models (Hu et al., 2021)](https://arxiv.org/abs/2106.09685) — LoRA was NLP-first; it transferred to SD with almost no changes
 - [diffusers documentation](https://huggingface.co/docs/diffusers) — the reference for every SD / SDXL / SD3 / FLUX pipeline
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Trace the five pieces of a Stable Diffusion pipeline: VAE, text encoder, U-Net, scheduler, safety checker — and what each of them actually does.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain latent diffusion and why training in a 4x64x64 latent space (instead of a 3x512x512 image) reduces compute by 48x without quality loss.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use `diffusers` to generate images, run image-to-image, inpainting, and ControlNet-guided generation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Trace the five pieces of a Stable Diffusion pipeline: VAE, text encoder, U-Net, scheduler, safety checker — and what each of them actually does,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use `diffusers` to generate images, run image-to-image, inpainting, and ControlNet-guided generation,” and cite a repeatable check rather than relying on visual inspection alone.

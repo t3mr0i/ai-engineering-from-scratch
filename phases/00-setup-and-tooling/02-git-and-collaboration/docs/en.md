@@ -64,3 +64,13 @@ That's it. You don't need rebase, cherry-pick, or submodules for this course.
 | Branch | "A copy" | A pointer to a commit that moves forward as you work |
 | Merge | "Combining code" | Taking changes from one branch and applying them to another |
 | Remote | "The cloud" | A copy of your repo hosted somewhere else (GitHub, GitLab) |
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Configure git identity and use the daily workflow of add, commit, and push.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Create and merge branches for isolated experiments without breaking main.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Write a `.gitignore` that excludes model checkpoints and large binary files.
+
+## Reference Solution
+
+A complete response first demonstrates “Configure git identity and use the daily workflow of add, commit, and push” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Create and merge branches for isolated experiments without breaking main.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Write a `.gitignore` that excludes model checkpoints and large binary files.” Unsupported preference statements are not sufficient.

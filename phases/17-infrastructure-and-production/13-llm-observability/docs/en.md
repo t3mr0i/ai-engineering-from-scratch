@@ -110,3 +110,13 @@ At >1M requests/day, full-trace retention costs more than the LLM calls. Sample 
 - [OpenTelemetry GenAI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
 - [Arize Phoenix docs](https://docs.arize.com/phoenix)
 - [Helicone docs](https://docs.helicone.ai/)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish development platforms (bundled: evals + prompts + sessions) from gateway/telemetry tools (traces + metrics only).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Map six major tools (Langfuse, LangSmith, Phoenix, Arize AX, Helicone, Opik) to their licensing, pricing, and sweet-spot use cases.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the OpenTelemetry-glue pattern that lets you combine a gateway tool with a separate eval platform.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish development platforms (bundled: evals + prompts + sessions) from gateway/telemetry tools (traces + metrics only),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the OpenTelemetry-glue pattern that lets you combine a gateway tool with a separate eval platform,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,0 +1,78 @@
+{
+  "lesson": "04-positional-encoding",
+  "title": "Positional Encoding — Sinusoidal, RoPE, ALiBi",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "options": [
+        "Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement the core component without relying on a transformer framework",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
+        "Trace tensor shapes and information flow through the implementation",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Evaluate the computational and modeling trade-offs introduced by Positional Encoding — Sinusoidal, RoPE, ALiBi",
+        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Positional Encoding — Sinusoidal, RoPE, ALiBi” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations"
+      ],
+      "correct": 3,
+      "explanation": "“Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "options": [
+        "Implement the core component without relying on a transformer framework",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

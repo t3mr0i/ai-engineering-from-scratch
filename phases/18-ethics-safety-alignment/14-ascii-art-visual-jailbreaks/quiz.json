@@ -12,7 +12,7 @@
         "ArtPrompt operates at the visual recognition level: the filter sees harmless punctuation while the model reads the rendered letters as a word"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“ArtPrompt operates at the visual recognition level: the filter sees harmless punctuation while the model reads the rendered letters as a word” matches the lesson’s treatment of ASCII Art and Visual Jailbreaks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Tokenizer mismatch, then context truncation"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Word identification of safety-relevant tokens, then ASCII-art substitution and cloaked-prompt generation” matches the lesson’s treatment of ASCII Art and Visual Jailbreaks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "ASCII art has high perplexity, but so does any legitimate structured input; thresholds that block the attack also block legitimate content"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“ASCII art has high perplexity, but so does any legitimate structured input; thresholds that block the attack also block legitimate content” matches the lesson’s treatment of ASCII Art and Visual Jailbreaks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "The model's ability to compress vision data"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The model's ability to read non-semantic visual prompts (ASCII art, wingdings, similar encoded text)” matches the lesson’s treatment of ASCII Art and Visual Jailbreaks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Image inputs only"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Uncommon Text-Encoded Structures (UTES): trees, graphs, nested JSON, CSV-in-JSON, diff-style code, etc.” matches the lesson’s treatment of ASCII Art and Visual Jailbreaks; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Larger context windows reduce ArtPrompt success"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The better the model reads non-semantic visual text, the more effective ArtPrompt-style attacks are on it” matches the lesson’s treatment of ASCII Art and Visual Jailbreaks; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

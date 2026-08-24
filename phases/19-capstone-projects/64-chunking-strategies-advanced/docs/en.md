@@ -79,3 +79,13 @@ A gold-labeled query carries the exact character offsets of the answer span insi
 - Phase 11 lesson 07 - advanced RAG
 - Phase 19 lesson 65 - hybrid retrieval that ranks the chunks produced here
 - Phase 19 lesson 68 - the eval harness that scores the strategy choice in production
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement five chunking strategies from scratch: fixed-window, sentence, recursive-split, semantic clustering, and structural markdown headers.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Measure recall@k on a fixture corpus with gold-labeled answer spans and explain why one strategy wins on prose and a different strategy wins on technical documents.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Read a chunk-length distribution and recognize the failure modes each strategy injects: orphan sentences, mid-symbol cuts, header-only chunks, semantic drift.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement five chunking strategies from scratch: fixed-window, sentence, recursive-split, semantic clustering, and structural markdown headers,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Read a chunk-length distribution and recognize the failure modes each strategy injects: orphan sentences, mid-symbol cuts, header-only chunks, semantic drift,” and cite a repeatable check rather than relying on visual inspection alone.

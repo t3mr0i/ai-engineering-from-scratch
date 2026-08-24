@@ -86,3 +86,13 @@ Lesson 18 is the lab governance layer. Lesson 19 is the lab-welfare layer — an
 - [Chalmers et al. — Near-term AI Consciousness and Moral Status (2024 expert report)](https://arxiv.org/abs/2411.00986) — philosophical framing
 - [Eleos AI Research — Model welfare evaluation](https://www.eleosai.org/research) — external methodology critiques
 - [Fish et al. — Spiritual Bliss Attractor writeup (2025 Anthropic blog)](https://www.anthropic.com/research/exploring-model-welfare) — the empirical finding
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the motivating question for model-welfare research and why it was taken seriously by a major lab in 2025.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: State the specific intervention Anthropic shipped in Claude Opus 4 and 4.1 (end-conversation on extreme edge cases).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the "spiritual bliss attractor" empirical finding and its methodological implications.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the motivating question for model-welfare research and why it was taken seriously by a major lab in 2025,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the "spiritual bliss attractor" empirical finding and its methodological implications,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -15,7 +15,7 @@
       "explanation": "Agno is Python (FastAPI-shaped); Mastra is TypeScript (Vercel AI SDK-shaped)."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is Agno's recommended production deployment shape?",
       "options": [
         "A long-lived stateful daemon that keeps every single agent resident in memory permanently",
@@ -51,7 +51,7 @@
       "explanation": "Agno's docs cite about 2 microseconds and about 3.75 KiB per agent."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does Mastra's Unified Model Router give?",
       "options": [
         "A queue that batches and rate-limits tool calls before sending them to the model",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "2 microseconds matters at chat fan-in scale, not for a single slow call per request."
-    },
-    {
-      "stage": "post",
-      "question": "What licensing surface should you read carefully before forking Mastra?",
-      "options": [
-        "There is no license file anywhere in the Mastra repository at all, ever",
-        "All of Mastra is licensed under the GPL, including every core package",
-        "Mastra requires signing a CLA but performs absolutely no other license review",
-        "ee/ directories are source-available rather than Apache 2.0 and restrict commercial use"
-      ],
-      "correct": 3,
-      "explanation": "Mastra is Apache 2.0 except for ee/ which is source-available; check the restrictions before forking."
     }
   ]
 }

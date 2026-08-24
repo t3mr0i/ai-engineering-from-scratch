@@ -102,3 +102,13 @@ If a tool invocation would combine all three, the host must reject or escalate s
 - [Unit 42 — Model Context Protocol attack vectors](https://unit42.paloaltonetworks.com/model-context-protocol-attack-vectors/) — seven-class attack taxonomy
 - [Microsoft — Protecting against indirect prompt injection in MCP](https://developer.microsoft.com/blog/protecting-against-indirect-injection-attacks-mcp) — MELON and allied defenses
 - [Simon Willison — MCP prompt injection writeup](https://simonwillison.net/2025/Apr/9/mcp-prompt-injection/) — April 2025 landmark post that popularized the concern
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchains, sampling attacks, supply-chain masquerading.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Understand why every attack works despite the tool interface looking correct.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Run `mcp-scan` (or equivalent) with hash pinning to detect description mutations.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchains, sampling attacks, supply-chain masquerading,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Run `mcp-scan` (or equivalent) with hash pinning to detect description mutations,” and cite a repeatable check rather than relying on visual inspection alone.

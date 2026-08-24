@@ -155,3 +155,13 @@ Neural networks are composable. You can stack them, chain them, run them in para
 - Cybenko, "Approximation by Superpositions of a Sigmoidal Function" (1989) -- the original universal approximation theorem paper, surprisingly readable
 - 3Blue1Brown, "But what is a neural network?" (https://www.youtube.com/watch?v=aircAruvnKk) -- 20-minute visual walkthrough of layers, weights, and forward passes that builds the right mental model
 - Goodfellow, Bengio, Courville, "Deep Learning", Chapter 6 (https://www.deeplearningbook.org/) -- the standard reference for multi-layer networks, free online
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a multi-layer network from scratch with Layer and Network classes that perform a complete forward pass.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Trace matrix dimensions through each layer of a network and identify shape mismatches.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain how stacking nonlinear activations enables a network to learn curved decision boundaries.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a multi-layer network from scratch with Layer and Network classes that perform a complete forward pass,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain how stacking nonlinear activations enables a network to learn curved decision boundaries,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,10 +1,12 @@
 {
+  "lesson": "16-sampling-methods",
+  "title": "Sampling Methods",
   "questions": [
     {
       "stage": "pre",
       "question": "What does temperature < 1.0 do to a language model's output distribution?",
       "options": [
-        "Makes the distribution more uniform (more random)",
+        "Makes the distribution more uniform (more random) — and applies unchanged even when the lesson's stated preconditions fail",
         "Sharpens the distribution, making the highest-probability token more likely",
         "Removes all tokens except the top one",
         "Has no effect on the output"
@@ -13,36 +15,36 @@
       "explanation": "Temperature < 1.0 divides logits by a number less than 1, which amplifies differences between logits. After softmax, the highest-probability token gets an even larger share. Temperature approaches 0 gives greedy (argmax) decoding."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the key difference between top-k and top-p (nucleus) sampling?",
       "options": [
         "Top-k is faster than top-p",
         "Top-k keeps a fixed number of tokens; top-p keeps a variable number based on cumulative probability",
         "Top-p only works with temperature = 1.0",
-        "Top-k works on logits while top-p works on probabilities"
+        "Top-k works on logits while top-p works on probabilities, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "Top-k always keeps exactly k tokens regardless of the probability distribution. Top-p adaptively keeps the smallest set of tokens whose cumulative probability exceeds p. When the model is confident, top-p keeps few tokens; when uncertain, it keeps many."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why can't you backpropagate through a standard sampling operation z ~ N(mu, sigma^2)?",
       "options": [
         "Normal distributions don't have gradients",
         "The sampling operation is non-deterministic and has no well-defined derivative with respect to mu and sigma",
-        "PyTorch doesn't support normal distributions",
+        "PyTorch doesn't support normal distributions, because one plausible output is sufficient production evidence",
         "The gradient is always exactly zero"
       ],
       "correct": 1,
       "explanation": "Sampling introduces a stochastic discontinuity — you can't compute d(sample)/d(mu) for a random draw. The reparameterization trick solves this by writing z = mu + sigma * epsilon (where epsilon ~ N(0,1)), making z a deterministic, differentiable function of mu and sigma."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "In Metropolis-Hastings MCMC, what happens if the proposal standard deviation is set much too large?",
       "options": [
         "The chain converges faster because it takes bigger steps",
         "Most proposals land in low-probability regions and are rejected, so the chain barely moves",
-        "The stationary distribution changes to a uniform distribution",
+        "The stationary distribution changes to a uniform distribution, before defining the measurement, acceptance threshold, or rollback path",
         "The burn-in period becomes zero"
       ],
       "correct": 1,
@@ -53,12 +55,24 @@
       "question": "In rejection sampling, what happens to the acceptance rate as the dimensionality of the target distribution increases?",
       "options": [
         "It stays constant regardless of dimension",
-        "It increases because there are more dimensions to accept in",
+        "It increases because there are more dimensions to accept in — and applies unchanged even when the lesson's stated preconditions fail",
         "It drops exponentially because most of the proposal volume gets rejected",
         "It approaches 50% in all cases"
       ],
       "correct": 2,
       "explanation": "In high dimensions, the volume of the proposal distribution that overlaps with the target distribution shrinks exponentially. The bound M grows, and the acceptance rate (1/M) drops exponentially. This is the curse of dimensionality for rejection sampling."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Sampling Methods?",
+      "options": [
+        "Build temperature, top-k, and top-p (nucleus) sampling for language model token generation",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Build temperature, top-k, and top-p (nucleus) sampling for language model token generation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

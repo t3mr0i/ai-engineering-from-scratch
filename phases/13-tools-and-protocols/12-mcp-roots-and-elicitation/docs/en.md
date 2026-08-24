@@ -133,3 +133,13 @@ Elicitation plus sampling together enable MCP's "human-in-the-loop" model. A ser
 - [Cisco — What's new in MCP elicitation, structured content, OAuth enhancements](https://blogs.cisco.com/developer/whats-new-in-mcp-elicitation-structured-content-and-oauth-enhancements) — 2025-11-25 additions walk-through
 - [MCP — GitHub SEP-1036](https://github.com/modelcontextprotocol/modelcontextprotocol) — URL-mode elicitation proposal (experimental, drift-risk)
 - [The New Stack — How elicitation brings human-in-the-loop to AI tools](https://thenewstack.io/how-elicitation-in-mcp-brings-human-in-the-loop-to-ai-tools/) — UX walkthrough
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Declare `roots` and respond to `notifications/roots/list_changed`.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Restrict server file operations to URIs inside the declared root set.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use `elicitation/create` to ask the user for a confirmation or structured input mid-tool-call.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Declare `roots` and respond to `notifications/roots/list_changed`,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use `elicitation/create` to ask the user for a confirmation or structured input mid-tool-call,” and cite a repeatable check rather than relying on visual inspection alone.

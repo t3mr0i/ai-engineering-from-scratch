@@ -317,3 +317,13 @@ division ever happens. `stable_softmax` fixes it the same way real libraries
 - [3Blue1Brown: But what is the Central Limit Theorem?](https://www.youtube.com/watch?v=zeJD6dqJ5lo) - visual proof of why averages become normal
 - [Stanford CS229 Probability Review](https://cs229.stanford.edu/section/cs229-prob.pdf) - concise reference covering everything here and more
 - [The Log-Sum-Exp Trick](https://gregorygundersen.com/blog/2020/02/09/log-sum-exp/) - why numerical stability matters and how to achieve it
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement PMFs and PDFs from scratch for Bernoulli, categorical, Poisson, uniform, and normal distributions.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute expected value, variance, and use the Central Limit Theorem to explain why Gaussians dominate.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build softmax and log-softmax functions with the numerical stability trick (subtract max logit).
+
+## Reference Solution
+
+Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement PMFs and PDFs from scratch for Bernoulli, categorical, Poisson, uniform, and normal distributions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build softmax and log-softmax functions with the numerical stability trick (subtract max logit),” and cite a repeatable check rather than relying on visual inspection alone.

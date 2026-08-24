@@ -117,3 +117,13 @@ For everything else in 2026 — financial reports, scientific papers, legal cont
 - [Yu et al. — VisRAG (arXiv:2410.10594)](https://arxiv.org/abs/2410.10594)
 - [Cho et al. — M3DocRAG (arXiv:2411.04952)](https://arxiv.org/abs/2411.04952)
 - [illuin-tech/colpali GitHub](https://github.com/illuin-tech/colpali)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the difference between bi-encoder retrieval (one vector per document) and late-interaction retrieval (many vectors per document).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe ColBERT's MaxSim operation and how ColPali generalizes it from text tokens to image patches.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a tiny ColPali-like indexer: page → patch embeddings → MaxSim over query-term embeddings → top-k pages.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the difference between bi-encoder retrieval (one vector per document) and late-interaction retrieval (many vectors per document),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a tiny ColPali-like indexer: page → patch embeddings → MaxSim over query-term embeddings → top-k pages,” and cite a repeatable check rather than relying on visual inspection alone.

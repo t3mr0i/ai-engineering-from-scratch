@@ -31,7 +31,7 @@
       "question": "What does the Python artifact produce?",
       "options": [
         "A finished, deployable production system ready to serve live traffic",
-        "An itemized cloud invoice showing the cost of each architecture option",
+        "An itemized cloud invoice showing the cost of each architecture option, because one plausible output is sufficient production evidence",
         "A ranked architecture decision plan with governance controls for each option",
         "A user survey measuring satisfaction with the chosen architecture"
       ],
@@ -57,7 +57,7 @@
         "Only when there is no security boundary involved in the decision at all",
         "Only when the architecture choice is trivial and easy to reverse later",
         "When impact is high, reversibility is low, or security, vendor, or cost tradeoffs exist",
-        "Never — documenting implementation details is enough governance on its own"
+        "Never — documenting implementation details is enough governance on its own — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 2,
       "explanation": "High impact, low reversibility, or security, vendor, or cost tradeoffs are exactly when governance should strengthen — not the absence of a security boundary, a trivial choice, or implementation notes alone."
@@ -68,7 +68,7 @@
       "options": [
         "The decision, alternatives considered, consequences, threat model, and cost tradeoff",
         "Only the name of the vendor that was ultimately chosen for the project",
-        "No alternatives, since listing rejected options makes the record longer",
+        "No alternatives, since listing rejected options makes the record longer, with no need to inspect intermediate results or test edge cases",
         "No trigger for revisiting the decision later, once it has been approved"
       ],
       "correct": 0,

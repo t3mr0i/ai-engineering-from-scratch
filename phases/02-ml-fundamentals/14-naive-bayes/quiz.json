@@ -1,11 +1,12 @@
 {
+  "lesson": "14-naive-bayes",
+  "title": "Naive Bayes",
   "questions": [
     {
-      "id": "nb-pre-1",
       "stage": "pre",
       "question": "What is the 'naive' assumption in Naive Bayes?",
       "options": [
-        "The prior probability of each class is equal",
+        "The prior probability of each class is equal — and applies unchanged even when the lesson's stated preconditions fail",
         "All features are conditionally independent given the class label",
         "The data is normally distributed",
         "The model has no parameters to learn"
@@ -14,56 +15,64 @@
       "explanation": "Naive Bayes assumes every feature is independent of every other feature, conditioned on the class. This is mathematically wrong (e.g., 'machine' and 'learning' co-occur) but works well in practice."
     },
     {
-      "id": "nb-pre-2",
-      "stage": "pre",
+      "stage": "check",
       "question": "What does Laplace smoothing prevent in Naive Bayes?",
       "options": [
         "Overfitting to large datasets",
         "Zero probabilities for words never seen in a class during training",
-        "Slow training on high-dimensional data",
+        "Slow training on high-dimensional data, with no need to inspect intermediate results or test edge cases",
         "Class imbalance in the dataset"
       ],
       "correct": 1,
       "explanation": "Without smoothing, a word that never appeared in 'spam' training emails would get P(word|spam) = 0, making the entire product zero regardless of other strong evidence. Laplace smoothing adds 1 to each count."
     },
     {
-      "id": "nb-post-1",
-      "stage": "post",
+      "stage": "check",
       "question": "The naive independence assumption is clearly wrong for text. Why does Naive Bayes still classify well?",
       "options": [
         "It only works on very small vocabularies where independence holds",
         "Classification only needs correct class rankings, not correct probability estimates, and the assumption introduces stable errors that affect all classes similarly",
-        "Modern implementations secretly remove the independence assumption",
+        "Modern implementations secretly remove the independence assumption, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "It only works when features are truly independent"
       ],
       "correct": 1,
       "explanation": "NB needs to rank classes correctly, not estimate exact probabilities. The independence assumption is high bias but low variance, making it stable with limited data. Correlated features double-count evidence for the correct class too."
     },
     {
-      "id": "nb-post-2",
-      "stage": "post",
+      "stage": "check",
       "question": "When should you use Multinomial NB versus Gaussian NB?",
       "options": [
         "Multinomial for regression, Gaussian for classification",
         "Multinomial for word count/frequency features, Gaussian for continuous real-valued features",
-        "Multinomial for binary data, Gaussian for multi-class problems",
+        "Multinomial for binary data, Gaussian for multi-class problems, before defining the measurement, acceptance threshold, or rollback path",
         "They are interchangeable -- always use whichever is faster"
       ],
       "correct": 1,
       "explanation": "Multinomial NB models feature counts (word frequencies in text). Gaussian NB assumes features follow normal distributions, suitable for continuous features like measurements or sensor readings."
     },
     {
-      "id": "nb-post-3",
       "stage": "post",
       "question": "An email contains 'free' twice and 'money' once. In Multinomial NB with log probabilities, how is the spam score computed?",
       "options": [
-        "log P(spam) + log P(free|spam) + log P(money|spam)",
+        "log P(spam) + log P(free|spam) + log P(money|spam) — and applies unchanged even when the lesson's stated preconditions fail",
         "log P(spam) + 2 * log P(free|spam) + 1 * log P(money|spam)",
         "P(spam) * P(free|spam) * P(money|spam)",
         "log P(spam) * 2 * log P(free|spam)"
       ],
       "correct": 1,
       "explanation": "Multinomial NB multiplies the word likelihoods raised to their count. In log space: log P(spam) + 2*log P(free|spam) + 1*log P(money|spam). The word count acts as an exponent."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Naive Bayes?",
+      "options": [
+        "Explain why the naive independence assumption is mathematically wrong but produces correct class rankings i...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain why the naive independence assumption is mathematically wrong but produces correct class rankings i...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

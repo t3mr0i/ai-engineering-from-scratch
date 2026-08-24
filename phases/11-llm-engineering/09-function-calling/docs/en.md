@@ -446,3 +446,13 @@ print_loop_result(result)
 - [Berkeley Function Calling Leaderboard](https://gorilla.cs.berkeley.edu/leaderboard.html) -- real-time benchmark comparing function calling accuracy across GPT-4o, Claude, Gemini, and open models
 - [Yao et al., "ReAct: Synergizing Reasoning and Acting in Language Models" (ICLR 2023)](https://arxiv.org/abs/2210.03629) -- the Thought-Action-Observation loop that is the outer agent loop around every tool call; where this lesson ends, Phase 14 picks up.
 - [Anthropic — Building effective agents (Dec 2024)](https://www.anthropic.com/research/building-effective-agents) -- five composable patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer) built from the single tool-use primitive.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a function calling loop: define tool schemas, parse the model's tool-call JSON, execute functions, and return results.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Design tool schemas with clear descriptions and typed parameters that the model can reliably invoke.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a multi-turn agent loop that chains multiple function calls to answer complex queries.
+
+## Reference Solution
+
+Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a function calling loop: define tool schemas, parse the model's tool-call JSON, execute functions, and return results,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a multi-turn agent loop that chains multiple function calls to answer complex queries,” and cite a repeatable check rather than relying on visual inspection alone.

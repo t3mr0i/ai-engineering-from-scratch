@@ -93,3 +93,13 @@ MoBA (Moonshot, arXiv:2502.13189) was concurrently published and takes a similar
 - [Beltagy et al. — Longformer: The Long-Document Transformer (arXiv:2004.05150)](https://arxiv.org/abs/2004.05150) — sliding-window origins
 - [Xiao et al. — StreamingLLM: Efficient Streaming Language Models with Attention Sinks (arXiv:2309.17453)](https://arxiv.org/abs/2309.17453) — inference-time sparsity baseline NSA improves on
 - [Dao et al. — FlashAttention-2 (arXiv:2307.08691)](https://arxiv.org/abs/2307.08691) — the full-attention baseline NSA kernels beat at 64k
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the three NSA attention branches and what each one captures.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why NSA is "natively trainable" where prior sparse-attention methods were inference-only.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute the attention compute savings of NSA versus full attention at 64k context as a function of compression block size and selection top-k.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the three NSA attention branches and what each one captures,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute the attention compute savings of NSA versus full attention at 64k context as a function of compression block size and selection top-k,” and cite a repeatable check rather than relying on visual inspection alone.

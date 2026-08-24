@@ -15,7 +15,7 @@
       "explanation": "Float ops on different hardware (or even different process orders) can differ at the bit level. A broadcast from rank 0 is the only way to get byte-equal weights everywhere."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does DDP do after backward and before optimizer.step?",
       "options": [
         "Nothing",
@@ -51,7 +51,7 @@
       "explanation": "A 1B-parameter model has thousands of grad tensors; one allreduce per tensor pays gloo or NCCL latency thousands of times."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does no_sync() exist in PyTorch DDP?",
       "options": [
         "To turn off DDP",

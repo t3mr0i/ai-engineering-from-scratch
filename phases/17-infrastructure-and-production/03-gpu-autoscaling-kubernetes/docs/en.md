@@ -104,3 +104,13 @@ Cold-start mitigation (Phase 17 · 10) is where node provisioning time becomes u
 - [Ray docs — KAI Scheduler for RayClusters](https://docs.ray.io/en/latest/cluster/kubernetes/k8s-ecosystem/kai-scheduler.html) — Ray integration pattern.
 - [AWS EKS Compute and Autoscaling Best Practices](https://docs.aws.amazon.com/eks/latest/best-practices/aiml-compute.html) — managed-Kubernetes-specific guidance.
 - [llm-d GitHub](https://github.com/llm-d/llm-d) — Workload Variant Autoscaler design.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Diagram the three autoscaling layers (node provisioning, gang scheduling, application-level) and name the tool used at each layer.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why `DCGM_FI_DEV_GPU_UTIL` is the wrong HPA signal for vLLM and name two replacements (queue depth, KV cache utilization).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe gang scheduling and the partial-allocation failure mode KAI Scheduler prevents (7 of 8 GPUs idle).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Diagram the three autoscaling layers (node provisioning, gang scheduling, application-level) and name the tool used at each layer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe gang scheduling and the partial-allocation failure mode KAI Scheduler prevents (7 of 8 GPUs idle),” and cite a repeatable check rather than relying on visual inspection alone.

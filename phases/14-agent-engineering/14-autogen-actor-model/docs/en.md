@@ -68,3 +68,13 @@ Early 2026: AutoGen v0.7.x is stable for research and prototyping. Microsoft has
 - [AutoGen v0.4, Microsoft Research](https://www.microsoft.com/en-us/research/articles/autogen-v0-4-reimagining-the-foundation-of-agentic-ai-for-scale-extensibility-and-robustness/) — the redesign post
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) — graph-shaped alternative
 - [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — spans AutoGen emits by default
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the actor model: agents as actors, messages as the only IPC, failure isolation per actor.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name AutoGen v0.4's three API layers — Core, AgentChat, Extensions — and what each is for.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why decoupling message delivery from handling gives fault isolation and natural concurrency.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the actor model: agents as actors, messages as the only IPC, failure isolation per actor,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why decoupling message delivery from handling gives fault isolation and natural concurrency,” and cite a repeatable check rather than relying on visual inspection alone.

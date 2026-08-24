@@ -70,3 +70,13 @@ The scaling factor is the GradScaler's internal state. Every step the lesson rea
 - Phase 19 · 42 - the downloader whose corpus feeds the loop
 - Phase 19 · 43 - the dataloader the loop consumes
 - Phase 19 · 44 - the schedule this loop composes with
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute the global L2 norm over all parameter gradients and clip in place when it exceeds a configured threshold.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Wrap a training step in autocast plus a GradScaler so FP16 forward and backward passes survive overflow.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Detect NaN and Inf in the loss or gradient, skip the optimizer step, and log the skip.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute the global L2 norm over all parameter gradients and clip in place when it exceeds a configured threshold,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Detect NaN and Inf in the loss or gradient, skip the optimizer step, and log the skip,” and cite a repeatable check rather than relying on visual inspection alone.

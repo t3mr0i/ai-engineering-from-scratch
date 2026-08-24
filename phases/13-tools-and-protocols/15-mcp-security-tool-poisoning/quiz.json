@@ -1,0 +1,78 @@
+{
+  "lesson": "15-mcp-security-tool-poisoning",
+  "title": "MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "options": [
+        "Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Understand why every attack works despite the tool interface looking correct",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Understand why every attack works despite the tool interface looking correct” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Run `mcp-scan` (or equivalent) with hash pinning to detect description mutations",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Run `mcp-scan` (or equivalent) with hash pinning to detect description mutations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Write a static detector for common injection patterns inside tool descriptions",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Write a static detector for common injection patterns inside tool descriptions” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain..."
+      ],
+      "correct": 3,
+      "explanation": "“Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "options": [
+        "Understand why every attack works despite the tool interface looking correct",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Understand why every attack works despite the tool interface looking correct” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

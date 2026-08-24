@@ -458,3 +458,13 @@ You just built gradient descent from scratch. PyTorch automates the gradient com
 
 - [3Blue1Brown: Essence of Calculus](https://www.3blue1brown.com/topics/calculus) - visual intuition for derivatives, integrals, and the chain rule
 - [Stanford CS231n: Backpropagation](https://cs231n.github.io/optimization-2/) - how gradients flow through neural network layers
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute numerical and analytical derivatives for common ML functions (x^2, sigmoid, cross-entropy).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement gradient descent from scratch to minimize a loss function in 1D and 2D.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Derive the gradient of a linear regression model and train it via manual weight updates.
+
+## Reference Solution
+
+Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute numerical and analytical derivatives for common ML functions (x^2, sigmoid, cross-entropy),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Derive the gradient of a linear regression model and train it via manual weight updates,” and cite a repeatable check rather than relying on visual inspection alone.

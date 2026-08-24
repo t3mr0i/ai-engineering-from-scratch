@@ -409,3 +409,13 @@ print(lrn_llm.text(r))
 - [agentic-community — MCP gateway registry](https://github.com/agentic-community/mcp-gateway-registry) — open-source reference gateway
 - [TrueFoundry — What is an MCP gateway?](https://www.truefoundry.com/blog/what-is-mcp-gateway) — feature comparison article
 - [IBM — MCP context forge](https://github.com/IBM/mcp-context-forge) — enterprise gateway from IBM
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain where an MCP gateway sits (between MCP clients and multiple backend MCP servers).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the five gateway responsibilities: auth, RBAC, audit, rate limit, policy.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Enforce a pinned-tool-hash manifest at the gateway layer.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain where an MCP gateway sits (between MCP clients and multiple backend MCP servers),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Enforce a pinned-tool-hash manifest at the gateway layer,” and cite a repeatable check rather than relying on visual inspection alone.

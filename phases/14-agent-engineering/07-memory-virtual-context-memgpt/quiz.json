@@ -15,7 +15,7 @@
       "explanation": "MemGPT maps prompt to RAM, external store to disk, and memory tools to page-fault-style transfers."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why do bigger context windows not fully solve memory?",
       "options": [
         "Because most providers cap the effective window at 4k tokens regardless of the sticker limit",
@@ -51,7 +51,7 @@
       "explanation": "Memory-as-interrupt: invoke memory tool, runtime fetches, result returns as a new observation on the next turn (like a Unix read())."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which production system did MemGPT evolve into in 2024?",
       "options": [
         "Mem0, a hybrid memory library built independently on top of the same pattern",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "External memory is retrieved text; if attacker-reachable content lands in a memory note the agent re-ingests it next session."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the lesson say production memory systems are MemGPT variants?",
-      "options": [
-        "Because every one of them happens to run on the exact same vector database product line",
-        "Because the MemGPT paper's authors hold a trademark that all these systems must license first",
-        "Because all of them are fine-tuned from the exact same base model weights",
-        "Letta, Mem0, Assistants threads, and Claude Agent SDK all run the same paged-memory pattern"
-      ],
-      "correct": 3,
-      "explanation": "Pick by operational shape, not pattern; all share the MemGPT page in/out skeleton."
     }
   ]
 }

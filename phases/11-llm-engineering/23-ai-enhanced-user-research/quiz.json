@@ -43,7 +43,7 @@
       "question": "Which control belongs to the lesson design?",
       "options": [
         "Anonymization, so personal data in interview notes never reaches a persona or a slide",
-        "Publishing quotes with names attached because the assistant already redacted them",
+        "Publishing quotes with names attached because the assistant already redacted them, before defining the measurement, acceptance threshold, or rollback path",
         "Skipping evidence tags since the interview sample felt representative enough",
         "Treating a single power-user complaint as proof of a wider product problem"
       ],

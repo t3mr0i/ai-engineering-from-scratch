@@ -77,3 +77,13 @@ Lesson 7 demonstrates persistent deception via implant. Lesson 8 demonstrates el
 - [Apollo Research — Towards Safety Cases For AI Scheming](https://www.apolloresearch.ai/research/towards-safety-cases-for-ai-scheming) — safety-case framework
 - [Schoen et al. — Stress Testing Deliberative Alignment for Anti-Scheming Training](https://www.apolloresearch.ai/blog/stress-testing-deliberative-alignment-for-anti-scheming-training) — the 2025 OpenAI+Apollo collaboration
 - [METR — Common Elements of Frontier AI Safety Policies](https://metr.org/blog/2025-03-26-common-elements-of-frontier-ai-safety-policies/) — three-pillar framework in context
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define in-context scheming and distinguish it from implanted deception (Lesson 7).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the three pillars of scheming — misalignment, goal-directedness, situational awareness — and how each is evaluated.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain what "oversight-disabling" behaviour looked like across o1, Claude 3.5 Sonnet, Claude 3 Opus, Gemini 1.5 Pro, and Llama 3.1 405B.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define in-context scheming and distinguish it from implanted deception (Lesson 7),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain what "oversight-disabling" behaviour looked like across o1, Claude 3.5 Sonnet, Claude 3 Opus, Gemini 1.5 Pro, and Llama 3.1 405B,” and cite a repeatable check rather than relying on visual inspection alone.

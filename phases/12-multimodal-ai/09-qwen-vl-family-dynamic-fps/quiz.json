@@ -1,0 +1,78 @@
+{
+  "lesson": "09-qwen-vl-family-dynamic-fps",
+  "title": "Qwen-VL Family and Dynamic-FPS Video",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Qwen-VL Family and Dynamic-FPS Video?",
+      "options": [
+        "Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Qwen-VL Family and Dynamic-FPS Video?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Qwen-VL Family and Dynamic-FPS Video?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Name the four Qwen-VL generational upgrades in order and what each enabled",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Name the four Qwen-VL generational upgrades in order and what each enabled” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Qwen-VL Family and Dynamic-FPS Video?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Wire a Qwen2.5-VL-style JSON agent output format and parse structured tool calls from a VLM response",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Wire a Qwen2.5-VL-style JSON agent output format and parse structured tool calls from a VLM response” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Qwen-VL Family and Dynamic-FPS Video?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed"
+      ],
+      "correct": 3,
+      "explanation": "“Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Qwen-VL Family and Dynamic-FPS Video?",
+      "options": [
+        "Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

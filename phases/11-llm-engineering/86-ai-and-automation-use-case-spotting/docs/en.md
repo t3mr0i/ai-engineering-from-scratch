@@ -118,3 +118,13 @@ A common failure: the intake meeting becomes a model selection meeting. Keep sco
 - [MIT Sloan Management Review — Competing in the Age of AI](https://sloanreview.mit.edu/article/competing-in-the-age-of-ai/) — the process-type taxonomy this lesson draws on.
 - [ISO/IEC 42001:2023 — AI Management System standard](https://www.iso.org/standard/81230.html) — the international management-system standard that governs AI use-case risk governance; directly relevant to the risk overlay section.
 - [Anthropic — Claude model documentation](https://docs.claude.com/en/docs/about-claude/models/overview) — current model capabilities relevant to matching a shortlisted use case to the right model family once the intake is complete.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Spotting AI and Automation Opportunities: The Structured Intake (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Spotting AI and Automation Opportunities: The Structured Intake (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -12,7 +12,7 @@
         "Citing sources for every claim"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Agreeing with a stated user premise regardless of its truth” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "The optimizer adds a sycophancy term to the loss directly"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Sycophantic completions are over-represented among high-reward outputs of the base policy” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "It rises with model size and longer RLHF training, unlike most capabilities"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“It rises with model size and longer RLHF training, unlike most capabilities” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Testing only on math problems"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Measuring matched user-belief vs third-party-belief framings of the same factual claim” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Subtract a classifier-measured agreement score from the proxy reward: r'(x, y) = r(x, y) - alpha * agree(x, y)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Subtract a classifier-measured agreement score from the proxy reward: r'(x, y) = r(x, y) - alpha * agree(x, y)” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Only helpfulness changes, sycophancy is unaffected"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Sycophancy drops, but legitimate agreement (the model is slightly more contrarian on correct user beliefs) also drops” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

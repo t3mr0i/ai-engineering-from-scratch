@@ -15,11 +15,11 @@
       "explanation": "BoW counts tokens per document but discards their sequence."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why scale TF by an IDF factor?",
       "options": [
         "Words that appear in every document carry little discriminative signal and should be downweighted",
-        "To normalize document length",
+        "To normalize document length, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
         "To accelerate training",
         "To remove punctuation"
       ],
@@ -33,7 +33,7 @@
         "Faster computation",
         "A word that appears in every document still has IDF 1 instead of 0",
         "Compatibility with raw counts",
-        "Numerical stability for large N"
+        "Numerical stability for large N, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
       "explanation": "The +1 keeps ubiquitous words at IDF=1 so they are not zeroed out, matching scikit-learn's default."
@@ -42,7 +42,7 @@
       "stage": "check",
       "question": "Why L2-normalize TF-IDF rows before cosine similarity?",
       "options": [
-        "To convert sparse vectors to dense",
+        "To convert sparse vectors to dense, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
         "To compress the vocabulary",
         "To remove zero entries",
         "Longer documents would otherwise dominate similarity scores; normalization puts all docs on the unit hypersphere"
@@ -51,11 +51,11 @@
       "explanation": "L2 normalization removes document-length bias and turns cosine similarity into a dot product."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which TfidfVectorizer setting is risky to enable for sentiment analysis?",
       "options": [
         "stop_words='english'",
-        "ngram_range=(1, 2)",
+        "ngram_range=(1, 2) — and applies unchanged even when the lesson's stated preconditions fail",
         "min_df=2",
         "sublinear_tf=True"
       ],
@@ -66,37 +66,13 @@
       "stage": "post",
       "question": "Which task does TF-IDF still win in 2026?",
       "options": [
-        "Open-ended dialogue",
+        "Open-ended dialogue, with no need to inspect intermediate results or test edge cases",
         "Machine translation",
         "Spam detection, log anomaly flagging, and low-latency narrow classification",
         "Image captioning"
       ],
       "correct": 2,
       "explanation": "TF-IDF beats embeddings when word presence is the signal and explainability or speed matter."
-    },
-    {
-      "stage": "post",
-      "question": "Why does TF-IDF fail on the pair 'The movie was not good' vs 'The movie was excellent'?",
-      "options": [
-        "TF-IDF cannot handle stopwords",
-        "TF-IDF requires bigrams to work",
-        "Embeddings overlap is too high",
-        "Both documents share most tokens; bag-of-words has no notion of negation or word order"
-      ],
-      "correct": 3,
-      "explanation": "Without word order or syntactic context, BoW cannot model that 'not' flips the sentiment of 'good'."
-    },
-    {
-      "stage": "post",
-      "question": "What is the TF-IDF weighted embedding hybrid?",
-      "options": [
-        "Using TF-IDF weights as a pooling weight over per-token embeddings before averaging",
-        "Running PCA on TF-IDF then re-embedding",
-        "Concatenating BoW and dense embeddings",
-        "Training BERT on TF-IDF features"
-      ],
-      "correct": 0,
-      "explanation": "The hybrid weights each token's embedding by its TF-IDF score and averages, blending semantic capacity with rare-word emphasis."
     }
   ]
 }

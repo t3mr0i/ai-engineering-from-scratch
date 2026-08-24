@@ -15,7 +15,7 @@
       "explanation": "Sharded write scales with cluster size: 64 ranks writing in parallel finish in 1/64 the time of one rank writing the gathered state."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does the manifest record that the shard files cannot?",
       "options": [
         "Random numbers",
@@ -51,7 +51,7 @@
       "explanation": "Without sha256 verification a truncated shard loads silently and corrupts the optimiser, surfacing later as NaN loss."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the load path reject a world_size mismatch loudly?",
       "options": [
         "Cosmetic",

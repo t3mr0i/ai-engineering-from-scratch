@@ -15,7 +15,7 @@
       "explanation": "Operational rules are testable; aspirational rules are wishes."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What five categories does the lesson cover most rules with?",
       "options": [
         "Read, write, exec, fork, and exit as five POSIX process primitives",
@@ -51,7 +51,7 @@
       "explanation": "The lesson says each rule has a slug, a category, a one-line description, and a check field that names a function in rule_checker.py."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What happens to stale rules in agent-rules.md, per the lesson?",
       "options": [
         "They get moved into a separate archive file for quarterly audit",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "The lesson says the reachability test requires an agent to reach any rule in at most two hops from the router, so the router must link every topic doc by path, not describe it in prose."
-    },
-    {
-      "stage": "post",
-      "question": "How do rules relate to framework guardrails?",
-      "options": [
-        "Rules replace guardrails entirely once the workbench has a complete, versioned rule set in place",
-        "Guardrails enforce rules at runtime; the rule set is the human-readable contract those guardrails implement",
-        "Guardrails are an alternative to rules, chosen instead of a rule set for simpler single-agent repos",
-        "Only one of them is required; teams pick either runtime guardrails or a written rule set, but never rely on both together"
-      ],
-      "correct": 1,
-      "explanation": "Both are needed: runtime catches violations; rule set proves the runtime is doing the right thing."
     }
   ]
 }

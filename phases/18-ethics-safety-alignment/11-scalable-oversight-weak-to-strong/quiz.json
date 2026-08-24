@@ -12,7 +12,7 @@
         "Are humans more accurate than reward models?"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Can a weaker overseer reliably supervise a stronger, aligned model?” matches the lesson’s treatment of Scalable Oversight and Weak-to-Strong Generalization; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "A strong model (GPT-4 class) is fine-tuned on labels produced by a weak model (GPT-2 class) and its capability is measured against the strong supervised ceiling"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“A strong model (GPT-4 class) is fine-tuned on labels produced by a weak model (GPT-2 class) and its capability is measured against the strong supervised ceiling” matches the lesson’s treatment of Scalable Oversight and Weak-to-Strong Generalization; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "(weak - ceiling) / ceiling"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“(fine-tuned - weak) / (ceiling - weak)” matches the lesson’s treatment of Scalable Oversight and Weak-to-Strong Generalization; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Debate"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Tokenizer Distillation” matches the lesson’s treatment of Scalable Oversight and Weak-to-Strong Generalization; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "They both require white-box access"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Scalable oversight improves the overseer's effective signal quality; W2SG closes the gap from whatever imperfect signal the overseer provides” matches the lesson’s treatment of Scalable Oversight and Weak-to-Strong Generalization; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Both debaters always tell the truth"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Finding a convincing true answer is easier than finding a convincing false answer” matches the lesson’s treatment of Scalable Oversight and Weak-to-Strong Generalization; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

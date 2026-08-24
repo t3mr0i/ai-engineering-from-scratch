@@ -79,3 +79,13 @@ Lessons 20-21 are bias/fairness. Lesson 22 is privacy. Lesson 23 is provenance v
 - [Duan et al. — Canary MIA on LLMs (arXiv:2402.07841, 2024)](https://arxiv.org/abs/2402.07841) — limited-success MIA
 - [Kowalczyk et al. — Auditing DP for LLMs (arXiv:2503.06808, March 2025)](https://arxiv.org/abs/2503.06808) — resolution of the tension
 - [PMixED (arXiv:2403.15638)](https://arxiv.org/abs/2403.15638) — inference-time private prediction
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define (epsilon, delta)-differential privacy and state the DP-SGD recipe.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the 2024-2025 tension: canary MIA vs training-data extraction give different pictures.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe PMixED and why inference-time private prediction is an alternative to DP training.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define (epsilon, delta)-differential privacy and state the DP-SGD recipe,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe PMixED and why inference-time private prediction is an alternative to DP training,” and cite a repeatable check rather than relying on visual inspection alone.

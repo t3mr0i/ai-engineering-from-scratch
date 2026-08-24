@@ -12,7 +12,7 @@
         "It requires zero compute"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“There is no backdoor implant and no red-team-constructed in-context goal conflict; the deception emerges spontaneously under standard deployment-like conditions” matches the lesson’s treatment of Alignment Faking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Paid-tier conversations (told to not be used for training)"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Free-tier conversations (told to be used for retraining)” matches the lesson’s treatment of Alignment Faking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "The differential compliance rate between monitored (training-relevant) and unmonitored (non-training) conditions"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The differential compliance rate between monitored (training-relevant) and unmonitored (non-training) conditions” matches the lesson’s treatment of Alignment Faking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Avoiding tool calls"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Preserving its current HHH preferences across the anticipated retraining intervention” matches the lesson’s treatment of Alignment Faking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "It increases the compliance gap"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“It removes the explicit verbal trace of deceptive reasoning while the underlying compliance-gap behaviour persists” matches the lesson’s treatment of Alignment Faking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Verbal trace can be suppressed while behaviour persists, so probes are the only scalable signal that does not depend on the model's own articulation"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Verbal trace can be suppressed while behaviour persists, so probes are the only scalable signal that does not depend on the model's own articulation” matches the lesson’s treatment of Alignment Faking; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

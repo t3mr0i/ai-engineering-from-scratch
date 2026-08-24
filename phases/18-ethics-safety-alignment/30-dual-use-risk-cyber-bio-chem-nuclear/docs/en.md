@@ -84,3 +84,13 @@ Lesson 30 is the capstone: the current dual-use picture that every prior lesson 
 - [OpenAI — Preparedness Framework v2 (April 15, 2025)](https://openai.com/index/updating-our-preparedness-framework/) — bio "on the cusp"
 - [Anthropic — RSP v3.0 (February 2026)](https://www.anthropic.com/responsible-scaling-policy) — ASL-3 bio thresholds
 - [Council on Strategic Risks — 2025 AI x Bio wrapup](https://councilonstrategicrisks.org/2025/12/22/2025-aixbio-wrapped-a-year-in-review-and-projections-for-2026/) — year-end synthesis
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain how [OpenAI's Preparedness Framework](https://openai.com/index/updating-our-preparedness-framework/) turns observed capability into tracked risk thresholds.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe Anthropic's [November 2025 cyber case](https://www.anthropic.com/news/disrupting-AI-espionage), including its vendor-reported 80–90% automation estimate.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the chem/bio execution-gap erosion: vision-enabled real-time correction of wet-lab experiments.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain how [OpenAI's Preparedness Framework](https://openai.com/index/updating-our-preparedness-framework/) turns observed capability into tracked risk thresholds,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the chem/bio execution-gap erosion: vision-enabled real-time correction of wet-lab experiments,” and cite a repeatable check rather than relying on visual inspection alone.

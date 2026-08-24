@@ -9,7 +9,7 @@
         "Because model selection is never important",
         "Because teams need to know whether sources are allowed, fresh, representative, and good enough",
         "Because all internal documents are automatically safe",
-        "Because evaluation can be skipped when data is available"
+        "Because evaluation can be skipped when data is available — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "AI feasibility depends on source quality, ownership, permissions, and evaluation before model choice becomes meaningful."
@@ -33,7 +33,7 @@
         "A ranked plan with category, score, priority, controls, and rationale",
         "A trained retrieval model",
         "A production data lake",
-        "An automatic GDPR approval"
+        "An automatic GDPR approval, because one plausible output is sufficient production evidence"
       ],
       "correct": 0,
       "explanation": "The artifact is a lightweight triage planner for classroom and project use."
@@ -56,7 +56,7 @@
       "options": [
         "When impact, uncertainty, and data risk signals are high",
         "Only when the UI is finished",
-        "Only when the model is open source",
+        "Only when the model is open source — and applies unchanged even when the lesson's stated preconditions fail",
         "Never; data readiness is optional"
       ],
       "correct": 0,
@@ -69,7 +69,7 @@
         "To replace data ownership",
         "To make data assumptions visible enough for teams to challenge and improve them",
         "To hide quality gaps from stakeholders",
-        "To approve every use case automatically"
+        "To approve every use case automatically, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "The worksheet creates a practical shared artifact for discovery and pilot planning."

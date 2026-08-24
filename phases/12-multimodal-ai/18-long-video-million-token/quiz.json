@@ -1,0 +1,78 @@
+{
+  "lesson": "18-long-video-million-token",
+  "title": "Long-Video Understanding at Million-Token Context",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Long-Video Understanding at Million-Token Context?",
+      "options": [
+        "Compute total visual-token counts for long-form video at varying FPS and pooling",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compute total visual-token counts for long-form video at varying FPS and pooling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Long-Video Understanding at Million-Token Context?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Long-Video Understanding at Million-Token Context?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Compare raw-context video VLMs vs agentic-retrieval video VLMs (VideoAgent) on accuracy and latency",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Compare raw-context video VLMs vs agentic-retrieval video VLMs (VideoAgent) on accuracy and latency” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Long-Video Understanding at Million-Token Context?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Design a needle-in-a-haystack test for a 30-minute video and measure recall at a specific minute",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Design a needle-in-a-haystack test for a 30-minute video and measure recall at a specific minute” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Long-Video Understanding at Million-Token Context?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Compute total visual-token counts for long-form video at varying FPS and pooling"
+      ],
+      "correct": 3,
+      "explanation": "“Compute total visual-token counts for long-form video at varying FPS and pooling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Long-Video Understanding at Million-Token Context?",
+      "options": [
+        "Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

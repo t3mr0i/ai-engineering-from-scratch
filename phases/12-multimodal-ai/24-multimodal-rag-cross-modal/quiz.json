@@ -1,0 +1,78 @@
+{
+  "lesson": "24-multimodal-rag-cross-modal",
+  "title": "Multimodal RAG and Cross-Modal Retrieval",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Multimodal RAG and Cross-Modal Retrieval?",
+      "options": [
+        "Design cross-modal retrieval: text → image, image → text, audio → video, etc",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Design cross-modal retrieval: text → image, image → text, audio → video, etc” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Multimodal RAG and Cross-Modal Retrieval?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Multimodal RAG and Cross-Modal Retrieval?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Explain generation grounding: what \"cite your sources\" looks like when sources are a mix of modalities",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Explain generation grounding: what \"cite your sources\" looks like when sources are a mix of modalities” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Multimodal RAG and Cross-Modal Retrieval?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name the three canonical multimodal RAG surveys of 2025 and their sub-problem taxonomy",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name the three canonical multimodal RAG surveys of 2025 and their sub-problem taxonomy” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Multimodal RAG and Cross-Modal Retrieval?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Design cross-modal retrieval: text → image, image → text, audio → video, etc"
+      ],
+      "correct": 3,
+      "explanation": "“Design cross-modal retrieval: text → image, image → text, audio → video, etc” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Multimodal RAG and Cross-Modal Retrieval?",
+      "options": [
+        "Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

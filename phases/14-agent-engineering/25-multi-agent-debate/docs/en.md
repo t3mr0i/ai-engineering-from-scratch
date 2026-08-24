@@ -74,3 +74,13 @@ Implications:
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) — sparse topology results
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — orchestrator-workers as a debate variant
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) — single-model self-critique counterpart
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the debate protocol: N proposers, R rounds, converge on a shared answer.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe why debate improves factuality, rule-following, and reasoning.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain sparse topology: not every debater needs to see every other.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the debate protocol: N proposers, R rounds, converge on a shared answer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain sparse topology: not every debater needs to see every other,” and cite a repeatable check rather than relying on visual inspection alone.

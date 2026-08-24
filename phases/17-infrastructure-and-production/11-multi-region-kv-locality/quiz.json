@@ -12,7 +12,7 @@
         "Round-robin is only valid for stateful databases"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“A request that does not land on the node holding its prefix pays full prefill cost instead of a cache hit” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "KV-cache events from replicas and a prefix hash on the incoming request"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“KV-cache events from replicas and a prefix hash on the incoming request” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "About 1000x"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“About 10x (~80 ms vs ~800 ms)” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Saved prefill can be dwarfed by network RTT, e.g. 440 ms round-trip can dwarf an 800-to-80 ms prefill saving"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Saved prefill can be dwarfed by network RTT, e.g. 440 ms round-trip can dwarf an 800-to-80 ms prefill saving” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Unencrypted backups"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Backups that include weights but miss tokenizer files or quantization configs” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "They are forbidden under GDPR"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“They optimize availability, not TTFT, and treat inference as opaque — you still need an app-layer cache-aware router” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

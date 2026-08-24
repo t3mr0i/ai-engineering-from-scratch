@@ -66,3 +66,13 @@ This creates a `.venv` at the repo root with core dependencies installed and ver
 | pyproject.toml | "The new setup.py" | The standard Python project configuration file, replacing setup.py/setup.cfg/requirements.txt |
 | Transitive dependency | "A dependency of a dependency" | Package B depends on C; if you install A which depends on B, C is a transitive dependency of A |
 | CUDA mismatch | "My GPU isn't working" | PyTorch was compiled for a different CUDA version than what your GPU driver supports |
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Create isolated virtual environments using `uv`, `venv`, or `conda`.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Diagnose and fix common pitfalls: global installs, pip/conda mixing, CUDA version mismatches.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Create isolated virtual environments using `uv`, `venv`, or `conda`,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Diagnose and fix common pitfalls: global installs, pip/conda mixing, CUDA version mismatches,” and cite a repeatable check rather than relying on visual inspection alone.

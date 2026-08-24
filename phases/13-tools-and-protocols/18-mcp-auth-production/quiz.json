@@ -1,0 +1,78 @@
+{
+  "lesson": "18-mcp-auth-production",
+  "title": "MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "options": [
+        "Discover an authorization server through RFC 8414 metadata and verify the contract",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Discover an authorization server through RFC 8414 metadata and verify the contract” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement RFC 7591 dynamic client registration so MCP clients enroll without admin intervention",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement RFC 7591 dynamic client registration so MCP clients enroll without admin intervention” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Cache and refresh JWKS keys on a schedule so signature verification survives key roll-over",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Cache and refresh JWKS keys on a schedule so signature verification survives key roll-over” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Pin tokens to a single MCP resource using RFC 8707 resource indicators and refuse confused-deputy reuse",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Pin tokens to a single MCP resource using RFC 8707 resource indicators and refuse confused-deputy reuse” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Separate the three roles cleanly — authorization server, resource server, client — so each enforces only th..."
+      ],
+      "correct": 3,
+      "explanation": "“Separate the three roles cleanly — authorization server, resource server, client — so each enforces only th...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "options": [
+        "Read an IdP capability matrix and refuse to deploy when the IdP cannot satisfy MCP's auth profile",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Read an IdP capability matrix and refuse to deploy when the IdP cannot satisfy MCP's auth profile” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

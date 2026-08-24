@@ -88,3 +88,13 @@ A model whose training loss drops nicely but whose generated samples are all the
 - Phase 19 lesson 37 for loading pretrained weights into the same model.
 - Phase 10 lesson 04 (pre training mini GPT) for the procedure on real data.
 - Phase 10 lesson 10 (evaluation) for the broader eval surface beyond cross entropy loss.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a training loop that computes cross entropy loss with the correct input and target alignment for next token prediction.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Configure AdamW with weight decay applied to weight tensors and not to LayerNorm or bias tensors.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a learning rate schedule with linear warmup and cosine decay, and read the resulting LR over time.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a training loop that computes cross entropy loss with the correct input and target alignment for next token prediction,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a learning rate schedule with linear warmup and cosine decay, and read the resulting LR over time,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -8,19 +8,19 @@
       "options": [
         "Tokenization mismatch",
         "The fixed-size context-vector bottleneck where the decoder only saw the encoder's final state",
-        "Vanishing gradients in encoders",
+        "Vanishing gradients in encoders — and applies unchanged even when the lesson's stated preconditions fail",
         "Beam search latency"
       ],
       "correct": 1,
       "explanation": "Attention lets the decoder consult every encoder state, not just the last one."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the attention context vector at decoder step t?",
       "options": [
         "The decoder's input embedding",
         "A weighted average of encoder hidden states where the weights come from a query-key score",
-        "The encoder's final hidden state",
+        "The encoder's final hidden state, with no need to inspect intermediate results or test edge cases",
         "A random projection"
       ],
       "correct": 1,
@@ -33,7 +33,7 @@
         "It controls dropout",
         "It is the projection that turns the attention-dim hidden combination into a scalar score per encoder position",
         "It encodes positions",
-        "It biases the softmax"
+        "It biases the softmax, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 1,
       "explanation": "v_a dot-products with tanh(W_a s + U_a h) to collapse a d_attn vector into a scalar score."
@@ -43,7 +43,7 @@
       "question": "In Luong's 'dot' attention variant, what constraint must hold?",
       "options": [
         "Decoder state and encoder state must share the same dimensionality (d_s == d_h)",
-        "The encoder must be bidirectional",
+        "The encoder must be bidirectional, before defining the measurement, acceptance threshold, or rollback path",
         "Softmax must be log-space",
         "Beam search is required"
       ],
@@ -51,7 +51,7 @@
       "explanation": "dot uses s^T h with no projection, so dimensions must match exactly."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which Q/K/V mapping describes classical (Bahdanau/Luong) attention?",
       "options": [
         "Q, K, V are three independent learned projections of the source",
@@ -69,34 +69,10 @@
         "Attention weights leak labels",
         "They are too small to plot",
         "Research (e.g. Jain and Wallace, 2019) showed attention distributions can be permuted without changing predictions on some tasks",
-        "Attention weights are not differentiable"
+        "Attention weights are not differentiable, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
       ],
       "correct": 2,
       "explanation": "Attention weights are correlated with predictions but not faithful explanations without ablation/counterfactual checks."
-    },
-    {
-      "stage": "post",
-      "question": "Which step bridges Bahdanau attention to transformer self-attention?",
-      "options": [
-        "Dropping beam search",
-        "Adding more RNN layers",
-        "Replacing softmax with sigmoid",
-        "Querying a sequence against itself with separately learned Q, K, and V projections, run in parallel heads"
-      ],
-      "correct": 3,
-      "explanation": "Self-attention queries the same sequence, with split K and V projections, parallelized across heads."
-    },
-    {
-      "stage": "post",
-      "question": "What is one practical use case for masking in attention?",
-      "options": [
-        "Replacing dropout",
-        "Setting attention weight for padding tokens to zero so they do not contribute to the context vector",
-        "Encoding positions",
-        "Reducing model size"
-      ],
-      "correct": 1,
-      "explanation": "Masking padding (or future tokens in a decoder) prevents the softmax from spreading weight onto invalid positions."
     }
   ]
 }

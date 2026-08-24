@@ -92,3 +92,13 @@ Build from real traffic samples (if you have them) or from published distributio
 - [TrueFoundry — LLM-Locust](https://www.truefoundry.com/blog/llm-locust-a-tool-for-benchmarking-llm-performance)
 - [LLMPerf](https://github.com/ray-project/llmperf)
 - [k6 Operator](https://github.com/grafana/k6-operator)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the two anti-patterns (GIL trap, prompt-uniformity trap) that make generic load testers lie for LLM APIs.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Pick a tool for a given purpose: LLMPerf (benchmark run), k6 + streaming extension (CI gate), guidellm (large-scale synthetic), GenAI-Perf (NVIDIA reference).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Design four load patterns (steady, ramp, spike, soak) and name the failure mode each catches.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the two anti-patterns (GIL trap, prompt-uniformity trap) that make generic load testers lie for LLM APIs,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Design four load patterns (steady, ramp, spike, soak) and name the failure mode each catches,” and cite a repeatable check rather than relying on visual inspection alone.

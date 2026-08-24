@@ -141,3 +141,13 @@ All three compose: the agent reads AGENTS.md on session start, the user invokes 
 - [OpenAI — Apps SDK](https://developers.openai.com/apps-sdk) — MCP-based developer platform for ChatGPT
 - [agents.md](https://agents.md/) — AGENTS.md format and adoption list
 - [Anthropic — anthropics/skills GitHub](https://github.com/anthropics/skills) — official skill examples
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Write a SKILL.md with YAML frontmatter and progressive disclosure.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Load skills filesystem-style into an agent runtime.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Load skills filesystem-style into an agent runtime,” and cite a repeatable check rather than relying on visual inspection alone.

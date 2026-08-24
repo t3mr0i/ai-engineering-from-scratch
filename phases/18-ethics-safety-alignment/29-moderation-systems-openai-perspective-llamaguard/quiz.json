@@ -1,6 +1,6 @@
 {
   "lesson": "29-moderation-systems-openai-perspective-llamaguard",
-  "title": "Moderation Systems - OpenAI, Perspective, Llama Guard",
+  "title": "Moderation Systems — OpenAI, Perspective, Llama Guard",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "A GPT-4o-based moderation classifier that handles text and images in one call, returning a 13-category response schema (harassment, hate, self-harm, sexual, violence, illicit, with sub-categories), free for most developers"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“A GPT-4o-based moderation classifier that handles text and images in one call, returning a 13-category response schema (harassment, hate, self-harm, sexual, violence, illicit, with sub-categories), free for most developers” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "harassment"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“election-interference” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Input moderation (pre-generation), Output moderation (post-generation), Custom moderation (domain rules)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Input moderation (pre-generation), Output moderation (post-generation), Custom moderation (domain rules)” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Reward over user satisfaction"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Toxicity (with severe-toxicity, insult, profanity, threat, identity-attack sub-dimensions) as a pre-LLM-era content-moderation baseline” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "It removes the need for output classifiers"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“It does not catch model output failures or hallucinations; encoding attacks (Lessons 12-14) can bypass input classifiers entirely” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Deprecated immediately with no replacement"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Deprecated February 2024, retired March 15, 2027; migration target is Azure AI Content Safety (LLM-based, integrated with Azure OpenAI)” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

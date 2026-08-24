@@ -97,3 +97,13 @@ FinOps for LLMs (Phase 17 · 27) introduces practices from cloud financial manag
 - [FinOps Foundation — FinOps Framework](https://www.finops.org/framework/) — the vendor-neutral framework for cloud financial management; the LLM adaptation in Phase 17 · 27 maps directly onto the inform/optimise/operate cycle.
 - [Martin Fowler — Cost of software](https://martinfowler.com/articles/is-quality-worth-cost.html) — the broader argument for cost-of-quality accounting; the reasoning applies directly to "invest in prompt engineering to reduce output tokens."
 - [OpenAI — Latency optimization](https://platform.openai.com/docs/guides/latency-optimization) — model-agnostic guidance on the same cache/route/trim levers; useful as a cross-vendor reference for the same structural decisions.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Cost and Value Economics: From Token Price to Business Case (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Cost and Value Economics: From Token Price to Business Case (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -114,3 +114,13 @@ Linear probe is a pure measure of feature quality; fine-tuning typically adds 2-
 - [DINO (Caron et al., 2021)](https://arxiv.org/abs/2104.14294) — teacher-student with momentum, centring, sharpening
 - [MAE (He et al., 2022)](https://arxiv.org/abs/2111.06377) — masked autoencoder pretraining for ViT
 - [DINOv2 (Oquab et al., 2023)](https://arxiv.org/abs/2304.07193) — scaling self-supervised ViT to production features
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Trace the three major self-supervised families — contrastive (SimCLR), teacher-student (DINO), masked reconstruction (MAE) — and state what each one optimises.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement an InfoNCE loss from scratch and explain why a batch of 512 works but a batch of 32 fails.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why MAE's 75% masking ratio is not arbitrary and how it differs from BERT's 15% for text.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Trace the three major self-supervised families — contrastive (SimCLR), teacher-student (DINO), masked reconstruction (MAE) — and state what each one optimises,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why MAE's 75% masking ratio is not arbitrary and how it differs from BERT's 15% for text,” and cite a repeatable check rather than relying on visual inspection alone.

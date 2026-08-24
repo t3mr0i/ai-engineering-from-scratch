@@ -7,7 +7,7 @@
       "question": "Why must AI-generated finance narratives be reviewed carefully?",
       "options": [
         "They can sound plausible while hiding weak data, wrong assumptions, or missing approvals",
-        "They use a different tone from the commentary the controlling team normally writes",
+        "They use a different tone from the commentary the controlling team normally writes — and applies unchanged even when the lesson's stated preconditions fail",
         "They take longer to produce than the manual variance commentary they replace",
         "They cannot reach the ledger directly, so every figure has to be typed in by hand"
       ],
@@ -19,7 +19,7 @@
       "question": "An AI draft explains a budget variance using a figure that does not match the ledger. Which signal is that?",
       "options": [
         "Source mismatch - the narrative and the underlying data disagree, so the source trace failed",
-        "Forecast uncertainty - the projection carries a range the narrative did not state clearly",
+        "Forecast uncertainty - the projection carries a range the narrative did not state clearly, with no need to inspect intermediate results or test edge cases",
         "Approval risk - the commentary was shared before the approval owner had reviewed it",
         "Variance gap - a movement in the numbers was left without any explanation at all"
       ],

@@ -63,3 +63,7 @@ evaluator and scope contract have independent tests.
 
 - [Phase 14 · 43 — Loop Engineering](../../43-loop-engineering/docs/en.md)
 - [Phase 14 · 52 — Workflow Graph](../../52-workflow-graph/docs/en.md)
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish manual, goal, timer, and event triggers,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare human interventions with an automated run on the same fixture task,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -323,3 +323,13 @@ clf = Pipeline([
 - [Platt: Sequential Minimal Optimization (1998)](https://www.microsoft.com/en-us/research/publication/sequential-minimal-optimization-a-fast-algorithm-for-training-support-vector-machines/) - the SMO algorithm that made SVM training practical
 - [scikit-learn SVM documentation](https://scikit-learn.org/stable/modules/svm.html) - practical guide with implementation details
 - [LIBSVM: A Library for Support Vector Machines](https://www.csie.ntu.edu.tw/~cjlin/libsvm/) - the C++ library behind most SVM implementations
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a linear SVM from scratch using hinge loss and gradient descent on the primal formulation.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the maximum margin principle and identify support vectors from a trained model.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare linear, polynomial, and RBF kernels and explain how the kernel trick avoids explicit high-dimensional mapping.
+
+## Reference Solution
+
+Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a linear SVM from scratch using hinge loss and gradient descent on the primal formulation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare linear, polynomial, and RBF kernels and explain how the kernel trick avoids explicit high-dimensional mapping,” and cite a repeatable check rather than relying on visual inspection alone.

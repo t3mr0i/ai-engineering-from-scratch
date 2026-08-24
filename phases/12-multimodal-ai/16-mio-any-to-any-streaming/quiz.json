@@ -1,0 +1,78 @@
+{
+  "lesson": "16-mio-any-to-any-streaming",
+  "title": "MIO and Any-to-Any Streaming Multimodal Models",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MIO and Any-to-Any Streaming Multimodal Models?",
+      "options": [
+        "Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MIO and Any-to-Any Streaming Multimodal Models?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MIO and Any-to-Any Streaming Multimodal Models?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Explain the four-stage curriculum that builds up any-to-any generation",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Explain the four-stage curriculum that builds up any-to-any generation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MIO and Any-to-Any Streaming Multimodal Models?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name the three open any-to-any recipes and their main trade-offs: MIO, AnyGPT, Unified-IO 2",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name the three open any-to-any recipes and their main trade-offs: MIO, AnyGPT, Unified-IO 2” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MIO and Any-to-Any Streaming Multimodal Models?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions"
+      ],
+      "correct": 3,
+      "explanation": "“Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MIO and Any-to-Any Streaming Multimodal Models?",
+      "options": [
+        "Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

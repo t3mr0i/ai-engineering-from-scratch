@@ -158,3 +158,13 @@ Read `main.py` top to bottom. The function ordering goes scalar to vector to rep
 ## Going further
 
 Calibration is the most ignored axis in published eval. Most leaderboards report a single accuracy number and call it done. A model that wins on accuracy and loses on Brier is a worse production deployment than a model that scores a few points lower on accuracy but reliably reports its uncertainty. Once you have the calibration plumbing in place, add temperature scaling on a held-out validation slice, recompute ECE, and watch the gap shrink. That is a separate lesson, but the floor lives here.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute token-level perplexity on a held-out corpus from token negative log-probabilities supplied by the model adapter.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute the expected calibration error (ECE) of a classifier or multiple-choice eval from binned predicted probabilities.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute the Brier score (mean squared error against the indicator of correctness) and explain when it does what ECE does not.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute token-level perplexity on a held-out corpus from token negative log-probabilities supplied by the model adapter,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute the Brier score (mean squared error against the indicator of correctness) and explain when it does what ECE does not,” and cite a repeatable check rather than relying on visual inspection alone.

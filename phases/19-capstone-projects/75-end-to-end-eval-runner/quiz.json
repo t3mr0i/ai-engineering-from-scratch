@@ -15,7 +15,7 @@
       "explanation": "One method covers any adapter. Everything else is optional decoration. The runner does not need a richer surface."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does the runner accept a parallel flag rather than always running in parallel?",
       "options": [
         "Parallel execution is unsafe in CPython",
@@ -51,7 +51,7 @@
       "explanation": "Composition over inlining. The runner produces records; the aggregator owns the leaderboard math. Each lesson owns one concern."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is the role of the perplexity block in the final JSON envelope?",
       "options": [
         "It is required for the leaderboard ranking",

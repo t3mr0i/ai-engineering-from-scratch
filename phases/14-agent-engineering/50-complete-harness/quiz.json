@@ -2,11 +2,77 @@
   "lesson": "50-complete-harness",
   "title": "Complete Harness",
   "questions": [
-    {"stage": "pre", "question": "What is the purpose of composing seven surfaces?", "options": ["Make the full reliability contract explicit", "Hide all of the harness's controls", "Remove the independent review step", "Automate the whole production deployment now"], "correct": 0, "explanation": "Composition connects the mechanisms while keeping ownership visible."},
-    {"stage": "check", "question": "What does the harness control plane do?", "options": ["Write arbitrary files to production", "Replace the underlying model entirely", "Evaluate evidence and route readiness", "Delete receipts from failed checks"], "correct": 2, "explanation": "The control plane governs decisions around the model."},
-    {"stage": "check", "question": "When is a report ready in this project?", "options": ["When the maker's note simply sounds confident", "When exactly one test happens to pass", "When the candidate diff is simply large", "When scope, feedback, checks, and review pass"], "correct": 3, "explanation": "Readiness requires all evidence categories."},
-    {"stage": "check", "question": "What should a blocked handoff contain?", "options": ["No context at all about what happened", "The failed surface and next repair action", "A success claim offered with no real evidence", "A fully hidden, unrecorded exception"], "correct": 1, "explanation": "A blocked state must preserve actionable context."},
-    {"stage": "post", "question": "Why keep instructions as a separate field?", "options": ["To count the words used in the prompt", "To avoid persisting any durable state", "To fully replace the scope contract instead", "To prove which startup rules were loaded"], "correct": 3, "explanation": "Surface ownership remains reviewable when it is explicit."},
-    {"stage": "post", "question": "What should happen after a ready report?", "options": ["An irreversible deploy that runs automatically", "Erasing the report once it is marked ready", "Human approval or the configured next gate", "Skipping the handoff to the next session"], "correct": 2, "explanation": "Readiness is evidence for the next gate, not permission for every side effect."}
+    {
+      "stage": "pre",
+      "question": "What is the purpose of composing seven surfaces?",
+      "options": [
+        "Make the full reliability contract explicit",
+        "Hide all of the harness's controls",
+        "Remove the independent review step",
+        "Automate the whole production deployment now"
+      ],
+      "correct": 0,
+      "explanation": "Composition connects the mechanisms while keeping ownership visible."
+    },
+    {
+      "stage": "check",
+      "question": "What does the harness control plane do?",
+      "options": [
+        "Write arbitrary files to production",
+        "Replace the underlying model entirely",
+        "Evaluate evidence and route readiness",
+        "Delete receipts from failed checks"
+      ],
+      "correct": 2,
+      "explanation": "The control plane governs decisions around the model."
+    },
+    {
+      "stage": "check",
+      "question": "When is a report ready in this project?",
+      "options": [
+        "When the maker's note simply sounds confident",
+        "When exactly one test happens to pass",
+        "When the candidate diff is simply large",
+        "When scope, feedback, checks, and review pass"
+      ],
+      "correct": 3,
+      "explanation": "Readiness requires all evidence categories."
+    },
+    {
+      "stage": "check",
+      "question": "What should a blocked handoff contain?",
+      "options": [
+        "No context at all about what happened",
+        "The failed surface and next repair action",
+        "A success claim offered with no real evidence",
+        "A fully hidden, unrecorded exception"
+      ],
+      "correct": 1,
+      "explanation": "A blocked state must preserve actionable context."
+    },
+    {
+      "stage": "post",
+      "question": "Why keep instructions as a separate field?",
+      "options": [
+        "To count the words used in the prompt",
+        "To avoid persisting any durable state",
+        "To fully replace the scope contract instead",
+        "To prove which startup rules were loaded"
+      ],
+      "correct": 3,
+      "explanation": "Surface ownership remains reviewable when it is explicit."
+    },
+    {
+      "stage": "post",
+      "question": "What should happen after a ready report?",
+      "options": [
+        "An irreversible deploy that runs automatically",
+        "Erasing the report once it is marked ready",
+        "Human approval or the configured next gate",
+        "Skipping the handoff to the next session"
+      ],
+      "correct": 2,
+      "explanation": "Readiness is evidence for the next gate, not permission for every side effect."
+    }
   ]
 }

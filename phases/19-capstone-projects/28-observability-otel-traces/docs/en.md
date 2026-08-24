@@ -96,3 +96,13 @@ python3 -m pytest code/tests/ -v
 ```
 
 The demo emits a `traces.jsonl` in the lesson's working dir (cleaned up at the end), then prints a sample of three spans, then prints the Prometheus exposition for the counters and histograms. The tests verify that spans serialise round-trip, that the canonical GenAI attributes are present, that counters increment correctly, and that the histogram exposition contains the expected bucket counts.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a span data class shaped to the OpenTelemetry GenAI semantic conventions.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a JSONL exporter that writes one self-contained span per line.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build counters and histograms with labels and Prometheus text-format exposition.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a span data class shaped to the OpenTelemetry GenAI semantic conventions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build counters and histograms with labels and Prometheus text-format exposition,” and cite a repeatable check rather than relying on visual inspection alone.

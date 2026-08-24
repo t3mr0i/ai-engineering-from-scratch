@@ -172,3 +172,13 @@ Read `main.py` top to bottom. The data shape (EvalRun, LeaderboardRow) comes fir
 ## Going further
 
 The natural next step is paired-task significance instead of unpaired bootstrap. If model A and B both ran the same hundred tasks, the appropriate test is the paired bootstrap on task-by-task differences, which we implement. Beyond that, you want a hierarchical bootstrap that respects task families (math problems are not independent from each other; an arithmetic error pattern affects ten of them). That is a follow-up. The point of this lesson is to get the floor right so the eval reports a number you can defend.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Aggregate per-task scores across multiple models and multiple tasks into a tidy per-model row.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Normalise heterogeneous scores so that pass rates and BLEU values do not over-influence the aggregate.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Rank models by mean and by win-rate, and explain when each is the right summary.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Aggregate per-task scores across multiple models and multiple tasks into a tidy per-model row,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Rank models by mean and by win-rate, and explain when each is the right summary,” and cite a repeatable check rather than relying on visual inspection alone.

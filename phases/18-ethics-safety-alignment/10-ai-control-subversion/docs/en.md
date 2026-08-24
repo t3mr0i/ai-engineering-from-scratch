@@ -84,3 +84,13 @@ Lessons 6-9 describe the threat (deception is possible). Lesson 10 describes the
 - [Redwood Research — Recent AI Control papers index](https://redwoodresearch.substack.com/) — 2024-2025 follow-ups
 - [UK AISI + METR — Control safety cases](https://metr.org/blog/2025-03-26-common-elements-of-frontier-ai-safety-policies/) — operationalization for frontier labs
 - [Hubinger et al. — Sleeper Agents (Lesson 7, arXiv:2401.05566)](https://arxiv.org/abs/2401.05566) — the threat model control assumes
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define the AI Control threat model: untrusted strong model U, trusted weaker model T, trusted human budget H.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the Trusted Editing protocol and why it Pareto-dominates Untrusted Monitoring on the ICML 2024 code-backdoor task.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the difference between alignment (U is trustworthy) and control (U is not trustworthy and we are safe anyway).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define the AI Control threat model: untrusted strong model U, trusted weaker model T, trusted human budget H,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the difference between alignment (U is trustworthy) and control (U is not trustworthy and we are safe anyway),” and cite a repeatable check rather than relying on visual inspection alone.

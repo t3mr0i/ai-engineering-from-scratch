@@ -74,3 +74,13 @@ The template in `outputs/checklist-ai-security-triage.md` can be used before an 
 - Tool access requires explicit approval and audit controls.
 - Security controls should be proportional to impact and uncertainty.
 - AI security work belongs in the design phase, not only at go-live.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify common AI security signals in prompts, tools, retrieval, and outputs.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a lightweight threat-triage artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map prompt injection, data leakage, unsafe tool use, and audit gaps to controls.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify common AI security signals in prompts, tools, retrieval, and outputs,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map prompt injection, data leakage, unsafe tool use, and audit gaps to controls,” and cite a repeatable check rather than relying on visual inspection alone.

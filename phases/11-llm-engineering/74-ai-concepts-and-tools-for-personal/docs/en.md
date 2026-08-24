@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering fundamentals), Phase 11 · 02 (Few-shot and chain-of-thought)
-**Time:** ~45 minutes
+**Time:** ~120 minutes
 
 ## Learning Objectives
 
@@ -123,3 +123,13 @@ The trap is treating all three as "delegation" and applying the same supervisory
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://airc.nist.gov/) — the governance framework for AI risk identification and control; widely referenced in enterprise AI policy.
 - [EU AI Act — Official text and guidance](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) — binding EU regulation; risk tiers and obligations that affect how organizations classify and deploy AI tools, phasing in from 2025 through 2028 (high-risk obligations from 2 December 2027 per Regulation (EU) 2026/1744).
 - [Papers With Code — Retrieval-Augmented Generation survey](https://paperswithcode.com/task/retrieval-augmented-generation) — living benchmark index for RAG approaches; useful for evaluating internal RAG toolchain claims.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Choosing and Using AI Tools for Personal Productivity (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Choosing and Using AI Tools for Personal Productivity (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

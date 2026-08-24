@@ -12,10 +12,10 @@
         "To raise the severity score of every prompt"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“So a shared label lets the team turn an attack stream into a histogram and drive coverage” matches the lesson’s treatment of Capstone 82 — Jailbreak Taxonomy; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Along which axis does the taxonomy partition attacks?",
       "options": [
         "Length of the prompt in tokens",
@@ -24,7 +24,7 @@
         "The publication date of the underlying paper"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Which trust boundary the attack abuses” matches the lesson’s treatment of Capstone 82 — Jailbreak Taxonomy; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "instruction-override"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“instruction-override” matches the lesson’s treatment of Capstone 82 — Jailbreak Taxonomy; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Every severity is in the 1 to 5 range"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Every fixture's prompt parses as valid JSON” matches the lesson’s treatment of Capstone 82 — Jailbreak Taxonomy; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the match method return for a candidate prompt?",
       "options": [
         "A boolean indicating whether the prompt is harmful",
@@ -60,7 +60,7 @@
         "The model's refusal text"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The nearest fixture by character trigram cosine and its category” matches the lesson’s treatment of Capstone 82 — Jailbreak Taxonomy; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Because numpy cannot compute integers"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Because severity depends on the deployed system's policy and impact, which is editorial judgment two reviewers can audit” matches the lesson’s treatment of Capstone 82 — Jailbreak Taxonomy; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

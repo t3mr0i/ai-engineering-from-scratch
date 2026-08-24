@@ -1,0 +1,78 @@
+{
+  "lesson": "02-clip-contrastive-pretraining",
+  "title": "CLIP and Contrastive Vision-Language Pretraining",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to CLIP and Contrastive Vision-Language Pretraining?",
+      "options": [
+        "Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of CLIP and Contrastive Vision-Language Pretraining?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through CLIP and Contrastive Vision-Language Pretraining?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Run zero-shot ImageNet classification by constructing text templates (`a photo of a {class}`) and taking ar...",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Run zero-shot ImageNet classification by constructing text templates (`a photo of a {class}`) and taking ar...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits CLIP and Contrastive Vision-Language Pretraining?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name the four levers CLIP / SigLIP pretraining gives you: batch size, temperature, prompt template, data qu...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name the four levers CLIP / SigLIP pretraining gives you: batch size, temperature, prompt template, data qu...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for CLIP and Contrastive Vision-Language Pretraining?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version"
+      ],
+      "correct": 3,
+      "explanation": "“Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for CLIP and Contrastive Vision-Language Pretraining?",
+      "options": [
+        "Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

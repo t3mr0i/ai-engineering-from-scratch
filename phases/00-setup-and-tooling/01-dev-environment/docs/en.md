@@ -53,3 +53,13 @@ This lesson produces a verification script that anyone can run to check their se
 
 See `outputs/prompt-env-check.md` for a prompt that helps AI assistants diagnose environment issues.
 
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Set up Python 3.11+, Node.js 20+, and Rust toolchains from scratch.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Configure virtual environments and package managers for reproducible builds.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Verify GPU access with CUDA/MPS and run a test tensor operation.
+
+## Reference Solution
+
+Use the canonical [main.rs](../code/main.rs) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Set up Python 3.11+, Node.js 20+, and Rust toolchains from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Verify GPU access with CUDA/MPS and run a test tensor operation,” and cite a repeatable check rather than relying on visual inspection alone.
+

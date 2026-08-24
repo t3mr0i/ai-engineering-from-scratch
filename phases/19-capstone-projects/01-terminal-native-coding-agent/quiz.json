@@ -12,10 +12,10 @@
         "Fetch, embed, rank, synthesize"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Plan, act, observe, recover” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does the harness run each task inside an E2B or Daytona sandbox?",
       "options": [
         "To isolate filesystem and tool execution from the host so the worktree can be torn down on completion",
@@ -24,7 +24,7 @@
         "To enable GPU access for the agent loop"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“To isolate filesystem and tool execution from the host so the worktree can be torn down on completion” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "PostToolUse"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“PreToolUse” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Model overfitting to tool-call traces"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Context poisoning and runaway cost when a tool returns a large dump” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the PreCompact hook do at the 150k-token mark?",
       "options": [
         "Cancels the run and refunds the user budget",
@@ -60,7 +60,7 @@
         "Switches the backing model to a smaller draft model"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Summarizes older turns into a prior-state block so the plan and new observations still fit” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "Aider"
       ],
       "correct": 1,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Which metric set is the deliverable measuring against?",
-      "options": [
-        "WER, MOS, and first-audio-out",
-        "Perplexity, BLEU, and ROUGE",
-        "pass@1, turns-per-task, and dollar-per-task",
-        "MRR@10 and nDCG@10"
-      ],
-      "correct": 2,
-      "explanation": ""
+      "explanation": "“mini-swe-agent” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

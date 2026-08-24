@@ -107,3 +107,13 @@ AnyGPT (Zhan et al., 2024) extends Chameleon to four modalities: text, image, sp
 - [Yu et al. — CM3Leon (arXiv:2309.02591)](https://arxiv.org/abs/2309.02591)
 - [Zhan et al. — AnyGPT (arXiv:2402.12226)](https://arxiv.org/abs/2402.12226)
 - [Adept — Fuyu-8B blog (adept.ai)](https://www.adept.ai/blog/fuyu-8b)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why a shared vocabulary + single loss changes what the model can do.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe how a VQ-VAE tokenizes an image into a discrete sequence compatible with a transformer's next-token objective.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name Chameleon's training-stability tricks: QK-Norm, dropout placement, LayerNorm ordering.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why a shared vocabulary + single loss changes what the model can do,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name Chameleon's training-stability tricks: QK-Norm, dropout placement, LayerNorm ordering,” and cite a repeatable check rather than relying on visual inspection alone.

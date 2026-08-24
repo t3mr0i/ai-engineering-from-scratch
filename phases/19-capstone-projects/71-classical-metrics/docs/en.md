@@ -174,3 +174,13 @@ Read `main.py` top to bottom. The functions are ordered by complexity. exact_mat
 ## Going further
 
 The classical metrics are necessary, not sufficient. They reward surface overlap and miss meaning. The fix is to layer model-based metrics on top (BLEURT, BERTScore, GEval) once you trust the classical floor. That is a later lesson. For now: make these five work, pin them with tests, and you have a metric stack that is auditable, fast, and reproducible.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement token-level exact-match, F1, and accuracy with explicit tokenisation rules.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement BLEU-4 from the ground up: modified n-gram precision, geometric mean over n equals 1 through 4, brevity penalty.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement ROUGE-L using longest common subsequence, with F-beta combination of precision and recall.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement token-level exact-match, F1, and accuracy with explicit tokenisation rules,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement ROUGE-L using longest common subsequence, with F-beta combination of precision and recall,” and cite a repeatable check rather than relying on visual inspection alone.

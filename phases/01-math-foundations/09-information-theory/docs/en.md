@@ -329,3 +329,13 @@ The `p > 0` mask is the same convention every ML framework uses: by definition, 
 - [Shannon 1948: A Mathematical Theory of Communication](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) - the original paper, still readable
 - [Visual Information Theory (Chris Olah)](https://colah.github.io/posts/2015-09-Visual-Information/) - best visual explanation of entropy and KL divergence
 - [PyTorch CrossEntropyLoss docs](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) - how the framework implements what you just built
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Compute entropy, cross-entropy, and KL divergence from scratch and explain their relationship.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Derive why minimizing cross-entropy loss is equivalent to maximizing log-likelihood.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Calculate mutual information between features and a target to rank feature importance.
+
+## Reference Solution
+
+A complete response first demonstrates “Compute entropy, cross-entropy, and KL divergence from scratch and explain their relationship” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Derive why minimizing cross-entropy loss is equivalent to maximizing log-likelihood.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Calculate mutual information between features and a target to rank feature importance.” Unsupported preference statements are not sufficient.

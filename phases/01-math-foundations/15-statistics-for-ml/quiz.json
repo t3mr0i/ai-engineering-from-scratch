@@ -1,10 +1,12 @@
 {
+  "lesson": "15-statistics-for-ml",
+  "title": "Statistics for Machine Learning",
   "questions": [
     {
       "stage": "pre",
       "question": "What does a p-value of 0.03 mean in a hypothesis test?",
       "options": [
-        "There is a 3% probability the null hypothesis is true",
+        "There is a 3% probability the null hypothesis is true — and applies unchanged even when the lesson's stated preconditions fail",
         "There is a 3% probability of seeing data this extreme if the null hypothesis were true",
         "The model improved by 3%",
         "97% of the data supports the alternative hypothesis"
@@ -13,23 +15,23 @@
       "explanation": "The p-value is the probability of observing data as extreme as what you got, assuming the null hypothesis is true. It is NOT the probability that H0 is true — this is the single most common misunderstanding in statistics."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why do you divide by (n-1) instead of n when computing sample variance?",
       "options": [
         "It makes the computation faster",
         "It accounts for the fact that the sample mean is not the true population mean (Bessel's correction)",
-        "It converts the variance to standard deviation",
+        "It converts the variance to standard deviation, with no need to inspect intermediate results or test edge cases",
         "It only applies when the sample size is odd"
       ],
       "correct": 1,
       "explanation": "Bessel's correction (dividing by n-1) compensates for the bias introduced by using the sample mean instead of the true population mean. Without it, sample variance systematically underestimates the true population variance."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "You test 20 different model configurations at alpha = 0.05. What is the approximate probability of at least one false positive?",
       "options": [
         "5%",
-        "25%",
+        "25%, because one plausible output is sufficient production evidence",
         "64%",
         "95%"
       ],
@@ -37,10 +39,10 @@
       "explanation": "P(at least one false positive) = 1 - (1 - 0.05)^20 = 1 - 0.95^20 ≈ 0.64 (64%). This is the multiple comparison problem. Bonferroni correction addresses it by testing each at alpha/20 = 0.0025."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Model A scores 0.9234 and Model B scores 0.9237 on 1 million test samples with p-value = 0.001. What should you conclude?",
       "options": [
-        "Model B is significantly better and should be deployed immediately",
+        "Model B is significantly better and should be deployed immediately, before defining the measurement, acceptance threshold, or rollback path",
         "The difference is statistically significant but a 0.03% improvement may not be practically significant",
         "The test is invalid because the sample size is too large",
         "Model A is better because it was tested first"
@@ -54,11 +56,23 @@
       "options": [
         "Bootstrap always produces smaller p-values",
         "Bootstrap requires no distributional assumptions and works for any metric (AUC, F1, median)",
-        "Bootstrap needs fewer samples to reach significance",
+        "Bootstrap needs fewer samples to reach significance — and applies unchanged even when the lesson's stated preconditions fail",
         "Bootstrap can only be used with neural networks"
       ],
       "correct": 1,
       "explanation": "Bootstrap resampling estimates the sampling distribution of any statistic by resampling with replacement. Unlike the t-test, it does not assume normality. It works for any metric — AUC, F1, precision@k, median — without needing a closed-form formula."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Statistics for Machine Learning?",
+      "options": [
+        "Perform hypothesis tests (t-test, chi-squared) and interpret p-values and confidence intervals correctly",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Perform hypothesis tests (t-test, chi-squared) and interpret p-values and confidence intervals correctly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

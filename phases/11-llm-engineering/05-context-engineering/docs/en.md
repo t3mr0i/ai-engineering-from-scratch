@@ -629,3 +629,13 @@ print("-" * 55)
 - [Liu et al., 2023 -- "Lost in the Middle: How Language Models Use Long Contexts"](https://arxiv.org/abs/2307.03172) -- the definitive study on position-dependent attention.
 - [Anthropic's Contextual Retrieval blog post](https://www.anthropic.com/news/contextual-retrieval) -- how Anthropic approaches context-aware chunk retrieval.
 - [Simon Willison's "Context Engineering"](https://simonwillison.net/2025/Jun/27/context-engineering/) -- the blog post that named the discipline.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Calculate token budgets across all context window components (system prompt, tools, history, retrieved docs, generation headroom).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement context window management strategies: truncation, summarization, and sliding window for conversation history.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Prioritize and order context components to maximize the model's attention on the most relevant information.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Calculate token budgets across all context window components (system prompt, tools, history, retrieved docs, generation headroom),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Prioritize and order context components to maximize the model's attention on the most relevant information,” and cite a repeatable check rather than relying on visual inspection alone.

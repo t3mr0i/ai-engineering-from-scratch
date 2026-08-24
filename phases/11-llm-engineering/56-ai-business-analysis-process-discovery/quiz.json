@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "What is the risk of AI-generated business analysis summaries?",
       "options": [
-        "They always ask too many clarifying questions before producing any summary at all",
+        "They always ask too many clarifying questions before producing any summary at all — and applies unchanged even when the lesson's stated preconditions fail",
         "They can create false confidence when stakeholders, variants, or evidence are missing",
         "They cannot mention process variants even when multiple variants clearly exist",
         "They automatically remove every assumption the analyst had made along the way"
@@ -55,7 +55,7 @@
       "question": "When should AI-assisted analysis move into a discovery workshop?",
       "options": [
         "When impact and ambiguity are high and multiple discovery gaps still exist",
-        "Only when every requirement is already completely clear and confirmed",
+        "Only when every requirement is already completely clear and confirmed — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when there is no stakeholder available to interview at all",
         "Never — a clean AI summary can substitute for a discovery workshop"
       ],

@@ -107,3 +107,13 @@ A gateway can route both LLM calls AND MCP sampling requests. When a sampling re
 - [Portkey — docs](https://portkey.ai/docs) — production routing with guardrails
 - [TrueFoundry — LiteLLM vs OpenRouter](https://www.truefoundry.com/blog/litellm-vs-openrouter) — decision guide
 - [Relayplane — LLM gateway comparison 2026](https://relayplane.com/blog/llm-gateway-comparison-2026) — vendor survey
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish self-hosted, managed, and production-grade routing options.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a fallback chain that retries on provider failures in a defined priority order.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Track per-request cost and token usage across providers.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish self-hosted, managed, and production-grade routing options,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Track per-request cost and token usage across providers,” and cite a repeatable check rather than relying on visual inspection alone.

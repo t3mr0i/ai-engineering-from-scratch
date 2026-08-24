@@ -204,3 +204,13 @@ The numbers change every six months. The skeleton does not.
 - [Hoffmann et al., 2022 -- "Training Compute-Optimal Large Language Models (Chinchilla)"](https://arxiv.org/abs/2203.15556) -- the correction to Kaplan that recalibrated modern data budgets
 - [PyTorch FSDP2 documentation](https://pytorch.org/docs/stable/fsdp.html) -- the distributed training primitive replacing FSDP1 in PyTorch 2.4+
 - [Weights & Biases LLM Reports](https://wandb.ai/site/llms) -- real manifests and experiment tracker output for open-source LLM runs, useful as plagiarizable templates
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compose the eleven prior lessons (tokenizer, data, pre-training, scaling, SFT, RLHF, DPO, CAI, eval, quantization, inference) into a single reproducible pipeline spec.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Define the artifact contract between stages: what each stage consumes, what it produces, and how the next stage verifies the input.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build an orchestrator that tracks experiments, hashes artifacts, and gates ship decisions on eval thresholds.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compose the eleven prior lessons (tokenizer, data, pre-training, scaling, SFT, RLHF, DPO, CAI, eval, quantization, inference) into a single reproducible pipeline spec,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build an orchestrator that tracks experiments, hashes artifacts, and gates ship decisions on eval thresholds,” and cite a repeatable check rather than relying on visual inspection alone.

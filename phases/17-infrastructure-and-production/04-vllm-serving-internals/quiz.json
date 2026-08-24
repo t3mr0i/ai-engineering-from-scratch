@@ -12,7 +12,7 @@
         "Padding to the longest prompt and longest output wastes memory and stalls the whole batch on the slowest sequence"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Padding to the longest prompt and longest output wastes memory and stalls the whole batch on the slowest sequence” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "By holding the full prompt in CPU RAM"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“By allocating KV cache in fixed-size blocks (default 16 tokens) referenced through a per-sequence block table” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "The scheduler runs once per decode iteration, admitting finished sequences out and waiting ones in"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The scheduler runs once per decode iteration, admitting finished sequences out and waiting ones in” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "P99 inter-token latency (ITL)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“P99 inter-token latency (ITL)” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Draft-model speculative decoding"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“N-gram GPU speculative decoding in the V1 scheduler” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "It only reduces decode-time jitter; the throughput win in practice comes from keeping decode sequences alive during long prefills, not from changing the work done"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“It only reduces decode-time jitter; the throughput win in practice comes from keeping decode sequences alive during long prefills, not from changing the work done” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

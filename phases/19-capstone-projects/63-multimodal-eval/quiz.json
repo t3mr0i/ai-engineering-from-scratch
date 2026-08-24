@@ -15,7 +15,7 @@
       "explanation": "Loss minimization is necessary but not sufficient. Held-out metrics on three task surfaces measure what the model can actually do."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is R@5 measuring in a 100-sample retrieval eval?",
       "options": [
         "The fifth caption is always correct",
@@ -51,7 +51,7 @@
       "explanation": "Without BP a one-word caption matching one reference word would score 1.0. BP shrinks the score for too-short generations."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does multi-reference BLEU usually score higher than single-reference BLEU on the same generation?",
       "options": [
         "The math is different",

@@ -1,0 +1,78 @@
+{
+  "lesson": "16-mcp-security-oauth-2-1",
+  "title": "MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "options": [
+        "Distinguish resource server from authorization server responsibilities",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Distinguish resource server from authorization server responsibilities” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Walk the PKCE-protected OAuth 2.1 authorization code flow",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Walk the PKCE-protected OAuth 2.1 authorization code flow” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Use `resource` (RFC 8707) and protected-resource metadata (RFC 9728) to prevent confused-deputy attacks",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Use `resource` (RFC 8707) and protected-resource metadata (RFC 9728) to prevent confused-deputy attacks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement step-up authorization: server responds 403 with WWW-Authenticate asking for a higher scope; clien...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement step-up authorization: server responds 403 with WWW-Authenticate asking for a higher scope; clien...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Distinguish resource server from authorization server responsibilities"
+      ],
+      "correct": 3,
+      "explanation": "“Distinguish resource server from authorization server responsibilities” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "options": [
+        "Walk the PKCE-protected OAuth 2.1 authorization code flow",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Walk the PKCE-protected OAuth 2.1 authorization code flow” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

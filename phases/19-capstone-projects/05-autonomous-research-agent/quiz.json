@@ -12,10 +12,10 @@
         "Breadth-first expansion with random scoring"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Best-first tree search over experiment nodes with a novelty x quality x budget score” matches the lesson’s treatment of Capstone 05 — Autonomous Research Agent (AI-Scientist Class); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is the sandbox configured with --network=none and bounded resource caps?",
       "options": [
         "To force the agent to use prompt caching",
@@ -24,7 +24,7 @@
         "To prevent network egress and contain experiment side effects within a reproducible envelope"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“To prevent network egress and contain experiment side effects within a reproducible envelope” matches the lesson’s treatment of Capstone 05 — Autonomous Research Agent (AI-Scientist Class); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Replaces matplotlib at render time"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Compiles the LaTeX draft to PDF, then has a VLM critique layout, figure legibility, and claim-evidence alignment” matches the lesson’s treatment of Capstone 05 — Autonomous Research Agent (AI-Scientist Class); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Five judges score on NeurIPS-style rubrics and the weighted aggregate must clear a threshold, otherwise the draft loops back to the writer"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Five judges score on NeurIPS-style rubrics and the weighted aggregate must clear a threshold, otherwise the draft loops back to the writer” matches the lesson’s treatment of Capstone 05 — Autonomous Research Agent (AI-Scientist Class); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which cost discipline does the capstone enforce per paper?",
       "options": [
         "A $30 hard budget tracked through Langfuse counters and pre-run estimates",
@@ -60,7 +60,7 @@
         "GPU-hours tracked but never capped"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“A $30 hard budget tracked through Langfuse counters and pre-run estimates” matches the lesson’s treatment of Capstone 05 — Autonomous Research Agent (AI-Scientist Class); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "Output length and token count"
       ],
       "correct": 0,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "What does the red-team report exercise against the system?",
-      "options": [
-        "Caching hit rate on system prompts",
-        "Multi-tenant data leakage in the vector DB",
-        "Latency tail under packet loss",
-        "Sandbox-escape attempts such as fork bombs, network exfiltration, and filesystem escapes"
-      ],
-      "correct": 3,
-      "explanation": ""
+      "explanation": "“Novelty x quality x remaining budget” matches the lesson’s treatment of Capstone 05 — Autonomous Research Agent (AI-Scientist Class); the alternatives conflict with its definitions or workflow."
     }
   ]
 }

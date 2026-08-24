@@ -15,7 +15,7 @@
       "explanation": "Client SDK gives you the loop; Agent SDK ships the loop pre-built."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What are the two documented purposes of subagents?",
       "options": [
         "Caching and rate limiting across every tool call the subagent makes across a run",
@@ -51,7 +51,7 @@
       "explanation": "Hooks include PreToolUse, PostToolUse, SessionStart/End, UserPromptSubmit, PreCompact, Stop, Notification. PreEmbedding is not a hook."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "How does trace context propagate across the agent and CLI subprocess?",
       "options": [
         "Through shared files on disk that both processes poll continuously",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "Subagents have overhead; batch small tasks instead of spawning one each."
-    },
-    {
-      "stage": "post",
-      "question": "What does Claude Managed Agents trade off against the self-hosted SDK?",
-      "options": [
-        "Control for managed infrastructure (long-running async, built-in prompt caching, built-in compaction)",
-        "Latency for cost, since Managed Agents always run on cheaper spot instances by default and nothing else",
-        "Tools for memory, since Managed Agents drop all custom tool registration entirely",
-        "Tracing for streaming, since Managed Agents cannot stream any partial output at all"
-      ],
-      "correct": 0,
-      "explanation": "Managed Agents is the hosted alternative for long-running async work; less control, less ops surface."
     }
   ]
 }

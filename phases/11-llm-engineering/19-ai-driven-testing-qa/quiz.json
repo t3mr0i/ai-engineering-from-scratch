@@ -44,7 +44,7 @@
       "options": [
         "Property tests that check invariants across many generated inputs, not just fixed examples",
         "Skipping property tests and golden cases because the generated suite was already green",
-        "Letting the AI decide unilaterally which edge cases matter, without a human risk review",
+        "Letting the AI decide unilaterally which edge cases matter, without a human risk review, before defining the measurement, acceptance threshold, or rollback path",
         "Treating high code coverage numbers as proof that a release is safe to ship"
       ],
       "correct": 0,

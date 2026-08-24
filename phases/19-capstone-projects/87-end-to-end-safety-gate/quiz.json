@@ -12,10 +12,10 @@
         "Only post-gen runs; pre-gen and during-gen are aliases"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Pre-gen runs on the prompt before the model, during-gen filters the stream, post-gen runs on the completed output” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the goal of during-gen filtering?",
       "options": [
         "To translate the output to another language",
@@ -24,7 +24,7 @@
         "To replace the prompt with a refusal"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“To buffer chunks and terminate the stream early when a known harmful continuation appears, before the user sees it” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "By looking only at the rules engine"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“By taking the maximum severity across detector, token-filter, classifier, and rules signals and mapping it to block, redact, warn, or allow” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "To replicate the trace into the prompt"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“To give a reviewer a per-checkpoint audit trail so a regression in any layer can be traced to the right module” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What happens when pre-gen confidence exceeds the block threshold?",
       "options": [
         "The model is still called for completeness",
@@ -60,7 +60,7 @@
         "The gate lowers the threshold and retries"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The gate returns the policy refusal and skips during-gen and post-gen entirely” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Because the rules engine handles encoding"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Because the input pipeline does not always normalize them in time; the during-gen filter is the defense in depth that catches the leaked continuation” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

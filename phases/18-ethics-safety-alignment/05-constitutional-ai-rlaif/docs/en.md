@@ -80,3 +80,13 @@ The axis is "where does the preference signal come from." CAI's 2022 paper was t
 - [Anthropic — Constitutional Classifiers (2024-2026)](https://www.anthropic.com/research/constitutional-classifiers) — output-gate defense with ~1% overhead in v2
 - [Lee et al. — RLAIF vs RLHF: Scaling Reinforcement Learning from Human Feedback (arXiv:2309.00267)](https://arxiv.org/abs/2309.00267) — empirical RLAIF / RLHF comparison
 - [Kundu et al. — Specific versus General Principles for Constitutional AI (arXiv:2310.13798)](https://arxiv.org/abs/2310.13798) — effect of principle granularity
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the two phases of Constitutional AI (critique-and-revise SFT, RL from AI feedback) and the role of the constitution in each.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why replacing a human preference labeler with an AI labeler is not a "cheaper" RLHF — it changes which failure modes the pipeline has.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Summarize the four-tier priority structure of the 2026 Claude constitution and what changed from the 2023 rewrite.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the two phases of Constitutional AI (critique-and-revise SFT, RL from AI feedback) and the role of the constitution in each,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Summarize the four-tier priority structure of the 2026 Claude constitution and what changed from the 2023 rewrite,” and cite a repeatable check rather than relying on visual inspection alone.

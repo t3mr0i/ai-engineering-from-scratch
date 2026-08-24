@@ -1,8 +1,9 @@
 {
   "lesson": "16-langgraph-state-machines",
+  "title": "LangGraph — State Machines for Agents",
   "questions": [
     {
-      "stage": "post",
+      "stage": "pre",
       "question": "Why does the `messages` field in a LangGraph State TypedDict need `Annotated[list, add_messages]`?",
       "options": [
         "It enables streaming of token deltas from the model as they're generated, rather than merging or appending anything.",
@@ -14,10 +15,10 @@
       "explanation": "Every state field has a reducer; the default is overwrite. `add_messages` makes the message list accumulate instead. Forgetting it is the most common LangGraph bug -- the second node to update `messages` silently wins and prior turns vanish."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "What is the difference between `interrupt_before=['tools']` and `interrupt_after=['tools']`?",
       "options": [
-        "No difference; they are aliases for the same hook, and both pause execution at exactly the same point in the graph's node boundary.",
+        "No difference; they are aliases for the same hook, and both pause execution at exactly the same point in the graph's node boundary., with no need to inspect intermediate results or test edge cases",
         "`interrupt_before` is meant for unit tests where you mock tool calls; `interrupt_after` is meant only for production traffic.",
         "`interrupt_before` pauses after the model emits tool_calls but before the tools execute; `interrupt_after` pauses after the tools have already run.",
         "`interrupt_before` runs the tool in an isolated sandbox first; `interrupt_after` always runs the same tool in production."
@@ -26,11 +27,11 @@
       "explanation": "Interrupts stop execution at a node boundary. `interrupt_before` catches the proposed tool call before any side effect happens, which is why approvals belong on the edge into a side-effecting node."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Given a thread's checkpoint history, how do you time-travel to a prior state and explore a different branch?",
       "options": [
         "Call a `graph.reset(thread_id)` method to clear history, then `graph.invoke(new_input, config)` with a completely fresh input and no prior context",
-        "Delete the checkpoint directory on disk entirely, then reinvoke the graph fresh with the same thread_id, expecting it to rebuild history automatically",
+        "Delete the checkpoint directory on disk entirely, then reinvoke the graph fresh with the same thread_id, expecting it to rebuild history automatically, because one plausible output is sufficient production evidence",
         "Invoke the graph with the desired prior `checkpoint_id` in the config; passing `None` as input replays from that checkpoint, passing a new value appends to it before resuming.",
         "Set an undocumented `graph.rewind = True` flag on the compiled graph object and reinvoke with the original input, expecting it to jump backward"
       ],
@@ -38,7 +39,7 @@
       "explanation": "`get_state_history` returns the full checkpoint log; passing an old `checkpoint_id` in the config forks execution from that point, either replaying it (`None` input) or appending a new update before resuming."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "In a four-node ReAct graph (agent, tools, conditional edge, static edge back to agent), where does the conditional edge live?",
       "options": [
         "From `agent`, routing to `tools` if the last message has tool_calls and to `END` otherwise.",
@@ -60,6 +61,18 @@
       ],
       "correct": 0,
       "explanation": "`Send` lets a node fan out to N parallel executions of a target node -- e.g. querying three retrievers at once -- whose outputs merge back through the state reducer, the orchestrator-workers pattern without manual threading."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for LangGraph — State Machines for Agents?",
+      "options": [
+        "Apply the lesson's decision or implementation workflow to a concrete case",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

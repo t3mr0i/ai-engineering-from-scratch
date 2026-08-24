@@ -79,3 +79,13 @@ Lesson 26 is model-level documentation. Lesson 27 is dataset-level governance. T
 - [EU AI Act + GPAI Code of Practice (Lesson 24)](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) — Copyright chapter
 - [Longpre, Mahari, Lee et al. — Consent in Crisis (dataprovenance.org, July 2024)](https://www.dataprovenance.org/consent-in-crisis-paper) — DPI audit
 - [IAPP — EU Digital Omnibus GDPR amendments (2025)](https://iapp.org/news/a/eu-digital-omnibus-amendments-to-gdpr-to-facilitate-ai-training-miss-the-mark) — regulatory context
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe California AB 2013's 12 mandated fields for Generative AI training-data transparency.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: State the 2025 DPA position on legitimate-interest LLM training (Irish DPC, UK ICO, Hamburg, Cologne).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the irreversibility problem: why GDPR right-to-erasure has no practical equivalent for trained neural networks.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe California AB 2013's 12 mandated fields for Generative AI training-data transparency,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the irreversibility problem: why GDPR right-to-erasure has no practical equivalent for trained neural networks,” and cite a repeatable check rather than relying on visual inspection alone.

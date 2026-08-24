@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 10 (Evaluation), Phase 18 · 27 (Data provenance and training governance)
-**Time:** ~45 minutes
+**Time:** ~90 minutes
 
 ## Learning Objectives
 
@@ -107,3 +107,13 @@ Phase 18 · 27 covers provenance: can you trace a model output back to the train
 - [Splink documentation](https://moj-analytical-services.github.io/splink/) — probabilistic entity resolution on DuckDB and Spark, actively maintained by the UK Ministry of Justice analytics team.
 - [TDWI — Data Quality for Machine Learning (whitepaper)](https://tdwi.org/research) — practitioner-level coverage of where traditional DQ frameworks need to be extended for ML/AI workloads.
 - [Microsoft Purview — Data Quality overview](https://learn.microsoft.com/en-us/purview/data-quality-overview) — cloud-native managed data quality and governance; useful reference for Azure-hosted AI stacks.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Diagnosing Data Quality Before AI Workflows Scale (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Diagnosing Data Quality Before AI Workflows Scale (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

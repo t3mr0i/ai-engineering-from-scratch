@@ -96,3 +96,13 @@ EU customer PHI cannot leave EU. If your cache-aware router sends a Paris-origin
 - [TianPan — Multi-Region LLM Serving Cache Locality](https://tianpan.co/blog/2026-04-17-multi-region-llm-serving-data-residency-routing)
 - [AWS Bedrock Cross-Region Inference](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html) — availability failover documentation.
 - [vLLM Production Stack Router](https://github.com/vllm-project/production-stack) — cache-aware router source.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why round-robin load balancing breaks cached inference and quantify the TTFT penalty.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Diagram a cache-aware router: inputs (KV-cache events), algorithm (prefix-hash match), tie-breaker (GPU utilization).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the 32% DR failure driver for LLMs (missing tokenizer files / quantization configs) and state a three-file DR checklist.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why round-robin load balancing breaks cached inference and quantify the TTFT penalty,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the 32% DR failure driver for LLMs (missing tokenizer files / quantization configs) and state a three-file DR checklist,” and cite a repeatable check rather than relying on visual inspection alone.

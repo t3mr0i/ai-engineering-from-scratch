@@ -94,3 +94,13 @@ Show-o, Janus-Pro, and InternVL-U all build on or challenge this thesis. Chinese
 - [Liu et al. — LWM (arXiv:2402.08268)](https://arxiv.org/abs/2402.08268)
 - [Yu et al. — MAGVIT-v2 (arXiv:2310.05737)](https://arxiv.org/abs/2310.05737)
 - [Tian et al. — VAR (arXiv:2404.02905)](https://arxiv.org/abs/2404.02905)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why Emu3's single-loss next-token objective works despite the long-held assumption that diffusion is required for image quality.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the 3D video tokenizer: what a spatiotemporal VQ codebook looks like, why patches span time.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare Emu3 vs Stable Diffusion XL on (training compute, inference cost, quality ceiling).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why Emu3's single-loss next-token objective works despite the long-held assumption that diffusion is required for image quality,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare Emu3 vs Stable Diffusion XL on (training compute, inference cost, quality ceiling),” and cite a repeatable check rather than relying on visual inspection alone.

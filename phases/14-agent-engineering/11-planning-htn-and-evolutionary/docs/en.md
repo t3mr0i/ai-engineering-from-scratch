@@ -95,3 +95,13 @@ The hard constraint: the fitness function must be machine-checkable. Evolutionar
 - [Gopalakrishnan et al., ChatHTN (arXiv:2505.11814)](https://arxiv.org/abs/2505.11814) — symbolic + LLM hybrid planner
 - [Novikov et al., AlphaEvolve (arXiv:2506.13131)](https://arxiv.org/abs/2506.13131) — evolutionary code search with LLM mutations
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — when to reach for a planner vs a simple loop
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain Hierarchical Task Networks: tasks, methods, operators, preconditions, effects.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe ChatHTN's hybrid loop — symbolic search with LLM fallback decomposition.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain AlphaEvolve's evolutionary loop and why it only works with a programmatic evaluator.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain Hierarchical Task Networks: tasks, methods, operators, preconditions, effects,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain AlphaEvolve's evolutionary loop and why it only works with a programmatic evaluator,” and cite a repeatable check rather than relying on visual inspection alone.

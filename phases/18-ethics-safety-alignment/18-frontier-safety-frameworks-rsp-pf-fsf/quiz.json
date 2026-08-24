@@ -1,6 +1,6 @@
 {
   "lesson": "18-frontier-safety-frameworks-rsp-pf-fsf",
-  "title": "Frontier Safety Frameworks - RSP, PF, FSF",
+  "title": "Frontier Safety Frameworks — RSP, PF, FSF",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "Biosafety levels (BSL)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Biosafety levels (BSL)” matches the lesson’s treatment of Frontier Safety Frameworks — RSP, PF, FSF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Measurable"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Instantaneous-or-irremediable” matches the lesson’s treatment of Frontier Safety Frameworks — RSP, PF, FSF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "ML R&D Acceleration"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Harmful Manipulation” matches the lesson’s treatment of Frontier Safety Frameworks — RSP, PF, FSF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "A model-card disclosure requirement"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“A provision allowing a lab to reduce safety requirements if peer labs ship without comparable safeguards” matches the lesson’s treatment of Frontier Safety Frameworks — RSP, PF, FSF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Inner, outer, mesa"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Monitoring, illegibility, incapability” matches the lesson’s treatment of Frontier Safety Frameworks — RSP, PF, FSF; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "All three use the exact same evaluations"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Structural alignment: tiered frontier-capability thresholds with published evaluation criteria, even though terminology differs” matches the lesson’s treatment of Frontier Safety Frameworks — RSP, PF, FSF; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

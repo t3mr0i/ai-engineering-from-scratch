@@ -113,3 +113,13 @@ They cannot reliably: determine whether a stated review date is genuine, resolve
 - [Anthropic — Building effective agents](https://docs.claude.com/en/docs/agents) — Anthropic's guidance on agentic pipelines; the retrieval and tool-use sections are directly relevant to corpus design decisions.
 - [LlamaIndex — Data ingestion and pipeline docs](https://docs.llamaindex.ai/en/stable/) — practical reference for the ingestion pipeline stage where source governance gates plug in.
 - [RAG Survey (Gao et al., 2024)](https://arxiv.org/abs/2312.10997) — the comprehensive academic survey of RAG approaches; Section 4 covers advanced RAG pre-retrieval techniques including corpus quality concerns.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Source Quality Gates Before Retrieval (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Source Quality Gates Before Retrieval (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

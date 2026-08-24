@@ -82,3 +82,13 @@ Lessons 22-23 are about what the model emits (private data, provenance signal). 
 - ["Stable Signature is Unstable" (arXiv:2405.07145)](https://arxiv.org/abs/2405.07145) — the removal attack
 - [Google DeepMind — SynthID](https://deepmind.google/models/synthid/) — the cross-modal watermark
 - [C2PA 2.2 Explainer (2025)](https://c2pa.org/specifications/specifications/2.2/explainer/Explainer.html) — metadata standard
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe token-level watermarking (SynthID-text style) and the mechanism by which it is detectable.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe Stable Signature and the 2024 removal attack that broke it.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: State C2PA's role and why it is complementary to watermarking.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe token-level watermarking (SynthID-text style) and the mechanism by which it is detectable,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “State C2PA's role and why it is complementary to watermarking,” and cite a repeatable check rather than relying on visual inspection alone.

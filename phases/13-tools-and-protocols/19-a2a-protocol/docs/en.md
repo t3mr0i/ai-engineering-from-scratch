@@ -145,3 +145,13 @@ Use MCP when you want to invoke a specific tool. Use A2A when you want to delega
 - [Linux Foundation — A2A launch press release](https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents) — June 2025 governance transfer
 - [Google Cloud — A2A protocol upgrade](https://cloud.google.com/blog/products/ai-machine-learning/agent2agent-protocol-is-getting-an-upgrade) — roadmap and partner momentum
 - [Google Dev — A2A 1.0 milestone](https://discuss.google.dev/t/the-a2a-1-0-milestone-ensuring-and-testing-backward-compatibility/352258) — v1.0 release notes and backward-compat guidance
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish agent-to-tool (MCP) from agent-to-agent (A2A) use cases.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Publish an Agent Card at `/.well-known/agent.json` with skills and endpoint metadata.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Walk the Task lifecycle (submitted → working → input-required → completed / failed / canceled / rejected).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish agent-to-tool (MCP) from agent-to-agent (A2A) use cases,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Walk the Task lifecycle (submitted → working → input-required → completed / failed / canceled / rejected),” and cite a repeatable check rather than relying on visual inspection alone.

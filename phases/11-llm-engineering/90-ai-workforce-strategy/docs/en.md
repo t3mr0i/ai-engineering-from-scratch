@@ -106,3 +106,13 @@ The role-capability matrix is the input to two downstream artefacts covered in o
 - [OECD AI Policy Observatory — AI skills and jobs](https://oecd.ai/en/work-innovation-productivity-skills) — cross-country analysis of AI skill demand shifts by occupation.
 - [NIST AI RMF Playbook — Govern function](https://airc.nist.gov/) — the US federal framework for AI governance roles and responsibilities; the Govern function maps directly to the accountability and audit competency categories.
 - [Anthropic — Model release notes](https://www.anthropic.com/news) — the authoritative source for capability changes between model versions; essential input to the enablement backlog refresh cycle.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

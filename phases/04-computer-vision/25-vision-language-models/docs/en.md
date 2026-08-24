@@ -116,3 +116,13 @@ Current VLMs score 50-60% on spatial reasoning benchmarks (above-below, left-rig
 - [BentoML: Best Open-Source VLMs 2026](https://www.bentoml.com/blog/multimodal-ai-a-guide-to-open-source-vision-language-models)
 - [MMMU: Multi-discipline Multimodal Understanding benchmark](https://mmmu-benchmark.github.io/)
 - [VLMs in manufacturing (Robotics Tomorrow, March 2026)](https://www.roboticstomorrow.com/story/2026/03/when-machines-learn-to-see-like-experts-the-rise-of-vision-language-models-in-manufacturing/26335/)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the ViT-MLP-LLM architecture and explain what each of the three components contributes.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare Qwen3-VL, InternVL3.5, LLaVA-Next, and GLM-4.6V on parameter count, context length, and benchmark performance.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain DeepStack: why multi-level ViT features tighten vision-language alignment better than a single last-layer feature.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the ViT-MLP-LLM architecture and explain what each of the three components contributes,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain DeepStack: why multi-level ViT features tighten vision-language alignment better than a single last-layer feature,” and cite a repeatable check rather than relying on visual inspection alone.

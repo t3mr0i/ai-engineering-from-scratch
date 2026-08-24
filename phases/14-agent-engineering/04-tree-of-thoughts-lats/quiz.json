@@ -15,7 +15,7 @@
       "explanation": "Without branching, a wrong early subexpression poisons the rest of the chain; the paper measures only 4 percent for CoT."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is a node in a Tree of Thoughts search?",
       "options": [
         "A single token produced by the model during autoregressive decoding",
@@ -51,7 +51,7 @@
       "explanation": "MCTS proceeds in select, expand, simulate, backpropagate per iteration."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "In UCT, what is the role of the exploration constant c?",
       "options": [
         "It weights the exploration term sqrt(ln N / n) against the exploitation term Q",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "A noisy value function plus a single correct answer is exactly when search overfits to the noise."
-    },
-    {
-      "stage": "post",
-      "question": "Roughly how much more token usage should you budget for ToT on Game of 24 compared with CoT?",
-      "options": [
-        "About 2x the tokens of CoT",
-        "About 10x the tokens of CoT",
-        "100x to 1000x the tokens of CoT",
-        "Less than CoT, thanks to pruning"
-      ],
-      "correct": 2,
-      "explanation": "The lesson cites 100-1000x token cost for ToT on Game of 24 versus CoT."
     }
   ]
 }

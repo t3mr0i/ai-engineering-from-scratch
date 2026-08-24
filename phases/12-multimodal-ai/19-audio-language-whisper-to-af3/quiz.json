@@ -1,0 +1,78 @@
+{
+  "lesson": "19-audio-language-whisper-to-af3",
+  "title": "Audio-Language Models: the Whisper to Audio Flamingo 3 Arc",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "options": [
+        "Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Build an audio Q-former: N learnable queries cross-attending to spectrogram patches",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Build an audio Q-former: N learnable queries cross-attending to spectrogram patches” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain cascaded (Whisper-then-LLM) vs end-to-end audio-LLM training: why end-to-end scales better for reas...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain cascaded (Whisper-then-LLM) vs end-to-end audio-LLM training: why end-to-end scales better for reas...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform"
+      ],
+      "correct": 3,
+      "explanation": "“Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "options": [
+        "Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

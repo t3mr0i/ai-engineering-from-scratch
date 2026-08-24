@@ -12,7 +12,7 @@
         "DCGM_FI_DEV_GPU_UTIL duty cycle"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“DCGM_FI_DEV_GPU_UTIL duty cycle” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Cold-start latency"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The partial-allocation trap where 7 of 8 GPUs sit idle waiting on the eighth” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "It prevents Karpenter from provisioning new nodes"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“It terminates running GPU nodes to migrate pods, which evicts running requests and reloads weights” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "About 5% faster"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Roughly 40% faster (~45-60s vs ~90-120s)” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Cluster Autoscaler for both"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Queue depth for prefill pods and KV cache pressure for decode pods, as separate per-role HPAs” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Disable Karpenter entirely"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“consolidationPolicy: WhenEmpty with consolidateAfter: 1h” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

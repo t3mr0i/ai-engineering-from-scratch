@@ -511,3 +511,13 @@ print(result['answer'])
 - Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (2020) -- the original RAG paper from Facebook AI Research that formalized the retrieve-then-generate pattern.
 - Anthropic's RAG documentation (docs.anthropic.com) -- practical guidelines for chunk sizes, prompt construction, and evaluation.
 - [Karpukhin et al., "Dense Passage Retrieval for Open-Domain Question Answering" (EMNLP 2020)](https://arxiv.org/abs/2004.04906) -- the DPR paper that proved dense bi-encoder retrieval beats BM25 on open-domain QA.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a complete RAG pipeline: document loading, chunking, embedding, vector storage, retrieval, and generation.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement semantic search using a vector database (ChromaDB, FAISS, or Pinecone) with proper indexing.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why RAG is preferred over fine-tuning for knowledge-grounded applications (cost, freshness, attribution).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a complete RAG pipeline: document loading, chunking, embedding, vector storage, retrieval, and generation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why RAG is preferred over fine-tuning for knowledge-grounded applications (cost, freshness, attribution),” and cite a repeatable check rather than relying on visual inspection alone.

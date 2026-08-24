@@ -100,3 +100,13 @@ The governance layer connects them: a test-data policy without a training-data p
 - [Lee et al. (2022) — Deduplicating Training Data Makes Language Models Better](https://arxiv.org/abs/2107.06499) — the 13-gram overlap study; contamination score methodology.
 - [ISO/IEC 42001:2023 — AI Management System Standard](https://www.iso.org/standard/81230.html) — clause 8.4 on data management and documentation obligations.
 - [Shi et al. (2024) — Detecting Pretraining Data from Large Language Models](https://arxiv.org/abs/2310.16789) — membership inference without log-probability access.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

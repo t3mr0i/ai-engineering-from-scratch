@@ -84,3 +84,13 @@ CUDA is the production target, but the same code paths exist on CPU. `gloo` is t
 - Phase 19 lesson 46 for the gradient accumulation pattern that wraps the DDP all-reduce in `no_sync`.
 - Phase 19 lesson 47 for the checkpoint layout that survives DDP and FSDP runs.
 - PyTorch FSDP documentation for the production implementation of the parameter sharding sketched here.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Bring up a process group across N ranks with the `gloo` backend, no special hardware.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a minimal DDP wrapper that broadcasts parameters at construction and all-reduces gradients after backward.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Prove that the all-reduce of per-rank gradients matches a single-process gradient on the concatenated input.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Bring up a process group across N ranks with the `gloo` backend, no special hardware,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Prove that the all-reduce of per-rank gradients matches a single-process gradient on the concatenated input,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,64 +1,78 @@
 {
+  "lesson": "11-quantization",
+  "title": "Quantization: Making Models Fit",
   "questions": [
     {
+      "stage": "pre",
       "question": "How much VRAM does a 70B parameter model in FP16 require just for weights?",
       "options": [
         "35 GB",
         "70 GB",
         "140 GB",
-        "280 GB"
+        "280 GB — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 2,
-      "explanation": "70 billion parameters * 2 bytes per FP16 parameter = 140 billion bytes = 140 GB. This exceeds a single A100 (80GB), requiring at least two GPUs just to load the weights.",
-      "stage": "pre"
+      "explanation": "70 billion parameters * 2 bytes per FP16 parameter = 140 billion bytes = 140 GB. This exceeds a single A100 (80GB), requiring at least two GPUs just to load the weights."
     },
     {
+      "stage": "check",
       "question": "What is quantization in the context of LLMs?",
       "options": [
         "Removing unused model layers",
         "Reducing the numerical precision of weights (e.g., FP16 to INT4) to decrease memory usage and increase inference speed",
-        "Compressing the training data",
+        "Compressing the training data, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
         "Reducing the vocabulary size"
       ],
       "correct": 1,
-      "explanation": "Quantization maps high-precision floating point weights to lower-precision integers. INT4 quantization stores each weight in 4 bits instead of 16, reducing memory by 4x with minimal accuracy loss.",
-      "stage": "pre"
+      "explanation": "Quantization maps high-precision floating point weights to lower-precision integers. INT4 quantization stores each weight in 4 bits instead of 16, reducing memory by 4x with minimal accuracy loss."
     },
     {
+      "stage": "check",
       "question": "What is the key difference between post-training quantization (PTQ) and quantization-aware training (QAT)?",
       "options": [
         "PTQ is more accurate",
         "PTQ quantizes after training with no retraining; QAT simulates quantization during training so the model learns to tolerate reduced precision",
-        "QAT doesn't use gradients",
+        "QAT doesn't use gradients, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "PTQ requires more data"
       ],
       "correct": 1,
-      "explanation": "PTQ is fast (just calibrate and quantize) but can lose accuracy. QAT includes fake quantization during training, allowing the model to adjust its weights to be more robust to precision loss. QAT usually gives better accuracy.",
-      "stage": "post"
+      "explanation": "PTQ is fast (just calibrate and quantize) but can lose accuracy. QAT includes fake quantization during training, allowing the model to adjust its weights to be more robust to precision loss. QAT usually gives better accuracy."
     },
     {
+      "stage": "check",
       "question": "What does 'per-channel' quantization mean and why is it better than 'per-tensor'?",
       "options": [
         "It quantizes each output channel separately, using different scale/zero-point for each, reducing quantization error",
-        "It processes one color channel at a time",
+        "It processes one color channel at a time, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
         "It uses separate GPUs per channel",
         "It's a type of data parallelism"
       ],
       "correct": 0,
-      "explanation": "Per-tensor uses one scale factor for the entire weight matrix. Per-channel uses a separate scale for each output channel (row). Since different channels have different value ranges, per-channel captures them more accurately.",
-      "stage": "post"
+      "explanation": "Per-tensor uses one scale factor for the entire weight matrix. Per-channel uses a separate scale for each output channel (row). Since different channels have different value ranges, per-channel captures them more accurately."
     },
     {
+      "stage": "post",
       "question": "Why do 95% of weights in Llama 3 70B fall between -0.1 and +0.1?",
       "options": [
         "The model is poorly trained",
         "Weight decay and normalization during training push weights toward small values, making the full FP16 range wasteful",
         "The weights haven't converged yet",
-        "This is specific to the Llama architecture"
+        "This is specific to the Llama architecture — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
-      "explanation": "Weight decay regularization shrinks weights toward zero. Layer normalization keeps activations centered. Combined, they produce weight distributions concentrated near zero, making low-precision quantization effective.",
-      "stage": "post"
+      "explanation": "Weight decay regularization shrinks weights toward zero. Layer normalization keeps activations centered. Combined, they produce weight distributions concentrated near zero, making low-precision quantization effective."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Quantization: Making Models Fit?",
+      "options": [
+        "Calculate the memory savings from quantization and determine which precision fits a given GPU's VRAM",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Calculate the memory savings from quantization and determine which precision fits a given GPU's VRAM” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

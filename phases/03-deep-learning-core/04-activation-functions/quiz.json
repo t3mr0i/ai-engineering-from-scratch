@@ -1,18 +1,21 @@
 {
+  "lesson": "04-activation-functions",
+  "title": "Activation Functions",
   "questions": [
     {
+      "stage": "pre",
       "question": "Why can't you build a useful deep network using only linear layers (no activation functions)?",
       "options": [
         "Linear layers are too slow",
         "Stacking linear layers collapses to a single linear transformation, giving no benefit from depth",
         "Linear layers don't have biases",
-        "Linear layers can't handle batched data"
+        "Linear layers can't handle batched data — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
-      "explanation": "y = W2(W1*x + b1) + b2 simplifies to y = Ax + c. No matter how many linear layers you stack, the result is equivalent to one linear layer. Activation functions break this composability.",
-      "stage": "pre"
+      "explanation": "y = W2(W1*x + b1) + b2 simplifies to y = Ax + c. No matter how many linear layers you stack, the result is equivalent to one linear layer. Activation functions break this composability."
     },
     {
+      "stage": "check",
       "question": "What is the output range of the ReLU activation function?",
       "options": [
         "(-1, 1)",
@@ -21,22 +24,22 @@
         "(-infinity, infinity)"
       ],
       "correct": 2,
-      "explanation": "ReLU(x) = max(0, x). It outputs 0 for all negative inputs and passes positive inputs unchanged, giving a range of [0, infinity).",
-      "stage": "pre"
+      "explanation": "ReLU(x) = max(0, x). It outputs 0 for all negative inputs and passes positive inputs unchanged, giving a range of [0, infinity)."
     },
     {
+      "stage": "check",
       "question": "What is the 'dead neuron' problem in ReLU networks?",
       "options": [
-        "Neurons that compute too slowly",
+        "Neurons that compute too slowly, because one plausible output is sufficient production evidence",
         "Neurons whose input is permanently negative, producing zero output and zero gradient forever",
         "Neurons that produce NaN values",
         "Neurons with zero bias"
       ],
       "correct": 1,
-      "explanation": "If a ReLU neuron's weighted input is always negative (due to bad initialization or large negative bias), it outputs 0 with gradient 0. It can never recover because zero gradient means zero update.",
-      "stage": "post"
+      "explanation": "If a ReLU neuron's weighted input is always negative (due to bad initialization or large negative bias), it outputs 0 with gradient 0. It can never recover because zero gradient means zero update."
     },
     {
+      "stage": "check",
       "question": "Which activation function is the default for hidden layers in modern transformers like GPT and BERT?",
       "options": [
         "Sigmoid",
@@ -45,20 +48,31 @@
         "Tanh"
       ],
       "correct": 2,
-      "explanation": "GELU (Gaussian Error Linear Unit) is the default activation in transformers. It provides smooth gradient flow, avoids dead neurons, and has been shown to outperform ReLU in language models.",
-      "stage": "post"
+      "explanation": "GELU (Gaussian Error Linear Unit) is the default activation in transformers. It provides smooth gradient flow, avoids dead neurons, and has been shown to outperform ReLU in language models."
     },
     {
+      "stage": "post",
       "question": "Why is softmax used only in the output layer and never in hidden layers?",
       "options": [
-        "It's too slow for hidden layers",
+        "It's too slow for hidden layers — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "It converts a vector into a probability distribution (values sum to 1), which is needed for classification output but not for intermediate representations",
         "It causes exploding gradients",
         "It only works with two classes"
       ],
       "correct": 1,
-      "explanation": "Softmax normalizes a vector so all values are in (0,1) and sum to 1, creating a probability distribution. Hidden layers need to preserve and transform information, not compress it into probabilities.",
-      "stage": "post"
+      "explanation": "Softmax normalizes a vector so all values are in (0,1) and sum to 1, creating a probability distribution. Hidden layers need to preserve and transform information, not compress it into probabilities."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Activation Functions?",
+      "options": [
+        "Diagnose the vanishing gradient problem by measuring activation magnitudes through 10+ layers with differen...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Diagnose the vanishing gradient problem by measuring activation magnitudes through 10+ layers with differen...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

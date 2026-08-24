@@ -464,3 +464,13 @@ print(f"Support vectors: {svm.n_support_}")
 - [Bottou, Curtis, Nocedal: Optimization Methods for Large-Scale Machine Learning (2018)](https://arxiv.org/abs/1606.04838) - bridges convex optimization theory and deep learning practice
 - [Choromanska et al.: The Loss Surfaces of Multilayer Networks (2015)](https://arxiv.org/abs/1412.0233) - why non-convex neural network landscapes are not as bad as they seem
 - [Nocedal & Wright: Numerical Optimization](https://link.springer.com/book/10.1007/978-0-387-40065-5) - comprehensive reference for Newton's method, L-BFGS, and constrained optimization
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Test whether a function is convex using the definition, second derivative, and Hessian criteria.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement Newton's method and compare its quadratic convergence against gradient descent.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Test whether a function is convex using the definition, second derivative, and Hessian criteria,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions,” and cite a repeatable check rather than relying on visual inspection alone.

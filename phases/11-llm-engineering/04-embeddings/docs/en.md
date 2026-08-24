@@ -238,3 +238,13 @@ The accuracy hit is around 5-10% on retrieval recall. The common pattern: binary
 - MTEB Leaderboard (huggingface.co/spaces/mteb/leaderboard) -- live benchmark comparing all embedding models across tasks and languages
 - [Muennighoff et al., "MTEB: Massive Text Embedding Benchmark" (EACL 2023)](https://arxiv.org/abs/2210.07316) -- the benchmark defining 8 task categories (classification, clustering, pair classification, reranking, retrieval, STS, summarization, bitext mining) that the leaderboard reports; read before trusting any single MTEB score.
 - [Sentence Transformers documentation](https://www.sbert.net/) -- canonical reference for bi-encoder vs cross-encoder, pooling strategies, and the ingest-split-embed-store RAG pipeline this lesson implements.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Generate text embeddings using API providers and open-source models, and compute cosine similarity between them.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a semantic search index that retrieves documents by meaning rather than exact keyword match.
+
+## Reference Solution
+
+Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Generate text embeddings using API providers and open-source models, and compute cosine similarity between them,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a semantic search index that retrieves documents by meaning rather than exact keyword match,” and cite a repeatable check rather than relying on visual inspection alone.

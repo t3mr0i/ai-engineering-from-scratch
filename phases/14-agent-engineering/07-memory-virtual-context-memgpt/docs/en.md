@@ -83,3 +83,13 @@ The MemGPT paper is the 2026 foundation even if production systems run Letta, Me
 - [Letta, Memory Blocks blog](https://www.letta.com/blog/memory-blocks) — the three-tier evolution
 - [Anthropic, Effective context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — treating context as a budget
 - [Chhikara et al., Mem0 (arXiv:2504.19413)](https://arxiv.org/abs/2504.19413) — hybrid production memory on top of this pattern
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the OS analogy MemGPT builds on: main context = RAM, external context = disk, memory tools = page in/out.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the two-tier MemGPT pattern in stdlib with a main-context buffer, an external searchable store, and page in/out tools.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe how the agent issues "interrupts" to query or modify external memory and how the result is spliced back into the next prompt.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the OS analogy MemGPT builds on: main context = RAM, external context = disk, memory tools = page in/out,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe how the agent issues "interrupts" to query or modify external memory and how the result is spliced back into the next prompt,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,64 +1,78 @@
 {
+  "lesson": "07-rlhf",
+  "title": "RLHF: Reward Model + PPO",
   "questions": [
     {
+      "stage": "pre",
       "question": "What does the reward model in RLHF learn from?",
       "options": [
-        "Raw text documents",
+        "Raw text documents — and applies unchanged even when the lesson's stated preconditions fail",
         "Human preference pairs: given two responses, which one humans preferred",
         "Benchmark scores",
         "Model loss curves"
       ],
       "correct": 1,
-      "explanation": "The reward model is trained on preference data: pairs of responses to the same prompt where a human labeled which is better. It learns to assign higher scores to responses that match human preferences.",
-      "stage": "pre"
+      "explanation": "The reward model is trained on preference data: pairs of responses to the same prompt where a human labeled which is better. It learns to assign higher scores to responses that match human preferences."
     },
     {
+      "stage": "check",
       "question": "Why is a KL divergence penalty used in PPO training for RLHF?",
       "options": [
         "To speed up training",
         "To prevent the policy from diverging too far from the SFT model, which would lead to reward hacking",
         "To reduce memory usage",
-        "To improve tokenization"
+        "To improve tokenization, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
-      "explanation": "Without the KL penalty, the model finds degenerate ways to maximize the reward score (e.g., producing repetitive text that exploits reward model weaknesses). KL keeps the model close to the well-behaved SFT baseline.",
-      "stage": "pre"
+      "explanation": "Without the KL penalty, the model finds degenerate ways to maximize the reward score (e.g., producing repetitive text that exploits reward model weaknesses). KL keeps the model close to the well-behaved SFT baseline."
     },
     {
+      "stage": "check",
       "question": "How many separate models are required for a full RLHF pipeline?",
       "options": [
         "One",
         "Two",
         "Three: SFT model, reward model, and policy model being optimized",
-        "Four"
+        "Four, because one plausible output is sufficient production evidence"
       ],
       "correct": 2,
-      "explanation": "RLHF requires: (1) SFT model as the starting point and KL reference, (2) reward model trained on preferences, (3) policy model being optimized with PPO. This complexity is why DPO (lesson 08) was developed.",
-      "stage": "post"
+      "explanation": "RLHF requires: (1) SFT model as the starting point and KL reference, (2) reward model trained on preferences, (3) policy model being optimized with PPO. This complexity is why DPO (lesson 08) was developed."
     },
     {
+      "stage": "check",
       "question": "What is 'reward hacking' in RLHF?",
       "options": [
-        "When the reward model is attacked by adversaries",
+        "When the reward model is attacked by adversaries, before defining the measurement, acceptance threshold, or rollback path",
         "When the policy finds ways to maximize the reward score without actually improving response quality",
         "When training data is corrupted",
         "When the learning rate is too high"
       ],
       "correct": 1,
-      "explanation": "The reward model is an imperfect proxy for human judgment. The policy can discover patterns that score high rewards (e.g., verbose responses, excessive hedging) without actually being more helpful. The KL penalty limits this.",
-      "stage": "post"
+      "explanation": "The reward model is an imperfect proxy for human judgment. The policy can discover patterns that score high rewards (e.g., verbose responses, excessive hedging) without actually being more helpful. The KL penalty limits this."
     },
     {
+      "stage": "post",
       "question": "What does PPO's clipping mechanism prevent?",
       "options": [
-        "Gradient overflow",
+        "Gradient overflow — and applies unchanged even when the lesson's stated preconditions fail",
         "Excessively large policy updates that could destabilize training",
         "Memory overflow",
         "Data leakage"
       ],
       "correct": 1,
-      "explanation": "PPO clips the probability ratio between the new and old policy to a range like [0.8, 1.2]. This prevents any single update from changing the policy too drastically, making training more stable than vanilla policy gradient.",
-      "stage": "post"
+      "explanation": "PPO clips the probability ratio between the new and old policy to a range like [0.8, 1.2]. This prevents any single update from changing the policy too drastically, making training more stable than vanilla policy gradient."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for RLHF: Reward Model + PPO?",
+      "options": [
+        "Implement the PPO training loop that optimizes a language model policy against the reward model with a KL p...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the PPO training loop that optimizes a language model policy against the reward model with a KL p...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

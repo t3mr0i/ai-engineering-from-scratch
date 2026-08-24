@@ -87,3 +87,13 @@ Workbench-guided:
 - Phases 14 · 32 to 14 · 40 — the surfaces this lesson exercises end-to-end
 - Phase 14 · 19 — SWE-bench, GAIA, AgentBench as the macro benchmarks this lesson complements
 - Phase 14 · 30 — eval-driven agent development the same harness plugs into
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Bring the seven workbench surfaces together on a small application.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Run the same task twice (prompt-only and workbench-guided) and measure five outcomes.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Read the before/after report and decide which surfaces gave the most leverage.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Bring the seven workbench surfaces together on a small application,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Read the before/after report and decide which surfaces gave the most leverage,” and cite a repeatable check rather than relying on visual inspection alone.

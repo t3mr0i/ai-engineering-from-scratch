@@ -161,3 +161,13 @@ Reserving 20% of VRAM for activations/KV cache turns a naive "12B fits in
 | VRAM | "GPU memory" | Video RAM on the GPU, separate from system RAM. Limits model size. |
 | fp16 | "Half precision" | 16-bit floating point, uses half the memory of fp32 with minimal accuracy loss |
 | Tensor Core | "Fast matrix hardware" | Specialized GPU cores for matrix multiplication, 4-8x faster than regular cores |
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Verify local GPU availability using `nvidia-smi` and PyTorch's CUDA API.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Configure Google Colab with a T4 GPU for free cloud-based experiments.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Benchmark matrix multiplication on CPU vs GPU and measure the speedup.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Verify local GPU availability using `nvidia-smi` and PyTorch's CUDA API,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Benchmark matrix multiplication on CPU vs GPU and measure the speedup,” and cite a repeatable check rather than relying on visual inspection alone.

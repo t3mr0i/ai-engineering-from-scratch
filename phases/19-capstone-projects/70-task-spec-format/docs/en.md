@@ -150,3 +150,13 @@ Read `main.py` top to bottom. Then read `code/tests/test_spec.py`. The tests pin
 ## Going further
 
 Real eval suites grow categories the way schemas grow columns. The sober move is to refuse to add a category without also adding a metric, a post-process rule, and at least one fixture task. Treat the spec like a database migration. Every change is reviewed, versioned, and accompanied by tests. The validator in this lesson is the gate.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define a JSONL task record schema that covers arithmetic, multiple-choice, code execution, classification, and free-text summarisation in one shape.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Pin a closed vocabulary of metric names so downstream lessons (71-73) can dispatch on a single field.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Specify few-shot examples and post-processing rules as part of the task, not the runner, so the same prompt produces the same target across models.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define a JSONL task record schema that covers arithmetic, multiple-choice, code execution, classification, and free-text summarisation in one shape,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Specify few-shot examples and post-processing rules as part of the task, not the runner, so the same prompt produces the same target across models,” and cite a repeatable check rather than relying on visual inspection alone.

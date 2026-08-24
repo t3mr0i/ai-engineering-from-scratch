@@ -108,3 +108,13 @@ Janus-Pro (Lesson 12.15) refines Transfusion's idea by decoupling the vision enc
 - [Peebles & Xie — DiT (arXiv:2212.09748)](https://arxiv.org/abs/2212.09748)
 - [Zhao et al. — MonoFormer (arXiv:2409.16280)](https://arxiv.org/abs/2409.16280)
 - [Xie et al. — Show-o (arXiv:2408.12528)](https://arxiv.org/abs/2408.12528)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why bidirectional attention across image patches plus causal attention over text tokens is the right mask choice.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare Transfusion-style (continuous images, diffusion loss) to Chameleon-style (discrete images, NTP) on compute, quality, and code complexity.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare Transfusion-style (continuous images, diffusion loss) to Chameleon-style (discrete images, NTP) on compute, quality, and code complexity,” and cite a repeatable check rather than relying on visual inspection alone.

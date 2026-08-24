@@ -121,3 +121,13 @@ Every modern framework does this automatically. Understanding it prevents confus
 - [3Blue1Brown: Essence of Linear Algebra](https://www.3blue1brown.com/topics/linear-algebra) - visual intuition for every operation covered here
 - [NumPy documentation on broadcasting](https://numpy.org/doc/stable/user/basics.broadcasting.html) - the exact rules NumPy follows
 - [Stanford CS229 Linear Algebra Review](http://cs229.stanford.edu/section/cs229-linalg.pdf) - concise reference for ML-specific linear algebra
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a Matrix class with element-wise operations, matrix multiplication, transpose, determinant, and inverse.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Distinguish element-wise multiplication from matrix multiplication and explain when each applies.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a single dense neural network layer (`relu(W @ x + b)`) using only the from-scratch Matrix class.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a Matrix class with element-wise operations, matrix multiplication, transpose, determinant, and inverse,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a single dense neural network layer (`relu(W @ x + b)`) using only the from-scratch Matrix class,” and cite a repeatable check rather than relying on visual inspection alone.

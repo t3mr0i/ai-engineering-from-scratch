@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "Why is 'human in the loop' not enough by itself?",
       "options": [
-        "Because humans should never be asked to review AI output in an accountable workflow",
+        "Because humans should never be asked to review AI output in an accountable workflow — and applies unchanged even when the lesson's stated preconditions fail",
         "Because review roles, approval gates, quality criteria, and appeal paths must be explicit",
         "Because approval always happens automatically once the AI output passes a filter",
         "Because quality criteria stop mattering as soon as a named reviewer is assigned"
@@ -45,7 +45,7 @@
         "Hiding quality uncertainty from reviewers so approvals move through faster",
         "Appeal path — a route for affected people to challenge an AI-supported decision",
         "Skipping the named reviewer because the AI output looked convincing enough",
-        "Removing the approval gate so high-impact output reaches users without delay"
+        "Removing the approval gate so high-impact output reaches users without delay, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 1,
       "explanation": "The lesson's controls are review role, approval gate, quality checklist, and appeal path — an appeal path lets affected people challenge a decision, unlike hiding uncertainty, skipping the reviewer, or removing the gate."
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "When is a mandatory approval gate appropriate?",
       "options": [
-        "Only when the AI output is trivial and has no effect on any downstream decision",
+        "Only when the AI output is trivial and has no effect on any downstream decision — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when no user or customer is affected by the outcome of the workflow at all",
         "When impact and uncertainty are high and decision authority or user impact is involved",
         "Never — informal peer review by a colleague always covers accountable approval"

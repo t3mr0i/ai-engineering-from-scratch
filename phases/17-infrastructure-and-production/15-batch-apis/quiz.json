@@ -12,7 +12,7 @@
         "50% discount with 24-hour turnaround"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“50% discount with 24-hour turnaround” matches the lesson’s treatment of Batch APIs — the 50% Discount as Industry Standard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Only batches under 1k requests qualify"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The provider promises to return within 24 hours, with typical P50 around 2-6 hours” matches the lesson’s treatment of Batch APIs — the 50% Discount as Industry Standard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "It increases cost by 50%"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“It can drop to roughly 10% of the synchronous-uncached baseline” matches the lesson’s treatment of Batch APIs — the 50% Discount as Industry Standard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Semi-interactive with async queue"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Interactive, because it sounds urgent” matches the lesson’s treatment of Batch APIs — the 50% Discount as Industry Standard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Batch file formats differ per provider (OpenAI JSONL, Anthropic JSONL, Vertex BigQuery/GCS), so a portable client needs per-provider adapters"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Batch file formats differ per provider (OpenAI JSONL, Anthropic JSONL, Vertex BigQuery/GCS), so a portable client needs per-provider adapters” matches the lesson’s treatment of Batch APIs — the 50% Discount as Industry Standard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "If the user wouldn't notice a 24-hour delivery, always batch (and stack caching)"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“If the user wouldn't notice a 24-hour delivery, always batch (and stack caching)” matches the lesson’s treatment of Batch APIs — the 50% Discount as Industry Standard; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -101,3 +101,13 @@ First LLM-specific experiment: inject one provider 429 for 5 minutes. Observe fa
 - [Chaos Mesh (CNCF)](https://chaos-mesh.org/)
 - [Harness Chaos Engineering](https://www.harness.io/products/chaos-engineering)
 - [AWS FIS](https://aws.amazon.com/fis/)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the five chaos engineering prerequisites (SLI/SLO, observability, rollback, runbooks, on-call) and explain why skipping any breaks the practice.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Diagram the four planes (control, target, safety, observability) and the feedback loop into SLO.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Enumerate five LLM-specific experiments (memory overload, network fail, provider outage, malformed prompt, KV eviction storm).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the five chaos engineering prerequisites (SLI/SLO, observability, rollback, runbooks, on-call) and explain why skipping any breaks the practice,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Enumerate five LLM-specific experiments (memory overload, network fail, provider outage, malformed prompt, KV eviction storm),” and cite a repeatable check rather than relying on visual inspection alone.

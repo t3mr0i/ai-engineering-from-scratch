@@ -1,11 +1,12 @@
 {
+  "lesson": "11-ensemble-methods",
+  "title": "Ensemble Methods",
   "questions": [
     {
-      "id": "ensemble-pre-1",
       "stage": "pre",
       "question": "Why does combining multiple weak classifiers into an ensemble improve accuracy?",
       "options": [
-        "Each weak classifier memorizes a different part of the test set",
+        "Each weak classifier memorizes a different part of the test set — and applies unchanged even when the lesson's stated preconditions fail",
         "If the classifiers make different errors, majority voting cancels out individual mistakes",
         "Ensembles always use more training data than single models",
         "Weak classifiers are always faster than strong classifiers"
@@ -14,12 +15,11 @@
       "explanation": "The key is diversity. If classifiers make independent errors, majority voting means a wrong answer must fool more than half the models. Errors cancel out, and the ensemble accuracy exceeds any individual."
     },
     {
-      "id": "ensemble-pre-2",
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the main difference between bagging and boosting?",
       "options": [
         "Bagging trains models in parallel on random subsets; boosting trains models sequentially, focusing on previous errors",
-        "Bagging uses deep neural networks; boosting uses decision trees",
+        "Bagging uses deep neural networks; boosting uses decision trees, with no need to inspect intermediate results or test edge cases",
         "Bagging reduces bias; boosting reduces variance",
         "Bagging requires labeled data; boosting works unsupervised"
       ],
@@ -27,24 +27,22 @@
       "explanation": "Bagging trains models independently on bootstrap samples (parallel, reduces variance). Boosting trains models sequentially, with each new model focusing on the mistakes of the ensemble so far (reduces bias)."
     },
     {
-      "id": "ensemble-post-1",
-      "stage": "post",
+      "stage": "check",
       "question": "In AdaBoost, what happens to the sample weight of a misclassified training point after each round?",
       "options": [
         "It stays the same",
         "It increases, so the next weak learner focuses more on this hard example",
-        "It decreases, so the next learner ignores it",
+        "It decreases, so the next learner ignores it, because one plausible output is sufficient production evidence",
         "It is removed from the training set"
       ],
       "correct": 1,
       "explanation": "AdaBoost increases the weights of misclassified samples after each round. This forces the next weak learner to pay more attention to the examples the ensemble currently gets wrong."
     },
     {
-      "id": "ensemble-post-2",
-      "stage": "post",
+      "stage": "check",
       "question": "A random forest with 100 trees has the same test accuracy as 200 trees. Adding more trees to 500 also shows no improvement. Why?",
       "options": [
-        "The random forest is underfitting and needs a different algorithm",
+        "The random forest is underfitting and needs a different algorithm, before defining the measurement, acceptance threshold, or rollback path",
         "After enough trees, variance reduction plateaus and adding more trees provides diminishing returns without increasing overfitting",
         "500 trees is the maximum allowed",
         "The trees are all identical so adding more has no effect"
@@ -53,17 +51,28 @@
       "explanation": "Random forests do not overfit with more trees (unlike boosting). However, variance reduction plateaus once enough diverse trees have been averaged. More trees just add compute cost without improving accuracy."
     },
     {
-      "id": "ensemble-post-3",
       "stage": "post",
       "question": "Gradient boosting fits each new tree to what quantity?",
       "options": [
         "The original target values",
         "The residuals (errors) of the current ensemble's predictions",
         "Random subsets of features",
-        "The predictions of the previous tree"
+        "The predictions of the previous tree — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "In gradient boosting, each new tree is trained to predict the residuals (negative gradient of the loss) of the current ensemble. This sequentially reduces the remaining error."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Ensemble Methods?",
+      "options": [
+        "Build a bagging ensemble and demonstrate how averaging decorrelated models reduces variance without increas...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Build a bagging ensemble and demonstrate how averaging decorrelated models reduces variance without increas...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

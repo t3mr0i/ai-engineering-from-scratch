@@ -15,7 +15,7 @@
       "explanation": "BM25 dominates on literal symbols; dense dominates on paraphrases. A real endpoint receives both classes from the same users."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the BM25 parameter b at the default 0.75?",
       "options": [
         "A multiplier on the IDF term",
@@ -51,7 +51,7 @@
       "explanation": "Score interpolation breaks every reindex because the score distributions shift; ranks are comparable across modalities by construction."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What happens to RRF when you make the constant k very small?",
       "options": [
         "The top-1 contribution dominates the fusion; deep ranks contribute almost nothing",

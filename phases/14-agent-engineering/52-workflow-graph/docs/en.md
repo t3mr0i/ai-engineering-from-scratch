@@ -5,7 +5,7 @@
 **Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 14 · 44 (Graph Engineering: Make Agent Structure Explicit), Phase 14 · 51 (Automated Loop)
-**Time:** ~75 minutes
+**Time:** ~20 minutes
 
 ## Learning Objectives
 
@@ -63,3 +63,7 @@ node in production and store traces separately when full replay is required.
 
 - [Phase 14 · 44 — Graph Engineering](../../44-graph-engineering/docs/en.md)
 - [Phase 14 · 51 — Automated Loop](../../51-automated-loop/docs/en.md)
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define graph nodes, labeled edges, shared state, and routing rules,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Checkpoint state before a human approval pause and resume from that point,” and cite a repeatable check rather than relying on visual inspection alone.

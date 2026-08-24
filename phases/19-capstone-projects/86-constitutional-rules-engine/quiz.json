@@ -12,10 +12,10 @@
         "Because YAML supports anchors"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Because rules in YAML are reviewable by non-engineers, lived in version control, and replaceable without a code change” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What fields must every rule have at minimum?",
       "options": [
         "name, regex, fix",
@@ -24,7 +24,7 @@
         "predicate, severity, owner"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“name, severity, must, explanation” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Through a neural classifier"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Via all_of, any_of, and not_ which recursively wrap atomic predicates” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "It picks the fixer operation"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“It gates the must predicate so rules that do not apply are recorded as not_applicable rather than violation” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the Fixer do?",
       "options": [
         "It rewrites the rules file",
@@ -60,7 +60,7 @@
         "It calls a remote model to repair the text"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“It applies the per-rule declarative fix (append, prepend, replace_regex) to produce a revised text” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Because the first pass is only a dry run"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“To verify the revised text satisfies the rules and to surface any rule the fixer cannot repair locally” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -15,7 +15,7 @@
       "explanation": "Micro batch is what fits in memory; accumulation steps are how many forward + backward passes pile gradients into the same buffer before one optimizer step."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why must the loss be divided by accum_steps before backward on each micro batch?",
       "options": [
         "It makes the loss curve prettier",
@@ -51,7 +51,7 @@
       "explanation": "DDP's no_sync skips the gradient collective. Wrapping all but the last micro batch turns N collectives per effective step into one."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the equivalence_check function in main.py assert?",
       "options": [
         "That the loss converges",

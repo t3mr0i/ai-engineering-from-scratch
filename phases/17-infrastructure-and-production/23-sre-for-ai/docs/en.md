@@ -100,3 +100,13 @@ Runbooks evolve from Confluence pages to versioned markdown with structured sect
 - [Datadog Bits AI](https://www.datadoghq.com/product/bits-ai/)
 - [NeuBird Hawkeye](https://www.neubird.ai/)
 - [awesome-ai-sre](https://github.com/agamm/awesome-ai-sre)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Diagram the multi-agent AI SRE architecture: supervisor + specialized agents (logs, metrics, runbooks) + human approval gate.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why auto-remediation is narrow (restart pod, revert deploy) rather than broad (re-architect service).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the adversarial evaluation pattern (NeuBird Hawkeye): two models agree = confidence; disagree = escalate.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Diagram the multi-agent AI SRE architecture: supervisor + specialized agents (logs, metrics, runbooks) + human approval gate,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the adversarial evaluation pattern (NeuBird Hawkeye): two models agree = confidence; disagree = escalate,” and cite a repeatable check rather than relying on visual inspection alone.

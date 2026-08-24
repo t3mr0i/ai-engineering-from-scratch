@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "Why do AI features need incident runbooks?",
       "options": [
-        "Because standard uptime monitoring already covers every way an assistant can degrade",
+        "Because standard uptime monitoring already covers every way an assistant can degrade — and applies unchanged even when the lesson's stated preconditions fail",
         "Because support teams respond faster when each incident is handled case by case",
         "Because most AI incidents resolve themselves once the provider rotates the model",
         "Because model behavior, retrieval quality, tool calls, cost, and safety controls can fail"
@@ -43,7 +43,7 @@
       "question": "Which control belongs to this lesson?",
       "options": [
         "A rollback path that returns the feature to a known-good state during containment",
-        "An alert threshold set high enough that routine quality variation stays quiet",
+        "An alert threshold set high enough that routine quality variation stays quiet, before defining the measurement, acceptance threshold, or rollback path",
         "A shared support inbox with no named owner, so whoever is free picks it up",
         "A resolution note filed instead of a postmortem once the incident is closed"
       ],

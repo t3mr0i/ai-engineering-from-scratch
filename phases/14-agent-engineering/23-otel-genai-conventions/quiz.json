@@ -15,7 +15,7 @@
       "explanation": "invoke_agent is the canonical name; the agent's name attribute appears in the span name when set."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which three span categories does the GenAI SIG define?",
       "options": [
         "Model/client, agent, and tool spans",
@@ -51,7 +51,7 @@
       "explanation": "Default-off content capture protects PII and secrets; opt-in is explicit."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which attribute identifies the corpus or store consulted for a retrieval?",
       "options": [
         "gen_ai.response.model",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "External storage with pointer IDs avoids PII leaking into traces that ops can read."
-    },
-    {
-      "stage": "post",
-      "question": "How do you opt into the experimental stable preview of GenAI conventions?",
-      "options": [
-        "Edit the OTel collector config to add a gen_ai_stability: true processor block",
-        "Set OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental as an env var",
-        "Rebuild the SDK from source with the --enable-genai-semconv flag set at compile time",
-        "Pay for a license upgrade that unlocks the stable GenAI attribute set"
-      ],
-      "correct": 1,
-      "explanation": "The env var pins the experimental conventions so attributes are not silently renamed."
     }
   ]
 }

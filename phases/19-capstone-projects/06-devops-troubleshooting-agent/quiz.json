@@ -12,10 +12,10 @@
         "Cluster-admin so it can self-heal"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Read-only by default, with destructive verbs gated behind a separate server and human approval” matches the lesson’s treatment of Capstone 06 — DevOps Troubleshooting Agent for Kubernetes; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the knowledge graph the agent walks during root cause analysis?",
       "options": [
         "Nodes are K8s objects plus telemetry sources; edges encode ownership, scheduling, and observation",
@@ -24,7 +24,7 @@
         "A graph of GitHub commits and PR reviews"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Nodes are K8s objects plus telemetry sources; edges encode ownership, scheduling, and observation” matches the lesson’s treatment of Capstone 06 — DevOps Troubleshooting Agent for Kubernetes; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "By the order they were generated"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“By an evidence score combining recency, specificity, graph-path length, and citation count” matches the lesson’s treatment of Capstone 06 — DevOps Troubleshooting Agent for Kubernetes; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Replay attacks require both lists"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Reviewers can catch near-misses where the agent almost ran a destructive command” matches the lesson’s treatment of Capstone 06 — DevOps Troubleshooting Agent for Kubernetes; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which mechanism prevents the agent from rolling back unilaterally on a bad deploy?",
       "options": [
         "Destructive tools live on a separate MCP server behind an approval token from a Slack card",
@@ -60,7 +60,7 @@
         "PagerDuty automatically pauses the deployment"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Destructive tools live on a separate MCP server behind an approval token from a Slack card” matches the lesson’s treatment of Capstone 06 — DevOps Troubleshooting Agent for Kubernetes; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "Under 30 seconds"
       ],
       "correct": 2,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "How big is the synthetic incident suite used to score RCA accuracy?",
-      "options": [
-        "1 scripted demo incident",
-        "5 scenarios",
-        "100 randomly sampled production alerts",
-        "20 scenarios covering OOMKill, DNS flap, HPA thrash, PVC fill, and more"
-      ],
-      "correct": 3,
-      "explanation": ""
+      "explanation": "“Under 5 minutes from alert to Slack brief” matches the lesson’s treatment of Capstone 06 — DevOps Troubleshooting Agent for Kubernetes; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

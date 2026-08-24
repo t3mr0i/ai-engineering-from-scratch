@@ -106,3 +106,13 @@ The value grows with context length. At 4k tokens the noise floor is small enoug
 - [Shared DIFF Transformer (arXiv:2501.17900)](https://arxiv.org/html/2501.17900) — parameter-sharing variant
 - [Vaswani et al. — Attention Is All You Need (arXiv:1706.03762)](https://arxiv.org/abs/1706.03762) — the baseline Transformer DIFF subtracts from
 - [Liu et al. — Lost in the Middle (arXiv:2307.03172)](https://arxiv.org/abs/2307.03172) — the long-context benchmark DIFF attention targets
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State precisely why softmax attention has a noise floor and why it grows with context length.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Derive the differential attention formula and explain why the subtraction cancels the shared noise component while preserving signal.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Walk the V1-to-V2 diff: what got faster, what got simpler, what got more stable, and why each change was necessary for production pre-training.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State precisely why softmax attention has a noise floor and why it grows with context length,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Walk the V1-to-V2 diff: what got faster, what got simpler, what got more stable, and why each change was necessary for production pre-training,” and cite a repeatable check rather than relying on visual inspection alone.

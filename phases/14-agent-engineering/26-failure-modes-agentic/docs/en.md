@@ -82,3 +82,13 @@ Automated verification gates at every step of a reasoning chain, checking factua
 - [Microsoft, Taxonomy of Failure Mode in Agentic AI Systems](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Taxonomy-of-Failure-Mode-in-Agentic-AI-Systems-Whitepaper.pdf) — risk register
 - [Arize Phoenix](https://docs.arize.com/phoenix) — drift clustering in practice
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — when simpler patterns avoid modes entirely
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name MASFT's three failure categories and at least four specific modes in each.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why agentic failure amplifies existing AI failure modes (bias, hallucination).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the five industry-recurring modes and their mitigations.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name MASFT's three failure categories and at least four specific modes in each,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the five industry-recurring modes and their mitigations,” and cite a repeatable check rather than relying on visual inspection alone.

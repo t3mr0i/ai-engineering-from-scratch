@@ -1,30 +1,33 @@
 {
+  "lesson": "08-weight-initialization",
+  "title": "Weight Initialization and Training Stability",
   "questions": [
     {
+      "stage": "pre",
       "question": "What happens if you initialize all weights in a neural network to zero?",
       "options": [
-        "The network trains normally but slowly",
+        "The network trains normally but slowly — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "All neurons compute identical outputs and receive identical gradients, so the network has only 1 effective neuron per layer",
         "The network diverges",
         "Zero init is the recommended default"
       ],
       "correct": 1,
-      "explanation": "With zero weights, every neuron in a layer computes the same function, receives the same gradient, and updates identically. This 'symmetry' means hundreds of parameters behave as one.",
-      "stage": "pre"
+      "explanation": "With zero weights, every neuron in a layer computes the same function, receives the same gradient, and updates identically. This 'symmetry' means hundreds of parameters behave as one."
     },
     {
+      "stage": "check",
       "question": "Why does the scale of random weight initialization matter?",
       "options": [
         "Larger weights train faster",
         "If variance is too high, activations explode; if too low, activations vanish -- both prevent training",
         "Scale only matters for the output layer",
-        "It doesn't matter as long as weights are nonzero"
+        "It doesn't matter as long as weights are nonzero, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
-      "explanation": "Each layer multiplies variance by fan_in * Var(w). If this product is > 1, signal explodes exponentially through layers. If < 1, it vanishes. Proper initialization keeps this product at exactly 1.",
-      "stage": "pre"
+      "explanation": "Each layer multiplies variance by fan_in * Var(w). If this product is > 1, signal explodes exponentially through layers. If < 1, it vanishes. Proper initialization keeps this product at exactly 1."
     },
     {
+      "stage": "check",
       "question": "What is the formula for Kaiming/He initialization variance?",
       "options": [
         "Var(w) = 1/fan_in",
@@ -33,32 +36,43 @@
         "Var(w) = 1/(fan_in + fan_out)"
       ],
       "correct": 1,
-      "explanation": "Kaiming init uses Var(w) = 2/fan_in. The factor of 2 compensates for ReLU zeroing half the activations (negative values become 0), which effectively halves the fan_in.",
-      "stage": "post"
+      "explanation": "Kaiming init uses Var(w) = 2/fan_in. The factor of 2 compensates for ReLU zeroing half the activations (negative values become 0), which effectively halves the fan_in."
     },
     {
+      "stage": "check",
       "question": "When should you use Xavier/Glorot initialization instead of Kaiming/He?",
       "options": [
-        "Always -- Xavier is universally better",
+        "Always -- Xavier is universally better, before defining the measurement, acceptance threshold, or rollback path",
         "When using sigmoid or tanh activations, which don't zero half the outputs like ReLU",
         "When training on small datasets",
         "When using Adam optimizer"
       ],
       "correct": 1,
-      "explanation": "Xavier init uses Var(w) = 2/(fan_in + fan_out), designed for activations that are roughly linear near zero (sigmoid, tanh). Kaiming's extra factor of 2 compensates for ReLU's half-zeroing, which Xavier doesn't need.",
-      "stage": "post"
+      "explanation": "Xavier init uses Var(w) = 2/(fan_in + fan_out), designed for activations that are roughly linear near zero (sigmoid, tanh). Kaiming's extra factor of 2 compensates for ReLU's half-zeroing, which Xavier doesn't need."
     },
     {
+      "stage": "post",
       "question": "Why does GPT-2 scale residual layer weights by 1/sqrt(2N)?",
       "options": [
         "To speed up training",
         "Each residual addition increases variance, so scaling prevents the accumulated signal from growing unbounded through N layers",
-        "To reduce the number of parameters",
+        "To reduce the number of parameters — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "To improve tokenization"
       ],
       "correct": 1,
-      "explanation": "Residual connections add sublayer output to the input: x = x + sublayer(x). Each addition increases variance. With N residual layers, variance grows proportionally to N. Scaling by 1/sqrt(2N) keeps the signal stable.",
-      "stage": "post"
+      "explanation": "Residual connections add sublayer output to the input: x = x + sublayer(x). Each addition increases variance. With N residual layers, variance grows proportionally to N. Scaling by 1/sqrt(2N) keeps the signal stable."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Weight Initialization and Training Stability?",
+      "options": [
+        "Derive why Xavier init uses Var(w) = 2/(fan_in + fan_out) and Kaiming uses Var(w) = 2/fan_in",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Derive why Xavier init uses Var(w) = 2/(fan_in + fan_out) and Kaiming uses Var(w) = 2/fan_in” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

@@ -187,3 +187,13 @@ Anthropic's 2022 paper trained a 52B reward model on 22,000 comparisons. Larger 
 - [Bai et al., 2022 -- "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback"](https://arxiv.org/abs/2204.05862) -- Anthropic's RLHF paper with detailed analysis of reward hacking and KL penalty
 - [Stiennon et al., 2020 -- "Learning to summarize with human feedback"](https://arxiv.org/abs/2009.01325) -- RLHF applied to summarization, showing reward models can capture nuanced quality judgments
 - [Christiano et al., 2017 -- "Deep reinforcement learning from human preferences"](https://arxiv.org/abs/1706.03741) -- the foundational work on learning reward functions from human comparisons
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a reward model that scores response quality from human preference pairs (chosen vs rejected).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the PPO training loop that optimizes a language model policy against the reward model with a KL penalty.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why RLHF requires three models (SFT, reward, policy) and how the KL constraint prevents reward hacking.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a reward model that scores response quality from human preference pairs (chosen vs rejected),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why RLHF requires three models (SFT, reward, policy) and how the KL constraint prevents reward hacking,” and cite a repeatable check rather than relying on visual inspection alone.

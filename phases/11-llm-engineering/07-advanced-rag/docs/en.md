@@ -608,3 +608,13 @@ else:
 - [Edge et al., "From Local to Global: A Graph RAG Approach to Query-Focused Summarization" (Microsoft Research 2024)](https://arxiv.org/abs/2404.16130) -- GraphRAG paper: entity-relation extraction + Leiden community detection for query-focused summarization; the global vs local retrieval distinction.
 - [Asai et al., "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection" (ICLR 2024)](https://arxiv.org/abs/2310.11511) -- self-evaluating RAG with reflection tokens; the agentic frontier past static retrieve-then-generate.
 - [LangChain Query Construction blog](https://blog.langchain.dev/query-construction/) -- how to translate natural-language queries into structured database queries (Text-to-SQL, Cypher) as a pre-retrieval step.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement advanced chunking strategies (semantic, recursive, parent-child) that preserve document structure and context.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a hybrid search pipeline combining BM25 keyword matching with semantic vector search and a cross-encoder reranker.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Apply query transformation techniques (HyDE, multi-query, step-back) to improve retrieval on ambiguous or complex questions.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement advanced chunking strategies (semantic, recursive, parent-child) that preserve document structure and context,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Apply query transformation techniques (HyDE, multi-query, step-back) to improve retrieval on ambiguous or complex questions,” and cite a repeatable check rather than relying on visual inspection alone.

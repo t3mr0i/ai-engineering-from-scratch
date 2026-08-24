@@ -15,7 +15,7 @@
       "explanation": "An LLM with no loop and no tools can only produce text from its weights; it cannot observe state or act on it."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which three labels appear in the canonical ReAct trace from Yao et al. 2022?",
       "options": [
         "Prompt, Response, Reward",
@@ -51,7 +51,7 @@
       "explanation": "Turn budget is a cap on loop iterations; 2026 agents commonly run 40-400 steps and need a task-appropriate cap."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What changed in the 2025-2026 native-reasoning shift compared to prompt-based Thought tokens?",
       "options": [
         "Thought tokens are now emitted on a separate reasoning channel passed through turns",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "OpenAI CUA docs state explicitly that only direct user instructions count as permission; tool outputs can carry adversarial instructions and must be treated as untrusted."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the lesson claim every 2026 framework still runs ReAct under the hood?",
-      "options": [
-        "Because providers require the literal ReAct keywords Thought and Action in every prompt",
-        "Because Yao et al. hold a patent on the loop that every 2026 agent framework must license",
-        "Because LangGraph forces every other framework to inherit from its checkpointing engine",
-        "Because the observe-think-act flow is invariant; frameworks differ only in checkpointing and tracing around it"
-      ],
-      "correct": 3,
-      "explanation": "Differences across Claude Agent SDK, OpenAI Agents SDK, LangGraph, AutoGen, CrewAI, Agno, and Mastra are about what wraps the loop, not the loop itself."
     }
   ]
 }

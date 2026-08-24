@@ -174,3 +174,13 @@ else:
 - [Databricks — Agent system design patterns](https://docs.databricks.com/aws/en/generative-ai/guide/agent-system-design-patterns) — registry-level design with measurable benchmarks
 - [Anthropic — Building agents with the Claude Agent SDK](https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk) — description patterns for Claude-based agents
 - [OpenAI — Function calling best practices](https://platform.openai.com/docs/guides/function-calling#best-practices) — description length, strict-mode requirements, atomic-tool guidance
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Write a tool description using the "Use when X. Do not use for Y." pattern, under 1024 characters.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name tools in a way that is stable, `snake_case`, and unambiguous across a large registry.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Choose between atomic tools and a single monolithic tool for a given task surface.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Write a tool description using the "Use when X. Do not use for Y." pattern, under 1024 characters,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Choose between atomic tools and a single monolithic tool for a given task surface,” and cite a repeatable check rather than relying on visual inspection alone.

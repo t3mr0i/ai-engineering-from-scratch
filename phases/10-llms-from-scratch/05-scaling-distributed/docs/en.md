@@ -250,3 +250,13 @@ graph TD
 - [Zhao et al., 2023 -- "PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel"](https://arxiv.org/abs/2304.11277) -- PyTorch's native FSDP implementation
 - [Llama 3 Technical Report](https://arxiv.org/abs/2407.21783) -- 16,384 GPU training with 3D parallelism details
 - [DeepSeek-V3 Technical Report](https://arxiv.org/abs/2412.19437) -- how MoE architecture reduces training cost by an order of magnitude
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the three types of parallelism (data, tensor, pipeline) and when each is necessary based on model and cluster size.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement data-parallel training using PyTorch DDP with gradient synchronization across multiple GPUs.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Calculate the memory budget for a given model size (weights + optimizer states + gradients + activations) to determine the minimum hardware.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the three types of parallelism (data, tensor, pipeline) and when each is necessary based on model and cluster size,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Calculate the memory budget for a given model size (weights + optimizer states + gradients + activations) to determine the minimum hardware,” and cite a repeatable check rather than relying on visual inspection alone.

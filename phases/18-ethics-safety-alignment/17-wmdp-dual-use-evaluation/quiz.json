@@ -12,7 +12,7 @@
         "Multilingual math reasoning"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Proximate, enabling knowledge of a harmful process without being a direct synthesis recipe” matches the lesson’s treatment of WMDP and Dual-Use Capability Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Biosecurity, cybersecurity, chemistry"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Biosecurity, cybersecurity, chemistry” matches the lesson’s treatment of WMDP and Dual-Use Capability Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Representation Misdirection for Unlearning: reduces WMDP scores to near-random while preserving general capability (e.g., MMLU) within a few points"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Representation Misdirection for Unlearning: reduces WMDP scores to near-random while preserving general capability (e.g., MMLU) within a few points” matches the lesson’s treatment of WMDP and Dual-Use Capability Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "0.5x; ASL-3 ruled out"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“2.53x; insufficient to rule out ASL-3” matches the lesson’s treatment of WMDP and Dual-Use Capability Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Both are measured only via MCQ"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Novice-relative is the multiplicative help over status-quo (e.g., internet search) for non-experts; expert-absolute is the maximum information a motivated expert can extract from the model” matches the lesson’s treatment of WMDP and Dual-Use Capability Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "The model's open-source license"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The model's open-source license” matches the lesson’s treatment of WMDP and Dual-Use Capability Evaluation; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

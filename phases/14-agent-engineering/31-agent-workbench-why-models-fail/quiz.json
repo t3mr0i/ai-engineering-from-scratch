@@ -15,7 +15,7 @@
       "explanation": "The model is not wrong about Python; it is wrong about the work. Surfaces around the model are missing."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What are the seven workbench surfaces the lesson names?",
       "options": [
         "Train, eval, deploy, monitor, retrain, scale, and retire model versions across releases",
@@ -51,7 +51,7 @@
       "explanation": "Deleting 80% of tools moved Vercel's agent from 80% to 100% success."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does Terminal Bench 2.0 demonstrate about model vs harness?",
       "options": [
         "Models alone determine ranking regardless of tool count or harness configuration used",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "Reason from primitives, not vendor taxonomies; the vocabulary changes but the engineering does not."
-    },
-    {
-      "stage": "post",
-      "question": "Where does chat history sit relative to the workbench?",
-      "options": [
-        "Chat is volatile; the repo is the system of record",
-        "Chat is the system of record; the repo just mirrors it",
-        "Both are equivalent; the repo regenerates from chat",
-        "Neither matters; the model re-derives context alone"
-      ],
-      "correct": 0,
-      "explanation": "The loop closes on the state file, not on chat history."
     }
   ]
 }

@@ -61,3 +61,7 @@ durable fact that tells the next session whether to ask, retry, or escalate.
 
 - [Phase 14 · 40 — Multi-Session Handoff](../../40-multi-session-handoff/docs/en.md)
 - [Phase 14 · 42 — Agent Workbench Capstone](../../42-agent-workbench-capstone/docs/en.md)
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Model session progress as validated state rather than chat history,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Resume a task with one concrete next action and visible blockers,” and cite a repeatable check rather than relying on visual inspection alone.

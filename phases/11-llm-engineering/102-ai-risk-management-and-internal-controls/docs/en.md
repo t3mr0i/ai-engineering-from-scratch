@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 29 (Decision-making with AI), Phase 17 · 25 (Security and secrets audit)
-**Time:** ~45 minutes
+**Time:** ~140 minutes
 
 ## Learning Objectives
 
@@ -137,3 +137,13 @@ In our experience, features that pass all four checks are *rare*. Most features 
 - [EU AI Act — official text (EUR-Lex)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — GPAI obligations in Chapter V (Art. 51-56); high-risk system requirements in Chapter III (Art. 6, Annexes I and III). The final text is organised into Chapters, not the "Titles" used in the 2021 Commission draft.
 - [Anthropic — Claude usage policies](https://www.anthropic.com/aup) — the model provider's own risk classification (prohibited, restricted, allowed with conditions); useful input to your consequence level mapping.
 - [ENISA — AI Cybersecurity Risks (2024)](https://www.enisa.europa.eu/) — threat landscape for AI systems; maps cleanly to the control-gap categories in this lesson.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Risk Management: Owners, Controls, and Audit Evidence (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Risk Management: Owners, Controls, and Audit Evidence (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

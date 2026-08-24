@@ -105,3 +105,13 @@ Lessons 17-18 are the measurement-and-governance layer on top of the deception a
 - [OpenAI — Updating the Preparedness Framework (April 15, 2025)](https://openai.com/index/updating-our-preparedness-framework/) — five criteria, adjustment clause
 - [DeepMind — Strengthening our Frontier Safety Framework (September 2025)](https://deepmind.google/blog/strengthening-our-frontier-safety-framework/) — CCL v3.0, Harmful Manipulation
 - [METR — Common Elements of Frontier AI Safety Policies (2025)](https://metr.org/blog/2025-03-26-common-elements-of-frontier-ai-safety-policies/) — cross-lab comparison
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe Anthropic's ASL tier structure and what activated ASL-3.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the five OpenAI Preparedness Framework v2 criteria for tracked capabilities.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe DeepMind's Critical Capability Level structure and the Harmful Manipulation CCL.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe Anthropic's ASL tier structure and what activated ASL-3,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe DeepMind's Critical Capability Level structure and the Harmful Manipulation CCL,” and cite a repeatable check rather than relying on visual inspection alone.

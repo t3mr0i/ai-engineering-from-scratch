@@ -90,3 +90,13 @@ Tool execution is the sandbox boundary. Every tool should specify read/write sur
 - [Berkeley Function Calling Leaderboard (V4)](https://gorilla.cs.berkeley.edu/leaderboard.html) — 2026 eval benchmark
 - [Anthropic, Tool use documentation](https://platform.claude.com/docs/en/agent-sdk/overview) — production tool schema in the Claude Agent SDK
 - [OpenAI Agents SDK docs](https://openai.github.io/openai-agents-python/) — function tool type and Guardrails
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain Toolformer's self-supervised training signal: keep tool annotations only when execution reduces next-token loss.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name BFCL V4's five evaluation categories and what each measures.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a stdlib tool registry with schema validation, argument coercion, and execution sandboxing.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain Toolformer's self-supervised training signal: keep tool annotations only when execution reduces next-token loss,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a stdlib tool registry with schema validation, argument coercion, and execution sandboxing,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -517,3 +517,13 @@ else:
 Two extensions production dispatchers add. First, structured logging at every transition (which the loop's event stream already gives you, but the dispatcher should also emit `dispatch.attempt` and `dispatch.retry` events). Second, circuit breakers: after N failures in a window, a tool gets a cool-down period where dispatches return immediately with `kind="circuit_open"` instead of attempting the handler. Both fit on top of this dispatcher without changing the contract.
 
 Lesson twenty-four glues the dispatcher to a plan-and-execute agent so you see all four pieces in motion.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Wrap a tool handler in a per-call timeout that returns a typed error instead of hanging the loop.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply exponential backoff retry with jitter and a maximum attempt count.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Deduplicate retries on an idempotency key so a retry that races with a slow original does not run twice.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Wrap a tool handler in a per-call timeout that returns a typed error instead of hanging the loop,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Deduplicate retries on an idempotency key so a retry that races with a slow original does not run twice,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -491,3 +491,13 @@ When you call `model.encode(text)` and then search a vector database, this is wh
 - [Locality-Sensitive Hashing (Indyk & Motwani, 1998)](https://dl.acm.org/doi/10.1145/276698.276876) - foundational ANN algorithm
 - [Efficient Estimation of Word Representations (Mikolov et al., 2013)](https://arxiv.org/abs/1301.3781) - Word2Vec, where cosine similarity became the default for embeddings
 - [sklearn.neighbors documentation](https://scikit-learn.org/stable/modules/neighbors.html) - practical guide to distance metrics and neighbor algorithms in scikit-learn
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement L1, L2, cosine, Mahalanobis, Jaccard, and edit distance functions from scratch.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Select the appropriate distance metric for a given ML task and explain why alternatives fail.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Connect L1 and L2 norms to LASSO and Ridge regularization and their geometric constraint regions.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement L1, L2, cosine, Mahalanobis, Jaccard, and edit distance functions from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Connect L1 and L2 norms to LASSO and Ridge regularization and their geometric constraint regions,” and cite a repeatable check rather than relying on visual inspection alone.

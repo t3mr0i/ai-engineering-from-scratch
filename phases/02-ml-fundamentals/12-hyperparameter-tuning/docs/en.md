@@ -422,3 +422,13 @@ Use `loguniform` from scipy for learning rate and regularization. Use `randint` 
 - [Li et al., Hyperband: A Novel Bandit-Based Approach (2018)](https://jmlr.org/papers/v18/16-558.html) -- the Hyperband paper
 - [Optuna: A Next-generation Hyperparameter Optimization Framework](https://arxiv.org/abs/1907.10902) -- the Optuna paper
 - [Probst et al., Tunability: Importance of Hyperparameters (2019)](https://jmlr.org/papers/v20/18-444.html) -- which hyperparameters matter
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement grid search, random search, and Bayesian optimization from scratch and compare their sample efficiency.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a Bayesian optimization loop using a surrogate model and acquisition function to guide the search.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement grid search, random search, and Bayesian optimization from scratch and compare their sample efficiency,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a Bayesian optimization loop using a surrogate model and acquisition function to guide the search,” and cite a repeatable check rather than relying on visual inspection alone.

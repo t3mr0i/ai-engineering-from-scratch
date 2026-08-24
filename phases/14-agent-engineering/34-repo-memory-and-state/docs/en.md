@@ -81,3 +81,13 @@ When the schema changes, ship a migration script next to the schema bump. The st
 - Phase 14 · 08 — memory blocks and sleep-time compute
 - Phase 14 · 32 — the three-file minimum this lesson schematizes
 - Phase 14 · 40 — handoff packets read from the same schema
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define what belongs in repo memory and what belongs in chat history.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Author JSON Schemas for `agent_state.json` and `task_board.json`.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a state manager that loads, validates, mutates, and persists state atomically.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define what belongs in repo memory and what belongs in chat history,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a state manager that loads, validates, mutates, and persists state atomically,” and cite a repeatable check rather than relying on visual inspection alone.

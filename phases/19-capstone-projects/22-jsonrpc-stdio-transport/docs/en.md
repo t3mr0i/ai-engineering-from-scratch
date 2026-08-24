@@ -100,3 +100,13 @@ The lesson implements one outbound notification helper, `write_notification`. Th
 ## Going further
 
 This transport is enough for the lessons that follow. Production transports add three things. A correlation id field that survives forwarding (your `id` is already this, but in a mesh you need an outer trace id too). A cancellation channel (a notification like `$/cancelRequest` with the id of the in-flight call). And a content-type negotiation handshake so the same socket can speak JSON-RPC and Streamable HTTP. None of those change the wire. They add metadata.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Speak JSON-RPC 2.0 framed as newline-delimited JSON over stdin and stdout.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Map the five standard error codes (-32700, -32600, -32601, -32602, -32603) and surface them with the right semantics.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Distinguish requests, responses, notifications, and batches without inventing new envelope keys.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Speak JSON-RPC 2.0 framed as newline-delimited JSON over stdin and stdout,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Distinguish requests, responses, notifications, and batches without inventing new envelope keys,” and cite a repeatable check rather than relying on visual inspection alone.

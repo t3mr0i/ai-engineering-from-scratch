@@ -12,7 +12,7 @@
         "It is trained to complete web-style text, where prompts continue with more prompts"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“It is trained to complete web-style text, where prompts continue with more prompts” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Cross-entropy between predicted and true reward"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Bradley-Terry: -log sigmoid(r(x, y_w) - r(x, y_l))” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "The optimizer finding adversarial high-reward strings that exploit the reward model"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The optimizer finding adversarial high-reward strings that exploit the reward model” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Tokenizer mismatch between SFT and RM"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The alignment tax: regression on benchmarks RLHF did not target” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Bigger base models always lose to small aligned models"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Alignment is a different axis from capability, and the base model sets the capability floor” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "The SFT model with the LM head replaced by a scalar head"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The SFT model with the LM head replaced by a scalar head” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

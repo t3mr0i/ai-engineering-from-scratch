@@ -132,3 +132,13 @@ The 2026 landscape: pure-Transformer MoE dominates the frontier, but hybrids own
 - [Dao, Gu — Mamba-2 (arXiv:2405.21060)](https://arxiv.org/abs/2405.21060) — the simplified structured-state-space successor
 - [Lahoti et al. — Mamba-3 (arXiv:2603.15569, ICLR 2026)](https://arxiv.org/abs/2603.15569) — complex-valued state, MIMO, the 2026 pure-SSM frontier
 - [Gu et al. — Efficiently Modeling Long Sequences with Structured State Spaces (arXiv:2111.00396)](https://arxiv.org/abs/2111.00396) — the S4 paper, the SSM genealogy's starting point for LLMs
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the three primitives in a Jamba block — Transformer layers, Mamba layers, MoE — and the 1:7:even interleaving recipe.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: State what an SSM's recurrence looks like at a high level and why it enables constant-memory inference.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute the KV cache footprint of a Jamba model at 256k context and compare to what a pure-Transformer model would need.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the three primitives in a Jamba block — Transformer layers, Mamba layers, MoE — and the 1:7:even interleaving recipe,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute the KV cache footprint of a Jamba model at 256k context and compare to what a pure-Transformer model would need,” and cite a repeatable check rather than relying on visual inspection alone.

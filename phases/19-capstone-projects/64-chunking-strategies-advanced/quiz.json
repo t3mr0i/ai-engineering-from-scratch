@@ -15,7 +15,7 @@
       "explanation": "If the chunk that holds the answer span is incoherent the embedding moves to the wrong cluster and downstream components cannot repair the damage."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which strategy is the strongest single-strategy default when you have no prior knowledge of the corpus?",
       "options": [
         "Fixed-window",
@@ -51,7 +51,7 @@
       "explanation": "Character-level cuts inside a symbol destroy the meaning the embedding model is supposed to capture."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is the centroid drift termination criterion in semantic chunking?",
       "options": [
         "Cosine similarity between the running mean vector and the next sentence drops below a threshold",

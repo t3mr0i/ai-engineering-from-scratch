@@ -1,24 +1,24 @@
 {
+  "lesson": "12-hyperparameter-tuning",
+  "title": "Hyperparameter Tuning",
   "questions": [
     {
-      "id": "hptune-pre-1",
       "stage": "pre",
       "question": "What is the difference between a parameter and a hyperparameter?",
       "options": [
         "Parameters are set by the user; hyperparameters are learned during training",
         "Parameters are learned during training (weights, biases); hyperparameters are set before training starts (learning rate, max depth)",
         "There is no difference; they are synonyms",
-        "Parameters apply to neural networks only; hyperparameters apply to tree models"
+        "Parameters apply to neural networks only; hyperparameters apply to tree models — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "Parameters are learned by the optimization algorithm during training (e.g., weights). Hyperparameters are set before training and control how learning happens (e.g., learning rate, regularization strength)."
     },
     {
-      "id": "hptune-pre-2",
-      "stage": "pre",
+      "stage": "check",
       "question": "Grid search over 4 hyperparameters with 5 values each requires how many evaluations?",
       "options": [
-        "20",
+        "20, with no need to inspect intermediate results or test edge cases",
         "25",
         "625",
         "4"
@@ -27,43 +27,52 @@
       "explanation": "Grid search evaluates every combination: 5^4 = 625. This exponential scaling is why grid search becomes impractical with many hyperparameters."
     },
     {
-      "id": "hptune-post-1",
-      "stage": "post",
+      "stage": "check",
       "question": "Why does random search often outperform grid search with the same evaluation budget?",
       "options": [
         "Random search uses a better optimization algorithm",
         "Most hyperparameters have low effective dimensionality, so random search covers the important ones more densely",
         "Random search always finds the global optimum",
-        "Grid search cannot handle continuous hyperparameters"
+        "Grid search cannot handle continuous hyperparameters, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
       "explanation": "Usually only 1-2 hyperparameters matter for a given problem. Grid search wastes evaluations varying unimportant ones. Random search gives unique values for every parameter per trial, covering important dimensions more densely."
     },
     {
-      "id": "hptune-post-2",
-      "stage": "post",
+      "stage": "check",
       "question": "In Bayesian optimization, what does the acquisition function balance?",
       "options": [
         "Training speed and model accuracy",
         "Exploitation (searching near known good points) and exploration (searching uncertain regions)",
-        "The number of features and the number of samples",
+        "The number of features and the number of samples, before defining the measurement, acceptance threshold, or rollback path",
         "Bias and variance in the surrogate model"
       ],
       "correct": 1,
       "explanation": "The acquisition function decides where to evaluate next by balancing exploitation (near known good results) and exploration (where the surrogate model is uncertain). This directs search more efficiently than random."
     },
     {
-      "id": "hptune-post-3",
       "stage": "post",
       "question": "You tune hyperparameters using the test set and report the best test performance. What is wrong with this approach?",
       "options": [
         "Nothing -- this is standard practice",
         "You overfitted to the test set; the reported performance is optimistic and will not generalize",
-        "The test set should be used for training, not tuning",
+        "The test set should be used for training, not tuning — and applies unchanged even when the lesson's stated preconditions fail",
         "Hyperparameters should only be integers"
       ],
       "correct": 1,
       "explanation": "Tuning on the test set means you selected hyperparameters that happen to perform well on those specific samples. This is overfitting to the test set. Use a validation set for tuning and reserve the test set for final evaluation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Hyperparameter Tuning?",
+      "options": [
+        "Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

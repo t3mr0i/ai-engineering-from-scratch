@@ -199,3 +199,13 @@ graph TD
 - [Touvron et al., 2023 -- "Llama 2: Open Foundation and Fine-Tuned Chat Models"](https://arxiv.org/abs/2307.09288) -- Meta's SFT + RLHF pipeline with 27K high-quality examples
 - [Chiang et al., 2023 -- "Vicuna: An Open-Source Chatbot Impressing GPT-4"](https://lmsys.org/blog/2023-03-30-vicuna/) -- training on 70K ShareGPT conversations
 - [Zhou et al., 2023 -- "LIMA: Less Is More for Alignment"](https://arxiv.org/abs/2305.11206) -- proving that 1,000 carefully curated examples can match SFT on much larger datasets
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement supervised fine-tuning (SFT) that converts a base language model into an instruction-following assistant.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Format training data using chat templates with system, user, and assistant roles, and mask loss on non-assistant tokens.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why SFT is necessary: base models continue text rather than answer questions.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement supervised fine-tuning (SFT) that converts a base language model into an instruction-following assistant,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why SFT is necessary: base models continue text rather than answer questions,” and cite a repeatable check rather than relying on visual inspection alone.

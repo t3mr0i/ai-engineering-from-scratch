@@ -15,7 +15,7 @@
       "explanation": "A handoff with everything except next_action is a status report; the next concrete step is what makes the next session productive."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why are handoffs generated, not written?",
       "options": [
         "Hand-written handoffs get skipped on a hard day; the generator reads workbench artifacts instead",
@@ -51,7 +51,7 @@
       "explanation": "The lesson's seven-field table lists open_risks as answering 'what could bite next session, with severity'."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the lesson say the cleanup phase emits before a handoff can be written?",
       "options": [
         "A signed approval token issued by the verification gate",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "Asymmetric trim: failures must survive; trivia at the tail is cheap to keep."
-    },
-    {
-      "stage": "post",
-      "question": "Per the lesson's clean-state table, why does a stray branch block a handoff?",
-      "options": [
-        "Stray branches make handoff.json fail its JSON Schema validation",
-        "Git refuses to generate a diff across more than one branch",
-        "The reviewer agent cannot read state from a non-default branch",
-        "The next session's first commit would land on the wrong branch"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's table says a wrong branch means the next session's first commit lands in the wrong place, so the check requires the expected branch with no detached HEAD or orphan branches."
     }
   ]
 }

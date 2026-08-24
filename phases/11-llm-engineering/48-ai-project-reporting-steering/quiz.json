@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "What does the Python artifact produce?",
       "options": [
-        "A finished, ready-to-send status report that needs no further review before steering",
+        "A finished, ready-to-send status report that needs no further review before steering, because one plausible output is sufficient production evidence",
         "A ranked project reporting plan that maps signals like dependency gaps to steering controls",
         "A new ticketing system that auto-closes dependency and risk tickets across teams",
         "A line-item invoice for the token cost of every AI-generated status update"
@@ -43,7 +43,7 @@
       "question": "Which control belongs to this lesson?",
       "options": [
         "Source snapshot — cite the exact ticket, message, or document a status claim is based on",
-        "Hiding the risk owner's name so steering can't trace accountability for a stalled risk",
+        "Hiding the risk owner's name so steering can't trace accountability for a stalled risk, before defining the measurement, acceptance threshold, or rollback path",
         "Skipping the decision question so steering has to guess what it's actually being asked",
         "Stripping out the status evidence so the report reads cleaner in the deck"
       ],
@@ -66,7 +66,7 @@
       "stage": "post",
       "question": "When should project reporting escalate to steering?",
       "options": [
-        "Only when delivery is fully on track and no risks or dependencies remain open",
+        "Only when delivery is fully on track and no risks or dependencies remain open, with no need to inspect intermediate results or test edge cases",
         "Only when a project has zero dependencies left on any other team or system",
         "Never — reports should stay purely informational and never request a decision",
         "When a decision request, an unclear risk, a dependency gap, or strong status drift shows up"

@@ -1,0 +1,78 @@
+{
+  "lesson": "14-open-models-architecture-walkthroughs",
+  "title": "Open Models: Architecture Walkthroughs",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Open Models: Architecture Walkthroughs?",
+      "options": [
+        "Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Open Models: Architecture Walkthroughs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Open Models: Architecture Walkthroughs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
+        "Compute parameter count, KV cache size, and activation memory for any open model from its config alone",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Compute parameter count, KV cache size, and activation memory for any open model from its config alone” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Open Models: Architecture Walkthroughs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Pick the right open model for a deployment target given latency, memory, and capability constraints",
+        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Pick the right open model for a deployment target given latency, memory, and capability constraints” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Open Models: Architecture Walkthroughs?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field"
+      ],
+      "correct": 3,
+      "explanation": "“Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Open Models: Architecture Walkthroughs?",
+      "options": [
+        "Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

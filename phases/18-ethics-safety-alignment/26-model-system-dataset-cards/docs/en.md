@@ -88,3 +88,13 @@ Lessons 24-25 are regulatory and CVE layers. Lesson 26 is the documentation laye
 - [Gebru et al. — Datasheets for Datasets (CACM 2021, arXiv:1803.09010)](https://arxiv.org/abs/1803.09010) — datasheet paper
 - [Pushkarna et al. — Data Cards (Google 2022)](https://arxiv.org/abs/2204.01075) — layered data documentation
 - [Sidhpurwala et al. — Blueprints of Trust (arXiv:2509.20394)](https://arxiv.org/abs/2509.20394) — System Card formalization
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the original Mitchell et al. 2019 model card and the Gebru et al. 2018 datasheet.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe Data Cards' telescopic/periscopic/microscopic layering.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe System Cards and their end-to-end coverage.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the original Mitchell et al. 2019 model card and the Gebru et al. 2018 datasheet,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe System Cards and their end-to-end coverage,” and cite a repeatable check rather than relying on visual inspection alone.

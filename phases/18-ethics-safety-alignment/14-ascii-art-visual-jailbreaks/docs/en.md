@@ -62,3 +62,13 @@ Lessons 12-14 describe three orthogonal attack vectors: iterative refinement (PA
 - [Li et al. — StructuralSleight (arXiv:2406.08754)](https://arxiv.org/abs/2406.08754) — UTES generalization
 - [Chao et al. — PAIR (Lesson 12, arXiv:2310.08419)](https://arxiv.org/abs/2310.08419) — complementary iterative attack
 - [Anil et al. — Many-shot Jailbreaking (Lesson 13)](https://www.anthropic.com/research/many-shot-jailbreaking) — complementary length attack
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the ArtPrompt attack: word-identification step, ASCII-art substitution, final cloaked prompt.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why standard defenses (PPL, Paraphrase, Retokenization) fail on ArtPrompt.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Define ViTC and describe what it measures.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the ArtPrompt attack: word-identification step, ASCII-art substitution, final cloaked prompt,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Define ViTC and describe what it measures,” and cite a repeatable check rather than relying on visual inspection alone.

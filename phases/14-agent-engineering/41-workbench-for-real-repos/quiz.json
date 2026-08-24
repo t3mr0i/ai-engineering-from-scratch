@@ -15,7 +15,7 @@
       "explanation": "The numbers do the arguing; the case is made on a real-feeling task, not a toy."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which is NOT one of the five outcomes measured?",
       "options": [
         "tests_actually_run, since most tests passed claims are otherwise completely unverifiable",
@@ -51,7 +51,7 @@
       "explanation": "The lesson lists the prompt-only pipeline as read README, read app.py, edit files, claim done; the workbench-guided pipeline adds the scope contract, feedback runner, verification gate, reviewer, and handoff steps."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is the task both pipelines run in the lesson?",
       "options": [
         "Add rate limiting to /signup and log every rejected attempt",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "The lesson's outcomes table gives the reason for tests_actually_run as: most 'tests passed' claims are unverifiable."
-    },
-    {
-      "stage": "post",
-      "question": "Why does files_outside_scope matter as one of the five measured outcomes, per the lesson?",
-      "options": [
-        "Because it is the only outcome the verification gate can compute",
-        "Because it directly sets the reviewer_total score by formula",
-        "Because it is the cheapest of the five outcomes to measure",
-        "Because scope creep is the dominant silent failure mode here"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's outcomes table gives the reason for files_outside_scope as: scope creep is the dominant silent failure."
     }
   ]
 }

@@ -15,7 +15,7 @@
       "explanation": "A separate process is the simplest isolation the language ships. The parent retains a kill handle and an independent address space, so a crashing experiment cannot take the orchestrator with it."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is the memory cap described as soft?",
       "options": [
         "Because it only applies to the heap, not the stack",
@@ -51,7 +51,7 @@
       "explanation": "Final metrics are the last line that parses as json and includes every required key. Earlier covering lines are kept as intermediate metrics for learning curves."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the ablation helper sweep one knob at a time rather than a full factorial?",
       "options": [
         "Because the runner cannot launch more than one subprocess",
@@ -63,7 +63,7 @@
       "explanation": "Single knob sweeps keep the result interpretable. Full factorial costs scale exponentially with the number of knobs and the resulting table is hard to read."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What guarantee does forwarding spec.seed into config['__seed'] give the evaluator?",
       "options": [
         "Faster wall time",

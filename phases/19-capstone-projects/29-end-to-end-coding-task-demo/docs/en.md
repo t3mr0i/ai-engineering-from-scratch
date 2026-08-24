@@ -113,3 +113,13 @@ python3 -m pytest code/tests/ -v
 ```
 
 The demo prints a per-step trace, the final eval report, and the Prometheus exposition. Exit code is zero. The tests cover the policy state transitions, the gate refusals on synthetic tool calls, the end-to-end run on the bundled fixture, and the step-budget invariants.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compose the gate chain, sandbox, eval harness, and span builder into a single agent loop.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a deterministic policy that uses read_file, run_tests, and write_file to fix a fixture bug.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Enforce a global step budget plus an observation token budget across an end-to-end run.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compose the gate chain, sandbox, eval harness, and span builder into a single agent loop,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Enforce a global step budget plus an observation token budget across an end-to-end run,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -68,3 +68,13 @@ This is Self-Refine (Lesson 05) generalized. Any agent flow you care about can w
 - [OpenAI, SWE-bench Verified](https://openai.com/index/introducing-swe-bench-verified/) — the curated benchmark
 - [Berkeley Function Calling Leaderboard](https://gorilla.cs.berkeley.edu/leaderboard.html) — tool-use benchmark
 - [Langfuse docs](https://langfuse.com/) — evals + session replay in practice
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three evaluation layers — static benchmarks, custom offline, online production — and what each is for.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the evaluator-optimizer tight loop.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the 2026 best practice: evals live next to code, run in CI, gate PRs.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three evaluation layers — static benchmarks, custom offline, online production — and what each is for,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the 2026 best practice: evals live next to code, run in CI, gate PRs,” and cite a repeatable check rather than relying on visual inspection alone.

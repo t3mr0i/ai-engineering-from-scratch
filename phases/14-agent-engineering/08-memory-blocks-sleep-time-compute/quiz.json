@@ -15,7 +15,7 @@
       "explanation": "Letta uses core (always visible), recall (conversation history), and archival (external) tiers."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which production problem does sleep-time compute target?",
       "options": [
         "Block bloat from unlimited block_append calls hitting the character limit",
@@ -51,7 +51,7 @@
       "explanation": "Because it does not block user responses, the sleep-time agent can be slower and more expensive."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What pattern do the Human and Persona blocks generalize to?",
       "options": [
         "Arbitrary user-defined typed editable blocks (Task, Project, Safety, ...)",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Versioning blocks and surfacing diffs in the trace makes sleep-time rewrites visible to the primary loop."
-    },
-    {
-      "stage": "post",
-      "question": "What replaced inline `Thought:` tokens and the send_message/heartbeat pattern in Letta V1?",
-      "options": [
-        "A second LLM dedicated solely to producing thoughts before the primary model responds",
-        "A larger system prompt that instructs the model to reason before answering",
-        "Native reasoning emitted on a separate channel and passed through turns",
-        "The user manually typing out reasoning steps for the agent to follow"
-      ],
-      "correct": 2,
-      "explanation": "Letta V1 (letta_v1_agent) uses provider-level native reasoning, not prompt-shaped thoughts."
     }
   ]
 }

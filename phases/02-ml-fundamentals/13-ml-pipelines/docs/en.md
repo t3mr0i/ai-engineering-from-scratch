@@ -280,3 +280,13 @@ The typical progression:
 - [DVC documentation](https://dvc.org/doc) -- data versioning
 - [Sculley et al., Hidden Technical Debt in Machine Learning Systems (2015)](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html) -- the seminal paper on ML systems complexity
 - [Google ML Best Practices: Rules of ML](https://developers.google.com/machine-learning/guides/rules-of-ml) -- practical production ML advice
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build an ML pipeline from scratch that chains imputation, scaling, encoding, and model training into a single reproducible object.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Identify data leakage scenarios and explain how pipelines prevent them by fitting transformers only on training data.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct a ColumnTransformer that applies different preprocessing to numeric and categorical features.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build an ML pipeline from scratch that chains imputation, scaling, encoding, and model training into a single reproducible object,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct a ColumnTransformer that applies different preprocessing to numeric and categorical features,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,0 +1,78 @@
+{
+  "lesson": "08-llava-onevision-single-multi-video",
+  "title": "LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "options": [
+        "Design a visual-token budget that holds constant across single-image, multi-image, and video inputs",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Design a visual-token budget that holds constant across single-image, multi-image, and video inputs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Explain why a single model beats specialists at the same parameter count when curriculum is done right",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Explain why a single model beats specialists at the same parameter count when curriculum is done right” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name the three emergent capabilities reported by LLaVA-OneVision: multi-camera reasoning, set-of-mark promp...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name the three emergent capabilities reported by LLaVA-OneVision: multi-camera reasoning, set-of-mark promp...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Design a visual-token budget that holds constant across single-image, multi-image, and video inputs"
+      ],
+      "correct": 3,
+      "explanation": "“Design a visual-token budget that holds constant across single-image, multi-image, and video inputs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "options": [
+        "Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

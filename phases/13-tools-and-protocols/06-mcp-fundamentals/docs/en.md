@@ -556,3 +556,13 @@ print("""# print(json.dumps(your_request, indent=2))
 - [Anthropic — Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — November 2024 launch post
 - [MCP blog — First MCP anniversary](https://blog.modelcontextprotocol.io/posts/2025-11-25-first-mcp-anniversary/) — one-year retrospective and the 2025-11-25 spec changes
 - [WorkOS — MCP 2025-11-25 spec update](https://workos.com/blog/mcp-2025-11-25-spec-update) — summary of SEP-1686, 1036, 1577, 835, and 1724
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the client) and give one use case each.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message at each phase.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Parse and emit JSON-RPC 2.0 request, response, and notification envelopes.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the client) and give one use case each,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Parse and emit JSON-RPC 2.0 request, response, and notification envelopes,” and cite a repeatable check rather than relying on visual inspection alone.

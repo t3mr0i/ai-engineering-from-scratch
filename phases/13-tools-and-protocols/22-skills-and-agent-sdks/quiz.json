@@ -1,0 +1,78 @@
+{
+  "lesson": "22-skills-and-agent-sdks",
+  "title": "Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "options": [
+        "Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Write a SKILL.md with YAML frontmatter and progressive disclosure",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Write a SKILL.md with YAML frontmatter and progressive disclosure” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Load skills filesystem-style into an agent runtime",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Load skills filesystem-style into an agent runtime” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Compose a skill with an MCP server and an AGENTS.md so one package works in Claude Code, Cursor, and Codex",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Compose a skill with an MCP server and an AGENTS.md so one package works in Claude Code, Cursor, and Codex” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)"
+      ],
+      "correct": 3,
+      "explanation": "“Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "options": [
+        "Write a SKILL.md with YAML frontmatter and progressive disclosure",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Write a SKILL.md with YAML frontmatter and progressive disclosure” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

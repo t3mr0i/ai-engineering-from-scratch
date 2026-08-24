@@ -371,3 +371,13 @@ This means everything you learned about dimensionality reduction in Lesson 10 is
 - [Netflix Prize and Matrix Factorization](https://sifter.org/~simon/journal/20061211.html) - Simon Funk's original blog post on SVD for recommendations
 - [Latent Semantic Analysis](https://en.wikipedia.org/wiki/Latent_semantic_analysis) - the original NLP application of SVD
 - [Numerical Linear Algebra by Trefethen and Bau](https://people.maths.ox.ac.uk/trefethen/text.html) - the gold standard for understanding SVD algorithms and their numerical properties
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement SVD via power iteration and explain the geometric meaning of U, Sigma, and V^T.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply truncated SVD for image compression and measure the compression ratio vs reconstruction error.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute the Moore-Penrose pseudoinverse via SVD to solve overdetermined least-squares systems.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement SVD via power iteration and explain the geometric meaning of U, Sigma, and V^T,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute the Moore-Penrose pseudoinverse via SVD to solve overdetermined least-squares systems,” and cite a repeatable check rather than relying on visual inspection alone.

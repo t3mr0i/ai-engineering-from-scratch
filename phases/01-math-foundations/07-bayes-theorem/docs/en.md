@@ -205,3 +205,13 @@ The connection is deeper than analogy:
 - [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/notes2022fall/cs229-notes2.pdf) - naive Bayes and its connection to discriminative models
 - [Think Bayes](https://greenteapress.com/wp/think-bayes/) - free book, Bayesian statistics with Python code
 - [scikit-learn Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html) - production implementations and when to use each variant
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Apply Bayes' theorem to compute posterior probabilities from priors, likelihoods, and evidence.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a Naive Bayes text classifier from scratch with Laplace smoothing and log-space computation.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare MLE and MAP estimation and explain how MAP corresponds to L2 regularization.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Apply Bayes' theorem to compute posterior probabilities from priors, likelihoods, and evidence,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare MLE and MAP estimation and explain how MAP corresponds to L2 regularization,” and cite a repeatable check rather than relying on visual inspection alone.

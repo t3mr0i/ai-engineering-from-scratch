@@ -113,3 +113,13 @@ The sequence is upstream of model selection. Choosing Claude Sonnet 4.6 vs. a se
 - [Databricks Unity Catalog](https://docs.databricks.com/en/data-governance/unity-catalog/index.html) — lineage, governance, and access control for data platform RAG sources.
 - [ENISA — AI and IoT security guidelines](https://www.enisa.europa.eu/) — European security framework for IoT-connected AI systems; covers OT/IT boundary requirements.
 - [GDPR Article 5 — principles relating to processing of personal data](https://gdpr-info.eu/art-5-gdpr/) — the data minimisation and purpose limitation principles that constrain what an LLM system may store or process.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

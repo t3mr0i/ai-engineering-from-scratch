@@ -70,3 +70,13 @@ Claude computer use, OpenAI CUA, Gemini 2.5 Computer Use (Lesson 21) all train o
 - [Xie et al., OSWorld (arXiv:2404.07972)](https://arxiv.org/abs/2404.07972) — cross-OS desktop benchmark
 - [Anthropic, Introducing computer use](https://www.anthropic.com/news/3-5-models-and-computer-use) — Claude's benchmark-shaped capability
 - [OpenAI, Computer-Using Agent](https://openai.com/index/computer-using-agent/) — OSWorld and WebArena numbers
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe WebArena's four self-hosted apps and why execution-based evaluation matters.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why OSWorld uses real OS screenshots instead of accessibility APIs.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the two primary OSWorld failure modes: GUI grounding and operational knowledge.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe WebArena's four self-hosted apps and why execution-based evaluation matters,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the two primary OSWorld failure modes: GUI grounding and operational knowledge,” and cite a repeatable check rather than relying on visual inspection alone.

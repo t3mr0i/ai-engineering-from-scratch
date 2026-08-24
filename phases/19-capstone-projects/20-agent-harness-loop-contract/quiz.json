@@ -15,7 +15,7 @@
       "explanation": "A state machine puts the legality rules in one transition function. The same input sequence reproduces the same state, which is what makes session replay possible. Speed, test coverage, and what a model can call are unrelated to why the shape was chosen."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does a pull point in the loop represent?",
       "options": [
         "A model call inside PLANNING that returns the name of the next tool to invoke without yielding control",
@@ -51,7 +51,7 @@
       "explanation": "HookAbort cancels the in-flight tool dispatch, fires on_error with the abort reason, and continues into REFLECTING. It does not end the session, unregister the hook, or touch the budget."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why are hooks and events kept as separate concerns?",
       "options": [
         "Because event types are serialized as raw bytes on disk while hooks are addressed by string names in the registry",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Budget exhaustion is a yield, not a kill switch. The harness transitions to IDLE, fires on_budget_exceeded, and returns a PullRequest so the caller can decide whether to extend or close."
-    },
-    {
-      "stage": "post",
-      "question": "Why does this lesson stub out the planner instead of calling a model?",
-      "options": [
-        "To keep the loop contract testable and deterministic before any model or real planner is bound to it",
-        "Because local model calls add enough latency that the test suite would time out on typical CI hardware",
-        "Because a language model is structurally incapable of returning a tool-call payload from an API response",
-        "To save on token spend while iterating on the harness's internal state machine during development"
-      ],
-      "correct": 0,
-      "explanation": "Pinning the loop contract first lets later lessons swap in real planners, registries, and dispatchers without renegotiating the state machine. Models return tool calls just fine — that is not the reason."
     }
   ]
 }

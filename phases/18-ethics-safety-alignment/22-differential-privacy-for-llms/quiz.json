@@ -12,7 +12,7 @@
         "M is provably equivalent to a non-private algorithm"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“For any two datasets differing in one example and any event S, P(M(D) in S) <= e^epsilon * P(M(D') in S) + delta, so any single individual's contribution cannot be reliably inferred” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Sum clipped gradients and add Gaussian noise scaled by sigma * C"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Re-randomize the model's tokenizer between steps” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "LoRA removes the need for an accountant"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Full DP-SGD on a frontier model is prohibitive; LoRA limits gradient updates to a small adapter, reducing per-example gradient storage while still providing DP guarantees on the adapter” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "It showed they measure different things: MIA on inserted canaries under-reports memorization because canaries are not optimized to be the 'most extractable' examples that actually matter for privacy"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“It showed they measure different things: MIA on inserted canaries under-reports memorization because canaries are not optimized to be the 'most extractable' examples that actually matter for privacy” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "A way to compute epsilon from epsilon-delta accounting alone"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Inference-time differential privacy via a mixture of experts on next-token distributions, with aggregation noise; avoids DP training entirely” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "A countermeasure to canary insertion"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Using a DP-trained model's confidence scores as an oracle to re-identify individuals, even when outputs do not leak directly” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

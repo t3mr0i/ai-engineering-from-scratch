@@ -97,3 +97,13 @@ Once you have a shared embedding space, every vision+language task becomes a dis
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip) — the community codebase
 - [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) — HF guide with side-by-side use cases
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain CLIP's two-tower architecture and contrastive training objective.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Use a pretrained CLIP (or SigLIP) for zero-shot classification without any task-specific training.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement zero-shot classification from scratch: encode class prompts, compute cosine similarity, take argmax.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain CLIP's two-tower architecture and contrastive training objective,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement zero-shot classification from scratch: encode class prompts, compute cosine similarity, take argmax,” and cite a repeatable check rather than relying on visual inspection alone.

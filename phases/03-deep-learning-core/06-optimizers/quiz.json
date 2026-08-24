@@ -1,54 +1,57 @@
 {
+  "lesson": "06-optimizers",
+  "title": "Optimizers",
   "questions": [
     {
+      "stage": "pre",
       "question": "What problem does momentum solve in gradient descent?",
       "options": [
         "It reduces memory usage",
         "It dampens oscillation by accumulating past gradients, accelerating movement in consistent directions",
-        "It eliminates the need for a learning rate",
+        "It eliminates the need for a learning rate — and applies unchanged even when the lesson's stated preconditions fail",
         "It prevents overfitting"
       ],
       "correct": 1,
-      "explanation": "In narrow valleys, gradients oscillate across the valley while making slow progress along it. Momentum accumulates past gradients: consistent directions amplify while oscillating directions cancel, giving smoother, faster convergence.",
-      "stage": "pre"
+      "explanation": "In narrow valleys, gradients oscillate across the valley while making slow progress along it. Momentum accumulates past gradients: consistent directions amplify while oscillating directions cancel, giving smoother, faster convergence."
     },
     {
+      "stage": "check",
       "question": "What is the key difference between Adam and AdamW?",
       "options": [
         "AdamW uses a higher learning rate",
         "AdamW applies weight decay directly to weights instead of through the gradient, giving proper regularization",
         "AdamW doesn't use momentum",
-        "AdamW only works with transformers"
+        "AdamW only works with transformers, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
-      "explanation": "In Adam + L2, the adaptive learning rate scales the regularization term differently per parameter. AdamW decouples weight decay from the gradient update, applying uniform shrinkage regardless of gradient statistics.",
-      "stage": "pre"
+      "explanation": "In Adam + L2, the adaptive learning rate scales the regularization term differently per parameter. AdamW decouples weight decay from the gradient update, applying uniform shrinkage regardless of gradient statistics."
     },
     {
+      "stage": "check",
       "question": "Why does Adam use bias correction in early training steps?",
       "options": [
         "To prevent overfitting",
         "The moment estimates are initialized to zero, so early values are biased toward zero; correction compensates for this cold start",
-        "To clip large gradients",
+        "To clip large gradients, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "To speed up convergence"
       ],
       "correct": 1,
-      "explanation": "At step 1 with beta1=0.9, m_1 = 0.1 * gradient (10x too small). Dividing by (1 - 0.9^1) = 0.1 corrects this to the actual gradient. The correction becomes negligible after ~50 steps.",
-      "stage": "post"
+      "explanation": "At step 1 with beta1=0.9, m_1 = 0.1 * gradient (10x too small). Dividing by (1 - 0.9^1) = 0.1 corrects this to the actual gradient. The correction becomes negligible after ~50 steps."
     },
     {
+      "stage": "check",
       "question": "What are the standard default hyperparameters for Adam?",
       "options": [
         "lr=0.1, beta1=0.5, beta2=0.5",
         "lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8",
-        "lr=0.01, beta1=0.99, beta2=0.99",
+        "lr=0.01, beta1=0.99, beta2=0.99, before defining the measurement, acceptance threshold, or rollback path",
         "lr=0.0001, beta1=0.8, beta2=0.9"
       ],
       "correct": 1,
-      "explanation": "The original Adam paper (Kingma & Ba, 2014) recommended lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8. These defaults work well for most problems.",
-      "stage": "post"
+      "explanation": "The original Adam paper (Kingma & Ba, 2014) recommended lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8. These defaults work well for most problems."
     },
     {
+      "stage": "post",
       "question": "Which optimizer is the modern default for training transformers and LLMs?",
       "options": [
         "Vanilla SGD",
@@ -57,8 +60,19 @@
         "AdamW"
       ],
       "correct": 3,
-      "explanation": "AdamW (Adam with decoupled weight decay) is used to train BERT, GPT, LLaMA, and virtually all modern transformers. It combines adaptive learning rates with proper weight decay regularization.",
-      "stage": "post"
+      "explanation": "AdamW (Adam with decoupled weight decay) is used to train BERT, GPT, LLaMA, and virtually all modern transformers. It combines adaptive learning rates with proper weight decay regularization."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Optimizers?",
+      "options": [
+        "Explain how Adam's bias correction compensates for zero-initialized moment estimates in early training steps",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain how Adam's bias correction compensates for zero-initialized moment estimates in early training steps” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

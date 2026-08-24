@@ -12,10 +12,10 @@
         "The cost of the API call per prompt"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“How often the model answers prompts labeled unsafe” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why use a mock LLM rather than a real model for this lesson?",
       "options": [
         "Because real models are not allowed in capstones",
@@ -24,7 +24,7 @@
         "Because the lesson requires GPU hardware"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“So the same input yields the same output across runs, making code changes attributable to known causes” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "0.05"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“0.17” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "The number of regex rules that fired"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The gap between the model's stated confidence and its observed accuracy, binned across confidence ranges” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the framework join unsafe prompts against the lesson 82 taxonomy?",
       "options": [
         "To re-run the lesson 82 corpus loader",
@@ -60,7 +60,7 @@
         "To remove duplicates"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“To report under-refusal per attack category so the team sees which boundary the model leaks on” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Because over-refusal is computed by a different team"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Because they are two opposite errors and a single number hides whichever one is worse on a given build” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -108,3 +108,13 @@ It does not implement KV cache for inference. Caching keys and values across for
 `main.py` defines `MultiHeadSelfAttention`. The class holds two linear layers and a registered mask buffer. The forward pass projects, reshapes, scores, masks, softmaxes, weights, reshapes, and projects again. The demo at the bottom builds a small model that wraps the attention with token and positional embeddings and an LM head, trains it on a copy task for three epochs, and prints the loss curve and a per-head attention heatmap. The tests in `code/tests/test_attention.py` pin the shape contract, the causality property, the softmax property, the head-split property, and the gradient flow.
 
 Run the demo. Then increase `n_heads` from 4 to 8 (keeping `d_model=32`, so `d_head=4`) and watch the heatmap change.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a batched Query/Key/Value projection as a single linear layer split into H heads.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute scaled dot-product attention with the correct normalization and dtype handling.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Apply a causal mask that prevents a position from attending to future positions.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a batched Query/Key/Value projection as a single linear layer split into H heads,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Apply a causal mask that prevents a position from attending to future positions,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -549,3 +549,13 @@ for call in tool_calls_obj.get("tool_calls", []):
 - [a2a-protocol.org](https://a2a-protocol.org/latest/) — A2A v1.0 reference
 - [OpenTelemetry — GenAI semconv](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — canonical tracing conventions
 - [Anthropic — Claude Agent SDK overview](https://code.claude.com/docs/en/agent-sdk/overview) — production agent runtime patterns
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Front the server with an OAuth 2.1 gateway that enforces RBAC and pinned hashes.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Write a multi-server client that traces with OTel GenAI attributes end-to-end.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Write a multi-server client that traces with OTel GenAI attributes end-to-end,” and cite a repeatable check rather than relying on visual inspection alone.

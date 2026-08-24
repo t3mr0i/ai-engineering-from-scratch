@@ -15,7 +15,7 @@
       "explanation": "These are the six runtime shapes; pick a shape before picking a framework."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "When is request-response a poor fit?",
       "options": [
         "On a 1-second classification task served synchronously through a single Agno or Mastra process",
@@ -51,7 +51,7 @@
       "explanation": "Anthropic flagged dozens-to-hundreds of steps per task as normal; that workload needs queues or durable runtimes."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the lesson mean by 'observability is load-bearing'?",
       "options": [
         "Without OTel GenAI spans and a Langfuse/Phoenix/Opik backend you cannot debug a multi-step agent that failed at step 40",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "Failed jobs without DLQ disappear; DLQ is the parking lot for failed jobs."
-    },
-    {
-      "stage": "post",
-      "question": "What does the lesson recommend pairing cron-shaped agents with?",
-      "options": [
-        "GPU autoscalers that add inference capacity during traffic spikes",
-        "Streaming SSE connections so users see progressive output as each step runs",
-        "WebRTC for low-latency voice and video during the scheduled agent run",
-        "Durable execution so a failing nightly run resumes next tick"
-      ],
-      "correct": 3,
-      "explanation": "Cron + durable execution recovers cleanly from failed scheduled runs."
     }
   ]
 }

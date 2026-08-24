@@ -72,3 +72,13 @@ Per Maxim (2026 field analysis): 89% of organizations have agent observability i
 - [Arize Phoenix docs](https://docs.arize.com/phoenix) — auto-instrumentation, drift
 - [Comet Opik](https://www.comet.com/site/products/opik/) — optimization + guardrails
 - [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — the schema all three consume
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three top open-source agent observability platforms and their licenses.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Distinguish what each one is strongest at: Langfuse (prompt mgmt + sessions), Phoenix (RAG + auto-instrumentation), Opik (optimization + guardrails).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why production agents need traces that connect prompts, tool calls, evaluations, cost, and user outcomes.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three top open-source agent observability platforms and their licenses,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why production agents need traces that connect prompts, tool calls, evaluations, cost, and user outcomes,” and cite a repeatable check rather than relying on visual inspection alone.

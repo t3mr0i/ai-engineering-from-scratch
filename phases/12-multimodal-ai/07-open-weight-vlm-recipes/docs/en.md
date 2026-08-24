@@ -107,3 +107,13 @@ Every one of those defaults traces back to a measured ablation in the papers cit
 - [Deitke et al. — Molmo and PixMo (arXiv:2409.17146)](https://arxiv.org/abs/2409.17146)
 - [Tong et al. — Cambrian-1 (arXiv:2406.16860)](https://arxiv.org/abs/2406.16860)
 - [Karamcheti et al. — Prismatic VLMs (arXiv:2402.07865)](https://arxiv.org/abs/2402.07865)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Pick a recipe (encoder, connector, data, resolution) for a new VLM given a compute budget and task mix.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Pick a recipe (encoder, connector, data, resolution) for a new VLM given a compute budget and task mix,” and cite a repeatable check rather than relying on visual inspection alone.

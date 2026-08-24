@@ -305,3 +305,13 @@ else:
 - [Beyer et al.: When Is "Nearest Neighbor" Meaningful? (1999)](https://link.springer.com/chapter/10.1007/3-540-49257-7_15) - formal analysis of the curse of dimensionality for nearest neighbor
 - [scikit-learn Nearest Neighbors documentation](https://scikit-learn.org/stable/modules/neighbors.html) - practical guide with algorithm selection
 - [FAISS: A Library for Efficient Similarity Search](https://github.com/facebookresearch/faiss) - Meta's library for billion-scale approximate nearest neighbor search
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement KNN classification and regression from scratch with configurable K and distance-weighted voting.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare L1, L2, cosine, and Minkowski distance metrics and select the appropriate one for a given data type.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the curse of dimensionality and demonstrate why KNN degrades in high-dimensional spaces.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement KNN classification and regression from scratch with configurable K and distance-weighted voting,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the curse of dimensionality and demonstrate why KNN degrades in high-dimensional spaces,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -15,7 +15,7 @@
       "explanation": "LangGraph models the agent as a state graph: nodes are pure functions, edges are transitions, state is typed and immutable."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which problem does durable execution solve?",
       "options": [
         "Resuming a 40-step run from step 38 when it fails, with exact state, instead of starting over",
@@ -51,7 +51,7 @@
       "explanation": "If a node depends on uncaptured nondeterminism, resume cannot reconstruct the post-step state."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is a conditional edge?",
       "options": [
         "An edge that only fires when the runtime is executing on a GPU",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "Only checkpointing conversation turns leaves tool state and memory writes outside resume's reach."
-    },
-    {
-      "stage": "post",
-      "question": "Where does human-in-the-loop fit into LangGraph's design?",
-      "options": [
-        "It requires forking the LangGraph runtime itself, since the built-in checkpointer exposes no hooks for external human review at all",
-        "Pause before a critical node, surface serialized state to a human, accept modifications, resume; the checkpointer makes this cheap",
-        "Only through a separate provider-hosted API that sits outside LangGraph's own checkpointing",
-        "Only at the very first START node and the very last END node"
-      ],
-      "correct": 1,
-      "explanation": "Because state is already serialized between nodes, human review and edit is a natural pause-and-resume pattern."
     }
   ]
 }

@@ -15,7 +15,7 @@
       "explanation": "With M microbatches and N stages, per-stage bubble is (N-1)/(M+N-1). Picking M much greater than N shrinks it."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is GPipe's activation memory proportional to M?",
       "options": [
         "Bug",
@@ -51,7 +51,7 @@
       "explanation": "Megatron-LM exposes --num-layers-per-stage as a list to allow uneven layer counts when per-layer cost differs."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What goes wrong if every stage calls send before recv?",
       "options": [
         "Memory leak",

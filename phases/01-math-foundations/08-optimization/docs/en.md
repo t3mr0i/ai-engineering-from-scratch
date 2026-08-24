@@ -205,3 +205,13 @@ Sharp minima generalize poorly. Flat minima generalize well. This is one reason 
 - [Why Momentum Really Works (Distill)](https://distill.pub/2017/momentum/) - interactive visualization of momentum dynamics
 - [Adam: A Method for Stochastic Optimization (Kingma & Ba, 2014)](https://arxiv.org/abs/1412.6980) - the original Adam paper, readable and short
 - [Visualizing the Loss Landscape of Neural Nets (Li et al., 2018)](https://arxiv.org/abs/1712.09913) - the paper that showed sharp vs flat minima
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement vanilla gradient descent, SGD with momentum, and Adam from scratch.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare optimizer convergence on the Rosenbrock function and explain why Adam adapts per-weight learning rates.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Distinguish convex from non-convex loss landscapes and explain the role of saddle points in high dimensions.
+
+## Reference Solution
+
+Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement vanilla gradient descent, SGD with momentum, and Adam from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Distinguish convex from non-convex loss landscapes and explain the role of saddle points in high dimensions,” and cite a repeatable check rather than relying on visual inspection alone.

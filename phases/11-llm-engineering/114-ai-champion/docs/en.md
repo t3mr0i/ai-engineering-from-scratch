@@ -86,3 +86,13 @@ The CoP's technical anchor should be the eval harness from Phase 19 · 27. Runni
 - [Community of Practice: A Brief Introduction — Wenger-Trayner](https://wenger-trayner.com/introduction-to-communities-of-practice/) — the original structural framing; short and directly applicable.
 - [DORA Research — Accelerate: The Science of Lean Software and DevOps](https://dora.dev/research/) — the quantitative playbook for measuring whether an enablement intervention actually moves team velocity; the methods transfer directly to AI Champion success metrics.
 - [Anthropic — Responsible scaling policy](https://www.anthropic.com/rsp) — the framework Anthropic uses to gate its own capability releases; useful as a reference model when designing the three-gate pilot process.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by The AI Champion Playbook: Knowledge Transfer That Actually Sticks (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by The AI Champion Playbook: Knowledge Transfer That Actually Sticks (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

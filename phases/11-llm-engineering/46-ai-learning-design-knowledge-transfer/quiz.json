@@ -31,7 +31,7 @@
       "question": "What does the Python artifact recommend?",
       "options": [
         "The HR policy that governs how training hours are recorded",
-        "The optimizer settings for a model trained on course material",
+        "The optimizer settings for a model trained on course material, because one plausible output is sufficient production evidence",
         "The right learning form and controls for an enablement scenario",
         "The manager decisions that follow once a learner has finished"
       ],
@@ -44,7 +44,7 @@
       "options": [
         "A knowledge check that tests the target behavior, not just recall of the text",
         "An objective written after the course content has already been drafted",
-        "A practice task replaced by a longer reading section to save session time",
+        "A practice task replaced by a longer reading section to save session time, before defining the measurement, acceptance threshold, or rollback path",
         "A manager handoff dropped once the learner has completed the material"
       ],
       "correct": 0,
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "When is a workshop a better fit than a micro lesson?",
       "options": [
-        "When the topic is broad enough that a single short lesson cannot cover it",
+        "When the topic is broad enough that a single short lesson cannot cover it — and applies unchanged even when the lesson's stated preconditions fail",
         "When learners need guided practice, discussion, and role-specific transfer",
         "When the material changes often and a live format is cheaper to update",
         "When the audience is large enough to fill a scheduled session properly"

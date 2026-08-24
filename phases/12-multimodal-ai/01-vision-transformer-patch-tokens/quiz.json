@@ -1,0 +1,78 @@
+{
+  "lesson": "01-vision-transformer-patch-tokens",
+  "title": "Vision Transformers and the Patch-Token Primitive",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Vision Transformers and the Patch-Token Primitive?",
+      "options": [
+        "Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Vision Transformers and the Patch-Token Primitive?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Vision Transformers and the Patch-Token Primitive?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (D...",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (D...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Vision Transformers and the Patch-Token Primitive?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Pick between CLS pooling, mean pooling, and register tokens for a downstream task",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Pick between CLS pooling, mean pooling, and register tokens for a downstream task” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Vision Transformers and the Patch-Token Primitive?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding"
+      ],
+      "correct": 3,
+      "explanation": "“Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Vision Transformers and the Patch-Token Primitive?",
+      "options": [
+        "Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

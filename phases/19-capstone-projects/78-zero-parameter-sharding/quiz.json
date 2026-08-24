@@ -15,7 +15,7 @@
       "explanation": "For Adam in mixed precision the fp32 master plus two moments is 12P bytes per rank vs 4P for fp16 params + grads. Sharding the biggest term first wins the most memory per unit complexity."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the per-step wire pattern of ZeRO stage 1?",
       "options": [
         "One allreduce",
@@ -51,7 +51,7 @@
       "explanation": "Vanilla: 2P + 2P + 4P + 4P + 4P = 16P. ZeRO-1: 2P + 2P + (4P+4P+4P)/8 = 5.5P. Drop is (16-5.5)/16 = 65.6%."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does ZeRO-2 add over ZeRO-1?",
       "options": [
         "Nothing",

@@ -15,7 +15,7 @@
       "explanation": "Prompt-only structure works ~80% of the time on frontier models; production needs harder guarantees."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does constrained decoding modify at each generation step?",
       "options": [
         "The logit vector, masking tokens that would invalidate the target grammar so only valid continuations can be sampled",
@@ -33,7 +33,7 @@
         "It swaps in a smaller distilled model automatically whenever a schema-constrained request is detected",
         "Forced scaffold tokens (e.g. '{\"name\": \"') can be emitted directly without sampling, and the valid-token search space shrinks",
         "It avoids running softmax entirely by short-circuiting straight from logits to the final output tokens",
-        "It skips backpropagation entirely, since the logit processor supposedly already knows what the correct final answer will be"
+        "It skips backpropagation entirely, since the logit processor supposedly already knows what the correct final answer will be, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
       "explanation": "Determined tokens skip sampling and reduced valid-token sets shrink the decode cost."
@@ -51,7 +51,7 @@
       "explanation": "Field order is logic: putting reasoning first lets the model think before locking in an answer."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is the limitation of FSM-based constrained decoding tools like Outlines?",
       "options": [
         "Recursive schemas have to be flattened; truly recursive structures need CFG-based engines such as XGrammar",
@@ -66,37 +66,13 @@
       "stage": "post",
       "question": "Why is Instructor described as not modifying logits?",
       "options": [
-        "It applies live gradient updates during inference to nudge the model's weights toward producing valid outputs",
+        "It applies live gradient updates during inference to nudge the model's weights toward producing valid outputs, with no need to inspect intermediate results or test edge cases",
         "Instructor formats the schema into the prompt and parses/retries the output; logit masking happens server-side or not at all",
         "Anthropic's terms of service require third-party libraries to avoid touching raw logits directly",
         "It only edits the prompt text, without ever validating or retrying against the returned response"
       ],
       "correct": 1,
       "explanation": "Instructor uses provider-side structured output plus client-side validation and retries, not logit masking."
-    },
-    {
-      "stage": "post",
-      "question": "What problem can a strict regex like date='YYYY-MM-DD' introduce?",
-      "options": [
-        "It requires switching from an FSM engine to a full CFG engine just to represent a single strict date field",
-        "It breaks JSON parsing entirely, since regex-constrained fields cannot be embedded inside a JSON object",
-        "Regex matching is inherently too slow to run at every generation step during decoding",
-        "It removes any escape hatch for unknown values, so the model fabricates a date instead of returning null/sentinel"
-      ],
-      "correct": 3,
-      "explanation": "Over-strict grammars force the model to invent values; always allow null/sentinel for unknowns."
-    },
-    {
-      "stage": "post",
-      "question": "When should you reach for vLLM guided decoding vs a vendor structured-output API?",
-      "options": [
-        "Always prefer the vendor API, since it is guaranteed to outperform any self-hosted decoding setup",
-        "Only for very small schemas, since vLLM's guided decoding cannot handle nested or recursive structures",
-        "Self-hosted inference where you control the model and want logit-level guarantees without relying on retries",
-        "Only when the tokenizer uses byte-level BPE, since other tokenization schemes are incompatible with guided decoding"
-      ],
-      "correct": 2,
-      "explanation": "vLLM guided decoding fits self-hosted serving with logit-level constraints; vendor APIs lock you to their stack."
     }
   ]
 }

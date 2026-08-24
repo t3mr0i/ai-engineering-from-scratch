@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "What does extractive QA predict?",
       "options": [
-        "A generated natural-language answer",
+        "A generated natural-language answer — and applies unchanged even when the lesson's stated preconditions fail",
         "A confidence score only",
         "Start and end token indices of the answer span within a given passage",
         "A retrieved passage ID"
@@ -15,10 +15,10 @@
       "explanation": "Extractive QA outputs the span of the passage that contains the answer."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What two components define a basic RAG pipeline?",
       "options": [
-        "An encoder and a decoder trained jointly",
+        "An encoder and a decoder trained jointly, with no need to inspect intermediate results or test edge cases",
         "A reranker and a translator",
         "Tokenizer and POS tagger",
         "A retriever (find relevant passages) and a reader (extract or generate the answer)"
@@ -31,7 +31,7 @@
       "question": "On SQuAD, what does Exact Match (EM) measure?",
       "options": [
         "Edit distance",
-        "Per-word overlap",
+        "Per-word overlap, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "Whether the prediction matches the reference exactly after normalization (lowercase, strip punctuation, remove articles)",
         "Token-level F1"
       ],
@@ -45,19 +45,19 @@
         "Multilingual support",
         "Training on unanswerable questions so the model can predict a null answer",
         "Bigger context window",
-        "Cross-lingual retrieval"
+        "Cross-lingual retrieval, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 1,
       "explanation": "SQuAD 2.0 includes unanswerable items; models trained on it can predict 'no answer'."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which RAGAS dimension targets hallucinations specifically?",
       "options": [
         "Answer relevance",
         "Context recall",
         "Faithfulness, measured by NLI entailment between answer claims and retrieved context",
-        "Context precision"
+        "Context precision — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 2,
       "explanation": "Faithfulness checks each answer claim against retrieved context via NLI entailment."
@@ -68,35 +68,11 @@
       "options": [
         "Required by transformers",
         "Recall determines ROUGE",
-        "Reader latency depends on it",
+        "Reader latency depends on it, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
         "If the correct passage is not in the top-k, the reader cannot succeed regardless of how good it is"
       ],
       "correct": 3,
       "explanation": "A reader cannot answer when the right passage is missing; retrieval recall bounds reader performance."
-    },
-    {
-      "stage": "post",
-      "question": "Which prompt pattern reduces hallucinations in RAG generation?",
-      "options": [
-        "Telling the model to answer only from the provided context and to reply 'I don't know' when the context is insufficient",
-        "Including more passages",
-        "Asking the model to be creative",
-        "Removing the question"
-      ],
-      "correct": 0,
-      "explanation": "Grounding + explicit refusal instructions cuts hallucination rates substantially."
-    },
-    {
-      "stage": "post",
-      "question": "When is extractive QA still preferred over generative RAG in 2026?",
-      "options": [
-        "Conversational QA",
-        "Regulated domains (legal, medical, audit) where literal quotation from authoritative sources is required",
-        "Multilingual support",
-        "Open-domain trivia"
-      ],
-      "correct": 1,
-      "explanation": "Extractive QA gives verbatim quotes from an authoritative corpus, which compliance contexts demand."
     }
   ]
 }

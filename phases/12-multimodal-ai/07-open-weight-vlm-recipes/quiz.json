@@ -1,0 +1,78 @@
+{
+  "lesson": "07-open-weight-vlm-recipes",
+  "title": "Open-Weight VLM Recipes: What Actually Matters",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Open-Weight VLM Recipes: What Actually Matters?",
+      "options": [
+        "Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Open-Weight VLM Recipes: What Actually Matters?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Open-Weight VLM Recipes: What Actually Matters?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Pick a recipe (encoder, connector, data, resolution) for a new VLM given a compute budget and task mix",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Pick a recipe (encoder, connector, data, resolution) for a new VLM given a compute budget and task mix” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Open-Weight VLM Recipes: What Actually Matters?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain why detailed human captions beat GPT-4V distillation at the same token count",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain why detailed human captions beat GPT-4V distillation at the same token count” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Open-Weight VLM Recipes: What Actually Matters?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule"
+      ],
+      "correct": 3,
+      "explanation": "“Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Open-Weight VLM Recipes: What Actually Matters?",
+      "options": [
+        "Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

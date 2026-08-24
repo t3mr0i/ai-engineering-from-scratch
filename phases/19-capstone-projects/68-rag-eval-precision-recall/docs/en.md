@@ -168,3 +168,13 @@ The naive check says 1.0 -- a gold doc showed up somewhere in the top-5, so it c
 - Phase 11 lesson 10 - evaluation framework foundations
 - Phase 19 lessons 64-67 - components evaluated here
 - Phase 19 lesson 69 - the end-to-end pipeline this eval grades
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute four retrieval metrics from gold qrels: precision@k, recall@k, MRR (mean reciprocal rank), and nDCG@k.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute two answer-grade metrics: faithfulness (every claim grounded in retrieved context) and answer relevance (the answer addresses the question).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a fixture qrels file (queries, gold doc ids, gold answer text) that the eval reads end to end.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute four retrieval metrics from gold qrels: precision@k, recall@k, MRR (mean reciprocal rank), and nDCG@k,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a fixture qrels file (queries, gold doc ids, gold answer text) that the eval reads end to end,” and cite a repeatable check rather than relying on visual inspection alone.

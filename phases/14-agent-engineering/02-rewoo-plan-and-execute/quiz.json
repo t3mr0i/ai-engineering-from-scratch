@@ -15,7 +15,7 @@
       "explanation": "ReAct re-includes prior thoughts and observations on each step, making total prompt length grow with the square of the depth."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the three-role split that defines ReWOO?",
       "options": [
         "Reader, Writer, Reviewer",
@@ -51,7 +51,7 @@
       "explanation": "Plan nodes use evidence references like #E1, #E2 that the executor substitutes with the output of upstream workers."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does ReWOO localize failures better than ReAct?",
       "options": [
         "An error in a worker becomes a string the Solver sees alongside the original plan, so degradation is per-node not per-step",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Plan-and-Act is built for long-horizon (over 30 steps) web and mobile agents where a single ReAct trajectory loses coherence."
-    },
-    {
-      "stage": "post",
-      "question": "What does ReWOO's planner distillation result imply for production agents?",
-      "options": [
-        "Frontier-scale models must still be used at every planning step for distillation to work",
-        "Planning quality collapses in practice once the planner drops below 7B parameters",
-        "A small planner (around 7B) can match a large teacher because the planner never sees observations",
-        "Distillation only works if the training data comes from gradient-based RL rollouts"
-      ],
-      "correct": 2,
-      "explanation": "Because the planner does not see observations, plan traces from a large teacher transfer cleanly to a small fine-tuned planner."
     }
   ]
 }

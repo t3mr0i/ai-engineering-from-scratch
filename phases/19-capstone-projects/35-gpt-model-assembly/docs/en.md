@@ -95,3 +95,13 @@ Three knobs, three different behaviors. Temperature near zero collapses to greed
 - Phase 19 lesson 37 for loading pretrained GPT-2 weights into this exact architecture.
 - Phase 7 lesson 07 (GPT causal language modeling) for the math of next token prediction.
 - Phase 10 lesson 04 (pre training mini GPT) for the original training procedure on the same architecture.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Assemble the transformer block from lesson 34 into a full GPT model: token embedding, position embedding, N blocks, final LayerNorm, language model head.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Reproduce the 124 million parameter configuration: vocab 50257, context 1024, embedding 768, twelve heads, twelve layers.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Tie the language model head weights to the token embedding and explain why that saves ~38 million parameters at this scale.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Assemble the transformer block from lesson 34 into a full GPT model: token embedding, position embedding, N blocks, final LayerNorm, language model head,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Tie the language model head weights to the token embedding and explain why that saves ~38 million parameters at this scale,” and cite a repeatable check rather than relying on visual inspection alone.

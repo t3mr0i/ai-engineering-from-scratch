@@ -15,7 +15,7 @@
       "explanation": "Pre-LN normalizes each sub-layer's input which keeps gradient norms bounded as depth grows."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "At hidden=768 with heads=12, what is the per-head dimension and why does it matter?",
       "options": [
         "12, so each head can run on a small GPU",
@@ -51,7 +51,7 @@
       "explanation": "The CLS token starts empty and accumulates information from every patch through self-attention across all 12 blocks."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why is the feed-forward layer expanded to 4x the hidden dim?",
       "options": [
         "PyTorch requires 4x",

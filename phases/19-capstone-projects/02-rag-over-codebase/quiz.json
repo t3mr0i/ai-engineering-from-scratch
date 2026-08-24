@@ -12,10 +12,10 @@
         "Embedding models do not see code as tokens"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“It poisons results on generated code, monorepo duplication, and rarely imported symbols” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does AST-aware chunking mean in the ingestion pipeline?",
       "options": [
         "Compressing chunks with gzip before storage",
@@ -24,7 +24,7 @@
         "Splitting code into fixed 256-token windows"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Cutting at tree-sitter node boundaries such as function and class spans” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Dense embedding, BM25 terms, and a natural-language summary"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Dense embedding, BM25 terms, and a natural-language summary” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "It scores each query-candidate pair together for higher accuracy than cosine alone"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“It scores each query-candidate pair together for higher accuracy than cosine alone” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the synthesizer reject answers without (repo/path:start-end) anchors?",
       "options": [
         "Citation faithfulness gates the answer so users can verify each claim",
@@ -60,7 +60,7 @@
         "Anchors are required by the vector database schema"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Citation faithfulness gates the answer so users can verify each claim” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "Throwing away the BM25 index and rebuilding it from scratch"
       ],
       "correct": 0,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Which metric measures whether retrieved claims are verifiable in the source?",
-      "options": [
-        "MRR@10",
-        "Citation faithfulness",
-        "nDCG@10",
-        "p95 query latency"
-      ],
-      "correct": 1,
-      "explanation": ""
+      "explanation": "“Re-embedding only chunks whose text changed and recomputing affected symbol edges” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
     }
   ]
 }

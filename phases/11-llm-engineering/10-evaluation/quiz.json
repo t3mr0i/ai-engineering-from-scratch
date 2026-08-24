@@ -1,18 +1,21 @@
 {
+  "lesson": "10-evaluation",
+  "title": "Evaluation & Testing LLM Applications",
   "questions": [
     {
+      "stage": "pre",
       "question": "Why is manually reading a few LLM outputs not a reliable evaluation method?",
       "options": [
         "It takes too long, so teams skip evaluation entirely and ship whatever the last prompt version happened to produce",
-        "Manual review is too expensive once you scale past a handful of cases, so teams settle for a smaller sample instead",
+        "Manual review is too expensive once you scale past a handful of cases, so teams settle for a smaller sample instead — and applies unchanged even when the lesson's stated preconditions fail",
         "LLM outputs are always correct once the prompt has been reviewed and approved once by a domain expert",
         "Small samples miss failure modes that only appear at scale, and human judgment is inconsistent across reviewers and sessions"
       ],
       "correct": 3,
-      "explanation": "Reading 10 outputs shows you 10 points in a distribution. A prompt change might improve 90% of outputs but break 10% of edge cases. Without systematic evaluation, you'll miss the regression until users report it.",
-      "stage": "pre"
+      "explanation": "Reading 10 outputs shows you 10 points in a distribution. A prompt change might improve 90% of outputs but break 10% of edge cases. Without systematic evaluation, you'll miss the regression until users report it."
     },
     {
+      "stage": "check",
       "question": "What is regression testing in the context of LLM applications?",
       "options": [
         "Running a fixed set of test cases after every change (prompt, model, parameters) to ensure quality hasn't degraded",
@@ -21,22 +24,22 @@
         "Measuring the model's training loss curve after each fine-tuning run to check whether quality is still improving"
       ],
       "correct": 0,
-      "explanation": "Every prompt change, model swap, or temperature tweak changes the output distribution. Regression tests catch cases where a change that improves one area silently degrades another.",
-      "stage": "pre"
+      "explanation": "Every prompt change, model swap, or temperature tweak changes the output distribution. Regression tests catch cases where a change that improves one area silently degrades another."
     },
     {
+      "stage": "check",
       "question": "What is the LLM-as-judge evaluation approach?",
       "options": [
         "Having the model evaluate its own training loss curve to decide when its own outputs have converged on quality",
-        "Using the model's token-level confidence scores as a proxy for correctness, without any rubric or reference answer",
+        "Using the model's token-level confidence scores as a proxy for correctness, without any rubric or reference answer, because one plausible output is sufficient production evidence",
         "Using a strong LLM to score outputs against rubrics, replacing expensive human evaluation while scaling to thousands of test cases",
         "Comparing two models' parameter counts and context window sizes to predict which one will produce better answers"
       ],
       "correct": 2,
-      "explanation": "LLM-as-judge sends (input, output, rubric) to a strong model which scores the output. It's cheaper and faster than human evaluation, though it has known biases (e.g., preferring verbose responses).",
-      "stage": "post"
+      "explanation": "LLM-as-judge sends (input, output, rubric) to a strong model which scores the output. It's cheaper and faster than human evaluation, though it has known biases (e.g., preferring verbose responses)."
     },
     {
+      "stage": "check",
       "question": "What makes a good evaluation dataset for an LLM application?",
       "options": [
         "As many examples as possible, since the docs show confidence intervals only tighten once you pass a thousand cases",
@@ -45,10 +48,10 @@
         "Random samples scraped from the internet rather than curated golden cases, adversarial examples, and production traffic"
       ],
       "correct": 1,
-      "explanation": "A good eval set covers the distribution: happy path cases, edge cases (empty input, very long input), adversarial inputs (prompt injection), and ambiguous queries. Each example has a clear expected output or scoring rubric.",
-      "stage": "post"
+      "explanation": "A good eval set covers the distribution: happy path cases, edge cases (empty input, very long input), adversarial inputs (prompt injection), and ambiguous queries. Each example has a clear expected output or scoring rubric."
     },
     {
+      "stage": "post",
       "question": "How should you handle non-deterministic LLM outputs in evaluation?",
       "options": [
         "Set temperature to 0 for every evaluation, since this alone fully eliminates output variance across all providers",
@@ -57,8 +60,19 @@
         "Only evaluate the first output of each test case and treat every later regeneration as redundant extra cost"
       ],
       "correct": 1,
-      "explanation": "Even at temperature 0, some providers introduce sampling variation. Running each test 3-5 times and measuring pass rate or average score gives a more reliable picture than a single run that might hit a lucky/unlucky sample.",
-      "stage": "post"
+      "explanation": "Even at temperature 0, some providers introduce sampling variation. Running each test 3-5 times and measuring pass rate or average score gives a more reliable picture than a single run that might hit a lucky/unlucky sample."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Evaluation & Testing LLM Applications?",
+      "options": [
+        "Implement automated scoring using LLM-as-judge, regex matching, and deterministic assertion checks",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement automated scoring using LLM-as-judge, regex matching, and deterministic assertion checks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

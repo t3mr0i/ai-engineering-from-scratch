@@ -92,3 +92,13 @@ OpenAI Agents SDK ships this pattern as "output guardrails." A guardrail is a va
 - [Gou et al., CRITIC (arXiv:2305.11738)](https://arxiv.org/abs/2305.11738) — tool-grounded verification
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — evaluator-optimizer workflow pattern
 - [OpenAI Agents SDK docs](https://openai.github.io/openai-agents-python/) — output guardrails as CRITIC-shaped verifiers
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State Self-Refine's three prompts (generate, feedback, refine) and explain why history matters for the refine prompt.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain CRITIC's critical insight: LLMs are unreliable at self-verification without external grounding.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a stdlib Self-Refine loop with history and an optional external verifier.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State Self-Refine's three prompts (generate, feedback, refine) and explain why history matters for the refine prompt,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a stdlib Self-Refine loop with history and an optional external verifier,” and cite a repeatable check rather than relying on visual inspection alone.

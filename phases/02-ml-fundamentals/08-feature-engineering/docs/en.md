@@ -112,3 +112,13 @@ More features is not always better. Irrelevant features add noise, increase trai
 - [Feature Engineering and Selection (Max Kuhn & Kjell Johnson)](http://www.feat.engineering/) - free online book covering the full landscape of feature engineering
 - [scikit-learn Preprocessing Guide](https://scikit-learn.org/stable/modules/preprocessing.html) - practical reference for all standard transforms
 - [Target Encoding Done Right (Micci-Barreca, 2001)](https://dl.acm.org/doi/10.1145/507533.507538) - the original paper on target encoding with smoothing
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement numerical transforms (standardization, min-max scaling, log transform, binning) and explain when each is appropriate.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build one-hot, label, and target encoding for categorical features and identify the data leakage risk in target encoding.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct a TF-IDF vectorizer from scratch and explain why it outperforms raw word counts for text classification.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement numerical transforms (standardization, min-max scaling, log transform, binning) and explain when each is appropriate,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct a TF-IDF vectorizer from scratch and explain why it outperforms raw word counts for text classification,” and cite a repeatable check rather than relying on visual inspection alone.

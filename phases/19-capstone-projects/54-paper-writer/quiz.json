@@ -15,7 +15,7 @@
       "explanation": "Structure-first lets the harness validate uniqueness, citation coverage, and figure coverage before invoking the prose generator. The skeleton is the contract."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does the figure-injection step produce from an experiment manifest?",
       "options": [
         "A PDF compiled from artifacts",

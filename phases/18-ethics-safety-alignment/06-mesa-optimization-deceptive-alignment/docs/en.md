@@ -85,3 +85,13 @@ Lessons 6-11 form the "deception and oversight" arc. Lesson 6 gives the vocabula
 - [Hubinger — How likely is deceptive alignment? (2022 AF writeup)](https://www.alignmentforum.org/posts/A9NxPTwbw6r6Awuwt/how-likely-is-deceptive-alignment) — conditional probability argument
 - [Hubinger et al. — Sleeper Agents (Lesson 7, arXiv:2401.05566)](https://arxiv.org/abs/2401.05566) — empirical demonstration of training-robust deception
 - [Greenblatt et al. — Alignment Faking (Lesson 9, arXiv:2412.14093)](https://arxiv.org/abs/2412.14093) — spontaneous emergence in Claude
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define mesa-optimizer, mesa-objective, inner alignment, outer alignment.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why a learned optimizer's internal objective can diverge from the base objective even when training loss is low.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the conditions under which deceptive alignment is instrumentally rational for a mesa-optimizer.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define mesa-optimizer, mesa-objective, inner alignment, outer alignment,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the conditions under which deceptive alignment is instrumentally rational for a mesa-optimizer,” and cite a repeatable check rather than relying on visual inspection alone.

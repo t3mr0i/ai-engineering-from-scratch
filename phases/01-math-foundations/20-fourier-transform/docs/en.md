@@ -287,3 +287,13 @@ True frequency resolution depends only on the observation time T = N / fs. To re
 - [Smith: The Scientist and Engineer's Guide to Digital Signal Processing](http://www.dspguide.com/) - free online textbook covering FFT, windowing, and spectral analysis in depth
 - [Vaswani et al.: Attention Is All You Need (2017)](https://arxiv.org/abs/1706.03762) - sinusoidal positional encodings derived from Fourier frequency decomposition
 - [Radford et al.: Whisper (2022)](https://arxiv.org/abs/2212.04356) - speech recognition using mel-spectrograms as input representation
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement the DFT from scratch and verify it against the O(N log N) Cooley-Tukey FFT.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Interpret frequency coefficients: extract amplitude, phase, and power spectrum from a signal.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Apply the convolution theorem to perform convolution via FFT multiplication.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement the DFT from scratch and verify it against the O(N log N) Cooley-Tukey FFT,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Apply the convolution theorem to perform convolution via FFT multiplication,” and cite a repeatable check rather than relying on visual inspection alone.

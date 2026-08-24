@@ -155,3 +155,13 @@ classDiagram
 - Paszke et al., "PyTorch: An Imperative Style, High-Performance Deep Learning Library" (2019) -- the paper describing PyTorch's design decisions
 - Chollet, "Deep Learning with Python, Second Edition" (2021) -- Chapter 3 covers Keras internals with the same module/layer abstraction
 - Johnson, "Tiny-DNN" (https://github.com/tiny-dnn/tiny-dnn) -- a header-only C++ deep learning framework for understanding framework internals
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a complete deep learning framework (~500 lines) with Module, Linear, ReLU, Sigmoid, Dropout, BatchNorm, Sequential, loss functions, optimizers, and DataLoader.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the Module abstraction (forward, backward, parameters) and why train/eval mode toggling is necessary.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Wire all components into a working training loop that trains a 4-layer network on circle classification.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a complete deep learning framework (~500 lines) with Module, Linear, ReLU, Sigmoid, Dropout, BatchNorm, Sequential, loss functions, optimizers, and DataLoader,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Wire all components into a working training loop that trains a 4-layer network on circle classification,” and cite a repeatable check rather than relying on visual inspection alone.

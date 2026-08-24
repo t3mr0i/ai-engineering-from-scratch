@@ -81,3 +81,13 @@ The template in `outputs/worksheet-data-readiness-triage.md` can be copied into 
 - Model choice cannot compensate for stale, uncontrolled, or unowned sources.
 - Evaluation samples should be planned before a pilot starts.
 - Data controls should be lightweight enough that teams actually use them.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify the data signals that decide whether an AI workflow is feasible.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a small Python data-readiness triage artifact.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map data quality, privacy, freshness, ownership, and evaluation into one worksheet.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify the data signals that decide whether an AI workflow is feasible,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map data quality, privacy, freshness, ownership, and evaluation into one worksheet,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 32 (AI use-case identification workshop), Phase 11 · 10 (Evaluation basics)
-**Time:** ~50 minutes
+**Time:** ~115 minutes
 
 ## Learning Objectives
 
@@ -145,3 +145,13 @@ For cross-lesson context: Phase 11 · 32 (the use-case identification workshop) 
 - **The strategic-project red herring.** Calling a strategic project a quick win to win the budget is the fastest way to lose the sponsor's trust. Strategic projects are not failures — they are the right plan for the right work. Name them.
 - **The cost-line misdirection.** Per-task cost and per-call cost are different when the system is an agent loop. A 20-step agent doing 50K tasks at 30 sub-calls each is 1.5M model calls, not 50K. Always multiply before dividing.
 - **The composite-score trap.** A composite score is a working artifact for the team, not the deliverable for the sponsor. If you put the matrix in the deck, the sponsor will argue about the weights instead of the conclusion.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Use Case Triage: From Discovery to Prioritized Backlog (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Use Case Triage: From Discovery to Prioritized Backlog (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

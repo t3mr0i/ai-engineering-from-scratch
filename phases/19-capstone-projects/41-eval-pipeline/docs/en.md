@@ -153,3 +153,13 @@ The JSON dump uses stable keys so a CI dashboard can plot trend lines across ver
 - Add per-task weight learning: instead of fixed weights, fit weights to a target preference order over models.
 
 The implementation gives you the four evals, the aggregator, and the report. Real evaluation pipelines layer many more dimensions on top; the pattern stays the same: one function per eval, one aggregator, one report.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute held-out perplexity with masked-token accounting on a tiny transformer.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Run an exact-match eval on short-form factual prompts.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute token-level F1 between predicted and reference strings with normalisation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute held-out perplexity with masked-token accounting on a tiny transformer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute token-level F1 between predicted and reference strings with normalisation,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -104,3 +104,13 @@ The paper writer in lesson fifty-four operates on the full `Paper` shape with fi
 Three extensions worth wiring once the demo is green. First, persistent state: each stage's result writes to a small JSON store so a restart can resume without re-running the cheap stages. Second, a dashboard: the trace events from the scheduler and critic loop render as a single timeline. Third, real model calls: swap the mocked prose generator and the deterministic critic for model-driven ones; the wiring does not change.
 
 The demo's job is to prove that composition is the architecture. Five lessons, four imports, one report. The next time you add a stage, the wiring grows by exactly one line.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Wire the auto-research loop end to end: hypothesis seed, experiment runner, scheduler, critic loop, paper writer.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compose the primitives from the four earlier Track D lessons through plain Python imports, not a framework.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Run the loop to a self-terminating end and emit a single demo report that lists every stage's output.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Wire the auto-research loop end to end: hypothesis seed, experiment runner, scheduler, critic loop, paper writer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Run the loop to a self-terminating end and emit a single demo report that lists every stage's output,” and cite a repeatable check rather than relying on visual inspection alone.

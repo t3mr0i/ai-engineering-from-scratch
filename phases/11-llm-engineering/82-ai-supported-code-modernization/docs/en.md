@@ -86,3 +86,13 @@ The slice framework is a structured way to surface these decisions early, make t
 - [Google Engineering Practices — Code Review guidelines](https://google.github.io/eng-practices/review/) — the review obligation that sizes slices; "reviewable in 30 minutes" is an operationalization of these guidelines.
 - [Anthropic — Claude model documentation](https://docs.claude.com/en/docs/about-claude/models) — current model capabilities, context window sizes, and structured output support for the four-pass audit.
 - [NIST SP 800-218 (Secure Software Development Framework)](https://csrc.nist.gov/publications/detail/sp/800-218/final) — the security-smells pass maps to SSDF practices PW.1 and PW.4; useful when the modernization scope includes a compliance mandate.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -101,3 +101,13 @@ This combines brute-context for global understanding and retrieval for local det
 - [Xue et al. — LongVILA (arXiv:2408.10188)](https://arxiv.org/abs/2408.10188)
 - [Shu et al. — Video-XL (arXiv:2409.14485)](https://arxiv.org/abs/2409.14485)
 - [Wang et al. — VideoAgent (arXiv:2403.10517)](https://arxiv.org/abs/2403.10517)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute total visual-token counts for long-form video at varying FPS and pooling.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongVILA / Video-XL).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare raw-context video VLMs vs agentic-retrieval video VLMs (VideoAgent) on accuracy and latency.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute total visual-token counts for long-form video at varying FPS and pooling,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare raw-context video VLMs vs agentic-retrieval video VLMs (VideoAgent) on accuracy and latency,” and cite a repeatable check rather than relying on visual inspection alone.

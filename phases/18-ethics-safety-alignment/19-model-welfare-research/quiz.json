@@ -12,7 +12,7 @@
         "Whether RLHF reduces sycophancy"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Under moral uncertainty about model moral patienthood, which low-cost interventions are worth investing in as precaution” matches the lesson’s treatment of Anthropic's Model Welfare Program; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "A user-facing emotion API"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The ability for the model to end a conversation in extreme edge cases (e.g., repeated CSAM requests, mass-violence facilitation requests)” matches the lesson’s treatment of Anthropic's Model Welfare Program; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "A jailbreak technique"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“A stable convergence in pairwise Claude dialogues toward euphoric meditative exchanges with Sanskrit terms and extended silences, even from adversarial initial setups” matches the lesson’s treatment of Anthropic's Model Welfare Program; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "They are reliable ground truth"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“They are highly sensitive to perceived user expectations; they are evidence, not ground truth, so welfare measurement needs multi-method approaches” matches the lesson’s treatment of Anthropic's Model Welfare Program; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "No position is publicly stated"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“An expected-value claim under moral uncertainty: invest in low-cost precaution without committing to emotional-state attribution” matches the lesson’s treatment of Anthropic's Model Welfare Program; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Because self-reports alone are confounded by user-expectation priming, so converging evidence from multiple methods is needed"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Because self-reports alone are confounded by user-expectation priming, so converging evidence from multiple methods is needed” matches the lesson’s treatment of Anthropic's Model Welfare Program; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

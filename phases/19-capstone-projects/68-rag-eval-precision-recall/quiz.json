@@ -15,7 +15,7 @@
       "explanation": "A retriever that misses the right chunk cannot be repaired downstream; surplus chunks waste tokens but rarely poison the answer."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does MRR compute?",
       "options": [
         "The mean of 1 / position-of-first-relevant-document across queries",
@@ -51,7 +51,7 @@
       "explanation": "A faithful but off-topic answer scores high on faithfulness, low on relevance; a relevant but ungrounded answer scores high on relevance, low on faithfulness."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "A pipeline shows decent recall@5 but low MRR. Which stage should you investigate first?",
       "options": [
         "The chunker",

@@ -8,7 +8,7 @@
       "options": [
         "They always add so many metric definitions that the reporting narrative becomes unreadable",
         "They can turn ambiguous metrics, misleading charts, or weak correlations into confident claims",
-        "They cannot summarize a dashboard at all without an analyst writing the narrative text first",
+        "They cannot summarize a dashboard at all without an analyst writing the narrative text first — and applies unchanged even when the lesson's stated preconditions fail",
         "They automatically strip the decision context out of every management report narrative"
       ],
       "correct": 1,
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "When should a reporting narrative require review?",
       "options": [
-        "Only when nobody is expected to read or act on the report the narrative appears in",
+        "Only when nobody is expected to read or act on the report the narrative appears in — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when every metric in the report is already obvious and needs no definition",
         "When decision impact is high or metrics, charts, causality, or audience context are risky",
         "Never — an AI-written summary is trustworthy enough to share without a review gate"

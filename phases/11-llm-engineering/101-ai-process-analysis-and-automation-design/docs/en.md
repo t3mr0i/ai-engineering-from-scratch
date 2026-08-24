@@ -110,3 +110,13 @@ The 2026 trap to avoid: using a model to analyze whether a process is ready to a
 - [McKinsey Global Institute — The state of AI in early 2024](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) — benchmark source for enterprise deployment failure analysis; check the most recent annual edition.
 - [Anthropic — Claude models overview](https://docs.claude.com/en/docs/about-claude/models/overview) — current model capabilities for the transcript analysis and log review use cases described in this lesson.
 - [ACM Queue — Deployments vs. experiments (Sculley et al.)](https://dl.acm.org/doi/10.1145/2668402.2668413) — the original technical debt paper for ML systems; the "hidden feedback loops" and "undeclared consumers" patterns apply directly to pre-automation analysis failures.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Process Analysis Before Automation: The AI Readiness Gate (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Process Analysis Before Automation: The AI Readiness Gate (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

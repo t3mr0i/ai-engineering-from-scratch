@@ -150,3 +150,13 @@ The optimal hyperparameter value is where the validation score peaks.
 - [scikit-learn Model Selection Guide](https://scikit-learn.org/stable/model_selection.html) - comprehensive reference on cross-validation, metrics, and hyperparameter tuning
 - [Beyond Accuracy: Precision and Recall (Google ML Crash Course)](https://developers.google.com/machine-learning/crash-course/classification/precision-and-recall) - clear explanation with interactive examples
 - [A Survey of Cross-Validation Procedures (Arlot & Celisse, 2010)](https://projecteuclid.org/journals/statistics-surveys/volume-4/issue-none/A-survey-of-cross-validation-procedures-for-model-selection/10.1214/09-SS054.full) - rigorous treatment of when and why different CV strategies work
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement K-fold and stratified K-fold cross-validation from scratch and explain why stratification matters for imbalanced data.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute precision, recall, F1, AUC-ROC, and regression metrics (MSE, RMSE, MAE, R-squared) from scratch.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Interpret learning curves to diagnose whether a model suffers from high bias or high variance.
+
+## Reference Solution
+
+Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement K-fold and stratified K-fold cross-validation from scratch and explain why stratification matters for imbalanced data,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Interpret learning curves to diagnose whether a model suffers from high bias or high variance,” and cite a repeatable check rather than relying on visual inspection alone.

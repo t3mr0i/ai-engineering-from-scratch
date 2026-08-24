@@ -68,3 +68,13 @@ Foundation for all five patterns: one LLM with three capabilities wired in — s
 - [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — the companion discipline
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) — when stateful graphs earn their cost
 - [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) — the orchestrator-workers pattern, productized
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name Anthropic's five workflow patterns: prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the agent-vs-workflow distinction and the engineering cost of each.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Identify when to pick a workflow over an agent (and vice versa).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name Anthropic's five workflow patterns: prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Identify when to pick a workflow over an agent (and vice versa),” and cite a repeatable check rather than relying on visual inspection alone.

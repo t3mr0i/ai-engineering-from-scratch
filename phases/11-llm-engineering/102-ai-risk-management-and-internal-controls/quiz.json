@@ -1,4 +1,6 @@
 {
+  "lesson": "102-ai-risk-management-and-internal-controls",
+  "title": "AI Risk Management: Owners, Controls, and Audit Evidence (2026)",
   "questions": [
     {
       "stage": "pre",
@@ -6,14 +8,14 @@
       "options": [
         "The team never wrote down a consequence level for the feature",
         "The classification was correct, but the stated human-review control never actually operated as designed",
-        "The model's accuracy was below the required threshold for legal text",
+        "The model's accuracy was below the required threshold for legal text — and applies unchanged even when the lesson's stated preconditions fail",
         "No risk owner had ever been named for the feature"
       ],
       "correct": 1,
       "explanation": "The L1 classification and 'lawyer reviews before it goes out' control were correctly designed on paper. In practice, a junior associate rubber-stamped ~80% of summaries within the same window the LLM produced them — a confirmation-bias loop, not a real review. The audit finding was that the evidence showed the control as defined did not run."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which consequence level requires a named human sign-off and documented rationale before an output takes effect?",
       "options": [
         "L0 — Informational",
@@ -25,24 +27,24 @@
       "explanation": "L3 covers irreversible or safety-adjacent outputs with regulatory or legal exposure — medical triage, legal documents, AML alerts, production code. The table maps it to named human sign-off with documented rationale, escalated to a VP or risk owner."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "According to the lesson, what determines an AI output's consequence level?",
       "options": [
         "Which model generated the output",
         "The output's downstream effect on a decision, not a property of the model itself",
-        "The benchmark score the model achieved during evaluation",
+        "The benchmark score the model achieved during evaluation, because one plausible output is sufficient production evidence",
         "How much the API call for that output cost"
       ],
       "correct": 1,
       "explanation": "The lesson is explicit that consequence level is a property of the output's downstream effect, not the model. That's why events like a new downstream consumer or a change in reversibility should trigger re-classification even when the model hasn't changed at all."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why does the lesson say an undated policy exception is one of the most common audit findings?",
       "options": [
         "Because exceptions are always illegal under ISO 42001",
         "Because without an expiry, the exception silently becomes permanent instead of being periodically re-justified",
-        "Because policy exceptions require board-level sign-off in every case",
+        "Because policy exceptions require board-level sign-off in every case, before defining the measurement, acceptance threshold, or rollback path",
         "Because undated exceptions cannot be logged in any system"
       ],
       "correct": 1,
@@ -55,7 +57,7 @@
         "It contained too few use cases to be statistically meaningful",
         "It had no schema — no field for consequence level, owner, evidence type, or exception status — so no row could be audited",
         "It was stored in a wiki instead of a spreadsheet",
-        "None of the forty prompt templates had been tested for accuracy"
+        "None of the forty prompt templates had been tested for accuracy — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "The auditor's finding was structural: a backlog of rich prose with no schema cannot be audited at any volume, while an empty register that has the right fields is still auditable because the auditor can verify no use cases were deployed off-register."
@@ -64,7 +66,7 @@
       "stage": "post",
       "question": "Which event does the lesson list as a trigger that should force a consequence-level re-classification?",
       "options": [
-        "The model provider releases a new model version with the same API",
+        "The model provider releases a new model version with the same API, with no need to inspect intermediate results or test edge cases",
         "The output gains a new downstream consumer, such as a CRM RAG tool being wired into a quoting workflow",
         "The team's on-call rotation changes",
         "The cost per token for the model decreases"

@@ -121,3 +121,13 @@ Best-case stacked: ~5-10% of naive baseline. Most teams have 2-3 levers engaged;
 - [FinOps School — Cost per Unit 2026 Guide](https://finopsschool.com/blog/cost-per-unit/)
 - [Digital Applied — LLM Agent Cost Attribution 2026](https://www.digitalapplied.com/blog/llm-agent-cost-attribution-guide-production-2026)
 - [PointFive — Managed LLMs in Azure OpenAI](https://www.pointfive.co/blog/finops-for-ai-economics-of-managed-llms-in-azure-open-ai)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why traditional FinOps (tags + tiers) breaks on LLM spend and name the three new attribution dimensions.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Enumerate the four token layers (prompt, tool, memory, response) and why single-bucket billing hides cost.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Design an enforcement ladder (rate → spend cap → kill switch) for a multi-tenant product.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why traditional FinOps (tags + tiers) breaks on LLM spend and name the three new attribution dimensions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Design an enforcement ladder (rate → spend cap → kill switch) for a multi-tenant product,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -70,3 +70,13 @@ The template in `outputs/planner-learning-design-transfer.md` can be used before
 - AI can draft faster, but learning design still needs objectives and practice.
 - Knowledge checks should test the target behavior.
 - Manager handoff improves transfer into daily work.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify learning situations where AI can support course design.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a learning-design triage artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map skill gap, role context, practice need, and assessment need to controls.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify learning situations where AI can support course design,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map skill gap, role context, practice need, and assessment need to controls,” and cite a repeatable check rather than relying on visual inspection alone.

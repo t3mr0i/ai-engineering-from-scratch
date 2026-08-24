@@ -1,0 +1,78 @@
+{
+  "lesson": "13-transfusion-autoregressive-diffusion",
+  "title": "Transfusion: Autoregressive Text + Diffusion Image in One Transformer",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "options": [
+        "Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Compare Transfusion-style (continuous images, diffusion loss) to Chameleon-style (discrete images, NTP) on...",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Compare Transfusion-style (continuous images, diffusion loss) to Chameleon-style (discrete images, NTP) on...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name MMDiT's contribution: modality-specific weights at each block, joint attention at the residual stream",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name MMDiT's contribution: modality-specific weights at each block, joint attention at the residual stream” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone"
+      ],
+      "correct": 3,
+      "explanation": "“Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "options": [
+        "Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

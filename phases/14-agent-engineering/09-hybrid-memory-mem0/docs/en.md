@@ -97,3 +97,13 @@ Every write picks one scope. Retrieval can query across scopes with per-scope we
 - [Mem0 docs](https://docs.mem0.ai/platform/overview) — production API, SDKs, managed cloud
 - [Packer et al., MemGPT (arXiv:2310.08560)](https://arxiv.org/abs/2310.08560) — the virtual-context predecessor
 - [Letta, Memory Blocks blog](https://www.letta.com/blog/memory-blocks) — the three-tier sibling design
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why a single store (vector only, graph only, KV only) is insufficient for agent memory.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name Mem0's three parallel stores and what each one optimizes for.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe Mem0's fusion scoring — relevance, importance, recency — and why it is a weighted sum, not a hierarchy.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why a single store (vector only, graph only, KV only) is insufficient for agent memory,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe Mem0's fusion scoring — relevance, importance, recency — and why it is a weighted sum, not a hierarchy,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,11 +1,13 @@
 {
+  "lesson": "103-ai-knowledge-management-and-content-governance",
+  "title": "Source Quality Gates Before Retrieval (2026)",
   "questions": [
     {
       "stage": "pre",
       "question": "In the lesson's opening example, why did the RAG assistant cite a superseded process document even though offline recall@5 was 0.82?",
       "options": [
         "The chunking strategy split the document at the wrong boundaries",
-        "The embedding model was outdated relative to the current vocabulary",
+        "The embedding model was outdated relative to the current vocabulary — and applies unchanged even when the lesson's stated preconditions fail",
         "The governance failure happened upstream, before indexing — the stale document was never filtered out of the source corpus",
         "The retrieval index had not been rebuilt in over a year"
       ],
@@ -13,10 +15,10 @@
       "explanation": "Retrieval metrics measured how well the system found relevant chunks — not whether those chunks came from an authoritative, current source. The three-year-old document was indexed in the first place because nothing gated source quality before embedding."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Under the four quality dimensions, how does a source get disqualified if it scores well on three of them?",
       "options": [
-        "It cannot be disqualified as long as the average across all four is above threshold",
+        "It cannot be disqualified as long as the average across all four is above threshold, with no need to inspect intermediate results or test edge cases",
         "A single failing dimension disqualifies it — all four must independently clear a minimum threshold",
         "Only the authority dimension can disqualify a source; the other three are advisory",
         "Disqualification requires failing at least two of the four dimensions"
@@ -25,25 +27,25 @@
       "explanation": "The lesson is explicit that this is an AND-gate, not a weighted average: authority, currency, consistency, and scope fit are each independently measured, and any one disqualifying condition removes the source regardless of the other three scores."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Under the tiered authority classification, what distinguishes a T2 'Reference' source from a T1 'Authoritative' source?",
       "options": [
         "T2 sources are always older than T1 sources",
         "T2 is maintained by identifiable contributors but is not formally version-controlled, unlike T1's documented change process",
-        "T2 sources can never be indexed under any circumstances",
+        "T2 sources can never be indexed under any circumstances, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "T2 sources are exclusively AI-generated content"
       ],
       "correct": 1,
       "explanation": "T1 requires a named group with review authority and a documented, version-controlled change process. T2 still has identifiable contributors and high subject-matter relevance, but lacks that formal version control — both can normally enter a production corpus, unlike T3."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why does the lesson reject a single 'documents older than two years are stale' rule for currency?",
       "options": [
         "Because currency should never be measured at all, only authority",
         "Because it fails on both ends: it excludes still-correct stable technical references and passes already-outdated fast-moving compliance documents",
         "Because two years is too short a window for any domain",
-        "Because currency can only be assessed by a human reviewer, never a rule"
+        "Because currency can only be assessed by a human reviewer, never a rule, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "The domain recency window table shows why a single threshold is wrong: regulatory compliance needs a 6-month window while core methodology tolerates 36 months, and historical case studies need no expiry at all — one rule cannot serve all of them."
@@ -52,7 +54,7 @@
       "stage": "post",
       "question": "According to the lesson, what can Sonnet 4.6 or Opus 4.x NOT reliably do in the governance pipeline?",
       "options": [
-        "Extract a document's claimed owner and review date for pre-classification",
+        "Extract a document's claimed owner and review date for pre-classification — and applies unchanged even when the lesson's stated preconditions fail",
         "Detect potential contradictions between two documents provided in context",
         "Make the final admitted-or-rejected governance decision without a human review loop",
         "Classify whether a document's content fits a declared scope description"
@@ -66,7 +68,7 @@
       "options": [
         "The scorer weighted authority too heavily against currency",
         "No supersession registry exists, so the old version is never removed when a new one is added",
-        "The governance log was stored in plain text instead of JSON",
+        "The governance log was stored in plain text instead of JSON, with no need to inspect intermediate results or test edge cases",
         "The document was never assigned a recency window"
       ],
       "correct": 1,

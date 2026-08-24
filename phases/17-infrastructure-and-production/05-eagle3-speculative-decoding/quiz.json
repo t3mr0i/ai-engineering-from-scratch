@@ -12,7 +12,7 @@
         "Decode is memory-bound, so the GPU is mostly idle waiting on HBM reads of weights"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Decode is memory-bound, so the GPU is mostly idle waiting on HBM reads of weights” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Cache hit rate of the KV cache"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Fraction of draft-proposed tokens accepted by the target model” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "The draft head is trained on multiple target layers rather than just the last layer"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“The draft head is trained on multiple target layers rather than just the last layer” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "0.85"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“0.55” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Mean E2E latency"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“P99 ITL, because rejected-draft two-passes can serialize under full batch” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "It requires a separate license"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Acceptance rate depends on workload, and turning it on without measuring alpha is a production anti-pattern” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

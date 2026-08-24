@@ -100,3 +100,13 @@ The bet InternVL3 makes: the alignment debt is worse than the reuse loss. The be
 - [InternVL3.5 (arXiv:2508.18265)](https://arxiv.org/abs/2508.18265)
 - [InternVL-U (arXiv:2603.09877)](https://arxiv.org/abs/2603.09877)
 - [Zhang et al. — MM1.5 (arXiv:2409.20566)](https://arxiv.org/abs/2409.20566)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why post-hoc VLM training accumulates alignment debt, citing the three measurable symptoms (catastrophic forgetting, answer drift, visual-text inconsistency).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe InternVL3's native pretraining corpus mix and why the ratio of text : interleaved : caption matters.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare V2PE (variable visual position encoding) to Qwen2-VL's M-RoPE.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why post-hoc VLM training accumulates alignment debt, citing the three measurable symptoms (catastrophic forgetting, answer drift, visual-text inconsistency),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare V2PE (variable visual position encoding) to Qwen2-VL's M-RoPE,” and cite a repeatable check rather than relying on visual inspection alone.

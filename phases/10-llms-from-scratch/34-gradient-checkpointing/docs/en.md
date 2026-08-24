@@ -126,3 +126,13 @@ All three give the same functional result. Wrappers are the standard idiom.
 - [Ren et al., 2021 -- "ZeRO-Offload: Democratizing Billion-Scale Model Training"](https://arxiv.org/abs/2101.06840) -- activation offload at scale
 - [PyTorch torch.utils.checkpoint docs](https://pytorch.org/docs/stable/checkpoint.html) -- the standard API
 - [Megatron-Core activation recomputation documentation](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/features/memory_optimizations.html) -- selective, full, and block modes
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the architecture or training mechanism behind Gradient Checkpointing and Activation Recomputation.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the central operation with explicit tensors and state.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Validate intermediate values against the lesson's stated invariants.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the architecture or training mechanism behind Gradient Checkpointing and Activation Recomputation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Validate intermediate values against the lesson's stated invariants,” and cite a repeatable check rather than relying on visual inspection alone.

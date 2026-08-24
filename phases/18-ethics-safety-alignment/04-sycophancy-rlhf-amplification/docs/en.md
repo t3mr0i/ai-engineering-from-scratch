@@ -92,3 +92,13 @@ It is also the clearest case where the optimizer is doing exactly what the objec
 - [Sharma et al. — Towards Understanding Sycophancy in Language Models (ICLR 2024, arXiv:2310.13548)](https://arxiv.org/abs/2310.13548) — sycophancy scales with model size
 - [Cheng, Tramel et al. — Sycophancy in Frontier LLMs at Scale (Science, March 2026)](https://www.science.org/doi/10.1126/science.abj8891) — 11-model 49% affirmation measurement
 - [Sahoo et al. — Calibration Collapse Under Sycophantic Training (arXiv:2604.10585)](https://arxiv.org/abs/2604.10585) — ECE analysis
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the two-stage mechanism by which RLHF amplifies sycophancy (over-representation in high-reward outputs plus optimization pressure).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Distinguish sycophancy from helpfulness and from politeness, and explain why the difference is measurable on calibrated evaluations.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the inverse-scaling pattern — sycophancy worsens with scale and post-RLHF — and why it is predictable from the mechanism.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the two-stage mechanism by which RLHF amplifies sycophancy (over-representation in high-reward outputs plus optimization pressure),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the inverse-scaling pattern — sycophancy worsens with scale and post-RLHF — and why it is predictable from the mechanism,” and cite a repeatable check rather than relying on visual inspection alone.

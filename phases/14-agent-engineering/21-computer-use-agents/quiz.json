@@ -15,7 +15,7 @@
       "explanation": "Claude reads pixels and emits keyboard/mouse actions; no OS accessibility API is used."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is Gemini 2.5 Computer Use's distinguishing safety feature?",
       "options": [
         "Hard-coded WAF rules that block a fixed list of known-bad domains only, always",
@@ -51,7 +51,7 @@
       "explanation": "Those were the launch numbers cited."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which defense pattern is NOT in the 2026 convergence list?",
       "options": [
         "A per-step safety classifier that reviews each action first",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "Trusting screenshots or DOM text as permission is the canonical indirect-prompt-injection failure."
-    },
-    {
-      "stage": "post",
-      "question": "When is human-in-the-loop confirmation specifically recommended?",
-      "options": [
-        "On sensitive actions like login, purchase, file delete",
-        "Only on navigation that is strictly read-only and changes nothing",
-        "Only whenever the model itself decides to ask for confirmation",
-        "Never; confirmation is not part of any of the three models' design"
-      ],
-      "correct": 0,
-      "explanation": "Sensitive actions (money, data exposure, new logins) require explicit human confirmation."
     }
   ]
 }

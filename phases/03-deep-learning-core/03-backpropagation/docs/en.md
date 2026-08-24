@@ -139,3 +139,13 @@ Every gradient is a product of local derivatives traced back from the loss. That
 
 - Rumelhart, Hinton & Williams, "Learning representations by back-propagating errors" (1986) -- the paper that made backpropagation mainstream and unlocked multi-layer network training
 - 3Blue1Brown, "Neural Networks" series (https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) -- the best visual explanation of backpropagation and gradient flow through networks
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a Value-based autograd engine that builds a computational graph and computes gradients via topological sort.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Derive the backward pass for addition, multiplication, and sigmoid using the chain rule.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Train a multi-layer network on XOR and circle classification using only your from-scratch backpropagation engine.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a Value-based autograd engine that builds a computational graph and computes gradients via topological sort,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Train a multi-layer network on XOR and circle classification using only your from-scratch backpropagation engine,” and cite a repeatable check rather than relying on visual inspection alone.

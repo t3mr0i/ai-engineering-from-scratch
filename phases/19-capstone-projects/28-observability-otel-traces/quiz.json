@@ -1,6 +1,6 @@
 {
   "lesson": "28-observability-otel-traces",
-  "title": "Observability: OTel GenAI Spans and Prometheus Metrics",
+  "title": "Observability with OTel GenAI Spans and Prometheus Metrics",
   "questions": [
     {
       "stage": "pre",

@@ -78,3 +78,13 @@ Concurrent write to one file via `O_APPEND` works on POSIX for byte-aligned writ
 - [POSIX rename atomicity](https://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html)
 - Phase 19 Lesson 78 - the ZeRO state this checkpoint is shaped to save
 - Phase 19 Lesson 81 - the end-to-end demo round-trips the saved state
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Save a multi-rank checkpoint as a per-rank shard file plus a manifest that records which rank owns what.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Use the atomic write pattern (write to a temp path then rename) so a crash mid-write never produces a half-finished checkpoint.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Resume from the manifest, verifying byte-equal state for both fp16 parameters and the ZeRO optimiser state on every rank.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Save a multi-rank checkpoint as a per-rank shard file plus a manifest that records which rank owns what,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Resume from the manifest, verifying byte-equal state for both fp16 parameters and the ZeRO optimiser state on every rank,” and cite a repeatable check rather than relying on visual inspection alone.

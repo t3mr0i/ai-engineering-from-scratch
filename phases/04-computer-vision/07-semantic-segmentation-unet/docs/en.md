@@ -144,3 +144,13 @@ For a first model, a 256x256 input with a 64-channel-base U-Net trains comfortab
 - [Fully Convolutional Networks (Long et al., 2015)](https://arxiv.org/abs/1411.4038) — the paper that first made segmentation an end-to-end conv problem
 - [segmentation_models_pytorch](https://github.com/qubvel/segmentation_models.pytorch) — the reference for production segmentation; every standard architecture plus every standard loss
 - [Lessons learned from training SOTA segmentation (kaggle.com competitions)](https://www.kaggle.com/code/iafoss/carvana-unet-pytorch) — a walkthrough of why TTA, pseudo-labeling, and class weights matter on real data
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish semantic, instance, and panoptic segmentation and pick the right task for a given problem.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a U-Net from scratch in PyTorch with encoder blocks, a bottleneck, a decoder with transposed convolutions, and skip connections.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement pixel-wise cross-entropy, Dice loss, and the combined loss that is the current default for medical and industrial segmentation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish semantic, instance, and panoptic segmentation and pick the right task for a given problem,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement pixel-wise cross-entropy, Dice loss, and the combined loss that is the current default for medical and industrial segmentation,” and cite a repeatable check rather than relying on visual inspection alone.

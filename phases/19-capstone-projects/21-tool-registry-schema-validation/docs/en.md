@@ -474,3 +474,13 @@ else:
 The two extensions you will want once this lesson lands are `$ref` resolution against a local definitions block, and `additionalProperties: false` for strict shape. Both are small. Both are common to add as the tool catalog grows past fifty tools. We left them out of the lesson to keep the file under one read.
 
 The next lesson (twenty-two) builds the JSON-RPC stdio transport that surfaces this registry to a model client. The lesson after (twenty-three) wraps both behind a dispatcher with timeouts and retries.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Hold a typed registry of tool name → schema → handler that the dispatcher can ask once and trust afterwards.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a JSON Schema 2020-12 subset that covers the keywords ninety percent of tool calls actually use.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Return precise, json-pointer-shaped error paths so the model can self-correct in one round trip.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Hold a typed registry of tool name → schema → handler that the dispatcher can ask once and trust afterwards,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Return precise, json-pointer-shaped error paths so the model can self-correct in one round trip,” and cite a repeatable check rather than relying on visual inspection alone.

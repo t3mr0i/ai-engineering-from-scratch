@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "Why is launch not the same as AI value realization?",
       "options": [
-        "Because launch always proves that the expected value has been delivered",
+        "Because launch always proves that the expected value has been delivered — and applies unchanged even when the lesson's stated preconditions fail",
         "Because adoption should never be measured once a tool has gone live",
         "Because baselines are irrelevant once a tool has been rolled out",
         "Because value needs a named owner, a baseline, a metric, a cadence, and a review"
@@ -55,7 +55,7 @@
       "question": "When should an AI initiative enter a portfolio value review?",
       "options": [
         "When expected value is high but baselines, metrics, ownership, or adoption are weak",
-        "Only when all of the expected value has already been fully proven and confirmed",
+        "Only when all of the expected value has already been fully proven and confirmed — and applies unchanged even when the lesson's stated preconditions fail",
         "Only when there is no owner at all and nobody is tracking the initiative",
         "Never — reporting delivery status alone is always a sufficient value review"
       ],
@@ -69,7 +69,7 @@
         "Only the launch date on which the AI tool became available to users",
         "The benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision",
         "Only raw tool usage numbers, without connecting them to business context",
-        "No owner or review cadence, since tracking is assumed to happen automatically"
+        "No owner or review cadence, since tracking is assumed to happen automatically, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "Benefits tracking should connect the benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision — not just a launch date, raw usage without context, or tracking with no owner or cadence."

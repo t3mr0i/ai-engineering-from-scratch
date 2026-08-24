@@ -12,10 +12,10 @@
         "Plain CSV log files"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“OpenTelemetry GenAI semantic conventions over OTLP HTTP” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why separate ClickHouse and Postgres in the storage tier?",
       "options": [
         "They are interchangeable and one is chosen at random",
@@ -24,7 +24,7 @@
         "ClickHouse handles columnar analytics over spans while Postgres holds users, sessions, and app metadata"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“ClickHouse handles columnar analytics over spans while Postgres holds users, sessions, and app metadata” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Truncates spans below 100ms"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Decides whether to keep a trace after it completes, using rules like keep errors plus sample successes” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Counts unique trace IDs"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Computes PSI or KL divergence on pooled prompt embeddings and watches eval-score trends” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is the deliverable's MTTR target on an injected PII-leak regression?",
       "options": [
         "Under 1 hour",
@@ -60,7 +60,7 @@
         "Under 5 minutes from bug deployed to Slack alert"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Under 5 minutes from bug deployed to Slack alert” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "OpenAI and Anthropic only"
       ],
       "correct": 1,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "How are evaluation results linked back to the original LLM call?",
-      "options": [
-        "As a CSV emailed nightly",
-        "As Slack messages only",
-        "As a separate Postgres table with no trace ID",
-        "As eval spans written as children of the parent trace in ClickHouse"
-      ],
-      "correct": 3,
-      "explanation": ""
+      "explanation": "“At least six: OpenAI, Anthropic, Google GenAI, LangChain, LlamaIndex, and vLLM” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

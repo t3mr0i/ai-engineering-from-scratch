@@ -12,10 +12,10 @@
         "Models lack support for git"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Context cannot hold the architecture plan, four parallel codebase slices, reviewer commentary, and test output at once” matches the lesson’s treatment of Capstone 10 — Multi-Agent Software Engineering Team; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does the architect role own in this factory shape?",
       "options": [
         "Reviewing the merged diff for hallucinations",
@@ -24,7 +24,7 @@
         "Force-merging branches when coders disagree"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Reading the issue and emitting a plan with subtasks that have explicit interfaces” matches the lesson’s treatment of Capstone 10 — Multi-Agent Software Engineering Team; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "The architect requires worktree IDs"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Isolated working trees let N coders implement subtasks in parallel without stepping on shared files” matches the lesson’s treatment of Capstone 10 — Multi-Agent Software Engineering Team; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "It must be the same model as the architect"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“It cannot approve diffs it authored or proposed” matches the lesson’s treatment of Capstone 10 — Multi-Agent Software Engineering Team; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does the rubric weigh token efficiency against a single-agent baseline?",
       "options": [
         "Multi-agent is always cheaper",
@@ -60,7 +60,7 @@
         "Token cost is unrelated to performance"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Role boundaries add summary and handoff context, so the real question is whether the factory wins per dollar” matches the lesson’s treatment of Capstone 10 — Multi-Agent Software Engineering Team; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "A handoff-failure histogram identifying which role boundary broke (plan, merge, review, test)"
       ],
       "correct": 3,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Which evaluation set does the capstone use to score pass@1 across roles?",
-      "options": [
-        "SWE-bench Pro 50-issue subset",
-        "HumanEval-Java",
-        "MT-Bench-v2",
-        "MigrationBench"
-      ],
-      "correct": 0,
-      "explanation": ""
+      "explanation": "“A handoff-failure histogram identifying which role boundary broke (plan, merge, review, test)” matches the lesson’s treatment of Capstone 10 — Multi-Agent Software Engineering Team; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -1,18 +1,21 @@
 {
+  "lesson": "04-pre-training-mini-gpt",
+  "title": "Pre-Training a Mini GPT (124M Parameters)",
   "questions": [
     {
+      "stage": "pre",
       "question": "What training objective does GPT use during pre-training?",
       "options": [
-        "Masked language modeling (predicting masked tokens)",
+        "Masked language modeling (predicting masked tokens) — and applies unchanged even when the lesson's stated preconditions fail",
         "Next-token prediction: given previous tokens, predict the next one",
         "Sentence classification",
         "Image-text alignment"
       ],
       "correct": 1,
-      "explanation": "GPT is a causal (autoregressive) language model trained with next-token prediction. Given tokens [t1, t2, ..., tn], it learns to predict tn+1. The loss is cross-entropy between predicted and actual next tokens.",
-      "stage": "pre"
+      "explanation": "GPT is a causal (autoregressive) language model trained with next-token prediction. Given tokens [t1, t2, ..., tn], it learns to predict tn+1. The loss is cross-entropy between predicted and actual next tokens."
     },
     {
+      "stage": "check",
       "question": "How many transformer layers, attention heads, and embedding dimensions does GPT-2 Small (124M) have?",
       "options": [
         "6 layers, 6 heads, 512 dims",
@@ -21,44 +24,55 @@
         "48 layers, 25 heads, 1600 dims"
       ],
       "correct": 1,
-      "explanation": "GPT-2 Small has 12 transformer layers, 12 attention heads per layer, and 768-dimensional embeddings. This architecture has 124 million parameters and can be trained on a single GPU in a few hours.",
-      "stage": "pre"
+      "explanation": "GPT-2 Small has 12 transformer layers, 12 attention heads per layer, and 768-dimensional embeddings. This architecture has 124 million parameters and can be trained on a single GPU in a few hours."
     },
     {
+      "stage": "check",
       "question": "What is the role of the causal attention mask in GPT?",
       "options": [
         "It prevents attention to padding tokens",
         "It prevents each token from attending to future tokens, ensuring the model can only use past context for predictions",
-        "It masks out low-confidence attention scores",
+        "It masks out low-confidence attention scores, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "It reduces memory usage during training"
       ],
       "correct": 1,
-      "explanation": "The causal mask is a triangular matrix that sets future positions to -infinity before softmax. Token at position 5 can attend to positions 1-5 but not 6+. This ensures the model generates tokens left-to-right.",
-      "stage": "post"
+      "explanation": "The causal mask is a triangular matrix that sets future positions to -infinity before softmax. Token at position 5 can attend to positions 1-5 but not 6+. This ensures the model generates tokens left-to-right."
     },
     {
+      "stage": "check",
       "question": "What does 'temperature' control during text generation?",
       "options": [
         "The speed of generation",
         "The randomness of token selection: lower temperature makes outputs more deterministic, higher makes them more diverse",
         "The number of tokens generated",
-        "The model's confidence threshold"
+        "The model's confidence threshold, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
-      "explanation": "Temperature divides logits before softmax. Temperature=0.1 makes the distribution very peaked (nearly deterministic). Temperature=1.0 is the training distribution. Temperature>1.0 flattens it, increasing randomness.",
-      "stage": "post"
+      "explanation": "Temperature divides logits before softmax. Temperature=0.1 makes the distribution very peaked (nearly deterministic). Temperature=1.0 is the training distribution. Temperature>1.0 flattens it, increasing randomness."
     },
     {
+      "stage": "post",
       "question": "Why does pre-training require significantly more compute than fine-tuning?",
       "options": [
         "Pre-training uses larger batch sizes",
         "Pre-training processes trillions of tokens from scratch to learn general language patterns, while fine-tuning adjusts an already-capable model on thousands of examples",
-        "Pre-training uses a different architecture",
+        "Pre-training uses a different architecture — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "Fine-tuning doesn't use gradients"
       ],
       "correct": 1,
-      "explanation": "Pre-training builds all language knowledge from random weights over trillions of tokens. Fine-tuning starts from these learned weights and adjusts them on a much smaller dataset (thousands to millions of examples).",
-      "stage": "post"
+      "explanation": "Pre-training builds all language knowledge from random weights over trillions of tokens. Fine-tuning starts from these learned weights and adjusts them on a much smaller dataset (thousands to millions of examples)."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Pre-Training a Mini GPT (124M Parameters)?",
+      "options": [
+        "Train a GPT model on a text corpus using next-token prediction with cross-entropy loss",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Train a GPT model on a text corpus using next-token prediction with cross-entropy loss” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

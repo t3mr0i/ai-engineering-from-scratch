@@ -67,3 +67,13 @@ The dataloader is the only stage that knows about training-sequence length. It p
 - Phase 19 · 42 - the downloader whose output this lesson tokenizes
 - Phase 19 · 44 - the cosine schedule that consumes this dataloader
 - Phase 19 · 45 - the AMP loop that wraps the training step
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Stream documents into a resizable HDF5 integer dataset with deterministic chunking.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Shard the write across multiple HDF5 files so failure is bounded and parallelism is possible.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Read tokens back through HDF5's page-cache-backed chunked layout so the dataloader copies into batch buffers only at batch time.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Stream documents into a resizable HDF5 integer dataset with deterministic chunking,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Read tokens back through HDF5's page-cache-backed chunked layout so the dataloader copies into batch buffers only at batch time,” and cite a repeatable check rather than relying on visual inspection alone.

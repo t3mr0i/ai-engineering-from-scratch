@@ -15,7 +15,7 @@
       "explanation": "A fixed dimension vector turns critique into structured data the harness can compare across rounds. Freeform criticism is unverifiable; vectors make regressions visible."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "In what order does the loop check stop conditions at the end of a round?",
       "options": [
         "Budget, then plateau, then target",

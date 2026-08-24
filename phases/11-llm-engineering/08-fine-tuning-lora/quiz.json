@@ -1,18 +1,21 @@
 {
+  "lesson": "08-fine-tuning-lora",
+  "title": "Fine-Tuning with LoRA & QLoRA",
   "questions": [
     {
+      "stage": "pre",
       "question": "What is the core insight behind LoRA (Low-Rank Adaptation)?",
       "options": [
         "Weight updates during fine-tuning have low intrinsic rank, so two small matrices can approximate them instead of the full matrix",
-        "Only the query and value projections carry task-specific information, so every other layer can be dropped from the model",
+        "Only the query and value projections carry task-specific information, so every other layer can be dropped from the model — and applies unchanged even when the lesson's stated preconditions fail",
         "Quantizing the base weights to four bits frees up enough memory that the full gradient now fits on one consumer GPU",
         "Freezing the early layers and training only the final one avoids catastrophic forgetting while keeping quality intact"
       ],
       "correct": 0,
-      "explanation": "Aghajanyan et al. showed that fine-tuning updates occupy a low-dimensional subspace. LoRA exploits this by representing the update as W + BA where B (d x r) and A (r x d) have small rank r, typically 8-64.",
-      "stage": "pre"
+      "explanation": "Aghajanyan et al. showed that fine-tuning updates occupy a low-dimensional subspace. LoRA exploits this by representing the update as W + BA where B (d x r) and A (r x d) have small rank r, typically 8-64."
     },
     {
+      "stage": "check",
       "question": "How much memory does LoRA save compared to full fine-tuning of an 8B model?",
       "options": [
         "No saving in GPU memory at all; LoRA only shrinks the checkpoint file you store on disk afterwards",
@@ -21,22 +24,22 @@
         "From ~56GB down to ~14GB, which is the memory needed to hold the base weights in fp16"
       ],
       "correct": 2,
-      "explanation": "Full fine-tuning needs gradients and optimizer states for all 8B parameters (~56GB). LoRA freezes base weights and only trains adapter matrices (~80M parameters at rank 16), needing ~6GB total.",
-      "stage": "pre"
+      "explanation": "Full fine-tuning needs gradients and optimizer states for all 8B parameters (~56GB). LoRA freezes base weights and only trains adapter matrices (~80M parameters at rank 16), needing ~6GB total."
     },
     {
+      "stage": "check",
       "question": "What is QLoRA?",
       "options": [
-        "A LoRA variant that quantizes the adapter matrices to 4-bit while the base model stays in fp16 throughout training",
+        "A LoRA variant that quantizes the adapter matrices to 4-bit while the base model stays in fp16 throughout training, because one plausible output is sufficient production evidence",
         "A merging method that trims small-magnitude adapter weights and resolves sign conflicts before combining adapters",
         "Quantized LoRA: the base model is loaded in 4-bit while the adapters train in 16-bit, combining the memory savings of both",
         "A kernel rewrite of the forward and backward pass that doubles throughput and halves VRAM with no accuracy loss"
       ],
       "correct": 2,
-      "explanation": "QLoRA (Dettmers et al.) loads the frozen base model in 4-bit (NF4 quantization) while training LoRA adapters in FP16/BF16. This allows fine-tuning a 7B model on a single consumer GPU with 6GB VRAM.",
-      "stage": "post"
+      "explanation": "QLoRA (Dettmers et al.) loads the frozen base model in 4-bit (NF4 quantization) while training LoRA adapters in FP16/BF16. This allows fine-tuning a 7B model on a single consumer GPU with 6GB VRAM."
     },
     {
+      "stage": "check",
       "question": "What does the 'rank' parameter (r) in LoRA control?",
       "options": [
         "The capacity of the adapter: higher rank captures more complex adaptations but uses more parameters and memory",
@@ -45,20 +48,31 @@
         "The number of bits used to store the frozen base weights while the adapters keep training in higher precision throughout"
       ],
       "correct": 0,
-      "explanation": "Rank r determines the size of adapter matrices A (r x d) and B (d x r). Rank 4 trains very few parameters (fast, cheap). Rank 64 trains more parameters (more expressive). Most tasks work well with rank 8-32.",
-      "stage": "post"
+      "explanation": "Rank r determines the size of adapter matrices A (r x d) and B (d x r). Rank 4 trains very few parameters (fast, cheap). Rank 64 trains more parameters (more expressive). Most tasks work well with rank 8-32."
     },
     {
+      "stage": "post",
       "question": "What happens when you merge LoRA weights back into the base model?",
       "options": [
         "The base weights are re-quantized to NF4, so the merged checkpoint ends up roughly as small as the adapter file was",
         "The adapters remain separate at inference time and are swapped in per request, which is the whole point of merging",
         "The adapter matrices are added to the base weights (W_merged = W_base + B*A), producing a standard model with no inference overhead",
-        "The merged model has to run one more training epoch, because the zero-initialized B matrix is reset during the merge"
+        "The merged model has to run one more training epoch, because the zero-initialized B matrix is reset during the merge — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 2,
-      "explanation": "Since LoRA adds W_base + B*A, you can compute B*A once and add it to W_base permanently. The merged model has the same architecture and inference speed as the original, with no adapter overhead.",
-      "stage": "post"
+      "explanation": "Since LoRA adds W_base + B*A, you can compute B*A once and add it to W_base permanently. The merged model has the same architecture and inference speed as the original, with no adapter overhead."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Fine-Tuning with LoRA & QLoRA?",
+      "options": [
+        "Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d pa...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d pa...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

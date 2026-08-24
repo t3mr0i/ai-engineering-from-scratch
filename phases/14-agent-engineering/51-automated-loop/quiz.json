@@ -2,11 +2,77 @@
   "lesson": "51-automated-loop",
   "title": "Automated Loop",
   "questions": [
-    {"stage": "pre", "question": "What does a trigger decide?", "options": ["When work may begin", "Whether the code works", "Which model is smartest", "Who owns the review"], "correct": 0, "explanation": "Trigger semantics are separate from loop completion."},
-    {"stage": "check", "question": "What does the evaluator own?", "options": ["The maker's original prompt", "The deployment secret's value", "The entire task's scope", "The completion decision"], "correct": 3, "explanation": "The evaluator decides whether evidence meets the goal."},
-    {"stage": "check", "question": "Why record every loop round?", "options": ["To inflate the log files needlessly", "To preserve evidence and feedback", "To avoid defining a stop policy", "To hide the intervention count"], "correct": 1, "explanation": "Round receipts make the loop replayable and reviewable."},
-    {"stage": "check", "question": "What is a stalled stop?", "options": ["A single artifact that already passed", "A timer trigger waking on schedule", "Repeated failure without artifact change", "A human approval decision pending review"], "correct": 2, "explanation": "Stall detection prevents useless repetition."},
-    {"stage": "post", "question": "Which task fits a goal loop best?", "options": ["A feature with a verifiable acceptance command", "An undefined wish with no finish line", "A clock-only poll that never has a defined goal", "An irreversible deploy without review"], "correct": 0, "explanation": "Goal loops need a machine-checkable finish line."},
-    {"stage": "post", "question": "What should manual versus automated comparisons measure?", "options": ["Only the elapsed wall-clock time", "The length of the original prompt", "Which particular model brand was used", "Interventions, failures, and receipts"], "correct": 3, "explanation": "Reliability improvement needs evidence beyond speed."}
+    {
+      "stage": "pre",
+      "question": "What does a trigger decide?",
+      "options": [
+        "When work may begin",
+        "Whether the code works",
+        "Which model is smartest",
+        "Who owns the review"
+      ],
+      "correct": 0,
+      "explanation": "Trigger semantics are separate from loop completion."
+    },
+    {
+      "stage": "check",
+      "question": "What does the evaluator own?",
+      "options": [
+        "The maker's original prompt",
+        "The deployment secret's value",
+        "The entire task's scope",
+        "The completion decision"
+      ],
+      "correct": 3,
+      "explanation": "The evaluator decides whether evidence meets the goal."
+    },
+    {
+      "stage": "check",
+      "question": "Why record every loop round?",
+      "options": [
+        "To inflate the log files needlessly",
+        "To preserve evidence and feedback",
+        "To avoid defining a stop policy",
+        "To hide the intervention count"
+      ],
+      "correct": 1,
+      "explanation": "Round receipts make the loop replayable and reviewable."
+    },
+    {
+      "stage": "check",
+      "question": "What is a stalled stop?",
+      "options": [
+        "A single artifact that already passed",
+        "A timer trigger waking on schedule",
+        "Repeated failure without artifact change",
+        "A human approval decision pending review"
+      ],
+      "correct": 2,
+      "explanation": "Stall detection prevents useless repetition."
+    },
+    {
+      "stage": "post",
+      "question": "Which task fits a goal loop best?",
+      "options": [
+        "A feature with a verifiable acceptance command",
+        "An undefined wish with no finish line",
+        "A clock-only poll that never has a defined goal",
+        "An irreversible deploy without review"
+      ],
+      "correct": 0,
+      "explanation": "Goal loops need a machine-checkable finish line."
+    },
+    {
+      "stage": "post",
+      "question": "What should manual versus automated comparisons measure?",
+      "options": [
+        "Only the elapsed wall-clock time",
+        "The length of the original prompt",
+        "Which particular model brand was used",
+        "Interventions, failures, and receipts"
+      ],
+      "correct": 3,
+      "explanation": "Reliability improvement needs evidence beyond speed."
+    }
   ]
 }

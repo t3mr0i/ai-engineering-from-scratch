@@ -58,3 +58,13 @@ A pipeline runs M microbatches of size B each. The effective batch size is M*B. 
 - [Megatron-LM pipeline parallel docs](https://github.com/NVIDIA/Megatron-LM)
 - Phase 19 Lesson 76 - the send/recv primitives the schedule uses
 - Phase 19 Lesson 78 - ZeRO is orthogonal to pipeline and often combined
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Split a sequential model into N stages and simulate a forward pipeline across N ranks.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Schedule M microbatches through the pipeline using the GPipe schedule (forward-only fill, then backward) and compute the bubble fraction.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare bubble against the interleaved 1F1B schedule used in Megatron-LM and PipeDream.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Split a sequential model into N stages and simulate a forward pipeline across N ranks,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare bubble against the interleaved 1F1B schedule used in Megatron-LM and PipeDream,” and cite a repeatable check rather than relying on visual inspection alone.

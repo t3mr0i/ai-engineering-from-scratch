@@ -20,7 +20,7 @@
       "options": [
         "Role impact — the tasks a specific role performs are changing because of the rollout",
         "Manager dependency — adoption stalls because leads cannot brief their teams on expectations",
-        "Communication gap — affected people never received a message explaining the change at all",
+        "Communication gap — affected people never received a message explaining the change at all, with no need to inspect intermediate results or test edge cases",
         "Adoption risk — the change is likely to stall even though the tool itself works fine"
       ],
       "correct": 1,
@@ -43,7 +43,7 @@
       "question": "Which control belongs to this lesson?",
       "options": [
         "Manager brief — material that lets leads explain the change and the new expectations",
-        "Skipping the communication script so each team improvises its own rollout message",
+        "Skipping the communication script so each team improvises its own rollout message, before defining the measurement, acceptance threshold, or rollback path",
         "Hiding the role-impact analysis so affected staff do not worry before the launch",
         "Dropping the stakeholder plan because training attendance already proves adoption"
       ],
@@ -56,7 +56,7 @@
       "options": [
         "When people impact, adoption complexity, role impact, or manager dependency is high",
         "Only when no role's daily work changes as a result of introducing the AI tool",
-        "Only after adoption has already failed and teams have returned to the old process",
+        "Only after adoption has already failed and teams have returned to the old process — and applies unchanged even when the lesson's stated preconditions fail",
         "Never — one training session covers everything an AI rollout plan needs to cover"
       ],
       "correct": 0,

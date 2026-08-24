@@ -103,3 +103,13 @@ Phase 17 · 13 (observability) + 16 (model routing) + 19 (gateways) are the same
 - [LiteLLM GitHub](https://github.com/BerriAI/litellm)
 - [Portkey GitHub](https://github.com/Portkey-AI/gateway)
 - [Kong AI Gateway docs](https://docs.konghq.com/gateway/latest/ai-gateway/)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Enumerate the six core gateway features (routing, fallback, retries, rate limits, secrets, observability, guardrails).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Map four 2026 gateways (LiteLLM, Portkey, Kong AI, Bifrost) to scale ceilings and use cases.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why vendor self-benchmarks are not evidence, and what to measure on your own traffic instead.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Enumerate the six core gateway features (routing, fallback, retries, rate limits, secrets, observability, guardrails),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why vendor self-benchmarks are not evidence, and what to measure on your own traffic instead,” and cite a repeatable check rather than relying on visual inspection alone.

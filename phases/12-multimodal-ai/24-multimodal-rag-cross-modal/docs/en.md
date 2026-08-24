@@ -120,3 +120,13 @@ No standard benchmark spans all modalities. Most papers evaluate on domain-speci
 - [Zhao et al. — Vision RAG Survey (arXiv:2503.18016)](https://arxiv.org/abs/2503.18016)
 - [Chen et al. — MuRAG (arXiv:2210.02928)](https://arxiv.org/abs/2210.02928)
 - [Liu et al. — REACT (arXiv:2301.10382)](https://arxiv.org/abs/2301.10382)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Design cross-modal retrieval: text → image, image → text, audio → video, etc.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain generation grounding: what "cite your sources" looks like when sources are a mix of modalities.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Design cross-modal retrieval: text → image, image → text, audio → video, etc,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain generation grounding: what "cite your sources" looks like when sources are a mix of modalities,” and cite a repeatable check rather than relying on visual inspection alone.

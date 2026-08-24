@@ -240,3 +240,13 @@ det = -1:  area preserved but orientation flipped (reflection)
 - [3Blue1Brown: Linear Transformations](https://www.3blue1brown.com/lessons/linear-transformations) -- visual intuition for how matrices reshape space
 - [3Blue1Brown: Eigenvectors and Eigenvalues](https://www.3blue1brown.com/lessons/eigenvalues) -- the best visual explanation of what eigenvectors mean geometrically
 - [MIT 18.06 Lecture 21: Eigenvalues and Eigenvectors](https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/) -- Gilbert Strang's classic treatment
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Construct rotation, scaling, shearing, and reflection matrices and apply them to 2D and 3D points.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compose multiple transformations by matrix multiplication and verify that order matters.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute eigenvalues and eigenvectors of 2x2 matrices from the characteristic equation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Construct rotation, scaling, shearing, and reflection matrices and apply them to 2D and 3D points,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute eigenvalues and eigenvectors of 2x2 matrices from the characteristic equation,” and cite a repeatable check rather than relying on visual inspection alone.

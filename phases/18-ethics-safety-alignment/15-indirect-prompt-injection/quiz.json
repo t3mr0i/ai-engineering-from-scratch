@@ -1,6 +1,6 @@
 {
   "lesson": "15-indirect-prompt-injection",
-  "title": "Indirect Prompt Injection - Production Attack Surface",
+  "title": "Indirect Prompt Injection — Production Attack Surface",
   "questions": [
     {
       "stage": "pre",

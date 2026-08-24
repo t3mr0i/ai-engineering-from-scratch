@@ -15,7 +15,7 @@
       "explanation": "Retrying a db.write that timed out at 4.9s can produce a second write. The dispatcher refuses unless the handler tells it the call is safe to repeat — measurement, speed, and key latency are not the reason."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the idempotency-key dedupe protecting against?",
       "options": [
         "Slow network links between the dispatcher and the tool backend that add latency to every call",
@@ -51,7 +51,7 @@
       "explanation": "A gather of forty calls would open forty concurrent dispatches without the limit. The semaphore caps the wave."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why is the idempotency key derived by the caller, not by the dispatcher?",
       "options": [
         "Because Python's built-in hash function produces unstable values across process restarts",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "-32602 Invalid params. The dispatcher returns it before any handler runs."
-    },
-    {
-      "stage": "post",
-      "question": "After max_attempts is reached with timeouts on an idempotent tool, what is returned?",
-      "options": [
-        "An exception propagates up through the dispatcher instead of being returned as a typed result to the caller",
-        "DispatchOk is returned with no result payload, since the tool eventually stopped timing out",
-        "DispatchError with kind=timeout, where attempts reports how many tries the dispatcher actually made",
-        "DispatchError is returned with kind=internal, since repeated timeouts indicate a handler bug"
-      ],
-      "correct": 2,
-      "explanation": "The dispatcher returns a typed error envelope. The kind reflects the last failure mode, attempts reflects how many tries it made."
     }
   ]
 }

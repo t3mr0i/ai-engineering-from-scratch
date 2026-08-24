@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "What is the key behavioral difference between extractive and abstractive summarization?",
       "options": [
-        "Extractive uses TF-IDF; abstractive uses Word2Vec",
+        "Extractive uses TF-IDF; abstractive uses Word2Vec — and applies unchanged even when the lesson's stated preconditions fail",
         "Extractive returns sentences verbatim from the source; abstractive generates new text and can hallucinate",
         "Extractive is multilingual only",
         "Extractive is slower than abstractive"
@@ -15,13 +15,13 @@
       "explanation": "Extractive lifts sentences verbatim; abstractive rewrites and risks hallucination."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does ROUGE measure?",
       "options": [
         "Embedding similarity",
         "N-gram and longest-common-subsequence overlap between system and reference summaries",
         "Reading time",
-        "Token-level perplexity"
+        "Token-level perplexity, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
       "explanation": "ROUGE-1/2/L measure unigram, bigram, and LCS overlap with references."
@@ -31,7 +31,7 @@
       "question": "How does TextRank score sentences in extractive summarization?",
       "options": [
         "By raw word count",
-        "By comparing to a reference summary",
+        "By comparing to a reference summary, because one plausible output is sufficient production evidence",
         "By running a PageRank-style iteration over a graph where edges are sentence-similarity weights",
         "By embedding cosine to the question"
       ],
@@ -45,17 +45,17 @@
         "Without stemming, 'running' and 'run' count as different tokens and ROUGE undercounts true overlap",
         "To speed up ROUGE",
         "Stemming normalizes case",
-        "Stemming is required by the rouge-score package"
+        "Stemming is required by the rouge-score package, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 0,
       "explanation": "Stemming merges morphological variants so ROUGE credits semantically equivalent forms."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which 2026 metric is purpose-built to detect summary hallucinations via NLI entailment?",
       "options": [
         "BLEU",
-        "ROUGE-L",
+        "ROUGE-L — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "Faithfulness checks (e.g. FactCC or RAGAS faithfulness) using NLI between source and summary claims",
         "chrF"
       ],
@@ -68,35 +68,11 @@
       "options": [
         "Outputs are lifted verbatim from the source, eliminating the abstractive hallucination class",
         "It is faster",
-        "Extractive supports longer outputs",
+        "Extractive supports longer outputs, with no need to inspect intermediate results or test edge cases",
         "ROUGE scores are higher"
       ],
       "correct": 0,
       "explanation": "Verbatim extraction cannot invent content, which matters where factuality is regulated."
-    },
-    {
-      "stage": "post",
-      "question": "Which of these is an abstractive hallucination type to monitor for?",
-      "options": [
-        "Punctuation drift",
-        "Stopword removal",
-        "Long sentences",
-        "Entity swap (e.g. 'John Smith' rendered as 'John Brown'), number drift, polarity flip, or fact invention"
-      ],
-      "correct": 3,
-      "explanation": "Entity swaps, numeric drift, polarity flips, and invented facts are the canonical abstractive failure modes."
-    },
-    {
-      "stage": "post",
-      "question": "When would you reach for a Pegasus checkpoint over BART-large-CNN?",
-      "options": [
-        "When evaluating BLEU",
-        "When the input is short",
-        "When you need extractive output",
-        "For domains like scientific abstracts where Pegasus's gap-sentence pretraining objective is a closer fit"
-      ],
-      "correct": 3,
-      "explanation": "Pegasus's gap-sentence objective excels at long-form domain summarization (e.g. pubmed)."
     }
   ]
 }

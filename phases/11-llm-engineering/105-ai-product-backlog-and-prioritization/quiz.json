@@ -1,4 +1,6 @@
 {
+  "lesson": "105-ai-product-backlog-and-prioritization",
+  "title": "AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies (2026)",
   "questions": [
     {
       "stage": "pre",
@@ -7,28 +9,28 @@
         "A ranked list of items",
         "The weights that reflect business priorities across value, risk, effort, and dependencies",
         "A breakdown of a vague epic into scoreable stories",
-        "A first-pass extraction of business impact from a feature description"
+        "A first-pass extraction of business impact from a feature description — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "The lesson's core claim: LLMs can do the scoring arithmetic explicitly and consistently, but the weights themselves are a product and business decision that has to come from humans — the model has no access to the strategy those weights encode."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does the lesson call the actual deliverable of a prioritization session a 'decision record' rather than a ranked list?",
       "options": [
         "Because Jira cannot store ranked lists natively",
         "Because a ranked list alone loses the weights, score breakdown, and reasoning behind the order, leaving nothing to defend when challenged later",
-        "Because decision records are required by the EU AI Act for all software projects",
+        "Because decision records are required by the EU AI Act for all software projects, with no need to inspect intermediate results or test edge cases",
         "Because ranked lists cannot be version-controlled"
       ],
       "correct": 1,
       "explanation": "The lesson's running example is a team that pastes 40 items into a chat and gets back a rank with no record of the weights or assumptions used. Three months later, when a stakeholder challenges the roadmap, there's no reasoning to point to — only the rank."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "In the RICE variant formula Score = (Value × w_v + (1 - Risk) × w_r) / (Effort × DependencyMultiplier), what does the DependencyMultiplier do?",
       "options": [
-        "It reduces the score for high-value items to keep rankings balanced",
+        "It reduces the score for high-value items to keep rankings balanced, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
         "It scales the denominator up (1.5-2.0x) for items blocked by three or more unresolved dependencies, effectively penalizing items that can't ship independently",
         "It replaces the Effort term entirely for items with no dependencies",
         "It is only applied during a compliance quarter"
@@ -37,13 +39,13 @@
       "explanation": "DependencyMultiplier is 1.0 for independent items and rises to 1.5-2.0 for heavily blocked ones. Since it multiplies the denominator, a high multiplier lowers the score — reflecting that an item entangled in unresolved dependencies is effectively more costly to ship."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "In the table of where LLMs help in the scoring workflow, what is the human gate for the 'Risk profiling' step?",
       "options": [
         "Approve the model's chosen weights for the quarter",
         "Decide the risk severity — the model surfaces risks, but does not get to decide how severe they are",
         "Re-run the dependency graph analysis manually",
-        "Confirm the item was correctly decomposed from its parent epic"
+        "Confirm the item was correctly decomposed from its parent epic, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 1,
       "explanation": "The lesson's table pairs each LLM contribution with an explicit human gate. For risk profiling, the model surfaces non-obvious risks (data pipeline dependency, regulatory exposure), but a human must decide how severe each one actually is."
@@ -52,7 +54,7 @@
       "stage": "post",
       "question": "Why does the lesson insist the scoring layer be a deterministic function rather than a model call?",
       "options": [
-        "Deterministic functions run faster than any LLM call",
+        "Deterministic functions run faster than any LLM call — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "So the ranking doesn't change just because the team switched model versions, and any past ranking can be replayed by re-running the function against stored inputs",
         "Because LLMs cannot output numeric scores reliably",
         "Because Jira only accepts CSV input, not JSON"
@@ -64,7 +66,7 @@
       "stage": "post",
       "question": "What does high 'fan-in' mean for an item in the dependency graph, and why does the lesson say it should be scheduled early even at a moderate value score?",
       "options": [
-        "High fan-in means the item has the deepest path from a root item, so it is inherently the most valuable",
+        "High fan-in means the item has the deepest path from a root item, so it is inherently the most valuable, with no need to inspect intermediate results or test edge cases",
         "High fan-in means many other items are blocked by it, so delaying it delays everything downstream — a force multiplier the WSJF insight favors scheduling early",
         "High fan-in means the item requires the most engineering effort to complete",
         "High fan-in is only relevant for items with no dependencies at all"

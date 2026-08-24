@@ -1,6 +1,6 @@
 {
   "lesson": "23-watermarking-synthid-stable-signature-c2pa",
-  "title": "Watermarking - SynthID, Stable Signature, C2PA",
+  "title": "Watermarking — SynthID, Stable Signature, C2PA",
   "questions": [
     {
       "stage": "pre",
@@ -12,7 +12,7 @@
         "By inserting a hidden HTML comment"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“At each decoding step, hash the previous K tokens to partition the vocabulary into green/red sets and bias sampling toward green; detection counts green tokens via a z-score” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "They actually survive paraphrase"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Rewording or paraphrasing the text destroys the green-token statistical signal” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Signs the metadata with a private key"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Fine-tunes the latent diffusion decoder so every generated image carries a fixed embedded message detectable from the latent” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Post-generation fine-tuning of the decoder can remove the watermark while preserving image quality, undermining adversarial robustness"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Post-generation fine-tuning of the decoder can remove the watermark while preserving image quality, undermining adversarial robustness” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "C2PA replaces watermarks entirely"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Metadata can be stripped but carries rich provenance chain; watermarks persist through transcoding but carry few bits; layered, they provide a usable provenance story” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Because SynthID only works on Gemini outputs"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Because SynthID only watermarks generations from SynthID-enabled models; content from any model without SynthID is unwatermarked by default” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

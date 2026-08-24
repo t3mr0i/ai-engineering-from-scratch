@@ -311,3 +311,13 @@ for inputs, targets in loader:
 - PyTorch Tutorials: "Learning PyTorch with Examples" (https://pytorch.org/tutorials/beginner/pytorch_with_examples.html) -- the official path from tensors to nn.Module
 - PyTorch Performance Tuning Guide (https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html) -- mixed precision, DataLoader workers, pinned memory, and other production optimizations
 - Horace He, "Making Deep Learning Go Brrrr" (https://horace.io/brrr_intro.html) -- why GPU training is fast, with PyTorch-specific optimization strategies
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build and train neural networks using PyTorch's nn.Module, nn.Sequential, and autograd.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Use PyTorch tensors, GPU acceleration, and the standard training loop (zero_grad, forward, loss, backward, step).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Convert your from-scratch mini framework components to their PyTorch equivalents.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build and train neural networks using PyTorch's nn.Module, nn.Sequential, and autograd,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Convert your from-scratch mini framework components to their PyTorch equivalents,” and cite a repeatable check rather than relying on visual inspection alone.

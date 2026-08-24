@@ -135,3 +135,13 @@ Training cost for stage 2: ~20 hours on 8xA100. This is the key number — one d
 - [Chen et al. — ShareGPT4V (arXiv:2311.12793)](https://arxiv.org/abs/2311.12793) — dense captions dataset.
 - [Karamcheti et al. — Prismatic VLMs (arXiv:2402.07865)](https://arxiv.org/abs/2402.07865) — design-space ablations.
 - [Li et al. — LLaVA-OneVision (arXiv:2408.03326)](https://arxiv.org/abs/2408.03326) — unified single-image, multi-image, video.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuning on 158k GPT-4-generated turns.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct a LLaVA-format prompt with the image token placeholder, system prompt, and user/assistant turns.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct a LLaVA-format prompt with the image token placeholder, system prompt, and user/assistant turns,” and cite a repeatable check rather than relying on visual inspection alone.

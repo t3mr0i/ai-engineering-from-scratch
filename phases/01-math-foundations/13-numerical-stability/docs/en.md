@@ -425,3 +425,13 @@ Fix: use mixed precision with loss scaling (AMP), or use bfloat16 instead.
 - [AMP: Automatic Mixed Precision (PyTorch docs)](https://pytorch.org/docs/stable/amp.html) -- practical guide to mixed precision in PyTorch
 - [bfloat16 format (Google Cloud TPU docs)](https://cloud.google.com/tpu/docs/bfloat16) -- why Google chose this format for TPUs
 - [Kahan Summation (Wikipedia)](https://en.wikipedia.org/wiki/Kahan_summation_algorithm) -- algorithm for reducing rounding error in floating point sums
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement numerically stable softmax and log-sum-exp using the max-subtraction trick.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Identify overflow, underflow, and catastrophic cancellation in floating-point computations.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Verify analytical gradients against numerical gradients using centered finite differences.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement numerically stable softmax and log-sum-exp using the max-subtraction trick,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Verify analytical gradients against numerical gradients using centered finite differences,” and cite a repeatable check rather than relying on visual inspection alone.

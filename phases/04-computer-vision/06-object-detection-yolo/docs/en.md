@@ -144,3 +144,13 @@ Report all four. A detector that is strong on mAP@0.5 but weak on mAP@0.5:0.95 i
 - [YOLOv3 (Redmon & Farhadi, 2018)](https://arxiv.org/abs/1804.02767) — the paper that introduced multi-scale FPN-style heads; still the clearest diagram
 - [Ultralytics YOLOv8 docs](https://docs.ultralytics.com) — the current production reference; covers dataset formats, augmentations, training recipes
 - [The Illustrated Guide to Object Detection (Jonathan Hui)](https://jonathan-hui.medium.com/object-detection-series-24d03a12f904) — best plain-English tour of the full detector zoo; priceless for understanding how DETR, RetinaNet, FCOS, and YOLO relate
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -1,6 +1,9 @@
 {
+  "lesson": "09-function-calling",
+  "title": "Function Calling & Tool Use",
   "questions": [
     {
+      "stage": "pre",
       "question": "Can LLMs actually execute functions or access external systems?",
       "options": [
         "Yes, modern LLMs open a socket and call the API directly during generation, bypassing your application code",
@@ -9,56 +12,67 @@
         "No -- LLMs only generate text (typically JSON) describing which function to call; your code must execute it"
       ],
       "correct": 3,
-      "explanation": "LLMs generate tokens. When 'calling a function,' the model outputs JSON specifying the function name and arguments. Your application code parses this JSON, executes the actual function, and sends the result back to the model.",
-      "stage": "pre"
+      "explanation": "LLMs generate tokens. When 'calling a function,' the model outputs JSON specifying the function name and arguments. Your application code parses this JSON, executes the actual function, and sends the result back to the model."
     },
     {
+      "stage": "check",
       "question": "What is a tool schema in the context of function calling?",
       "options": [
         "A database schema defining the tables and columns the model is allowed to query directly during the loop",
         "The API endpoint URL and authentication credentials the application uses to reach the external service",
-        "A description of the model's internal architecture that determines which functions it was trained to call",
+        "A description of the model's internal architecture that determines which functions it was trained to call, with no need to inspect intermediate results or test edge cases",
         "A JSON description of a function's name, parameters, types, and purpose that tells the model what tools are available"
       ],
       "correct": 3,
-      "explanation": "Tool schemas describe available functions to the model: function name, parameter names and types, descriptions of what each parameter does, and what the function returns. The model uses these to decide when and how to call tools.",
-      "stage": "pre"
+      "explanation": "Tool schemas describe available functions to the model: function name, parameter names and types, descriptions of what each parameter does, and what the function returns. The model uses these to decide when and how to call tools."
     },
     {
+      "stage": "check",
       "question": "What is the standard pattern for a multi-turn function calling loop?",
       "options": [
         "Call every registered tool in parallel on the first turn and merge whichever results return before the timeout",
         "Send message -> model requests tool call -> execute function -> send result back -> model generates final response (repeat if needed)",
         "The model executes the function internally during generation, without any code on your side ever running",
-        "Parse the entire conversation as a single batch and have the model return every tool call it will ever need up front"
+        "Parse the entire conversation as a single batch and have the model return every tool call it will ever need up front, because one plausible output is sufficient production evidence"
       ],
       "correct": 1,
-      "explanation": "The loop: (1) send user message + tool schemas, (2) model responds with a tool call request, (3) execute the function, (4) send the result back as a tool response, (5) model generates the next response or another tool call.",
-      "stage": "post"
+      "explanation": "The loop: (1) send user message + tool schemas, (2) model responds with a tool call request, (3) execute the function, (4) send the result back as a tool response, (5) model generates the next response or another tool call."
     },
     {
+      "stage": "check",
       "question": "How do you prevent infinite tool calling loops?",
       "options": [
         "Switch to a faster underlying model so the loop always finishes before any request timeout is hit",
-        "Infinite loops can't happen because the model always knows when a task is complete and stops calling tools",
+        "Infinite loops can't happen because the model always knows when a task is complete and stops calling tools, before defining the measurement, acceptance threshold, or rollback path",
         "Set a maximum number of tool call iterations and implement a timeout, breaking the loop if the limit is reached",
         "Remove every tool schema from the request after the first call so the model can no longer call anything"
       ],
       "correct": 2,
-      "explanation": "Without limits, a model could repeatedly call tools (e.g., searching for information it can never find). A max iteration count (e.g., 10 rounds) and total timeout prevent runaway loops in production.",
-      "stage": "post"
+      "explanation": "Without limits, a model could repeatedly call tools (e.g., searching for information it can never find). A max iteration count (e.g., 10 rounds) and total timeout prevent runaway loops in production."
     },
     {
+      "stage": "post",
       "question": "Why are clear, descriptive parameter names and descriptions important in tool schemas?",
       "options": [
         "They make the code more readable for other engineers, but the model itself ignores descriptions and infers types from context",
         "The model uses descriptions to decide which tool to call and how to fill in parameters -- vague descriptions lead to wrong tool selections and incorrect arguments",
         "They are required by the API provider's validation layer, but changing them has no effect on which tool the model decides to call",
-        "They improve response time, because shorter and vaguer descriptions mean fewer tokens for the model to process before calling a tool"
+        "They improve response time, because shorter and vaguer descriptions mean fewer tokens for the model to process before calling a tool — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
-      "explanation": "The model reads tool descriptions to decide what to call and how. A parameter described as 'q' vs 'search_query: The user's search terms to look up in the knowledge base' gives vastly different results.",
-      "stage": "post"
+      "explanation": "The model reads tool descriptions to decide what to call and how. A parameter described as 'q' vs 'search_query: The user's search terms to look up in the knowledge base' gives vastly different results."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Function Calling & Tool Use?",
+      "options": [
+        "Design tool schemas with clear descriptions and typed parameters that the model can reliably invoke",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Design tool schemas with clear descriptions and typed parameters that the model can reliably invoke” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

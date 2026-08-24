@@ -5,7 +5,7 @@
 **Type:** Build
 **Languages:** TypeScript
 **Prerequisites:** Phase 11 Lesson 01 (Prompt Engineering), Phase 11 Lesson 09 (Function Calling)
-**Time:** ~45 minutes
+**Time:** ~105 minutes
 **Related:** Phase 11 · 14 (Model Context Protocol) — MCP's resource/tool boundaries interact with guardrails; untrusted resource content must be treated as data, not instructions. Phase 18 (Ethics, Safety, Alignment) goes deeper on policy and red-teaming.
 
 ## Learning Objectives
@@ -451,3 +451,13 @@ else:
 - [Greshake et al., 2023 -- "Not What You Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"](https://arxiv.org/abs/2302.12173) -- the foundational paper on indirect prompt injection.
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) -- industry standard vulnerability list for LLM apps.
 - [Perez & Ribeiro, "Ignore Previous Prompt: Attack Techniques For Language Models" (2022)](https://arxiv.org/abs/2211.09527) -- the first systematic study of prompt-injection attacks.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement input guardrails that detect and block prompt injection, jailbreak attempts, and toxic content before reaching the model.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build output guardrails that validate responses for PII leakage, hallucinated URLs, and policy violations.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Design a layered defense system combining input filtering, system prompt hardening, and output validation.
+
+## Reference Solution
+
+Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement input guardrails that detect and block prompt injection, jailbreak attempts, and toxic content before reaching the model,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Design a layered defense system combining input filtering, system prompt hardening, and output validation,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -149,3 +149,13 @@ DeepSeek-V4 (if it ships) is expected to keep MLA + MoE + MTP and add DSA (DeepS
 - [DeepSeek-R1 paper (arXiv:2501.12948)](https://arxiv.org/abs/2501.12948) — the reasoning-training successor on V3's architecture
 - [Native Sparse Attention (arXiv:2502.11089)](https://arxiv.org/abs/2502.11089) — the future direction for DeepSeek-family attention
 - [DualPipe repository](https://github.com/deepseek-ai/DualPipe) — the training-schedule reference
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Read the DeepSeek-V3 config top to bottom and explain each field in terms of the six GPT-2 knobs plus four DeepSeek-specific additions.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Derive the total parameter count (671B), active parameter count (37B), and the components that contribute to each.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute the KV cache footprint of MLA at 128k context and compare to what a same-active-param dense model with GQA would pay.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Read the DeepSeek-V3 config top to bottom and explain each field in terms of the six GPT-2 knobs plus four DeepSeek-specific additions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute the KV cache footprint of MLA at 128k context and compare to what a same-active-param dense model with GQA would pay,” and cite a repeatable check rather than relying on visual inspection alone.

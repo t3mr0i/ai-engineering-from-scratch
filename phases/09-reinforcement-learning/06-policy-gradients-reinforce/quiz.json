@@ -1,0 +1,78 @@
+{
+  "lesson": "06-policy-gradients-reinforce",
+  "title": "Policy Gradient — REINFORCE from Scratch",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Policy Gradient — REINFORCE from Scratch?",
+      "options": [
+        "Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Policy Gradient — REINFORCE from Scratch?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement the central update rule from first principles",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Policy Gradient — REINFORCE from Scratch?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Trace learning signals through a self-terminating experiment",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Policy Gradient — REINFORCE from Scratch?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Evaluate convergence, stability, and exploration trade-offs",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Policy Gradient — REINFORCE from Scratch?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives"
+      ],
+      "correct": 3,
+      "explanation": "“Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Policy Gradient — REINFORCE from Scratch?",
+      "options": [
+        "Implement the central update rule from first principles",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

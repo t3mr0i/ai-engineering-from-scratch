@@ -109,3 +109,13 @@ python3 -m unittest code/test_main.py
 - CLIP paper for the original contrastive recipe.
 - CoCa paper for contrastive plus captioning in one model.
 - SigLIP paper for the sigmoid pair-loss variant and why it scales better.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement InfoNCE contrastive loss across a batch of image-caption pairs.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compose contrastive loss with autoregressive language modeling loss.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Synthesize a 200-pair mock image-caption corpus with no real dataset download.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement InfoNCE contrastive loss across a batch of image-caption pairs,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Synthesize a 200-pair mock image-caption corpus with no real dataset download,” and cite a repeatable check rather than relying on visual inspection alone.

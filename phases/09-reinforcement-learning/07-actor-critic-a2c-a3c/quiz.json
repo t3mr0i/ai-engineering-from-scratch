@@ -1,0 +1,78 @@
+{
+  "lesson": "07-actor-critic-a2c-a3c",
+  "title": "Actor-Critic — A2C and A3C",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Actor-Critic — A2C and A3C?",
+      "options": [
+        "Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Actor-Critic — A2C and A3C?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement the central update rule from first principles",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Actor-Critic — A2C and A3C?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Trace learning signals through a self-terminating experiment",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Actor-Critic — A2C and A3C?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Evaluate convergence, stability, and exploration trade-offs",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Actor-Critic — A2C and A3C?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
+        "Treat one successful example as proof that every edge case works",
+        "Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives"
+      ],
+      "correct": 3,
+      "explanation": "“Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Actor-Critic — A2C and A3C?",
+      "options": [
+        "Implement the central update rule from first principles",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

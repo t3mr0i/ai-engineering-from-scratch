@@ -1,0 +1,78 @@
+{
+  "lesson": "10-mcp-resources-and-prompts",
+  "title": "MCP Resources and Prompts — Context Exposure Beyond Tools",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "options": [
+        "Decide between exposing a capability as a tool, a resource, or a prompt for a given domain",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Decide between exposing a capability as a tool, a resource, or a prompt for a given domain” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Implement `prompts/list` and `prompts/get` with argument templates",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Implement `prompts/list` and `prompts/get` with argument templates” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Recognize when the host surfaces prompts as slash-commands vs auto-injected context",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Recognize when the host surfaces prompts as slash-commands vs auto-injected context” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Decide between exposing a capability as a tool, a resource, or a prompt for a given domain"
+      ],
+      "correct": 3,
+      "explanation": "“Decide between exposing a capability as a tool, a resource, or a prompt for a given domain” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "options": [
+        "Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

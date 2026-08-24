@@ -465,3 +465,13 @@ else:
 - [Dong et al., "XGrammar: Flexible and Efficient Structured Generation Engine for Large Language Models" (MLSys 2025)](https://arxiv.org/abs/2411.15100) -- the current state-of-the-art grammar engine; pushdown-automaton compilation that masks tokens at ~100 ns / token.
 - [Beurer-Kellner et al., "Prompting Is Programming: A Query Language for Large Language Models" (LMQL)](https://arxiv.org/abs/2212.06094) -- the LMQL paper framing constrained decoding as a query language with type and value constraints.
 - [Microsoft Guidance (framework docs)](https://github.com/guidance-ai/guidance) -- template-driven constrained generation; vendor-agnostic complement to Outlines and XGrammar.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement JSON-mode and schema-constrained outputs using OpenAI and Anthropic API parameters.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a Pydantic validation layer that rejects malformed LLM outputs and retries with error feedback.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain how constrained decoding forces valid JSON at the token level without post-processing.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement JSON-mode and schema-constrained outputs using OpenAI and Anthropic API parameters,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain how constrained decoding forces valid JSON at the token level without post-processing,” and cite a repeatable check rather than relying on visual inspection alone.

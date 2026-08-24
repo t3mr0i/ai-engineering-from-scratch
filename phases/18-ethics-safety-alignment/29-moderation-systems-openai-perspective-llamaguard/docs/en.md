@@ -82,3 +82,13 @@ Lesson 16 covers the moderation tooling in the red-team context. Lesson 29 cover
 - [Meta PurpleLlama + Llama Guard](https://github.com/meta-llama/PurpleLlama) — Llama Guard repo
 - [Google Jigsaw Perspective API](https://perspectiveapi.com/) — toxicity scoring
 - [Azure AI Content Safety](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/) — Azure replacement
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the OpenAI Moderation API's category taxonomy and how it differs from Llama Guard 3's MLCommons set.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the three moderation-layer pattern (input, output, custom) and name one failure mode of each.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe Perspective API's position as a pre-LLM-era baseline and why it remains used in research.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the OpenAI Moderation API's category taxonomy and how it differs from Llama Guard 3's MLCommons set,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe Perspective API's position as a pre-LLM-era baseline and why it remains used in research,” and cite a repeatable check rather than relying on visual inspection alone.

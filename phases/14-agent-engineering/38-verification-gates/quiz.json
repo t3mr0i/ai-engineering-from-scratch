@@ -15,7 +15,7 @@
       "explanation": "The gate is a deterministic function over workbench artifacts producing a pass/fail verdict."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why must the gate be deterministic?",
       "options": [
         "The same artifact set must produce the same verdict every time; LLM judges belong in the reviewer, not the gate",
@@ -51,7 +51,7 @@
       "explanation": "Anthropic 2026 guidance: gate runs the first class; reviewer (Lesson 39) runs the second."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "How does defense-in-depth layer the gates?",
       "options": [
         "Single gate at merge time",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Without a floor, agents can silently lower coverage to keep the verdict green."
-    },
-    {
-      "stage": "post",
-      "question": "When should --strict mode promote every warn to block?",
-      "options": [
-        "Always, since --strict is meant to be the permanent default posture for every branch",
-        "Never, since promoting warnings to blocks would make the gate impossible to pass",
-        "Release branches, ship-blocking PRs, and post-incident triage, not the daily default",
-        "Only on branches whose name matches a regex configured in the gate's own settings file"
-      ],
-      "correct": 2,
-      "explanation": "--strict is opt-in by branch; reserve for high-stakes moments."
     }
   ]
 }

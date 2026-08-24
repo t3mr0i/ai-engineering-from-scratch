@@ -109,3 +109,13 @@ OpenAI maintains SOC 2 Type 2, ISO/IEC 27001:2022, ISO/IEC 27701:2019, GDPR/CCPA
 - [EU AI Act official text](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) — primary source.
 - [Colorado AI Act](https://leg.colorado.gov/bills/sb24-205) — primary source.
 - [ISO/IEC 42001:2023](https://www.iso.org/standard/81230.html) — AI management system standard.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Enumerate the seven 2026 frameworks relevant to LLM products and match each to a customer segment.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Cite the EU AI Act enforcement timeline (in force August 2024; high-risk enforcement 2 December 2027 for Annex III / 2 August 2028 for Annex I, per Regulation (EU) 2026/1744) and the two-tier fine ceiling (€15M / 3% for high-risk obligations, €35M / 7% for prohibited practices).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why post-processing PII cleanup is not enough for GDPR and name real-time inference-layer redaction as the defensible standard.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Enumerate the seven 2026 frameworks relevant to LLM products and match each to a customer segment,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why post-processing PII cleanup is not enough for GDPR and name real-time inference-layer redaction as the defensible standard,” and cite a repeatable check rather than relying on visual inspection alone.

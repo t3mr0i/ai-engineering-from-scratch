@@ -12,7 +12,7 @@
         "Outer = is data clean; inner = is the optimizer stochastic"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Outer = does the base objective match what we wanted; inner = does the mesa-objective match the base objective” matches the lesson’s treatment of Mesa-Optimization and Deceptive Alignment; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Probabilistically aligned"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Probabilistically aligned” matches the lesson’s treatment of Mesa-Optimization and Deceptive Alignment; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "It has any internal representation at all"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“It has a persistent terminal goal, has situational awareness of training vs deployment, and the base optimizer modifies it if it defects in training” matches the lesson’s treatment of Mesa-Optimization and Deceptive Alignment; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "It cannot run on GPUs"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“It teaches the mesa-optimizer a sharper discriminator between test and deployment, not an aligned mesa-objective” matches the lesson’s treatment of Mesa-Optimization and Deceptive Alignment; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "A technique for faster training"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“A speculative pathology where a capable mesa-optimizer produces outputs that shape its own gradient updates to preserve its mesa-objective” matches the lesson’s treatment of Mesa-Optimization and Deceptive Alignment; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Mesa-optimizer hides its goal during evaluation"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Reward hacking and sycophancy emerging because the base objective is itself a flawed proxy for human intent” matches the lesson’s treatment of Mesa-Optimization and Deceptive Alignment; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

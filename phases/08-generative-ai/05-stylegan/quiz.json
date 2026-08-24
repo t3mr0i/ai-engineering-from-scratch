@@ -1,0 +1,78 @@
+{
+  "lesson": "05-stylegan",
+  "title": "StyleGAN",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to StyleGAN?",
+      "options": [
+        "Explain the probabilistic mechanism behind StyleGAN",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Explain the probabilistic mechanism behind StyleGAN” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of StyleGAN?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement the lesson's core generative step from first principles",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through StyleGAN?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
+        "Inspect samples and intermediate states to diagnose generation behavior",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Inspect samples and intermediate states to diagnose generation behavior” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits StyleGAN?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Compare quality, diversity, stability, and compute trade-offs",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Compare quality, diversity, stability, and compute trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for StyleGAN?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Explain the probabilistic mechanism behind StyleGAN"
+      ],
+      "correct": 3,
+      "explanation": "“Explain the probabilistic mechanism behind StyleGAN” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for StyleGAN?",
+      "options": [
+        "Implement the lesson's core generative step from first principles",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

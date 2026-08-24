@@ -15,7 +15,7 @@
       "explanation": "The pack is the recipe; each install is a serving."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which is NOT part of the pack layout?",
       "options": [
         "AGENTS.md and the docs/ directory that hold the pack's rules and rubric",
@@ -51,7 +51,7 @@
       "explanation": "The lesson lists the installer's first step as: refuses to install over an existing pack without --force."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What three things does the lesson list as staying 'in' the pack?",
       "options": [
         "The target repo's tasks, its CI secrets, and its onboarding wiki",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Tasks belong on the target repo's board, not the pack; vendor SDK calls would lock the pack to one framework."
-    },
-    {
-      "stage": "post",
-      "question": "What does the lesson say the installer prints after copying the pack into a target repo?",
-      "options": [
-        "A checksum of every file it copied, for audit purposes",
-        "A list of every AI agent the pack is compatible with",
-        "A link to the pack's changelog and version history",
-        "Next: fill the board, set commands, run init script"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's installer steps end with: prints next steps: fill in the board, set acceptance commands, run the init script."
     }
   ]
 }

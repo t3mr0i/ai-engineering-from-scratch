@@ -1,6 +1,9 @@
 {
+  "lesson": "03-data-pipelines",
+  "title": "Data Pipelines for Pre-Training",
   "questions": [
     {
+      "stage": "pre",
       "question": "Why can't you simply load all pre-training data into memory?",
       "options": [
         "Python's built-in list and array types impose a hard 4GB size limit per object, so any larger corpus must be split into many separate in-memory objects first",
@@ -9,10 +12,10 @@
         "GPU memory is reserved entirely for model weights and optimizer states, so the CPU side has no RAM left over for data at all"
       ],
       "correct": 2,
-      "explanation": "LLM pre-training data is typically 1-15 TB of text. Even with 256GB of RAM, you can't hold the full dataset. Streaming pipelines process data on-the-fly, loading only what's needed for the current batch.",
-      "stage": "pre"
+      "explanation": "LLM pre-training data is typically 1-15 TB of text. Even with 256GB of RAM, you can't hold the full dataset. Streaming pipelines process data on-the-fly, loading only what's needed for the current batch."
     },
     {
+      "stage": "check",
       "question": "Why is data deduplication important for pre-training?",
       "options": [
         "Duplicate documents cause the model to memorize specific text verbatim and waste training compute on repeated content instead of diverse signal",
@@ -21,22 +24,22 @@
         "It reduces the size of the model's vocabulary, since fewer unique documents means fewer unique subword tokens to learn"
       ],
       "correct": 0,
-      "explanation": "Near-duplicate content (boilerplate, scraped duplicates) causes the model to memorize rather than generalize. Deduplication reduces training compute waste and improves model quality by ensuring diverse training signal.",
-      "stage": "pre"
+      "explanation": "Near-duplicate content (boilerplate, scraped duplicates) causes the model to memorize rather than generalize. Deduplication reduces training compute waste and improves model quality by ensuring diverse training signal."
     },
     {
+      "stage": "check",
       "question": "What is the purpose of creating fixed-length training sequences from variable-length documents?",
       "options": [
         "It makes the raw text easier for a human reviewer to read during a manual quality-control pass before training starts",
-        "Fixed-length sequences let the model make more accurate predictions, since every training example carries exactly the same amount of information",
+        "Fixed-length sequences let the model make more accurate predictions, since every training example carries exactly the same amount of information, because one plausible output is sufficient production evidence",
         "It reduces the total number of tokens the model has to process overall, cutting training cost per step across the run",
         "GPU training requires uniform tensor shapes, so documents must be packed or padded into fixed-length sequences with a block-diagonal attention mask"
       ],
       "correct": 3,
-      "explanation": "GPUs process batches of tensors with identical shapes. Variable-length documents must be chunked into fixed-length sequences (e.g., 2048 or 4096 tokens) with proper attention masks at document boundaries.",
-      "stage": "post"
+      "explanation": "GPUs process batches of tensors with identical shapes. Variable-length documents must be chunked into fixed-length sequences (e.g., 2048 or 4096 tokens) with proper attention masks at document boundaries."
     },
     {
+      "stage": "check",
       "question": "What happens if the data pipeline is slower than GPU training speed?",
       "options": [
         "Training automatically throttles the learning rate to match the slower data arrival rate, preserving convergence",
@@ -45,10 +48,10 @@
         "Nothing changes, because the pipeline runs on a fully asynchronous background thread that never blocks the training loop"
       ],
       "correct": 1,
-      "explanation": "If the dataloader can't serve batches fast enough, the GPU stalls between steps. On A100 clusters costing $30+/hour, pipeline bottlenecks directly waste money. Profiling pipeline throughput is essential.",
-      "stage": "post"
+      "explanation": "If the dataloader can't serve batches fast enough, the GPU stalls between steps. On A100 clusters costing $30+/hour, pipeline bottlenecks directly waste money. Profiling pipeline throughput is essential."
     },
     {
+      "stage": "post",
       "question": "Why is data quality filtering (language detection, content filtering) applied before tokenization?",
       "options": [
         "Tokenizers throw hard errors on low-quality text, since BPE merge rules assume the input is already free of spam and boilerplate",
@@ -57,8 +60,19 @@
         "It reduces the time tokenization itself takes to run, since fewer surviving documents means fewer BPE merge operations overall"
       ],
       "correct": 1,
-      "explanation": "The model learns from whatever data it sees. If 10% of training data is spam or low-quality content, the model allocates 10% of its capacity to reproducing those patterns. Filtering early ensures only high-quality signal reaches the model.",
-      "stage": "post"
+      "explanation": "The model learns from whatever data it sees. If 10% of training data is spam or low-quality content, the model allocates 10% of its capacity to reproducing those patterns. Filtering early ensures only high-quality signal reaches the model."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Data Pipelines for Pre-Training?",
+      "options": [
+        "Implement data quality filters (deduplication, language detection, content filtering) used in real pre-trai...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement data quality filters (deduplication, language detection, content filtering) used in real pre-trai...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

@@ -134,3 +134,13 @@ MAE makes ViT trainable on ImageNet-1k alone, hits SOTA, and is the current defa
 - [DeiT: Data-efficient Image Transformers (Touvron et al., 2020)](https://arxiv.org/abs/2012.12877) — how to train ViT on ImageNet-1k alone
 - [Masked Autoencoders are Scalable Vision Learners (He et al., 2022)](https://arxiv.org/abs/2111.06377) — MAE pretraining
 - [timm documentation](https://huggingface.co/docs/timm) — the reference for every vision transformer you will use in production
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement patch embedding, learned positional embedding, class token, and transformer encoder blocks from scratch to build a minimal ViT.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why ViT was thought to need massive pretraining data until DeiT and MAE proved otherwise.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare ViT, Swin, and ConvNeXt on their architectural priors (none, local window attention, conv backbone).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement patch embedding, learned positional embedding, class token, and transformer encoder blocks from scratch to build a minimal ViT,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare ViT, Swin, and ConvNeXt on their architectural priors (none, local window attention, conv backbone),” and cite a repeatable check rather than relying on visual inspection alone.

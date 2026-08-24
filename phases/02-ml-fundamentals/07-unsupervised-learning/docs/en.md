@@ -130,3 +130,13 @@ Clustering naturally supports anomaly detection:
 - [Stanford CS229 - Unsupervised Learning](https://cs229.stanford.edu/notes2022fall/main_notes.pdf) - Andrew Ng's lecture notes on clustering and EM
 - [scikit-learn Clustering Guide](https://scikit-learn.org/stable/modules/clustering.html) - practical comparison of all clustering algorithms with visual examples
 - [DBSCAN original paper (Ester et al., 1996)](https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf) - the paper that introduced density-based clustering
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement K-Means, DBSCAN, and Gaussian Mixture Models from scratch and compare their clustering behavior.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Evaluate cluster quality using the silhouette score and the elbow method to select the optimal K.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain when DBSCAN outperforms K-Means and identify which algorithm handles non-spherical clusters and outliers.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement K-Means, DBSCAN, and Gaussian Mixture Models from scratch and compare their clustering behavior,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain when DBSCAN outperforms K-Means and identify which algorithm handles non-spherical clusters and outliers,” and cite a repeatable check rather than relying on visual inspection alone.

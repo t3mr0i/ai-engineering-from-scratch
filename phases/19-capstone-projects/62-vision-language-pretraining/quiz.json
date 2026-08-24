@@ -15,7 +15,7 @@
       "explanation": "InfoNCE handles ranking; LM loss handles generation. CoCa, BLIP, and friends combine both in one training pass."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "In InfoNCE for a batch of N pairs, how many positive pairs and negative pairs are formed?",
       "options": [
         "1 positive and N negatives",
@@ -51,7 +51,7 @@
       "explanation": "Contrastive loss does not touch the decoder; LM loss does not touch the text-side mean-pool encoder."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does ignore_index=PAD_ID accomplish in the LM cross-entropy?",
       "options": [
         "Speeds up the loss",

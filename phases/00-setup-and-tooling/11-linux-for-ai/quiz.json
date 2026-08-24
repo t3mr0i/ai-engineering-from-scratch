@@ -1,39 +1,78 @@
 {
+  "lesson": "11-linux-for-ai",
+  "title": "Linux for AI",
   "questions": [
     {
       "stage": "pre",
       "question": "What does the '~' symbol represent in a Linux file path?",
-      "options": ["The root directory of the file system", "The current user's home directory", "The temporary files directory", "The directory where system programs are installed"],
+      "options": [
+        "The root directory of the file system",
+        "The current user's home directory",
+        "The temporary files directory",
+        "The directory where system programs are installed"
+      ],
       "correct": 1,
       "explanation": "The tilde (~) is a shortcut for the current user's home directory, typically /home/username on Linux. 'cd ~' takes you home from anywhere."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the purpose of 'sudo' before a command?",
-      "options": ["It speeds up the command execution", "It runs the command with root (administrator) privileges", "It runs the command in a sandboxed environment", "It logs the command output to a system file"],
+      "options": [
+        "It speeds up the command execution",
+        "It runs the command with root (administrator) privileges",
+        "It runs the command in a sandboxed environment, with no need to inspect intermediate results or test edge cases",
+        "It logs the command output to a system file"
+      ],
       "correct": 1,
       "explanation": "sudo (superuser do) temporarily elevates your privileges to root level for a single command. Required for system-level operations like installing packages with apt."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "You get 'Permission denied' when trying to run a shell script. What command fixes this?",
-      "options": ["sudo rm script.sh", "chmod +x script.sh", "chown root script.sh", "mv script.sh /usr/bin/"],
+      "options": [
+        "sudo rm script.sh",
+        "chmod +x script.sh",
+        "chown root script.sh",
+        "mv script.sh /usr/bin/"
+      ],
       "correct": 1,
       "explanation": "chmod +x adds execute permission to the file. Without the execute bit set, the shell refuses to run the script even if you own it."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "On a remote GPU box, your training data fills the disk. Which command shows the largest directories consuming space?",
-      "options": ["ls -la /", "du -h --max-depth=1 / | sort -hr | head -20", "cat /proc/meminfo", "free -h"],
+      "options": [
+        "ls -la /",
+        "du -h --max-depth=1 / | sort -hr | head -20",
+        "cat /proc/meminfo, before defining the measurement, acceptance threshold, or rollback path",
+        "free -h"
+      ],
       "correct": 1,
       "explanation": "du -h shows disk usage per directory, --max-depth=1 limits to top-level directories, and sort -hr sorts by size in descending order. This reveals which directories are consuming the most space."
     },
     {
       "stage": "post",
       "question": "What is a key difference between the macOS and Linux versions of 'sed -i'?",
-      "options": ["Linux sed is faster than macOS sed", "macOS sed requires an empty string argument after -i ('sed -i \"\"'), while Linux does not", "Linux sed does not support regular expressions", "macOS sed cannot modify files in place"],
+      "options": [
+        "Linux sed is faster than macOS sed",
+        "macOS sed requires an empty string argument after -i ('sed -i \"\"'), while Linux does not",
+        "Linux sed does not support regular expressions — and applies unchanged even when the lesson's stated preconditions fail",
+        "macOS sed cannot modify files in place"
+      ],
       "correct": 1,
       "explanation": "macOS uses BSD sed which requires 'sed -i \"\" pattern file', while Linux uses GNU sed which accepts 'sed -i pattern file'. This is a common gotcha when moving scripts between systems."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Linux for AI?",
+      "options": [
+        "Manage file permissions with `chmod` and `chown` to resolve \"Permission denied\" errors",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Manage file permissions with `chmod` and `chown` to resolve \"Permission denied\" errors” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

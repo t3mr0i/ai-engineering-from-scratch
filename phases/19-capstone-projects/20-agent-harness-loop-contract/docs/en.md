@@ -256,3 +256,13 @@ Read `main.py` top to bottom. Then read `code/tests/test_loop.py`. The tests pin
 The hardest part of building a harness in production is not the state machine. It is making the contract enforceable. The contract has to survive a hot reload of the planner. It has to survive a tool that returns malformed JSON. It has to survive a hook that raises in `before_tool_call` two-thirds of the way through a forty-turn session. The tests in this lesson exercise those failure modes. Run them. Break them. Add cases.
 
 The next lesson adds the tool registry. After that, the JSON-RPC transport. After that, the dispatcher. By lesson twenty-four, the loop in this file will be running a real plan against real tools with real budgets enforced.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Specify an agent harness loop as a deterministic state machine with explicit transitions.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement ten lifecycle hook topics that operators wire policy, telemetry, and guardrails into.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Define two pull points where the loop yields control back to the caller and resumes on a fresh input.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Specify an agent harness loop as a deterministic state machine with explicit transitions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Define two pull points where the loop yields control back to the caller and resumes on a fresh input,” and cite a repeatable check rather than relying on visual inspection alone.

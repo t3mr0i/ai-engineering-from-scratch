@@ -637,3 +637,13 @@ else:
 - [FastMCP — server framework](https://gofastmcp.com/) — decorator-style Python API for MCP servers
 - [MCP — Quickstart server guide](https://modelcontextprotocol.io/quickstart/server) — end-to-end tutorial using either SDK
 - [MCP — Server tools spec](https://modelcontextprotocol.io/specification/2025-11-25/server/tools) — complete reference for tools/* messages
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` methods.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` methods,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes,” and cite a repeatable check rather than relying on visual inspection alone.

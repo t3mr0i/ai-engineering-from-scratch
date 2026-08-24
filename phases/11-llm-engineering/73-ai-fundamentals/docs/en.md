@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 2 · 01 (What is machine learning), Phase 8 · 01 (Generative models taxonomy)
-**Time:** ~50 minutes
+**Time:** ~150 minutes
 
 ## Learning Objectives
 
@@ -149,3 +149,13 @@ If the answer to question 2 is "we will trust the output," the project is not re
 - [NIST AI Risk Management Framework (AI RMF)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US complement to EU AI Act; used in many enterprise risk assessments.
 - [Anthropic — Claude's model specification](https://www.anthropic.com/news/claudes-constitution) — how Anthropic frames model values and constraints; useful for explaining responsible AI design to clients.
 - [arXiv — "A Survey of Large Language Models" (Zhao et al.)](https://arxiv.org/abs/2303.18223) — the canonical academic survey of LLM architecture, training, and capabilities; well-maintained with updates.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by How AI Systems Actually Work: A Consultant's Map of the Four Layers (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by How AI Systems Actually Work: A Consultant's Map of the Four Layers (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

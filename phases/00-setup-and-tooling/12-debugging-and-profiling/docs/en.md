@@ -45,3 +45,13 @@ python phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.p
 ```
 
 See `outputs/prompt-debug-ai-code.md` for a prompt that helps diagnose AI-specific bugs.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Use conditional `breakpoint()` and `debug_print` to inspect tensor shapes, dtypes, and NaN values mid-training.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Profile training loops with `cProfile`, `line_profiler`, and `tracemalloc` to find bottlenecks.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Detect common AI bugs: shape mismatches, NaN loss, data leakage, and wrong-device tensors.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Use conditional `breakpoint()` and `debug_print` to inspect tensor shapes, dtypes, and NaN values mid-training,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Detect common AI bugs: shape mismatches, NaN loss, data leakage, and wrong-device tensors,” and cite a repeatable check rather than relying on visual inspection alone.

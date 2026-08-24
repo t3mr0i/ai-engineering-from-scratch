@@ -18,7 +18,7 @@
       "stage": "check",
       "question": "An AI tool scores internal candidates during a promotion round. What does this lesson's legal frame say applies?",
       "options": [
-        "It stays outside the AI Act because the model only ranks and a manager makes the final call",
+        "It stays outside the AI Act because the model only ranks and a manager makes the final call, with no need to inspect intermediate results or test edge cases",
         "It is exempt while the tool runs internally and its outputs never leave the company",
         "It only needs a data processing agreement, since personal data stays in the HR system",
         "Annex III of the EU AI Act covers it as high-risk employment use, so human oversight applies"

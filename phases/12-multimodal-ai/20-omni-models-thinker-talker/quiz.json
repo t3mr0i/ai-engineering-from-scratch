@@ -1,0 +1,78 @@
+{
+  "lesson": "20-omni-models-thinker-talker",
+  "title": "Omni Models: Qwen2.5-Omni and the Thinker-Talker Split",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "options": [
+        "Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Describe TMRoPE's time-aligned position encoding across vision, audio, and text within the Thinker",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Describe TMRoPE's time-aligned position encoding across vision, audio, and text within the Thinker” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Name the three real-time conversational patterns: half-duplex, turn-taking, full-duplex",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Name the three real-time conversational patterns: half-duplex, turn-taking, full-duplex” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa..."
+      ],
+      "correct": 3,
+      "explanation": "“Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "options": [
+        "Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

@@ -71,3 +71,13 @@ The template in `outputs/canvas-product-experiment-feedback.md` can be used befo
 - Feedback synthesis needs a visible sample and bias check.
 - Metrics should decide what happens after the pilot.
 - Stop rules protect teams from scaling weak evidence.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify product AI ideas that should be tested as experiments.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a product experiment triage artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map user feedback, unclear hypotheses, missing metrics, and rollout risk to controls.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify product AI ideas that should be tested as experiments,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map user feedback, unclear hypotheses, missing metrics, and rollout risk to controls,” and cite a repeatable check rather than relying on visual inspection alone.

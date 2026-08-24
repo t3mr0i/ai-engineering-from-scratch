@@ -61,3 +61,13 @@ Here's when each tool comes into play during this course:
 | PID | "Process ID" | A unique number assigned to every running process, used to monitor or kill it |
 | nohup | "No hangup" | Runs a command immune to the hangup signal, so closing the terminal won't kill it |
 | SSH | "Connecting to the server" | Secure Shell, an encrypted protocol for running commands on a remote machine |
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Use piping, redirects, and `grep` to filter and process training logs from the command line.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Create persistent tmux sessions with multiple panes for concurrent training and GPU monitoring.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Monitor system and GPU resources with `htop`, `nvtop`, and `nvidia-smi`.
+
+## Reference Solution
+
+A complete response first demonstrates “Use piping, redirects, and `grep` to filter and process training logs from the command line” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Create persistent tmux sessions with multiple panes for concurrent training and GPU monitoring.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Monitor system and GPU resources with `htop`, `nvtop`, and `nvidia-smi`.” Unsupported preference statements are not sufficient.

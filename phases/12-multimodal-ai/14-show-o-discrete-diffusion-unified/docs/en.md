@@ -99,3 +99,13 @@ Pick by task: Show-o when you want T2I + inpainting + VQA in one open model with
 - [Chang et al. — MaskGIT (arXiv:2202.04200)](https://arxiv.org/abs/2202.04200)
 - [Sun et al. — LlamaGen (arXiv:2406.06525)](https://arxiv.org/abs/2406.06525)
 - [Chang et al. — Muse (arXiv:2301.00704)](https://arxiv.org/abs/2301.00704)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain masked discrete diffusion: the schedule that masks tokens uniformly then asks the transformer to recover them.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare parallel image decoding (Show-o, MaskGIT) to autoregressive image decoding (Chameleon, Emu3) on speed and quality.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the three tasks Show-o handles in one checkpoint: T2I, VQA, image inpainting.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain masked discrete diffusion: the schedule that masks tokens uniformly then asks the transformer to recover them,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the three tasks Show-o handles in one checkpoint: T2I, VQA, image inpainting,” and cite a repeatable check rather than relying on visual inspection alone.

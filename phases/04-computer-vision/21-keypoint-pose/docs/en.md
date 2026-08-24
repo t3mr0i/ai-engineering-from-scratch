@@ -96,3 +96,13 @@ The standard body-pose dataset: 17 keypoints per person, PCK (Percentage of Corr
 - [HRNet (Sun et al., 2019)](https://arxiv.org/abs/1902.09212) — the top-down reference architecture
 - [ViTPose (Xu et al., 2022)](https://arxiv.org/abs/2204.12484) — plain ViT as a pose backbone; current SOTA on many benchmarks
 - [MediaPipe Pose](https://developers.google.com/mediapipe/solutions/vision/pose_landmarker) — production real-time pose; the fastest deployed stack in 2026
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish top-down and bottom-up pose estimation and state when each is used.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Regress heatmaps for K keypoints with a Gaussian-per-keypoint target and extract keypoint coordinates at inference.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain Part Affinity Fields (PAFs) and how bottom-up pipelines associate keypoints into instances.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish top-down and bottom-up pose estimation and state when each is used,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain Part Affinity Fields (PAFs) and how bottom-up pipelines associate keypoints into instances,” and cite a repeatable check rather than relying on visual inspection alone.

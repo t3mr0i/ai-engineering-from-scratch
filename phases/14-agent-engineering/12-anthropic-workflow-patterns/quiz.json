@@ -15,7 +15,7 @@
       "explanation": "Workflow = predefined code path the engineer owns; agent = the model owns the graph."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What are the three capabilities of the augmented LLM that underpins all five patterns?",
       "options": [
         "Embeddings, fine-tuning, and retrieval-augmented generation pipelines",
@@ -51,7 +51,7 @@
       "explanation": "Parallelization is sectioning or voting; both fan out N calls and aggregate."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which workflow pattern is Self-Refine generalized?",
       "options": [
         "Evaluator-optimizer, where one LLM proposes and another critiques",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "Workflows are cheaper, easier to debug, and auditable; pick them when steps are knowable."
-    },
-    {
-      "stage": "post",
-      "question": "What is the lesson's recommended default starting point?",
-      "options": [
-        "Fine-tune the base model directly on examples of the desired workflow behavior",
-        "Build a custom Monte Carlo tree search planner completely from scratch",
-        "Direct API calls; add frameworks only when durable state, actor concurrency, or role templating earns its cost",
-        "Start with a multi-agent framework immediately, so scaling to more complex workflows later never requires a rewrite"
-      ],
-      "correct": 2,
-      "explanation": "Schluntz and Zhang: start simple; add framework complexity only when justified."
     }
   ]
 }

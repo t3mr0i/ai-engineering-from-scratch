@@ -15,7 +15,7 @@
       "explanation": "Toolformer's self-supervised signal keeps annotations whose tool results lower next-token loss."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the BFCL V4 split that the lesson reports?",
       "options": [
         "100% single-turn calls, since BFCL V4 dropped multi-turn evaluation entirely",
@@ -51,7 +51,7 @@
       "explanation": "tool_use_id is the correlation token; swapping them routes results to the wrong call."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which class of failure does V3 state-based evaluation try to catch?",
       "options": [
         "AST-matching tool calls that look right but leave the API in the wrong state",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "The open problems are memory, dynamic decision-making, long-horizon chains, and hallucination detection; decoding speed is not on the list."
-    },
-    {
-      "stage": "post",
-      "question": "Why is a generic run_shell(cmd) tool called a red flag in this lesson?",
-      "options": [
-        "A generic shell tool measurably runs slower than a set of narrow, specific tools would",
-        "It widens the sandbox boundary; specific tools like git_status() bound read/write surface and risk",
-        "A generic shell tool cannot ever be included in a parallel tool-calling batch of calls",
-        "Most providers reject any tool schema that is literally named run_shell outright"
-      ],
-      "correct": 1,
-      "explanation": "Narrow tools constrain the sandbox surface; a generic shell tool grants the full surface of the host."
     }
   ]
 }

@@ -145,3 +145,13 @@ Without the mask, the loss treats instruction tokens as targets. The model learn
 - Add a chat template with multi-turn formatting and train on a fixture that includes follow-ups.
 
 The implementation gives you the format contract, the mask, and the loop. The objective change from base model to instruction follower is one collate function.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Format paired instruction-response data into a single causal sequence with explicit boundary tokens.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a collate function that masks instruction tokens so cross-entropy only counts response tokens.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Train a tiny transformer body under the SFT objective and watch the eval metric move.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Format paired instruction-response data into a single causal sequence with explicit boundary tokens,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Train a tiny transformer body under the SFT objective and watch the eval metric move,” and cite a repeatable check rather than relying on visual inspection alone.

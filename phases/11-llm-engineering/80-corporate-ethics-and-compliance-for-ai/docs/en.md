@@ -96,3 +96,13 @@ Open-weight models (Llama 4, Mistral Large 2) deployed on company-owned infrastr
 - [EU AI Office — GPAI model compliance](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) — the implementation guidance and codes of practice for GPAI providers and deployers.
 - [NIST AI Risk Management Framework 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US complement to the EU Act; adopted as a baseline reference in the AI governance policies of most large multinational enterprises our teams encounter, typically alongside the EU framework.
 - [ISO/IEC 42001:2023 — AI Management System standard](https://www.iso.org/standard/81230.html) — the international management-system standard for AI; increasingly required in enterprise procurement and audit.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Use-Case Intake: From Idea to Approved Deployment (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Use-Case Intake: From Idea to Approved Deployment (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

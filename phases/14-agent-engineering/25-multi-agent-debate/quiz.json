@@ -15,7 +15,7 @@
       "explanation": "N proposers, R rounds, cross-critique, convergence is the canonical Du et al. debate."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does cross-model debate (e.g. ChatGPT + Bard) outperform single-model debate?",
       "options": [
         "Different vendors negotiate lower API prices when their models are combined in one pipeline",
@@ -51,7 +51,7 @@
       "explanation": "Latency- and cost-sensitive trivial lookups do not benefit from N x R debate."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is convergence collapse?",
       "options": [
         "A network outage that drops the connection between debating agents mid-round",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "Diverse prompts (and ideally diverse models) keep the proposal distribution wide."
-    },
-    {
-      "stage": "post",
-      "question": "Which production pattern is a debate variant per the lesson?",
-      "options": [
-        "Pure single-shot RAG with no cross-model critique step at all",
-        "A cron-only schedule that reruns the exact same fixed prompt nightly",
-        "Vector indexing of documents ahead of retrieval-augmented generation",
-        "Anthropic's orchestrator-workers pattern with an added synthesis step"
-      ],
-      "correct": 3,
-      "explanation": "Orchestrator-workers with synthesis is a debate-shaped pattern in production."
     }
   ]
 }

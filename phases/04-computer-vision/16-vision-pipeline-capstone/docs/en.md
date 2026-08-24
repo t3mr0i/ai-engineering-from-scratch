@@ -100,3 +100,13 @@ A production service serves multiple clients. Batching detections and classifica
 - [BentoML docs](https://docs.bentoml.com) — serving framework with batching, versioning, and metrics
 - [torchserve docs](https://pytorch.org/serve/) — PyTorch's official serving library
 - [NVIDIA Triton Inference Server](https://developer.nvidia.com/triton-inference-server) — high-throughput serving with batching and multi-model support
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Design a production vision pipeline that detects objects, classifies them, and emits structured JSON — with every failure path handled.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Plug a detector (Mask R-CNN or YOLO), a classifier (ConvNeXt-Tiny), and a data contract (Pydantic) into one service.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Benchmark the end-to-end pipeline and identify the first bottleneck (usually preprocessing, then the detector).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Design a production vision pipeline that detects objects, classifies them, and emits structured JSON — with every failure path handled,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Benchmark the end-to-end pipeline and identify the first bottleneck (usually preprocessing, then the detector),” and cite a repeatable check rather than relying on visual inspection alone.

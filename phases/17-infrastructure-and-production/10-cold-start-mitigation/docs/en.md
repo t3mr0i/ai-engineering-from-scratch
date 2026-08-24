@@ -95,3 +95,13 @@ Cold-start anatomy for a 70B model on a fresh node (illustrative):
 - [Baseten — Cold-start mitigation](https://www.baseten.co/blog/cold-start-mitigation/) — pre-warming playbook.
 - [ServerlessLLM paper (USENIX OSDI'24)](https://www.usenix.org/conference/osdi24/presentation/fu) — tiered loading design.
 - [NVIDIA — Disaggregated LLM Inference on Kubernetes](https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/) — live migration for disaggregated deployments.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Enumerate the five layers of cold-start mitigation and name one tool or pattern at each layer.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute total cold-start time as a sum of (node provision) + (weights download) + (weights load into HBM) + (engine init) for a 70B model.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why live migration transfers input tokens (KB) not KV cache (GB) and what the penalty is (recomputation).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Enumerate the five layers of cold-start mitigation and name one tool or pattern at each layer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why live migration transfers input tokens (KB) not KV cache (GB) and what the penalty is (recomputation),” and cite a repeatable check rather than relying on visual inspection alone.

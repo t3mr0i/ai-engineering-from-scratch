@@ -88,3 +88,13 @@ Decision order:
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) — supervisor, swarm, hierarchical
 - [CrewAI docs](https://docs.crewai.com/en/introduction) — Crew vs Flow
 - [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) — debate pattern
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the four recurring orchestration patterns and when each fits.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the 2026 LangChain recommendation: tool-call-based supervision vs supervisor libraries.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain Anthropic's "build the right system" rule and how it gates topology choice.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the four recurring orchestration patterns and when each fits,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain Anthropic's "build the right system" rule and how it gates topology choice,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -15,7 +15,7 @@
       "explanation": "Voyager's contribution is making code the action: skills are programs, not raw commands."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What three components define a Voyager agent?",
       "options": [
         "Encoder, decoder, and value head, borrowed from actor-critic RL",
@@ -51,7 +51,7 @@
       "explanation": "The proposer aims for tasks just above current capability so progress is steady."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which 2026 product is the lesson's clearest match for the Voyager skill?",
       "options": [
         "Pinecone's vector indices, used for nearest-neighbor similarity lookup at query time",
@@ -73,18 +73,6 @@
       ],
       "correct": 2,
       "explanation": "Near-duplicate descriptions collapse to a single canonical skill so retrieval stays clean."
-    },
-    {
-      "stage": "post",
-      "question": "What problem does composed-skill drift describe?",
-      "options": [
-        "A parent skill silently picks up a refined child version it was never tested against; fix by pinning skill versions",
-        "A skill stops compiling after a routine Python interpreter upgrade breaks its syntax",
-        "Skills get encrypted at rest in storage by default, which occasionally corrupts the stored source on write, forcing manual re-registration",
-        "Retrieval returns nothing because the vector index was never populated for that skill"
-      ],
-      "correct": 0,
-      "explanation": "Without version pinning, a refinement to a child silently changes the parent's behavior."
     }
   ]
 }

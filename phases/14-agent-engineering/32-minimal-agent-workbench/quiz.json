@@ -15,7 +15,7 @@
       "explanation": "A short router, durable state, and a task queue are the floor."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the lesson's framing of AGENTS.md?",
       "options": [
         "A short router that points at deeper docs and the state and board",
@@ -51,7 +51,7 @@
       "explanation": "Sessions die and chat gets trimmed; the file is the durable system of record."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the lesson say happens when conflicting instructions land in AGENTS.md?",
       "options": [
         "Latency drops",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "Symlinks (or Nx-style generators) keep one canonical source across Claude Code, Codex, Cursor, Copilot, etc."
-    },
-    {
-      "stage": "post",
-      "question": "What pattern do nested AGENTS.md files follow?",
-      "options": [
-        "Only the root-level AGENTS.md file is read by any tool; files placed in subdirectories are silently ignored altogether",
-        "Walk from the working file toward the repo root, concatenate every AGENTS.md found on the way (nearest wins; sub-directories extend root)",
-        "Files are selected at random from whichever directories happen to contain an AGENTS.md when the agent starts a session",
-        "Every AGENTS.md found anywhere in the repository is merged in strict alphabetical order by directory path, regardless of nesting or proximity to the file"
-      ],
-      "correct": 1,
-      "explanation": "OpenAI ships 88 AGENTS.md files across its main repo; tools concatenate nearest-up-tree."
     }
   ]
 }

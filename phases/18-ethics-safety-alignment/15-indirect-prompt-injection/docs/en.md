@@ -64,3 +64,13 @@ Lessons 12-14 are model-centric jailbreaks. Lesson 15 is the system-centric atta
 - [Nasr et al. — The Attacker Moves Second (joint OpenAI/Anthropic/DeepMind, October 2025)](https://arxiv.org/abs/2510.18108) — adaptive attack evaluation
 - [Greshake et al. — Not what you've signed up for (arXiv:2302.12173)](https://arxiv.org/abs/2302.12173) — the original IPI paper
 - [OWASP — LLM Top 10 (2025)](https://genai.owasp.org/llm-top-10/) — prompt injection ranked LLM01
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define indirect prompt injection and describe three common delivery vectors.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why user-input filters miss IPI entirely.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the "information flow control" framing as the 2026 defense paradigm.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define indirect prompt injection and describe three common delivery vectors,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the "information flow control" framing as the 2026 defense paradigm,” and cite a repeatable check rather than relying on visual inspection alone.

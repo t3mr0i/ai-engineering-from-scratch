@@ -1,0 +1,78 @@
+{
+  "lesson": "02-function-calling-deep-dive",
+  "title": "Function Calling Deep Dive — OpenAI, Anthropic, Gemini",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "options": [
+        "State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Translate one tool declaration across all three provider formats and predict where strict-mode constraints...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Translate one tool declaration across all three provider formats and predict where strict-mode constraints...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Know the per-provider hard limits (tool count, schema depth, argument length) and the error signatures each...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Know the per-provider hard limits (tool count, schema depth, argument length) and the error signatures each...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat..."
+      ],
+      "correct": 3,
+      "explanation": "“State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "options": [
+        "Translate one tool declaration across all three provider formats and predict where strict-mode constraints...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Translate one tool declaration across all three provider formats and predict where strict-mode constraints...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

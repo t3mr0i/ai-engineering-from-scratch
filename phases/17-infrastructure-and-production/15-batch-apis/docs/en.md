@@ -88,3 +88,13 @@ Writing "one batch client" across providers means adapter code per provider. Gat
 - [Vertex AI Batch Prediction](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/batch-prediction) — Gemini batch semantics.
 - [Finout — OpenAI vs Anthropic API Pricing 2026](https://www.finout.io/blog/openai-vs-anthropic-api-pricing-comparison)
 - [Zen Van Riel — LLM API Cost Comparison 2026](https://zenvanriel.com/ai-engineer-blog/llm-api-cost-comparison-2026/)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three provider batch APIs (OpenAI, Anthropic, Google) and the common 50% discount + 24h turnaround guarantees.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute the cost for stacking batch + cached-input on an overnight classification workload and compare to synchronous-uncached baseline.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Triage a workload into interactive / semi-interactive / batch and justify the lane.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three provider batch APIs (OpenAI, Anthropic, Google) and the common 50% discount + 24h turnaround guarantees,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Triage a workload into interactive / semi-interactive / batch and justify the lane,” and cite a repeatable check rather than relying on visual inspection alone.

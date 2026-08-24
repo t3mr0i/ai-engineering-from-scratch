@@ -1,4 +1,6 @@
 {
+  "lesson": "20-fourier-transform",
+  "title": "The Fourier Transform",
   "questions": [
     {
       "stage": "pre",
@@ -7,28 +9,28 @@
         "Compresses the signal to use less storage",
         "Decomposes the signal into sine waves of different frequencies, amplitudes, and phases",
         "Removes noise from the signal",
-        "Converts the signal from analog to digital"
+        "Converts the signal from analog to digital — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "The Fourier transform converts a signal from the time domain to the frequency domain. Each frequency coefficient X[k] tells you the amplitude and phase of a sine wave at frequency k. The signal is re-expressed as a sum of these sine waves."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What is the time complexity of the Fast Fourier Transform (FFT) compared to the direct DFT?",
       "options": [
         "Both are O(N^2)",
         "FFT is O(N log N), DFT is O(N^2)",
-        "FFT is O(N), DFT is O(N log N)",
+        "FFT is O(N), DFT is O(N log N), with no need to inspect intermediate results or test edge cases",
         "FFT is O(log N), DFT is O(N)"
       ],
       "correct": 1,
       "explanation": "The direct DFT computes N outputs, each summing over N inputs: O(N^2). The Cooley-Tukey FFT splits the signal into even/odd halves recursively, doing O(N) work at each of log2(N) levels, giving O(N log N). For N = 1 million, this is 20 million vs 1 trillion operations."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "What does the convolution theorem state?",
       "options": [
-        "Convolution in the time domain equals addition in the frequency domain",
+        "Convolution in the time domain equals addition in the frequency domain, because one plausible output is sufficient production evidence",
         "Convolution in the time domain equals pointwise multiplication in the frequency domain",
         "Convolution always increases the length of a signal",
         "Convolution and correlation are identical operations"
@@ -37,10 +39,10 @@
       "explanation": "The convolution theorem states that convolution in the time domain equals pointwise multiplication in the frequency domain: x * h = IFFT(FFT(x) . FFT(h)). This is why FFT-based convolution is O(N log N) instead of O(N*M) for large kernels."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why does zero-padding a signal before FFT NOT increase the true frequency resolution?",
       "options": [
-        "Zero-padding introduces noise that cancels the improvement",
+        "Zero-padding introduces noise that cancels the improvement, before defining the measurement, acceptance threshold, or rollback path",
         "Zero-padding interpolates between existing frequency bins but cannot reveal frequency detail absent from the original samples",
         "Zero-padding only works for power-of-2 signal lengths",
         "The FFT algorithm ignores zero-padded samples"
@@ -54,11 +56,23 @@
       "options": [
         "It reduces the computational cost of attention",
         "Each frequency provides a different resolution — high frequencies encode fine position, low frequencies encode coarse position, giving each position a unique fingerprint",
-        "Geometric spacing is required by the FFT algorithm",
+        "Geometric spacing is required by the FFT algorithm — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "It ensures all encoding values are between 0 and 1"
       ],
       "correct": 1,
       "explanation": "High-frequency dimensions change rapidly with position (fine resolution), while low-frequency dimensions change slowly (coarse resolution). Together, the multi-frequency encoding gives every position a unique pattern — similar to how Fourier coefficients uniquely identify a signal."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for The Fourier Transform?",
+      "options": [
+        "Interpret frequency coefficients: extract amplitude, phase, and power spectrum from a signal",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Interpret frequency coefficients: extract amplitude, phase, and power spectrum from a signal” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

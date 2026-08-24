@@ -142,3 +142,13 @@ Read `main.py` top to bottom. The runner template is the load-bearing piece. Sta
 ## Going further
 
 Once the subprocess shape works, the next concern is portability. Different Python versions handle SIGKILL differently on Windows. The cleanest fix is to put the runner in a Docker image. The next thing after that is replacing assertion strings with real unit test files so the eval matches what production CI does. Stop calling assertion strings tests at that point; they are toy tests and they have toy failure modes.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Extract a code block from a free-form generation in a way that matches the post-process rule from lesson 70.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Execute candidate code in an isolated subprocess with a wall-clock timeout, output cap, and an import denylist.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Score a task as the fraction of supplied assertion strings that pass against the candidate.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Extract a code block from a free-form generation in a way that matches the post-process rule from lesson 70,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Score a task as the fraction of supplied assertion strings that pass against the candidate,” and cite a repeatable check rather than relying on visual inspection alone.

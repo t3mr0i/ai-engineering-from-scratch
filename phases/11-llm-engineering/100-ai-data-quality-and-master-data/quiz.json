@@ -1,4 +1,6 @@
 {
+  "lesson": "100-ai-data-quality-and-master-data",
+  "title": "Diagnosing Data Quality Before AI Workflows Scale (2026)",
   "questions": [
     {
       "stage": "pre",
@@ -6,17 +8,17 @@
       "options": [
         "AI pipelines are interpolative — they fill in plausible-looking values for gaps instead of surfacing nulls or errors",
         "AI pipelines do not use SQL joins, so broken keys never appear",
-        "AI pipelines always run on smaller datasets, hiding the defect statistically",
+        "AI pipelines always run on smaller datasets, hiding the defect statistically — and applies unchanged even when the lesson's stated preconditions fail",
         "AI pipelines re-validate every input against a schema before inference"
       ],
       "correct": 0,
       "explanation": "A broken SQL join fails loudly with a null or an 'unknown' label. A generative model instead interpolates a plausible-looking answer from noisy input, so the failure is invisible until someone inspects the input data directly."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Of the four data quality dimensions the lesson ranks as most impactful for AI, which one means 'one real-world entity equals one master record'?",
       "options": [
-        "Completeness",
+        "Completeness, with no need to inspect intermediate results or test edge cases",
         "Uniqueness / deduplication",
         "Consistency",
         "Timeliness"
@@ -25,19 +27,19 @@
       "explanation": "Uniqueness/deduplication is specifically about duplicate records for the same real-world entity. Duplicate customer or product records inject contradictory signal that the model averages across, which is why entity resolution is its detection method."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why does the lesson rank accuracy and referential integrity as mattering less for AI than the other four dimensions?",
       "options": [
         "They are impossible to measure in any pipeline",
         "AI models are immune to inaccurate data by design",
         "Accuracy is hard to measure without ground truth, and referential integrity is usually already enforced at the ETL layer before the AI sees the data",
-        "They only apply to structured relational databases, never to AI workflows"
+        "They only apply to structured relational databases, never to AI workflows, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 2,
       "explanation": "The lesson doesn't claim these dimensions don't matter — only that AI evaluation catches some accuracy issues downstream, and referential integrity constraints are typically enforced upstream in the ETL layer, so they add less new risk than completeness, uniqueness, consistency, and timeliness."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "In the quality threshold model, what determines whether a data defect is a blocker for deployment?",
       "options": [
         "Only the total row count of the affected table",
@@ -54,11 +56,23 @@
       "options": [
         "They measure the same thing and one supersedes the other",
         "Evaluation measures output quality after deployment; this lesson's data quality dimensions are the input levers, and low eval scores should prompt a look at upstream completeness and uniqueness",
-        "Evaluation only applies to fine-tuned models, while data quality only applies to RAG systems",
+        "Evaluation only applies to fine-tuned models, while data quality only applies to RAG systems — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "This lesson replaces the need for an evaluation loop entirely"
       ],
       "correct": 1,
       "explanation": "The lesson frames data quality as an upstream gate and evaluation as the downstream outcome measure: if evaluation scores are low without a model regression, the first place to check is completeness and uniqueness in the retrieval corpus."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Diagnosing Data Quality Before AI Workflows Scale (2026)?",
+      "options": [
+        "Apply the lesson's decision or implementation workflow to a concrete case",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

@@ -109,3 +109,13 @@ The pipeline does not call the large model on ambiguous, low-confidence tickets 
 - [OpenTelemetry Semantic Conventions for IT incidents](https://opentelemetry.io/docs/specs/semconv/) — standard attributes for instrumenting pipelines; Phase 17 · 23 applies these to AI system observability.
 - [NIST SP 800-61r3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — authoritative incident handoff structure; r3 replaced the older phase model with an organization around the NIST CSF 2.0 functions (Govern, Identify, Protect, Detect, Respond, Recover), and the six-field template in this lesson maps to the Detect and Respond functions.
 - [RAG survey — "Retrieval-Augmented Generation for Large Language Models" (Gao et al., 2023, arXiv:2312.10997)](https://arxiv.org/abs/2312.10997) — the foundation for understanding retrieval quality metrics used in Phase 11 · 36 and referenced here.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

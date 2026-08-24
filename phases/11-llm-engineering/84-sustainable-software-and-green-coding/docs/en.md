@@ -101,3 +101,13 @@ The output is a number in gCO₂eq per functional unit, directly comparable acro
 - [AWS Customer Carbon Footprint Tool](https://aws.amazon.com/aws-cost-management/aws-customer-carbon-footprint-tool/) — per-service, per-region Scope 2 carbon reporting for AWS workloads.
 - [Luccioni et al., "Power Hungry Processing: Watts Driving the Cost of AI Deployment?" (2023)](https://arxiv.org/abs/2311.16863) — the most-cited empirical benchmark of per-task energy consumption across model sizes and task types.
 - [MLCommons — MLPerf Power benchmark](https://mlcommons.org/en/training-normal-10/) — standardized methodology for measuring energy efficiency of ML inference systems across hardware.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

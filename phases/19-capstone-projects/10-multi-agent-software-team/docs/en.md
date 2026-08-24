@@ -84,3 +84,13 @@ Coder A          Coder B          Coder C          Coder D          (4 parallel)
 - [Google A2A protocol](https://developers.google.com/agent-to-agent) — inter-agent messaging spec
 - [git worktree documentation](https://git-scm.com/docs/git-worktree) — the isolation substrate
 - [SWE-bench Pro](https://www.swebench.com) — the evaluation target
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define measurable acceptance criteria for Capstone 10 — Multi-Agent Software Engineering Team.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Integrate the required components into one self-terminating workflow.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Exercise happy paths, edge cases, and failure recovery with reproducible fixtures.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define measurable acceptance criteria for Capstone 10 — Multi-Agent Software Engineering Team,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Exercise happy paths, edge cases, and failure recovery with reproducible fixtures,” and cite a repeatable check rather than relying on visual inspection alone.

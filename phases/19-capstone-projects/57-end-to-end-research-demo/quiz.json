@@ -15,7 +15,7 @@
       "explanation": "The demo is a composition test. Each stage exists in its own lesson. The demo imports them and wires the report. No new framework, no new abstractions."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does the lesson load earlier lessons via importlib instead of a normal package import?",
       "options": [
         "Because importlib is faster",

@@ -12,10 +12,10 @@
         "Scene cuts are the only thing a VLM understands"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Ingesting 100 hours of video into a queryable corpus needs scene-level retrieval, even when individual videos can be read whole” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which three vector types does each scene get in the multi-vector index?",
       "options": [
         "Caption embedding, keyframe embedding, and transcript embedding",
@@ -24,7 +24,7 @@
         "Pose, depth, and optical flow"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Caption embedding, keyframe embedding, and transcript embedding” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "By taking the union without scoring"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Via reciprocal rank fusion across the three ranked lists” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "The keyframe embedding dimensionality"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“The (start, end) timestamp window that contains the answer” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which question class is reported separately because it is a known hallucination hotspot?",
       "options": [
         "Descriptive questions about scenery",
@@ -60,7 +60,7 @@
         "Counting and action-type questions, where VLMs miscount or mis-order events"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Counting and action-type questions, where VLMs miscount or mis-order events” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "MRR@10"
       ],
       "correct": 0,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Why does the pipeline require cited timestamps in answers?",
-      "options": [
-        "They reduce the embedding dimension",
-        "Timestamps are required by Whisper output",
-        "Timestamps are required by Qdrant payloads",
-        "They let the viewer jump to the exact (video_id, start, end) so users can verify the claim"
-      ],
-      "correct": 3,
-      "explanation": ""
+      "explanation": "“Temporal-grounding intersection-over-union (IoU)” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
     }
   ]
 }

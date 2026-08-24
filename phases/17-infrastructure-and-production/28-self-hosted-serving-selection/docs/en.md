@@ -101,3 +101,13 @@ Phase 17 · 01 (managed hyperscalers), · 02 (inference platforms) cover managed
 - [PremAI — 10 Best vLLM Alternatives 2026](https://blog.premai.io/10-best-vllm-alternatives-for-llm-inference-in-production-2026/)
 - [TGI maintenance announcement](https://github.com/huggingface/text-generation-inference) — release notes.
 - [vLLM v0.15.1 release notes](https://github.com/vllm-project/vllm/releases)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Pick an engine given hardware (CPU / AMD / NVIDIA Hopper / Blackwell), scale (1 user / 100 / 10,000), and workload (general chat / agent / long-context).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the 2026 TGI maintenance-mode status (December 11, 2025) and why it biases new projects toward vLLM or SGLang.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the dev/staging/prod pipeline using the same GGUF or HF weights throughout.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Pick an engine given hardware (CPU / AMD / NVIDIA Hopper / Blackwell), scale (1 user / 100 / 10,000), and workload (general chat / agent / long-context),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the dev/staging/prod pipeline using the same GGUF or HF weights throughout,” and cite a repeatable check rather than relying on visual inspection alone.

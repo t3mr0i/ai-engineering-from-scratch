@@ -1,0 +1,78 @@
+{
+  "lesson": "08-building-an-mcp-client",
+  "title": "Building an MCP Client — Discovery, Invocation, Session Management",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to Building an MCP Client — Discovery, Invocation, Session Management?",
+      "options": [
+        "Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of Building an MCP Client — Discovery, Invocation, Session Management?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Maintain per-server session state (capabilities, tool list, last-seen notification ids)",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Maintain per-server session state (capabilities, tool list, last-seen notification ids)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through Building an MCP Client — Discovery, Invocation, Session Management?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Merge tool lists across multiple servers into one namespace with collision handling",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Merge tool lists across multiple servers into one namespace with collision handling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits Building an MCP Client — Discovery, Invocation, Session Management?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Route a tool call to the server that owns it and reassemble the response",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Route a tool call to the server that owns it and reassemble the response” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for Building an MCP Client — Discovery, Invocation, Session Management?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`"
+      ],
+      "correct": 3,
+      "explanation": "“Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Building an MCP Client — Discovery, Invocation, Session Management?",
+      "options": [
+        "Maintain per-server session state (capabilities, tool list, last-seen notification ids)",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Maintain per-server session state (capabilities, tool list, last-seen notification ids)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

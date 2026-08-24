@@ -509,3 +509,13 @@ emitted — no retry needed.
 - [Pydantic AI — Output](https://ai.pydantic.dev/output/) — typed output_type bindings that serialize to each provider
 - [JSON Schema — 2020-12 release notes](https://json-schema.org/draft/2020-12/release-notes) — the canonical spec
 - [Microsoft — Structured outputs in Azure OpenAI](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/structured-outputs) — enterprise deployment notes and strict-mode caveats
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Write a JSON Schema 2020-12 for an extraction target using the right constraints (enum, min/max, required, pattern).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why strict mode and constrained decoding give different guarantees from "validate after generation".
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Distinguish the three failure modes: parse error, schema violation, model refusal.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Write a JSON Schema 2020-12 for an extraction target using the right constraints (enum, min/max, required, pattern),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Distinguish the three failure modes: parse error, schema violation, model refusal,” and cite a repeatable check rather than relying on visual inspection alone.

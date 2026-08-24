@@ -339,3 +339,13 @@ print("Design an experiment to test this.")
 - [Gallegos et al. — Bias and Fairness in LLMs: A Survey (arXiv:2309.00770, Computational Linguistics 2024)](https://arxiv.org/abs/2309.00770) — canonical survey
 - [An et al. — Intersectional resume-evaluation bias (PNAS Nexus, March 2025)](https://academic.oup.com/pnasnexus/article/4/3/pgaf089/8111343) — five-model intersectional study
 - [WinoIdentity — uncertainty-based intersectional coreference-resolution fairness (arXiv:2508.07111, COLM 2025)](https://arxiv.org/abs/2508.07111) — new benchmark
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define representational vs allocational harm and give one example of each in an LLM deployment.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the three evaluation-metric categories from Gallegos et al. 2024 and describe one metric from each.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe intersectionality and why WinoIdentity's uncertainty-based coreference-resolution fairness measurement addresses gaps in single-axis bias evaluation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define representational vs allocational harm and give one example of each in an LLM deployment,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe intersectionality and why WinoIdentity's uncertainty-based coreference-resolution fairness measurement addresses gaps in single-axis bias evaluation,” and cite a repeatable check rather than relying on visual inspection alone.

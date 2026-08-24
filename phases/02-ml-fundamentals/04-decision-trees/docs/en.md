@@ -199,3 +199,13 @@ Neural networks win when the data has spatial or sequential structure (images, t
 - [Grinsztajn et al.: Why do tree-based models still outperform deep learning on tabular data? (2022)](https://arxiv.org/abs/2207.08815) - rigorous comparison of trees vs neural networks on tabular tasks
 - [scikit-learn Decision Trees documentation](https://scikit-learn.org/stable/modules/tree.html) - practical guide with visualization tools
 - [XGBoost: A Scalable Tree Boosting System (Chen & Guestrin, 2016)](https://arxiv.org/abs/1603.02754) - the gradient boosting paper that dominates Kaggle
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement Gini impurity, entropy, and information gain calculations to find optimal decision tree splits.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a decision tree classifier from scratch with pre-pruning controls (max depth, min samples).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct a random forest using bootstrap sampling and feature randomization, and explain why it reduces variance.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement Gini impurity, entropy, and information gain calculations to find optimal decision tree splits,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct a random forest using bootstrap sampling and feature randomization, and explain why it reduces variance,” and cite a repeatable check rather than relying on visual inspection alone.

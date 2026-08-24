@@ -111,3 +111,13 @@ The deterministic scoring layer is intentional. You do not want the ranking to c
 - [Jira — Link issues and dependencies](https://support.atlassian.com/jira-software-cloud/docs/link-issues/) — how dependency link types work in the standard toolchain.
 - [Anthropic — Structured outputs guide](https://docs.claude.com/en/docs/build-with-claude/structured-outputs) — how to use Claude's structured output mode to populate scoring templates reliably.
 - [McKinsey Digital — The state of AI in product management (2025)](https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights) — survey data on AI-assisted prioritization adoption and outcomes.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

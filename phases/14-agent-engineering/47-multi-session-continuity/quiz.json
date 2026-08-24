@@ -2,11 +2,77 @@
   "lesson": "47-multi-session-continuity",
   "title": "Multi-Session Continuity",
   "questions": [
-    {"stage": "pre", "question": "Why is chat history a weak state store?", "options": ["It is always too short to be useful in practice", "It cannot contain any working prose at all", "It can be missing or detached from the task", "It is defined by a strict versioned JSON schema"], "correct": 2, "explanation": "Repository state must survive transcript boundaries."},
-    {"stage": "check", "question": "What should next_action contain?", "options": ["A vague aspiration for the whole task", "Every possible future task in one field", "A model's confidence score for the run", "One concrete continuation step"], "correct": 3, "explanation": "A single action makes resumption operational."},
-    {"stage": "check", "question": "Why use an atomic replace for state?", "options": ["To increase the state file's size on disk", "To avoid leaving a half-written snapshot", "To hide blockers from the next session", "To remove schema validation on load"], "correct": 1, "explanation": "The previous valid state remains if writing is interrupted."},
-    {"stage": "check", "question": "What is a blocker?", "options": ["A reason to erase the session's prior progress", "A completed check with no further action needed", "An optional title field carrying no meaning at all here", "A durable fact requiring retry, question, or escalation"], "correct": 3, "explanation": "Blockers guide the next session's decision."},
-    {"stage": "post", "question": "Which field identifies the continuity chain?", "options": ["task_id, which links sessions to the same work", "completed_steps, which lists finished steps only", "touched_files, which lists the paths that were edited", "blockers, which lists durable facts needing retry"], "correct": 0, "explanation": "Task identity links sessions to the same work."},
-    {"stage": "post", "question": "What should a handoff keep separate from state?", "options": ["Commands and review risks", "The task's identity field", "Its single next action", "The list of touched files"], "correct": 0, "explanation": "Receipts explain what happened without bloating the core state."}
+    {
+      "stage": "pre",
+      "question": "Why is chat history a weak state store?",
+      "options": [
+        "It is always too short to be useful in practice",
+        "It cannot contain any working prose at all",
+        "It can be missing or detached from the task",
+        "It is defined by a strict versioned JSON schema"
+      ],
+      "correct": 2,
+      "explanation": "Repository state must survive transcript boundaries."
+    },
+    {
+      "stage": "check",
+      "question": "What should next_action contain?",
+      "options": [
+        "A vague aspiration for the whole task",
+        "Every possible future task in one field",
+        "A model's confidence score for the run",
+        "One concrete continuation step"
+      ],
+      "correct": 3,
+      "explanation": "A single action makes resumption operational."
+    },
+    {
+      "stage": "check",
+      "question": "Why use an atomic replace for state?",
+      "options": [
+        "To increase the state file's size on disk",
+        "To avoid leaving a half-written snapshot",
+        "To hide blockers from the next session",
+        "To remove schema validation on load"
+      ],
+      "correct": 1,
+      "explanation": "The previous valid state remains if writing is interrupted."
+    },
+    {
+      "stage": "check",
+      "question": "What is a blocker?",
+      "options": [
+        "A reason to erase the session's prior progress",
+        "A completed check with no further action needed",
+        "An optional title field carrying no meaning at all here",
+        "A durable fact requiring retry, question, or escalation"
+      ],
+      "correct": 3,
+      "explanation": "Blockers guide the next session's decision."
+    },
+    {
+      "stage": "post",
+      "question": "Which field identifies the continuity chain?",
+      "options": [
+        "task_id, which links sessions to the same work",
+        "completed_steps, which lists finished steps only",
+        "touched_files, which lists the paths that were edited",
+        "blockers, which lists durable facts needing retry"
+      ],
+      "correct": 0,
+      "explanation": "Task identity links sessions to the same work."
+    },
+    {
+      "stage": "post",
+      "question": "What should a handoff keep separate from state?",
+      "options": [
+        "Commands and review risks",
+        "The task's identity field",
+        "Its single next action",
+        "The list of touched files"
+      ],
+      "correct": 0,
+      "explanation": "Receipts explain what happened without bloating the core state."
+    }
   ]
 }

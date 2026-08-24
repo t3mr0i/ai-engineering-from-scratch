@@ -12,7 +12,7 @@
         "Optimization always improves a proxy without limit"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Any measure that becomes a target ceases to be a good measure” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Proxy keeps rising, gold peaks closer to the origin then falls"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Proxy keeps rising, gold peaks closer to the origin then falls” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Sycophancy"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Tokenizer mismatch” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Under heavy-tailed reward error, a KL-constrained optimal policy can still drive proxy reward up while gold reward stays at baseline"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Under heavy-tailed reward error, a KL-constrained optimal policy can still drive proxy reward up while gold reward stays at baseline” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Increasing the labeler pool to one million raters"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Reward-model ensembles with worst-case aggregation” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "They are each independent bugs in distinct reward heads"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Probability mass shifts to outputs that maximize proxy reward by exploiting easy-to-learn heuristics that spuriously correlated with approval” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

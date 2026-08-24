@@ -12,10 +12,10 @@
         "Test-set leakage from public benchmarks such as MMLU-Pro and MT-Bench-v2 into training data"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Test-set leakage from public benchmarks such as MMLU-Pro and MT-Bench-v2 into training data” matches the lesson’s treatment of Capstone 07 — End-to-End Fine-Tuning Pipeline (Data to SFT to DPO to Serve); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does the pipeline compose SFT then DPO (or GRPO) rather than DPO alone?",
       "options": [
         "Axolotl does not implement DPO",
@@ -24,7 +24,7 @@
         "DPO cannot run on quantized weights"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“SFT establishes domain behavior on labeled completions while DPO or GRPO aligns the model against preference pairs or verifiable rewards” matches the lesson’s treatment of Capstone 07 — End-to-End Fine-Tuning Pipeline (Data to SFT to DPO to Serve); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Draft heads that predict N tokens ahead; the target verifies in one pass for 2-3x throughput"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Draft heads that predict N tokens ahead; the target verifies in one pass for 2-3x throughput” matches the lesson’s treatment of Capstone 07 — End-to-End Fine-Tuning Pipeline (Data to SFT to DPO to Serve); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Perplexity"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Acceptance rate” matches the lesson’s treatment of Capstone 07 — End-to-End Fine-Tuning Pipeline (Data to SFT to DPO to Serve); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which trio of quants does the pipeline ship for deployment flexibility?",
       "options": [
         "ONNX, CoreML, TFLite",
@@ -60,7 +60,7 @@
         "FP32, FP16, BF16"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“GPTQ-INT4-Marlin, AWQ-INT4, and GGUF-Q4_K_M” matches the lesson’s treatment of Capstone 07 — End-to-End Fine-Tuning Pipeline (Data to SFT to DPO to Serve); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "OpenAI's model card format"
       ],
       "correct": 1,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Which HPA metric is used to autoscale the serving replicas?",
-      "options": [
-        "Queue-wait time",
-        "CPU utilization",
-        "GPU temperature",
-        "Network egress bytes"
-      ],
-      "correct": 0,
-      "explanation": ""
+      "explanation": "“Model Openness Framework (MOF) 2026 template covering data, training, eval, safety, license, and reproducibility” matches the lesson’s treatment of Capstone 07 — End-to-End Fine-Tuning Pipeline (Data to SFT to DPO to Serve); the alternatives conflict with its definitions or workflow."
     }
   ]
 }

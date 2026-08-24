@@ -189,3 +189,13 @@ The entire reason "3x3 all the way down" works (VGG, ResNet, ConvNeXt) is that t
 - [CS231n: Convolutional Neural Networks for Visual Recognition](https://cs231n.github.io/convolutional-networks/) — the canonical lecture notes, including the original im2col explanation
 - [The Annotated ConvNet (fast.ai)](https://nbviewer.org/github/fastai/fastbook/blob/master/13_convolutions.ipynb) — a notebook that walks from manual convolution to a trained digit classifier
 - [Receptive Field Arithmetic for CNNs (Dang Ha The Hien)](https://distill.pub/2019/computing-receptive-fields/) — the paper-quality interactive explainer of receptive field calculations
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does,” and cite a repeatable check rather than relying on visual inspection alone.

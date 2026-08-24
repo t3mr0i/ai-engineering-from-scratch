@@ -143,3 +143,13 @@ Independent of LangChain. Python 3.10 to 3.13. Uses `uv`. Star count: see [crewA
 - [CrewAI memory](https://docs.crewai.com/en/concepts/memory): short-term, long-term, entity, contextual
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents): when multi-agent helps and when it does not
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview): the state-machine alternative
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name CrewAI's four primitives (Agent, Task, Crew, Process) and what each owns.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Distinguish Sequential, Hierarchical, and the planned Consensus process; pick one per workload.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Distinguish Crews (autonomous role-based) from Flows (event-driven deterministic), and explain the docs' production recommendation.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name CrewAI's four primitives (Agent, Task, Crew, Process) and what each owns,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Distinguish Crews (autonomous role-based) from Flows (event-driven deterministic), and explain the docs' production recommendation,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -15,7 +15,7 @@
       "explanation": "The two encoders learn independent bases; a bridge module is required to align them in a shared space."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is the two-layer MLP enough for modality alignment in practice?",
       "options": [
         "PyTorch requires two layers",
@@ -51,7 +51,7 @@
       "explanation": "Loss is 1 - cos(angle). Antiparallel vectors have cos = -1, so the loss is 1 - (-1) = 2.0."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why does CLS pooling get used to produce a single image-level vector from 197 tokens?",
       "options": [
         "PyTorch sums tokens automatically",

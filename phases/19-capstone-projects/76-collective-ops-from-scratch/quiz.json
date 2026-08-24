@@ -15,7 +15,7 @@
       "explanation": "Ring allreduce moves N-1 chunks of size T/N twice (reduce-scatter then allgather); the per-rank total is 2T(N-1)/N, independent of cluster size."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is the queue mesh in this lesson an honest stand-in for NCCL on a real cluster?",
       "options": [
         "It runs on CUDA cores",
@@ -51,7 +51,7 @@
       "explanation": "log2(N) hops dominate when latency per hop is the bottleneck; N-1 sequential sends pay that latency floor N times."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why verify against torch.distributed gloo on the same input?",
       "options": [
         "Gloo is faster",

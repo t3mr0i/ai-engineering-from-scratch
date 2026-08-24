@@ -73,3 +73,13 @@ Lessons 12-15 are the attack families. Lesson 16 is the production tooling. Less
 - [Meta — Llama Guard 3-1B-INT4 (arXiv:2411.17713)](https://arxiv.org/abs/2411.17713) — quantized mobile classifier
 - [NVIDIA Garak — GitHub](https://github.com/NVIDIA/garak) — the scanner repo and documentation
 - [Microsoft PyRIT — GitHub](https://github.com/Azure/PyRIT) — the campaign toolkit
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe Llama Guard 3/4's position in the safety stack: input classifier, output classifier, or both.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the 14 MLCommons hazard categories and state one non-obvious one (Code Interpreter Abuse).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe Garak's probe architecture: probes, detectors, harnesses.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe Llama Guard 3/4's position in the safety stack: input classifier, output classifier, or both,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe Garak's probe architecture: probes, detectors, harnesses,” and cite a repeatable check rather than relying on visual inspection alone.

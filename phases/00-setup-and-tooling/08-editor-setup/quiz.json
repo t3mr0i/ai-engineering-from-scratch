@@ -1,39 +1,78 @@
 {
+  "lesson": "08-editor-setup",
+  "title": "Editor Setup",
   "questions": [
     {
       "stage": "pre",
       "question": "What is a Language Server Protocol (LSP)?",
-      "options": ["A protocol for transferring files between editors", "A standard for editors to receive type info, completions, and diagnostics from a language-specific server", "A compression format for source code files", "A network protocol for remote pair programming"],
+      "options": [
+        "A protocol for transferring files between editors — and applies unchanged even when the lesson's stated preconditions fail",
+        "A standard for editors to receive type info, completions, and diagnostics from a language-specific server",
+        "A compression format for source code files",
+        "A network protocol for remote pair programming"
+      ],
       "correct": 1,
       "explanation": "LSP is a standardized protocol that lets editors communicate with language servers for features like autocomplete, type checking, and error diagnostics, regardless of the editor used."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is format-on-save useful for team projects?",
-      "options": ["It reduces file sizes by removing whitespace", "It ensures consistent code style across all contributors without manual formatting", "It catches runtime bugs before the code is executed", "It compresses the code for faster git operations"],
+      "options": [
+        "It reduces file sizes by removing whitespace",
+        "It ensures consistent code style across all contributors without manual formatting",
+        "It catches runtime bugs before the code is executed, with no need to inspect intermediate results or test edge cases",
+        "It compresses the code for faster git operations"
+      ],
       "correct": 1,
       "explanation": "Format-on-save runs a formatter (like Black or Ruff) every time you save, ensuring all code follows the same style conventions regardless of who wrote it."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Which VS Code extension enables editing code on a remote GPU machine as if it were local?",
-      "options": ["GitLens", "Pylance", "Remote SSH", "Debugpy"],
+      "options": [
+        "GitLens, because one plausible output is sufficient production evidence",
+        "Pylance",
+        "Remote SSH",
+        "Debugpy"
+      ],
       "correct": 2,
       "explanation": "Remote SSH installs a lightweight VS Code server on the remote machine and streams the UI to your local editor, letting you edit files, run terminals, and debug remotely."
     },
     {
-      "stage": "post",
+      "stage": "check",
       "question": "Why should 'notebook.output.scrolling' be enabled in VS Code settings for AI work?",
-      "options": ["It enables horizontal scrolling for wide dataframes", "It prevents training loop output (thousands of lines) from exploding the output panel", "It allows scrolling between notebook cells with the mouse wheel", "It enables smooth scrolling animations in the editor"],
+      "options": [
+        "It enables horizontal scrolling for wide dataframes",
+        "It prevents training loop output (thousands of lines) from exploding the output panel",
+        "It allows scrolling between notebook cells with the mouse wheel, before defining the measurement, acceptance threshold, or rollback path",
+        "It enables smooth scrolling animations in the editor"
+      ],
       "correct": 1,
       "explanation": "Training loops can print thousands of lines of output. Without output scrolling, the notebook output panel grows unbounded, making the notebook unusable."
     },
     {
       "stage": "post",
       "question": "What does setting 'python.analysis.typeCheckingMode' to 'basic' in VS Code accomplish?",
-      "options": ["It enables syntax highlighting for Python files", "It catches wrong argument types and tensor shape mismatches before running the code", "It formats Python code according to PEP 8 standards", "It enables Python 3.12 language features"],
+      "options": [
+        "It enables syntax highlighting for Python files",
+        "It catches wrong argument types and tensor shape mismatches before running the code",
+        "It formats Python code according to PEP 8 standards — and applies unchanged even when the lesson's stated preconditions fail",
+        "It enables Python 3.12 language features"
+      ],
       "correct": 1,
       "explanation": "Basic type checking with Pylance flags type mismatches, wrong argument types, and incorrect API parameters at edit time, catching bugs before you run a potentially expensive training script."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Editor Setup?",
+      "options": [
+        "Configure format-on-save, type checking, and notebook output scrolling for AI workflows",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Configure format-on-save, type checking, and notebook output scrolling for AI workflows” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

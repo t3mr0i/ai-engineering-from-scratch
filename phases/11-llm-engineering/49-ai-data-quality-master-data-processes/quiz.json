@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "When should a data issue become an AI readiness blocker?",
       "options": [
-        "Only when the underlying source data is already perfect and needs absolutely no further review",
+        "Only when the underlying source data is already perfect and needs absolutely no further review — and applies unchanged even when the lesson's stated preconditions fail",
         "When ownership, duplicates, stale fields, or definitions stay unresolved for a high-impact use case",
         "Only when there is no AI use case being considered for that data at all right now",
         "Never — AI can reliably infer every missing data definition from context on its own"
@@ -66,7 +66,7 @@
       "stage": "post",
       "question": "What should teams create before scaling AI on operational data?",
       "options": [
-        "A single prompt template that works without referencing any source data at all",
+        "A single prompt template that works without referencing any source data at all, with no need to inspect intermediate results or test edge cases",
         "Named owners, testable quality rules, sample checks, and a data-quality backlog",
         "An enrichment workflow that runs on operational data without any human review",
         "A data definition that stays undocumented so the team can move faster"

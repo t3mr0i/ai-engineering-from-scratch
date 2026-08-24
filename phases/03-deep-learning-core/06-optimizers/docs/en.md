@@ -173,3 +173,13 @@ flowchart TD
 - Loshchilov & Hutter, "Decoupled Weight Decay Regularization" (2017) -- proved that L2 regularization and weight decay are not equivalent in Adam, and proposed AdamW
 - Smith, "Cyclical Learning Rates for Training Neural Networks" (2017) -- introduced the LR range test and cyclical schedules that remove the need to tune a fixed learning rate
 - Ruder, "An Overview of Gradient Descent Optimization Algorithms" (2016) -- the best single survey of all optimizer variants, with clear comparisons and intuitions
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement SGD, SGD with momentum, Adam, and AdamW optimizers from scratch in Python.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain how Adam's bias correction compensates for zero-initialized moment estimates in early training steps.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Demonstrate why AdamW produces better generalization than Adam with L2 regularization on the same task.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement SGD, SGD with momentum, Adam, and AdamW optimizers from scratch in Python,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Demonstrate why AdamW produces better generalization than Adam with L2 regularization on the same task,” and cite a repeatable check rather than relying on visual inspection alone.

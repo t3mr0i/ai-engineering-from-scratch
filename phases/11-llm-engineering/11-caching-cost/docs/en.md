@@ -765,3 +765,13 @@ print(f"\n💡 Try asking a similar question next to see semantic caching in act
 - [OpenAI Prompt Caching](https://platform.openai.com/docs/guides/prompt-caching) -- OpenAI's automatic caching and how to verify cache hits via usage fields.
 - [Kwon et al., "Efficient Memory Management for Large Language Model Serving with PagedAttention" (SOSP 2023)](https://arxiv.org/abs/2309.06180) -- the vLLM paper; why paged KV-cache + continuous batching beat naive servers 24× on throughput.
 - [Dao et al., "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning" (ICLR 2024)](https://arxiv.org/abs/2307.08691) -- kernel-level cost reduction orthogonal to prompt caching; read alongside speculative decoding and GQA for the full cost-curve picture.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement semantic caching that serves repeated or similar queries from cache instead of making a new API call.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Calculate per-request costs across providers and implement token-aware rate limiting and budget alerts.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a cost optimization layer with prompt compression, model routing (expensive vs cheap), and response caching.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement semantic caching that serves repeated or similar queries from cache instead of making a new API call,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a cost optimization layer with prompt compression, model routing (expensive vs cheap), and response caching,” and cite a repeatable check rather than relying on visual inspection alone.

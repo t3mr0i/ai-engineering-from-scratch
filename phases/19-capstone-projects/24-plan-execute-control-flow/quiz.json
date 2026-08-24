@@ -15,7 +15,7 @@
       "explanation": "Planner emits structured plans. The executor runs them, enforces timeouts, and owns the transport. Mixing the two is the chain-of-thought trap this lesson is moving away from."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why is expected_outcome part of the Step shape even though the executor does not check it?",
       "options": [
         "Because the dispatcher uses the expected_outcome string as a cache key for idempotency",
@@ -51,7 +51,7 @@
       "explanation": "max_replans catches a planner that keeps returning the same broken plan. max_steps catches a runaway plan that keeps growing."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which reason is returned when the planner returns an empty list on the first call?",
       "options": [
         "no_plan — the planner returned zero steps on the very first call",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "revised is the set of ids whose (tool_name, args) signature changed across the revision — not the added, removed, or skipped sets."
-    },
-    {
-      "stage": "post",
-      "question": "When the executor exhausts max_replans, what is the resulting SessionResult.reason?",
-      "options": [
-        "step_budget — the plan exceeded the maximum number of total steps",
-        "replan_budget — the planner was invoked more times than max_replans allows",
-        "goal_met — the executor reached the stated goal before exhausting the replan budget",
-        "no_plan — the very first call to the planner returned an empty list of steps"
-      ],
-      "correct": 1,
-      "explanation": "replan_budget. The status is failed. History carries every step that ran, including the failures that triggered replans."
     }
   ]
 }

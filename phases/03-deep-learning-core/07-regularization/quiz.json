@@ -1,64 +1,78 @@
 {
+  "lesson": "07-regularization",
+  "title": "Regularization",
   "questions": [
     {
+      "stage": "pre",
       "question": "What is overfitting in neural networks?",
       "options": [
-        "The model is too small to learn the data",
+        "The model is too small to learn the data — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
         "The model memorizes training data instead of learning generalizable patterns, showing a large gap between train and test accuracy",
         "The model trains too slowly",
         "The loss function is wrong"
       ],
       "correct": 1,
-      "explanation": "Overfitting occurs when a model achieves high training accuracy but poor test accuracy. It has memorized the training data's noise rather than learning the underlying patterns.",
-      "stage": "pre"
+      "explanation": "Overfitting occurs when a model achieves high training accuracy but poor test accuracy. It has memorized the training data's noise rather than learning the underlying patterns."
     },
     {
+      "stage": "check",
       "question": "How does dropout regularize a neural network?",
       "options": [
-        "It removes the worst-performing neurons permanently",
+        "It removes the worst-performing neurons permanently, with no need to inspect intermediate results or test edge cases",
         "It randomly zeroes neurons during training, forcing the network to learn redundant representations",
         "It reduces the learning rate",
         "It removes outliers from the training data"
       ],
       "correct": 1,
-      "explanation": "During each forward pass, dropout randomly sets neuron outputs to zero with probability p. This prevents co-adaptation (neurons relying on specific others) and is equivalent to training an ensemble of 2^N subnetworks.",
-      "stage": "pre"
+      "explanation": "During each forward pass, dropout randomly sets neuron outputs to zero with probability p. This prevents co-adaptation (neurons relying on specific others) and is equivalent to training an ensemble of 2^N subnetworks."
     },
     {
+      "stage": "check",
       "question": "Why do transformers use LayerNorm instead of BatchNorm?",
       "options": [
         "LayerNorm is faster to compute",
         "LayerNorm normalizes across features per sample (batch-independent), which works with variable sequence lengths and small batch sizes",
         "BatchNorm causes gradient explosion",
-        "LayerNorm was invented more recently"
+        "LayerNorm was invented more recently, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
       ],
       "correct": 1,
-      "explanation": "BatchNorm depends on batch statistics, which are noisy with small batches and meaningless with batch size 1 (common during generation). LayerNorm normalizes across features within each sample, independent of batch size.",
-      "stage": "post"
+      "explanation": "BatchNorm depends on batch statistics, which are noisy with small batches and meaningless with batch size 1 (common during generation). LayerNorm normalizes across features within each sample, independent of batch size."
     },
     {
+      "stage": "check",
       "question": "What is the key difference between RMSNorm and LayerNorm?",
       "options": [
         "RMSNorm uses batch statistics",
         "RMSNorm skips the mean subtraction, only dividing by the root mean square, giving ~10% speedup with equal accuracy",
-        "RMSNorm adds learnable parameters",
+        "RMSNorm adds learnable parameters, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
         "RMSNorm only works on CNNs"
       ],
       "correct": 1,
-      "explanation": "RMSNorm removes the mean subtraction step from LayerNorm, which contributes little to accuracy but adds computation. LLaMA, Mistral, and most modern LLMs use RMSNorm for this efficiency gain.",
-      "stage": "post"
+      "explanation": "RMSNorm removes the mean subtraction step from LayerNorm, which contributes little to accuracy but adds computation. LLaMA, Mistral, and most modern LLMs use RMSNorm for this efficiency gain."
     },
     {
+      "stage": "post",
       "question": "Why is it critical to call model.eval() before running inference in PyTorch?",
       "options": [
         "It speeds up computation",
         "It disables dropout and switches BatchNorm to use running statistics instead of batch statistics, giving deterministic outputs",
         "It frees GPU memory",
-        "It enables gradient computation"
+        "It enables gradient computation — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 1,
-      "explanation": "Without model.eval(), dropout randomly zeroes neurons during inference (causing random output variation) and BatchNorm uses current-batch statistics instead of the stable running averages accumulated during training.",
-      "stage": "post"
+      "explanation": "Without model.eval(), dropout randomly zeroes neurons during inference (causing random output variation) and BatchNorm uses current-batch statistics instead of the stable running averages accumulated during training."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Regularization?",
+      "options": [
+        "Measure the train-test accuracy gap and diagnose overfitting using regularization experiments",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Measure the train-test accuracy gap and diagnose overfitting using regularization experiments” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

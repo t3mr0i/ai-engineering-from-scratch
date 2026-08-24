@@ -18,7 +18,7 @@
       "stage": "check",
       "question": "A team wants a Confluence assistant. Where does this lesson locate the hard part?",
       "options": [
-        "Choosing an embedding model whose similarity scores match how colleagues phrase questions",
+        "Choosing an embedding model whose similarity scores match how colleagues phrase questions, with no need to inspect intermediate results or test edge cases",
         "Sizing the vector store so retrieval stays fast once the whole space has been indexed",
         "Designing a chat interface that colleagues will prefer over searching Confluence directly",
         "Knowing which sources are allowed, who owns them, what is stale, and how wrong answers get caught"

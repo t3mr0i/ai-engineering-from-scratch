@@ -15,7 +15,7 @@
       "explanation": "Input is tokens 0..T-1; target is tokens 1..T; loss is computed on the flattened (batch*seq, vocab) and (batch*seq,) shapes."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does evaluate_model do that the training step does not?",
       "options": [
         "It runs the optimizer",
@@ -51,7 +51,7 @@
       "explanation": "Warmup populates optimizer state; cosine decay tapers the step size so the final phase fine-tunes the weights."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why clip gradient norm before optimizer.step()?",
       "options": [
         "It accelerates the matmul",

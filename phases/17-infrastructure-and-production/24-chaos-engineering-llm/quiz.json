@@ -12,7 +12,7 @@
         "Three frontier models"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“SLI/SLO, observability, automated rollback, structured runbooks, on-call” matches the lesson’s treatment of Chaos Engineering for LLM Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Frontend, backend, mobile, web"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Control, target, safety, observability — with feedback into SLO adjustments” matches the lesson’s treatment of Chaos Engineering for LLM Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Pauses the experiment when daily error-budget burn exceeds roughly 2x expected"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Pauses the experiment when daily error-budget burn exceeds roughly 2x expected” matches the lesson’s treatment of Chaos Engineering for LLM Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Reboot the entire datacenter"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“KV eviction storm that forces vLLM block-budget saturation” matches the lesson’s treatment of Chaos Engineering for LLM Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Yearly only"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Weekly small canary, monthly game day with postmortem, quarterly cross-team resilience audit” matches the lesson’s treatment of Chaos Engineering for LLM Production; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Network packet loss"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Tokenizer stalls that lock up a worker on inputs like deeply nested unicode or huge UTF-8 codepoints” matches the lesson’s treatment of Chaos Engineering for LLM Production; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

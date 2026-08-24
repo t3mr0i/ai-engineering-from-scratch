@@ -253,3 +253,13 @@ The crossover point on A100 is around ops:byte = 156 (312 TFLOPS / 2 TB/s). Belo
 - Li et al., "EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty" (2024) -- achieves higher acceptance rates by training a head on the target model's own features instead of using a separate draft model
 - Zheng et al., "SGLang: Efficient Execution of Structured Language Model Programs" (2024) -- introduces RadixAttention for prefix caching and a programming model for multi-call LLM programs
 - Williams et al., "Roofline: An Insightful Visual Performance Model for Multicore Architectures" (2009) -- the original roofline paper that formalized the ops:byte framework for reasoning about compute vs memory bottlenecks
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement KV-cache to eliminate redundant computation during autoregressive token generation.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the prefill vs decode phases of LLM inference and why each has different bottlenecks (compute-bound vs memory-bound).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement continuous batching and PagedAttention concepts to maximize GPU utilization under concurrent requests.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement KV-cache to eliminate redundant computation during autoregressive token generation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement continuous batching and PagedAttention concepts to maximize GPU utilization under concurrent requests,” and cite a repeatable check rather than relying on visual inspection alone.

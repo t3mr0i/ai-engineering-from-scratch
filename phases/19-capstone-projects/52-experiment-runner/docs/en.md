@@ -149,3 +149,13 @@ The evaluator reads `metrics` and `terminal` first. If terminal is anything othe
 ## Where this slots in
 
 Lesson fifty generates the hypothesis. Lesson fifty-one filters out anything the literature already settled. Lesson fifty-two runs the experiment for what is left. Lesson fifty-three reads the result, runs the significance test, and writes the verdict the orchestrator stores against the hypothesis id.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Encode an experiment as a typed spec the runner can serialise to a subprocess.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Launch a subprocess with a hard wall clock timeout and a soft memory cap, and surface both as terminal conditions.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Capture stdout, stderr, and the structured metrics blob into a single result record.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Encode an experiment as a typed spec the runner can serialise to a subprocess,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Capture stdout, stderr, and the structured metrics blob into a single result record,” and cite a repeatable check rather than relying on visual inspection alone.

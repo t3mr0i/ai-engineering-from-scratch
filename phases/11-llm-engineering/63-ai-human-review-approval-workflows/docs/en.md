@@ -70,3 +70,13 @@ The template in `outputs/sheet-human-review-approval-workflow.md` can be used be
 - Approval gates should be tied to impact and uncertainty.
 - Quality checklists turn review into an inspectable control.
 - Appeal paths protect users and customers.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify AI workflows that need human review or approval gates.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a review-and-approval triage artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map decision authority, approval gap, quality uncertainty, and user impact to controls.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify AI workflows that need human review or approval gates,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map decision authority, approval gap, quality uncertainty, and user impact to controls,” and cite a repeatable check rather than relying on visual inspection alone.

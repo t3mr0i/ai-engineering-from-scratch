@@ -1,6 +1,9 @@
 {
+  "lesson": "06-rag",
+  "title": "RAG (Retrieval-Augmented Generation)",
   "questions": [
     {
+      "stage": "pre",
       "question": "What does RAG stand for and what problem does it solve?",
       "options": [
         "Recurrent Attention Generation -- replacing quadratic attention so longer documents fit into the prompt",
@@ -9,10 +12,10 @@
         "Retrieval-Augmented Generation -- giving LLMs access to external knowledge they weren't trained on"
       ],
       "correct": 3,
-      "explanation": "RAG retrieves relevant documents from an external knowledge base and adds them to the prompt. This gives the LLM access to up-to-date, domain-specific information without retraining.",
-      "stage": "pre"
+      "explanation": "RAG retrieves relevant documents from an external knowledge base and adds them to the prompt. This gives the LLM access to up-to-date, domain-specific information without retraining."
     },
     {
+      "stage": "check",
       "question": "Why is RAG preferred over fine-tuning for most knowledge-grounded applications?",
       "options": [
         "RAG bakes your documents permanently into the model's weights, so the answers stay correct even when the vector store is offline or empty",
@@ -21,22 +24,22 @@
         "RAG teaches the model a style and reasoning pattern that prompting alone cannot reach, which fine-tuning is unable to do"
       ],
       "correct": 1,
-      "explanation": "Fine-tuning costs thousands of dollars, produces a static model that becomes stale as documents change, and offers no source attribution. RAG updates instantly (just update the document store), costs only embedding + storage, and can cite its sources.",
-      "stage": "pre"
+      "explanation": "Fine-tuning costs thousands of dollars, produces a static model that becomes stale as documents change, and offers no source attribution. RAG updates instantly (just update the document store), costs only embedding + storage, and can cite its sources."
     },
     {
+      "stage": "check",
       "question": "What is the correct order of steps in a basic RAG pipeline?",
       "options": [
         "Embed the documents, generate a draft answer, then chunk that draft and store its embeddings for the next query",
         "Chunk documents, embed chunks, store in vector DB, embed query, retrieve similar chunks, generate answer with context",
-        "Embed the query, generate the answer, then retrieve documents afterwards to check the finished answer against them",
+        "Embed the query, generate the answer, then retrieve documents afterwards to check the finished answer against them, because one plausible output is sufficient production evidence",
         "Store whole documents unchunked, query the LLM first, then append the matching documents to its finished response"
       ],
       "correct": 1,
-      "explanation": "Ingestion: chunk documents -> embed chunks -> store in vector DB. Query time: embed the user's query -> retrieve top-K similar chunks -> add chunks to prompt -> generate answer grounded in retrieved context.",
-      "stage": "post"
+      "explanation": "Ingestion: chunk documents -> embed chunks -> store in vector DB. Query time: embed the user's query -> retrieve top-K similar chunks -> add chunks to prompt -> generate answer grounded in retrieved context."
     },
     {
+      "stage": "check",
       "question": "What is a common failure mode in basic RAG systems?",
       "options": [
         "Retrieved chunks are semantically similar to the query but do not contain the answer, e.g. revenue strategy text when the query asked for Q3 revenue numbers",
@@ -45,10 +48,10 @@
         "Re-indexing after a document changes invalidates every earlier embedding, so the whole vector store has to be rebuilt from scratch each time"
       ],
       "correct": 0,
-      "explanation": "Semantic search finds text that 'sounds like' the query, not necessarily text that 'answers' it. A query about revenue might retrieve chunks discussing revenue strategy rather than the chunk containing the actual number.",
-      "stage": "post"
+      "explanation": "Semantic search finds text that 'sounds like' the query, not necessarily text that 'answers' it. A query about revenue might retrieve chunks discussing revenue strategy rather than the chunk containing the actual number."
     },
     {
+      "stage": "post",
       "question": "How do you evaluate RAG quality?",
       "options": [
         "By measuring end-to-end latency, since retrieval under 200ms and generation under three seconds define a pipeline that is working correctly",
@@ -57,8 +60,19 @@
         "By checking that every retrieved chunk falls in the 256 to 512 token range with the standard 50-token overlap between chunks"
       ],
       "correct": 1,
-      "explanation": "RAG evaluation has two parts: retrieval quality (precision/recall of retrieved chunks against ground truth) and generation quality (faithfulness to context, relevance to query, no hallucination beyond retrieved information).",
-      "stage": "post"
+      "explanation": "RAG evaluation has two parts: retrieval quality (precision/recall of retrieved chunks against ground truth) and generation quality (faithfulness to context, relevance to query, no hallucination beyond retrieved information)."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for RAG (Retrieval-Augmented Generation)?",
+      "options": [
+        "Implement semantic search using a vector database (ChromaDB, FAISS, or Pinecone) with proper indexing",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement semantic search using a vector database (ChromaDB, FAISS, or Pinecone) with proper indexing” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

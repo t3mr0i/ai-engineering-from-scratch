@@ -1,6 +1,6 @@
 {
   "lesson": "26-sandbox-runner-denylist",
-  "title": "Sandbox Runner with Denylist and Path Jail",
+  "title": "Capstone Lesson 26: Sandbox Runner with Denylist and Path Jail",
   "questions": [
     {
       "stage": "pre",

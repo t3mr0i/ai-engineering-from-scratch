@@ -15,7 +15,7 @@
       "explanation": "Agents narrate each step in good faith; the silent total is the creep."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which contract field does the lesson call half the contract?",
       "options": [
         "task_id, since it links the contract back to the board entry the human filed",
@@ -51,7 +51,7 @@
       "explanation": "The lesson says listing how to roll back forces the contract author to think about what could go wrong; a contract you cannot roll back from should not be approved."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the scope checker compare against the diff, per the lesson?",
       "options": [
         "Only the commit message, checked against a required template",
@@ -73,18 +73,6 @@
       ],
       "correct": 1,
       "explanation": "The lesson says the invariant 'at most one in_progress' is itself a startup check: if the list shows two, the session refuses to start until a human resolves it."
-    },
-    {
-      "stage": "post",
-      "question": "How does an agent pick which feature to work on, per the lesson?",
-      "options": [
-        "It asks the human operator to assign one at the start of every session",
-        "It works through features strictly in the order they appear in the file",
-        "It picks whichever feature has the shortest done_when description",
-        "It picks one todo feature and cannot start a second in that session"
-      ],
-      "correct": 3,
-      "explanation": "The lesson says the agent picks exactly one feature whose status is todo, writes its id into the active scope contract, and is forbidden from starting a second feature in the same session."
     }
   ]
 }

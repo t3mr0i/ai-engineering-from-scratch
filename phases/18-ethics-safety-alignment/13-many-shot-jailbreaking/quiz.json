@@ -12,7 +12,7 @@
         "Tokenizer ambiguities on Unicode characters"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Very long context windows that admit hundreds of faux user-assistant turns of harmful compliance before the target query” matches the lesson’s treatment of Many-Shot Jailbreaking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Logistic, plateauing at 50%"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Power-law in shot count; does not plateau, keeps climbing” matches the lesson’s treatment of Many-Shot Jailbreaking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Both require a hidden scratchpad"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Both depend on the model extracting task structure from in-context examples and executing it on the query” matches the lesson’s treatment of Many-Shot Jailbreaking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "Defenses must run on every token of the response"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Suppressing pattern extraction from long contexts would also disable benign in-context learning; defenses must distinguish harmful from benign patterns” matches the lesson’s treatment of Many-Shot Jailbreaking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "It increases ASR"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“From 61% to 2%” matches the lesson’s treatment of Many-Shot Jailbreaking; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "They are mutually exclusive"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“MSJ composes with PAIR; using PAIR to find an attack structure and then filling it with many shots can reach higher ASR than either alone” matches the lesson’s treatment of Many-Shot Jailbreaking; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

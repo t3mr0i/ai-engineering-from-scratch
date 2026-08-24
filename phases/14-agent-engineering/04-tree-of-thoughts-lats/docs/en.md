@@ -448,3 +448,13 @@ else:
 - [Zhou et al., LATS (arXiv:2310.04406)](https://arxiv.org/abs/2310.04406) — MCTS with Reflexion feedback
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) — subgraph patterns for search
 - [AlphaEvolve (arXiv:2506.13131)](https://arxiv.org/abs/2506.13131) — evolutionary search with programmatic evaluators
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Frame reasoning as search: nodes are "thoughts," edges are "expansions," value is "how promising.".
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a stdlib ToT-style BFS tree search with self-evaluation scoring.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Extend to a toy LATS MCTS loop with select / expand / simulate / backpropagate.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Frame reasoning as search: nodes are "thoughts," edges are "expansions," value is "how promising.",” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Extend to a toy LATS MCTS loop with select / expand / simulate / backpropagate,” and cite a repeatable check rather than relying on visual inspection alone.

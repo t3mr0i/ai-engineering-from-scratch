@@ -12,7 +12,7 @@
         "Storage capacity"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Memory bandwidth (mobile DRAM at 50-90 GB/s vs HBM3 at 2-3 TB/s)” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Apple Silicon ships unified memory — CPU and ANE share the same pool"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Apple Silicon ships unified memory — CPU and ANE share the same pool” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "GGUF Q4_K_M"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Q4 MLC (q4f16_1) compiled via mlc_llm convert_weight” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "About 70-75%, with Firefox Android still catching up"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“About 70-75%, with Firefox Android still catching up” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "iOS forbids long context"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Model weights plus KV cache for 32K tokens plus OS overhead easily exceed the 8 GB RAM budget” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Voice runs in WebAssembly only"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Voice agents are latency-sensitive (first token < 500 ms) and local inference eliminates network latency entirely” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

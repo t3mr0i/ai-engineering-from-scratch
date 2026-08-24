@@ -15,7 +15,7 @@
       "explanation": "Perplexity equals exp(avg negative log-likelihood). When every token gets probability 1, the NLL is zero, and exp(0) is 1 — not uniformity, an empty corpus, or a broken model."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does the harness require non-negative log-probabilities from the adapter?",
       "options": [
         "A negative log-probability value means the adapter sent log p instead of the required -log p",
@@ -51,7 +51,7 @@
       "explanation": "With few populated bins the ECE is dominated by noise. Reporting the populated count lets the runner refuse to publish a misleading single number."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does Brier score capture that ECE does not?",
       "options": [
         "It penalises local miscalibration directly, since it is the per-prediction squared error",

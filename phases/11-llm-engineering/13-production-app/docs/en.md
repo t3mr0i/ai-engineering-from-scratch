@@ -984,3 +984,13 @@ print(f"\nSavings: Avoided redundant LLM call, saved ${result1.get('cost_usd', 0
 - [Eugene Yan, "Patterns for Building LLM-based Systems"](https://eugeneyan.com/writing/llm-patterns/) -- architectural patterns (guardrails, RAG, caching, routing) seen across production LLM deployments.
 - [Hamel Husain, "Your AI Product Needs Evals"](https://hamel.dev/blog/posts/evals/) -- evaluation-driven development for LLM applications.
 - [OpenTelemetry Python SDK](https://opentelemetry.io/docs/languages/python/) -- the standard for distributed tracing across an LLM pipeline.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Wire all Phase 11 components (prompts, RAG, function calling, caching, guardrails) into a single production-ready service.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement streaming token delivery, graceful error handling, and request timeout management.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build observability into the application: request logging, cost tracking, latency percentiles, and error rate dashboards.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Wire all Phase 11 components (prompts, RAG, function calling, caching, guardrails) into a single production-ready service,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build observability into the application: request logging, cost tracking, latency percentiles, and error rate dashboards,” and cite a repeatable check rather than relying on visual inspection alone.

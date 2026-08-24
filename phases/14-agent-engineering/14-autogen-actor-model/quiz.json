@@ -15,7 +15,7 @@
       "explanation": "Actors have private state and an inbox; messages are the only interaction."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What are the three API layers of AutoGen v0.4?",
       "options": [
         "Frontend, Backend, and Database layers",
@@ -51,7 +51,7 @@
       "explanation": "RoundRobinGroupChat is fixed rotation; SelectorGroupChat uses a selector to pick next."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What is Magentic-One in this lesson?",
       "options": [
         "A serialization format used for persisting actor state between separate runs",
@@ -73,18 +73,6 @@
       ],
       "correct": 3,
       "explanation": "AutoGen v0.7.x is stable for research; active development has shifted to Microsoft Agent Framework."
-    },
-    {
-      "stage": "post",
-      "question": "Which observability standard does AutoGen v0.4 emit by default?",
-      "options": [
-        "OpenTelemetry spans with gen_ai.* attributes per the OTel GenAI semantic conventions",
-        "Prometheus metrics only, scraped on a fixed polling interval from every actor in the runtime",
-        "StatsD counters and gauges pushed over UDP to a local metrics agent",
-        "Datadog APM traces tied specifically to a Datadog-hosted agent process"
-      ],
-      "correct": 0,
-      "explanation": "Every message emits a span; tool calls carry gen_ai.* attributes per OTel GenAI conventions."
     }
   ]
 }

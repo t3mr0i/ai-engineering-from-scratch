@@ -1,0 +1,78 @@
+{
+  "lesson": "06-mcp-fundamentals",
+  "title": "MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "options": [
+        "Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Parse and emit JSON-RPC 2.0 request, response, and notification envelopes",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Parse and emit JSON-RPC 2.0 request, response, and notification envelopes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Explain what capability negotiation at `initialize` is and what breaks without it",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Explain what capability negotiation at `initialize` is and what breaks without it” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c..."
+      ],
+      "correct": 3,
+      "explanation": "“Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "options": [
+        "Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

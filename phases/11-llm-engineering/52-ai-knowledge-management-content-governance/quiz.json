@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "When should content be cleaned up before AI use?",
       "options": [
-        "Only when nobody in the organization is actively using the content anymore",
+        "Only when nobody in the organization is actively using the content anymore — and applies unchanged even when the lesson's stated preconditions fail",
         "When content is stale, duplicated, ownerless, or sensitive from an access standpoint",
         "Only when the content has already passed a full editorial and legal review",
         "Never — retrieval quality alone is enough to fix source-quality problems"

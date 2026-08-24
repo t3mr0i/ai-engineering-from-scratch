@@ -70,3 +70,13 @@ If the runner errors before capturing exit, the record carries `exit_code: null`
 - Phase 14 · 24 — agent observability platforms (Langfuse, Phoenix, Opik)
 - Phase 14 · 33 — the rule that demands feedback before declaring done
 - Phase 14 · 38 — the verification gate that reads the JSONL
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish runtime feedback from observability telemetry.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a feedback runner that wraps shell commands and persists structured records.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Truncate large outputs deterministically so the loop stays within token budget.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish runtime feedback from observability telemetry,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Truncate large outputs deterministically so the loop stays within token budget,” and cite a repeatable check rather than relying on visual inspection alone.

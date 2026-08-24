@@ -243,3 +243,13 @@ This lesson produces a reusable prompt for deciding when to go multi-agent. See 
 - [AutoGen: Enabling Next-Gen LLM Applications](https://arxiv.org/abs/2308.08155) - Microsoft's multi-agent conversation framework
 - [Claude Code subagents documentation](https://docs.anthropic.com/en/docs/claude-code) - how Claude Code delegates with Task
 - [CrewAI documentation](https://docs.crewai.com/) - role-based multi-agent framework
+
+## Exercises
+
+1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Identify the single-agent ceiling (context overflow, mixed expertise, sequential bottleneck) and explain when splitting into multiple agents is the right move.
+2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Compare orchestration patterns (pipeline, parallel fan-out, supervisor, hierarchical) and select the right one for a given task structure.
+3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Design a multi-agent system with clear role boundaries, shared state, and a communication contract.
+
+## Reference Solution
+
+A complete response first demonstrates “Identify the single-agent ceiling (context overflow, mixed expertise, sequential bottleneck) and explain when splitting into multiple agents is the right move” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Compare orchestration patterns (pipeline, parallel fan-out, supervisor, hierarchical) and select the right one for a given task structure.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Design a multi-agent system with clear role boundaries, shared state, and a communication contract.” Unsupported preference statements are not sufficient.

@@ -15,7 +15,7 @@
       "explanation": "Pinned self-hosted apps make execution-based evaluation reliable and comparable over time."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why does OSWorld use real OS screenshots rather than accessibility APIs?",
       "options": [
         "Screenshots force the agent to do real GUI grounding in 1920x1080, matching production constraints",
@@ -51,7 +51,7 @@
       "explanation": "Gold trajectories make trajectory efficiency measurable, not just success rate."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which release-time number does the lesson cite for WebArena?",
       "options": [
         "Best agent reaching 99% success rate with human performance at exactly 100%",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "Evaluating an accessibility-API agent on screenshot-only benchmarks skips the grounding test."
-    },
-    {
-      "stage": "post",
-      "question": "Why is ignoring trajectory length a benchmarking failure?",
-      "options": [
-        "It always matches the gold trajectory step for step on every single recorded task",
-        "It hides cost and inefficiency that success rate alone misses (the 1.4-2.7x gap OSWorld-Human surfaces)",
-        "Trajectories are simply not measurable at all with the current OSWorld tooling and setup",
-        "Trajectory length is the only metric that has ever truly mattered for benchmarking"
-      ],
-      "correct": 1,
-      "explanation": "Two agents at 60% success can differ 2-3x in steps; cost and efficiency only show up if you measure trajectory length."
     }
   ]
 }

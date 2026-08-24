@@ -96,3 +96,13 @@ It does not handle multiple documents. The corpus is treated as one continuous i
 `main.py` defines two classes and one helper. `SlidingWindowDataset` is the PyTorch Dataset. `make_dataloader` returns a configured DataLoader with a seeded generator. `_encode_corpus_to_ids` is the one-shot tokenizer call. The demo at the bottom builds a small tokenizer in-process, encodes a built-in corpus, constructs the dataset and dataloader, prints one batch, and asserts the shape contract. The tests in `code/tests/test_dataset.py` pin the window count formula, the shift-by-one property, the deterministic shuffle, and the stride trade-off.
 
 Run the demo. Then change the context length from 16 to 32 and watch how the number of examples per epoch falls. That number is your steps-per-epoch budget.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Convert a raw corpus into a stream of token ids by calling the tokenizer once.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Slice the id stream into fixed-length windows with a configurable overlap stride.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a PyTorch Dataset that returns input and target tensors for next-token prediction.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Convert a raw corpus into a stream of token ids by calling the tokenizer once,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a PyTorch Dataset that returns input and target tensors for next-token prediction,” and cite a repeatable check rather than relying on visual inspection alone.

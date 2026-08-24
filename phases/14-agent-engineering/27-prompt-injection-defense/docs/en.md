@@ -74,3 +74,13 @@ The trade-off: an extra inference per tool call. For the vast majority of agent 
 - [OpenAI, Computer-Using Agent](https://openai.com/index/computer-using-agent/) — "only direct instructions from the user count as permission"
 - [Google, Gemini 2.5 Computer Use](https://blog.google/technology/google-deepmind/gemini-computer-use-model/) — per-step safety service
 - [OpenAI Agents SDK docs](https://openai.github.io/openai-agents-python/) — guardrails as PVE
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the indirect prompt injection threat model from Greshake et al.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the five demonstrated exploit classes (data theft, worming, persistent memory poisoning, ecosystem contamination, arbitrary tool use).
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the 2026 defense doctrine: untrusted content, allowlist navigation, per-step safety, guardrails, human-in-the-loop, external capture.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the indirect prompt injection threat model from Greshake et al,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the 2026 defense doctrine: untrusted content, allowlist navigation, per-step safety, guardrails, human-in-the-loop, external capture,” and cite a repeatable check rather than relying on visual inspection alone.

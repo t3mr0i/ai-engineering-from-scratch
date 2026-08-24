@@ -119,3 +119,13 @@ python3 -m unittest code/test_main.py
 - An Image is Worth 16x16 Words (ViT, 2021) for the encoder recipe.
 - DINOv2 (2023) for register tokens and the self-supervised pretraining objective.
 - SigLIP (2023) for the average-pooling variant and the sigmoid contrastive loss used in lesson 62.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a pre-LN transformer block with multi-head self-attention and a feed-forward sub-layer.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Stack 12 blocks with 12 heads to form a ViT-Base encoder.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Wire the patch front end from lesson 58 into the encoder and run a forward pass.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a pre-LN transformer block with multi-head self-attention and a feed-forward sub-layer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Wire the patch front end from lesson 58 into the encoder and run a forward pass,” and cite a repeatable check rather than relying on visual inspection alone.

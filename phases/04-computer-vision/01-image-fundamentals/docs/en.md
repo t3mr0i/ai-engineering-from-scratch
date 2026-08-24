@@ -205,3 +205,13 @@ Rule of thumb: bilinear for training, bicubic or lanczos for assets you will loo
 - [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html) — the full pipeline of transforms you will actually compose in production
 - [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg) — a sharp visual tour of chroma subsampling, DCT, and why JPEG encodes YCbCr rather than RGB
 - [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html) — the source of truth for `mean=[0.485, 0.456, 0.406]` and why every model in the zoo expects it
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain how a continuous scene gets discretized into pixels and why sampling/quantization decisions set the ceiling on every downstream model.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Read, slice, and inspect images as NumPy arrays and switch fluently between HWC and CHW layouts.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Convert between RGB, grayscale, HSV, and YCbCr and justify why each color space exists.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain how a continuous scene gets discretized into pixels and why sampling/quantization decisions set the ceiling on every downstream model,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Convert between RGB, grayscale, HSV, and YCbCr and justify why each color space exists,” and cite a repeatable check rather than relying on visual inspection alone.

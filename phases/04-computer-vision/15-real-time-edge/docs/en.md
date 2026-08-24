@@ -111,3 +111,13 @@ Quantise all of these to INT8 unless you have a specific reason not to.
 - [MobileNetV3 (Howard et al., 2019)](https://arxiv.org/abs/1905.02244) — mobile-first architecture with h-swish and squeeze-excite
 - [A Practical Guide to TensorRT Optimization (NVIDIA)](https://developer.nvidia.com/blog/accelerating-model-inference-with-tensorrt-tips-and-best-practices-for-pytorch-users/) — how to actually get the throughput numbers in the paper
 - [ONNX Runtime docs](https://onnxruntime.ai/docs/) — quantisation, graph optimisation, provider selection
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Measure inference latency, peak memory, and throughput for any PyTorch model, and read the FLOPs / params / latency trade-off.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Quantise a vision model to INT8 using PyTorch's post-training quantisation and verify accuracy loss < 1%.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Export to ONNX and compile with ONNX Runtime or TensorRT; name the three most common export failures and their fixes.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Measure inference latency, peak memory, and throughput for any PyTorch model, and read the FLOPs / params / latency trade-off,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Export to ONNX and compile with ONNX Runtime or TensorRT; name the three most common export failures and their fixes,” and cite a repeatable check rather than relying on visual inspection alone.

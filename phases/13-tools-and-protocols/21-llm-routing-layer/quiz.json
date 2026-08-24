@@ -1,0 +1,78 @@
+{
+  "lesson": "21-llm-routing-layer",
+  "title": "LLM Routing Layer — LiteLLM, OpenRouter, Portkey",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which learning outcome is central to LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "options": [
+        "Distinguish self-hosted, managed, and production-grade routing options",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Distinguish self-hosted, managed, and production-grade routing options” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which task best demonstrates practical understanding of LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Implement a fallback chain that retries on provider failures in a defined priority order",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Implement a fallback chain that retries on provider failures in a defined priority order” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "What should a learner inspect while working through LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Track per-request cost and token usage across providers",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 2,
+      "explanation": "“Track per-request cost and token usage across providers” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "check",
+      "question": "Which evaluation habit best fits LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Decide between LiteLLM, OpenRouter, and Portkey for a given production constraint",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 1,
+      "explanation": "“Decide between LiteLLM, OpenRouter, and Portkey for a given production constraint” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "Which workflow provides the strongest evidence of mastery for LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "options": [
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works",
+        "Distinguish self-hosted, managed, and production-grade routing options"
+      ],
+      "correct": 3,
+      "explanation": "“Distinguish self-hosted, managed, and production-grade routing options” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "options": [
+        "Implement a fallback chain that retries on provider failures in a defined priority order",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Implement a fallback chain that retries on provider failures in a defined priority order” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+    }
+  ]
+}

@@ -396,3 +396,13 @@ Every method in this lesson appears in production ML:
 - [Numerical Linear Algebra](https://people.maths.ox.ac.uk/trefethen/text.html) (Trefethen & Bau) -- the standard reference for understanding numerical stability, conditioning, and why algorithms fail
 - [Matrix Computations](https://www.cs.cornell.edu/cv/GolubVanLoan4/golubandvanloan.htm) (Golub & Van Loan) -- the encyclopedic reference for every matrix algorithm
 - [3Blue1Brown: Inverse Matrices](https://www.3blue1brown.com/lessons/inverse-matrices) -- visual intuition for what solving Ax = b means geometrically
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Solve Ax = b using Gaussian elimination with partial pivoting and back substitution.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Factor matrices with LU, QR, and Cholesky decompositions and explain when each is appropriate.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Derive the normal equations for least squares and connect them to linear and ridge regression.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Solve Ax = b using Gaussian elimination with partial pivoting and back substitution,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Derive the normal equations for least squares and connect them to linear and ridge regression,” and cite a repeatable check rather than relying on visual inspection alone.

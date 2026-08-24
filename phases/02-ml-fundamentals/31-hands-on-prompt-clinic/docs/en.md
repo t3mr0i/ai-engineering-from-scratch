@@ -71,3 +71,13 @@ The template in `outputs/prompt-clinic-review-sheet.md` can be used to collect b
 - Output review is part of the prompt workflow.
 - Teams should turn good prompts into maintained assets.
 - The best prompt clinic uses real work examples.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Diagnose weak prompts by goal, audience, context, constraints, and evidence.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a small prompt-clinic planner in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Convert vague requests into reusable prompt briefs.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Diagnose weak prompts by goal, audience, context, constraints, and evidence,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Convert vague requests into reusable prompt briefs,” and cite a repeatable check rather than relying on visual inspection alone.

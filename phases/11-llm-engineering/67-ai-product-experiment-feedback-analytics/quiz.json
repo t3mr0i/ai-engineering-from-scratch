@@ -5,42 +5,72 @@
     {
       "stage": "pre",
       "question": "What should an AI product experiment define before rollout?",
-      "options": ["A demo script that shows the impressive output to stakeholders", "A backlog label and a rollout date with no success metric", "A hypothesis, success metric, feedback sample, and stop rule", "A feedback sample only, collected after the rollout is live"],
+      "options": [
+        "A demo script that shows the impressive output to stakeholders",
+        "A backlog label and a rollout date with no success metric",
+        "A hypothesis, success metric, feedback sample, and stop rule",
+        "A feedback sample only, collected after the rollout is live"
+      ],
       "correct": 2,
       "explanation": "A product experiment needs a decision structure, not just an implementation idea."
     },
     {
       "stage": "check",
       "question": "Why is an unclear hypothesis a risk?",
-      "options": ["The stop rule becomes the only artifact the team needs", "The feedback sample can be collected without any bias review", "The team cannot tell what it is trying to learn or measure", "The rollout risk note replaces the need for a hypothesis"],
+      "options": [
+        "The stop rule becomes the only artifact the team needs",
+        "The feedback sample can be collected without any bias review",
+        "The team cannot tell what it is trying to learn or measure",
+        "The rollout risk note replaces the need for a hypothesis"
+      ],
       "correct": 2,
       "explanation": "Without a hypothesis, feedback cannot be interpreted against a learning goal."
     },
     {
       "stage": "check",
       "question": "What does a stop rule prevent?",
-      "options": ["Collecting a feedback sample before the pilot begins running", "Defining a success metric while the experiment is being designed", "Scaling weak evidence or harmful behavior into a full rollout", "All user research conducted before an AI experiment starts"],
+      "options": [
+        "Collecting a feedback sample before the pilot begins running",
+        "Defining a success metric while the experiment is being designed",
+        "Scaling weak evidence or harmful behavior into a full rollout",
+        "All user research conducted before an AI experiment starts"
+      ],
       "correct": 2,
       "explanation": "A stop rule defines when the team should halt instead of scaling the idea."
     },
     {
       "stage": "check",
       "question": "Which input helps AI feedback synthesis stay credible?",
-      "options": ["Unlabeled anecdotes collected without any stated sample size", "A visible feedback sample paired with an explicit bias note", "A hidden prompt that stakeholders cannot review or audit", "A single executive quote presented as the full user feedback view"],
+      "options": [
+        "Unlabeled anecdotes collected without any stated sample size",
+        "A visible feedback sample paired with an explicit bias note",
+        "A hidden prompt that stakeholders cannot review or audit",
+        "A single executive quote presented as the full user feedback view"
+      ],
       "correct": 1,
       "explanation": "The team needs to understand where the feedback came from and what bias it may contain."
     },
     {
       "stage": "post",
       "question": "Which product idea is most ready for a controlled experiment?",
-      "options": ["One with no user segment and no plan for a feedback sample", "One with no decision owner and no defined stop rule for the pilot", "One with user feedback, a clear metric, and known rollout risk", "One with no success metric and an undefined hypothesis statement"],
+      "options": [
+        "One with no user segment and no plan for a feedback sample",
+        "One with no decision owner and no defined stop rule for the pilot",
+        "One with user feedback, a clear metric, and known rollout risk",
+        "One with no success metric and an undefined hypothesis statement"
+      ],
       "correct": 2,
       "explanation": "Feedback, metric clarity, and known risk are good reasons to run a controlled experiment."
     },
     {
       "stage": "post",
       "question": "What should AI assist with in feedback analytics?",
-      "options": ["Replacing the product team rollout and stop-rule decisions", "Hiding negative feedback that contradicts the stated hypothesis", "Removing the need for a success metric before the rollout decision", "Synthesizing feedback while decisions stay under human review"],
+      "options": [
+        "Replacing the product team rollout and stop-rule decisions",
+        "Hiding negative feedback that contradicts the stated hypothesis",
+        "Removing the need for a success metric before the rollout decision",
+        "Synthesizing feedback while decisions stay under human review"
+      ],
       "correct": 3,
       "explanation": "AI can help synthesize feedback, but product decisions still need human review and evidence."
     }

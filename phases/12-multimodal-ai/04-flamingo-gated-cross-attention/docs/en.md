@@ -118,3 +118,13 @@ Pick BLIP-2 for single-image VQA on a budget. Pick Flamingo/Idefics2 for interle
 - [Jaegle et al. — Perceiver IO (arXiv:2107.14795)](https://arxiv.org/abs/2107.14795) — the general Perceiver architecture.
 - [Li et al. — Otter (arXiv:2305.03726)](https://arxiv.org/abs/2305.03726) — instruction-tuned Flamingo descendant.
 - [Laurençon et al. — Idefics2 (arXiv:2405.02246)](https://arxiv.org/abs/2405.02246) — modern simplification of the Flamingo approach.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain how gated cross-attention preserves a frozen LLM's text capability at initialization via tanh(gate) = 0.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Walk through a Perceiver resampler: N image patches → K fixed "latent" queries via cross-attention.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe how Flamingo handles interleaved image-text sequences with causal masking that respects image placement.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain how gated cross-attention preserves a frozen LLM's text capability at initialization via tanh(gate) = 0,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe how Flamingo handles interleaved image-text sequences with causal masking that respects image placement,” and cite a repeatable check rather than relying on visual inspection alone.

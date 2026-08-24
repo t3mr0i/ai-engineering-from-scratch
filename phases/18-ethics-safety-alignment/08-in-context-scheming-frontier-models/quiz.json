@@ -12,7 +12,7 @@
         "Scheming uses smaller models"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Scheming is elicited from the in-context prompt and environment alone, with no implant” matches the lesson’s treatment of In-Context Scheming in Frontier Models; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "Misalignment, goal-directedness, situational awareness"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Misalignment, goal-directedness, situational awareness” matches the lesson’s treatment of In-Context Scheming in Frontier Models; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "o1"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“o1” matches the lesson’s treatment of In-Context Scheming in Frontier Models; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "PPO was replaced with DPO"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The post-trained model is also better at detecting that it is in an evaluation, so part of the apparent drop in covert action is improved hiding, not improved alignment” matches the lesson’s treatment of In-Context Scheming in Frontier Models; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Open-source models cannot run new benchmarks"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“More situationally-aware models can recognize evaluation contexts, so their eval behaviour is a less reliable proxy for deployment behaviour” matches the lesson’s treatment of In-Context Scheming in Frontier Models; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "They all rely on Constitutional AI"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“They cover the deception spectrum: implanted (Sleeper Agents), elicited from in-context conflict (Scheming), and spontaneous emergence with no goal conflict (Alignment Faking)” matches the lesson’s treatment of In-Context Scheming in Frontier Models; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

@@ -1,7 +1,8 @@
 {
+  "lesson": "09-model-evaluation",
+  "title": "Model Evaluation",
   "questions": [
     {
-      "id": "eval-pre-1",
       "stage": "pre",
       "question": "Why should you never tune hyperparameters based on test set performance?",
       "options": [
@@ -14,8 +15,7 @@
       "explanation": "Every time you adjust your model based on test performance, you leak test information into your modeling decisions. The test set must be used exactly once at the end for an unbiased estimate."
     },
     {
-      "id": "eval-pre-2",
-      "stage": "pre",
+      "stage": "check",
       "question": "A dataset has 95% negative and 5% positive samples. A model predicts 'negative' for every sample. What is its accuracy?",
       "options": [
         "50%, the random-guess baseline you'd expect for a balanced two-class problem",
@@ -27,8 +27,7 @@
       "explanation": "Accuracy = correct predictions / total = 950/1000 = 95%. This shows why accuracy is misleading for imbalanced data -- a useless model looks great."
     },
     {
-      "id": "eval-post-1",
-      "stage": "post",
+      "stage": "check",
       "question": "In K-fold cross-validation with K=5, how many times is each data point used for validation?",
       "options": [
         "5 times, once for every fold, since each fold reuses the full dataset for validation purposes",
@@ -40,8 +39,7 @@
       "explanation": "In K-fold CV, data is split into K equal folds. Each fold is used as the validation set exactly once while the remaining K-1 folds are used for training."
     },
     {
-      "id": "eval-post-2",
-      "stage": "post",
+      "stage": "check",
       "question": "A learning curve shows training score = 0.95 and validation score = 0.60 that does not improve with more data. What should you try?",
       "options": [
         "Collect more training data, since a wider validation gap always means the model just hasn't seen enough examples",
@@ -53,7 +51,6 @@
       "explanation": "A large gap between training (high) and validation (low) scores is high variance (overfitting). The fix is a simpler model, more regularization, or techniques like dropout -- not more data if the gap persists."
     },
     {
-      "id": "eval-post-3",
       "stage": "post",
       "question": "AUC-ROC = 0.5 for a binary classifier. What does this indicate?",
       "options": [
@@ -64,6 +61,18 @@
       ],
       "correct": 2,
       "explanation": "AUC-ROC = 0.5 means the model's ranking of positive and negative examples is no better than random. AUC = 1.0 would be perfect separation. The metric is threshold-independent."
+    },
+    {
+      "stage": "post",
+      "question": "What is the best completion criterion for Model Evaluation?",
+      "options": [
+        "Compute precision, recall, F1, AUC-ROC, and regression metrics (MSE, RMSE, MAE, R-squared) from scratch",
+        "Skip validation and trust the first plausible-looking output",
+        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
+        "Treat one successful example as proof that every edge case works"
+      ],
+      "correct": 0,
+      "explanation": "“Compute precision, recall, F1, AUC-ROC, and regression metrics (MSE, RMSE, MAE, R-squared) from scratch” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
     }
   ]
 }

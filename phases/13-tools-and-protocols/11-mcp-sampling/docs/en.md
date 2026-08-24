@@ -131,3 +131,13 @@ The server never touches an LLM API. The client's user pays for the completions 
 - [MCP — GitHub SEP-1577](https://github.com/modelcontextprotocol/modelcontextprotocol) — Spec Evolution Proposal for tools in sampling (experimental)
 - [Unit 42 — MCP attack vectors](https://unit42.paloaltonetworks.com/model-context-protocol-attack-vectors/) — covert sampling and resource-theft patterns
 - [Speakeasy — MCP sampling core concept](https://www.speakeasy.com/mcp/core-concepts/sampling) — walk-through with client-side code samples
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain what `sampling/createMessage` solves (server-hosted loops without server-side API keys).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a server that asks the client to sample over a multi-turn prompt and returns the completion.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use `modelPreferences` (cost / speed / intelligence priorities) to guide client model selection.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain what `sampling/createMessage` solves (server-hosted loops without server-side API keys),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use `modelPreferences` (cost / speed / intelligence priorities) to guide client model selection,” and cite a repeatable check rather than relying on visual inspection alone.

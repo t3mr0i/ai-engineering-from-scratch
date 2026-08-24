@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 06 (RAG), Phase 11 · 07 (Advanced RAG), Phase 11 · 10 (Evaluation)
-**Time:** ~55 minutes
+**Time:** ~120 minutes
 
 ## Learning Objectives
 
@@ -143,3 +143,13 @@ The faithfulness check is the only line that is not present in the pre-2026 desi
 - [Qdrant documentation — Filtering](https://qdrant.tech/documentation/concepts/filtering/) — concrete reference for metadata pre-filtering in a production vector store.
 - [DeepEval — RAG evaluation metrics](https://docs.confident-ai.com/docs/metrics-overview) — open-source framework covering faithfulness, contextual recall, and answer relevancy; the tool most commonly used for RAG eval automation in 2026.
 - [Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (2020)](https://arxiv.org/abs/2005.11401) — the original RAG paper; the retrieve-then-generate pattern this course builds on.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

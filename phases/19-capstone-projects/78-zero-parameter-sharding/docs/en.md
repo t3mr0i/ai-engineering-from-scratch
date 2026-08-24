@@ -73,3 +73,13 @@ Allreduce gives every rank the full summed gradient. If you only need shard r, t
 - [PyTorch FSDP documentation](https://pytorch.org/docs/stable/fsdp.html)
 - Phase 19 Lesson 76 - the reduce_scatter and allgather this lesson stands on
 - Phase 19 Lesson 80 - sharded checkpointing the ZeRO state must use
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Shard optimiser state (first moment, second moment, fp32 master copy) across N ranks so each rank owns 1/N.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Use reduce_scatter to deliver each rank only its shard's gradient sum, then allgather to broadcast the updated parameter shards back.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute the memory savings table for stage 1, stage 2, stage 3 against vanilla DDP.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Shard optimiser state (first moment, second moment, fp32 master copy) across N ranks so each rank owns 1/N,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute the memory savings table for stage 1, stage 2, stage 3 against vanilla DDP,” and cite a repeatable check rather than relying on visual inspection alone.

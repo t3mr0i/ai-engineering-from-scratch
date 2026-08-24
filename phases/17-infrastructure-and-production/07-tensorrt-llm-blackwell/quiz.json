@@ -12,7 +12,7 @@
         "About 1.1x"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“About 7x” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "FP8 uses less memory than FP4"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“KV cache spans a wide dynamic range; FP4 quantization causes catastrophic accuracy loss in attention scores” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "BF16 KV cache"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Day-0 FP4 weights shipped by model providers” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "It only works at small scale"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“It locks you into NVIDIA hardware — no AMD, no Intel, no ARM” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Weights INT8, activations FP32, KV cache INT4"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Weights NVFP4, activations NVFP4, KV cache FP8, attention accumulator FP32” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Ship NVFP4 anyway because the cost win dominates"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“Validate task quality on your eval set per model; teams often use FP8 weights + FP4 activations or stay on H200 with FP8 throughout” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

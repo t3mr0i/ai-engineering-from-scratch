@@ -634,3 +634,13 @@ print("(Try adding another tool and translating it to all three formats!)")
 - [Google — Gemini function calling](https://ai.google.dev/gemini-api/docs/function-calling) — parallel calls, unique ids, and OpenAPI subset
 - [Vertex AI — Function calling reference](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling) — Gemini's enterprise surface
 - [OpenAI — Structured outputs](https://platform.openai.com/docs/guides/structured-outputs) — strict-mode schema enforcement details
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declaration, call, result).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Translate one tool declaration across all three provider formats and predict where strict-mode constraints will differ.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declaration, call, result),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -439,3 +439,13 @@ python3 -m pytest code/tests/ -v
 ```
 
 The demo prints the EvalReport in JSON, including pass@1, pass@5, mean latency, and per-task breakdown. The exit code is zero. The tests cover the verifier functions, the pass@k math, fixture loading, and the harness end-to-end against the bundled reference candidate.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define a fixture task as a triple of goal, setup, and verifier.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Score multiple sample runs per task and compute pass@1 and pass@k.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Aggregate latency and cost into mean and 95th-percentile metrics.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define a fixture task as a triple of goal, setup, and verifier,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Aggregate latency and cost into mean and 95th-percentile metrics,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -120,3 +120,13 @@ The fix: stack perceptrons into layers. A multi-layer perceptron can solve XOR b
 - Frank Rosenblatt, "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain" (1958) -- the original paper that started it all
 - Minsky & Papert, "Perceptrons" (1969) -- the book that proved XOR was unsolvable by single-layer networks and killed perceptron research for a decade
 - Michael Nielsen, "Neural Networks and Deep Learning", Chapter 1 (http://neuralnetworksanddeeplearning.com/) -- free online, best visual explanation of how perceptrons compose into networks
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a perceptron from scratch in Python, including the weight update rule and step activation function.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why a single perceptron can only solve linearly separable problems and demonstrate the XOR failure case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct a multi-layer perceptron by composing OR, NAND, and AND gates to solve XOR.
+
+## Reference Solution
+
+Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a perceptron from scratch in Python, including the weight update rule and step activation function,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct a multi-layer perceptron by composing OR, NAND, and AND gates to solve XOR,” and cite a repeatable check rather than relying on visual inspection alone.

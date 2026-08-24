@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "What does the Python artifact produce for AI Cost and Value Economics?",
       "options": [
-        "A finished business case ready to submit for funding without review",
+        "A finished business case ready to submit for funding without review, because one plausible output is sufficient production evidence",
         "A ranked plan with category, score, priority, controls, and rationale",
         "A single cost-of-ownership figure with no assumptions attached",
         "An invoice reconciling token spend against the license budget"
@@ -69,7 +69,7 @@
         "To formally replace the benefits owner's accountability for the value case after funding",
         "To keep shaky cost assumptions out of sight of the people making the funding call",
         "To create a reusable worksheet or prompt that teams can keep applying after the course ends",
-        "To automatically generate completion certificates for participants once the workshop ends"
+        "To automatically generate completion certificates for participants once the workshop ends, with no need to inspect intermediate results or test edge cases"
       ],
       "correct": 2,
       "explanation": "The output template is a value case calculator and assumption log teams keep applying after the course — not a substitute for the benefits owner's accountability, a way to hide cost assumptions, or an automatic certificate generator."

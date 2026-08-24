@@ -156,3 +156,13 @@ flowchart LR
 - Phase 19 lesson 46 covers the gradient accumulation patterns used in the training stack the harness scores.
 - Phase 19 lesson 47 covers the checkpoint format you score against; pin the checkpoint hash in the leaderboard.
 - Phase 19 lesson 48 covers the distributed training stack that produced the model under test.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define a task as a JSONL file with `prompt`, `targets`, `metric`, and optional `extras` per example.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement five metrics: exact match, rouge-l F1, executable check, multiple choice, and substring contains.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a runner that batches examples per task and dispatches to a swappable model adapter.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define a task as a JSONL file with `prompt`, `targets`, `metric`, and optional `extras` per example,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a runner that batches examples per task and dispatches to a swappable model adapter,” and cite a repeatable check rather than relying on visual inspection alone.

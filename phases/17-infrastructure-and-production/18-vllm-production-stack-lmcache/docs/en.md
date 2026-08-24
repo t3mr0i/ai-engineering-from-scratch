@@ -91,3 +91,13 @@ Phase 17 · 17 disaggregated serving + LMCache compounds: KV transfers from pref
 - [LMCache for Enterprise-Scale LLM Inference (arXiv:2510.09665)](https://arxiv.org/html/2510.09665v2)
 - [LMCache GitHub](https://github.com/LMCache/LMCache) — Connector implementation.
 - [vLLM 0.11.0 release notes](https://github.com/vllm-project/vllm/releases) — asynchronous path details.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Diagram the vLLM production-stack layers: router, engines, KV offload, observability.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the KV Offloading Connector API (v0.9.0+) and how the 0.11.0 asynchronous path hides offload latency.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Quantify when LMCache CPU-DRAM helps (KV > HBM) vs adds overhead (KV small enough to fit HBM).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Diagram the vLLM production-stack layers: router, engines, KV offload, observability,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Quantify when LMCache CPU-DRAM helps (KV > HBM) vs adds overhead (KV small enough to fit HBM),” and cite a repeatable check rather than relying on visual inspection alone.

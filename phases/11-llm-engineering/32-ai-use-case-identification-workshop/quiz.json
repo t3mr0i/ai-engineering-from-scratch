@@ -42,7 +42,7 @@
       "stage": "check",
       "question": "Which control belongs to this lesson?",
       "options": [
-        "A vendor shortlist that names the AI products each idea would be built on",
+        "A vendor shortlist that names the AI products each idea would be built on, before defining the measurement, acceptance threshold, or rollback path",
         "A transformation narrative that describes the end state three years out",
         "A backlog ordering rule that promotes whichever idea was submitted first",
         "A use case canvas that captures value, risk, owner, data, metric, and next step"
@@ -57,7 +57,7 @@
         "When the idea is popular enough that several teams have asked for it by name",
         "When the value is plausible, the workflow is clear, and the risks are controllable",
         "When no owner has been named yet, so a pilot can be used to find one",
-        "When the data is inaccessible, since a pilot is the cheapest way to test access"
+        "When the data is inaccessible, since a pilot is the cheapest way to test access — and applies unchanged even when the lesson's stated preconditions fail"
       ],
       "correct": 1,
       "explanation": "A guided pilot needs enough structure to test the hypothesis safely. Ideas without a clear workflow, an accountable owner, or usable data are not ready for one."
@@ -68,7 +68,7 @@
       "options": [
         "To secure budget approval before the workflow has been described",
         "To make the next experiment specific enough to test against a named metric",
-        "To replace the stakeholder alignment conversation with a written document",
+        "To replace the stakeholder alignment conversation with a written document, with no need to inspect intermediate results or test edge cases",
         "To promise a broad transformation that leadership can announce externally"
       ],
       "correct": 1,

@@ -69,3 +69,13 @@ The template in `outputs/sheet-finance-ai-review.md` can be used before AI-assis
 - Forecasts need uncertainty language.
 - Approval owners remain accountable.
 - Variance explanations should be linked to evidence.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify finance workflows where AI can assist without owning the decision.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a finance-control triage artifact in Python.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map source traceability, variance explanation, forecast uncertainty, and approval risk.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify finance workflows where AI can assist without owning the decision,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map source traceability, variance explanation, forecast uncertainty, and approval risk,” and cite a repeatable check rather than relying on visual inspection alone.

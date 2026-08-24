@@ -369,3 +369,13 @@ print(f"\nTry changing test_input to see different classifications.")
 - [langgraph-supervisor reference](https://reference.langchain.com/python/langgraph/supervisor/) — supervisor pattern API
 - [AutoGen v0.4, Microsoft Research](https://www.microsoft.com/en-us/research/articles/autogen-v0-4-reimagining-the-foundation-of-agentic-ai-for-scale-extensibility-and-robustness/) — actor-model alternative
 - [Claude Agent SDK overview](https://platform.claude.com/docs/en/agent-sdk/overview) — session store and subagents
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe LangGraph's core model: state machine with immutable state, function nodes, conditional edges, and post-step checkpoints.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the four capabilities the docs highlight: durable execution, streaming, human-in-the-loop, comprehensive memory.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the three orchestration topologies LangGraph supports: supervisor, peer-to-peer (swarm), hierarchical (nested subgraphs).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe LangGraph's core model: state machine with immutable state, function nodes, conditional edges, and post-step checkpoints,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the three orchestration topologies LangGraph supports: supervisor, peer-to-peer (swarm), hierarchical (nested subgraphs),” and cite a repeatable check rather than relying on visual inspection alone.

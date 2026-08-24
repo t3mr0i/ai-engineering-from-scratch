@@ -12,10 +12,10 @@
         "Switches to a different concept node"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Asks a leading question that scaffolds the learner toward the answer” matches the lesson’s treatment of Capstone 17 — Personal AI Tutor (Adaptive, Multimodal, with Memory); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Which structure does the curriculum graph encode?",
       "options": [
         "A directed graph of concepts with prerequisite edges, attached to OER content",
@@ -24,7 +24,7 @@
         "Only the most recently studied node"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“A directed graph of concepts with prerequisite edges, attached to OER content” matches the lesson’s treatment of Capstone 17 — Personal AI Tutor (Adaptive, Multimodal, with Memory); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Per-concept mastery probability via Bayesian knowledge tracing or a similar variant"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“Per-concept mastery probability via Bayesian knowledge tracing or a similar variant” matches the lesson’s treatment of Capstone 17 — Personal AI Tutor (Adaptive, Multimodal, with Memory); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         "Episodic holds embeddings; semantic holds raw audio"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“Episodic holds every interaction; semantic holds compacted mistakes and preferences promoted from episodic” matches the lesson’s treatment of Capstone 17 — Personal AI Tutor (Adaptive, Multimodal, with Memory); the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Which constraint shapes memory retention for K-12 learners?",
       "options": [
         "Retention based on model context length",
@@ -60,7 +60,7 @@
         "COPPA-aware retention with auto-deletion after a defined window and parental access"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“COPPA-aware retention with auto-deletion after a defined window and parental access” matches the lesson’s treatment of Capstone 17 — Personal AI Tutor (Adaptive, Multimodal, with Memory); the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "A single one-hour session with one learner"
       ],
       "correct": 2,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "Which multimodal input paths does the tutor expose to the learner?",
-      "options": [
-        "Text only",
-        "Photo only via a custom OCR model",
-        "Voice only with no text or photo",
-        "Text typed, voice via LiveKit + Whisper, and photo math via dots.ocr or PaliGemma 2"
-      ],
-      "correct": 3,
-      "explanation": ""
+      "explanation": "“Pre-test and post-test over two weeks with 10 learners, compared against a non-adaptive baseline cohort” matches the lesson’s treatment of Capstone 17 — Personal AI Tutor (Adaptive, Multimodal, with Memory); the alternatives conflict with its definitions or workflow."
     }
   ]
 }

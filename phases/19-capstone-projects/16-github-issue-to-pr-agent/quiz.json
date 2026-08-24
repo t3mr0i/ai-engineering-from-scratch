@@ -12,10 +12,10 @@
         "A manual file upload"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“A GitHub webhook fired by an issue label or PR comment, dispatched to a sandbox worker” matches the lesson’s treatment of Capstone 16 — GitHub Issue-to-PR Autonomous Agent; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "Why must the agent run with a short-lived GitHub App installation token rather than a personal access token?",
       "options": [
         "Apps avoid GitHub rate limits entirely",
@@ -24,7 +24,7 @@
         "Apps require less code than PATs"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“App tokens grant fine-grained, scoped, short-lived credentials suited for per-task workers” matches the lesson’s treatment of Capstone 16 — GitHub Issue-to-PR Autonomous Agent; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "Disabling git on the worker"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Branch protection enforcing no direct push or force-push to main, with the app not on the bypass list” matches the lesson’s treatment of Capstone 16 — GitHub Issue-to-PR Autonomous Agent; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,10 +48,10 @@
         ".github/workflows is a virtual path"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“GitHub App permissions are not path-scoped, so the worker's allow-list check on the proposed diff is the right place to enforce it” matches the lesson’s treatment of Capstone 16 — GitHub Issue-to-PR Autonomous Agent; the alternatives conflict with its definitions or workflow."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What gating happens after the agent loop concludes, before opening a PR?",
       "options": [
         "The reviewer model rewrites the diff",
@@ -60,7 +60,7 @@
         "The repo is force-pushed to main"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“Full CI runs in the sandbox; coverage delta is computed; PRs with a regression beyond a threshold are labeled needs-review” matches the lesson’s treatment of Capstone 16 — GitHub Issue-to-PR Autonomous Agent; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,19 +72,7 @@
         "Only a turn cap"
       ],
       "correct": 2,
-      "explanation": ""
-    },
-    {
-      "stage": "post",
-      "question": "What goes into the PR body that the agent posts?",
-      "options": [
-        "Only the diff",
-        "Rationale, diff summary, trace URL, cost, and turn count so reviewers can audit and follow up",
-        "A generated changelog only",
-        "Nothing; the PR has an empty body"
-      ],
-      "correct": 1,
-      "explanation": ""
+      "explanation": "“A dollar ceiling per PR plus a maximum number of PRs per repo per day” matches the lesson’s treatment of Capstone 16 — GitHub Issue-to-PR Autonomous Agent; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

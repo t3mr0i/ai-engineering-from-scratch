@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 17 · 13 (LLM observability), Phase 17 · 23 (SRE for AI)
-**Time:** ~45 minutes
+**Time:** ~125 minutes
 
 ## Learning Objectives
 
@@ -153,3 +153,13 @@ Patterns a senior consultant recognises by name. None of them are subtle after y
 - [OpenAI — Production best practices](https://platform.openai.com/docs/guides/production-best-practices) — OpenAI's own guide to monitoring, rollback, and safety in deployment.
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US federal framework for AI risk management; the GOVERN function maps directly to incident ownership and escalation tree design.
 - [PagerDuty — Incident Response Docs](https://response.pagerduty.com/) — the operational incident response playbook this lesson's severity table and runbook structure are adapted from.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Operations: Triage Signals, Runbooks, and Incident Response (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Operations: Triage Signals, Runbooks, and Incident Response (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

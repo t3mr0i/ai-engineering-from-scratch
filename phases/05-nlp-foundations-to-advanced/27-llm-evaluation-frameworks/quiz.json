@@ -15,7 +15,7 @@
       "explanation": "Exact-match/F1 cannot recognize paraphrases or formatting differences that humans would mark correct."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does the RAGAS faithfulness metric measure?",
       "options": [
         "Retrieval recall, the fraction of all relevant passages successfully returned by the retriever's top-K results",
@@ -43,7 +43,7 @@
       "question": "What is self-evaluation bias in LLM-as-judge setups?",
       "options": [
         "The claim that judge latency drops whenever the judge model shares a weights family with the generator",
-        "The observation that judges run measurably faster whenever they are scoring cached, previously seen model outputs",
+        "The observation that judges run measurably faster whenever they are scoring cached, previously seen model outputs, before defining the measurement, acceptance threshold, or rollback path",
         "Using the same LLM family to both generate and judge inflates scores compared to using an independent judge model",
         "The tendency of judge models to silently ignore any system prompt they are given during evaluation"
       ],
@@ -51,7 +51,7 @@
       "explanation": "Same-family generator+judge biases scores upward; use a different model family for judging."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does G-Eval specifically add over a naive 'score 0-1' prompt?",
       "options": [
         "A larger context window, letting the judge see substantially more of the full conversation history before scoring",
@@ -73,30 +73,6 @@
       ],
       "correct": 0,
       "explanation": "Means hide tail failures; surface bottom-10% to catch high-severity issues."
-    },
-    {
-      "stage": "post",
-      "question": "Why pin the judge model + version in CI?",
-      "options": [
-        "It is a contractual requirement Anthropic imposes on anyone using its models as an evaluation judge",
-        "Pinning the judge model measurably lowers the per-call cost of running evaluation in CI pipelines",
-        "Unpinned judges are vulnerable to silent tokenizer drift, which corrupts the scoring input before evaluation even starts",
-        "Upgrading the judge model silently shifts every metric it produces; longitudinal comparison breaks without a frozen judge"
-      ],
-      "correct": 3,
-      "explanation": "A judge upgrade silently shifts the metric baseline; pinning preserves cross-run comparability."
-    },
-    {
-      "stage": "post",
-      "question": "Where does DeepEval fit relative to RAGAS?",
-      "options": [
-        "DeepEval is a hosted-only SaaS product, unlike RAGAS which can only ever run as a self-hosted open-source library",
-        "DeepEval is pytest-for-LLMs (CI gates, G-Eval, hallucination metrics); RAGAS specializes in reference-free RAG monitoring",
-        "DeepEval is actually a tokenizer library, unrelated to LLM output evaluation or scoring at all",
-        "DeepEval fully replaces RAGAS, making RAGAS's four RAG-specific metrics obsolete for production use"
-      ],
-      "correct": 1,
-      "explanation": "DeepEval anchors CI/CD regression testing; RAGAS handles reference-free RAG monitoring."
     }
   ]
 }

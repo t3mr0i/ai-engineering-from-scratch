@@ -15,7 +15,7 @@
       "explanation": "Greshake et al. coined indirect prompt injection: attacker-controlled retrieved content carries instructions."
     },
     {
-      "stage": "pre",
+      "stage": "check",
       "question": "What does the lesson say processing retrieved prompts is equivalent to?",
       "options": [
         "Arbitrary code execution on the agent's own tool-use surface, per Greshake et al.",
@@ -51,7 +51,7 @@
       "explanation": "PVE wraps every tool invocation with a cheap validator before main-model commit."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "Why is 'system prompt says ignore untrusted instructions' insufficient?",
       "options": [
         "It is too short a string to satisfy most model providers' minimum system-prompt length requirement",
@@ -73,18 +73,6 @@
       ],
       "correct": 0,
       "explanation": "Persistent memory poisoning means injections survive across sessions if memory is treated as trusted."
-    },
-    {
-      "stage": "post",
-      "question": "What metadata does the lesson recommend attaching to every piece of content?",
-      "options": [
-        "An encryption key derived per-session so retrieved content cannot be replayed across sessions",
-        "A source tag: user_message vs tool_output vs retrieved; validator refuses directives in retrieved content",
-        "A timestamp only, with no indication of whether the content came from the user or a tool",
-        "A token count only, used purely to enforce the model's fixed context window budget limit"
-      ],
-      "correct": 1,
-      "explanation": "Provenance tagging lets the validator treat content according to its trust level."
     }
   ]
 }

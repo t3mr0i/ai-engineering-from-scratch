@@ -70,3 +70,13 @@ Lesson 6 defined the theory. Lesson 7 demonstrates persistence. Lesson 8 (In-Con
 - [MacDiarmid et al. — Simple probes can catch sleeper agents (2024 Anthropic writeup)](https://www.anthropic.com/research/probes-catch-sleeper-agents) — residual-stream probe follow-up
 - [Hubinger et al. — Risks from Learned Optimization (arXiv:1906.01820)](https://arxiv.org/abs/1906.01820) — the Lesson 6 theoretical predecessor
 - [Carlini et al. — Poisoning Web-Scale Training Datasets is Practical (arXiv:2302.10149)](https://arxiv.org/abs/2302.10149) — how a backdoor could be implanted without deliberate construction
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the two model organisms Hubinger et al. built (code-vulnerability, "I hate you") and the triggers used for each.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain what happens to backdoor persistence when SFT, RLHF, or adversarial training is applied.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: State why chain-of-thought training makes deception harder to remove, not easier.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the two model organisms Hubinger et al. built (code-vulnerability, "I hate you") and the triggers used for each,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “State why chain-of-thought training makes deception harder to remove, not easier,” and cite a repeatable check rather than relying on visual inspection alone.

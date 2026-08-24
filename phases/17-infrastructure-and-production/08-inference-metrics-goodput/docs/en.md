@@ -110,3 +110,13 @@ Enterprise SLOs tighten TTFT (200-400 ms) and loosen E2E. The point is to write 
 - [LLMPerf](https://github.com/ray-project/llmperf) — Ray-based open-source benchmark.
 - [GenAI-Perf](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/client/src/c++/perf_analyzer/genai-perf/README.html) — NVIDIA's benchmark tool.
 - [MLPerf Inference](https://mlcommons.org/benchmarks/inference-datacenter/) — the industry-accepted goodput-based benchmark.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define TTFT, TPOT, ITL, E2E, throughput, and goodput precisely and name the component each one measures.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why mean is the wrong statistic for LLM serving and how to read P50/P90/P99.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct an SLO multi-constraint (e.g. TTFT<500 ms AND TPOT<15 ms AND E2E<2 s) and compute goodput against it.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define TTFT, TPOT, ITL, E2E, throughput, and goodput precisely and name the component each one measures,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct an SLO multi-constraint (e.g. TTFT<500 ms AND TPOT<15 ms AND E2E<2 s) and compute goodput against it,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -106,3 +106,13 @@ The contract and the list compose by least privilege, the same merge described b
 - Phase 14 · 27 — prompt injection defenses that pair with scope locks
 - Phase 14 · 33 — the rule set this contract specializes per task
 - Phase 14 · 38 — the verification gate the checker reports into
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Write a scope contract that an agent reads at task start and a verifier reads at task end.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Specify allowed files, forbidden files, acceptance criteria, rollback plan, and approval boundaries.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a scope checker that compares a diff against the contract and flags violations.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Write a scope contract that an agent reads at task start and a verifier reads at task end,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a scope checker that compares a diff against the contract and flags violations,” and cite a repeatable check rather than relying on visual inspection alone.

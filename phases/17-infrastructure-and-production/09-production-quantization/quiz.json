@@ -12,7 +12,7 @@
         "NVFP4"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“GGUF Q4_K_M / Q5_K_M” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -24,7 +24,7 @@
         "NVFP4"
       ],
       "correct": 2,
-      "explanation": ""
+      "explanation": "“GPTQ with Marlin kernels” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -36,7 +36,7 @@
         "AWQ only shrinks weights; KV cache and activations are separate and can add 30-50 GB at production batch sizes"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“AWQ only shrinks weights; KV cache and activations are separate and can add 30-50 GB at production batch sizes” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "check",
@@ -48,7 +48,7 @@
         "It increases model size"
       ],
       "correct": 1,
-      "explanation": ""
+      "explanation": "“The algorithm makes wrong decisions about which weights to protect, dropping domain accuracy (for example several Pass@1 points on HumanEval)” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "FP8 weights"
       ],
       "correct": 3,
-      "explanation": ""
+      "explanation": "“FP8 weights” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
     },
     {
       "stage": "post",
@@ -72,7 +72,7 @@
         "Cannot be combined with FP8 KV cache"
       ],
       "correct": 0,
-      "explanation": ""
+      "explanation": "“No LoRA support yet” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
     }
   ]
 }

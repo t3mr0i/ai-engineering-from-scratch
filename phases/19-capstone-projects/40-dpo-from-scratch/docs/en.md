@@ -157,3 +157,13 @@ DPO is mathematically equivalent to RLHF under the Bradley-Terry preference mode
 - Replace the reference with a smaller cheaper model (knowledge distillation flavour).
 
 The implementation gives you the loss, the reference invariance, and the training loop. The math is the lesson. The code makes the math concrete.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Derive the DPO loss as a sigmoid over a scaled log-ratio difference and connect it to the implicit reward.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a reference model + policy model pair with a frozen reference and a trainable policy.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute sequence-level log-probabilities under both models, masking prompt tokens.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Derive the DPO loss as a sigmoid over a scaled log-ratio difference and connect it to the implicit reward,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute sequence-level log-probabilities under both models, masking prompt tokens,” and cite a repeatable check rather than relying on visual inspection alone.

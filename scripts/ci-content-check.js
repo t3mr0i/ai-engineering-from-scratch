@@ -134,7 +134,7 @@ const THRESHOLDS = {
   //    already dropped to 72.4-73.1%, didn't justify a permanent 20-point
   //    reserve) down to today's real measured value. Keep lowering as B13
   //    remediation continues toward 40%.
-  c5_longestCorrectSharePct: 69.4,
+  c5_longestCorrectSharePct: 40,
   // 6. No empty `explanation`. Ratcheted from 401 (repo-wide max, could
   //    never fail) to today's real measured value, per §10-5's same
   //    "ratchet, don't chase a moving target with a permanent cushion"
@@ -153,7 +153,7 @@ const THRESHOLDS = {
   //     correlation is ~0 by design (time is not simply proportional to
   //     length), so this gates on the wpm-band violation count, not on
   //     correlation. PLAN: start at today's state.
-  c11_implausibleTime: 17,
+  c11_implausibleTime: 0,
   // 12. Referenced phase/lesson appears earlier in the SAME LRN course.
   //     PLAN: start at today's state. See check-12 comment: this diverges
   //     materially from the plan's original "92 of 112" estimate.

@@ -136,3 +136,13 @@ For a new document-AI project:
 - [Huang et al. — LayoutLMv3 (arXiv:2204.08387)](https://arxiv.org/abs/2204.08387)
 - [Kim et al. — Donut (arXiv:2111.15664)](https://arxiv.org/abs/2111.15664)
 - [Wang et al. — DocLLM (arXiv:2401.00908)](https://arxiv.org/abs/2401.00908)
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the three eras of document AI: OCR pipeline, OCR-free, VLM-native.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe LayoutLMv3's three input streams: text, layout (bbox), image patches, with unified masking.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare Donut (OCR-free, image → markup), Nougat (scientific paper → LaTeX), DocLLM (layout-aware generative), PaliGemma 2 (VLM-native).
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the three eras of document AI: OCR pipeline, OCR-free, VLM-native,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare Donut (OCR-free, image → markup), Nougat (scientific paper → LaTeX), DocLLM (layout-aware generative), PaliGemma 2 (VLM-native),” and cite a repeatable check rather than relying on visual inspection alone.

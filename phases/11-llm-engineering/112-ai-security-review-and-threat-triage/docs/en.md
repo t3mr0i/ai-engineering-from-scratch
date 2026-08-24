@@ -99,3 +99,13 @@ The full OWASP LLM Top 10 2025 document is the authoritative reference for the t
 - [ISO/IEC 27001:2022 Annex A](https://www.iso.org/standard/82875.html) — information security controls standard; Annex A section A.5 covers information classification relevant to the sensitive data category.
 - [Anthropic — Claude's approach to trust and safety](https://trust.anthropic.com/) — documentation on Anthropic's model-level controls, relevant when assessing which mitigations can be delegated to the model vs. which must be architectural.
 - [PortSwigger Web Security Academy — Prompt Injection](https://portswigger.net/web-security/llm-attacks) — technical lab environment for understanding prompt injection attack shapes; recommended for technical team members reviewing the triage findings.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Security Threat Triage for Business Proposals (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Security Threat Triage for Business Proposals (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

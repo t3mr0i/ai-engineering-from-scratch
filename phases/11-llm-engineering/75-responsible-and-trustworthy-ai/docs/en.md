@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 18 · 24 (regulatory frameworks)
-**Time:** ~55 minutes
+**Time:** ~135 minutes
 
 ## Learning Objectives
 
@@ -143,3 +143,13 @@ A common mistake is to run only the first gate and stop there. The contract-revi
 - [European Commission — Conformity assessment under the AI Act](https://digital-strategy.ec.europa.eu/en/policies/ai-act-conformity-assessment) — the procedure for high-risk systems; useful framing for a kickoff workshop.
 - [ICO Guidance on AI and data protection](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/) — the UK regulator's practical guidance on DPIAs for AI and bias auditing.
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US voluntary framework; maps cleanly against the AI Act risk tiers for organisations operating in both jurisdictions.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make (2026).
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.

@@ -63,3 +63,7 @@ owner of that condition.
 
 - [Phase 14 · 30 — Eval-Driven Agent Development](../../30-eval-driven-agent-development/docs/en.md)
 - [Phase 14 · 43 — Loop Engineering](../../43-loop-engineering/docs/en.md)
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define a verification check with a name, boolean result, and evidence detail,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Keep exceptions and missing checks visible instead of treating them as passes,” and cite a repeatable check rather than relying on visual inspection alone.

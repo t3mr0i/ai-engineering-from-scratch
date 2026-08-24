@@ -58,3 +58,7 @@ context budget.
 
 - [Phase 14 · 33 — Agent Instructions as Executable Constraints](../../33-instructions-as-executable-constraints/docs/en.md)
 - [Phase 14 · 35 — Initialization Scripts](../../35-initialization-scripts/docs/en.md)
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a compact index from repository paths and headings,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Select a progressive read set from a task description,” and cite a repeatable check rather than relying on visual inspection alone.

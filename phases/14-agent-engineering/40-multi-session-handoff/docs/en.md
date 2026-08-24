@@ -93,3 +93,13 @@ The cleanup phase emits a `clean_state.json` of blocking issues; an empty list i
 - Phase 14 · 34 — the state file the generator reads
 - Phase 14 · 38 — the verification verdict the packet points at
 - Phase 14 · 39 — the reviewer report bundled into the packet
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify the seven fields every handoff packet needs.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Generate a handoff from the workbench artifacts without hand-writing prose.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trim large feedback logs into a handoff-sized summary.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify the seven fields every handoff packet needs,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trim large feedback logs into a handoff-sized summary,” and cite a repeatable check rather than relying on visual inspection alone.

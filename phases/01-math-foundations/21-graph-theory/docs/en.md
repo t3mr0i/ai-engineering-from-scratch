@@ -252,3 +252,13 @@ graph LR
 - **Hamilton (2020)** -- "Graph Representation Learning." Book covering GNNs from fundamentals to applications.
 - **Bronstein et al. (2021)** -- "Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges." The unifying framework paper.
 - **Veličković et al. (2018)** -- "Graph Attention Networks." Extends message passing with attention mechanisms.
+
+## Exercises
+
+1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a graph class with adjacency matrix/list representations and implement BFS and DFS traversals.
+2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute the graph Laplacian and use its eigenvalues to detect connected components and cluster nodes.
+3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement one round of GNN-style message passing as a normalized adjacency matrix multiplication.
+
+## Reference Solution
+
+Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a graph class with adjacency matrix/list representations and implement BFS and DFS traversals,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement one round of GNN-style message passing as a normalized adjacency matrix multiplication,” and cite a repeatable check rather than relying on visual inspection alone.
