@@ -205,8 +205,13 @@
     var coverage = doc.getElementById("skillsProgressCoverage");
     var sort = doc.getElementById("skillsProgressSort");
     var showAllButton = doc.getElementById("skillsProgressShowAll");
+    var profileSelect = doc.getElementById("capabilityProfileSelect");
+    var groupList = doc.getElementById("capabilityGroupList");
+    var groupReset = doc.getElementById("capabilityGroupReset");
     var expanded = {};
     var showAll = false;
+    var activeCluster = "";
+    var cockpitStore = "lhind:lrn-cockpit:v3";
 
     function i18n(key, fallback, vars) {
       var dict = (typeof window !== "undefined" && window.SITE_I18N) || {};
@@ -221,9 +226,36 @@
     }
 
     function currentProfileId() {
-      var select = doc.getElementById("profileSelect");
-      if (select && select.value) return select.value;
-      return data.profiles && data.profiles[0] ? data.profiles[0].id : "tc";
+      if (profileSelect && profileSelect.value) return profileSelect.value;
+      return (data.profiles || []).some(function (profile) { return profile.id === "tc"; }) ? "tc" : (data.profiles[0] && data.profiles[0].id || "tc");
+    }
+
+    function storedProfileId() {
+      try {
+        var saved = JSON.parse(window.localStorage.getItem(cockpitStore));
+        if (saved && (data.profiles || []).some(function (profile) { return profile.id === saved.profileId; })) {
+          return saved.profileId;
+        }
+      } catch (error) {}
+      return (data.profiles || []).some(function (profile) { return profile.id === "tc"; }) ? "tc" : (data.profiles[0] && data.profiles[0].id || "tc");
+    }
+
+    function saveProfileId(profileId) {
+      try {
+        var saved = JSON.parse(window.localStorage.getItem(cockpitStore)) || {};
+        saved.profileId = profileId;
+        window.localStorage.setItem(cockpitStore, JSON.stringify(saved));
+      } catch (error) {}
+    }
+
+    function populateProfileSelect() {
+      if (!profileSelect) return;
+      (data.profiles || []).forEach(function (profile) {
+        var option = element("option", "", profile.label);
+        option.value = profile.id;
+        profileSelect.appendChild(option);
+      });
+      profileSelect.value = storedProfileId();
     }
 
     function element(tag, className, content) {
@@ -237,6 +269,11 @@
       String(text || "").split(/\n\s*\n/).filter(Boolean).forEach(function (block) {
         parent.appendChild(element("p", "", block));
       });
+    }
+
+    function shortDescription(text) {
+      var first = String(text || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/)[0] || "";
+      return first.length > 180 ? first.slice(0, 177).trimEnd() + "…" : first;
     }
 
     function levelDescription(text) {
@@ -407,7 +444,8 @@
 
       var identity = element("span", "skill-track__identity");
       identity.appendChild(element("strong", "", item.title));
-      identity.appendChild(element("small", "", item.cluster));
+      identity.appendChild(element("small", "skill-track__cluster", item.cluster));
+      identity.appendChild(element("span", "skill-track__description", shortDescription(item.description)));
 
       var visual = element("span", "skill-track__visual");
       var rail = element("span", "skill-track__rail");
@@ -447,6 +485,36 @@
       return li;
     }
 
+    function renderGroupNavigation(model) {
+      if (!groupList) return;
+      var lang = typeof window !== "undefined" && window.SiteLang ? window.SiteLang.get() : "en";
+      var counts = {};
+      model.items.forEach(function (item) { counts[item.cluster] = (counts[item.cluster] || 0) + 1; });
+      var groups = data.capabilityGroups || [];
+      groupList.replaceChildren.apply(groupList, groups.map(function (group) {
+        var button = element("button", "capability-group");
+        button.type = "button";
+        button.setAttribute("aria-pressed", String(activeCluster === group.cluster));
+        button.dataset.active = String(activeCluster === group.cluster);
+        var icon = element("span", "capability-group__icon");
+        var glyph = element("i", "ph-light ph-" + (group.icon || CLUSTER_ICONS[group.cluster] || "star"));
+        glyph.setAttribute("aria-hidden", "true");
+        icon.appendChild(glyph);
+        var copy = element("span", "capability-group__copy");
+        copy.appendChild(element("strong", "", lang === "de" ? group.labelDe : group.label));
+        copy.appendChild(element("span", "", lang === "de" ? group.descriptionDe : group.description));
+        copy.appendChild(element("small", "", i18n("capability_groups_count", "{count} capabilities", { count: counts[group.cluster] || 0 })));
+        button.append(icon, copy);
+        button.addEventListener("click", function () {
+          activeCluster = activeCluster === group.cluster ? "" : group.cluster;
+          showAll = Boolean(activeCluster);
+          render();
+        });
+        return button;
+      }));
+      if (groupReset) groupReset.setAttribute("aria-pressed", String(!activeCluster));
+    }
+
     function render() {
       var model = createModel({
         catalogCapabilities: data.capabilities || [],
@@ -462,7 +530,9 @@
         return;
       }
       section.hidden = false;
-      var sorted = sortItems(model.items, sort ? sort.value : "progress");
+      renderGroupNavigation(model);
+      var scoped = activeCluster ? model.items.filter(function (item) { return item.cluster === activeCluster; }) : model.items;
+      var sorted = sortItems(scoped, sort ? sort.value : "progress");
       var shown = showAll ? sorted : sorted.slice(0, INITIAL_LIMIT);
       list.replaceChildren.apply(list, shown.map(skillRow));
       total.textContent = model.totalPercent + "%";
@@ -480,13 +550,22 @@
     }
 
     if (sort) sort.addEventListener("change", render);
+    populateProfileSelect();
+    if (profileSelect) profileSelect.addEventListener("change", function () {
+      saveProfileId(profileSelect.value);
+      expanded = {};
+      render();
+    });
+    if (groupReset) groupReset.addEventListener("click", function () {
+      activeCluster = "";
+      showAll = false;
+      render();
+    });
     showAllButton.addEventListener("click", function () {
       showAll = !showAll;
       render();
       showAllButton.focus();
     });
-    var profileSelect = doc.getElementById("profileSelect");
-    if (profileSelect) profileSelect.addEventListener("change", render);
     doc.addEventListener("sitelang:change", render);
     if (progressApi && progressApi.onChange) progressApi.onChange(render);
     render();

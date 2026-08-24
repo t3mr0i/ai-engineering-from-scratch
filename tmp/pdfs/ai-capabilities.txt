@@ -1,0 +1,818 @@
+AI Capabilities
+
+
+
+
+        This Document - Your Compass   LHIND Academy Pages
+
+
+
+
+            WHAT to learn?                HOW to learn?
+Introduction
+
+As artificial intelligence moves from experimentation into everyday delivery, we need more than isolated experts or general a wareness
+sessions. We need a shared literacy model. In this context, AI Literacy is the capability to interpret AI developments, evaluate the
+relevance of AI for certain task, use AI tools appropriately, and shape outcomes with AI within the scope of one’s role and d ecision rights.
+
+The first central idea of our model is the usage of AI capabilities. We intentionally defined the target picture for LHIND using AI capabilities
+instead of specific tools or skills. Why? Tools come and go. The capabilities that we defined shall remain more stable and will serve as a
+north star for your development. The second central idea is our role-based view. AI Literacy does not look the same for every function. For
+example, a consultant, an application manager or a project manager do not need identical depth for all conceivable AI usages.
+
+Thus, all roles need a common frame that enables collaboration across business, technology and support functions but different depths. We
+use three levels per AI capability: Acquire, Deepen and Create. Acquire represents the foundational level, where people build a reliable
+understanding of concepts, opportunities, limits and safe usage patterns. Deepen reflects the point at which teams apply AI with more role-
+specific judgement, stronger methods and clearer integration into day-to-day work. Create marks the highest ambition level, where roles
+actively redesign offerings, decisions, workflows or services through AI and contribute to scalable organizational value creation. To give you
+an idea of “how it will feel” to work with AI in the future, we drafted a current state and a target state per role.
+
+The actual measures to build up the AI capabilities are courses, hands-on sessions, blended learning sessions, etc. The Self-Assessment
+outputs the corresponding courses for your specific context, and on the pages of the LHIND Academy you will find the courses and blended
+learning sessions. The AI Literacy team is continuously evaluating new courses and learning formats and platforms and will ma ke them
+available to you. Enjoy the journey. Have fun. We look forward to your feedback.
+
+                                                                                                    Your AI Literacy & LHIND Academy Team
+                                                                             Lars Schwabe, Oksana Wagner, Vanessa Mai and Tatjana Matiasch
+The Impact of the AI Literacy Initiative for LHIND – For Each Role (1/2)
+
+Technology Consulting
+▪ AI knowledge is often expert-driven and unevenly distributed.                           ▪ Consultants act as AI solution orchestrators across business and technology.
+▪ Many discussions remain at tool or demo level instead of scalable architecture level.   ▪ AI becomes a standard dimension in architecture, platform and delivery decisions.
+▪ Standards for responsible AI and reuse are not yet consistently embedded.               ▪ Reusable patterns, guardrails and evaluation standards are established.
+
+
+
+
+Business & Strategy Consulting
+▪ AI is often discussed as a trend topic rather than a structured value lever             ▪ Massive speed-up in compilation of artifacts, incl. top-quality desk research done in
+▪ Use cases are not always tied to clear outcomes, metrics and adoption pathways            minutes with AI
+▪ Transformation and capability building sometimes run in parallel instead of together    ▪ Consulting links AI consistently to strategy, value and execution.
+                                                                                          ▪ AI Literacy is embedded into every transformation agenda and strategic recommendation
+
+
+Products & Value Streams
+▪ AI ideas emerge frequently, but not always with product strategy discipline             ▪ Product teams build AI around customer value, ownership and measurable outcomes
+▪ Feature thinking can dominate over adoption, outcome and user trust perspectives        ▪ AI is integrated into discovery, backlog prioritization, and KPI management as an assistant
+▪ Measurement of AI impact is inconsistent across teams and streams                         or even an autonomously acting colleague as a peer.
+
+
+
+
+Application Management
+▪ Operations still rely heavily on reactive handling and expert knowledge silos           ▪ Application Management becomes more proactive, data-informed and AI-supported
+▪ Automation potential is only partially realized across support processes                ▪ Knowledge is systematized and accessible in the right context at the right time
+▪ AI usage in operations is cautious and often isolated                                   ▪ Service quality improves through intelligent assistance and automation
+The Impact of the AI Literacy Initiative for LHIND – For Each Role (2/2)
+
+
+Project Management & Agility
+▪ Projects face high coordination effort and heavy manual documentation work
+                                                                                        ▪ Project work becomes faster, clearer and less burdened by administrative effort
+▪ AI is often used individually rather than systematically across teams
+                                                                                        ▪ Teams use AI systematically for planning, synchronization and knowledge flow
+▪ Best practices, usage rules and shared team routines are still emerging
+                                                                                        ▪ Agility is strengthened through better insight, faster feedback and decision support
+
+
+
+
+Corporate Functions
+▪ Many repetitive tasks remain manual and tool usage is fragmented                      ▪ Internal services improve in efficiency, accessibility and quality
+▪ AI experiments happen, but scaling across functions is limited                        ▪ Support functions have much more time for analysis, tactical and strategic planning and
+▪ Uncertainty around governance and accountability slows adoption                         consulting of their internal customers
+                                                                                        ▪ Manual work is largely executed by agents, orchestrated by the support function staff
+
+
+
+
+Leadership
+▪ Leadership interest in AI is high, but maturity and language are not always aligned   ▪ Leadership visibly drives AI as both a business and capability topic
+▪ Initiatives can remain decentralized or tool-centric without a shared direction       ▪ Decisions follow a coherent target picture, governance logic and value ambition
+▪ Role modelling and clear expectations for adoption are still evolving                 ▪ Leaders create orientation, confidence and accountability for scaled adoption of AI
+The 4 Pillars of the AI Literacy Initiative
+
+
+
+
+           AI Capabilities             Trainings & LHIND Academy             AI Self Assessment               AI Champions Network
+
+
+ ▪   19 Capabilities               ▪   Role-specific learning paths   ▪   Anonymous                      ▪   Best-practice sharing
+
+ ▪   Role-based target profile     ▪   Blended learning @ Academy     ▪   10 questions for determining   ▪   AI Ambassadors
+                                                                          the “as is” profile                   ▪ General AI @
+ ▪   “As is” via anonymous self-   ▪   On-demand & on-site                                                        the LHIND workplace
+     assessment                                                       ▪   Role-specific target profile
+                                                                          determine training measures    ▪   AI Dev Champions
+ ▪   Derivation of measures and                                                                                 ▪ for Dev & Ops
+     individual growth path
+AI Capabilities Overview
+
+
+
+                                  ◫                                                                          ⌂
+
+
+  Foundation:               Engineering                 Product and              Advisory and        Leadership and
+ General Literacy             Literacy                Process Literacy            Biz Literacy          Strategy
+
+
+  01 Digital & AI         05 AI Systems and           11 AI-Augmented           13 AI & Automation   17 Managing AI
+  Terminology             Architecture                Requirement Engineering   Use Case Spotting    Transformations
+                          06 Agentic Software
+  02 Data Literacy &                                  12 AI-Enhanced User       14 AI Cost & Value   18 AI Workforce
+                          Development
+  Interpretation                                      Research                  Economics            Strategy
+                          07 AI-Driven Testing & QA
+  03 Personal AI          08 AI-Supported Code                                  15 Consultative      19 Decision Making
+  Productivity            Modernization                                         Prompting            with AI
+                          09 AI-Assisted
+  04 Corporate Ethics &   Documentation                                         16 AI Ecosystem
+  Compliance                                                                    Knowledge
+                          10 Sustainable Software &
+                          Green Coding
+The whole system on one page
+First goal: Establishing the foundation
+                                               Business & Strategy   Products & Value   Technology   Application   Project Management      Corporate            Leadership
+                                                   Consulting            Streams        Consulting   Management          & Agility          Function
+      Foundation
+     1 Digital & AI Terminology                     DEEPEN               DEEPEN           CREATE       DEEPEN           DEEPEN              DEEPEN               DEEPEN
+     2 Data Literacy                                 CREATE               CREATE          CREATE       DEEPEN           DEEPEN              DEEPEN               DEEPEN
+     3 Personal AI Productivity                      CREATE               CREATE          CREATE       ACQUIRE           CREATE             DEEPEN                CREATE
+     4 Corporate Ethics & Compliance                DEEPEN               DEEPEN           CREATE       CREATE           DEEPEN              DEEPEN                CREATE
+
+
+
+
+      Engineering
+     5 AI Systems & Architecture                                         ACQUIRE          CREATE
+     6 Agentic Software Development                 ACQUIRE              ACQUIRE          CREATE       ACQUIRE
+     7 AI-Driven Testing & QA                                            ACQUIRE          CREATE       DEEPEN
+     8 AI-Supported Code Modernization              ACQUIRE              ACQUIRE          CREATE       CREATE
+     9 AI-Assisted Documentation                    DEEPEN               DEEPEN           CREATE       CREATE                               DEEPEN               ACQUIRE
+     10 Sustainable Software & Green Coding         DEEPEN               DEEPEN          DEEPEN        ACQUIRE                                                   ACQUIRE
+
+      Product & Process
+     11 AI-Augmented Requirement Engineering         CREATE               CREATE         DEEPEN        ACQUIRE          ACQUIRE             ACQUIRE              ACQUIRE
+     12 AI-Enhanced User Research                    CREATE               CREATE         ACQUIRE                        ACQUIRE             ACQUIRE              ACQUIRE
+
+
+      Advisory & Business Consulting
+     13 AI & Automation Use Case Spotting            CREATE              DEEPEN          DEEPEN        ACQUIRE           CREATE             ACQUIRE              DEEPEN
+     14 AI Cost & Value Economics                    CREATE              DEEPEN          DEEPEN        ACQUIRE          DEEPEN              ACQUIRE               CREATE
+     15 Consultative Prompting                       CREATE              DEEPEN          DEEPEN        DEEPEN            CREATE             ACQUIRE               CREATE
+     16 AI Ecosystem Knowledge                       CREATE              DEEPEN           CREATE       ACQUIRE          ACQUIRE             ACQUIRE              DEEPEN
+
+
+      Leadership & Strategy
+     17 Managing AI Transformations                  CREATE              DEEPEN          ACQUIRE       ACQUIRE           CREATE             ACQUIRE              DEEPEN
+     18 AI Workforce Strategy                       DEEPEN               ACQUIRE         ACQUIRE       ACQUIRE          ACQUIRE             CREATE                CREATE
+     19 Decision Making with AI                     DEEPEN               DEEPEN          ACQUIRE       ACQUIRE          DEEPEN              DEEPEN                CREATE
+
+
+
+                                                                                                                          ACQUIRE       DEEPEN         CREATE       not expected
+Capability 1: Digital & AI Terminology, AI Concepts, Tool overviews
+Cluster: Foundation
+
+
+                      Description                                          ACQUIRE                              DEEPEN                                    CREATE
+
+  This capability establishes a shared understanding of core AI     The employee possesses a            The employee understands the          The employee acts as a bridge
+  and digital concepts across the organization. It includes         foundational literacy, ensuring     semi-formal logic of the              between business strategy and
+  familiarity with key terminology, distinctions between major AI   they can navigate corporate         concepts and can map business         technology, capable of guiding
+  approaches (e.g., Machine Learning, Deep Learning, Generative     communications and internal         problems within their specific        organizational investment and
+  AI), basic data foundations, and awareness of commonly used       announcements without               function (e.g., HR, Finance, Ops)     governance
+  AI tools and platforms.                                           ambiguity.                          to technological categories.          Critical Evaluation: Analyzes the
+  The goal is to enable everyone at LHIND to communicate clearly    Taxonomic Accuracy: Correctly       Conceptual Mapping: Identifies        theoretical limitations of AI
+  and credibly with clients, colleagues, and technical teams,       distinguishes and defines core      which class of algorithm/method       architectures to prevent the
+  avoiding hype-driven discussions and unrealistic expectations.    concepts, understanding the         is appropriate for specific           deployment of fragile systems in
+  A consistent conceptual grounding helps teams identify            hierarchical relationship (e.g.,    operational pain points (e.g.,        critical business processes (e.g.,
+  appropriate use cases, explain AI capabilities and limitations    Deep Learning, Machine              using Regression for forecasting      understanding why GenAI is risky for
+  accurately, and translate technical topics into business-         Learning).                          sales vs LLMs for drafting internal   precise financial decisions).
+  relevant conversations.                                           Vocabulary: Utilizes the            docs).                                Strategic Guidance: Understands and
+                                                                    corporate glossary to define        Tool Selection: Has an overview       interprets market trends, vendor
+                                                                    standard terms (e.g., Supervised    of the common tools, tool             claims, and emerging tech realistically
+                                                                    vs Unsupervised Learning,           landscape and knows the major         Strategic Architecture: Designs or
+                                                                    Tokens, Hallucinations) and         players Evaluates and selects         oversees comprehensive workflows,
+                                                                    identifies the basic functions of   appropriate tools for their team's    assessing the long-term ROI,
+                                                                    approved internal AI tools          workflows, understanding the          maintenance costs, and scalability of
+                                                                    Data Awareness: Recognizes the      trade-offs between speed, cost,       AI integration within their business unit
+                                                                    importance of data quality in       and accuracy.
+                                                                                                                                              Standardization & Governance:
+                                                                    internal systems and                                                      Actively refines the internal glossary,
+                                                                    understands the "Garbage In,                                              mentors team members to correct
+                                                                    Garbage Out" principle regarding                                          misconceptions, and ensures the
+                                                                    company data beyond mere                                                  department remains resilient against
+                                                                    parroting of this phrase.                                                 external vendor hype.
+Capability 2: Data Literacy
+Cluster: Foundation
+
+
+                      Description                                            ACQUIRE                               DEEPEN                                 CREATE
+
+  This capability defines the capacity to read, analyze, and argue    The employee effectively             The employee actively analyzes       The employee evaluates the
+  with data, transforming raw metrics into evidence-based             consumes standard reports and        data to find patterns and            methodology behind data
+  decisions. It also covers tool usage and the responsibilities and   understands fundamental              questions the validity of the        generation and enforces high
+  mindset regarding data quality, including the own role and          statistical concepts necessary       information presented                standards of epistemic rigor.
+  responsibilities in maintaining a high quality data landscape.      for daily operations.                Statistical Reasoning:               Methodological Critique:
+  It includes reading reports and dashboards accurately,              Descriptive Statistics: Correctly    Understands concepts of              scrutinizes the data collection
+  understanding basic statistical concepts, recognizing data          interprets and understands basic     distribution and variance;           process itself, identifying
+  limitations, and questioning and critically evaluate how data is    statistical concepts such as         distinguishes between simple         systemic biases (e.g.,
+  collected, analyzed, and presented.                                 mean, median, mode and spread        correlation and causality            survivorship bias, selection bias)
+  Employees must demonstrate the ability to identify common           (range), distinguishing between      Critical Scrutiny: Identifies        that invalidate the dataset.
+  logical fallacies, such as conflating correlation with causation,   them in reporting.                   misleading visualizations (e.g.,     Probabilistic Thinking:
+  and recognize the limitations of specific datasets, including       Visual Literacy: Accurately          truncated axes, cherry-picked        Evaluates risks and forecasts
+  selection bias and sampling errors.                                 reads standard organizational        timeframes) and questions the        using probabilistic frameworks
+                                                                      charts (bar, line, pie) and          context of the data (e.g., "Is the   (e.g., confidence intervals,
+                                                                      dashboards without                   sample size n sufficient?")          scenarios) rather than
+                                                                      misinterpreting the scale or axes.   Contextualization: Connects          demanding deterministic
+                                                                      Data Hygiene: Adheres to basic       disparate data points to form a      certainty.
+                                                                      data entry standards to ensure       coherent narrative, identifying      Data Strategy: Defines the
+                                                                      integrity and understands the        outliers or anomalies that require   metrics that should be measured
+                                                                      direct impact data quality on        investigation rather than            to track strategic goals, ensuring
+                                                                      reports or AI.                       dismissal.                           they do not create perverse
+                                                                      Tools Usage: Understands how         Understands data requirements        incentives (Goodhart’s Law).
+                                                                      and when to use common LHIND         for analytics and AI initiatives.    Advises on data tool selection,
+                                                                      tools (Excel, PowerBI, Data Entry                                         architecture, and integration with
+                                                                      tools) to retrieve and explore                                            AI systems
+                                                                      information.
+Capability 3: Personal AI Productivity
+Cluster: Foundation
+
+
+                       Description                                                ACQUIRE                                DEEPEN                                   CREATE
+
+  This capability defines the individual’s ability to leverage AI tools   The employee uses AI as a              The employee engages in "Chain-        The employee builds personal
+  to improve personal output, optimize time management, and               "better search engine" or basic        of-Thought" reasoning with the         systems and custom tools that
+  streamline cognitive workflows.                                         drafter for standalone tasks           AI, integrating it deeply into         automate repetitive cognitive
+  It moves beyond mere tool awareness and to the application of           Prompting Basics: Formulates           complex workflows.                     loops.
+  Large Language Models (LLMs) and automation software for                simple, zero-shot queries (e.g.,       Advanced Prompting: Uses               Customization: Configures
+  drafting, summarizing, coding, or problem-solving (among                "Draft an email to X about Y") but     techniques like "Few-Shot              "Custom Instructions" or builds
+  others).                                                                may accept generic outputs             Prompting" (providing examples)        personal "GPTs/Agents" pre-
+  It includes effective prompting, iterative refinement of AI-            without much refinement.               and role-setting (e.g., "Act as a      loaded with specific project
+  generated content (Human in the loop), responsible handling of          Task Application: Uses                 Senior Financial Analyst...") to       knowledge, style guides, and
+  sensitive information, and thoughtful judgment about when AI            approved tools for low-risk            guide the AI toward specific           formatting rules.
+  support is appropriate.                                                 summarization of long                  formats and tones.                     Workflow Chaining: Connects AI
+  Crucially, this capability includes the judgment to discern when        documents or to brainstorm             Iterative Refinement: Does not         tools with other software (e.g.,
+  to use AI versus manual effort, preventing the "time-sink" of           initial ideas for projects. Is aware   settle for the first result; engages   using scripts or integrations) to
+  over-engineering simple tasks.                                          of applications and use cases in       in a multi-turn dialogue to refine,    automate multi-step processes
+                                                                          everyday work                          critique, and polish the output.       (e.g., "Summarize meeting notes -
+                                                                          Validation: Manually reviews AI        Context Management: Knows              > extract action items -> draft Jira
+                                                                          output for hallucinations or           how to safely feed relevant            tickets").
+                                                                          factual errors before using it,        context (anonymized data,              Prompt Library: Maintains and
+                                                                          treating the AI as a junior intern     project background) into the tool      shares a library of high-efficacy
+                                                                          whose work needs checking.             to get highly specific, actionable     prompts for the team, effectively
+                                                                                                                 results.                               acting as a productivity multiplier
+                                                                                                                 Outcome: Produces higher               for others
+                                                                                                                 quality work faster; uses AI to        Outcome: Operates at a
+                                                                                                                 critique their own logic or            significantly higher velocity than
+                                                                                                                 simulate counter-arguments             peers; eliminates administrative
+                                                                                                                 before meetings.                       drudgery entirely; creates reusable
+                                                                                                                                                        assets that benefit the wider team
+Capability 4: Corporate Ethics & Compliance
+Cluster: Foundation
+
+
+                      Description                                             ACQUIRE                              DEEPEN                                 CREATE
+
+  This capability defines the moral, legal, and ethical guardrails    The employee acts with               The employee engages in              The employee exercises systemic
+  for responsible digital and AI usage within the organization        fundamental sensitivity, focusing    context-aware weighing of            responsibility, shaping standards
+  It requires a solid understanding of regulatory frameworks (e.g.,   on compliance and adherence to       options and assumes proactive        that build long-term trust
+  GDPR, EU AI Act) and internal compliance rules, combined with       established guidelines.              responsibility for outcomes          Strategic Anticipation:
+  the ability to identify and mitigate ethical risks such as bias,    Compliance: Deploys                  Impact Evaluation:                   Anticipates the long-term
+  lack of transparency, mi...                                         technology, data, and AI in strict   Systematically assesses the          societal and organizational
+  Beyond knowing what is legally permitted, employees act with        accordance with applicable           effects of technology deployment     implications of technological
+  intention and accountability, carefully considering impacts on      guidelines and regulations.          on people, the organization, and     decisions
+  people, the organization, and society—especially in ambiguous       Guardrail Awareness: Knows           society                              Governance Design: Develops
+  or complex situations                                               and respects relevant legal,         Risk Detection: Proactively          and establishes ethical
+  Technical feasibility alone is not sufficient; decisions must       corporate-specific, and cultural     identifies potential risks           guidelines, standards, or
+  balance innovation with fairness, dignity, and long-term trust      boundaries.                          regarding bias, data privacy, or     governance models for the
+                                                                      Risk Reflection: Reflects on         fairness within workflows or         organization
+                                                                      obvious risks and impacts on         models                               Balanced Strategy: Strategically
+                                                                      users and stakeholders (e.g., "Is    Ethical Decision Making: Makes       balances the triangle of
+                                                                      this data sensitive?").              ethically reflected decisions even   Innovation, Economic Viability,
+                                                                      Consultation: Actively seeks         when faced with conflicting goals    and Responsibility
+                                                                      guidance and consultation in         (e.g., balancing Speed vs            Cultural Leadership: Fosters a
+                                                                      cases of uncertainty rather than     Fairness)                            culture of integrity, transparency,
+                                                                      making assumptions.                                                       and sustainability; acts as a role
+                                                                                                                                                model for responsible technology
+                                                                                                                                                use
+Capability 5: AI Systems and Architecture
+Cluster: Engineering
+
+
+                      Description                                           ACQUIRE                              DEEPEN                                   CREATE
+
+  This capability defines the technical fluency required to         The employee can identify the        The employee understands how           The employee evaluates
+  understand how AI solutions are architected, integrated, and      major building blocks of an AI       data moves through the system          technical designs against
+  deployed within an enterprise environment                         system and understands               and the dependencies between           business goals, optimizing for
+  It moves beyond the theoretical understanding of algorithms to    standard technical vocabulary        different components                   cost, performance, and reliability
+  the practical reality of systems engineering                      Vocabulary: Correctly defines        Pipeline Logic: Maps the flow of       Trade-off Analysis: Balances
+  This includes a grasp of the end-to-end data pipeline—from        terms like "API" (Application        information: $Input ->                 conflicting constraints, such as
+  ingestion and pre-processing to model training (or fine-tuning)   Programming Interface),              Preprocessing -> Model ->              Accuracy vs Latency or Cost vs
+  and final inference                                               "Inference" (running the model),     Postprocessing -> Output               Privacy; Makes decisions on
+                                                                    "Latency" (speed), and "Cloud        Understands where errors can           "Edge AI" (running on device) vs.
+  Employees must understand critical architectural concepts         Computing."                                                                 "Cloud AI."
+  such as APIs, cloud vs. on-premise infrastructure, latency                                             occur at each stage
+  requirements, and the distinct roles of components like Vector    System Boundaries: Recognizes        Integration Constraints:
+  Databases or Orchestration layers                                 that an AI model is not a            Identifies potential bottlenecks
+                                                                    standalone app but a component       (e.g., "If the API is slow, the user
+                                                                    that must talk to other systems      waits") and data privacy
+                                                                    (e.g., "The Chatbot needs to read    boundaries (e.g., "Does data
+                                                                    the SharePoint database")            leave our secure cloud
+                                                                    Resource Awareness:                  environment?")
+                                                                    Understands that AI processes        Lifecycle Awareness:
+                                                                    consume computing power              Recognizes that deploying a
+                                                                    (GPU/CPU) and that this              model is just the beginning;
+                                                                    translates directly to operational   understands the need for
+                                                                    costs                                monitoring and updates (MLOps
+                                                                    Outcome: Can follow technical        concepts)
+                                                                    updates from IT; understands
+                                                                    why a "simple change" might
+                                                                    require significant backend work
+Capability 6: Agentic Software Development
+Cluster: Engineering
+
+
+                      Description                                              ACQUIRE                               DEEPEN                                  CREATE
+
+  This capability defines the paradigm shift from "writing code" to    The developer uses agents to          The developer guides an agent         The developer treats the agent as a
+  "orchestrating development." It entails the ability to effectively   accelerate isolated, well-defined     through multi-step, multi-file        "Senior Pair Programmer," using it
+  utilize autonomous AI agents to execute engineering tasks.           coding tasks                          changes to implement complete         for high-level design and complex
+  The core skill is no longer syntax memorization, but Intent          Scoped Prompting: Can                 features                              migrations
+  Specification: the ability to clearly articulate technical           delegate single-file tasks to an      Context Engineering: Curates          Architectural Prompts: Asks the
+  requirements and constraints (context) that an agent can             agent (e.g., "Write a unit test for   the correct set of files,             agent to propose high-level designs
+  execute.                                                             this function," "Refactor this        documentation, and types to           or folder structures before writing
+  Crucially, this requires a rigorous Verification Mindset—the         method to be async")                  feed the agent so it                  code, validating the approach
+  ability to review, audit, and debug machine-generated code           Code Review: Reads every line of      "understands" the broader             against system constraints
+  with the same scrutiny applied to a junior human developer.          agent-generated code to ensure        system architecture before            Large-Scale Refactoring:
+                                                                       it actually runs and follows basic    coding.                               Orchestrates agents to perform
+  It involves managing the "Context Window" (knowing which files
+  to feed the agent) and guiding the agent through iterative error     style guidelines before               Iterative Steering: Engages in a      tedious, system-wide changes (e.g.,
+  correction.                                                          committing                            dialogue with the agent to refine     "Migrate all API calls from REST to
+                                                                       Hallucination Check:                  behavior (e.g., "That solution        GraphQL") while managing the risk
+                                                                       Recognizes when an agent              broke the login flow; try again       of regression
+                                                                       invents a library or method that      using the AuthService class")         Security Auditing: Specifically
+                                                                       doesn't exist and manually            Debugging Agent Logic:                prompts agents to audit their own
+                                                                       corrects it                           Identifies why an agent failed        code for vulnerabilities (e.g.,
+                                                                       Outcome: Eliminates boilerplate       (e.g., "It didn't see the interface   "Review your last output for SQL
+                                                                       work; speeds up unit testing and      definition") and provides the         injection risks") and verifies the
+                                                                       documentation; maintains code         missing information rather than       findings
+                                                                       quality in individual files           rewriting the code manually           Outcome: Acts as a "Technical
+                                                                                                             Outcome: Delivers full features       Lead" for an AI workforce; builds
+                                                                                                             faster; effectively uses agents to    prototypes in hours, not days;
+                                                                                                             refactor code across multiple         maintains high architectural
+                                                                                                             dependencies; reduces "context        integrity despite the speed of
+                                                                                                             switching" fatigue                    generation.
+Capability 7: AI-Driven Testing & QA
+Cluster: Engineering
+
+
+                       Description                                            ACQUIRE                                DEEPEN                                    CREATE
+
+  This capability defines the strategic application of AI to the      The employee understands the          The employee identifies where to         The employee designs the
+  quality assurance process, marking a shift from manual              vocabulary of modern QA and the       apply AI tools to optimize the testing   comprehensive Quality Strategy,
+  verification to intelligent, automated validation                   fundamental difference between        process and reduce bottlenecks           balancing speed, cost, and risk in
+  It moves beyond traditional "scripted" testing (where humans        manual and AI-assisted testing        Strategic Application: Identifies        an AI-native environment
+  write every step) to understanding how AI tools can                 Core Concepts: Distinguishes          high-value use cases for AI, such as     Risk-Based Testing: Uses AI
+  autonomously generate test cases, detect anomalies, and             between Manual Testing,               "Visual Regression" (spotting UI         metrics to predict which parts of
+  "self-heal" broken tests when software updates o...                 Traditional Automation (scripts),     changes) or "Test Data Generation"       the software are most likely to
+  For employees, this literacy involves recognizing that AI is a      and AI-Driven Testing                 (creating fake user data for privacy     fail (based on code changes) and
+  force multiplier for speed and coverage, not a magic wand that      (autonomous)                          compliance)                              focuses testing efforts there
+  eliminates the need for human oversight                             Vocabulary: Correctly uses            Self-Healing Awareness:                  Data Governance: Manages the
+  It requires distinguishing between deterministic checks (is A + B   terms like "Regression Testing"       Understands the value of "Self-          complex compliance issues of
+  = C?) and probabilistic AI validation (does this look right?)       (checking old features still work),   Healing" tests (AI that fixes the        "Test Data Management" (TDM),
+                                                                      "False Positives" (AI flagging a      script when a button name                ensuring AI doesn't train on or
+                                                                      bug that isn't real), and "Test       changes) in reducing maintenance         expose sensitive PII during
+                                                                      Coverage."                            costs                                    testing
+                                                                      Limitations: Recognizes that AI       Shift Left: Advocates for testing        Algorithmic Integrity: Audits the
+                                                                      cannot validate "Business Intent"     earlier in the development cycle         AI testing tools themselves to
+                                                                      (e.g., the software works             ("Shift Left"), using AI to scan         ensure they aren't "hallucinating"
+                                                                      technically, but does it solve the    requirements or code drafts before       success (passing a broken
+                                                                      user's problem?)                      the product is fully built               feature) or creating "Flaky Tests"
+                                                                      Outcome: Can discuss project          Outcome: Prioritizes testing             (random failures)
+                                                                      timelines realistically,              resources effectively; evaluates tool    Outcome: transform the QA
+                                                                      understanding that "AI Testing"       vendors based on "maintenance            function from a cost center to a
+                                                                      still requires setup and review       effort" rather than just "creation       speed enabler; defines the
+                                                                      time; does not expect zero bugs       speed"; writes clear acceptance          organization's "Definition of
+                                                                      immediately                           criteria that AI can validate            Done"; ensures reliability in
+                                                                                                                                                     continuous delivery pipelines
+Capability 8: AI-Supported Code Modernization
+Cluster: Engineering
+
+
+                       Description                                          ACQUIRE                              DEEPEN                                   CREATE
+
+  This capability defines the strategic ability to leverage AI for   The employee understands the        The employee actively manages         The employee orchestrates large-
+  transforming legacy systems into modern, maintainable, and         business risks of legacy code and   the modernization process,            scale systemic changes, balancing
+  secure software.                                                   the basic role AI plays in          ensuring AI outputs are validated     architectural purity with business
+  It moves beyond the concept of "rewriting code" to                 mitigating them                     and risks are controlled              continuity
+  understanding how AI accelerates the refactoring process—          Vocabulary: Correctly defines       Conversion Logic: Understands         Architectural Decoupling:
+  translating outdated languages (e.g., COBOL to Java), updating     terms like "Technical Debt" (cost   the difference between a direct       Strategies how to break a "Monolith"
+  libraries, and documenting "Black Box" systems.                    of rework), "Refactoring"           "Line-by-Line" translation (often     (one giant program) into
+  For employees, this means grasping that "Modernization" is not     (improving structure without        bad) and "Idiomatic Refactoring"      "Microservices" using AI to identify
+  just a technical upgrade but a risk reduction strategy.            changing function), and "Legacy     (writing code the way a modern        logical seams and boundaries
+                                                                     Code" (old, valuable, but hard to   developer would)                      Pattern Recognition: Uses AI to
+  It involves recognizing that AI tools can analyze vast codebases   change)
+  to map dependencies, identify security vulnerabilities, and                                            Testing Necessity: Insists on         scan the entire codebase for
+  generate test cases for behavior that was previously               AI Role: Recognizes that AI helps   rigorous regression testing;          recurring anti-patterns or security
+  undocumented.                                                      assist developers in                realizes that if the old code had a   flaws, applying fixes at scale rather
+                                                                     understanding old code, not just    bug, the AI might faithfully copy     than one by one
+                                                                     magically rewriting it perfectly    that bug into the new language        Vendor & Tool Governance:
+                                                                     Documentation: values the           Scope Management: Identifies          Evaluates the efficacy of specific
+                                                                     ability of AI to generate           which parts of a system are "High     modernization agents/tools;
+                                                                     documentation for                   Risk/Low Value" (candidates for       ensures that proprietary code isn't
+                                                                     undocumented systems,               retirement) vs. "High Risk/High       leaking into public models during
+                                                                     reducing the "Key Person Risk"      Value" (candidates for AI             the refactoring process
+                                                                     (what happens if the expert         modernization)                        Outcome: Leads the "Strangler Fig"
+                                                                     leaves?)                            Outcome: Drafts realistic project     strategy (gradually replacing the old
+                                                                     Outcome: Can articulate the         roadmaps; allocates time for          system); quantifies the ROI of
+                                                                     business case for modernization     "Human Review" of AI-generated        modernization (e.g., "We reduced
+                                                                     projects; understands why           code; prioritizes modules for         deployment time by 50%");
+                                                                     "keeping the lights on" costs       modernization based on                safeguards the organization's
+                                                                     increase over time                  business criticality                  intellectual property
+Capability 9: AI-Assisted Documentation
+Cluster: Engineering
+
+
+                       Description                                             ACQUIRE                             DEEPEN                                  CREATE
+
+  This capability defines the ability to leverage AI to solve one of   The employee knows that             The employee actively uses AI to     The employee treats documentation
+  the most persistent challenges in any organization: the              documentation can be generated      bridge the gap between technical     as a strategic asset and enforces
+  "Knowledge Silo".                                                    on-demand and how to query it       reality and business process         systems to keep it alive
+  For non-engineers, this means the ability to use AI tools to         Retrieval Literacy: Instead of      Business Logic Extraction: Uses      Knowledge Architecture: Designs
+  "interrogate" a system and extract plain-language explanations       saying "I can't find the manual,"   AI to read code snippets or          the flow of information, ensuring
+  of how it functions ("Reverse Engineering" business rules).          the employee uses AI search         technical specs and extract the      that AI tools have access to the
+  It also encompasses the strategy of "Documentation as Living         tools ("Chat with your Data") to    actual business rules (e.g.,         "Single Source of Truth" and are
+  Knowledge"—ensuring that as software or processes change,            find answers within technical       "According to the code, the          blocked from reading deprecated
+  the corresponding documentation is updated automatically or          repositories                        discount is applied before tax,      drafts
+  semi-automatically.                                                  Concept Awareness:                  not after")                          Docs-as-Code Strategy:
+  The objective is to reduce "Key Person Risk" (where knowledge        Understands that "Code              Gap Analysis: Compares the AI-       Champions the engineering practice
+  lives only in one person's head) and ensure that business            Comments" and "Readme files"        generated description of the         where documentation is treated like
+  decisions are based on how the systems actually work, not how        exist and that AI can translate     system against the official SOPs     software (versioned, reviewed, and
+  they were described three years ago.                                 these into business-readable        to find discrepancies ("The          automated), ensuring business
+                                                                       summaries                           system does X, but our policy        continuity
+                                                                       Staleness Detection:                says Y")                             Legacy Archeology: Leads
+                                                                       Recognizes that if the AI is        Drafting Assistance: Uses AI to      initiatives to document "Black Box"
+                                                                       reading a file from 2021, the       draft technical requirements or      legacy systems using AI, effectively
+                                                                       answer is likely wrong              bug reports that engineers can       recovering lost institutional
+                                                                       ("Hallucination by Outdated         actually use, minimizing back-       knowledge before a crisis occurs
+                                                                       Context")                           and-forth                            Outcome: Mitigation of "Bus
+                                                                       Outcome: Can independently          Outcome: Acts as a translator        Factor" (risk of losing key staff);
+                                                                       answer basic functional             between IT and Business;             audits and approves the information
+                                                                       questions about internal tools      ensures that process maps            architecture; ensures the
+                                                                       without emailing the engineering    reflect technical reality; reduces   organization remains compliant and
+                                                                       team                                "requirements churn."                auditable
+Capability 10: Sustainable Software & Green Coding
+Cluster: Engineering
+
+
+                      Description                                            ACQUIRE                               DEEPEN                                     CREATE
+
+  This capability defines the practice of designing, building, and   The developer understands the          The developer actively profiles     The developer architects systems that
+  maintaining software that is energy-efficient by default           physical connection between            and refactors code to reduce        dynamically adapt to energy availability
+  It moves beyond high-level operational metrics (GreenOps) to       code execution and energy              computational cost and energy       and grid intensity
+  the granular level of Green Coding—understanding how specific      consumption                            usage                               Carbon-Aware Computing: Designs
+  algorithms, languages, and architectural patterns directly         Carbon Literacy: Correctly             Algorithmic Efficiency:             systems capable of "Temporal Shifting"
+  dictate physical energy consumption                                defines the relationship between       Evaluates code complexity (Big O    (running heavy batch jobs only when the
+  It requires a semi-formal understanding of "Energy                 software intensity and hardware        notation) to select algorithms      grid is green/renewable) and "Spatial
+  Proportionality" (ensuring systems consume energy only when        power draw (Energy = Power x           that minimize CPU cycles (e.g.,     Shifting" (routing workloads to data
+  delivering value) and the ability to optimize code not just for    Time)                                  choosing O(n log n) sorting over    centers in cooler climates)
+  speed, but for carbon intensity                                    Bloat Recognition: Identifies          O(n^2)), directly reducing energy   Architectural Efficiency: Makes
+                                                                     "Zombie Resources" (unused             burn                                strategic trade-offs between
+  The competency encompasses efficient data handling
+  (minimizing payload sizes), resource-aware logic (avoiding         containers/VMs) and inefficient        Data Minimization: Optimizes        Microservices (flexibility) and Monoliths
+  "polling" loops), and the selection of hardware-accelerated        data practices (e.g., retrieving all   network payloads (compression,      (efficiency), recognizing that the network
+  libraries                                                          columns in a SQL query when            efficient formats like Parquet vs   overhead of microservices can increase
+                                                                     only one is needed)                    CSV) to reduce data transfer        total energy cost
+                                                                     Principles: Adheres to the basic       energy                              Measurement & Telemetry: Builds
+                                                                     tenets of the Green Software           Resource Management:                "Software Carbon Intensity" (SCI) metrics
+                                                                     Foundation, such as "Carbon            Implements "Sleep" states and       directly into the CI/CD pipeline, enabling
+                                                                     Efficiency" (least amount of           efficient event-driven patterns     the team to fail a build if the carbon
+                                                                     carbon possible) and "Hardware         (e.g., Webhooks) instead of         footprint exceeds a defined threshold
+                                                                     Efficiency" (using the least           continuous polling loops that       Outcome: Builds "Net Zero" ready
+                                                                     amount of embodied carbon)             keep processors active              systems; sets the standard for
+                                                                     Outcome: Avoids obvious waste;                                             sustainable engineering practices;
+                                                                     writes clean, concise code that                                            creates feedback loops where energy
+                                                                     doesn't unnecessarily tax the                                              efficiency drives architectural innovation
+                                                                     CPU or memory
+Capability 11: AI-Augmented Requirement Engineering
+Cluster: Product and Process
+
+
+                      Description                                            ACQUIRE                                  DEEPEN                                              CREATE
+
+  This capability defines the strategic integration of AI into the   The employee uses AI to speed        The employee uses AI to interrogate                The employee manages the entire
+  product definition lifecycle, transforming how business needs      up the writing of standard           requirements, finding edge cases and               requirements ecosystem, ensuring
+  are captured, analyzed, and translated into technical              requirement documents and            logical inconsistencies before developers          that changes propagate correctly and
+                                                                                                          see them including AI-Augmented Behavior-
+  specifications                                                     ensure basic clarity                                                                    align with high-level goals
+                                                                                                          Driven Development (BDD).
+  It entails leveraging Natural Language Processing (NLP) tools to   Drafting: Generates initial drafts   Ambiguity Detection: Prompts the AI to act         Impact Analysis: Uses AI to trace the
+  assist in eliciting, structuring, and refining requirements,       of User Stories or functional        as a "Critical Reviewer," specifically asking      downstream impact of a requirement
+  ensuring they are unambiguous, consistent, and testable            requirements from rough bullet       it to identify vague terms (e.g., "fast," "user-   change (e.g., "If we change this login
+  Employees must understand how to use AI to synthesize              points (e.g., "Turn these notes      friendly") that need quantification (e.g., "<      rule, which 5 other modules break?")
+  unstructured inputs (e.g., meeting transcripts, emails) into       into a standard JIRA ticket          200ms").                                           Conflict Resolution: Analyzes large
+  formal artifacts like User Stories, Use Cases, or Gherkin syntax   format")                             Scenario Generation: Uses AI to                    sets of requirements from different
+  (Given -> When -> Then)                                            Standardization: Uses AI to          brainstorm "Edge Cases" and "Unhappy               stakeholders to identify conflicting
+                                                                     enforce a consistent tone and        Paths" (e.g., "What happens if the user            constraints (e.g., Stakeholder A wants
+  Crucially, it involves a rigorous "Human-in-the-Loop" validation                                        loses internet connection mid-
+  process to detect logical gaps or "hallucinated" features that     structure across documents,                                                             Speed, Stakeholder B wants complex
+                                                                                                          transaction?") that were missed in the initial
+  the AI might introduce                                             ensuring all requirements follow                                                        Encryption)
+                                                                                                          scope.
+                                                                     the "INVEST" criteria                                                                   Living Specifications: Maintains a
+                                                                     (Independent, Negotiable,            Translation: Converts textual requirements
+                                                                                                          into structured formats like Mermaid.js            dynamic, AI-updated specification
+                                                                     Valuable, Estimable, Small,                                                             repository where requirements auto-
+                                                                                                          code for diagrams or Gherkin syntax for
+                                                                     Testable)                            automated testing.                                 sync with code changes, API contracts,
+                                                                     Summarization: Rapidly               Outcome: Delivers robust, "developer-              and test results – eliminating the
+                                                                     condenses long stakeholder           ready" specifications; proactively identifies      'Rotting Spec' problem entirely
+                                                                     interview transcripts into key       gaps in logic; reduces the back-and-forth          Outcome: Ensures complete
+                                                                     feature requests and pain points     between Business and IT
+                                                                                                                                                             traceability from "Business Goal" to
+                                                                     Outcome: Reduces                                                                        "Code Deployment"; manages scope
+                                                                     administrative overhead; ensures                                                        creep effectively using data; aligns
+                                                                     that tickets and docs are legible                                                       product roadmap with technical reality
+                                                                     and follow the company
+                                                                     template
+Capability 12: AI-Enhanced User Research
+Cluster: Product and Process
+
+
+                       Description                                              ACQUIRE                             DEEPEN                                     CREATE
+
+  This capability defines the capability to leverage AI to accelerate   The employee uses AI to process      The employee uses AI to connect    The employee uses AI to simulate user
+  the discovery and synthesis of user insights, transforming raw        individual data points faster,       dots across multiple sources,      behaviors and create continuous,
+  feedback into actionable product strategy.                            reducing the manual drudgery of      identifying patterns that humans   automated research loops
+  It moves beyond manual data coding to utilizing Natural               research                             might miss                         Synthetic Personas: Creates and
+  Language Processing (NLP) for analyzing vast quantities of            Transcription & Summary:             Thematic Coding: Uses AI to        interacts with "Synthetic Users" (AI
+  qualitative data—such as customer interviews, support tickets,        Routinely uses AI tools to           analyze hundreds of open-ended     modeled on real user data) to test early
+  and open-ended survey responses—at scale                              transcribe meetings and              responses and auto-categorize      value propositions or messaging before
+  Employees must understand how to use AI to identify                   generate accurate, bulleted          them into specific themes (e.g.,   recruiting human participants
+  sentiment, extract recurring themes, and even simulate user           summaries of customer                "Pricing," "Usability," "Feature   Predictive Insight: Uses AI to forecast
+  reactions via "Synthetic Personas"                                    interviews immediately after they    Gap")                              future user needs or churn risks based
+                                                                        occur.                               Cross-Reference: Prompts AI to     on subtle shifts in language patterns
+  Crucially, this literacy includes the ability to audit AI-generated
+  insights for bias and hallucination, ensuring that speed does not     Sentiment Check: Applies basic       look for correlations between      across support channels over time
+  compromise empathy or accuracy.                                       sentiment analysis tools to gauge    disparate datasets (e.g., "Do      Bias Auditing: Rigorously tests the AI
+                                                                        the general "mood" of a batch of     users who complain about speed     models themselves for cultural or
+                                                                        feedback                             also mention the mobile app?")     cognitive bias, ensuring that the "Voice of
+                                                                        (Positive/Negative/Neutral)          Voice of Customer Analytics:       the Customer" isn't skewed by the
+                                                                        Searchability: Uses AI-enabled       Uses AI to continuously analyze    training data
+                                                                        repositories to ask questions of     NPS verbatims, support tickets,    Establishes clear governance rules for
+                                                                        existing research (e.g., "What did   and review data to surface         synthetic persona usage: mandatory
+                                                                        customers say about the login        emerging themes and churn          labeling of synthetic vs. real data,
+                                                                        button last month?") rather than     signals at scale                   prohibition of synthetic data in regulatory
+                                                                        re-running studies                   Gap Analysis: Asks the AI to       submissions, and regular validation
+                                                                        Outcome: Drastically reduces         critique the research plan or      against real user panels
+                                                                        administrative time; ensures no      interview guide, identifying
+                                                                        interview or feedback is "lost" in   leading questions or missing
+                                                                        a folder; democratizes access to     demographic perspectives
+                                                                        basic customer sentiments            before data collection begins
+Capability 13: AI & Automation Use Case Spotting
+Cluster: Advisory and Business
+Consulting
+
+                       Description                                              ACQUIRE                                 DEEPEN                                     CREATE
+
+  This capability defines the strategic ability to identify, qualify,   The employee can spot repetitive,       The employee evaluates the               The employee looks at the entire
+  and articulate high-value opportunities for AI and automation         low-value tasks in their immediate      feasibility of an idea, ensuring it is   value chain to transform how
+  within business operations.                                           environment that are ripe for           technically viable and                   work gets done, rather than just
+                                                                        automation                              economically sensible                    speeding up existing steps
+  It requires a diagnostic mindset to deconstruct workflows,
+  pinpoint inefficiencies, and map specific technological               Pain Point Recognition: Identifies      Feasibility Check: Asks critical         Process Re-engineering:
+  solutions to genuine business problems.                               tasks that are "Dull, Dirty, or         questions before proposing a             Instead of automating step 3 of a
+                                                                        Dangerous" (in a data sense)—           solution: "Do we have the data?",        5-step process, they ask: "If we
+  Employees must move beyond "solutioneering" (finding a
+                                                                        specifically manual data entry,         "Is the process stable?", "Is the        have AI, do we even need steps 2
+  problem for a cool tool) to a rigorous assessment of Process
+                                                                        copy-pasting between apps, or           error tolerance zero?" (if yes,          and 4?" (e.g., changing "Draft ->
+  Suitability, distinguishing between tasks suitable for
+                                                                        scheduling.                             GenAI might be wrong)                    Review -> Send" to "Auto-
+  deterministic automation (RPA) versus those that require AI and
+                                                                        Taxonomy of Waste:                      Tool Matching: Correctly maps            Generate -> Approve")
+  mimicking human capabilities.
+                                                                        Distinguishes between "Cognitive        the problem to the solution class:       Portfolio Management:
+                                                                        Load" (thinking) and                    Uses RPA for structured, rule-           Balances a mix of "Horizon 1"
+                                                                        "Administrative Load" (formatting),     based tasks (e.g., invoicing) and        (Incremental efficiency) and
+                                                                        recognizing that AI is best suited to   LLMs for unstructured, creative          "Horizon 2" (Transformative) use
+                                                                        reduce the latter first                 tasks (e.g., summarizing emails)         cases, managing the aggregate
+                                                                        Problem articulation: Can clearly       ROI Estimation: Calculates a             risk and reward
+                                                                        state the problem (Current State)       rough "Return on Investment"             Buy vs Build Strategy: Makes
+                                                                        and the desired outcome (Future         based on hours saved (Hours x            informed decisions on whether to
+                                                                        State) without necessarily knowing      Rate) vs. the cost of                    use off-the-shelf SaaS features
+                                                                        the technical "How."                    building/buying the tool                 or commission custom
+                                                                        Outcome: Generates a backlog of         Outcome: Submits high-quality            development based on
+                                                                        simple "Quick Win" ideas; stops         project briefs; filters out "Cool but    competitive advantage
+                                                                        accepting manual drudgery as            Useless" ideas; prevents the team
+                                                                        "just the way things are."              from automating broken
+                                                                                                                processes ("Paving the Cow Path")
+Capability 14: AI Cost & Value Economics
+Cluster: Advisory and Business
+Consulting
+
+                       Description                                           ACQUIRE                             DEEPEN                                  CREATE
+
+  This capability defines the financial acumen required to            The employee understands that      The employee calculates the            The employee manages the
+  evaluate Artificial Intelligence not just as a technology, but as   AI usage incurs variable costs     specific return on investment for      economic architecture of the
+  an economic engine with distinct cost structures and value          and tracks consumption against     individual use cases                   organization's AI portfolio
+  drivers.                                                            budget                             Unit Calculation: Estimates the        AI FinOps: Implements
+  It moves beyond the hype of "productivity" to the rigorous          Cost Drivers: Recognizes that      cost of a single operation (e.g.,      governance policies to
+  analysis of Unit Economics—understanding the direct cost per        "Asking the AI" is not free;       "Summarizing this 50-page PDF          dynamically manage cloud
+  transaction (e.g., cost per query, token, or generated image)       understands the difference         costs approx. $0.30 in tokens")        spend (e.g., "Rate Limiting,"
+  versus the marginal value created.                                  between fixed costs (seat          Value Comparison: Compares the         "Budget Alarms," "Chargebacks"
+  Employees must grasp the concept of Total Cost of Ownership         licenses) and variable costs       AI cost against the alternative        to specific departments)
+  (TCO) for AI, which includes "invisible" costs like cloud           (usage/tokens)                     (Human Labor Cost); determines if      Build vs Buy: Conducts
+  inference, vector storage, continuous monitoring, and human         Vocabulary: Correctly defines      the efficiency gain justifies the      sophisticated financial modeling
+  review time, etc.                                                   terms like "Tokens" (parts of      expense (e.g., "Is it worth $0.10 to   to decide whether to rent a
+  The objective is to empower the organization to avoid "Bill         words used for billing),           save 2 minutes of employee time?")     model (API cost) or fine-
+  Shock" from unmanaged consumption and to make data-driven           "Inference Cost" (running the      Model Selection: Chooses the           tune/host an open-source model
+  decisions on whether a use case is financially viable (Value >      model), and "Credits."             most cost-effective model for the      internally (Infrastructure +
+  Cost), ensuring that AI initiatives are impactful.                  Budget Tracking: Monitors team     task—using a cheaper, faster model     Maintenance cost)
+                                                                      usage to ensure they stay within   (e.g., GPT-3.5/Haiku) for simple       AI Pricing Design: Architects
+                                                                      the allocated monthly limits;      sorting, and reserving the expensive   commercial pricing models for
+                                                                      flags unexpected spikes in         "Smart" model (e.g., GPT-4/Opus)       AI-powered services (per-
+                                                                      consumption immediately            only for complex tasks.                transaction, tiered SLAs,
+                                                                      Outcome: Prevents "Zombie          Applies cost-performance               outcome-based), ensuring
+                                                                      Subscriptions" (paying for         optimization: selects models not       margin protection while
+                                                                      unused tools); encourages          just by capability but by cost-per-    remaining competitive
+                                                                      responsible usage among team       task ratio (e.g., routing simple
+                                                                      members                            classification to Haiku/Flash while
+                                                                                                         reserving Opus/GPT-4 for complex
+                                                                                                         reasoning)
+Capability 15: Consultative Prompting
+Cluster: Advisory and Business
+Consulting
+
+                       Description                                             ACQUIRE                              DEEPEN                                       CREATE
+
+  This capability defines the advanced ability to engage Artificial    The employee can structure a         The employee treats the AI as a        The employee designs complex
+  Intelligence not merely as a task-execution engine, but as a         prompt to get a specific, high-      collaborator, engaging in back-and-    "Prompt Chains" to simulate expert
+  strategic thought partner.                                           quality business output              forth refinement to improve the        panels or automate high-level
+                                                                       Role Assignment: Consistently        logic                                  reasoning
+  It transcends basic "instructional prompting" (telling the AI what
+  to write) to embrace Consultative Dialogue—a dynamic,                assigns a relevant persona to the    Socratic Interaction: Asks the AI to   Multi-Persona Simulation:
+  iterative process of Socratic questioning, scenario simulation,      AI (e.g., "You are an expert         "Think step-by-step" or "Explain       Orchestrates a debate between
+  and multi-perspective analysis.                                      Project Manager") to influence       your reasoning" to uncover the logic   multiple AI personas (e.g., "Simulate a
+                                                                       the tone and depth of the            behind a recommendation                conversation between a Privacy
+  Employees must master the art of contextual framing, assigning
+                                                                       response                             Counter-Factual Prompting: Ask         Lawyer, a Marketing Director, and a
+  the AI specific professional personas (e.g., "Act as a Skeptical
+                                                                       Context Setting: Provides            the AI to challenge the user's own     CTO about this new feature")
+  CFO" or "Act as a UX Researcher") to stress-test ideas and
+  uncover blind spots.                                                 necessary background                 assumptions (e.g., "Critique this      Recursive Refinement: Sets up a
+                                                                       information (the "Who, What,         plan from the perspective of a         workflow where the AI generates an
+  It involves the skill of "Chain-of-Thought" prompting, guiding the
+                                                                       Where") rather than asking           competitor," "What are the top 3       output, then reviews its own work
+  model to break down complex business problems into logical
+                                                                       vague, one-sentence questions        reasons this initiative will fail?")   against a rubric, then improves it (Self-
+  steps before delivering a solution.
+                                                                       Output Formatting: Explicitly        Few-Shot Prompting: Provides           Correction Loop)
+                                                                       requests the desired format (e.g.,   examples of "Good" and "Bad"           Prompt Library Design: Creates and
+                                                                       "Give me a table comparing X         outputs to guide the AI’s              maintains a shared library of "Mega-
+                                                                       and Y," "Write a memo in the         performance on complex tasks           Prompts" (complex, modular
+                                                                       style of Amazon's 6-pager")          (e.g., "Here are three examples of     instructions) for the department,
+                                                                       Outcome: Receives usable first       how we write executive                 scaling high-performance behaviors to
+                                                                       drafts; reduces the need for         summaries...")                         the team
+                                                                       manual rewriting; avoids generic,    Workshop Preparation: Uses AI to       Outcome: Solves "wicked problems"
+                                                                       "fluffy" AI answers.                 research client context, generate      with diverse inputs; automates
+                                                                                                            tailored discussion frameworks,        complex decision-support workflows;
+                                                                                                            simulate likely client objections,     acts as a force multiplier for the team’s
+                                                                                                            and prepare data-backed talking        strategic thinking
+                                                                                                            points before client engagements
+Capability 16: AI Ecosystem Knowledge
+Cluster: Advisory and Business
+Consulting
+
+                      Description                                            ACQUIRE                             DEEPEN                                 CREATE
+
+  This capability defines the strategic awareness of the rapidly      The employee knows the major        The employee evaluates different    The employee predicts market
+  evolving Artificial Intelligence marketplace, enabling employees    entities and the basic categories   ecosystems to select the best fit   shifts to position the organization
+  to navigate the complex web of vendors, platforms, and open-        of the AI market                    for specific business needs         for long-term resilience and
+  source communities.                                                 Key Players: Correctly identifies   Model Nuance: Understands the       leverage
+  It moves beyond understanding the technology to                     the "Big Tech" providers            specific strengths of different     Commoditization Strategy:
+  understanding the industry dynamics—identifying key players         (Microsoft/OpenAI, Google,          model families (e.g., "Claude is    Recognizes that "Intelligence" is
+  (e.g., Hyperscalers vs. specialized startups), distinct ecosystem   AWS/Anthropic) and major open-      often preferred for creative        becoming a commodity and
+  approaches (Closed/Proprietary vs Open Weights), and the            source contenders (Meta,            writing and coding," "GPT-4 is      advises the business to build value
+  underlying hardware supply chain (GPU availability)                 Mistral)                            strong on reasoning," "Gemini       on proprietary data and workflows,
+  Employees must grasp the trade-offs between "Walled                 Category Distinction:               excels at multimodal/video          not just the model itself
+  Gardens" (like the OpenAI/Microsoft or Google ecosystems) and       Distinguishes between               analysis“, etc.                     Supply Chain Risks: Analyzes the
+  flexible, self-hosted solutions (like Meta’s Llama or Mistral)      "Foundation Models" (the brain),    Ecosystem Integration:              geopolitical and physical
+                                                                      "Infrastructure" (the               Evaluates how well a tool plays     constraints of the AI supply chain
+                                                                      chips/cloud), and "Applications"    with existing corporate systems     (chip shortages, energy limits) and
+                                                                      (the tool you use)                  (e.g., "Copilot integrates with     plans for redundancy
+                                                                      News Literacy: Can follow           M365 natively, but using            Sovereign AI: Develops strategies
+                                                                      industry news and understand        ChatGPT requires data               for "Model Independence,"
+                                                                      the implications of major           movement")                          ensuring the organization can
+                                                                      announcements (e.g., "Why does      Open vs Closed: Articulates the     switch providers easily if a vendor
+                                                                      it matter if a model has a 1        pros and cons of using a            changes pricing or terms (the
+                                                                      million token context window?")     proprietary API (fast, easy, but    "Wrapper Strategy")
+                                                                      Outcome: Participates               data leaves the premise) vs.        Outcome: Defines the 3-5 year
+                                                                      intelligently in strategy           hosting an open model (private,     technology roadmap; manages
+                                                                      discussions; doesn't confuse a      control, but high maintenance)      high-stakes vendor negotiations;
+                                                                      software wrapper with a                                                 builds the organization's "Moat"
+                                                                      foundation model                                                        against competitors using similar
+                                                                                                                                              AI tools
+Capability 17: Managing AI Transformations
+Cluster: Leadership and Strategy
+
+
+                       Description                                               ACQUIRE                              DEEPEN                                CREATE
+
+   This capability defines the strategic capability to orchestrate the   The leader supports AI initiatives   The leader actively redesigns      The leader redefines the
+   complex organizational shift required to thrive in an AI-native       within their immediate scope and     how work gets done to              business model and operating
+   environment.                                                          models positive adoption             accommodate AI, managing the       structure to be "AI-First."
+   It moves beyond the technical implementation of tools to the          behaviors                            "dip" in productivity during the   Target Operating Model (TOM):
+   critical human dynamics of Change Management.                         Change Advocacy: Actively            transition                         Redesigns the organizational
+   Leaders must navigate the "Trough of Disillusionment,"                communicates the "Why" behind        Workflow Re-engineering:           chart to reflect new realities (e.g.,
+   managing expectations when initial pilots stall, while                AI adoption to their team,           Identifies that adding AI to a     creating "AI Centers of
+   simultaneously fostering a culture of psychological safety            countering rumors and reducing       broken process just makes it       Excellence" or embedding data
+   where experimentation is encouraged and failure is a chance.          "FUD" (Fear, Uncertainty, Doubt)     break faster; proactively          scientists into business units),
+                                                                         Psychological Safety: Creates        redesigns team workflows to        shapes consulting offerings or
+   It involves aligning AI initiatives strictly with core business                                            leverage automation (e.g.,         delivery models around AI
+   objectives to avoid "Solutionism" (building tech for tech's sake)     an environment where team
+                                                                         members feel safe to admit they      changing "Who writes the first     Resource Allocation: Makes
+   and rigorously addressing the "Skills Gap" through targeted                                                draft")
+   upskilling and role redesign.                                         don't know how to use a tool,                                           hard decisions to sunset legacy
+                                                                         encouraging peer-to-peer             KPI Adjustment: Shifts             projects or roles that are no
+                                                                         learning                             performance metrics from           longer viable, reallocating capital
+                                                                         Pilot Participation: Volunteers      "Output Volume" or "Hours          to high-growth AI initiatives
+                                                                         their team for pilot programs,       Worked" to "Outcome Quality"       (Capital_{AI} > Capital_{Legacy})
+                                                                         providing constructive feedback      and "Strategic Value,"             Cultural Transformation:
+                                                                         on what works and what doesn't       recognizing that AI distorts old   Embeds "Continuous Learning"
+                                                                         in a real-world setting              productivity proxies               into the DNA of the company,
+                                                                         Outcome: Reduces friction            Skill Gap Management:              recognizing that the pace of AI
+                                                                         during rollout; ensures high         Conducts skills assessments to     change requires a workforce that
+                                                                         adoption rates within their          identify which team members        reinvents itself every 18 months.
+                                                                         specific unit; prevents "passive     need training in e.g prompt
+                                                                         resistance."                         engineering
+Capability 18: AI Workforce Strategy
+Cluster: Leadership and Strategy
+
+
+                      Description                                             ACQUIRE                               DEEPEN                                 CREATE
+
+  This capability defines the strategic planning required to align    The leader understands the            The leader actively redesigns        The leader defines the long-term
+  human capital with an AI-enabled future.                            changing nature of talent and can     roles and manages the "Build vs      talent structure, balancing
+  It transcends simple headcount reduction to focus on                identify "AI Affinity" within their   Bot" trade-off for specific          automation economics with
+  Workforce Transformation—identifying which roles will be            current team.                         functions.                           human capital sustainability
+  augmented, which will be automated, and what net-new roles          Talent Spotting: Identifies           Job Crafting: Rewrites Job           Strategic Workforce Planning
+  (e.g., AI Ethicists, MLOps Engineers) are required.                 employees who show high               Descriptions (JDs) to remove         (SWP): Models future headcount
+  Leaders must rigorously assess the "Half-Life of Skills" of their   aptitude for digital tools and "AI    obsolete requirements (e.g.,         scenarios based on AI adoption
+  teams, implementing aggressive upskilling programs to bridge        Curiosity," tagging them as           "Must be fast at Excel data          rates (e.g., "In 3 years, we need
+  the gap between legacy expertise and digital fluency.               potential champions rather than       entry") and insert AI-relevant       30% fewer Junior Coders but 50%
+                                                                      just "tech-savvy."                    competencies (e.g., "Must be         more System Architects")
+  It involves the architectural redesign of job descriptions to                                             able to audit AI outputs")
+  prioritize judgment, empathy, and complex problem-solving           Task Analysis: Breaks down                                                 Build vs Buy vs Bot:
+  over routine cognitive tasks.                                       team roles into "Tasks" vs.           Capacity Planning: Calculates        sophisticatedly evaluates every
+                                                                      "Jobs," recognizing that while a      the "Capacity Release" from          talent gap: Should we Hire (Buy),
+                                                                      task (e.g., scheduling) can be        automation (e.g., "If AI saves 20%   Train (Build), or Automate (Bot)?
+                                                                      automated, the job (e.g.,             of the team's time, where do we      (Cost_{bot} < Cost_{hire})
+                                                                      Executive Assistant) might evolve     reinvest that 20%?") to prevent
+                                                                      Skill Literacy: Understands the       idle tim, manage productivity
+                                                                      difference between "Hard Skills"      transitions
+                                                                      (Python, Prompting) and               Upskilling Pathways: Designs
+                                                                      "Enduring Skills" (Critical           specific learning journeys for the
+                                                                      Thinking, Negotiation) that AI        team (e.g., sending analysts to
+                                                                      cannot easily replicate               "Data Literacy" bootcamps),
+                                                                                                            measuring progress against
+                                                                                                            business need, identifies skill
+                                                                                                            gap
+Capability 19: Decision Making with AI
+Cluster: Leadership and Strategy
+
+
+                       Description                                            ACQUIRE                                 DEEPEN                                  CREATE
+
+  This capability defines the ability to integrate Artificial        The leader uses AI to gather data        The leader uses AI to simulate       The leader designs the system of
+  Intelligence into the decision-making process, moving from         and challenge their own                  complex futures and quantifies       authority, deciding what decides
+  purely intuition-based leadership to AI-Augmented Intelligence     assumptions but ultimately makes         uncertainty before committing        (Human vs
+  It requires the discernment to distinguish between decisions       the call manually                        resources                            Machine)
+  that are suitable for algorithmic optimization (e.g., inventory    Source Criticality: Consults AI          Simulation: Uses AI to run           Decision Delegation: Explicitly
+  forecasting, resource allocation) and those demanding human        summaries or data analysis to            "What-If" scenarios (e.g.,           categorizes decisions into "Type
+  judgment (e.g., ethical dilemmas).                                 inform a decision but verifies the       "Simulate the P&L impact if          1" (Reversible/Low Risk →
+  Leaders must master the interpretation of probabilistic outputs,   "Source of Truth" before acting (e.g.,   supply costs rise by 15% and         Automate with AI) and "Type 2"
+  understanding that AI provides predictions based on                "The AI says sales are down, let me      demand drops by 5%")                 (Irreversible/High Risk -> Human
+  correlations, not certainties based on causality.                  check the raw CRM report")               Confidence Intervals: Interprets     Decision)
+  Crucially, this literacy involves recognizing and mitigating       Bias Awareness: Recognizes that AI       AI predictions not as facts but as   Algorithmic Accountability:
+  "Automation Bias" (the tendency to over-rely on computer           outputs can reflect historical biases    ranges (e.g., "The model predicts    Establishes the "Rule of Law" for
+  suggestions) and maintaining strict Human-in-the-Loop              in training data and actively            80% confidence in this               AI decisions—defining who is
+  accountability for high-stakes outcomes.                           questions if a recommendation            outcome"), creating contingency      responsible if the algorithm
+                                                                     reinforces a stereotype                  plans for the other 20%              makes a mistake (e.g., "The
+                                                                     Option Generation: Uses AI to            Constraint Optimization: Uses        Human Manager is always
+                                                                     brainstorm a "Long List" of potential    AI to solve multi-variable           liable")
+                                                                     solutions to a problem, expanding        problems (e.g., "Optimize the        Feedback Loops: Designs
+                                                                     the decision space beyond the            shift schedule for lowest cost       systems where the outcome of
+                                                                     team's immediate ideas                   while meeting these 5 HR             every decision (Success/Failure)
+                                                                     Outcome: Makes more well-                constraints")                        is fed back into the model,
+                                                                     rounded decisions; reduces               Outcome: Justifies strategic bets    creating a "Learning
+                                                                     "Groupthink" by introducing an           with robust data modeling;           Organization."
+                                                                     external (AI) perspective; avoids        communicates risk more
+                                                                     "Analysis Paralysis" by getting quick    precisely ("We have a high
+                                                                     summaries                                probability of X..."); reduces the
+                                                                                                              cost of failed experiments
+

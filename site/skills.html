@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
+  <script src="/admin-entry.js" defer></script>
   <script>
     (function () {
       function apply() {
@@ -95,10 +96,11 @@
         <p class="skills-progress__overline" data-i18n="skills_progress_overline">Learning progress</p>
         <h1 id="skillsProgressTitle" data-i18n="skills_progress_title">Your capability progress</h1>
         <p class="skills-progress__intro" data-i18n="skills_progress_intro">Assigned courses move you through Acquire, Deepen, and Create — with every contribution visible.</p>
-        <p class="skills-page__profile">
+        <label class="skills-page__profile" for="capabilityProfileSelect">
           <i class="ph-light ph-user-circle" aria-hidden="true"></i>
-          <span data-i18n="skills_page_profile">Role profile · Technology Consulting</span>
-        </p>
+          <span data-i18n="skills_page_profile_label">Role profile</span>
+          <select id="capabilityProfileSelect" aria-label="Choose role profile" data-i18n-aria-label="profile_select_label"></select>
+        </label>
       </div>
       <div class="skills-progress__summary" aria-live="polite">
         <strong id="skillsProgressTotal">0%</strong>
@@ -106,6 +108,18 @@
         <small id="skillsProgressCoverage"></small>
       </div>
     </header>
+
+    <section class="capability-groups" aria-labelledby="capabilityGroupsTitle">
+      <div class="capability-groups__heading">
+        <div>
+          <p class="skills-progress__overline" data-i18n="capability_groups_overline">Capability model</p>
+          <h2 id="capabilityGroupsTitle" data-i18n="capability_groups_title">Five dimensions, 19 capabilities</h2>
+          <p data-i18n="capability_groups_intro">Each dimension groups related capabilities. Select one to focus your progress view.</p>
+        </div>
+        <button id="capabilityGroupReset" type="button" aria-pressed="true" data-i18n="capability_groups_show_all">Show all 19</button>
+      </div>
+      <div class="capability-groups__list" id="capabilityGroupList"></div>
+    </section>
 
     <section class="skills-progress skills-progress--standalone" id="skillsProgress" aria-label="Capability progress details" data-i18n-aria-label="skills_progress_details_label">
       <div class="skills-progress__toolbar">
@@ -135,7 +149,7 @@
   <noscript><p class="noscript-note">JavaScript is required to calculate your local learning progress.</p></noscript>
   <script src="progress.js"></script>
   <script src="capabilities.js"></script>
-  <script src="lrn/data.js?v=20260824b"></script>
+  <script src="lrn/data.js?v=20260824c"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="skills-progress-evidence.js"></script>
   <script src="skills-progress.js"></script>

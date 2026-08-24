@@ -1,0 +1,43 @@
+AI Fähigkeiten - Übersicht
+        5 Dimensionen                                    19 Fähigkeiten                                                                               3 Fähigkeitslevel
+                                                                                                           7 Rollen                             Ausgangspunkt für zielgerichtete
+Strukturierte Einteilung für bessere           Umfassende Abdeckung zentraler AI
+                                                                                              Auf Rollen der LHIND zugeschnitten                        Entwicklung
+            Orientierung                                 Fähigkeiten
+
+
+
+             1                                    2                                       3                               4                                        5
+                                                                                                                 Advisory and                                   Leadership
+       Foundation                           Engineering                    Product and Process
+                                                                                                              Business Consulting                              and Strategy
+
+▪ Digital & AI Terminology,            ▪ AI Systems &                      ▪ AI-Augmented                     ▪ AI & Automation Use                   ▪ Managing AI
+AI Concepts, Tool overviews            Architecture                        Requirement Engineering            Case Spotting                           Transformation
+▪ Data Literacy                        ▪ Agentic Software                  ▪ AI-Enhanced User                 ▪ AI Cost & Value                       ▪ AI Workforce Strategy
+▪ Personal AI Productivity             Development                         Research                           Economics                               ▪ Decision Making with AI
+▪ Corporate Ethics &                   ▪ AI-Driven Testing & QA                                               ▪ Consultative Prompting
+Compliance                             ▪ AI-Supported Code                                                    ▪ AI Ecosystem Knowledge
+
+
+
+
+                                                                                                                                                                                       © by Lufthansa Industry Solutions
+                                       Modemization
+                                       ▪ AI-Assisted
+                                       Documentation
+                                       ▪ Sustainable Software &
+                                       Green Coding
+
+
+                                                Rollen                                                                                    Fähigkeitslevel
+
+
+                                                                                                                                                                                       18.06.2026
+                                                                                                              n.a.       Acquire                 Deepen                Create
+Business &                                                     Project                                                 (Basis aufbauen)          (Vertiefen)         (Neu gestalten)
+              Products &      Technology      Application                     Corporate
+ Strategy                                                   Management &                      Leadership
+             Value Streams    Consulting      Management                      Functions
+Consulting                                                     Agility
+

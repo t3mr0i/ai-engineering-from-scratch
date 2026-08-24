@@ -39,6 +39,12 @@
     baseCurrent: true,
   };
 
+  const ROLE_LABELS = {
+    editor: "Bearbeiten",
+    reviewer: "Prüfen",
+    publisher: "Veröffentlichen",
+  };
+
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
@@ -209,10 +215,9 @@
     window.setTimeout(() => node.remove(), 5000);
   }
 
-  function pageHeading(id, overline, title, description, action) {
+  function pageHeading(id, _context, title, description, action) {
     return h("div", { class: "admin-page-heading" }, [
       h("div", {}, [
-        h("p", { class: "admin-overline", text: overline }),
         h("h1", { id, text: title }),
         h("p", { text: description }),
       ]),
@@ -336,8 +341,7 @@
       item.classList.toggle("is-active", active);
       if (active) item.setAttribute("aria-current", "page"); else item.removeAttribute("aria-current");
     });
-    $("#adminSidebar").classList.remove("is-open");
-    $("#adminMenuButton").setAttribute("aria-expanded", "false");
+    setSidebarOpen(false);
     renderCurrentView();
     $("#adminMain").focus({ preventScroll: true });
   }
@@ -377,26 +381,19 @@
     const review = state.changesets.filter((item) => item.status === "review").length;
     const dashboard = h("div", { class: "admin-dashboard" });
 
-    dashboard.append(
-      h("article", { class: "metric-primary" }, [
-        h("div", {}, [h("span", { class: "metric-label", text: "Kurse im Katalog" }), h("strong", { class: "metric-value", text: state.stats.courses })]),
-        h("div", {}, [
-          h("span", { class: "metric-context", text: `${state.stats.units} Units · ${state.stats.activities} Activities` }),
-          h("svg", { class: "metric-line", viewBox: "0 0 300 34", preserveAspectRatio: "none", "aria-hidden": "true" },
-            h("path", { d: "M0 28 C35 24 54 26 82 18 S132 10 164 15 S215 21 246 10 S278 6 300 4" })),
-        ]),
+    const inventoryItems = [
+      ["Kurse", state.stats.courses, `${state.stats.units} Units`],
+      ["Lessons", state.lessons.length, `${state.stats.activities} Activities`],
+      ["Lernpfade", state.stats.tracks, "Profile und Level verbunden"],
+      ["Offene Entscheidungen", drafts + review, `${drafts} Entwürfe · ${review} im Review`],
+    ];
+    dashboard.append(h("dl", { class: "admin-inventory", "aria-label": "Curriculum-Inventar" }, inventoryItems.map(([label, value, context]) =>
+      h("div", { class: "admin-inventory__item" }, [
+        h("dt", { text: label }),
+        h("dd", { text: value }),
+        h("small", { text: context }),
       ]),
-      h("article", { class: "metric-support" }, [
-        h("span", { class: "metric-label", text: "Lernpfade" }),
-        h("strong", { class: "metric-value", text: state.stats.tracks }),
-        h("span", { class: "metric-context", text: "Profile und Level verbunden" }),
-      ]),
-      h("article", { class: "metric-support" }, [
-        h("span", { class: "metric-label", text: "Offene Entscheidungen" }),
-        h("strong", { class: "metric-value", text: drafts + review }),
-        h("span", { class: "metric-context", text: `${drafts} Entwürfe · ${review} im Review` }),
-      ]),
-    );
+    )));
 
     const changePanel = h("article", { class: "admin-panel admin-dashboard__wide" }, [
       h("div", { class: "admin-panel__header" }, [h("h2", { text: "Letzte Änderungssätze" }), button("Neuen Entwurf anlegen", "secondary", openChangesetDialog, "plus")]),
@@ -1430,9 +1427,10 @@
   function bindShell() {
     $$("[data-view]").forEach((item) => item.addEventListener("click", () => activateView(item.dataset.view)));
     $("#adminMenuButton").addEventListener("click", () => {
-      const open = $("#adminSidebar").classList.toggle("is-open");
-      $("#adminMenuButton").setAttribute("aria-expanded", String(open));
+      setSidebarOpen(!$("#adminSidebar").classList.contains("is-open"));
     });
+    $("#adminSidebarBackdrop").addEventListener("click", () => setSidebarOpen(false));
+    $("#adminThemeButton").addEventListener("click", toggleAdminTheme);
     $("#newChangesetButton").addEventListener("click", openChangesetDialog);
     $("#saveButton").addEventListener("click", () => saveDraft(false));
     $("#validateButton").addEventListener("click", validateActive);
@@ -1446,6 +1444,11 @@
     $("#cancelConflict").addEventListener("click", cancelConflict);
     $("#applyConflict").addEventListener("click", applyConflict);
     document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && $("#adminSidebar").classList.contains("is-open")) {
+        setSidebarOpen(false);
+        $("#adminMenuButton").focus();
+        return;
+      }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
         if (state.lessonDirty) saveLessonDraft(false); else saveDraft(false);
@@ -1456,6 +1459,36 @@
       event.preventDefault();
       event.returnValue = "";
     });
+  }
+
+  function setSidebarOpen(open) {
+    $("#adminSidebar").classList.toggle("is-open", open);
+    $("#adminMenuButton").setAttribute("aria-expanded", String(open));
+    $("#adminSidebarBackdrop").hidden = !open;
+    document.body.classList.toggle("admin-nav-open", open);
+  }
+
+  function currentAdminTheme() {
+    let stored = "";
+    try { stored = localStorage.getItem("theme") || ""; } catch (_) {}
+    if (stored === "dark" || stored === "light") return stored;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  function renderAdminTheme() {
+    const dark = currentAdminTheme() === "dark";
+    $("#adminThemeIcon").className = `ph-light ${dark ? "ph-sun" : "ph-moon"}`;
+    const label = dark ? "Zu hellem Farbschema wechseln" : "Zu dunklem Farbschema wechseln";
+    $("#adminThemeButton").setAttribute("aria-label", label);
+    $("#adminThemeButton").setAttribute("title", label);
+    $("#adminThemeButton").setAttribute("aria-pressed", String(dark));
+  }
+
+  function toggleAdminTheme() {
+    const next = currentAdminTheme() === "dark" ? "light" : "dark";
+    try { localStorage.setItem("theme", next); } catch (_) {}
+    document.documentElement.dataset.theme = next;
+    renderAdminTheme();
   }
 
   function renderFatal(error) {
@@ -1487,10 +1520,11 @@
       state.publishConfigured = publishConfig.configured;
       state.lessons = lessons.lessons;
       $("#adminUsername").textContent = state.actor.username;
-      $("#adminRoles").textContent = state.actor.roles.join(" · ");
+      $("#adminRoles").textContent = state.actor.roles.map((role) => ROLE_LABELS[role] || role).join(" · ");
       $("#adminAvatar").textContent = initials(state.actor.username);
       $("#adminBoot").hidden = true;
       $("#adminApp").hidden = false;
+      renderAdminTheme();
       bindShell();
       await refreshChangeSets(false);
       updateStats();

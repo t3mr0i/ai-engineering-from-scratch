@@ -14,6 +14,7 @@
   }
   var profileById = indexBy(data.profiles, "id");
   var courseById = indexBy(data.courses, "id");
+  var trackByCode = indexBy(data.tracks || [], "code");
   var state = loadState();
 
   // Die Tiefenachse (Acquire/Deepen/Create) ersetzt die frueheren L1-L4-
@@ -72,24 +73,24 @@
     searchClear: document.getElementById("searchClear"),
     resetBtn: document.getElementById("resetBtn"),
     academyPathList: document.getElementById("academyPathList"),
+    academyPathCount: document.getElementById("academyPathCount"),
+    academyAllToggle: document.getElementById("academyAllToggle"),
     srStatus: document.getElementById("srStatus")
   };
 
   applyExternalParams();
   renderControls();
-  renderAcademyPaths();
   render();
   wireActions();
   if (progressApi && progressApi.onChange) progressApi.onChange(render);
 
   function loadState() {
-    // LRN cockpit currently exposes only the Technology Consulting profile;
-    // see site/lrn/data.js -> profiles for the full set.
     var fallback = {
       profileId: "tc",
       externalLevel: 1,
       filter: "recommended",
-      activeCourseId: null
+      activeCourseId: null,
+      academyAll: false
     };
 
     try {
@@ -99,7 +100,8 @@
         profileId: saved.profileId,
         externalLevel: validDepthValue(saved.externalLevel) ? Number(saved.externalLevel) : fallback.externalLevel,
         filter: ["recommended", "optional", "inprogress", "completed", "all"].indexOf(saved.filter) !== -1 ? saved.filter : "recommended",
-        activeCourseId: saved.activeCourseId || null
+        activeCourseId: saved.activeCourseId || null,
+        academyAll: Boolean(saved.academyAll)
       };
     } catch (error) {
       return fallback;
@@ -155,6 +157,7 @@
       state.externalLevel = 1;
       state.filter = "recommended";
       state.activeCourseId = null;
+      state.academyAll = false;
       if (els.searchInput) els.searchInput.value = "";
       syncSearchUi();
       saveState();
@@ -178,6 +181,13 @@
     }
     if (els.searchClear) {
       els.searchClear.addEventListener("click", clearSearch);
+    }
+    if (els.academyAllToggle) {
+      els.academyAllToggle.addEventListener("click", function () {
+        state.academyAll = !state.academyAll;
+        saveState();
+        renderAcademyPaths(compute());
+      });
     }
     var searchForm = document.getElementById("searchForm");
     if (searchForm) {
@@ -213,7 +223,6 @@
 
     document.addEventListener("sitelang:change", function () {
       renderControls();
-      renderAcademyPaths();
       render();
     });
   }
@@ -229,6 +238,7 @@
     var computed = compute();
     syncSelects();
     renderFilters();
+    renderAcademyPaths(computed);
     renderCourses(computed);
     refreshIcons();
   }
@@ -282,97 +292,86 @@
     }));
   }
 
-  function renderAcademyPaths() {
+  function renderAcademyPaths(computed) {
     if (!els.academyPathList) return;
 
-    var openPathIds = Array.prototype.filter.call(
-      els.academyPathList.querySelectorAll("details[open]"),
-      function (detail) { return detail.dataset.pathId; }
-    ).map(function (detail) { return detail.dataset.pathId; });
+    var activeLevel = computed && computed.level && computed.level.focusLevels[0] || "Acquire";
+    var profileId = computed && computed.profile && computed.profile.id || state.profileId;
+    var relevantTrackCodes = Object.keys(trackByCode).filter(function (code) {
+      var track = trackByCode[code];
+      return (track.profileIds || []).indexOf(profileId) !== -1;
+    });
+    var allPaths = data.academyPaths || [];
+    var visiblePaths = allPaths.filter(function (path) {
+      if (state.academyAll) return true;
+      var roleMatch = (path.trackCodes || []).some(function (code) {
+        return relevantTrackCodes.indexOf(code) !== -1;
+      });
+      var levelMatch = (path.stages || []).some(function (stage) { return stage.label === activeLevel; });
+      return roleMatch && levelMatch;
+    });
 
-    replaceChildren(els.academyPathList, (data.academyPaths || []).map(function (path) {
-      var detail = document.createElement("details");
-      detail.className = "academy-path";
-      detail.dataset.pathId = path.id;
-      detail.open = openPathIds.indexOf(path.id) !== -1;
+    if (els.academyPathCount) {
+      els.academyPathCount.textContent = i18n("academy_paths_count", "{count} matching trainings")
+        .replace("{count}", String(visiblePaths.length));
+    }
+    if (els.academyAllToggle) {
+      els.academyAllToggle.setAttribute("aria-pressed", String(state.academyAll));
+      els.academyAllToggle.textContent = state.academyAll
+        ? i18n("academy_paths_show_relevant", "Show role recommendations")
+        : i18n("academy_paths_show_all", "Show all AI-X trainings");
+    }
 
-      var summary = document.createElement("summary");
-      summary.className = "academy-path__summary";
+    replaceChildren(els.academyPathList, visiblePaths.map(function (path) {
+      var link = document.createElement("a");
+      link.className = "academy-card";
+      link.dataset.pathId = path.id;
+      link.href = academyPathHref(path.academyCourse);
+      link.setAttribute("aria-label", i18n("academy_path_open", "Open {title}").replace("{title}", path.title));
+
+      var icon = document.createElement("span");
+      icon.className = "academy-card__icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.appendChild(lucideIcon(academyPathIcon(path)));
 
       var code = document.createElement("span");
-      code.className = "academy-path__code";
+      code.className = "academy-card__code";
       code.textContent = path.academyCourse;
 
       var identity = document.createElement("span");
-      identity.className = "academy-path__identity";
+      identity.className = "academy-card__identity";
       var title = document.createElement("strong");
       title.textContent = path.title;
       var format = document.createElement("span");
       format.textContent = path.format;
       identity.append(title, format);
 
-      var chevron = lucideIcon("caret-down");
-      chevron.classList.add("academy-path__chevron");
-      summary.append(code, identity, chevron);
+      var selectedStage = (path.stages || []).find(function (stage) { return stage.label === activeLevel; }) || path.stages[0];
+      var stageBadge = document.createElement("span");
+      stageBadge.className = "academy-card__level";
+      stageBadge.textContent = selectedStage ? i18n("lrn_depth_" + selectedStage.label.toLowerCase(), selectedStage.label) : activeLevel;
 
-      var body = document.createElement("div");
-      body.className = "academy-path__body";
-      var pathSummary = document.createElement("p");
-      pathSummary.className = "academy-path__description";
-      pathSummary.textContent = path.summary;
-
-      var facts = document.createElement("dl");
-      facts.className = "academy-path__facts";
-      appendFact(facts, i18n("academy_path_audience"), path.audience);
-      appendFact(facts, i18n("academy_path_prerequisites"), path.prerequisites);
-
-      var stages = document.createElement("ol");
-      stages.className = "academy-path__stages";
-      (path.stages || []).forEach(function (stage) {
-        var item = document.createElement("li");
-        item.className = "academy-stage";
-
-        var stageCopy = document.createElement("div");
-        stageCopy.className = "academy-stage__copy";
-        var stageTitle = document.createElement("h3");
-        stageTitle.textContent = i18n("lrn_depth_" + stage.label.toLowerCase(), stage.label);
-        var stageFocus = document.createElement("p");
-        stageFocus.textContent = stage.focus;
-        stageCopy.append(stageTitle, stageFocus);
-
-        var courseList = document.createElement("ul");
-        courseList.className = "academy-stage__courses";
-        courseList.setAttribute("aria-label", i18n("academy_path_courses"));
-        (stage.courses || []).forEach(function (courseId) {
-          var course = courseById[courseId];
-          if (!course) return;
-          var courseItem = document.createElement("li");
-          var link = document.createElement("a");
-          link.href = courseHref(courseId);
-          link.textContent = courseId + " · " + course.title;
-          link.setAttribute("aria-label", i18n("academy_path_open_course").replace("{title}", course.title));
-          courseItem.appendChild(link);
-          courseList.appendChild(courseItem);
-        });
-
-        item.append(stageCopy, courseList);
-        stages.appendChild(item);
-      });
-
-      body.append(pathSummary, facts, stages);
-      detail.append(summary, body);
-      return detail;
+      var chevron = lucideIcon("arrow-right");
+      chevron.classList.add("academy-card__chevron");
+      link.append(icon, code, identity, stageBadge, chevron);
+      return link;
     }));
   }
 
-  function appendFact(list, label, value) {
-    var group = document.createElement("div");
-    var term = document.createElement("dt");
-    term.textContent = label;
-    var description = document.createElement("dd");
-    description.textContent = value;
-    group.append(term, description);
-    list.appendChild(group);
+  function academyPathIcon(path) {
+    var icons = {
+      "AI-01": "code",
+      "AI-02": "robot",
+      "AI-03": "tree-structure",
+      "AI-04": "clipboard-text",
+      "AI-06": "magic-wand",
+      "AI-07": "chart-line-up",
+      "AI-08": "users-three",
+      "AI-09": "book-open",
+      "AI-10": "presentation-chart",
+      "AI-12": "cloud"
+    };
+    return icons[path.academyCourse] || "graduation-cap";
   }
 
   var lastVisibleSignature = null;
@@ -775,6 +774,12 @@
     var inLrn = /\/lrn(\/|$)/.test(location.pathname);
     var prefix = inLrn ? "course.html" : "lrn/course.html";
     return prefix + "?id=" + encodeURIComponent(courseId);
+  }
+
+  function academyPathHref(academyCourse) {
+    var inLrn = /\/lrn(\/|$)/.test(location.pathname);
+    var prefix = inLrn ? "course.html" : "lrn/course.html";
+    return prefix + "?academy=" + encodeURIComponent(academyCourse);
   }
 
   function validDepthValue(value) {

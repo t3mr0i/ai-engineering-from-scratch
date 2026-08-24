@@ -163,6 +163,52 @@ test("Harness Engineering course is scoped to the Technology Consulting profile"
   assert.ok(tc && tc.code === "R03-TC", "Technology Consulting profile must retain code R03-TC");
 });
 
+test("the learner model exposes all seven AI Literacy roles", () => {
+  assert.deepEqual(
+    [...data.profiles.map((profile) => profile.id)],
+    ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+  );
+  assert.equal(new Set(data.profiles.map((profile) => profile.code)).size, 7);
+});
+
+test("capability targets match the supplied role-depth matrix", () => {
+  const byId = new Map(data.capabilities.map((capability) => [capability.id, capability]));
+  const roles = ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"];
+  const na = "n. a.";
+  const expected = {
+    1: ["Deepen", "Deepen", "Create", "Deepen", "Deepen", "Deepen", "Deepen"],
+    2: ["Create", "Create", "Create", "Deepen", "Deepen", "Deepen", "Deepen"],
+    3: ["Create", "Create", "Create", "Acquire", "Create", "Deepen", "Create"],
+    4: ["Deepen", "Deepen", "Create", "Create", "Deepen", "Deepen", "Create"],
+    5: [na, "Acquire", "Create", na, na, na, na],
+    6: ["Acquire", "Acquire", "Create", "Acquire", na, na, na],
+    7: [na, "Acquire", "Create", "Deepen", na, na, na],
+    8: ["Acquire", "Acquire", "Create", "Create", na, na, na],
+    9: ["Deepen", "Deepen", "Create", "Create", na, "Deepen", "Acquire"],
+    10: ["Deepen", "Deepen", "Deepen", "Acquire", na, na, "Acquire"],
+    11: ["Create", "Create", "Deepen", "Acquire", "Acquire", "Acquire", "Acquire"],
+    12: ["Create", "Create", "Acquire", na, "Acquire", "Acquire", "Acquire"],
+    13: ["Create", "Deepen", "Deepen", "Acquire", "Create", "Acquire", "Deepen"],
+    14: ["Create", "Deepen", "Deepen", "Acquire", "Deepen", "Acquire", "Create"],
+    15: ["Create", "Deepen", "Deepen", "Deepen", "Create", "Acquire", "Create"],
+    16: ["Create", "Deepen", "Create", "Acquire", "Acquire", "Acquire", "Deepen"],
+    17: ["Create", "Deepen", "Acquire", "Acquire", "Create", "Acquire", "Deepen"],
+    18: ["Deepen", "Acquire", "Acquire", "Acquire", "Acquire", "Create", "Create"],
+    19: ["Deepen", "Deepen", "Acquire", "Acquire", "Deepen", "Deepen", "Create"],
+  };
+  for (const [id, row] of Object.entries(expected)) {
+    assert.deepEqual(roles.map((role) => byId.get(Number(id)).targets[role]), row, `capability ${id} target row drifted`);
+  }
+  assert.equal(data.capabilityGroups.length, 5);
+  assert.deepEqual(Array.from(data.capabilityGroups, (group) => group.cluster), [
+    "Foundation",
+    "Engineering",
+    "Product and Process",
+    "Advisory and Business Consulting",
+    "Leadership and Strategy",
+  ]);
+});
+
 // ───────────────────────────────────────────────────────────────────────────
 // tracks / paths shape
 // ───────────────────────────────────────────────────────────────────────────
@@ -252,14 +298,23 @@ test("every Academy learning path is an ordered, resolvable Course journey", () 
 test("the learner catalog exposes the Academy paths with current browser data", () => {
   const html = readFileSync("site/index.html", "utf8");
   const lrn = readFileSync("site/lrn/lrn.js", "utf8");
+  const courseDetail = readFileSync("site/lrn/course.js", "utf8");
   assert.match(html, /id="academyPathList"/,
     "catalog needs a learner-visible Academy path container");
-  assert.match(html, /lrn\/data\.js\?v=20260824b/,
+  assert.match(html, /lrn\/data\.js\?v=20260824c/,
     "catalog must cache-bust the browser data that contains Academy paths");
-  assert.match(lrn, /function renderAcademyPaths\(\)/,
+  assert.match(lrn, /function renderAcademyPaths\(computed\)/,
     "catalog needs to render Academy paths from LrnData");
-  assert.match(lrn, /courseHref\(courseId\)/,
-    "Academy path stages must link into LRN course details");
+  assert.match(lrn, /link\.href = academyPathHref\(path\.academyCourse\)/,
+    "Academy cards must open a dedicated intermediate page instead of expanding inline");
+  assert.doesNotMatch(lrn, /createElement\("details"\)/,
+    "Academy cards must not use inline disclosure widgets");
+  assert.match(courseDetail, /params\.get\("academy"\)/,
+    "course detail must resolve Academy deep links");
+  assert.match(courseDetail, /function renderAcademyPath\(path\)/,
+    "course detail must render the Academy intermediate page");
+  assert.match(courseDetail, /courseDetailHref\(courseItem\.id\)/,
+    "Academy stages must link onward into supporting LRN course details");
 });
 
 test("AI-06, AI-07, and AI-08 extend their existing Courses with source-specific units", () => {

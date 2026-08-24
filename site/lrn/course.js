@@ -13,10 +13,13 @@
     });
   }
   var courseById = indexBy(data.courses, "id");
+  var academyPathByCourse = indexBy(data.academyPaths || [], "academyCourse");
+  var trackByCode = indexBy(data.tracks || [], "code");
 
   var root = document.getElementById("courseRoot");
   var srStatus = document.getElementById("srStatus");
   var course = resolveCourse();
+  var academyPath = resolveAcademyPath();
 
   // Mirrors lang.js's entry() lookup, same as lrn.js's i18n() — course.js
   // has its own dynamic (non data-i18n) render path so it needs the same
@@ -52,6 +55,12 @@
     return id && courseById[id] ? courseById[id] : null;
   }
 
+  function resolveAcademyPath() {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get("academy");
+    return id && academyPathByCourse[id] ? academyPathByCourse[id] : null;
+  }
+
   // "Back to courses" must preserve the catalog selection. Read the same store
   // the catalog persists to and re-encode profile/level/interests as params.
   // Point at "/" so it works from any host path (/, /lrn/, /lrn/course.html).
@@ -83,6 +92,11 @@
   }
 
   function render() {
+    if (academyPath) {
+      renderAcademyPath(academyPath);
+      return;
+    }
+
     if (!course) {
       var empty = document.createElement("div");
       empty.className = "empty-state";
@@ -263,6 +277,266 @@
 
     replaceChildren(root, children);
     refreshIcons();
+  }
+
+  function renderAcademyPath(path) {
+    document.title = path.title + " · LHIND AI Learning Catalog";
+
+    var stats = academyPathStats(path);
+    var nextCourse = stats.courses.find(function (item) {
+      return courseProgress(item).percent < 100;
+    });
+
+    var intro = document.createElement("section");
+    intro.className = "course-intro";
+    intro.setAttribute("aria-labelledby", "courseTitle");
+
+    var head = document.createElement("header");
+    head.className = "course-head";
+
+    var code = document.createElement("p");
+    code.className = "course-head__code";
+    code.textContent = path.academyCourse;
+
+    var title = document.createElement("h1");
+    title.id = "courseTitle";
+    title.textContent = path.title;
+    title.title = path.academyCourse + " · " + path.title;
+
+    var summary = document.createElement("p");
+    summary.className = "course-head__summary";
+    summary.textContent = path.summary;
+
+    var progress = document.createElement("div");
+    progress.className = "course-head__progress";
+    var progressLabel = document.createElement("p");
+    progressLabel.className = "course-head__progress-label";
+    progressLabel.textContent = i18n("academy_path_progress_heading", "Learning-path progress");
+    progress.append(progressLabel, progressMeter(
+      stats.percent,
+      i18nFmt("academy_path_progress_label", { title: path.title }, "Progress {title}")
+    ));
+
+    var action = document.createElement("a");
+    action.className = "primary-cta";
+    if (nextCourse) {
+      action.href = courseDetailHref(nextCourse.id);
+      var actionLabel = document.createElement("span");
+      actionLabel.textContent = stats.visitedLessons > 0
+        ? i18n("academy_path_resume", "Resume path")
+        : i18n("academy_path_open_first_course", "Open first course");
+      action.append(actionLabel, lucideIcon("arrow-right"));
+    } else {
+      action.href = "#";
+      action.setAttribute("aria-disabled", "true");
+      action.addEventListener("click", function (event) { event.preventDefault(); });
+      action.append(lucideIcon("check-circle"), document.createTextNode(i18n("academy_path_all_complete", "Path complete")));
+    }
+
+    head.append(code, title, summary, progress, action);
+
+    var includes = document.createElement("aside");
+    includes.className = "course-includes";
+    includes.setAttribute("aria-labelledby", "courseIncludesTitle");
+    var includesTitle = document.createElement("h2");
+    includesTitle.id = "courseIncludesTitle";
+    includesTitle.textContent = i18n("academy_path_includes_title", "This learning path includes");
+    var formatBadge = document.createElement("span");
+    formatBadge.className = "course-includes__format";
+    formatBadge.append(lucideIcon("graduation-cap"), document.createTextNode(i18n("academy_path_format_badge", "Academy learning path")));
+    var includesList = document.createElement("ul");
+    includesList.className = "course-includes__list";
+    includesList.appendChild(includesItem("presentation-chart", path.format));
+    (path.stages || []).forEach(function (stage) {
+      var count = uniqueValues(stage.courses || []).length;
+      includesList.appendChild(includesItem(
+        "stack",
+        localizedStage(stage.label) + " · " + courseCountLabel(count)
+      ));
+    });
+    includes.append(includesTitle, formatBadge, includesList);
+    intro.append(head, includes);
+
+    var facts = document.createElement("section");
+    facts.className = "course-facts";
+    facts.setAttribute("aria-label", i18n("academy_path_facts_label", "Learning-path facts"));
+    facts.append(
+      factItem("presentation-chart", i18n("academy_path_fact_format", "Format"), path.format),
+      factItem("stairs", i18n("academy_path_fact_stages", "Stages"), String((path.stages || []).length)),
+      factItem("stack", i18n("academy_path_fact_courses", "Courses"), String(stats.courses.length)),
+      factItem("list-checks", i18n("academy_path_fact_activities", "Activities"), String(stats.lessonCount))
+    );
+
+    var overview = document.createElement("section");
+    overview.className = "course-overview";
+    var about = document.createElement("article");
+    about.className = "course-overview__about";
+    about.setAttribute("aria-labelledby", "courseAboutTitle");
+    var aboutTitle = document.createElement("h2");
+    aboutTitle.id = "courseAboutTitle";
+    aboutTitle.textContent = i18n("academy_path_about_title", "About this learning path");
+    about.append(
+      aboutTitle,
+      overviewDetail(i18n("academy_path_audience", "Audience"), path.audience),
+      overviewDetail(i18n("academy_path_prerequisites", "Prerequisites"), path.prerequisites)
+    );
+    var trackNames = (path.trackCodes || []).map(function (trackCode) {
+      return trackByCode[trackCode] ? trackByCode[trackCode].label : trackCode;
+    });
+    if (trackNames.length) {
+      about.appendChild(overviewDetail(i18n("academy_path_tracks", "Tracks"), trackNames.join(" · ")));
+    }
+    overview.appendChild(about);
+
+    var journey = document.createElement("section");
+    journey.className = "course-head__outcomes";
+    journey.setAttribute("aria-labelledby", "courseOutcomesTitle");
+    var journeyTitle = document.createElement("h2");
+    journeyTitle.id = "courseOutcomesTitle";
+    journeyTitle.className = "course-head__outcomes-title";
+    journeyTitle.textContent = i18n("academy_path_journey_title", "Your journey");
+    var journeyList = document.createElement("ul");
+    journeyList.className = "course-head__outcomes-list";
+    (path.stages || []).forEach(function (stage) {
+      var item = document.createElement("li");
+      item.className = "course-head__outcomes-item";
+      item.append(
+        lucideIcon("check-circle"),
+        document.createTextNode(localizedStage(stage.label) + " — " + stage.focus)
+      );
+      journeyList.appendChild(item);
+    });
+    journey.append(journeyTitle, journeyList);
+    overview.appendChild(journey);
+
+    var children = [intro, facts, overview];
+    var syllabusTitle = document.createElement("h2");
+    syllabusTitle.className = "syllabus-title";
+    syllabusTitle.textContent = i18n("academy_path_courses_title", "Supporting courses");
+    children.push(syllabusTitle);
+    (path.stages || []).forEach(function (stage, index) {
+      children.push(academyStageBlock(stage, index));
+    });
+
+    replaceChildren(root, children);
+    refreshIcons();
+  }
+
+  function academyStageBlock(stage, index) {
+    var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
+    var lessonPathsForStage = uniqueValues(courses.reduce(function (all, item) {
+      return all.concat(lessonPaths(item.id));
+    }, []));
+    var completedCourses = courses.filter(function (item) { return courseProgress(item).percent === 100; }).length;
+
+    var block = document.createElement("section");
+    block.className = "unit-block";
+    var head = document.createElement("div");
+    head.className = "unit-block__head";
+    var icon = lucideIcon(["flag", "path", "rocket-launch"][index] || "graduation-cap");
+    icon.classList.add("unit-block__icon");
+    var code = document.createElement("span");
+    code.className = "unit-block__code";
+    code.textContent = "S" + String(index + 1).padStart(2, "0");
+    var title = document.createElement("h3");
+    title.textContent = localizedStage(stage.label);
+    var meta = document.createElement("span");
+    meta.className = "unit-block__meta";
+    meta.textContent = i18nFmt(
+      "academy_path_stage_progress",
+      { completed: completedCourses, total: courses.length },
+      "{completed} of {total} courses completed"
+    );
+    head.append(icon, code, title, meta);
+    block.appendChild(head);
+    var meter = progressMeter(
+      averageReadPercent(lessonPathsForStage),
+      i18nFmt("academy_path_progress_label", { title: stage.label }, "Progress {title}")
+    );
+    meter.classList.add("unit-block__meter");
+    block.appendChild(meter);
+    if (stage.focus) {
+      var note = document.createElement("p");
+      note.className = "unit-block__note";
+      note.textContent = stage.focus;
+      block.appendChild(note);
+    }
+    var list = document.createElement("div");
+    list.className = "activity-list";
+    courses.forEach(function (item) { list.appendChild(academyCourseLink(item)); });
+    block.appendChild(list);
+    return block;
+  }
+
+  function academyCourseLink(courseItem) {
+    var stats = courseProgress(courseItem);
+    var state = stats.percent === 100 ? "completed" : stats.visitedLessons > 0 ? "visited" : "open";
+    var link = document.createElement("a");
+    link.className = "activity-link academy-course-link";
+    link.href = courseDetailHref(courseItem.id);
+    link.title = courseItem.id + " · " + courseItem.title;
+    var dot = document.createElement("span");
+    dot.className = "activity-link__dot";
+    dot.dataset.state = state;
+    dot.setAttribute("aria-hidden", "true");
+    dot.appendChild(lucideIcon(state === "completed" ? "check-circle" : state === "visited" ? "dot" : "circle"));
+    var icon = lucideIcon(courseFormat(courseItem).icon);
+    icon.classList.add("activity-link__type-icon");
+    var label = document.createElement("strong");
+    label.textContent = courseItem.title;
+    var type = document.createElement("small");
+    type.textContent = courseItem.id + " · " + activityCountLabel(stats.lessonCount);
+    link.append(dot, icon, label, type);
+    if (state !== "open") {
+      var status = document.createElement("em");
+      status.dataset.state = state;
+      status.textContent = i18nFmt("academy_path_course_progress", { percent: stats.percent }, "{percent}% complete");
+      link.appendChild(status);
+    }
+    return link;
+  }
+
+  function academyPathStats(path) {
+    var courseIds = uniqueValues((path.stages || []).reduce(function (all, stage) {
+      return all.concat(stage.courses || []);
+    }, []));
+    var courses = courseIds.map(function (id) { return courseById[id]; }).filter(Boolean);
+    var paths = uniqueValues(courses.reduce(function (all, item) { return all.concat(lessonPaths(item.id)); }, []));
+    return {
+      courses: courses,
+      lessonCount: paths.length,
+      visitedLessons: paths.filter(function (lessonPath) { return lessonProgress(lessonPath).state !== "open"; }).length,
+      percent: averageReadPercent(paths)
+    };
+  }
+
+  function localizedStage(label) {
+    return i18n("lrn_depth_" + String(label).toLowerCase(), label);
+  }
+
+  function courseCountLabel(count) {
+    return count === 1
+      ? i18n("academy_path_courses_one", "1 course")
+      : i18nFmt("academy_path_courses_many", { count: count }, "{count} courses");
+  }
+
+  function activityCountLabel(count) {
+    return count === 1
+      ? i18n("course_activities_one", "1 activity")
+      : i18nFmt("course_activities_many", { count: count }, "{count} activities");
+  }
+
+  function courseDetailHref(courseId) {
+    return "course.html?id=" + encodeURIComponent(courseId);
+  }
+
+  function uniqueValues(values) {
+    var seen = {};
+    return values.filter(function (value) {
+      if (seen[value]) return false;
+      seen[value] = true;
+      return true;
+    });
   }
 
   function courseFormat(courseItem) {

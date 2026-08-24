@@ -53,6 +53,53 @@
       "short": "Human-in-the-loop, team enablement, and knowledge transfer"
     }
   ],
+  "capabilityGroups": [
+    {
+      "id": "foundation",
+      "cluster": "Foundation",
+      "label": "Foundation",
+      "labelDe": "Grundlagen",
+      "icon": "book-open",
+      "description": "Shared terminology, data literacy, productive AI use, and responsible guardrails.",
+      "descriptionDe": "Gemeinsame Begriffe, Datenkompetenz, produktiver KI-Einsatz und verantwortungsvolle Leitplanken."
+    },
+    {
+      "id": "engineering",
+      "cluster": "Engineering",
+      "label": "Engineering",
+      "labelDe": "Engineering",
+      "icon": "cpu",
+      "description": "Architecture, agents, testing, modernization, documentation, and sustainable software.",
+      "descriptionDe": "Architektur, Agenten, Testing, Modernisierung, Dokumentation und nachhaltige Software."
+    },
+    {
+      "id": "product-process",
+      "cluster": "Product and Process",
+      "label": "Product and Process",
+      "labelDe": "Produkt und Prozess",
+      "icon": "clipboard-text",
+      "description": "Requirements and user research redesigned with AI while preserving human validation.",
+      "descriptionDe": "Requirements und User Research mit KI neu gestalten und menschliche Validierung sichern."
+    },
+    {
+      "id": "advisory-business",
+      "cluster": "Advisory and Business Consulting",
+      "label": "Advisory and Business Consulting",
+      "labelDe": "Advisory und Business Consulting",
+      "icon": "chats-circle",
+      "description": "Spot use cases, evaluate value, prompt consultatively, and navigate the AI ecosystem.",
+      "descriptionDe": "Use Cases erkennen, Wert bewerten, konsultativ prompten und das KI-Ökosystem einordnen."
+    },
+    {
+      "id": "leadership-strategy",
+      "cluster": "Leadership and Strategy",
+      "label": "Leadership and Strategy",
+      "labelDe": "Leadership und Strategie",
+      "icon": "house-line",
+      "description": "Lead transformation, shape the workforce, and make accountable decisions with AI.",
+      "descriptionDe": "Transformation führen, die Workforce gestalten und mit KI verantwortlich entscheiden."
+    }
+  ],
   "questions": [
     {
       "id": "q1",
@@ -107,17 +154,101 @@
   ],
   "profiles": [
     {
+      "id": "bsc",
+      "code": "R01-BSC",
+      "label": "Business & Strategy Consulting",
+      "segment": "BSC",
+      "description": "Consulting, business analysis, strategy, process, and customer context.",
+      "targets": {
+        "literacy": 2,
+        "prompting": 3,
+        "business": 3,
+        "data": 2,
+        "change": 3
+      }
+    },
+    {
+      "id": "pvs",
+      "code": "R02-PVS",
+      "label": "Products & Value Streams",
+      "segment": "PVS",
+      "description": "Product management, product sales, value streams, and product-adjacent consulting.",
+      "targets": {
+        "literacy": 2,
+        "prompting": 2,
+        "business": 2,
+        "data": 2,
+        "change": 2
+      }
+    },
+    {
       "id": "tc",
       "code": "R03-TC",
       "label": "Technology Consulting",
       "segment": "TC",
-      "description": "Architecture, integration, security, evaluation, delivery.",
+      "description": "Engineering, architecture, security, cloud, IoT, data, and technical delivery.",
+      "targets": {
+        "literacy": 3,
+        "prompting": 2,
+        "business": 2,
+        "data": 3,
+        "change": 1
+      }
+    },
+    {
+      "id": "am",
+      "code": "R04-AM",
+      "label": "Application Management",
+      "segment": "AM",
+      "description": "Service technology, service management, operations, and operations-adjacent roles.",
+      "targets": {
+        "literacy": 2,
+        "prompting": 2,
+        "business": 1,
+        "data": 3,
+        "change": 1
+      }
+    },
+    {
+      "id": "pma",
+      "code": "R05-PMA",
+      "label": "Project Management & Agility",
+      "segment": "PMA",
+      "description": "Project management, product ownership, agility, and transformation delivery.",
       "targets": {
         "literacy": 2,
         "prompting": 3,
-        "business": 2,
+        "business": 3,
+        "data": 2,
+        "change": 3
+      }
+    },
+    {
+      "id": "corp",
+      "code": "R06-CF",
+      "label": "Corporate Functions",
+      "segment": "CF",
+      "description": "HR, finance, legal, communications, procurement, and internal business functions.",
+      "targets": {
+        "literacy": 2,
+        "prompting": 2,
+        "business": 1,
+        "data": 2,
+        "change": 3
+      }
+    },
+    {
+      "id": "lead",
+      "code": "R07-LEAD",
+      "label": "Leadership",
+      "segment": "Leadership",
+      "description": "People leadership, portfolio decisions, and strategic AI transformation.",
+      "targets": {
+        "literacy": 2,
+        "prompting": 3,
+        "business": 3,
         "data": 3,
-        "change": 2
+        "change": 3
       }
     }
   ],
@@ -257,7 +388,7 @@
       "cluster": "Foundation",
       "title": "Digital & AI Terminology, AI Concepts, Tool overviews",
       "targets": {
-        "bsc": "Acquire",
+        "bsc": "Deepen",
         "pvs": "Deepen",
         "tc": "Create",
         "am": "Deepen",
@@ -484,7 +615,7 @@
       "targets": {
         "bsc": "Create",
         "pvs": "Deepen",
-        "tc": "Deepen",
+        "tc": "Create",
         "am": "Acquire",
         "pma": "Acquire",
         "corp": "Acquire",

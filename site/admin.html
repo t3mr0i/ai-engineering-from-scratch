@@ -36,29 +36,29 @@
       </a>
 
       <nav class="admin-nav" aria-label="Admin-Navigation">
-        <button class="admin-nav__item is-active" type="button" data-view="overview" aria-current="page">
+        <button class="admin-nav__item is-active" type="button" data-view="overview" aria-label="Übersicht" title="Übersicht" aria-current="page">
           <i class="ph-light ph-squares-four" aria-hidden="true"></i><span>Übersicht</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="courses">
+        <button class="admin-nav__item" type="button" data-view="courses" aria-label="Kurse" title="Kurse">
           <i class="ph-light ph-books" aria-hidden="true"></i><span>Kurse</span>
           <span class="admin-nav__count" id="courseNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="lessons">
+        <button class="admin-nav__item" type="button" data-view="lessons" aria-label="Lessons" title="Lessons">
           <i class="ph-light ph-file-code" aria-hidden="true"></i><span>Lessons</span>
           <span class="admin-nav__count" id="lessonNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="paths">
+        <button class="admin-nav__item" type="button" data-view="paths" aria-label="Lernpfade" title="Lernpfade">
           <i class="ph-light ph-path" aria-hidden="true"></i><span>Lernpfade</span>
           <span class="admin-nav__count" id="pathNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="assistant">
+        <button class="admin-nav__item" type="button" data-view="assistant" aria-label="KI-Studio" title="KI-Studio">
           <i class="ph-light ph-sparkle" aria-hidden="true"></i><span>KI-Studio</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="review">
+        <button class="admin-nav__item" type="button" data-view="review" aria-label="Review" title="Review">
           <i class="ph-light ph-check-circle" aria-hidden="true"></i><span>Review</span>
           <span class="admin-nav__count admin-nav__count--attention" id="reviewNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="history">
+        <button class="admin-nav__item" type="button" data-view="history" aria-label="Historie" title="Historie">
           <i class="ph-light ph-clock-counter-clockwise" aria-hidden="true"></i><span>Historie</span>
         </button>
       </nav>
@@ -76,6 +76,7 @@
         </a>
       </div>
     </aside>
+    <button class="admin-sidebar-backdrop" id="adminSidebarBackdrop" type="button" aria-label="Navigation schließen" hidden></button>
 
     <div class="admin-workspace">
       <header class="admin-toolbar">
@@ -93,6 +94,9 @@
         </div>
         <span class="save-status" id="saveStatus" role="status" aria-live="polite">Nur lesen</span>
         <div class="admin-toolbar__actions">
+          <button class="admin-icon-button admin-theme-button" id="adminThemeButton" type="button" aria-label="Farbschema wechseln" title="Farbschema wechseln" aria-pressed="false">
+            <i class="ph-light ph-moon" id="adminThemeIcon" aria-hidden="true"></i>
+          </button>
           <button class="admin-button admin-button--secondary" id="validateButton" type="button">
             <i class="ph-light ph-shield-check" aria-hidden="true"></i> Prüfen
           </button>
@@ -118,7 +122,6 @@
     <form method="dialog" id="changesetForm">
       <div class="admin-dialog__header">
         <div>
-          <p class="admin-overline">Neuer Änderungssatz</p>
           <h2 id="changesetDialogTitle">Arbeit nachvollziehbar bündeln</h2>
         </div>
         <button class="admin-icon-button" value="cancel" aria-label="Dialog schließen">
@@ -146,7 +149,6 @@
     <form method="dialog" id="lessonForm">
       <div class="admin-dialog__header">
         <div>
-          <p class="admin-overline">Neue Lesson</p>
           <h2 id="lessonDialogTitle">Lesson-Vertrag anlegen</h2>
         </div>
         <button class="admin-icon-button" value="cancel" aria-label="Dialog schließen">
@@ -187,7 +189,6 @@
   <dialog class="admin-dialog" id="importDialog" aria-labelledby="importDialogTitle">
     <div class="admin-dialog__header">
       <div>
-        <p class="admin-overline">Import-Vorschau</p>
         <h2 id="importDialogTitle">Änderungen vor Übernahme prüfen</h2>
       </div>
       <button class="admin-icon-button" id="closeImportDialog" type="button" aria-label="Dialog schließen">
@@ -204,7 +205,6 @@
   <dialog class="admin-dialog admin-dialog--wide" id="conflictDialog" aria-labelledby="conflictDialogTitle">
     <div class="admin-dialog__header">
       <div>
-        <p class="admin-overline">Bearbeitungskonflikt</p>
         <h2 id="conflictDialogTitle">Überlappende Änderungen entscheiden</h2>
       </div>
     </div>
