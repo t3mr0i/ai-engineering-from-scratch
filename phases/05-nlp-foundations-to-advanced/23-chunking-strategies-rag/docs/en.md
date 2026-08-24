@@ -15,7 +15,7 @@ The fix is not "buy a better embedding model." The fix is chunking. How big? Ove
 
 Feb 2026 benchmarks show surprising results:
 
-- Vectara's 2026 study: recursive 512-token chunking beat semantic chunking 69% → 54% accuracy.
+- Published chunking comparisons disagree across corpora; treat chunk size, overlap, and semantic splitting as eval parameters rather than universal winners.
 - SPLADE + Ministral-8B on Natural Questions: overlap provided zero measurable benefit.
 - Context cliff: response quality drops sharply around 2,500 tokens of context.
 

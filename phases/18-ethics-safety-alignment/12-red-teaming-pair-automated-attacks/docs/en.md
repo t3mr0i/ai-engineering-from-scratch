@@ -57,7 +57,7 @@ Both (2024) standardize evaluation:
 - JailbreakBench (arXiv:2404.01318). 100 harmful behaviors across 10 OpenAI-policy categories. Attack success rate (ASR) as the primary metric. Requires a judge (GPT-4-turbo, Llama Guard, or StrongREJECT).
 - HarmBench (Mazeika et al. 2024). 510 behaviours across 7 categories, with semantic and functional harm tests. Compares 18 attacks against 33 models.
 
-ASR is usually reported at a fixed query budget. Comparing attacks requires matching budgets; a 90% ASR at 200 queries is not comparable to 85% ASR at 20.
+**Worked example (hypothetical).** A 90% attack-success rate at 200 queries is not comparable to 85% at 20 queries. ASR must be reported with a fixed query budget.
 
 ### Reason it matters for 2026 deployments
 

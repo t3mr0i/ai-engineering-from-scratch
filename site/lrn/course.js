@@ -325,8 +325,8 @@
   }
 
   // Phosphor Light icon for a syllabus unit, picked from the unit title.
-  // First match wins. Same vocabulary as lrn.js COURSE_ICON_RULES so a unit
-  // about "Architecture" gets tree-structure on both surfaces.
+  // These remain topic icons because they describe units; course-level icons
+  // deliberately describe the learning format via course-formats.js.
   var UNIT_ICON_RULES = [
     [/security|injection/, "shield-warning"],
     [/responsible|trustworthy|gdpr|ethics|legal|compliance|risk|governance/, "shield-check"],

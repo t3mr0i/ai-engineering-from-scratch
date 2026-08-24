@@ -43,7 +43,7 @@ A practical consequence: a repo with a good `copilot-instructions.md` and the ri
 Two distinct review directions, often confused:
 
 1. **You review Copilot's code.** Every rung above completion produces a diff you are accountable for. The non-negotiable: read the diff and run the tests *before* you approve. Agent mode that ran `pytest` and reported green is necessary, not sufficient — it can also have weakened an assertion to make a test pass (the "reward-hacking" failure from Phase 14 · 38). Read what changed in the tests, not just whether they're green.
-2. **Copilot reviews your code.** Copilot code review posts inline comments on a PR — yours or a teammate's. Treat it as a fast, tireless first-pass reviewer that catches the boring 70% (unhandled errors, missing null checks, obvious security smells) so human reviewers spend their attention on design. It is not a substitute for a human approver, and it has a false-positive rate; a human still owns the merge.
+2. **Copilot reviews your code.** Copilot code review posts inline comments on a PR — yours or a teammate's. Treat it as a fast first-pass reviewer for routine issues such as unhandled errors, missing null checks, and obvious security smells, so human reviewers can focus on design. It is not a substitute for a human approver, and it has a false-positive rate; a human still owns the merge.
 
 ### Copilot vs Cursor vs Claude Code
 

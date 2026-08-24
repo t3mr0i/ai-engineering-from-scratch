@@ -46,7 +46,7 @@ OpenAI, Aug 2024. Human-curated 500-task subset. Removes ambiguous issues, unrel
 - **SWE-bench+** found 32.67% of successful patches leaked solutions in the issue text (model saw the fix in the description), and 31.08% were suspicious due to weak test coverage.
 - Verified is cleaner but not contamination-free.
 
-Practical implication: a model that scores 50% on SWE-bench may score 35% on SWE-bench+. Always report both if you claim SWE-bench performance.
+**Hypothetical example.** A model reported at 50% on SWE-bench could score 35% on a separately audited variant. Always name the exact benchmark and split instead of transferring a score between them.
 
 ### GAIA (Mialon et al., Nov 2023)
 

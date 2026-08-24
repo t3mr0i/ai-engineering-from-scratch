@@ -108,7 +108,7 @@ Two levels:
 - **Clip-level accuracy** — model sees one T-frame clip, reports top-k.
 - **Video-level accuracy** — average clip-level predictions across multiple clips per video; higher and more stable.
 
-Always report both. A model that scores 78% clip / 82% video is relying heavily on test-time averaging; one that scores 80% / 81% is more robust per-clip.
+**Worked example (hypothetical).** A model that scores 78% per clip and 82% per video benefits more from test-time averaging than one scoring 80% and 81%. Always report both aggregation levels.
 
 ### Datasets you will meet
 

@@ -123,7 +123,7 @@ Cross-entropy gives stable gradients early in training; Dice focuses the tail of
 - **Dice (F1 on pixels)** — similar to IoU; `Dice = 2 * IoU / (1 + IoU)`. Medical imaging prefers Dice, driving community prefers IoU; they are monotonically related.
 - **Boundary F1** — measures how close predicted boundaries are to ground-truth boundaries, penalising even small shifts. Important for high-precision tasks like semiconductor inspection.
 
-Report IoU per class, not just mIoU. Mean IoU hides a class at 15% when nine others are at 85%.
+**Worked example (hypothetical).** Mean IoU can hide one class at 15% when nine others are at 85%. Report IoU per class, not just mIoU.
 
 ### Input resolution trade-off
 

@@ -72,13 +72,15 @@ Use Dynamo if you want a managed stack-above orchestrator. Use llm-d if you want
 
 Internal composite (not a single published case study — order-of-magnitude anchor):
 
+**Illustrative scenario — not a published customer case:**
+
 - $2M/year inference spend on colocated serving.
 - Switched to disaggregated with Dynamo.
 - Same request volume, same P99 latency SLA.
 - Reported savings: $600K–$800K/year (30–40% reduction).
 - No new hardware.
 
-We synthesize this figure from multiple customer disclosures rather than a single citable case study; closest published data point is Baseten's 2x faster TTFT / 61% higher throughput with Dynamo KV routing (baseten.co, 2025-10), and VAST + CoreWeave's projection of 60–130% more tokens/$ at 40–60% KV hit rate (vastdata.com, 2025-12). The savings come from right-sizing each pool; prefill-heavy workloads (RAG with 8K+ prefixes) benefit more than balanced ones.
+The preceding figures are **illustrative assumptions**, not a synthesized customer claim. Replace them with measurements from your own traffic, hardware, and SLA. The savings mechanism is right-sizing each pool; prefill-heavy workloads such as RAG with long prefixes can benefit more than balanced ones.
 
 ### When NOT to disaggregate
 

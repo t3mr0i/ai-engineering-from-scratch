@@ -111,7 +111,7 @@ else:
     print("WRONG:", fixed_rate)
 ```
 
-The naive threshold reports 83% accuracy on this batch, counting the partial `code_exec` pass as a win. `_correct_from_score`'s per-family thresholds report 50% -- the true number once a `code_exec` candidate has to pass every assertion, not just some of them, to count.
+**Worked example (hypothetical).** The naive threshold reports 83% accuracy on this batch, counting the partial `code_exec` pass as a win. `_correct_from_score`'s per-family thresholds report 50% -- the true number once a `code_exec` candidate has to pass every assertion, not just some of them, to count.
 
 ## Aggregation
 

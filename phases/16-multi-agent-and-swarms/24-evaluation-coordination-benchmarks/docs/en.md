@@ -70,6 +70,8 @@ AAAI 2026 Bridge Program — Workshop on Multi-Agent Coordination (https://multi
 
 When someone claims a multi-agent result:
 
+**Hypothetical example checklist for reviewing a claimed result:**
+
 1. **Which benchmark, which split?** SWE-bench Verified vs Pro matters a lot. A number reported on the wrong split is worthless.
 2. **Contamination check.** Was the benchmark released after the model's training cutoff? If not, treat with caution.
 3. **Baseline comparison.** Vs single-LLM baseline, vs random, vs prior multi-agent work. Not "vs untuned version of the same system."

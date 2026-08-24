@@ -50,105 +50,16 @@
   // so `shown < undefined` was always false and every course got demoted → 0 shown.
   var RECOMMEND_CAP = 11;
 
-  // Visual theme per course family — derived from the course's primary
-  // (first) interest. The theme drives the tile tint; the icon itself is
-  // resolved per course from its title (see COURSE_ICON_RULES).
-  // Icons are Phosphor Light names (Lufthansa DS substitutes for the
-  // official LHG line-icon set; see SKILL.md). Phosphor resolves them
-  // from the CDN font file loaded in course.html.
+  // Visual theme per course family — derived from the primary interest. It
+  // only drives the tile tint; course-formats.js owns the icon and label.
   var INTEREST_THEMES = {
-    foundation: { icon: "graduation-cap" },
-    productivity: { icon: "lightning" },
-    consulting: { icon: "briefcase" },
-    engineering: { icon: "terminal-window" },
-    governance: { icon: "shield-check" },
-    leadership: { icon: "compass" }
+    foundation: true,
+    productivity: true,
+    consulting: true,
+    engineering: true,
+    governance: true,
+    leadership: true
   };
-
-  // Title-keyword → Phosphor Light icon. First match wins, so specific topics
-  // (security, prompts, testing) must come before broad ones (learning).
-  // Fallback: the interest theme's icon.
-  // Per-course icon map (course.id → Phosphor Light name). Authoritative —
-  // a specific mapping here always wins over the keyword fallback below, so
-  // we can pin a unique, content-matched icon per course. Phosphor Light
-  // names verified against @phosphor-icons/web 2.1.2.
-  var COURSE_ICONS = {
-    "PRIMER-01": "brain",
-    "LRN-01": "graduation-cap",
-    "LRN-02": "lightning",
-    "LRN-03": "scales",
-    "LRN-22": "chats",
-    "LRN-23": "magnifying-glass",
-    "LRN-06": "code",
-    "LRN-25": "tree-structure",
-    "LRN-24": "robot",
-    "LRN-04": "shield-check",
-    "LRN-19": "test-tube",
-    "LRN-20": "path",
-    "LRN-11": "file-text",
-    "LRN-08": "leaf",
-    "LRN-17": "users-three",
-    "LRN-07": "magnifying-glass",
-    "LRN-33": "coins",
-    "LRN-21": "chats",
-    "LRN-15": "handshake",
-    "LRN-16": "users",
-    "LRN-40": "compass",
-    "LRN-05": "chart-bar",
-    "LRN-28": "shield-warning",
-    "LRN-18": "database",
-    "LRN-41": "handshake",
-    "LRN-36": "wrench",
-    "LRN-09": "headphones",
-    "LRN-10": "presentation-chart",
-    "LRN-32": "squares-four",
-    "LRN-12": "database",
-    "LRN-30": "flow-arrow",
-    "LRN-39": "shield-check",
-    "LRN-13": "file-text",
-    "LRN-42": "tree-structure",
-    "LRN-31": "clipboard-text",
-    "LRN-29": "test-tube",
-    "LRN-34": "briefcase",
-    "LRN-35": "cloud",
-    "LRN-38": "users-three",
-    "LRN-43": "squares-four",
-    "LRN-37": "wrench",
-    "LRN-14": "shield-warning",
-    "LRN-27": "book-open"
-  };
-
-  // Keyword fallback for any future course id that isn't in COURSE_ICONS yet.
-  // Specific topics come before broad ones. Interest theme icon is the last
-  // resort.
-  var COURSE_ICON_RULES = [
-    [/security|injection/, "shield-warning"],
-    [/responsible|trustworthy|gdpr|ethics|legal/, "scales"],
-    [/governance|risk|controls|compliance/, "shield-check"],
-    [/prompt/, "chats"],
-    [/copilot|code|agentic|software engineer/, "code"],
-    [/testing|qa\b|test data/, "test-tube"],
-    [/architecture|systems/, "tree-structure"],
-    [/rag|knowledge/, "database"],
-    [/documentation|content/, "file-text"],
-    [/requirement|backlog|business analysis/, "clipboard-text"],
-    [/use case|spotting|discovery|research/, "magnifying-glass"],
-    [/cost|value|economics|finance|benefits/, "coins"],
-    [/workforce|hr\b|people/, "users"],
-    [/change|transformation|stakeholder/, "arrows-clockwise"],
-    [/project|reporting|steering|portfolio|roadmap/, "squares-four"],
-    [/data/, "chart-bar"],
-    [/green|sustainable/, "leaf"],
-    [/vendor|procurement|ecosystem/, "handshake"],
-    [/operations|incident|service|support/, "wrench"],
-    [/sales|consulting/, "briefcase"],
-    [/communication|marketing/, "megaphone"],
-    [/meeting|facilitation|workshop/, "presentation-chart"],
-    [/automation|process/, "flow-arrow"],
-    [/customer/, "headphones"],
-    [/leader|decision/, "compass"],
-    [/productivity/, "lightning"]
-  ];
 
   var els = {
     profileSelect: document.getElementById("profileSelect"),
@@ -504,10 +415,6 @@
     return INTEREST_THEMES[primary] ? primary : "foundation";
   }
 
-  function courseIcon(course, theme) {
-    return courseFormat(course).icon;
-  }
-
   function courseFormat(course) {
     if (window.LrnCourseFormats && window.LrnCourseFormats.resolve) {
       return window.LrnCourseFormats.resolve(course);
@@ -542,7 +449,7 @@
     var tile = document.createElement("span");
     tile.className = "course-card__tile";
     tile.setAttribute("aria-hidden", "true");
-    tile.appendChild(lucideIcon(courseIcon(course, theme)));
+    tile.appendChild(lucideIcon(format.icon));
 
     var formatLabel = document.createElement("span");
     formatLabel.className = "course-card__format";
@@ -828,8 +735,7 @@
 
   // Render a Phosphor Light icon. Phosphor is a web font loaded via the
   // CDN <script> in course.html; the icon is just a glyph on the <i> tag.
-  // Lucide → Phosphor names: callers pass the Phosphor name (COURSE_ICON_RULES
-  // and call sites below use Phosphor spellings directly).
+  // Lucide → Phosphor names: callers pass Phosphor spellings directly.
   function lucideIcon(name) {
     var i = document.createElement("i");
     i.className = "ph-light ph-" + name;

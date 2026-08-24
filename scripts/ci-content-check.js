@@ -720,6 +720,10 @@ function check15() {
   const ORG_YEAR_RE = /\b(McKinsey|Gartner|Stanford(?: HAI)?|Nielsen|NN\/?g(?:roup)?|Databricks|LangChain|PMI|Anthropic|OpenAI|Google|Meta)\s+(?:\(?20\d\d\)?|eval(?:s)?|survey|study|report|index)/i;
   const GENERIC_RE = /\b(study|survey|report(?:ed|s)?|found that|according to (?:a |the )?(?:20\d\d )?(?:study|survey|report)|research (?:shows|found|by))\b/i;
   const LINK_RE = /\[[^\]]*\]\(https?:\/\/[^)]+\)|https?:\/\/\S+/;
+  // Explicitly labeled teaching examples are invented inputs for practicing a
+  // calculation or decision. They are not evidence claims. The label is
+  // required so an external-looking number cannot silently pass as fact.
+  const EXPLICIT_EXAMPLE_RE = /\b(hypothetical (?:case|scenario|example)|worked example \(hypothetical\)|illustrative (?:scenario|figures|assumptions))\b/i;
 
   let totalPctParas = 0, attribParas = 0;
   const details = [];
@@ -731,6 +735,7 @@ function check15() {
       totalPctParas++;
       if (!(ORG_YEAR_RE.test(p) || GENERIC_RE.test(p))) continue;
       attribParas++;
+      if (EXPLICIT_EXAMPLE_RE.test(p)) continue;
       if (!LINK_RE.test(p)) details.push(`${f}: ${p.replace(/\s+/g, " ").trim().slice(0, 160)}`);
     }
   }

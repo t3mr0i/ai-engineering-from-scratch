@@ -43,7 +43,7 @@ Both steps are learnable. Both are benchmarked. The combined pipeline has been s
 - **Mention recall (candidate gen).** Fraction of gold mentions where the correct KB entry appears in the candidate list. Floor for the whole pipeline.
 - **Disambiguation accuracy / F1.** Given correct candidates, how often the top-1 is right.
 
-Always report both. A system with 99% disambiguation on 80% candidate recall is an 80% pipeline.
+**Worked example (hypothetical).** A system with 99% disambiguation on 80% candidate recall is only about an 80% end-to-end pipeline. Always report both stages.
 
 
 

@@ -11,7 +11,7 @@
 
 - Name the three top open-source agent observability platforms and their licenses.
 - Distinguish what each one is strongest at: Langfuse (prompt mgmt + sessions), Phoenix (RAG + auto-instrumentation), Opik (optimization + guardrails).
-- Explain why 89% of organizations report having agent observability in place by 2026.
+- Explain why production agents need traces that connect prompts, tool calls, evaluations, cost, and user outcomes.
 - Implement a stdlib trace-to-dashboard pipeline with LLM-judge evaluation.
 
 ## The Problem

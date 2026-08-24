@@ -25,7 +25,7 @@ The interesting problem is what to do about unseen n-grams. A raw count-based mo
 P(w | context) = count(context, w) / count(context)
 ```
 
-**The zero-count problem.** Any n-gram not seen in training gets probability zero. A 2007 study on the Brown corpus found that even a 4-gram model had 30% of held-out 4-grams unseen in training. You cannot evaluate on any real text without smoothing.
+**The zero-count problem.** Any n-gram not seen in training gets probability zero. Held-out text inevitably contains unseen higher-order n-grams, so an unsmoothed model can assign an entire sequence probability zero. You cannot evaluate robustly on real text without smoothing.
 
 **Smoothing approaches, in order of sophistication:**
 

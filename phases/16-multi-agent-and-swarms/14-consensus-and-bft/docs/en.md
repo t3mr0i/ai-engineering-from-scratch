@@ -71,7 +71,7 @@ A minimal BFT round for LLM agents:
 7. minority clusters logged with provenance for post-hoc audit
 ```
 
-The semantic clustering step is the LLM-specific twist. Two answers "the study reports 4.2%" and "4.2% improvement" are the same cluster. A naive string-equality check would miss this. In production, use a cheap embedding model or explicit canonicalization.
+**Worked example (hypothetical).** The answers "the study reports 4.2%" and "4.2% improvement" belong to the same semantic cluster. A naive string-equality check would miss this. In production, use a cheap embedding model or explicit canonicalization.
 
 ### Threshold tuning
 

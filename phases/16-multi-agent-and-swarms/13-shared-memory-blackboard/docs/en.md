@@ -52,6 +52,8 @@ Production systems often mix: a small full pool at the top (planning layer), bla
 
 Three agents work on a research task. Agent A is a retrieval agent. Agent B is a summarizer. Agent C is an analyst.
 
+**Hypothetical scenario:**
+
 1. A fetches a page and writes a message to shared state: "The study reports a 42% accuracy improvement."
 2. The fetched page actually said "4.2% improvement." A hallucinated a decimal.
 3. B, reading shared state, writes: "Large 42% accuracy gain reported (source: A)."

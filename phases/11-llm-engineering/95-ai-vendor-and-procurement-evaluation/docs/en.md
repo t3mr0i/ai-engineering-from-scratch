@@ -11,6 +11,8 @@
 
 The market has settled into a working topology that you should be able to price from memory at the start of an evaluation. The figures below are approximate as of early 2026 and drift monthly; re-quote at the start of every engagement.
 
+**Illustrative assumptions — replace every figure with dated vendor quotes before procurement:**
+
 - **Frontier API, real-time, input**: roughly $3-4 per million tokens (Sonnet 4.6-class, GPT-4o-class). Cheaper "mini" tiers at roughly $0.20-0.40.
 - **Frontier API, real-time, output**: roughly $15-18 per million tokens. Output is 4-6x input across the frontier tier.
 - **Self-hosted open weights, marginal cost at scale**: roughly $0.50-1.50 per million tokens once you include amortised GPU, networking, and ops; the upfront GPU bill is the real cost (eight H100s for a production-grade deployment sit in the $250-400K capex range, depending on vendor and memory configuration).
