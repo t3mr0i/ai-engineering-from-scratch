@@ -123,7 +123,7 @@ function validateCurriculum(snapshot) {
     for (const [unitIndex, unit] of units.entries()) {
       const at = `curriculumMap.courseMaps.${courseId}[${unitIndex}]`;
       if (!String(unit.title || "").trim()) {
-        issues.push(issue("error", "unit.title", `${at}.title`, "Der Unit-Titel fehlt."));
+        issues.push(issue("warning", "unit.title", `${at}.title`, "Der Unit-Titel fehlt."));
       }
       if (!Array.isArray(unit.lessons) || unit.lessons.length === 0) {
         issues.push(issue("warning", "unit.lessons.empty", `${at}.lessons`, "Die Unit enthält keine Activities."));

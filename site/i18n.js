@@ -13,7 +13,6 @@ window.SITE_I18N = {
   lang_toggle_title: { en: "Switch language", de: "Sprache wechseln" },
   skip_content: { en: "Skip to content", de: "Zum Inhalt springen" },
   skip_catalog: { en: "Skip to course catalog", de: "Zum Kurskatalog springen" },
-  footer_tagline: { en: "LHIND AI Learning Catalog · open source · free forever.", de: "LHIND AI Learning Catalog · Open Source · für immer kostenlos." },
   footer_home: { en: "Home", de: "Startseite" },
   footer_glossary: { en: "Glossary", de: "Glossar" },
   footer_notes: { en: "My Merkzettel", de: "Meine Merkzettel" },

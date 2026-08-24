@@ -1,6 +1,7 @@
 /* Curriculum Admin — uses site/lrn/tokens.css as its only token source. */
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 html { color-scheme: light dark; }
 

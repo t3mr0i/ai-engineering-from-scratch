@@ -113,10 +113,6 @@ function createAdminApi(options = {}) {
 
       if (!action && req.method === "PUT") {
         const issues = validateCurriculum(body.snapshot);
-        const errors = issues.filter((item) => item.severity === "error");
-        if (errors.length) {
-          throw new StoreError("curriculum.invalid", "Der Entwurf enthält blockierende Fehler.", 422, { issues });
-        }
         const changeset = store.save(id, actor, body);
         sendJson(res, 200, { ok: true, changeset, issues });
         return true;
@@ -137,6 +133,13 @@ function createAdminApi(options = {}) {
 
       if (action === "status") {
         requireMethod(req, "POST");
+        const current = store.get(id);
+        if (body.status === "review") {
+          const issues = validateCurriculum(current.snapshot);
+          if (issues.some((item) => item.severity === "error")) {
+            throw new StoreError("curriculum.invalid", "Blockierende Fehler verhindern das Review.", 422, { issues });
+          }
+        }
         if (body.status === "approved") requireRole(actor, "reviewer");
         if (["published", "archived"].includes(body.status)) requireRole(actor, "publisher");
         const changeset = store.transition(id, actor, body);
