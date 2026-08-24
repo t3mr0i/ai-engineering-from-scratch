@@ -3,6 +3,7 @@
 > A group of weak learners, combined correctly, becomes a strong learner. This is not a metaphor. It is a theorem.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 2, Lesson 10 (Bias-Variance Tradeoff)
 **Time:** ~120 minutes

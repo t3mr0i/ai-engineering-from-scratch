@@ -3,9 +3,16 @@
 > By 2026 the median enterprise has run between 15 and 40 AI pilots. Fewer than a third of those pilots have reached production at scale, and the most commonly cited cause of failure is not model quality — it is the absence of a repeatable operating structure: who decides which use cases to fund, who owns the standards the models must meet, and who makes sure the next team starts from what the last team learned. A Center of Excellence (CoE) is the organizational answer to that gap. It is not a bureaucracy that slows delivery; it is the shared infrastructure layer — governance, reusable assets, a champion network, and a cadence — that lets an organization move from dozens of disconnected experiments to a compound-growth platform. The engineering and consulting question for 2026 is not whether to establish one, but what a CoE actually decides, what it standardizes, and what it must leave to the delivery teams.
 
 **Type:** Learn
-**Languages:** Python (stdlib — CoE readiness scorer + operating model router)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 22 (Skills and agent SDKs), Phase 11 · 01 (Prompt engineering)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Operating Model and Center of Excellence: From Pilots to Platform (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -3,7 +3,7 @@
 > Mem0 (Chhikara et al., 2025) treats memory as three stores in parallel — vector for semantic similarity, KV for fast fact lookup, graph for entity-relationship reasoning. A scoring layer fuses the three on retrieval. This is the 2026 production standard for external memory.
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 07 (MemGPT), Phase 14 · 08 (Letta Blocks)
 **Time:** ~75 minutes
 

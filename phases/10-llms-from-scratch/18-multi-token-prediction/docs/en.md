@@ -3,7 +3,7 @@
 > Every autoregressive LLM from GPT-2 to Llama 3 trains on one loss per position: predict the next token. DeepSeek-V3 added a second loss per position: predict the token after that. The extra 14B of parameters (on a 671B model) feed training signal back into the main model, and the trained MTP heads are reused at inference as speculative-decoding drafters. The [DeepSeek-V3 technical report](https://arxiv.org/abs/2412.19437) reports over 80% first-token acceptance and up to 1.8× generation throughput. This lesson builds the sequential MTP module, computes the loss and shared-head parameter layout, and explains why MTP keeps the causal chain while Gloeckle et al.'s original parallel MTP did not.
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 10 · 04 (pre-training a mini GPT), Phase 10 · 15 (speculative decoding)
 **Time:** ~60 minutes
 

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 05 (Full Transformer), Phase 7 · 06 (BERT), Phase 7 · 07 (GPT)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind T5, BART — Encoder-Decoder Models from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by T5, BART — Encoder-Decoder Models
+
 ## The Problem
 
 Decoder-only GPT and encoder-only BERT each strip down the 2017 architecture for a different goal. But many tasks are naturally input-output:

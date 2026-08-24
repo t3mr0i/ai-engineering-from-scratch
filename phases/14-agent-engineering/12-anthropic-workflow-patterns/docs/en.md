@@ -2,8 +2,8 @@
 
 > Schluntz and Zhang (Anthropic, Dec 2024) distinguish workflows (predefined paths) from agents (dynamic tool-use). Five workflow patterns cover most cases. Start with direct API calls. Add agents only when steps cannot be predicted.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 14 · 01 (Agent Loop)
 **Time:** ~60 minutes
 

@@ -3,9 +3,16 @@
 > Gartner reports that at least 50% of generative AI pilots are abandoned after proof of concept, citing poor data quality, inadequate risk controls, escalating costs, and unclear business value rather than model failure ([Gartner — Why Half of GenAI Projects Fail](https://www.gartner.com/en/articles/genai-project-failure)). One of the least measured causes is the absence of a structured mechanism to move a working pilot's learning outward into the rest of the organization. The AI Champion role is that mechanism: a named individual or small cohort responsible for brown bags, communities of practice (CoPs), internal toolkits, and piloting new AI approaches before the rest of the organization has to absorb the risk. In 2026, the job is harder than it was 18 months ago because the landscape moves faster — Anthropic releases Fable 5 and major Sonnet/Haiku 4.x updates on a cadence measured in weeks, not quarters. A champion who cannot distinguish a meaningful capability shift from a changelog footnote will create noise instead of signal. The difference between a champion and an enthusiast is that the champion produces reusable artifacts: a decision aid that survives their absence, an eval harness that catches regressions, a structured session that transfers skill rather than enthusiasm.
 
 **Type:** Learn
-**Languages:** Python (stdlib — enablement-session planner and artifact prioritizer)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 22 (Skills and agent SDKs), Phase 19 · 27 (Eval harness and fixture tasks)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by The AI Champion Playbook: Knowledge Transfer That Actually Sticks (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

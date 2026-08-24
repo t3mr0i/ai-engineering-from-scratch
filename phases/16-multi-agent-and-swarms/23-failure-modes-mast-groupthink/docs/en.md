@@ -3,9 +3,16 @@
 > [MAST](https://arxiv.org/abs/2503.13657) derives a multi-agent failure taxonomy from 1,642 execution traces across seven open-source systems, reporting 41–86.7% failure rates and grouping causes into specification, coordination, and verification categories. The [Groupthink survey](https://arxiv.org/abs/2508.05687) extends the picture with monoculture collapse, conformity bias, deficient theory of mind, and cascading reliability failures. This lesson treats those reported taxonomies as hypotheses to test against your own traces.
 
 **Type:** Learn
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 16 · 13 (Shared Memory), Phase 16 · 14 (Consensus and BFT), Phase 16 · 15 (Voting and Debate Topology)
 **Time:** ~75 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Failure Modes — MAST, Groupthink, Monoculture, Cascading Errors
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

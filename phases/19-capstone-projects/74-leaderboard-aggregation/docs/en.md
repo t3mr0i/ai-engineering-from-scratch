@@ -7,7 +7,7 @@
 **Prerequisites:** Phase 19 Track B foundations, lessons 70, 71, 73
 **Time:** ~90 min
 
-## Learning objectives
+## Learning Objectives
 
 - Aggregate per-task scores across multiple models and multiple tasks into a tidy per-model row.
 - Normalise heterogeneous scores so that pass rates and BLEU values do not over-influence the aggregate.

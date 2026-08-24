@@ -3,9 +3,16 @@
 > By 2026 the average enterprise AI stack contains seven distinct model providers, three inference tiers, and at least two shadow deployments the architecture team does not know about. Decisions made in a 30-minute sprint — which model, which vendor, where the security boundary sits — calcify into multi-year cost and compliance constraints. The Architecture Decision Record (ADR) format, used in software since Nygard (2011), extends naturally to AI-specific concerns: model substitutability, data-residency obligations, cost ceilings, and vendor-lock risk. An AI ADR captures the context, the options genuinely evaluated, the decision made, and — critically — the signals that would force a re-evaluation. Without this paper trail, governing AI spend, auditing for regulatory compliance (EU AI Act, DSGVO), and safely onboarding new models becomes archaeology.
 
 **Type:** Learn
-**Languages:** Python (stdlib — AI ADR validator and decision-register simulator)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 14 (Model Context Protocol), Phase 14 · 36 (Scope contracts)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Architecture Decision Records: Governing Model, Vendor, and Boundary Choices (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

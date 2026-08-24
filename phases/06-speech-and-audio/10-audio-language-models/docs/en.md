@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 04 (ASR), Phase 12 · 03 (Vision-Language Models), Phase 7 · 10 (Audio Transformers)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Audio-Language Models — Qwen2.5-Omni, Audio Flamingo, GPT-4o Audio
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Audio-Language Models — Qwen2.5-Omni, Audio Flamingo, GPT-4o Audio
+
 ## The Problem
 
 You have 5 seconds of audio: dog barks, someone yells "stop!", then silence. Useful questions span multiple axes:

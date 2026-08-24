@@ -2,11 +2,18 @@
 
 > SWE-AF's factory architecture, MetaGPT's role-based prompting, AutoGen 0.4's typed actor graph, Cognition's Devin, and Factory's Droids all converged on the same 2026 shape: an architect plans, N coders work in parallel worktrees, a reviewer gates, a tester verifies. Parallel worktrees convert wall-clock into throughput. Shared state and handoff protocols become the failure surface. The capstone is to build the team, evaluate on SWE-bench Pro, and report which handoffs break and how often.
 
-**Type:** Capstone
-**Languages:** Python / TypeScript (agents), Shell (worktree scripts)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 11 (LLM engineering), Phase 13 (tools), Phase 14 (agents), Phase 15 (autonomous), Phase 16 (multi-agent), Phase 17 (infrastructure)
 **Phases exercised:** P11 · P13 · P14 · P15 · P16 · P17
 **Time:** 40 hours
+
+## Learning Objectives
+
+- Define measurable acceptance criteria for Capstone 10 — Multi-Agent Software Engineering Team
+- Integrate the required components into one self-terminating workflow
+- Exercise happy paths, edge cases, and failure recovery with reproducible fixtures
+- Package the verified result as a reusable curriculum artifact
 
 ## Problem
 

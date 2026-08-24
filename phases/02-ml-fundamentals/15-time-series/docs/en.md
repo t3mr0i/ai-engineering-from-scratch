@@ -3,6 +3,7 @@
 > Past performance does predict future results -- if you check for stationarity first.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 2, Lessons 01-09
 **Time:** ~90 minutes

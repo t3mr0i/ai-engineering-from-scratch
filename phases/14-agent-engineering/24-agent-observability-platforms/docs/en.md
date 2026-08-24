@@ -3,7 +3,7 @@
 > Three open-source agent observability platforms dominate 2026. Langfuse (MIT) — 6M+ installs/month, tracing + prompt management + evals + session replay. Arize Phoenix (Elastic 2.0) — deep agent-specific evals, RAG relevancy, OpenInference auto-instrumentation. Comet Opik (Apache 2.0) — automated prompt optimization, guardrails, LLM-judge hallucination detection.
 
 **Type:** Learn
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 23 (OTel GenAI)
 **Time:** ~45 minutes
 

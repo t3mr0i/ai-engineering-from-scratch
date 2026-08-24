@@ -3,9 +3,16 @@
 > Chunking configuration influences retrieval quality as much as the choice of embedding model (Vectara NAACL 2025). Get chunking wrong and no amount of reranking saves you.
 
 **Type:** Build
-**Languages:** Python
+**Languages:** Python, TypeScript
 **Prerequisites:** Phase 5 · 14 (Information Retrieval), Phase 5 · 22 (Embedding Models)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the core mechanism in Chunking Strategies for RAG and place it in an NLP pipeline
+- Implement the central transformation behind Chunking Strategies for RAG from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Chunking Strategies for RAG
 
 ## The Problem
 

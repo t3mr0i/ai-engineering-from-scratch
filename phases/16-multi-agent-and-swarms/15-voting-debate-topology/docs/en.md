@@ -2,10 +2,17 @@
 
 > The cheapest aggregation: sample N independent agents, majority-vote. Wang et al. 2022 self-consistency did this with one model sampled N times. Multi-agent extends it with **heterogeneous** agents to escape monoculture — different models, different prompts, different temperatures, different contexts. Beyond majority vote, debate topology matters: MultiAgentBench (arXiv:2503.01935, ACL 2025) evaluated star / chain / tree / graph coordination and found **graph best for research**, with a "coordination tax" past ~4 agents. AgentVerse (ICLR 2024) documents two emergent patterns — volunteer behaviors and conformity behaviors — and conformity is both a feature (finding consensus) and a risk (groupthink, Lesson 24). This lesson maps the topology space, builds each variant, and measures the coordination tax.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 16 · 07 (Society of Mind and Debate), Phase 16 · 14 (Consensus and BFT)
 **Time:** ~75 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Voting, Self-Consistency, and Debate Topology
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

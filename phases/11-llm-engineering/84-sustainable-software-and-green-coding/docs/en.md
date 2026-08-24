@@ -3,9 +3,16 @@
 > Training a frontier model like GPT-4 consumed roughly 50 GWh — comparable to powering 4,600 average US homes for a year — and that figure does not include inference, which now accounts for the majority of a deployed model's lifetime emissions. By 2026 the inference side has grown large enough that Scope 3 emissions from AI API consumption appear in enterprise sustainability reporting. The gap between "the model works" and "the model is worth deploying" now includes energy density, carbon intensity of the serving region, token efficiency, and measurable operational impact per unit cost. Green coding in this context is not an add-on ethic; it is an engineering constraint that surfaces in architecture decisions, model selection, and prompt design simultaneously. The frameworks to measure it — SCI (Software Carbon Intensity), MLOps energy profiling — exist today, and the tooling in cloud providers can surface per-request carbon data.
 
 **Type:** Learn
-**Languages:** Python (stdlib — token-efficiency scorer + region carbon comparator)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 02 (Inference platform economics), Phase 17 · 16 (Model routing)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

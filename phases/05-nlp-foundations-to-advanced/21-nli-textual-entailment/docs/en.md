@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 05 (Sentiment Analysis), Phase 5 · 13 (Question Answering)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Natural Language Inference — Textual Entailment and place it in an NLP pipeline
+- Implement the central transformation behind Natural Language Inference — Textual Entailment from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Natural Language Inference — Textual Entailment
+
 ## The Problem
 
 You built a summarizer. It produced a summary. How do you know the summary does not contain a hallucination?

@@ -2,10 +2,17 @@
 
 > Hierarchical is supervisor nested. Manager agents over sub-managers over workers. CrewAI `Process.hierarchical` is the textbook version: a `manager_llm` dynamically delegates tasks and validates outputs. The LangGraph equivalent is `create_supervisor(create_supervisor(...))`. It is the natural pattern when the task is a real org chart. It is also the pattern most likely to collapse into managerial looping — manager agents assign work poorly, misinterpret sub-outputs, or fail to reach consensus. Sequential often beats it.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 16 · 05 (Supervisor Pattern)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Hierarchical Architecture and Its Failure Mode
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

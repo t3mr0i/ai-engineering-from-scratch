@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 11 (Machine Translation), Phase 5 · 10 (Attention Mechanism)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Question Answering Systems and place it in an NLP pipeline
+- Implement the central transformation behind Question Answering Systems from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Question Answering Systems
+
 ## The Problem
 
 A user types "When did the first iPhone launch?" and expects "June 29, 2007." Not "Apple's history is long and varied." Not "2007" sitting in isolation with no sentence. A direct, grounded, correct answer.

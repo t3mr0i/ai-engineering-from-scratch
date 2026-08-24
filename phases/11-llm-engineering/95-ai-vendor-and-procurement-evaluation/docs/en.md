@@ -3,9 +3,16 @@
 > In 2026 the AI vendor market is a two-tier system: a small frontier-lab tier (Anthropic, Google DeepMind, OpenAI, Meta, Mistral, DeepSeek) where capability and pricing move monthly, and a wider infrastructure tier (AWS Bedrock, Azure AI Foundry, Google Vertex AI, self-hosted) where data handling, compliance posture, and commercial terms are what change between proposals. The trap is evaluating on the variable that moves. By the time a procurement paper is signed, the lead model has typically been superseded by a newer checkpoint; the dimensions that survive a contract cycle are the hard-to-change ones: data residency, key custody, exit path, and how operating cost scales with real production traffic. In an LHIND GDPR context layered with EU AI Act tier-one obligations, a casual evaluation is a decision with a six-figure downside — not because the model was wrong, but because the procurement evidence was thin.
 
 **Type:** Learn
-**Languages:** Python (stdlib — vendor scorecard engine + hard-gate enforcement + cost-trap detector)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 26 (Compliance frameworks), Phase 17 · 27 (FinOps for LLMs)
 **Time:** ~50 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Vendor Evaluation: Procurement Evidence That Bites (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## What the 2026 market actually looks like
 

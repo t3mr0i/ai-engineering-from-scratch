@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 02 (Self-Attention), Phase 7 · 03 (Multi-Head), Phase 7 · 12 (KV Cache / Flash Attention)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind Attention Variants — Sliding Window, Sparse, Differential from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by Attention Variants — Sliding Window, Sparse, Differential
+
 ## The Problem
 
 Full attention costs `O(N²)` memory and `O(N²)` compute in sequence length. For a 128K-context Llama 3 70B that is 16 billion attention entries per layer, times 80 layers. Flash Attention (Lesson 12) hides the `O(N²)` activation memory but does not change the arithmetic cost — every token still attends to every other token.

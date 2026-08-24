@@ -3,7 +3,7 @@
 > MemGPT became Letta in 2024. The 2026 evolution adds two ideas: discrete functional memory blocks the model can edit directly, and a sleep-time agent that consolidates memory asynchronously while the primary agent is idle. This is how you scale memory beyond one conversation.
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 07 (MemGPT)
 **Time:** ~75 minutes
 

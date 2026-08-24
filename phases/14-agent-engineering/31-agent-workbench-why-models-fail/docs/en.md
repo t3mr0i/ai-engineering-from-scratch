@@ -2,8 +2,8 @@
 
 > A capable model is not enough. Reliable agents need a workbench: instructions, state, scope, feedback, verification, review, and handoff. Strip those away and even a frontier model produces work that is unsafe to ship.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 14 · 01 (Agent Loop), Phase 14 · 26 (Failure Modes)
 **Time:** ~45 minutes
 

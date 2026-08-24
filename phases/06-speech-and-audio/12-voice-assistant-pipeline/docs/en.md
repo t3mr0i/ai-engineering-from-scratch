@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 04, 05, 06, 07, 11; Phase 11 · 09 (Function Calling); Phase 14 · 01 (Agent Loop)
 **Time:** ~120 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Build a Voice Assistant Pipeline — The Phase 6 Capstone
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Build a Voice Assistant Pipeline — The Phase 6 Capstone
+
 ## The Problem
 
 Build an end-to-end assistant:

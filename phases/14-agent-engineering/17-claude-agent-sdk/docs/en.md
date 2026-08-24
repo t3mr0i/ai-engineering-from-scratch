@@ -2,8 +2,8 @@
 
 > The Claude Agent SDK is the library form of the Claude Code harness. Built-in tools, subagents for context isolation, hooks, W3C trace propagation, session store parity. Claude Managed Agents is the hosted alternative for long-running async work.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 14 · 01 (Agent Loop), Phase 14 · 10 (Skill Libraries)
 **Time:** ~75 minutes
 

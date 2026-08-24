@@ -3,9 +3,16 @@
 > Teams shipping LLM features routinely find that production regressions are caught by users rather than by automated tests — because the teams had no systematic eval before deployment. By 2026 the tooling gap has closed: Anthropic, OpenAI, and Google ship hosted eval runners; NIST AI RMF 1.0 (voluntary) and ISO/IEC 42001 (mandatory only for organizations pursuing certification) both name evaluation as a core control; and model providers publish standardized test harness APIs. What has not caught up is engineering practice. Most teams still treat LLM features like deterministic code, writing assertion-heavy unit tests that shatter on every model update and missing the class of failures those tests cannot see — coherence regressions, tone drift, silent context truncation, and adversarial prompt injection.
 
 **Type:** Learn
-**Languages:** Python (stdlib — eval-set classifier + regression gate simulator)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 10 (Evaluation), Phase 14 · 30 (Eval-driven agent development)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI-Driven Testing and QA: From Eval Sets to Regression Gates (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

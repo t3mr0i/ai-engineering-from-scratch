@@ -3,7 +3,7 @@
 > Tool descriptions land in the model's context verbatim. Malicious servers embed hidden instructions that users never see. Research in 2025-2026 from Invariant Labs, Unit 42, and an arXiv study published March 2026 measured attack-success rates above 70 percent on frontier models and about 85 percent against state-of-the-art defenses under adaptive attacks. This lesson names the seven concrete attack classes and builds a tool-poisoning detector you can run in CI.
 
 **Type:** Learn
-**Languages:** Python (stdlib, hash-pin + poisoning detector)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 07 (MCP server), Phase 13 · 08 (MCP client)
 **Time:** ~45 minutes
 

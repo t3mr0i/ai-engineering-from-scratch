@@ -3,6 +3,7 @@
 > Training a neural network is nothing more than finding the bottom of a valley.
 
 **Type:** Build
+**Languages:** Julia
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 04-05 (Derivatives, Gradients)
 **Time:** ~75 minutes

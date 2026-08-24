@@ -3,7 +3,7 @@
 > The terminal is where AI engineers live. Get comfortable here.
 
 **Type:** Learn
-**Languages:** --
+**Languages:** None
 **Prerequisites:** Phase 0, Lesson 01
 **Time:** ~35 minutes
 

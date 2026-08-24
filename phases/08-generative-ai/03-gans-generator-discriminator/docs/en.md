@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 3 · 02 (Backprop), Phase 3 · 08 (Optimizers), Phase 8 · 02 (VAE)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the probabilistic mechanism behind GANs — Generator vs Discriminator
+- Implement the lesson's core generative step from first principles
+- Inspect samples and intermediate states to diagnose generation behavior
+- Compare quality, diversity, stability, and compute trade-offs
+
 ## The Problem
 
 VAEs produce blurry samples because their MSE decoder loss is Bayes-optimal for the *mean* image — and the mean of many plausible digits is a fuzzy digit. You want a loss that rewards *plausibility*, not pixel-wise proximity to any one target. There is no closed-form for plausibility. You have to learn it.

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 01 through 13. Don't skip.
 **Time:** ~120 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind Build a Transformer from Scratch — The Capstone from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by Build a Transformer from Scratch — The Capstone
+
 ## The Problem
 
 You've read every paper. You've implemented attention, multi-head splits, positional encodings, encoder and decoder blocks, BERT and GPT losses, MoE, KV cache. Now make them work together on a real task.

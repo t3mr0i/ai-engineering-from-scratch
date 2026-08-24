@@ -3,6 +3,7 @@
 > Every signal is a sum of sine waves. The Fourier transform tells you which ones.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 01-04, 19 (complex numbers)
 **Time:** ~90 minutes

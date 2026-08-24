@@ -3,9 +3,16 @@
 > In 2026, large language models underpin products used by more than 750 million people weekly. Inside the enterprise, the same models run inside tools that write code, draft contracts, triage tickets, and approve invoices. Yet most business conversations about AI still collapse four structurally different layers into one phrase: "AI." Machine learning, foundation models, generative AI, and agentic systems are not synonyms. They have different build costs, different failure modes, and — as the EU AI Act phases in (prohibitions since Feb 2025, GPAI obligations since Aug 2025, high-risk obligations from Dec 2027 per Regulation (EU) 2026/1744) — different legal obligations. The practitioner cost of confusing them is measured in wrong architecture, blown timelines, and missed risk gates. The goal here is the map, not the encyclopedia: which concept lives where, what each one can and cannot do, and which three questions a consultant must answer in writing before any AI project enters scoping.
 
 **Type:** Learn
-**Languages:** Python (stdlib — system-type classifier, risk evaluator, failure-shape simulator)
+**Languages:** Python
 **Prerequisites:** Phase 2 · 01 (What is machine learning), Phase 8 · 01 (Generative models taxonomy)
 **Time:** ~50 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by How AI Systems Actually Work: A Consultant's Map of the Four Layers (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

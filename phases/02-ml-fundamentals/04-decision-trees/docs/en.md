@@ -3,6 +3,7 @@
 > A decision tree is just a flowchart. But a forest of them is one of the most powerful tools in ML.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1 (Lessons 09 Information Theory, 06 Probability)
 **Time:** ~90 minutes

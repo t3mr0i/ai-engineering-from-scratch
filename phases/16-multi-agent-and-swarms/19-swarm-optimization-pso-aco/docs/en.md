@@ -2,10 +2,17 @@
 
 > Bio-inspired optimization is returning in LLM research. [LMPSO](https://arxiv.org/abs/2504.09247) applies PSO to LLM-generated structured sequences. [Model Swarms](https://arxiv.org/abs/2410.11163) treats expert models as particles on a weight-space manifold and reports a 13.3% average gain over its evaluated baselines. [AMRO-S](https://arxiv.org/abs/2603.12933) applies ACO-inspired pheromone routing to specialist agents and reports a 4.7× speedup in its setting. This lesson implements the underlying algorithms and treats every paper result as a reproduction target, not a guaranteed production gain.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 16 · 09 (Parallel Swarm Networks), Phase 16 · 14 (Consensus and BFT)
 **Time:** ~75 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Swarm Optimization for LLMs (PSO, ACO)
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

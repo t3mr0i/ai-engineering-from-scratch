@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 13 (Question Answering), Phase 5 · 14 (Information Retrieval)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Chatbots — Rule-Based to Neural to LLM Agents and place it in an NLP pipeline
+- Implement the central transformation behind Chatbots — Rule-Based to Neural to LLM Agents from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Chatbots — Rule-Based to Neural to LLM Agents
+
 ## The Problem
 
 A user says "I want to change my flight." The system has to figure out what they want, what information is missing, how to get it, and how to complete the action. Then the user says "wait, what if I cancel instead?" and the system has to remember the context, switch tasks, and preserve state.

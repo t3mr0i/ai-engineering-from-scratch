@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 3 · 11 (PyTorch Intro), Phase 5 · 03 (Word Embeddings), Phase 4 · 02 (Convolutions from Scratch)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in CNNs and RNNs for Text and place it in an NLP pipeline
+- Implement the central transformation behind CNNs and RNNs for Text from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for CNNs and RNNs for Text
+
 ## The Problem
 
 TF-IDF and Word2Vec produced flat vectors that ignored word order. A classifier built on them could not tell `dog bites man` from `man bites dog`. Word order sometimes carries the signal.

@@ -3,9 +3,16 @@
 > According to Gartner's September 2025 survey of IT application leaders, just 15% are considering, piloting, or deploying fully autonomous AI agents ([Gartner — Survey Finds Just 15% of IT Application Leaders Are Considering, Piloting, or Deploying Fully Autonomous AI Agents](https://www.gartner.com/en/newsroom/press-releases/2025-09-30-gartner-survey-finds-just-15-percent-of-it-application-leaders-are-considering-piloting-or-deploying-fully-autonomous-ai-agents)); the rest keep a human in the loop, primarily because early deployments produced confident, wrong classifications at the same rate as correct ones. The 2026 shift is architectural: production deployments now treat the model as one signal in a weighted routing policy rather than a decision-maker, and they gate on measurable retrieval quality before any model sees a ticket. The discipline that makes this work — grounding triage in verified knowledge, scoring responses before they reach a human, and packaging incident context for clean handoff — is what separates a live service AI from a failed pilot.
 
 **Type:** Learn
-**Languages:** Python (stdlib — ticket triage pipeline + response quality scorer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 36 (Internal knowledge assistants and RAG), Phase 17 · 23 (SRE for AI systems)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

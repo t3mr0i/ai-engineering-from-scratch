@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 9 · 01 (MDPs), Phase 9 · 02 (Dynamic Programming)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Formulate Monte Carlo Methods — Learning from Complete Episodes in terms of states, actions, rewards, and objectives
+- Implement the central update rule from first principles
+- Trace learning signals through a self-terminating experiment
+- Evaluate convergence, stability, and exploration trade-offs
+
 ## The Problem
 
 Dynamic programming is elegant, but it assumes you can query `P(s' | s, a)` for every state and action. Almost nothing in the real world works that way. A robot cannot analytically compute the distribution over camera pixels after a joint torque. A pricing algorithm cannot integrate over every possible customer reaction. An LLM cannot enumerate all possible continuations after a token.

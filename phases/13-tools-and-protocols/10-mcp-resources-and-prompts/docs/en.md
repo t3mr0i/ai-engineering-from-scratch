@@ -3,7 +3,7 @@
 > Tools get 90 percent of MCP attention. The other two server primitives solve different problems. Resources expose data for reading; prompts expose reusable templates as slash-commands. Many servers should use resources instead of wrapping reads in tools, and prompts instead of hard-coding workflows in client prompts. This lesson names the decision rule and walks the `resources/*` and `prompts/*` messages.
 
 **Type:** Build
-**Languages:** Python (stdlib, resource + prompt handler)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 07 (MCP server)
 **Time:** ~45 minutes
 

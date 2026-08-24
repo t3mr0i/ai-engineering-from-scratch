@@ -3,9 +3,16 @@
 > As of mid-2026 the capability gap between Anthropic's Fable 5 and Opus/Sonnet/Haiku 4.x, OpenAI's o-series and GPT-4.x lineup, Google Gemini 2.x Pro/Flash, and Meta's Llama 4 open weights has narrowed to a few points on standard benchmarks. Selection has therefore moved upstream of the leaderboard: the defensible decision is now about *deployment model*, *exit cost*, and *who holds the keys when the contract ends* — not which model scores three points higher on MMLU this quarter. A consultant who recommends a vendor without modeling the cost of leaving that vendor has not finished the analysis. They have just deferred it to the next budget cycle.
 
 **Type:** Learn
-**Languages:** Python (stdlib — vendor/platform scorer with exit-cost model, plus a demonstration of the failure shape)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 01 (Managed LLM platforms), Phase 17 · 19 (AI gateways)
 **Time:** ~50 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Ecosystem Map: Vendor Decisions With Exit Costs in View (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

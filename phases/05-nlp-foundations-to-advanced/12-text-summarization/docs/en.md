@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 02 (BoW + TF-IDF), Phase 5 · 11 (Machine Translation)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Text Summarization and place it in an NLP pipeline
+- Implement the central transformation behind Text Summarization from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Text Summarization
+
 ## The Problem
 
 A 2,000-word news article lands in your feed. You need 120 words that capture it. You can either pick the three most important sentences from the article (extractive) or rewrite the content in your own words (abstractive). Both are called summarization. They are completely different problems.

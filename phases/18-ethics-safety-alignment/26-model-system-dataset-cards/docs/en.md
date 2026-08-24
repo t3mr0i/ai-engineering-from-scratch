@@ -3,7 +3,7 @@
 > Three documentation formats structure AI transparency. [Model Cards](https://arxiv.org/abs/1810.03993) document intended use, evaluation, limitations, and disaggregated performance. [Datasheets for Datasets](https://arxiv.org/abs/1803.09010) cover motivation, composition, collection, labeling, distribution, and maintenance. [Data Cards](https://arxiv.org/abs/2204.01075) organize layered detail for different readers. Newer work such as [CardGen](https://arxiv.org/abs/2405.06258) explores assisted generation, but automation does not verify claims. System cards extend documentation to the end-to-end system, including safeguards and operational limitations.
 
 **Type:** Build
-**Languages:** Python (stdlib, model-card + datasheet + system-card generator)
+**Languages:** Python
 **Prerequisites:** Phase 18 · 18 (safety frameworks), Phase 18 · 24 (regulatory)
 **Time:** ~60 minutes
 

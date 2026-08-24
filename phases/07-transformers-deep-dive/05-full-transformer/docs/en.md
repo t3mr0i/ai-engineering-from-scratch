@@ -3,9 +3,16 @@
 > Attention is the star. Everything else — residuals, normalization, feed-forward, cross-attention — is the scaffolding that lets you stack it deep.
 
 **Type:** Build
-**Languages:** Python
+**Languages:** Python, Julia
 **Prerequisites:** Phase 7 · 02 (Self-Attention), Phase 7 · 03 (Multi-Head Attention), Phase 7 · 04 (Positional Encoding)
 **Time:** ~75 minutes
+
+## Learning Objectives
+
+- Derive the mechanism behind The Full Transformer — Encoder + Decoder from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by The Full Transformer — Encoder + Decoder
 
 ## The Problem
 

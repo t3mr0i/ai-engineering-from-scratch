@@ -3,7 +3,7 @@
 > Symbolic planning handles the cases where the plan is provably correct. Evolutionary code search handles the cases where the fitness function is machine-checkable. ChatHTN (2025) and AlphaEvolve (2025) show what each unlocks when paired with an LLM.
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 02 (ReWOO and Plan-and-Execute)
 **Time:** ~75 minutes
 

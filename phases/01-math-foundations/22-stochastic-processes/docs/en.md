@@ -3,6 +3,7 @@
 > Randomness with structure. The math behind random walks, Markov chains, and diffusion models.
 
 **Type:** Learn
+**Languages:** None
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 06-07 (probability, Bayes)
 **Time:** ~75 minutes

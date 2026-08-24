@@ -3,6 +3,7 @@
 > Normal is easy to define. Abnormal is whatever doesn't fit.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 2, Lessons 01-09
 **Time:** ~75 minutes

@@ -2,11 +2,18 @@
 
 > Langfuse went open-core. Arize Phoenix published the 2026 GenAI semconv mappings. Helicone and Braintrust both doubled down on per-user cost attribution. Traceloop's OpenLLMetry became the de-facto SDK instrumentation. The production shape is ClickHouse for traces, Postgres for metadata, Next.js for UI, and a small army of eval jobs (DeepEval, RAGAS, LLM-judge) running over sampled traces. Build one self-hosted, ingest from at least four SDK families, and demonstrate catching an injected regression in under five minutes.
 
-**Type:** Capstone
-**Languages:** TypeScript (UI), Python / TypeScript (ingest + evals), SQL (ClickHouse)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 11 (LLM engineering), Phase 13 (tools), Phase 17 (infrastructure), Phase 18 (safety)
 **Phases exercised:** P11 · P13 · P17 · P18
 **Time:** 25 hours
+
+## Learning Objectives
+
+- Define measurable acceptance criteria for Capstone 11 — LLM Observability & Eval Dashboard
+- Integrate the required components into one self-terminating workflow
+- Exercise happy paths, edge cases, and failure recovery with reproducible fixtures
+- Package the verified result as a reusable curriculum artifact
 
 ## Problem
 

@@ -3,7 +3,7 @@
 > Self-Refine (Madaan et al., 2023) uses one LLM in three roles — generate, feedback, refine — in a loop. Average gain: +20 absolute on 7 tasks. CRITIC (Gou et al., 2023) hardens the feedback step by routing verification through external tools. In 2026 this pattern ships in every framework as "evaluator-optimizer" (Anthropic) or a guardrail loop (OpenAI Agents SDK).
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 01 (Agent Loop), Phase 14 · 03 (Reflexion)
 **Time:** ~60 minutes
 

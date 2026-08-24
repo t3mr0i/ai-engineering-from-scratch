@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 01 (Text Processing), Phase 2 · 02 (Linear Regression from Scratch)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Bag of Words, TF-IDF, and Text Representation and place it in an NLP pipeline
+- Implement the central transformation behind Bag of Words, TF-IDF, and Text Representation from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Bag of Words, TF-IDF, and Text Representation
+
 ## The Problem
 
 The model needs numbers. You have strings.

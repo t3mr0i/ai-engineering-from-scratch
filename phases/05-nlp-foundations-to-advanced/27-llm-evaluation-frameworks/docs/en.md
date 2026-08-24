@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 13 (Question Answering), Phase 5 · 14 (Information Retrieval)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in LLM Evaluation — RAGAS, DeepEval, G-Eval and place it in an NLP pipeline
+- Implement the central transformation behind LLM Evaluation — RAGAS, DeepEval, G-Eval from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for LLM Evaluation — RAGAS, DeepEval, G-Eval
+
 ## The Problem
 
 Your RAG system answers: "June 29th, 2007."

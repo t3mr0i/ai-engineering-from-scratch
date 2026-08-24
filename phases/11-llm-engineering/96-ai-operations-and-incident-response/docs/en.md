@@ -3,9 +3,16 @@
 > In 2026 the average gap between an AI quality regression and its detection in production is on the order of 40-60 minutes — long enough to affect thousands of requests. Most teams have some monitoring; the gap is triage. Engineers look at L1 latency (fine), L1 error rate (fine), L4 NPS (lagging), and conclude nothing is wrong. Meanwhile a provider's silent rolling update has shrunk summarisation outputs by 40 percent and no L3 metric exists to catch it. AI incidents fail at the category level before they fail at the technical level: the on-call engineer reaches for the wrong runbook, or no runbook at all, and spends the first hour re-establishing basic facts.
 
 **Type:** Learn
-**Languages:** Python (stdlib — incident signal classifier + runbook router)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 13 (LLM observability), Phase 17 · 23 (SRE for AI)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Operations: Triage Signals, Runbooks, and Incident Response (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

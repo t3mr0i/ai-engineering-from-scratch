@@ -3,7 +3,7 @@
 > The smallest useful workbench is three files: a root instructions router, a state file, and a task board. Everything else is layered on top. If a repo cannot carry these three, no model will save it.
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 31 (Why Capable Models Still Fail)
 **Time:** ~45 minutes
 

@@ -2,7 +2,7 @@
 
 > A video model that predicts the next seconds of a scene is a world simulator. Condition that prediction on actions and you have a learned game engine.
 
-**Type:** Learn + Build
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 10 (Diffusion), Phase 4 Lesson 12 (Video Understanding), Phase 4 Lesson 23 (DiT + Rectified Flow)
 **Time:** ~75 minutes

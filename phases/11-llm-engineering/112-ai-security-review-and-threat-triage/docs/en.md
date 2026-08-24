@@ -3,9 +3,16 @@
 > AI-enabled products have leaked sensitive data, been hijacked via prompt injection, or silently acquired permissions the business team never approved — documented incidents keep accumulating across the industry. In our experience, approximately three out of four of those cases were discovered not in pen tests but in production — after customer data had moved. In 2026, almost every consulting engagement that touches AI will surface a proposal involving sensitive data, an external API, or user-supplied text routed into a model. The question is not whether those proposals carry risk; they do by design. The question is whether the business team can name the specific risk category before the project reaches an architecture review, because a triage done at ideation costs an hour and a triage done after three months of development costs a quarter.
 
 **Type:** Learn
-**Languages:** Python (stdlib — AI use-case threat triage scorer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 35 (Prompt injection for business teams), Phase 17 · 25 (Security and secrets audit)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Security Threat Triage for Business Proposals (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

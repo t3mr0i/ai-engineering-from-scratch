@@ -3,9 +3,16 @@
 > By mid-2026 the EU AI Act's high-risk obligations are binding for any system whose output drives a consequential decision about a person — recruitment shortlisting, credit, benefit eligibility, employee monitoring, biometric identification. GDPR has not gone away; it operates at the context-window layer where most teams still treat it as an afterthought. A system can pass every internal review for accuracy, latency, and bias on a benchmark, and still be illegal because the *legal basis for processing the data inside the prompt* was never declared, or because the *use case* triggers Art. 14 human-oversight obligations the team never built a reviewer gate to satisfy. This lesson is about the decisions you make in a client room in the three weeks before go-live, not the regulation on paper.
 
 **Type:** Learn
-**Languages:** Python (stdlib — compliance scorer, guardrail evaluator, proxy-bias audit)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 18 · 24 (regulatory frameworks)
 **Time:** ~55 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Responsible AI in a Client Room: EU AI Act, GDPR, and the Decisions You Actually Make (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

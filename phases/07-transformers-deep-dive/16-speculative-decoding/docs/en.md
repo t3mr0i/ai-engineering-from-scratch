@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 07 (GPT Causal LM), Phase 7 · 12 (KV Cache & Flash Attention)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind Speculative Decoding — Draft, Verify, Repeat from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by Speculative Decoding — Draft, Verify, Repeat
+
 ## The Problem
 
 A 70B LLM sampling one token takes ~30 ms on an H100. A 3B draft model takes ~3 ms. If we let the 3B draft 5 tokens ahead, then run the 70B *once* to verify all 5, the total is `5×3 + 30 = 45 ms` for up to 5 accepted tokens — versus `5×30 = 150 ms` for straight-line generation. That is the full speculative-decoding pitch: trade a small amount of extra GPU memory (draft model) for 2–4× lower decode latency.

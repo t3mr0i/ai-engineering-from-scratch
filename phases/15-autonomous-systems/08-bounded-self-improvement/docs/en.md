@@ -3,9 +3,16 @@
 > Research has converged on four primitives for bounding a self-improvement loop. Formal invariants that must hold across every edit. Alignment anchors that cannot be modified. Multi-objective constraints where every dimension (safety, fairness, robustness) must hold, not just performance. Regression detection that pauses the loop when historical metrics suggest capability loss. None of them is a proof of safety — information-theoretic results (Kolmogorov complexity, Lob's theorem) bound what any system can prove about its own successors. They are mitigations that raise the cost of silent failure.
 
 **Type:** Learn
-**Languages:** Python (stdlib, bounded-loop with invariant check)
+**Languages:** Python
 **Prerequisites:** Phase 15 · 07 (RSI), Phase 15 · 04 (DGM)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the autonomy mechanism and assumptions behind Bounded Self-Improvement Designs
+- Model its control loop, state transitions, and stopping conditions explicitly
+- Apply bounded permissions, budgets, and rollback controls
+- Evaluate capability and safety claims against reproducible evidence
 
 ## The Problem
 

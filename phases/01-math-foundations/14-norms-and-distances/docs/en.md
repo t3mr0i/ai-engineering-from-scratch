@@ -3,6 +3,7 @@
 > Your distance function defines what "similar" means. Choose wrong and everything downstream breaks.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 01 (Linear Algebra Intuition), 02 (Vectors, Matrices & Operations)
 **Time:** ~90 minutes

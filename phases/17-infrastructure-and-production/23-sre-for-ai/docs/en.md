@@ -3,7 +3,7 @@
 > AI SRE uses LLMs grounded in infrastructure data (logs, runbooks, service topology) via RAG to automate investigation, documentation, and coordination phases. The 2026 architecture pattern is multi-agent orchestration — specialized agents (logs, metrics, runbooks) coordinated by a supervisor; AI proposes hypotheses and queries, humans approve judgment calls. Datadog Bits AI and Azure SRE Agent ship this as managed products. Runbooks are evolving: NeuBird Hawkeye uses adversarial evaluation (two models analyze the same incident; agreement = confidence, disagreement = uncertainty); operational memory persists across team changes. Auto-remediation stays cautious: AI suggests, humans approve. Fully autonomous action is narrow (restart pod, rollback specific deploy) with tight guardrails — anyone selling "set it and forget it" is overselling. Emerging frontier: pre-incident prediction. Prediction is feasible on telemetry-rich stacks (logs + metrics + deploy events); the constraint is always actuation, not detection — predictions without an action policy are dashboards, not SRE.
 
 **Type:** Learn
-**Languages:** Python (stdlib, toy multi-agent incident triage simulator)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 13 (Observability), Phase 17 · 24 (Chaos Engineering)
 **Time:** ~60 minutes
 

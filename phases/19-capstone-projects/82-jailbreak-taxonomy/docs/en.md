@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 18 safety lessons, Phase 19 Track A lessons 25-29
 **Time:** ~90 min
 
+## Learning Objectives
+
+- Define measurable acceptance criteria for Capstone 82 — Jailbreak Taxonomy
+- Integrate the required components into one self-terminating workflow
+- Exercise happy paths, edge cases, and failure recovery with reproducible fixtures
+- Package the verified result as a reusable curriculum artifact
+
 ## Problem
 
 A model deployed without an attack model is a model defended against nothing in particular. Operators read a Twitter thread, recognize the trick, write a regex, ship it, and move on. The next prompt is a paraphrase. The regex misses. A week later someone shows the same trick wrapped in base64 and the operator writes a second regex. By month three, the system has 40 patched rules, no shared vocabulary, no way to talk about what an attack actually is, and a backlog growing faster than the patches.

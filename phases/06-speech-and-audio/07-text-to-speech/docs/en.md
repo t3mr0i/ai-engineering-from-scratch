@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 02 (Spectrograms & Mel), Phase 5 · 09 (Seq2Seq), Phase 7 · 05 (Full Transformer)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Text-to-Speech (TTS) — From Tacotron to F5 and Kokoro
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Text-to-Speech (TTS) — From Tacotron to F5 and Kokoro
+
 ## The Problem
 
 You have a string: "Please remind me to water the plants at 6 pm." You need a 3-second audio clip that sounds natural, has correct prosody (pauses, stress), pronounces "plants" with the right vowel, and runs in under 300 ms on a CPU for a live voice assistant. You also need to swap voices, handle code-switched input ("remind me at 6 pm, daijoubu?"), and not embarrass yourself on names.

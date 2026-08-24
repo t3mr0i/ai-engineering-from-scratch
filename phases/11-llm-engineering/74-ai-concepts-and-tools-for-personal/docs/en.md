@@ -3,9 +3,16 @@
 > By 2026 the question is no longer "should I use AI" but "which tool, on which data, for which step in my workflow, and what verification step matches the consequence of being wrong." The 2026 approved toolset at most organizations spans at least four categories: chat assistants (Claude Opus/Sonnet 4.x, ChatGPT, Gemini 2.x), coding co-pilots (Copilot, Cursor, Claude Code), specialized document processors, and internal retrieval-augmented search. Practitioners who deliberately match tasks to tools — rather than defaulting to whichever assistant they have open — consistently report far larger time savings than those who do not. The skill that separates the productive user from the frustrated one is the routing habit, not the prompt.
 
 **Type:** Learn
-**Languages:** Python (stdlib — task-to-tool router + verification classifier with one demonstrated failure)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering fundamentals), Phase 11 · 02 (Few-shot and chain-of-thought)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Choosing and Using AI Tools for Personal Productivity (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 17 (Chatbots), Phase 5 · 19 (Subword Tokenization)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Structured Outputs & Constrained Decoding and place it in an NLP pipeline
+- Implement the central transformation behind Structured Outputs & Constrained Decoding from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Structured Outputs & Constrained Decoding
+
 ## The Problem
 
 A classifier prompts an LLM: "Return one of {positive, negative, neutral}." The model returns "The sentiment is positive — this review is overwhelmingly favorable because the customer explicitly states that they ...". Your parser crashes. Your classifier's F1 is 0.0.

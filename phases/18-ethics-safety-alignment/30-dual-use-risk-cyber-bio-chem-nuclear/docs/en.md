@@ -3,7 +3,7 @@
 > Dual-use risk must be evaluated domain by domain. OpenAI's [Preparedness Framework update](https://openai.com/index/updating-our-preparedness-framework/) describes biological and cybersecurity capability thresholds. Anthropic's [cyber-espionage case report](https://www.anthropic.com/news/disrupting-AI-espionage) says a threat actor used Claude for 80–90% of a campaign, with human intervention at roughly four to six decision points. In a benign wet-lab setting, OpenAI reports a [79× cloning-efficiency improvement](https://openai.com/index/accelerating-biological-research-in-the-wet-lab/); the result is specific to that protocol and does not by itself establish dangerous capability. Safety cases must separate information access, experimental execution, and expert oversight.
 
 **Type:** Learn
-**Languages:** none
+**Languages:** Python
 **Prerequisites:** Phase 18 · 17 (WMDP), Phase 18 · 18 (safety frameworks), Phase 18 · 28 (ecosystem)
 **Time:** ~75 minutes
 

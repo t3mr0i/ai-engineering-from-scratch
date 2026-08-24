@@ -3,9 +3,16 @@
 > A prompt is software. Teams that treat it as an informal note — pasted into a chat, tweaked by whoever is at the keyboard, never attributed to anyone — accumulate the same class of debt as teams that never version their config files. In 2026 the stakes are higher: a single shared system prompt may gate a customer-facing workflow used by dozens of engineers and thousands of users. The governance gap is real: organisations without a defined prompt registry are far more exposed to silent regressions after model upgrades than those with one. This lesson frames prompts as reusable patterns — artefacts with an owner, a version, an evaluation example, and a retirement rule — and gives you the mechanics to govern them at team scale.
 
 **Type:** Learn
-**Languages:** Python (stdlib — prompt registry with lifecycle state machine)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 13 · 22 (Skills and agent SDKs)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Prompt Library Governance: Versioning, Ownership, and Retirement (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 8 · 03 (GANs), Phase 4 · 08 (Normalization), Phase 3 · 07 (CNNs)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the probabilistic mechanism behind StyleGAN
+- Implement the lesson's core generative step from first principles
+- Inspect samples and intermediate states to diagnose generation behavior
+- Compare quality, diversity, stability, and compute trade-offs
+
 ## The Problem
 
 A DCGAN maps `z` to an image through a stack of transposed convolutions. The problem: `z` controls everything — pose, lighting, identity, background — entangled together. Move along one axis of `z`, all four change. You cannot ask the model "same person, different pose" because the representation does not factor that way.

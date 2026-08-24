@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 01 (Text Processing), Phase 2 · 14 (Naive Bayes)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Text Generation Before Transformers — N-gram Language Models and place it in an NLP pipeline
+- Implement the central transformation behind Text Generation Before Transformers — N-gram Language Models from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Text Generation Before Transformers — N-gram Language Models
+
 ## The Problem
 
 Before transformers, before RNNs, before word embeddings, a language model predicted the next word by counting how often it followed the previous `n-1` words. Count "the cat" → "sat" 47 times, "the cat" → "jumped" 12 times, "the cat" → "refrigerator" 0 times. Normalize to get a probability distribution.

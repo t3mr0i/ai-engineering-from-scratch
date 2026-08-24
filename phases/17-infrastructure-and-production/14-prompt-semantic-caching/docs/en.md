@@ -5,7 +5,7 @@
 > Caching happens at two layers. Provider-level prompt caching reuses repeated prefixes; [Anthropic documents](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) its cache-write and cache-read multipliers, while [OpenAI's guide](https://platform.openai.com/docs/guides/prompt-caching) explains automatic prefix matching and usage reporting. Exact prices and retention options are model-specific and change over time, so read the live rate card. Application-level semantic caching skips the LLM entirely on a sufficiently similar hit. Neither mechanism guarantees a hit rate: measure hit correctness, hit rate, latency, and saved tokens separately.
 
 **Type:** Learn
-**Languages:** Python (stdlib, toy two-layer cache simulator)
+**Languages:** Python, TypeScript
 **Prerequisites:** Phase 17 · 04 (vLLM Serving Internals), Phase 17 · 06 (SGLang RadixAttention)
 **Time:** ~60 minutes
 

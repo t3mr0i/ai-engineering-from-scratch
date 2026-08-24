@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 8 · 03 (GANs), Phase 4 · 06 (U-Net), Phase 3 · 07 (CNNs)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the probabilistic mechanism behind Conditional GANs & Pix2Pix
+- Implement the lesson's core generative step from first principles
+- Inspect samples and intermediate states to diagnose generation behavior
+- Compare quality, diversity, stability, and compute trade-offs
+
 ## The Problem
 
 An unconditional GAN samples arbitrary faces. Useful for a demo, useless in production. You want: *map a sketch to a photo*, *map a map to an aerial photo*, *map a daytime scene to nighttime*, *colorize a grayscale image*. In all of these, you are given an input image `x` and must output `y` with some semantic correspondence. There are many plausible `y`s per `x`. Mean-squared error flattens them into mush. An adversarial loss doesn't, because "looks real" is sharp.

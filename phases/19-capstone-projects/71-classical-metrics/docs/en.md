@@ -7,7 +7,7 @@
 **Prerequisites:** Phase 19 Track B foundations, lesson 70
 **Time:** ~90 min
 
-## Learning objectives
+## Learning Objectives
 
 - Implement token-level exact-match, F1, and accuracy with explicit tokenisation rules.
 - Implement BLEU-4 from the ground up: modified n-gram precision, geometric mean over n equals 1 through 4, brevity penalty.

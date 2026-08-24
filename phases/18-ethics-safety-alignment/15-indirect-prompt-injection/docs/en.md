@@ -3,7 +3,7 @@
 > Indirect prompt injection embeds instructions inside external content consumed by an agent. A [2026 survey](https://www.mdpi.com/2078-2489/17/1/54) synthesizes the threat and defense literature. [*The Attacker Moves Second*](https://arxiv.org/abs/2510.18108) evaluated 12 published defenses with adaptive attacks and reports attack-success rates above 90% against defenses that had appeared robust under non-adaptive evaluation. This is why keyword filters and one-shot red teams are insufficient evidence.
 
 **Type:** Build
-**Languages:** Python (stdlib, IPI attack + defense harness)
+**Languages:** Python
 **Prerequisites:** Phase 18 · 12 (PAIR), Phase 14 (agent engineering)
 **Time:** ~75 minutes
 

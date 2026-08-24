@@ -3,9 +3,16 @@
 > Retrieval-augmented generation promised to ground language models in your actual documents and kill the hallucination problem at its root. Six years later, the failure mode that dominates our incident reviews is not hallucination in the classical sense — the system is doing exactly what it was designed to do. It is retrieving a chunk, quoting it, citing it, and being wrong. The wrong document has the highest cosine similarity to the query. The wrong document was indexed last year and never updated. The wrong document was mis-tagged at the source system and the assistant inherited the mis-tag. The wrong document is permitted for the user, so the permission gate does not catch it. The retrieval score is 0.84, the answer cites three sources, and the response is confident and wrong. This lesson is about that failure shape, and the small set of design decisions that turn it from "production rollback" into "logged edge case."
 
 **Type:** Learn
-**Languages:** Python (stdlib — wrong-doc failure simulator)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 06 (RAG), Phase 11 · 07 (Advanced RAG), Phase 11 · 10 (Evaluation)
 **Time:** ~55 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

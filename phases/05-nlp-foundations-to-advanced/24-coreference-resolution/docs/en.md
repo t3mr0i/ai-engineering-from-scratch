@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 06 (NER), Phase 5 · 07 (POS & Parsing)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Coreference Resolution and place it in an NLP pipeline
+- Implement the central transformation behind Coreference Resolution from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Coreference Resolution
+
 ## The Problem
 
 Extract every mention of Apple Inc. from a 300-word article. Easy when the article says "Apple." Hard when it says "the company," "they," "Cupertino's technology giant," or "Jobs's firm." Without resolving these mentions to the same entity, your NER pipeline misses 60-80% of the mentions.

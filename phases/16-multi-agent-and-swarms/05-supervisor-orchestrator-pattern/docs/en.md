@@ -2,10 +2,17 @@
 
 > One lead agent plans and delegates; specialized workers execute in parallel contexts and report back. Anthropic describes this pattern in its [multi-agent Research system](https://www.anthropic.com/engineering/multi-agent-research-system), reporting a 90.2% improvement over a single-agent baseline on its internal research evaluation and attributing 80% of BrowseComp score variance to token usage. This lesson builds the supervisor pattern from primitives and separates the reusable architecture from one vendor's internal measurements.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib, `threading`)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 16 · 04 (Primitive Model)
 **Time:** ~75 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Supervisor / Orchestrator-Worker Pattern
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

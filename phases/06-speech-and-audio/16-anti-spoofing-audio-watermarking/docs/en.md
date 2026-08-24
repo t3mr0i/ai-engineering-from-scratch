@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 06 (Speaker Recognition), Phase 6 · 08 (Voice Cloning)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Voice Anti-Spoofing & Audio Watermarking — ASVspoof 5, AudioSeal, WaveVerify
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Voice Anti-Spoofing & Audio Watermarking — ASVspoof 5, AudioSeal, WaveVerify
+
 ## The Problem
 
 Three related defenses:

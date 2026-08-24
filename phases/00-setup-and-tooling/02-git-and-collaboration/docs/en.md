@@ -3,7 +3,7 @@
 > Version control is not optional. Every experiment, every model, every lesson you build here gets tracked.
 
 **Type:** Learn
-**Languages:** --
+**Languages:** None
 **Prerequisites:** Phase 0, Lesson 01
 **Time:** ~30 minutes
 

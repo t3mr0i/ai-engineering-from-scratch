@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 3 · 03 (Backpropagation), Phase 9 · 04 (Q-learning, SARSA)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Formulate Deep Q-Networks (DQN) in terms of states, actions, rewards, and objectives
+- Implement the central update rule from first principles
+- Trace learning signals through a self-terminating experiment
+- Evaluate convergence, stability, and exploration trade-offs
+
 ## The Problem
 
 Tabular Q-learning needs a separate Q-value for every (state, action) pair. A chess board has ~10⁴³ states. An Atari frame is 210×160×3 = 100,800 features. Tabular RL dies at thousands of states, let alone billions.

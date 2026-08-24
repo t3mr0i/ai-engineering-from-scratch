@@ -3,9 +3,16 @@
 > Backprop keeps every intermediate activation. At 70B parameters and 128K context that is 3 TB of activations per rank. Checkpointing trades FLOPs for memory: recompute instead of save. The question is which segments to drop, and the answer is not "all of them."
 
 **Type:** Build
-**Languages:** Python (with numpy, optional torch)
+**Languages:** Python
 **Prerequisites:** Phase 10 Lesson 04 (Pre-Training Mini-GPT), Phase 10 Lesson 05 (Scaling & Distributed)
 **Time:** ~70 minutes
+
+## Learning Objectives
+
+- Explain the architecture or training mechanism behind Gradient Checkpointing and Activation Recomputation
+- Implement the central operation with explicit tensors and state
+- Validate intermediate values against the lesson's stated invariants
+- Evaluate quality, memory, and throughput trade-offs
 
 ## The Problem
 

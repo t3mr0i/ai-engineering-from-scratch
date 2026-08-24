@@ -3,6 +3,7 @@
 > Store everything. Predict by looking at your neighbors. The simplest algorithm that actually works.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1 (Lesson 14 Norms and Distances)
 **Time:** ~90 minutes

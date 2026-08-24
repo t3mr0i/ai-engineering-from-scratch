@@ -3,9 +3,16 @@
 > The smallest possible self-improvement loop sits inside the rationale. A model generates a chain of thought, keeps the ones that land on correct answers, and fine-tunes on those. That is STaR. V-STaR adds a verifier so inference-time selection is better. Quiet-STaR pushes the rationale down to every token. All three work. None of them are magic — the loop preserves any shortcut that happened to reach the right answer.
 
 **Type:** Learn
-**Languages:** Python (stdlib, bootstrap-loop simulator)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 01-03 (Reasoning and CoT), Phase 15 · 01 (long-horizon framing)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the autonomy mechanism and assumptions behind STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning
+- Model its control loop, state transitions, and stopping conditions explicitly
+- Apply bounded permissions, budgets, and rollback controls
+- Evaluate capability and safety claims against reproducible evidence
 
 ## The Problem
 

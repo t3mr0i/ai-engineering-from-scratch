@@ -2,8 +2,8 @@
 
 > CrewAI is the 2026 role-based multi-agent framework. Four primitives: Agent, Task, Crew, Process. Two top-level shapes: Crews (autonomous, role-based collaboration) and Flows (event-driven, deterministic). The docs are blunt: "for any production-ready application, start with a Flow."
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 14 · 12 (Workflow Patterns), Phase 14 · 14 (Actor Model)
 **Time:** ~75 minutes
 
@@ -13,7 +13,6 @@
 - Distinguish Sequential, Hierarchical, and the planned Consensus process; pick one per workload.
 - Distinguish Crews (autonomous role-based) from Flows (event-driven deterministic), and explain the docs' production recommendation.
 - Wire tools with the `@tool` decorator and `BaseTool` subclass; reason about structured outputs vs free text.
-- Name the four CrewAI memory types and when each pays off.
 - Implement a stdlib three-agent crew (researcher, writer, editor) that produces a brief.
 - Spot the three CrewAI failure modes: prompt-bloat, manager-LLM tax, brittle handoffs.
 

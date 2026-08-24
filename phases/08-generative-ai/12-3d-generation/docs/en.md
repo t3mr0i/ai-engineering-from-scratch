@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 4 (Vision), Phase 8 · 07 (Latent Diffusion)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the probabilistic mechanism behind 3D Generation
+- Implement the lesson's core generative step from first principles
+- Inspect samples and intermediate states to diagnose generation behavior
+- Compare quality, diversity, stability, and compute trade-offs
+
 ## The Problem
 
 3D content is painful:

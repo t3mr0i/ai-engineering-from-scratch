@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 11 (Real-Time Audio), Phase 6 · 12 (Voice Assistant)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Voice Activity Detection & Turn-Taking — Silero, Cobra, and the Flush Trick
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Voice Activity Detection & Turn-Taking — Silero, Cobra, and the Flush Trick
+
 ## The Problem
 
 Three distinct decisions a voice agent makes on every 20 ms chunk:

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 05 (Sentiment), Phase 9 · 08 (PPO)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Formulate Reward Modeling & RLHF in terms of states, actions, rewards, and objectives
+- Implement the central update rule from first principles
+- Trace learning signals through a self-terminating experiment
+- Evaluate convergence, stability, and exploration trade-offs
+
 ## The Problem
 
 You trained a language model on the next-token-prediction objective. It writes grammatical English. It also lies, rambles, and refuses to refuse. You cannot fix this with more pretraining — web text is the problem, not the cure.

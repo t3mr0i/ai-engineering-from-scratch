@@ -3,9 +3,16 @@
 > Sakana's AI Scientist v2 (Yamada et al., arXiv:2504.08066) runs the full research loop: hypothesis, code, experiments, figures, writeup, submission. It is the first system to have a generated paper pass peer review at an ICLR 2025 workshop. Independent evaluation (Beel et al.) found 42% of experiments failed from coding errors and literature review frequently mislabeled established concepts as novel. Sakana's own docs warn that the codebase executes LLM-written code and recommend Docker isolation. Both halves of that picture are the point.
 
 **Type:** Learn
-**Languages:** Python (stdlib, research-loop state-machine toy)
+**Languages:** Python
 **Prerequisites:** Phase 15 · 03 (AlphaEvolve), Phase 15 · 04 (DGM)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the autonomy mechanism and assumptions behind AI Scientist v2 — Workshop-Level Autonomous Research
+- Model its control loop, state transitions, and stopping conditions explicitly
+- Apply bounded permissions, budgets, and rollback controls
+- Evaluate capability and safety claims against reproducible evidence
 
 ## The Problem
 

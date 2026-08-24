@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 9 · 04 (TD Learning), Phase 9 · 06 (REINFORCE)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives
+- Implement the central update rule from first principles
+- Trace learning signals through a self-terminating experiment
+- Evaluate convergence, stability, and exploration trade-offs
+
 ## The Problem
 
 Vanilla REINFORCE works, but its variance is terrible. Monte Carlo returns `G_t` can swing over a factor of 10 between episodes. Multiplying that noise by `∇ log π` and averaging produces a gradient estimator that takes thousands of episodes to move the policy the same distance you could move it with far fewer DQN updates.

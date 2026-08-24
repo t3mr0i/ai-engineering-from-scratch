@@ -3,7 +3,7 @@
 > Your editor is your co-pilot. Configure it once so it stays out of your way and starts pulling its weight.
 
 **Type:** Build
-**Languages:** --
+**Languages:** Python
 **Prerequisites:** Phase 0, Lesson 01
 **Time:** ~20 minutes
 

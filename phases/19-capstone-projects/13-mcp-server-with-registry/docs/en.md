@@ -2,11 +2,18 @@
 
 > The Model Context Protocol stopped being the future and became the default tool-use spec in 2026. Anthropic, OpenAI, Google, and every major IDE ship MCP clients. Pinterest published its internal ecosystem of MCP servers. The AAIF Registry formalized capability metadata at `.well-known`. AWS ECS published the reference stateless deployment. Block's goose-agent put the same protocol inside a hosted assistant. The 2026 production shape is: StreamableHTTP transport, OAuth 2.1 scopes, OPA policy gating, and a registry that lets platform teams discover, validate, and enable servers. Build that end to end.
 
-**Type:** Capstone
-**Languages:** Python (server, via FastMCP) or TypeScript (@modelcontextprotocol/sdk), Go (registry service)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 11 (LLM engineering), Phase 13 (tools and MCP), Phase 14 (agents), Phase 17 (infrastructure), Phase 18 (safety)
 **Phases exercised:** P11 · P13 · P14 · P17 · P18
 **Time:** 25 hours
+
+## Learning Objectives
+
+- Define measurable acceptance criteria for Capstone 13 — MCP Server with Registry and Governance
+- Integrate the required components into one self-terminating workflow
+- Exercise happy paths, edge cases, and failure recovery with reproducible fixtures
+- Package the verified result as a reusable curriculum artifact
 
 ## Problem
 

@@ -3,9 +3,16 @@
 > Enterprise service desks resolve between 60 and 80 percent of Level-1 tickets by executing a documented procedure — yet in most organisations those procedures are buried in PDFs, outdated wikis, and tribal memory. LLMs can close this gap not by replacing the analyst but by doing the gap analysis work that nobody has time to do: clustering recurring tickets, surfacing missing runbook coverage, and generating draft automation that a human then validates and ships. In 2026 the meaningful question is not "can AI handle tickets" — it is which ticket classes have sufficient structured knowledge to automate safely, which require a human decision, and how you keep the knowledge base accurate as systems change. Getting that triage boundary wrong in either direction costs money: missed automation leaves analysts doing 40-click procedures on repeat; over-automated responses applied to edge cases degrade trust and escalate SLA breaches.
 
 **Type:** Learn
-**Languages:** Python (stdlib — ticket classifier + runbook coverage scorer + gap reporter)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 17 · 23 (SRE for AI systems)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI-Augmented Service Desk: Ticket Triage, Runbooks, and Knowledge Gap Analysis (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

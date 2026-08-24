@@ -3,9 +3,16 @@
 > Anthropic's January 22, 2026 Claude Constitution runs 79 pages and is CC0. It moves from rule-based to reason-based alignment and establishes a four-tier priority hierarchy: (1) safety and supporting human oversight, (2) ethics, (3) Anthropic guidelines, (4) helpfulness. Behaviours split into hardcoded prohibitions (bioweapons uplift, CSAM) that operators and users cannot override and soft-coded defaults that operators can adjust within defined bounds. The 2022 original (Bai et al.) trained harmlessness via self-critique and RLAIF against a constitution. The honest caveat: reason-based alignment relies on the model generalising principles to unanticipated situations. Anthropic's own 2023 participatory experiment showed ~50% divergence between public-sourced and corporate principles; the 2026 version did not incorporate those findings.
 
 **Type:** Learn
-**Languages:** Python (stdlib, four-tier priority resolver)
+**Languages:** Python
 **Prerequisites:** Phase 15 · 06 (Automated alignment research), Phase 15 · 10 (Permission modes)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the autonomy mechanism and assumptions behind Constitutional AI and Rule Overrides
+- Model its control loop, state transitions, and stopping conditions explicitly
+- Apply bounded permissions, budgets, and rollback controls
+- Evaluate capability and safety claims against reproducible evidence
 
 ## The Problem
 

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 02 (BoW + TF-IDF), Phase 3 · 03 (Backpropagation from Scratch)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Word Embeddings — Word2Vec from Scratch and place it in an NLP pipeline
+- Implement the central transformation behind Word Embeddings — Word2Vec from Scratch from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Word Embeddings — Word2Vec from Scratch
+
 ## The Problem
 
 TF-IDF knows `dog` and `puppy` are different words. It does not know they mean nearly the same thing. A classifier trained on `dog` cannot generalize to a review about `puppy`. You can paper over this by listing synonyms, but that fails on rare terms, domain jargon, and every language you did not anticipate.

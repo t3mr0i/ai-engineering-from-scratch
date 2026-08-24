@@ -3,6 +3,7 @@
 > Data is the fuel. How you manage it determines how fast you go.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 0, Lesson 01
 **Time:** ~45 minutes

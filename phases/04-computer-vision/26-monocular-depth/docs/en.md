@@ -2,7 +2,7 @@
 
 > A depth map is a single-channel image where each pixel is a distance from the camera. Predicting it from one RGB frame used to be impossible without stereo or LiDAR. In 2026 a frozen ViT encoder plus a lightweight head gets within a few percent of ground truth.
 
-**Type:** Build + Use
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 14 (ViT), Phase 4 Lesson 17 (Self-Supervised Vision), Phase 4 Lesson 07 (U-Net)
 **Time:** ~60 minutes

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 03 (Word2Vec), Phase 5 · 14 (Information Retrieval)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Embedding Models — The 2026 Deep Dive and place it in an NLP pipeline
+- Implement the central transformation behind Embedding Models — The 2026 Deep Dive from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Embedding Models — The 2026 Deep Dive
+
 ## The Problem
 
 Your RAG system retrieves the wrong passage 40% of the time. The culprit is rarely the vector database or the prompt. It is the embedding model.

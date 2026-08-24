@@ -3,7 +3,7 @@
 > SFT teaches the model to follow instructions. But it doesn't teach the model which response is BETTER. Two grammatically correct, factually accurate answers can differ enormously in helpfulness. RLHF is how you encode human judgment into the model's behavior. It's what makes Claude helpful and GPT polite.
 
 **Type:** Build
-**Languages:** Python (with numpy)
+**Languages:** Python
 **Prerequisites:** Phase 10, Lesson 06 (Instruction Tuning / SFT)
 **Time:** ~90 minutes
 

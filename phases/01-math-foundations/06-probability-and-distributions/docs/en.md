@@ -3,6 +3,7 @@
 > Probability is the language AI uses to express uncertainty.
 
 **Type:** Learn
+**Languages:** Julia
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 01-04
 **Time:** ~75 minutes

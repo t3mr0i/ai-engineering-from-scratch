@@ -3,9 +3,16 @@
 > Anthropic reports that combining prompt-engineering best practices with domain expertise improved a production Claude deployment's accuracy by 20% — without changing the model ([Anthropic — Prompt engineering for business performance](https://www.anthropic.com/news/prompt-engineering-for-business-performance)). The gap is not the model — it is the problem framing. Consultative prompting is the discipline of encoding the three things a senior advisor always knows before speaking: who is in the room, what decision is on the table, and what a good answer looks like to that specific audience. Applied to LLM prompts, this discipline transforms a general-purpose frontier model into a context-aware analyst that produces memos, hypotheses, and risk assessments that survive the first read by a demanding partner. The skill is transferable across Claude Sonnet 4.x, GPT-4o, and every model that accepts a system prompt — because the structure lives in the framing, not in the model's weights.
 
 **Type:** Learn
-**Languages:** Python (stdlib — stakeholder-context router + hypothesis-quality scorer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 11 · 02 (Few-shot and chain-of-thought)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Consultative Prompting: Framing Problems for Stakeholder-Grade Output (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

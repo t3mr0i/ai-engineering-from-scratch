@@ -3,7 +3,7 @@
 > Every AI model is just matrix math wearing a fancy hat.
 
 **Type:** Learn
-**Languages:** Python, Julia
+**Languages:** None
 **Prerequisites:** Phase 0
 **Time:** ~60 minutes
 

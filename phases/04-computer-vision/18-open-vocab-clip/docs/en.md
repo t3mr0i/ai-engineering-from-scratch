@@ -2,7 +2,7 @@
 
 > Train an image encoder and a text encoder together so that matching (image, caption) pairs land at the same point in a shared space. That is the whole trick.
 
-**Type:** Build + Use
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 14 (ViT), Phase 4 Lesson 17 (Self-Supervised)
 **Time:** ~45 minutes

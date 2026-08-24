@@ -3,7 +3,7 @@
 > stdio works locally and nowhere else. Streamable HTTP (2025-03-26) is the remote standard. The old HTTP+SSE transport is deprecated and being removed in mid-2026. Picking the wrong transport costs a migration; picking the right one buys a remote-hostable MCP server with session continuity and DNS-rebinding protection.
 
 **Type:** Learn
-**Languages:** Python (stdlib, Streamable HTTP endpoint skeleton)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 07, 08 (MCP server and client)
 **Time:** ~45 minutes
 

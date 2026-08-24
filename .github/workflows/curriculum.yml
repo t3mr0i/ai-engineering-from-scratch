@@ -54,6 +54,8 @@ jobs:
           python-version: "3.12"
       - name: run scripts/audit_lessons.py
         run: python3 scripts/audit_lessons.py
+      - name: enforce learner-facing lesson contract
+        run: python3 scripts/check_lesson_contract.py
       - name: run script regression tests
         run: python3 -m unittest discover scripts/tests -v
 

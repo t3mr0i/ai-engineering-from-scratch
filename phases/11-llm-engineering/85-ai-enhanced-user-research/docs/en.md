@@ -3,9 +3,16 @@
 > Product teams typically spend a large share of their research time on synthesis — clustering notes, spotting patterns, and drafting recommendation documents — rather than on talking to users. LLMs cut that synthesis burden dramatically, but they also introduce a new failure mode: confident-sounding summaries that flatten contradictions, amplify the loudest voices in the transcript set, and launder analyst priors as "themes." The 2026 practice is not "use AI to summarize interviews." It is a structured pipeline: cluster with traceability, score hypotheses with falsifiability criteria, and run a representational-bias check before any decision artefact is handed to product or engineering. Teams that skip the bias check and the falsifiability gate are not moving faster; they are moving faster toward the wrong decision.
 
 **Type:** Learn
-**Languages:** Python (stdlib — hypothesis scorer + representational-bias checker)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 11 · 03 (Structured outputs)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

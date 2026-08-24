@@ -3,7 +3,7 @@
 > Enterprises cannot let every dev install random MCP servers. A gateway centralizes auth, RBAC, audit, rate limiting, caching, and tool-poisoning detection, then exposes the merged tool surface as a single MCP endpoint. The Official MCP Registry (Anthropic + GitHub + PulseMCP + Microsoft, namespace-verified) is the canonical upstream. This lesson names where a gateway fits, walks a minimal implementation, and surveys the 2026 vendor landscape.
 
 **Type:** Learn
-**Languages:** Python (stdlib, minimal gateway)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 15 (tool poisoning), Phase 13 · 16 (OAuth 2.1)
 **Time:** ~45 minutes
 

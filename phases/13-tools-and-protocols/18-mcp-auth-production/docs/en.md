@@ -5,7 +5,7 @@
 > **Spec note (2025-11-25):** the November 2025 MCP authorization spec demoted Dynamic Client Registration from `SHOULD` to `MAY` and made **Client ID Metadata Documents (CIMD)** the recommended default enrollment mechanism. This lesson teaches both, in the spec's priority order, and the code keeps DCR for the walk-through because it is fully self-contained in one process.
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 16 (OAuth 2.1 state machine), Phase 13 · 17 (gateways)
 **Time:** ~90 minutes
 

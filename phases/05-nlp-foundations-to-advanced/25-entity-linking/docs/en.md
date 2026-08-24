@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 06 (NER), Phase 5 · 24 (Coreference Resolution)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Entity Linking & Disambiguation and place it in an NLP pipeline
+- Implement the central transformation behind Entity Linking & Disambiguation from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Entity Linking & Disambiguation
+
 ## The Problem
 
 A sentence reads: "Jordan beat the press." Your NER tags "Jordan" as PERSON. Good. But *which* Jordan?

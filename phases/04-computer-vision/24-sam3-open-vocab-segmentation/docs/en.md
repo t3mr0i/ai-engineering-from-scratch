@@ -2,7 +2,7 @@
 
 > Give a model a text prompt and an image and get masks for every matching object. SAM 3 made that a single forward pass.
 
-**Type:** Use + Build
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 07 (U-Net), Phase 4 Lesson 08 (Mask R-CNN), Phase 4 Lesson 18 (CLIP)
 **Time:** ~60 minutes

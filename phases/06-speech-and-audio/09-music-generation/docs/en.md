@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 02 (Spectrograms), Phase 4 · 10 (Diffusion Models)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Music Generation — MusicGen, Stable Audio, Suno, and the Licensing Earthquake
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Music Generation — MusicGen, Stable Audio, Suno, and the Licensing Earthquake
+
 ## The Problem
 
 Text → a 30-second to 4-minute music clip, with lyrics, vocals, and structure. Three sub-problems:

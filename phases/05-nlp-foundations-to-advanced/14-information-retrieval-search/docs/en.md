@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 02 (BoW + TF-IDF), Phase 5 · 04 (GloVe, FastText, Subword)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Information Retrieval and Search and place it in an NLP pipeline
+- Implement the central transformation behind Information Retrieval and Search from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Information Retrieval and Search
+
 ## The Problem
 
 The user types "what happens if someone lies to get money" and expects to find the statute that actually covers that: "Section 420 IPC." A keyword search misses it entirely (no shared vocabulary). A semantic search misses it if the embeddings were not trained on legal text. Real search has to handle both.

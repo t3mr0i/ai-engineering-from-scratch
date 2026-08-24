@@ -3,6 +3,7 @@
 > Find the widest street between two classes. That is the entire idea.
 
 **Type:** Build
+**Languages:** Julia
 **Language:** Python
 **Prerequisites:** Phase 1 (Lessons 08 Optimization, 14 Norms and Distances, 18 Convex Optimization)
 **Time:** ~90 minutes

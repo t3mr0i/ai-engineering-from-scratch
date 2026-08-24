@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 9 · 05 (DQN), Phase 9 · 08 (PPO), Phase 9 · 09 (RLHF), Phase 9 · 10 (MARL)
 **Time:** ~120 minutes
 
+## Learning Objectives
+
+- Formulate RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era in terms of states, actions, rewards, and objectives
+- Implement the central update rule from first principles
+- Trace learning signals through a self-terminating experiment
+- Evaluate convergence, stability, and exploration trade-offs
+
 ## The Problem
 
 Games have everything RL wants. Clean reward (win/loss). Infinite episodes (self-play resets). Perfect simulation (the game *is* the simulator). Discrete or small continuous action spaces. Multi-agent structure that forces adversarial robustness.

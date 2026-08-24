@@ -3,6 +3,7 @@
 > More features is not better. The right features is better.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 2, Lessons 01-09, 08 (feature engineering)
 **Time:** ~75 minutes

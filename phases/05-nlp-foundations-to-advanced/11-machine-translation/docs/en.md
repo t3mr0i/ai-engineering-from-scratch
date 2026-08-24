@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 10 (Attention Mechanism), Phase 5 · 04 (GloVe, FastText, Subword)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Machine Translation and place it in an NLP pipeline
+- Implement the central transformation behind Machine Translation from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Machine Translation
+
 ## The Problem
 
 A model reads a sentence in one language and produces a sentence in another. Length varies. Word order varies. Some source words map to multiple target words and vice versa. Idioms refuse one-to-one mapping. "I miss you" in French is "tu me manques" — literally "you are lacking to me." No word-level alignment survives that.

@@ -3,9 +3,16 @@
 > The three leading AI coding tools of 2026 have converged on the same loop — plan, edit, run, verify — and increasingly share the same plumbing: the Model Context Protocol and the same frontier models. What still differs is *where you live*: GitHub Copilot inside the GitHub flow, Cursor inside a purpose-built editor, Claude Code inside the terminal. Because lock-in is low and the loop is shared, the durable skill is not picking a winner — it is wiring the same MCP servers into whichever tool you use so the assistant reads your Jira, your docs, and your service catalog directly. The choice that used to be "which AI coder" is now "which surface," and the leverage has moved to context plumbing.
 
 **Type:** Learn
-**Languages:** Python (stdlib — tool-fit selector + MCP capability/trust model)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 70 (Copilot daily workflow), Phase 13 · 06 (MCP fundamentals)
 **Time:** ~50 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Copilot vs Cursor vs Claude Code, and MCP in the IDE (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

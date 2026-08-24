@@ -3,9 +3,16 @@
 > RNNs process tokens one at a time. Transformers process all tokens at once. That single architectural bet changed every scaling curve in deep learning after 2017.
 
 **Type:** Learn
-**Languages:** Python
+**Languages:** Python, Julia
 **Prerequisites:** Phase 3 (Deep Learning Core), Phase 5 · 09 (Sequence-to-Sequence), Phase 5 · 10 (Attention Mechanism)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Derive the mechanism behind Why Transformers — The Problems with RNNs from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by Why Transformers — The Problems with RNNs
 
 ## The Problem
 

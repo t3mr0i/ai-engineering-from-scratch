@@ -2,7 +2,7 @@
 
 > Add a tiny mask branch to a Faster R-CNN detector and you have instance segmentation. The hard part is RoIAlign, and it is harder than it looks.
 
-**Type:** Build + Learn
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 06 (YOLO), Phase 4 Lesson 07 (U-Net)
 **Time:** ~75 minutes

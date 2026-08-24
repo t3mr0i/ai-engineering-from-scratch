@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 11 · 09 (Function Calling), Phase 11 · 16 (LangGraph)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the production problem addressed by Agent Framework Tradeoffs — LangGraph vs CrewAI vs AutoGen vs Agno
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
+
 ## The Problem
 
 You have a task that needs more than one LLM call. Maybe it is a research workflow (plan, search, summarize, cite). Maybe it is a code-review pipeline (parse diff, critique, patch, validate). Maybe it is a multi-turn assistant that books flights, writes emails, and files expense reports. You pick a framework.

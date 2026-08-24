@@ -3,6 +3,7 @@
 > Statistics is how you know if your model actually works or just got lucky.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 06 (Probability and Distributions), 07 (Bayes' Theorem)
 **Time:** ~120 minutes

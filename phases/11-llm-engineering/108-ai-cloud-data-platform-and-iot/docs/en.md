@@ -3,9 +3,16 @@
 > Most enterprise AI use cases span at least two distinct data environments: a cloud-hosted LLM, an on-premises data platform, and one or more IoT-generating edge locations. The boundary between those environments is where most AI projects fail — not because the model was wrong, but because the data never arrived at inference time in the right shape, with the right latency, and within the right ownership perimeter. Designing an AI use case in this context requires the same rigor as designing a distributed system: you map ownership, latency, and schema fidelity at every hop before you write a prompt. The missing discipline in 2026 is not "choosing the right model" — it is knowing which boundaries your use case actually crosses and making deliberate engineering decisions at each one.
 
 **Type:** Learn
-**Languages:** Python (stdlib — data-boundary classifier + latency budget modeler)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 06 (RAG patterns), Phase 17 · 27 (FinOps for LLMs)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

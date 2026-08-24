@@ -3,6 +3,7 @@
 > When 99% of your data is "normal," accuracy is a lie.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 2, Lessons 01-09 (especially evaluation metrics)
 **Time:** ~90 minutes

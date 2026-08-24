@@ -3,7 +3,7 @@
 > Most AI runs on Linux. You need to know enough to not be stuck.
 
 **Type:** Learn
-**Languages:** --
+**Languages:** None
 **Prerequisites:** Phase 0, Lesson 01
 **Time:** ~30 minutes
 
@@ -293,5 +293,4 @@ Disk:           df -h, du -sh
 Network:        curl, wget, scp, rsync
 Sessions:       tmux new/attach/detach
 ```
-
 

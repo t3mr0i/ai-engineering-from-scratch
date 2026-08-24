@@ -3,6 +3,7 @@
 > A model is not a product. A pipeline is. The pipeline is everything from raw data to deployed prediction, and every step must be reproducible.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 2, Lesson 12 (Hyperparameter Tuning)
 **Time:** ~120 minutes

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 8 · 07 (Latent Diffusion), Phase 10 (LLMs from Scratch — for LoRA foundation)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the probabilistic mechanism behind ControlNet, LoRA & Conditioning
+- Implement the lesson's core generative step from first principles
+- Inspect samples and intermediate states to diagnose generation behavior
+- Compare quality, diversity, stability, and compute trade-offs
+
 ## The Problem
 
 A prompt like "a woman in a red dress walking a dog on a busy street" gives the model no information about *where* the dog is, *what pose* the woman is in, or *the perspective* of the street. Text pins down about 10% of what you need to specify an image. The rest is visual and cannot be described efficiently in words.

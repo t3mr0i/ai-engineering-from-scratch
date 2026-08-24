@@ -3,6 +3,7 @@
 > The chain rule is the engine behind every neural network that learns.
 
 **Type:** Build
+**Languages:** Julia
 **Language:** Python
 **Prerequisites:** Phase 1, Lesson 04 (Derivatives & Gradients)
 **Time:** ~90 minutes

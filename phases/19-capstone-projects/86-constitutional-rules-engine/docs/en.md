@@ -3,9 +3,16 @@
 > A rule is a name, a predicate, and an explanation. Anything missing one of those three is a vibe, not a rule.
 
 **Type:** Build
-**Languages:** Python, YAML
+**Languages:** Python
 **Prerequisites:** Phase 18 safety lessons, Phase 19 Track A lessons 25-29
 **Time:** ~90 min
+
+## Learning Objectives
+
+- Define measurable acceptance criteria for Capstone 86 — Constitutional Rules Engine
+- Integrate the required components into one self-terminating workflow
+- Exercise happy paths, edge cases, and failure recovery with reproducible fixtures
+- Package the verified result as a reusable curriculum artifact
 
 ## Problem
 

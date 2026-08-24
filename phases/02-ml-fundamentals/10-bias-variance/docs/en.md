@@ -3,6 +3,7 @@
 > Every model error comes from one of three sources: bias, variance, or noise. You can only control the first two.
 
 **Type:** Learn
+**Languages:** None
 **Language:** Python
 **Prerequisites:** Phase 2, Lessons 01-09 (ML basics, regression, classification, evaluation)
 **Time:** ~75 minutes

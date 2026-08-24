@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 02 (BoW + TF-IDF), Phase 5 · 03 (Word2Vec)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Topic Modeling — LDA and BERTopic and place it in an NLP pipeline
+- Implement the central transformation behind Topic Modeling — LDA and BERTopic from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Topic Modeling — LDA and BERTopic
+
 ## The Problem
 
 You have 10,000 customer support tickets, 50,000 news articles, or 200,000 tweets. You need to know what the collection is about without reading it. You do not have labeled categories. You do not even know how many categories exist.

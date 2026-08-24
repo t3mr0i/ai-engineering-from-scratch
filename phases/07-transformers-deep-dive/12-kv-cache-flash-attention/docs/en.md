@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 02 (Self-Attention), Phase 7 · 05 (Full Transformer), Phase 7 · 07 (GPT)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind KV Cache, Flash Attention & Inference Optimization from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by KV Cache, Flash Attention & Inference Optimization
+
 ## The Problem
 
 A naive autoregressive decoder does `O(N²)` work to generate `N` tokens: at each step it recomputes attention over the full prefix. For a 4K-token response that is 16M attention operations, most of them redundant. Every hidden state of a prefix token is deterministic once computed — you only need to run the new token's query against the cached keys and values of everything before.

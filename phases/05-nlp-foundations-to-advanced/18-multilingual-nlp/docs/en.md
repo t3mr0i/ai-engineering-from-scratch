@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 04 (GloVe, FastText, Subword), Phase 5 · 11 (Machine Translation)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Multilingual NLP and place it in an NLP pipeline
+- Implement the central transformation behind Multilingual NLP from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Multilingual NLP
+
 ## The Problem
 
 English has billions of labeled examples. Urdu has thousands. Maithili has almost none. Any practical NLP system that serves a global audience has to work on the long tail of languages where task-specific training data does not exist.

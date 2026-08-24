@@ -3,9 +3,16 @@
 > Claude Code exposes six permission modes. "plan" asks before every action, "default" asks only for risky ones, "acceptEdits" auto-approves file writes but still confirms shell execution, "dontAsk" denies everything not explicitly allowed, and "bypassPermissions" approves everything. Auto Mode (March 24, 2026) replaces per-action approval with a two-stage parallel safety classifier: a single-token fast check runs on every action; flagged actions kick off a chain-of-thought deep review. Action budgets are enforced via `max_turns` and `max_budget_usd`. Auto Mode shipped as a research preview — Anthropic has stated explicitly that the classifier is not sufficient alone.
 
 **Type:** Learn
-**Languages:** Python (stdlib, two-stage classifier simulator)
+**Languages:** Python
 **Prerequisites:** Phase 15 · 01 (Long-horizon agents), Phase 15 · 09 (Coding-agent landscape)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the autonomy mechanism and assumptions behind Claude Code as an Autonomous Agent: Permission Modes and Auto Mode
+- Model its control loop, state transitions, and stopping conditions explicitly
+- Apply bounded permissions, budgets, and rollback controls
+- Evaluate capability and safety claims against reproducible evidence
 
 ## The Problem
 

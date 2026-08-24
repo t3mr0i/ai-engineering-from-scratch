@@ -3,9 +3,16 @@
 > Claude Sonnet 4.6 costs $3 per million input tokens; Claude Opus 4.7 costs $15. At first glance the choice is a five-fold price difference on a commodity. In practice it is a decision about where your total cost actually lives — and token price is rarely the dominant term. A system prompt cached via prompt caching costs roughly 10% of a cache-miss read. A use case that would cost $40,000/month on frontier models costs under $8,000 when a smaller routed model handles 80% of traffic and only the remaining 20% stays on the frontier model. By 2026, most organisations that have moved past proof-of-concept have found the same structural problem: an AI initiative that cleared a business case on a spreadsheet fails a production cost audit because nobody modelled input growth, cache hit rates, or the difference between p50 and p99 latency at scale. This lesson frames the economics decision end-to-end, from token-level arithmetic to the business-value denominator that determines whether any cost is acceptable at all.
 
 **Type:** Learn
-**Languages:** Python (stdlib — cost model, routing policy, value-case calculator)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 14 (Prompt semantic caching), Phase 17 · 16 (Model routing)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Cost and Value Economics: From Token Price to Business Case (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -7,7 +7,7 @@
 **Prerequisites:** Phase 19 Track B foundations, lessons 70 through 74
 **Time:** ~90 min
 
-## Learning objectives
+## Learning Objectives
 
 - Define a `ModelAdapter` interface that any model (mock, local, API) can satisfy with a small method surface.
 - Run the eval over a fixture JSONL file with parallel task execution across a worker pool.

@@ -3,9 +3,16 @@
 > SAP and Salesforce together run the operational core of most large enterprises: order-to-cash, procure-to-pay, field service, and customer journeys. By 2026, both vendors have embedded LLM surfaces directly into these platforms — SAP Joule is generally available across S/4HANA Cloud, Salesforce Agentforce ships autonomous AI agents inside Sales and Service Cloud, and Microsoft 365 Copilot reaches Dynamics 365 workloads through the same Copilot Studio orchestration layer. The consequence is that a Technology Consulting engagement cannot treat AI as a separate initiative layered on top of these systems: the question is now where inside the ERP or CRM the AI surface sits, who owns the data it touches, and which system boundary it crosses. An AI use case that looks straightforward in isolation — "summarize this customer case" — turns out to share a data pipeline with a compliance-controlled ledger the moment you map the actual integration. Getting the system boundary and data ownership map right before a use case enters the backlog is the single highest-leverage analytical move in this space.
 
 **Type:** Learn
-**Languages:** Python (stdlib — use-case boundary classifier + data ownership scorer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 50 (AI process analysis and automation design), Phase 11 · 24 (Use-case spotting and automation discovery)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Use-Case Evaluation in ERP and CRM Systems (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 1 · 06 (Vectors & Matrices), Phase 1 · 14 (Probability Distributions)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Audio Fundamentals — Waveforms, Sampling, Fourier Transform
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Audio Fundamentals — Waveforms, Sampling, Fourier Transform
+
 ## The Problem
 
 A microphone produces a pressure-vs-time signal. Your neural net consumes tensors. Between them sits a stack of conventions that, when violated, produce silent bugs: the model trains fine but the WER doubles, or TTS ships a hiss, or a voice cloning system memorizes the microphone instead of the speaker.

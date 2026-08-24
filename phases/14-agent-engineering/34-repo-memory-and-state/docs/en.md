@@ -3,7 +3,7 @@
 > Chat history is volatile. The repo is durable. The workbench stores agent state in versioned files so the next session, the next agent, and the next reviewer all read from the same source of truth.
 
 **Type:** Build
-**Languages:** Python (stdlib + `jsonschema` optional)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 32 (Minimal Workbench)
 **Time:** ~60 minutes
 

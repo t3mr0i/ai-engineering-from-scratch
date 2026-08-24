@@ -3,9 +3,16 @@
 > AI-related quality incidents in enterprise deployments are disproportionately traceable to missing or poorly-placed human checkpoints, not to model errors. By 2026 every frontier model vendor — Anthropic, OpenAI, Google — publishes explicit guidance that autonomous AI output in high-stakes domains must pass through human review before it acts. The engineering question is no longer whether to include humans but where to place the gates, what reviewers actually decide, how escalation paths are structured, and how you measure that the gate is doing its job rather than becoming a rubber stamp. A gate that a reviewer approves in under three seconds is not a gate; it is organizational cover.
 
 **Type:** Learn
-**Languages:** Python (stdlib — AI output risk classifier + approval gate simulator)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 10 (LLM output evaluation), Phase 14 · 38 (Verification gates for agents)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

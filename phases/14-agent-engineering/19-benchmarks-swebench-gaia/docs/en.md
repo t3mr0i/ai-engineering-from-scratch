@@ -3,7 +3,7 @@
 > Three benchmarks anchor agent evaluation in 2026. SWE-bench tests code patching. GAIA tests generalist tool use. AgentBench tests multi-environment reasoning. Know their composition, their contamination story, and what they do not measure.
 
 **Type:** Learn
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 06 (Tool Use)
 **Time:** ~60 minutes
 

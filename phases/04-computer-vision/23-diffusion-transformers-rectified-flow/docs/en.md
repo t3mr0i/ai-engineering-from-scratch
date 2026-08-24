@@ -2,7 +2,7 @@
 
 > The U-Net is not the secret of diffusion. Replace it with a transformer, swap the noise schedule for a straight-line flow, and suddenly you have SD3, FLUX, and every 2026 text-to-image model.
 
-**Type:** Learn + Build
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 10 (Diffusion DDPM), Phase 4 Lesson 14 (ViT), Phase 7 Lesson 02 (Self-Attention)
 **Time:** ~75 minutes

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 02 (Spectrograms & Mel), Phase 5 · 08 (CNNs & RNNs for Text), Phase 5 · 10 (Attention)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Speech Recognition (ASR) — CTC, RNN-T, Attention
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Speech Recognition (ASR) — CTC, RNN-T, Attention
+
 ## The Problem
 
 You have a 10-second 16 kHz clip. You want a string: "turn on the kitchen lights". The challenge is structural: audio frames do not align one-to-one with characters. The word "okay" might take 200 ms or 1200 ms. Silence punctuates the utterance. Some phonemes are longer than others. The number of output tokens is not known in advance.

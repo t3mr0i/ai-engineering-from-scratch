@@ -3,6 +3,7 @@
 > Tensors are the common language between data and deep learning. Every image, every sentence, every gradient flows through them.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 01 (Linear Algebra Intuition), 02 (Vectors, Matrices & Operations)
 **Time:** ~90 minutes

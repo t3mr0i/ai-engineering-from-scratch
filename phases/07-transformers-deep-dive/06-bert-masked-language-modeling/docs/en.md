@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 05 (Full Transformer), Phase 5 · 02 (Text Representation)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind BERT — Masked Language Modeling from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by BERT — Masked Language Modeling
+
 ## The Problem
 
 In 2018 every NLP task — sentiment, NER, QA, entailment — trained its own model from scratch on its own labeled data. There was no pre-trained "understand English" checkpoint you could fine-tune. ELMo (2018) showed you could pre-train contextual embeddings with a bidirectional LSTM; it helped but did not generalize.

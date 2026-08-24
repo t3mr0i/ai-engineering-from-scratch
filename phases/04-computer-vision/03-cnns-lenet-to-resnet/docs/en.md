@@ -2,7 +2,7 @@
 
 > Every major CNN of the last thirty years is the same conv–nonlinearity–downsample recipe with one new idea bolted on. Learn the ideas in order.
 
-**Type:** Learn + Build
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 3 Lesson 11 (PyTorch), Phase 4 Lesson 01 (Image Fundamentals), Phase 4 Lesson 02 (Convolutions from Scratch)
 **Time:** ~75 minutes

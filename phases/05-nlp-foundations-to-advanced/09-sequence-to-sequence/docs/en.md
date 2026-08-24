@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 08 (CNNs + RNNs for Text), Phase 3 · 11 (PyTorch Intro)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Sequence-to-Sequence Models and place it in an NLP pipeline
+- Implement the central transformation behind Sequence-to-Sequence Models from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Sequence-to-Sequence Models
+
 ## The Problem
 
 Classification maps a variable-length sequence to a single label. Translation maps a variable-length sequence to another variable-length sequence. The input and output live in different vocabularies, possibly different languages, with no guarantee of length parity.

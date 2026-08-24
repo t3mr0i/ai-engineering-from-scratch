@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 06 (Speaker Recognition), Phase 6 · 07 (TTS)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Voice Cloning & Voice Conversion
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Voice Cloning & Voice Conversion
+
 ## The Problem
 
 In 2026, a 5-second audio clip is enough to produce a high-quality clone of anyone's voice with a consumer GPU. ElevenLabs, F5-TTS, OpenVoice v2, VoiceBox all ship zero-shot or few-shot cloning. The technology is a blessing (accessibility TTS, dubbing, assistive voices) and a weapon (scam calls, political deepfakes, IP theft).

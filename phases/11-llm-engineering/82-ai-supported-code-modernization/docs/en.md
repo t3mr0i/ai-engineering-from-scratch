@@ -3,9 +3,16 @@
 > In 2026, large language models can read a 10,000-line legacy module and produce a dependency graph, a risk-ranked change list, and a first draft of the replacement — inside a single context window. That capability is real and widely deployed, but it accounts for fewer than half of the teams that attempt AI-assisted modernization. The other half stall not because the model is wrong, but because the humans around it have no framework for deciding which slice to cut first, how large a slice to take, and what "done" means before the next slice starts. The failure is operational, not technical. This lesson establishes the slice-based analysis workflow that the rest of this course builds on: from the first LLM-generated code audit (this lesson) through safe refactor execution (Phase 14, Lessons 38–39) and production controls (Phase 17, Lessons 20 and 25).
 
 **Type:** Learn
-**Languages:** Python (stdlib — legacy code scorer + slice prioritizer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 14 · 38 (Verification gates)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 02 (BoW + TF-IDF), Phase 2 · 14 (Naive Bayes)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Sentiment Analysis and place it in an NLP pipeline
+- Implement the central transformation behind Sentiment Analysis from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Sentiment Analysis
+
 ## The Problem
 
 "The food was not great." Positive or negative?

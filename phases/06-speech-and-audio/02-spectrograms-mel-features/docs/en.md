@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 01 (Audio Fundamentals)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Spectrograms, Mel Scale & Audio Features
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Spectrograms, Mel Scale & Audio Features
+
 ## The Problem
 
 Take a 10-second 16 kHz clip. That is 160,000 floats, all in `[-1, 1]`, almost perfectly uncorrelated with the label "dog barking" or "the word cat". The raw waveform has the information but in a form the model cannot easily extract. Two identical phonemes spoken 100 ms apart have completely different raw samples.

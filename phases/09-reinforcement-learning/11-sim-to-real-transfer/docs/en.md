@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 9 · 08 (PPO), Phase 2 · 10 (Bias/Variance)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Formulate Sim-to-Real Transfer in terms of states, actions, rewards, and objectives
+- Implement the central update rule from first principles
+- Trace learning signals through a self-terminating experiment
+- Evaluate convergence, stability, and exploration trade-offs
+
 ## The Problem
 
 Training a real robot is slow, dangerous, and expensive. A biped takes millions of training episodes to learn to walk; a real biped that falls over even once breaks hardware. Simulation gives you unlimited resets, deterministic reproducibility, parallel environments, and no physical damage.

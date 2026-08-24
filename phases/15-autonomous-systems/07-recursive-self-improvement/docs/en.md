@@ -3,9 +3,16 @@
 > Recursive self-improvement (RSI) is an active research question spanning tooling, evaluation, and safety. The [ICLR 2026 RSI Workshop](https://recursive-workshop.github.io/) organized work on these concrete mechanisms. Anthropic's [alignment-faking study](https://arxiv.org/abs/2412.14093) measured a related evaluation-awareness failure mode: 12% in one baseline condition and up to 78% after a reinforcement-learning intervention. Those results do not demonstrate RSI, but they show why self-modification claims require adversarial evaluation.
 
 **Type:** Learn
-**Languages:** Python (stdlib, capability-vs-alignment race simulator)
+**Languages:** Python
 **Prerequisites:** Phase 15 · 04 (DGM), Phase 15 · 06 (AAR)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the autonomy mechanism and assumptions behind Recursive Self-Improvement — Capability vs Alignment
+- Model its control loop, state transitions, and stopping conditions explicitly
+- Apply bounded permissions, budgets, and rollback controls
+- Evaluate capability and safety claims against reproducible evidence
 
 ## The Problem
 

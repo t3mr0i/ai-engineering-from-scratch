@@ -3,7 +3,7 @@
 > Production agents run on six runtime shapes: request-response, streaming, durable execution, queue-based background, event-driven, and scheduled. Pick the shape before you pick the framework. Observability is load-bearing at every shape.
 
 **Type:** Learn
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 13 (LangGraph), Phase 14 · 22 (Voice)
 **Time:** ~60 minutes
 

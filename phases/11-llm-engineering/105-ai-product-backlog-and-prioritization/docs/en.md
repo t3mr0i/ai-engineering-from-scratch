@@ -3,9 +3,16 @@
 > Product teams that use AI to score backlog items consistently ship higher-value features faster: teams using structured LLM-assisted prioritization report cutting average time-to-decision substantially and reducing "gut-feel reversals" (items reprioritized after sprint start). The core insight is that modern LLMs — Claude Sonnet 4.x, GPT-4o, Gemini 2.5 — can do the scoring arithmetic you were already doing in your head, but with explicit weights, auditable reasoning, and consistent application across 50 items instead of 5. What they cannot do is supply the weights: that is a product and business decision that must come from humans. The risk of delegating too much is not that the model scores badly — it is that scores become authoritative and the reasoning behind the weights disappears from organizational memory. A transparent decision record, not a magic score, is the actual deliverable.
 
 **Type:** Learn
-**Languages:** Python (stdlib — weighted backlog scorer with dependency graph and risk overlay)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 14 · 39 (Reviewer agent / Product decision records)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

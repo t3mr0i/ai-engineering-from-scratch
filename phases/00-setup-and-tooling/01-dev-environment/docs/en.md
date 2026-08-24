@@ -3,7 +3,7 @@
 > Your tools shape your thinking. Set them up once, set them up right.
 
 **Type:** Build
-**Languages:** Python, Node.js, Rust
+**Languages:** Rust
 **Prerequisites:** None
 **Time:** ~45 minutes
 
@@ -52,5 +52,4 @@ print(f"Vector: {a}, dot product with itself: {np.dot(a, a)}")
 This lesson produces a verification script that anyone can run to check their setup.
 
 See `outputs/prompt-env-check.md` for a prompt that helps AI assistants diagnose environment issues.
-
 

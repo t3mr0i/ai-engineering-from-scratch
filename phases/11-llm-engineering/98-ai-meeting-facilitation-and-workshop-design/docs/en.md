@@ -3,9 +3,16 @@
 > A 2025 Atlassian survey found that knowledge workers spend on average 31 hours per month in unproductive meetings — the chief complaint is not length but lack of clear outcomes. LLMs entered this space first as transcription-and-summary tools, but summary is the least valuable part of the job: a good summary of a bad meeting produces a polished record of nothing. The real leverage is in the decision layer: forcing explicit capture of the choice made, the rationale, the owner, and the deadline before the call ends. By 2026 a mature facilitation pattern treats the model not as a notetaker but as a structured elicitation loop — prompting participants in real time for decision frames, surfacing open threads, and producing durable artifacts that feed the next meeting rather than archive the last one.
 
 **Type:** Learn
-**Languages:** Python (stdlib — meeting artifact classifier + action-item quality scorer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 29 (Decision-making with AI), Phase 14 · 39 (Reviewer agent)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Structured Meeting Facilitation with LLMs: From Summary to Action (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

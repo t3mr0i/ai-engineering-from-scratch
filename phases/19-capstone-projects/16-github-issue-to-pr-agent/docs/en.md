@@ -2,11 +2,18 @@
 
 > AWS Remote SWE Agents, Cursor Background Agents, OpenAI Codex cloud, and Google Jules all ship the same 2026 product shape: label an issue, get a PR. Run an agent in a cloud sandbox, verify tests pass, and post a review-ready PR with rationale. The hard parts are reproducing the repo's build environment automatically, preventing credential leakage, enforcing per-repo budgets, and making sure the agent cannot force-push. This capstone builds the self-hosted version and compares it on cost and pass rate to the hosted alternatives.
 
-**Type:** Capstone
-**Languages:** Python (agent), TypeScript (GitHub App), YAML (Actions)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 11 (LLM engineering), Phase 13 (tools), Phase 14 (agents), Phase 15 (autonomous), Phase 17 (infrastructure)
 **Phases exercised:** P11 · P13 · P14 · P15 · P17
 **Time:** 30 hours
+
+## Learning Objectives
+
+- Define measurable acceptance criteria for Capstone 16 — GitHub Issue-to-PR Autonomous Agent
+- Integrate the required components into one self-terminating workflow
+- Exercise happy paths, edge cases, and failure recovery with reproducible fixtures
+- Package the verified result as a reusable curriculum artifact
 
 ## Problem
 

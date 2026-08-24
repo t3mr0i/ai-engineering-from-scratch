@@ -2,7 +2,7 @@
 
 > 3D vision comes in two flavours. Point clouds are the sensor's raw output. NeRFs are the learned volumetric field. Both answer "what is where in space."
 
-**Type:** Learn + Build
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 03 (CNNs), Phase 1 Lesson 12 (Tensor Operations)
 **Time:** ~45 minutes

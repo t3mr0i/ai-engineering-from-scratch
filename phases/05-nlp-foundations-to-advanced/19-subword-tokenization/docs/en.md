@@ -3,9 +3,16 @@
 > Word tokenizers choke on unseen words. Character tokenizers blow up sequence length. Subword tokenizers split the difference. Every modern LLM ships on one.
 
 **Type:** Learn
-**Languages:** Python
+**Languages:** Python, TypeScript
 **Prerequisites:** Phase 5 · 01 (Text Processing), Phase 5 · 04 (GloVe / FastText / Subword)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the core mechanism in Subword Tokenization — BPE, WordPiece, Unigram, SentencePiece and place it in an NLP pipeline
+- Implement the central transformation behind Subword Tokenization — BPE, WordPiece, Unigram, SentencePiece from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Subword Tokenization — BPE, WordPiece, Unigram, SentencePiece
 
 ## The Problem
 

@@ -3,9 +3,16 @@
 > The EU AI Act (Articles 10 and 11) and the GDPR (Art. 5(2) accountability principle and Art. 30 records of processing) require organisations to document the provenance and representativeness of every dataset used to develop or evaluate a conformance-listed AI system. At the same time, the most common reason AI test suites miss production bugs is not bad logic — it is training-data leakage: the model has already seen the test cases during pre-training or fine-tuning. By 2026 the standard engineering response is a two-layer strategy: replace or mask any personally-identifiable test data with synthetic equivalents, then run explicit leakage checks before publishing evaluation results. Both layers have known failure modes that a practitioner must handle deliberately.
 
 **Type:** Learn
-**Languages:** Python (stdlib — synthetic data generator + leakage classifier)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 10 (LLM evaluation), Phase 18 · 27 (Data provenance and training governance)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

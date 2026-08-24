@@ -2,10 +2,17 @@
 
 > A common multi-agent decomposition assigns planning, execution, and verification to separate roles. [MetaGPT](https://arxiv.org/abs/2308.00352) encodes software SOPs into role prompts; [ChatDev](https://arxiv.org/abs/2307.07924) chains designer, programmer, reviewer, and tester through a chat chain; [MAST](https://arxiv.org/abs/2503.13657) provides an empirical taxonomy that includes verification failures. These papers motivate the verifier role without implying a universal accuracy multiplier.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 16 · 04 (Primitive Model), Phase 16 · 05 (Supervisor)
 **Time:** ~60 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Role Specialization — Planner, Critic, Executor, Verifier
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

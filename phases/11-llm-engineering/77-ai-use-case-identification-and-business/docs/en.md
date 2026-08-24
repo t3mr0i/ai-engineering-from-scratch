@@ -3,9 +3,16 @@
 > Organizations with a structured triage process reach production meaningfully faster than teams that go straight from "idea" to "build." The gap is not model capability — the commodity risk in 2026 is not picking the wrong model, it is investing six weeks of engineering time in a use case a back-of-envelope calculation would have ruled out in an afternoon. This lesson gives you that calculation, and the structured process around it that converts a raw idea list into a prioritized, sponsor-ready backlog you can defend in one meeting.
 
 **Type:** Learn
-**Languages:** Python (stdlib — use-case scoring and triage engine)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 32 (AI use-case identification workshop), Phase 11 · 10 (Evaluation basics)
 **Time:** ~50 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Use Case Triage: From Discovery to Prioritized Backlog (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

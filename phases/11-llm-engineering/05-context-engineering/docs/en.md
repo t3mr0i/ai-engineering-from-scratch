@@ -3,7 +3,7 @@
 > Context engineering is what happens when prompt engineering grows up. The context window is everything that goes into the model: system instructions, retrieved documents, tool definitions, conversation history, few-shot examples, and the prompt itself. The job of a context engineer is to decide what goes in, what stays out, and in what order.
 
 **Type:** Build
-**Languages:** Python
+**Languages:** Python, TypeScript
 **Prerequisites:** Phase 10 (LLMs from Scratch), Phase 11 Lesson 01-02
 **Time:** ~90 minutes
 **Related:** Phase 11 · 15 (Prompt Caching) — the cache-friendly layout is an extension of context engineering. Phase 5 · 28 (Long-Context Evaluation) for how to measure lost-in-the-middle with NIAH/RULER.

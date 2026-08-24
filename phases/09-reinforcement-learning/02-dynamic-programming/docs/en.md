@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 9 · 01 (MDPs)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, and objectives
+- Implement the central update rule from first principles
+- Trace learning signals through a self-terminating experiment
+- Evaluate convergence, stability, and exploration trade-offs
+
 ## The Problem
 
 You have an MDP with a known model: you can query `P(s' | s, a)` and `R(s, a, s')` for any state-action pair. An inventory manager knows the demand distribution. A board game has deterministic transitions. A gridworld is four lines of Python. You have a *model*.

@@ -2,10 +2,17 @@
 
 > Study three documented architectures end to end: Anthropic's [Research system](https://www.anthropic.com/engineering/multi-agent-research-system) for supervisor-worker orchestration, [MetaGPT](https://arxiv.org/abs/2308.00352) and [ChatDev](https://arxiv.org/abs/2307.07924) for role specialization, and [MacNet](https://arxiv.org/abs/2406.07155) for DAG-based scaling. Compare claims only within the evaluation described by each source; framework popularity and product status change too quickly to encode as timeless rankings.
 
-**Type:** Learn (capstone)
-**Languages:** —
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** all of Phase 16 (Lessons 01-24)
 **Time:** ~90 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Case Studies and the 2026 State of the Art
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 09 (Sequence-to-Sequence Models)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Attention Mechanism — The Breakthrough and place it in an NLP pipeline
+- Implement the central transformation behind Attention Mechanism — The Breakthrough from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Attention Mechanism — The Breakthrough
+
 ## The Problem
 
 Lesson 09 ended on a measured failure. A GRU encoder-decoder trained on a toy copy task goes from 89% accuracy at length 5 to near-chance at length 80. The reason is structural, not a training bug: every bit of information the encoder gleaned has to fit in one fixed-size hidden state, and the decoder never sees anything else.

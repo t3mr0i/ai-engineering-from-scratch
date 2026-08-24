@@ -3,9 +3,16 @@
 > By 2026 "Copilot" is no longer one feature. It is a ladder: ghost-text completion, Copilot Chat, edit-multiple-files, and an autonomous **agent mode** that plans, edits across the repo, runs the terminal, and opens a pull request. The same model surface also runs **server-side**: the Copilot coding agent picks up an assigned GitHub issue and produces a draft PR without a human at the keyboard. The skill that separates a 10x user from a frustrated one is no longer "write a good prompt" — it is knowing which rung of the ladder a given task belongs on, and how to keep the review loop tight enough that you stay accountable for code you did not type.
 
 **Type:** Learn
-**Languages:** Python (stdlib — task-to-mode router + acceptance simulator)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 15 · 09 (Coding-agent landscape)
 **Time:** ~50 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by GitHub Copilot for Software Engineers: The Daily Workflow (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

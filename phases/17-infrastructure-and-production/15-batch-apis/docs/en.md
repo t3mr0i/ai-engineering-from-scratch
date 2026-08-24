@@ -3,7 +3,7 @@
 > Async batch APIs trade latency for cost and throughput, but providers do not expose identical terms. [OpenAI documents](https://platform.openai.com/docs/api-reference/batch) a 24-hour completion window and 50% discount; [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/batch-processing) and [Google Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/batch-prediction) publish their own limits and pricing. Triage workloads into interactive, queued, and batch lanes, then calculate savings from the dated rate cards instead of assuming every provider stacks the same discounts.
 
 **Type:** Learn
-**Languages:** Python (stdlib, toy batch-vs-sync cost simulator)
+**Languages:** Python, TypeScript
 **Prerequisites:** Phase 17 · 14 (Prompt & Semantic Caching)
 **Time:** ~45 minutes
 

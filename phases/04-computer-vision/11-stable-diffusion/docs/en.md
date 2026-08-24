@@ -2,7 +2,7 @@
 
 > Stable Diffusion is a DDPM that runs in the latent space of a pretrained VAE, conditioned on text via cross-attention, sampled with a fast deterministic ODE solver, and steered by classifier-free guidance.
 
-**Type:** Learn + Use
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 10 (Diffusion), Phase 7 Lesson 02 (Self-Attention)
 **Time:** ~75 minutes

@@ -3,9 +3,16 @@
 > The 2026 GitHub flow has two AI surfaces aimed at the pull request, and engineers conflate them. The **coding agent** is upstream of the PR — you assign it an issue and it produces a draft PR autonomously. **Copilot code review** is downstream — it reads an existing PR (yours or a teammate's) and posts inline comments. One writes the diff; the other critiques it. Neither owns the merge. The discipline that makes this safe is the same one that makes human review safe: a reviewable PR is small, has an intent statement, and ships its own verification. An agent that opens a 600-line PR with the body "fixes the issue" is unreviewable no matter who reads it.
 
 **Type:** Learn
-**Languages:** Python (stdlib — PR reviewability scorer + review-comment triage)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 70 (Copilot daily workflow), Phase 14 · 39 (Reviewer agent)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Copilot Code Review and the PR Workflow (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

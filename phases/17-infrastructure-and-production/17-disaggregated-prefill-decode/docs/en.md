@@ -3,7 +3,7 @@
 > Prefill is compute-heavy; decode is typically memory-bandwidth-heavy. Disaggregation places them in separate pools and transfers KV state between them. NVIDIA's [Dynamo announcement](https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models/) reports hardware- and workload-specific throughput gains, while the [llm-d project](https://github.com/llm-d/llm-d) documents a Kubernetes-native alternative. Do not combine vendor headline numbers into a synthetic multiplier: benchmark your prompt/output distribution, transfer fabric, tail-latency SLO, and pool utilization directly.
 
 **Type:** Learn
-**Languages:** Python (stdlib, toy disaggregated-vs-colocated simulator)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 04 (vLLM Serving Internals), Phase 17 · 08 (Inference Metrics)
 **Time:** ~75 minutes
 

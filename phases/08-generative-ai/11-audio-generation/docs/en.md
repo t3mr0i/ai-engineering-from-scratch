@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 02 (Audio Features), Phase 6 · 04 (ASR), Phase 8 · 06 (DDPM)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the probabilistic mechanism behind Audio Generation
+- Implement the lesson's core generative step from first principles
+- Inspect samples and intermediate states to diagnose generation behavior
+- Compare quality, diversity, stability, and compute trade-offs
+
 ## The Problem
 
 Three audio generation tasks:

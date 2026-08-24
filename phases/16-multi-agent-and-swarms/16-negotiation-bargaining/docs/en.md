@@ -2,10 +2,17 @@
 
 > Agents negotiate resources, prices, task allocations, and terms. [NegotiationArena](https://arxiv.org/abs/2402.05863) studies persona effects on payoffs; [Measuring Bargaining Abilities](https://arxiv.org/abs/2402.15813) reports its OG-Narrator decomposition moving deal rate from 26.67% to 88.88%; the [Large-Scale Autonomous Negotiation Competition](https://arxiv.org/abs/2503.06416) analyzes roughly 180,000 negotiations. This lesson implements the underlying decomposition and measures it locally instead of treating benchmark rankings as universal agent traits.
 
-**Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 16 · 02 (FIPA-ACL Heritage), Phase 16 · 09 (Parallel Swarm Networks)
 **Time:** ~75 minutes
+
+## Learning Objectives
+
+- Explain the coordination mechanism behind Negotiation and Bargaining
+- Implement the central multi-agent interaction from first principles
+- Trace messages, shared state, and verification decisions end to end
+- Evaluate coordination quality, cost, and correlated failure modes
 
 ## Problem
 

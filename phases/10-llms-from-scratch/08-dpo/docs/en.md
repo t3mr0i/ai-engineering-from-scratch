@@ -3,7 +3,7 @@
 > RLHF works. It also requires training three models (SFT, reward model, policy), managing PPO's instability, and tuning a KL penalty. DPO asks: what if you could skip all of that? DPO directly optimizes the language model on preference pairs. No reward model. No PPO. One training loop. Same results.
 
 **Type:** Build
-**Languages:** Python (with numpy)
+**Languages:** Python
 **Prerequisites:** Phase 10, Lesson 07 (RLHF)
 **Time:** ~90 minutes
 

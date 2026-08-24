@@ -3,6 +3,7 @@
 > High-dimensional data has structure. You find it by looking from the right angle.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 01 (Linear Algebra Intuition), 02 (Vectors, Matrices & Operations), 03 (Eigenvalues & Eigenvectors), 06 (Probability & Distributions)
 **Time:** ~90 minutes

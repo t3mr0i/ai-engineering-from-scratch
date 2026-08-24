@@ -3,7 +3,7 @@
 > MCP says "what tools exist." Skills say "how to do a task." The 2026 stack layers both. Anthropic's Agent Skills (open standard, December 2025) ship as SKILL.md with progressive disclosure. OpenAI's Apps SDK is MCP plus widget metadata. AGENTS.md (now in 60,000+ repos) sits at the repo root as project-level agent context. This lesson names what each covers and builds a minimal SKILL.md + AGENTS.md bundle that travels across agents.
 
 **Type:** Learn
-**Languages:** Python (stdlib, SKILL.md parser and loader)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 07 (MCP server)
 **Time:** ~45 minutes
 

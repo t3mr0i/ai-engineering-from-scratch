@@ -7,7 +7,7 @@
 **Prerequisites:** Phase 19 Track B foundations, lessons 70 and 71
 **Time:** ~90 min
 
-## Learning objectives
+## Learning Objectives
 
 - Compute token-level perplexity on a held-out corpus from token negative log-probabilities supplied by the model adapter.
 - Compute the expected calibration error (ECE) of a classifier or multiple-choice eval from binned predicted probabilities.

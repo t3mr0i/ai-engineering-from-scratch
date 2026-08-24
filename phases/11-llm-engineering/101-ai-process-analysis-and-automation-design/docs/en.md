@@ -3,9 +3,16 @@
 > Automation failures in enterprise AI projects follow a predictable pattern: teams select a process to automate because it is repetitive, not because it is well-understood. A large share of enterprise AI deployment failures in the first six months are traceable to inadequate exception mapping before any model was selected. The "AI readiness gate" is a structured pre-automation decision — a set of questions that must have concrete answers before a pilot budget, a model choice, or a system design is committed. Getting these answers requires spending time with the process as it actually runs, not as the process documentation says it runs. The sibling lessons in this course cover what happens after you pass the gate: pilot controls in Phase 17 · 20 and human-in-the-loop design in Phase 14 · 36. This lesson is what happens before.
 
 **Type:** Learn
-**Languages:** Python (stdlib — process readiness scorer + automation recommendation)
+**Languages:** Python
 **Prerequisites:** Phase 17 · 20 (Shadow and canary deployments), Phase 14 · 36 (Scope contracts for agents)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Process Analysis Before Automation: The AI Readiness Gate (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

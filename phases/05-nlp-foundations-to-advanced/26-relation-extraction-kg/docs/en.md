@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 06 (NER), Phase 5 · 25 (Entity Linking)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Relation Extraction & Knowledge Graph Construction and place it in an NLP pipeline
+- Implement the central transformation behind Relation Extraction & Knowledge Graph Construction from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Relation Extraction & Knowledge Graph Construction
+
 ## The Problem
 
 An analyst reads: "Tim Cook became CEO of Apple in 2011." Four facts:

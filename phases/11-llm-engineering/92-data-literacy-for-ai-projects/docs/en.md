@@ -3,9 +3,16 @@
 > McKinsey's 2024 State of AI survey found that 63% of respondents named output inaccuracy as the top gen-AI risk facing their organization — ahead of any model-capability concern ([McKinsey — The state of AI in early 2024](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024)). By 2026 the gap has narrowed but not closed: RAG systems surface stale data, fine-tuned models carry licensing debt, and evaluation sets drawn from the training corpus produce inflated benchmarks. Frontier models (Claude Sonnet 4.x, GPT-4o, Gemini 2.x) have dramatically reduced the need for task-specific training data, yet they amplify data problems rather than hide them — a retrieval pipeline built on unvetted internal documents returns confidently wrong answers at frontier-model quality. The discipline of checking data before building is not due diligence theatre; it is the cheapest way to avoid a six-week production incident.
 
 **Type:** Learn
-**Languages:** Python (stdlib — data source scoring + readiness decision engine)
+**Languages:** Python
 **Prerequisites:** Phase 18 · 27 (Data provenance and training governance), Phase 11 · 10 (Evaluation)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Data Readiness for AI Projects: Assess Before You Build (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

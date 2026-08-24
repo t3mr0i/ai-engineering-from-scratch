@@ -3,7 +3,7 @@
 > Every AI API works the same way: send a request, get a response. The details change, the pattern doesn't.
 
 **Type:** Build
-**Languages:** Python, TypeScript
+**Languages:** Python
 **Prerequisites:** Phase 0, Lesson 01
 **Time:** ~30 minutes
 

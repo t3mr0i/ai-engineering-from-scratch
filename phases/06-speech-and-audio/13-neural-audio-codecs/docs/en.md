@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 02 (Spectrograms), Phase 10 · 11 (Quantization), Phase 5 · 19 (Subword Tokenization)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Neural Audio Codecs — EnCodec, SNAC, Mimi, DAC and the Semantic-Acoustic Split
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Neural Audio Codecs — EnCodec, SNAC, Mimi, DAC and the Semantic-Acoustic Split
+
 ## The Problem
 
 Language models work on discrete tokens. Audio is continuous. If you want an LLM-style model for speech / music — MusicGen, Moshi, Sesame CSM, VibeVoice, Orpheus — you first need a **neural audio codec**: a learned encoder that discretizes audio into a small vocabulary of tokens, and a matching decoder that reconstructs the waveform.

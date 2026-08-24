@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 05 (Full Transformer), Phase 4 · 03 (CNNs), Phase 4 · 14 (Vision Transformers intro)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind Vision Transformers (ViT) from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by Vision Transformers (ViT)
+
 ## The Problem
 
 Before 2020, computer vision meant convolutions. Every SOTA on ImageNet, COCO, and detection benchmarks used a CNN backbone. Transformers were for language.

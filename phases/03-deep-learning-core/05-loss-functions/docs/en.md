@@ -3,7 +3,7 @@
 > Your network makes a prediction. The ground truth says otherwise. How wrong is it? That number is the loss. Pick the wrong loss function and your model optimizes for the wrong thing entirely.
 
 **Type:** Build
-**Languages:** Python
+**Languages:** Python, Julia
 **Prerequisites:** Lesson 03.04 (Activation Functions)
 **Time:** ~75 minutes
 

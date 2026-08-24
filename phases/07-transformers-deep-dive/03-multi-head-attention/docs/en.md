@@ -3,9 +3,16 @@
 > One attention head learns one relation at a time. Eight heads learn eight. Heads are free. Take more of them.
 
 **Type:** Build
-**Languages:** Python
+**Languages:** Python, Rust
 **Prerequisites:** Phase 7 · 02 (Self-Attention from Scratch)
 **Time:** ~75 minutes
+
+## Learning Objectives
+
+- Derive the mechanism behind Multi-Head Attention from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by Multi-Head Attention
 
 ## The Problem
 

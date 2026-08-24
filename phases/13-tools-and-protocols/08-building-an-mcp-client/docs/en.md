@@ -3,7 +3,7 @@
 > Most MCP content ships server tutorials and waves a hand at the client. Client code is where the hard orchestration lives: process spawning, capability negotiation, tool list merging across multiple servers, sampling callbacks, reconnection, and namespace collision resolution. This lesson builds a multi-server client that lifts three different MCP servers into one flat tool namespace for the model.
 
 **Type:** Build
-**Languages:** Python (stdlib, multi-server MCP client)
+**Languages:** Python
 **Prerequisites:** Phase 13 · 07 (building an MCP server)
 **Time:** ~75 minutes
 

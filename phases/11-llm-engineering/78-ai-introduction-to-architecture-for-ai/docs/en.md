@@ -3,9 +3,16 @@
 > Most generative AI pilots die between "it works in the notebook" and "it runs in production under real load." The gap is architectural: a single LLM API call is not a system. A production AI application is an orchestration layer over models, retrieval infrastructure, tool execution environments, observability pipelines, and safety gates — and each layer introduces latency, cost, and failure modes the model itself cannot compensate for. In 2026 the model layer (GPT-4o, Claude Sonnet 4.6, Gemini 2.5 Pro) has largely commoditized; the architectural decisions around context assembly, retrieval strategy, agentic boundaries, and deployment topology are where consulting engagements succeed or fail. This lesson frames the complete architectural decision space and gives you a repeatable vocabulary to bring into a client conversation.
 
 **Type:** Learn
-**Languages:** Python (stdlib — architecture pattern classifier + layer cost estimator)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 13 (Production LLM applications), Phase 17 · 01 (Managed LLM platforms)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

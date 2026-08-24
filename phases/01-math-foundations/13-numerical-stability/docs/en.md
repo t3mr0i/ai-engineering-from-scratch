@@ -3,6 +3,7 @@
 > Floating point is a leaky abstraction. It will bite you during training, and you will not see it coming.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 01-04
 **Time:** ~120 minutes

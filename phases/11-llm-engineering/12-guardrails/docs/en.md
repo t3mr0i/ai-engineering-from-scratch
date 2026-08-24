@@ -3,7 +3,7 @@
 > Every chatbot, every agent, every RAG pipeline is a target. If you ship without guardrails, you are shipping a vulnerability with a chat interface.
 
 **Type:** Build
-**Languages:** Python
+**Languages:** TypeScript
 **Prerequisites:** Phase 11 Lesson 01 (Prompt Engineering), Phase 11 Lesson 09 (Function Calling)
 **Time:** ~45 minutes
 **Related:** Phase 11 · 14 (Model Context Protocol) — MCP's resource/tool boundaries interact with guardrails; untrusted resource content must be treated as data, not instructions. Phase 18 (Ethics, Safety, Alignment) goes deeper on policy and red-teaming.

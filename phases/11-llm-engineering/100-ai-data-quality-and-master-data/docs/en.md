@@ -3,9 +3,16 @@
 > Gartner estimates that poor data quality costs organizations an average of $12.9 million per year, and that number compounds when AI workflows amplify bad data into bad decisions at scale. The specific failure mode in 2026 is not a missing column — it is a master data entity (a product, a customer, a supplier) that exists under three different identifiers across three systems, each version slightly inconsistent, all ingested together into a vector store or fine-tuning corpus. The model learns the noise as signal. By the time the AI output is wrong, the root cause is buried three layers upstream. Diagnosing this gap before an AI workflow scales is an engineering discipline with its own tools, metrics, and decision thresholds — not a one-time data-cleaning task. This lesson frames that discipline and equips you to run the assessment at a client engagement before the first model call goes to production.
 
 **Type:** Learn
-**Languages:** Python (stdlib — data quality scorer + master data conflict detector)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 10 (Evaluation), Phase 18 · 27 (Data provenance and training governance)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Diagnosing Data Quality Before AI Workflows Scale (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

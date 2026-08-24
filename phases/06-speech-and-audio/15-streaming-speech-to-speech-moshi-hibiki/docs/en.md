@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 13 (Neural Audio Codecs), Phase 6 · 11 (Real-Time Audio), Phase 7 · 05 (Full Transformer)
 **Time:** ~75 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Streaming Speech-to-Speech — Moshi, Hibiki, and Full-Duplex Dialogue
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Streaming Speech-to-Speech — Moshi, Hibiki, and Full-Duplex Dialogue
+
 ## The Problem
 
 Every voice agent built from Lessons 11 + 12 has a fundamental latency floor around 300-500 ms: VAD fires, STT processes, LLM reasons, TTS generates. Each stage has its own minimum latency. You can tune and parallelize, but the pipeline shape caps you.

@@ -3,7 +3,7 @@
 > Context windows are finite. Conversations, documents, and tool traces are not. MemGPT (Packer et al., 2023) frames this as OS virtual memory — main context is RAM, external store is disk, the agent pages between them. This is the pattern every 2026 memory system inherits.
 
 **Type:** Build
-**Languages:** Python (stdlib)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 01 (Agent Loop), Phase 14 · 06 (Tool Use)
 **Time:** ~75 minutes
 

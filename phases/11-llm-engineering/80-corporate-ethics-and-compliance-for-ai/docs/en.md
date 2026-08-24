@@ -3,9 +3,16 @@
 > The EU AI Act is phasing in on a rolling schedule, not a single go-live date: prohibited-use rules have applied since February 2025 and general-purpose model providers have had to publish capability evaluations since August 2025, but — after Regulation (EU) 2026/1744 postponed the original 2026/2027 dates — high-risk system obligations (conformity assessment, human oversight, logging), which carry fines up to 3% of global revenue, only start applying on 2 December 2027 (Annex III systems) and 2 August 2028 (Annex I systems). At the same time, GDPR enforcement on AI-generated personal data has accelerated — six significant decisions landed in 2024–25, including a 250 M EUR fine for a generative model that reproduced training data verbatim. For a technology consultant, this means every new AI use case arrives with two distinct compliance clocks running simultaneously: the client's internal approval gate and the regulator's. Missing either is a project-stopper, not a paperwork problem. The skill this lesson builds is an intake process that turns a vague "let's use AI for this" into a documented, risk-classified, approval-ready proposal before any model is called.
 
 **Type:** Learn
-**Languages:** Python (stdlib — AI use-case risk classifier and approval gate simulator)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 75 (Responsible AI in practice), Phase 11 · 12 (Guardrails, safety and content filtering)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Use-Case Intake: From Idea to Approved Deployment (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

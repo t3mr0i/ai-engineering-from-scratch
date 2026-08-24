@@ -3,7 +3,7 @@
 > Machine learning is teaching computers to find patterns in data instead of writing rules by hand.
 
 **Type:** Learn
-**Languages:** Python
+**Languages:** None
 **Prerequisites:** Phase 1 (Math Foundations)
 **Time:** ~45 minutes
 

@@ -2,8 +2,8 @@
 
 > Edge inference is the discipline of getting a 90-accuracy model to run at 30 fps on a device with 2 GB of RAM. Every percentage point of accuracy is traded against milliseconds of latency.
 
-**Type:** Learn + Build
-**Languages:** Python
+**Type:** Build
+**Languages:** Python, Rust
 **Prerequisites:** Phase 4 Lesson 04 (Image Classification), Phase 10 Lesson 11 (Quantization)
 **Time:** ~75 minutes
 

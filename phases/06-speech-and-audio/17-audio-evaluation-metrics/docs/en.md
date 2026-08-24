@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 6 · 04, 06, 07, 09, 10; Phase 2 · 09 (Model Evaluation)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the signal-processing and modeling concepts behind Audio Evaluation — WER, MOS, UTMOS, MMAU, FAD, and the Open Leaderboards
+- Implement the lesson's core audio operation from first principles
+- Inspect time-, frequency-, or token-domain intermediates produced by the pipeline
+- Evaluate quality, latency, and robustness trade-offs for Audio Evaluation — WER, MOS, UTMOS, MMAU, FAD, and the Open Leaderboards
+
 ## The Problem
 
 Every audio task has multiple metrics, each measuring a different axis. Using the wrong metric is how you ship a model that looks great on your dashboard and terribly in production. The 2026 canonical list:

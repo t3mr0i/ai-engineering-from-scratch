@@ -2,11 +2,18 @@
 
 > A voice agent that feels right has end-to-end latency under 800ms, knows when you have stopped talking, handles barge-in, and can call a tool without stalling. Retell, Vapi, LiveKit Agents, and Pipecat all hit this bar in 2026. They do it with the same shape: a streaming ASR, a turn-detector, a streaming LLM, and a streaming TTS, all wired through WebRTC with aggressive latency budgets at every hop. Build one, measure WER and MOS and false-cutoff rate, and run it under packet loss.
 
-**Type:** Capstone
-**Languages:** Python (agent + pipeline), TypeScript (web client)
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 6 (speech and audio), Phase 7 (transformers), Phase 11 (LLM engineering), Phase 13 (tools), Phase 14 (agents), Phase 17 (infrastructure)
 **Phases exercised:** P6 · P7 · P11 · P13 · P14 · P17
 **Time:** 30 hours
+
+## Learning Objectives
+
+- Define measurable acceptance criteria for Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS)
+- Integrate the required components into one self-terminating workflow
+- Exercise happy paths, edge cases, and failure recovery with reproducible fixtures
+- Package the verified result as a reusable curriculum artifact
 
 ## Problem
 

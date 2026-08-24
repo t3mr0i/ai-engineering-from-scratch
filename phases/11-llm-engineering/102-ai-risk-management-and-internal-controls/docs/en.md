@@ -3,9 +3,16 @@
 > In 2026, the EU AI Act's General-Purpose AI (GPAI) obligations are in force, and the first wave of enterprise AI governance audits has surfaced a consistent finding: teams that deployed LLMs in 2024-2025 cannot demonstrate *who owned the risk* when a model output caused a material business error. Ownership ambiguity — not model capability — is the dominant control failure. NIST AI RMF 1.0 and ISO 42001:2023 both treat "risk ownership" as a non-negotiable first step before any technical control. The practical gap is that most software engineers know how to ship AI features but have never written a risk register entry, classified a model output by consequence level, or issued a policy exception with audit evidence. This lesson closes that gap.
 
 **Type:** Learn
-**Languages:** Python (stdlib — risk classifier + control gap analyzer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 29 (Decision-making with AI), Phase 17 · 25 (Security and secrets audit)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI Risk Management: Owners, Controls, and Audit Evidence (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

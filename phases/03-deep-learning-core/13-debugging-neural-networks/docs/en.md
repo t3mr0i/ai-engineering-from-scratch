@@ -2,8 +2,8 @@
 
 > Your network compiled. It ran. It produced a number. The number is wrong and nothing crashed. Welcome to the hardest kind of debugging -- the kind where there is no error message.
 
-**Type:** Practice
-**Languages:** Python, PyTorch
+**Type:** Build
+**Languages:** Python
 **Prerequisites:** Phase 03 Lessons 01-10 (especially backpropagation, loss functions, optimizers)
 **Time:** ~90 minutes
 

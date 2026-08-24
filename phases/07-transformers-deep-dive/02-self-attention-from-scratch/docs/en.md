@@ -3,7 +3,7 @@
 > Attention is a lookup table where every word asks "who matters to me?" - and learns the answer.
 
 **Type:** Build
-**Languages:** Python
+**Languages:** Rust, Julia
 **Prerequisites:** Phase 3 (Deep Learning Core), Phase 5 Lesson 10 (Sequence-to-Sequence)
 **Time:** ~90 minutes
 

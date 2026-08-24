@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 03 (Word2Vec from Scratch)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in GloVe, FastText, and Subword Embeddings and place it in an NLP pipeline
+- Implement the central transformation behind GloVe, FastText, and Subword Embeddings from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for GloVe, FastText, and Subword Embeddings
+
 ## The Problem
 
 Word2Vec left two open questions.

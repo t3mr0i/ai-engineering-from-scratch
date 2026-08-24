@@ -3,9 +3,16 @@
 > In 2026 every mature enterprise AI deployment has hit the same wall: a model that scored 92% on the lab benchmark still ships a wrong loan denial, a wrong shortlist filter, or a wrong triage score, and the post-mortem blames the model. The model is rarely the cause. The cause is the decision process wrapped around the model — teams that treat a confidence score as a verdict, skip uncertainty quantification, skip subgroup audit, and let "human in the loop" collapse into a rubber stamp. The EU AI Act (in force since August 2024; high-risk obligations — documented human oversight, bias measurement, and an audit trail — apply from 2 December 2027 for Annex III systems and 2 August 2028 for Annex I systems, per Regulation (EU) 2026/1744) and NIST AI RMF 1.0 codify the same expectation. The practical question for a working consultant or engineer is not "is this model good enough" but "given this output, what decision process turns it into a defensible, reversible, auditable action?"
 
 **Type:** Learn
-**Languages:** Python (stdlib — decision-quality scorer + accountability chain model)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 10 (Evaluation), Phase 18 · 20 (Bias and representational harm)
 **Time:** ~50 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -3,6 +3,7 @@
 > Convex problems have one valley. Neural networks have millions. Knowing the difference matters.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Phase 1, Lessons 04 (Calculus for ML), 08 (Optimization)
 **Time:** ~90 minutes

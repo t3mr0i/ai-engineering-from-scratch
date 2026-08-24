@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 7 · 05 (Full Transformer), Phase 7 · 07 (GPT)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Derive the mechanism behind Scaling Laws from tensor operations
+- Implement the core component without relying on a transformer framework
+- Trace tensor shapes and information flow through the implementation
+- Evaluate the computational and modeling trade-offs introduced by Scaling Laws
+
 ## The Problem
 
 When you have C FLOPs of training compute and want the best model, you face two knobs:

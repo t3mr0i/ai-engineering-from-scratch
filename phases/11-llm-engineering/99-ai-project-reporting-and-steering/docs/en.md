@@ -3,9 +3,16 @@
 > Project managers routinely spend a large share of their weekly hours on status collection, synthesis, and pack assembly — work that produces no new decisions. By 2026, frontier models handle the mechanical synthesis reliably: pulling signals from Jira, Git, and meeting transcripts, structuring them into a steering-ready format, and surfacing the open decision questions that actually need stakeholder attention. The skill that separates an effective consultant from a frustrated one is no longer the ability to assemble a pack; it is the ability to define what evidence a good pack must contain, what decision question each slide answers, and when AI-generated content is good enough to present without manual rework. This lesson builds that skill as an engineering discipline rather than a presentation-design question.
 
 **Type:** Learn
-**Languages:** Python (stdlib — steering-signal classifier + pack-section decision router)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 10 (Evaluation and Testing LLM Applications), Phase 11 · 29 (Decision Making with AI)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by AI-Assisted Project Status and Steering Pack Production (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

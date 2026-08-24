@@ -3,9 +3,16 @@
 > The hardest part of an AI use-case program is not building the pilots — it is choosing which ones to build. Most enterprise AI pilots are still not in production well after launch; the leading cause is not technical failure but misfit: the use case was not ready for AI, or the value was never well-specified before the team committed. The discipline that prevents this is structured use-case intake: a repeatable method for surfacing candidate processes, scoring them on value and automation readiness, and making the go/no-go decision on a pilot before any model is selected or any engineer is assigned. This lesson frames the intake as an engineering artifact — a policy you can code, audit, and hand off — not a workshop exercise done once and forgotten. The sibling lessons on FinOps (Phase 17 · 27) and cost governors (Phase 15 · 13) assume you have already made this decision correctly; this lesson is where that decision happens.
 
 **Type:** Learn
-**Languages:** Python (stdlib — use-case scorer and pilot-decision classifier)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 17 · 27 (FinOps for LLMs)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Spotting AI and Automation Opportunities: The Structured Intake (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

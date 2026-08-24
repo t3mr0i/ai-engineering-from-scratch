@@ -2,7 +2,7 @@
 
 > Labels are the bottleneck of supervised vision. Self-supervised pretraining removes them: learn visual features from 100M unlabelled images, fine-tune on 10k labelled ones.
 
-**Type:** Learn + Build
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 04 (Image Classification), Phase 4 Lesson 14 (ViT)
 **Time:** ~75 minutes

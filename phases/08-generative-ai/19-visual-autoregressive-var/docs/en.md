@@ -3,9 +3,16 @@
 > Diffusion models sample iteratively in time (denoising steps). VAR samples iteratively in scale — it predicts a 1x1 token, then 2x2, then 4x4, up to the final resolution, each scale conditioning on the previous. The 2024 paper showed VAR matches GPT-style scaling laws for image generation and beats DiT at the same compute budget. This lesson builds the core mechanism.
 
 **Type:** Build
-**Languages:** Python (with PyTorch)
+**Languages:** Python
 **Prerequisites:** Phase 7 Lesson 03 (Multi-Head Attention), Phase 8 Lesson 06 (DDPM)
 **Time:** ~90 minutes
+
+## Learning Objectives
+
+- Explain the probabilistic mechanism behind Visual Autoregressive Modeling (VAR): Next-Scale Prediction
+- Implement the lesson's core generative step from first principles
+- Inspect samples and intermediate states to diagnose generation behavior
+- Compare quality, diversity, stability, and compute trade-offs
 
 ## The Problem
 

@@ -3,6 +3,7 @@
 > The worst AI bugs don't crash. They train silently on garbage and report a beautiful loss curve.
 
 **Type:** Build
+**Languages:** Python
 **Language:** Python
 **Prerequisites:** Lesson 1 (Dev Environment), basic PyTorch familiarity
 **Time:** ~60 minutes
@@ -44,5 +45,3 @@ python phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.p
 ```
 
 See `outputs/prompt-debug-ai-code.md` for a prompt that helps diagnose AI-specific bugs.
-
-

@@ -3,9 +3,16 @@
 > Teams using AI for documentation commonly report at least one incident where an AI-generated document cited a requirement, API endpoint, or architectural decision that no longer existed in the codebase. The failure mode is not that the model fabricates — it is that documentation and source drift apart silently, and no one is accountable for the gap. By 2026 the craft is well-defined: source-grounded documentation anchors every substantive claim to a retrievable artifact (code, ADR, ticket, schema), structures handoff material so the next engineer or auditor can verify rather than trust, and treats AI as a drafter that accelerates extraction, not as an authority that replaces source review. The models that do this work best — Claude Sonnet 4.x, GPT-4.1, Gemini 2.5 Pro — are capable enough that the quality ceiling is now the quality of the context you feed them, not the model itself.
 
 **Type:** Learn
-**Languages:** Python (stdlib — source-claim matcher + documentation health scorer)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 05 (Context engineering), Phase 13 · 10 (MCP resources and prompts)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Source-Grounded AI Documentation: From Draft to Deliverable (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

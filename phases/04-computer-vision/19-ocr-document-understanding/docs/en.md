@@ -2,7 +2,7 @@
 
 > OCR is a three-stage pipeline — detect text boxes, recognise the characters, then lay them out. Every modern OCR system reorders these stages or merges them.
 
-**Type:** Learn + Use
+**Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 4 Lesson 06 (Detection), Phase 7 Lesson 02 (Self-Attention)
 **Time:** ~45 minutes

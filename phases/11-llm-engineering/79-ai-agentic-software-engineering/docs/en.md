@@ -3,9 +3,16 @@
 > By 2026 the dominant productivity lever in professional software development is not faster typing or smarter autocomplete — it is the ability to compose verified, multi-step agent workflows that complete whole tasks and hand back a result that survives a real code review. Anthropic's internal measurement put unassisted Claude at roughly 15% on SWE-bench full in early 2025; scaffolded with tools and a verification loop, agent-mode systems clear 50-70% on the same benchmark. The gap between those numbers is not model intelligence — it is engineering: tool design, loop structure, grounding, and the decision of when the agent should stop and ask. A consulting engineer in 2026 who understands that gap will design systems that are actually reliable; one who does not will keep rebuilding demos that fail in production.
 
 **Type:** Learn
-**Languages:** Python (stdlib — agent-loop state machine + task-decomposition router)
+**Languages:** Python
 **Prerequisites:** Phase 14 · 01 (The agent loop), Phase 14 · 06 (Tool use and function calling)
 **Time:** ~45 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Agentic Software Engineering: From Prompt to Autonomous Workflow (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

@@ -3,9 +3,16 @@
 > Prompt injection is the only vulnerability class that the AI safety research community, enterprise security teams, and three major incident post-mortems agreed on in 2025 as "not yet patchable by design." OWASP's 2025 Top 10 for LLM Applications placed it at position one for the second consecutive year. The attack does not require code execution: an adversary embeds an instruction in any text the model will read — a retrieved document, a calendar event, a Jira ticket — and the model follows it as if it came from the user. As AI agents gain tool access and operate with less human oversight, the blast radius of a successful injection grows from "wrong answer" to "deleted data, exfiltrated secrets, or lateral movement." The defense is not a single control; it is a layered triage across the attack surface — input boundaries, tool scopes, output validators, and audit trails — and this course frames all three downstream lessons around that triage.
 
 **Type:** Learn
-**Languages:** Python (stdlib — threat-surface scorer + injection triage classifier)
+**Languages:** Python
 **Prerequisites:** Phase 11 · 12 (Guardrails), Phase 14 · 27 (Prompt injection defense)
 **Time:** ~55 minutes
+
+## Learning Objectives
+
+- Explain the production problem addressed by Prompt Injection and AI Security: Failure Shapes and Defense Triage (2026)
+- Apply the lesson's decision or implementation workflow to a concrete case
+- Measure quality, cost, latency, and risk with explicit acceptance criteria
+- Identify failure modes and define a safe rollback or review path
 
 ## The Problem
 

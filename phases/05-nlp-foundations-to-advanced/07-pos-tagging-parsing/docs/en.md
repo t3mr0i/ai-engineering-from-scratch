@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 01 (Text Processing), Phase 2 · 14 (Naive Bayes)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in POS Tagging and Syntactic Parsing and place it in an NLP pipeline
+- Implement the central transformation behind POS Tagging and Syntactic Parsing from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for POS Tagging and Syntactic Parsing
+
 ## The Problem
 
 Lesson 01 promised that lemmatization needs a part-of-speech tag. Without knowing `running` is a verb, a lemmatizer cannot reduce it to `run`. Without knowing `better` is an adjective, it cannot reduce to `good`.

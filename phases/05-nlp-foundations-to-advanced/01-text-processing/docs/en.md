@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 2 · 14 (Naive Bayes)
 **Time:** ~45 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Text Processing — Tokenization, Stemming, Lemmatization and place it in an NLP pipeline
+- Implement the central transformation behind Text Processing — Tokenization, Stemming, Lemmatization from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Text Processing — Tokenization, Stemming, Lemmatization
+
 ## The Problem
 
 A model cannot read "The cats were running." It reads integers.

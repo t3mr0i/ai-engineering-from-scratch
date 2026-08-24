@@ -7,6 +7,13 @@
 **Prerequisites:** Phase 5 · 13 (Question Answering), Phase 5 · 23 (Chunking Strategies)
 **Time:** ~60 minutes
 
+## Learning Objectives
+
+- Explain the core mechanism in Long-Context Evaluation — NIAH, RULER, LongBench, MRCR and place it in an NLP pipeline
+- Implement the central transformation behind Long-Context Evaluation — NIAH, RULER, LongBench, MRCR from first principles
+- Inspect intermediate representations to connect the algorithm to its output
+- Evaluate failure cases and choose appropriate metrics for Long-Context Evaluation — NIAH, RULER, LongBench, MRCR
+
 ## The Problem
 
 You have a 200-page contract. The model claims a 1M-token context. You paste the contract in and ask: "What is the termination clause?" The model answers — but answers from the cover page because the termination clause sits at 120k tokens deep, past where the model actually attends.
