@@ -606,8 +606,8 @@
     const units = state.snapshot.curriculumMap.courseMaps[course.id] || [];
     return h("article", { class: "course-preview" }, [
       h("div", { class: "course-preview__hero" }, [
-        h("p", { class: "admin-overline", text: `${course.id} · ${course.format || "Format offen"}` }),
         h("h2", { text: course.title }),
+        h("p", { class: "admin-context-line", text: `${course.id} · ${course.format || "Format offen"}` }),
         h("p", { text: course.summary || "Noch keine Zusammenfassung." }),
         h("div", { class: "course-preview__meta" }, [h("span", { text: `${units.length} Units` }), h("span", { text: `${units.reduce((sum, unit) => sum + (unit.lessons || []).length, 0)} Activities` }), h("span", { text: course.status || "draft" })]),
       ]),
@@ -907,7 +907,7 @@
       const source = state.activeLesson.files[state.lessonFile] || "";
       editor.append(
         h("div", { class: "editor-heading" }, [
-          h("div", {}, [h("p", { class: "admin-overline", text: state.activeLesson.mode === "create" ? "Neue Lesson" : "Repository-Lesson" }), h("h1", { text: lessonTitle(state.activeLesson) }), h("p", { text: state.activeLesson.path })]),
+          h("div", {}, [h("h1", { text: lessonTitle(state.activeLesson) }), h("p", { class: "admin-context-line", text: `${state.activeLesson.mode === "create" ? "Neue Lesson" : "Repository-Lesson"} · ${state.activeLesson.path}` })]),
           button("Lesson speichern", "primary", () => saveLessonDraft(false), "floppy-disk", { disabled: !editable || !state.lessonDirty }),
         ]),
         state.lessonIssues.length ? h("div", { class: "lesson-issue-summary", role: "status" }, [icon("warning-circle"), h("span", { text: `${state.lessonIssues.length} Vertragspunkte offen. Entwürfe dürfen unvollständig sein; Review bleibt blockiert.` })]) : null,
@@ -1482,6 +1482,8 @@
     $("#adminThemeButton").setAttribute("aria-label", label);
     $("#adminThemeButton").setAttribute("title", label);
     $("#adminThemeButton").setAttribute("aria-pressed", String(dark));
+    const themeColor = $("meta[name=\"theme-color\"]");
+    if (themeColor) themeColor.content = getComputedStyle(document.documentElement).getPropertyValue("--color-bg").trim();
   }
 
   function toggleAdminTheme() {
