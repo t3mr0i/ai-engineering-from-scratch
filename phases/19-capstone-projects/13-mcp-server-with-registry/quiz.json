@@ -1,0 +1,78 @@
+{
+  "lesson": "13-mcp-server-with-registry",
+  "title": "MCP Server with Registry",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What does dispatch return when jira.create has its write scope but no fresh human approval?",
+      "options": [
+        "An error object with code 403 and the destructive-approval reason",
+        "A successful PROJ-99 issue because the scope is sufficient",
+        "An error object with code 500 from the Jira handler",
+        "The request is queued without an audit entry"
+      ],
+      "correct": 0,
+      "explanation": "policy_decide checks fresh_approval for destructive tools after checking scope; dispatch records the denial and returns error code 403 before invoking the handler."
+    },
+    {
+      "stage": "check",
+      "question": "How long is the default fresh human-approval window?",
+      "options": [
+        "60 seconds",
+        "900 seconds",
+        "3,600 seconds",
+        "8,192 seconds"
+      ],
+      "correct": 1,
+      "explanation": "Token.fresh_approval uses window_s=900 by default and requires approved:by:human to be present in the token scope set."
+    },
+    {
+      "stage": "check",
+      "question": "Which payload condition causes policy_decide to deny an otherwise authorized call?",
+      "options": [
+        "The JSON contains a string field named title",
+        "The tool is read-only and has a required scope",
+        "The serialized args exceed 8,192 characters",
+        "The token was minted for user u42"
+      ],
+      "correct": 2,
+      "explanation": "After scope and approval checks, policy_decide rejects len(json.dumps(args)) > 8192 with the payload-too-large reason."
+    },
+    {
+      "stage": "check",
+      "question": "What does Registry.search(\"jira\") find after both demo servers are registered?",
+      "options": [
+        "Only postgres.readonly, because Jira is not an MCP tool",
+        "Only jira.create, because read-only tools are omitted",
+        "Both tools, but only on the destructive server",
+        "jira.search on the read-only server and jira.create on the destructive server"
+      ],
+      "correct": 3,
+      "explanation": "The registry scans each capability manifest, so the query matches jira.search in internal-readonly-mcp and jira.create in internal-destructive-mcp."
+    },
+    {
+      "stage": "post",
+      "question": "What does the audit entry store for an email address and SSN in tool args?",
+      "options": [
+        "[email] and [ssn] placeholders after redact runs",
+        "The original values, because only responses are redacted",
+        "A SHA-256 digest for the email and a deleted SSN field",
+        "The whole args object replaced by an empty dictionary"
+      ],
+      "correct": 0,
+      "explanation": "dispatch calls redact on args and responses; the local regex stand-in replaces emails with [email] and SSNs with [ssn] before writing AuditEntry."
+    },
+    {
+      "stage": "post",
+      "question": "Which transport is advertised in MCPServer.capabilities()?",
+      "options": [
+        "stdio",
+        "streamable_http",
+        "websocket_json",
+        "grpc_stream"
+      ],
+      "correct": 1,
+      "explanation": "The .well-known-style capabilities dictionary sets transport to the literal string streamable_http and includes the server URL and tool manifests."
+    }
+  ]
+}

@@ -64,7 +64,7 @@
     },
     {
       "stage": "post",
-      "question": "What happens when `tool_read_file` is given a path outside the sandbox?",
+      "question": "What happens when the resolved path does not start with the resolved sandbox string?",
       "options": [
         "The path is silently rewritten to the sandbox root",
         "It raises `RuntimeError(\"path escapes sandbox\")`",
@@ -72,7 +72,7 @@
         "It opens the path because read-only access is harmless"
       ],
       "correct": 1,
-      "explanation": "The real-path prefix check rejects paths that do not remain below the sandbox directory and raises the explicit escape error before opening a file."
+      "explanation": "`tool_read_file` raises the explicit escape error when `realpath(full).startswith(realpath(sandbox))` is false. This is a string-prefix check in the scaffold, not a component-boundary guarantee."
     }
   ]
 }

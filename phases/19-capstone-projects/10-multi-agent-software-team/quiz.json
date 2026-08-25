@@ -72,7 +72,7 @@
         "The multi-agent token total with the single-agent token total"
       ],
       "correct": 3,
-      "explanation": "The printed amplification is a cost trade-off: the team's 35,530 tokens are divided by the single-agent baseline token count, yielding 1.60×."
+      "explanation": "The printed amplification compares the matched-trial means, 34,819 team tokens per run versus 21,705 baseline tokens per run, yielding 1.60×. The 35,530-token figure is the separate single demo run."
     }
   ]
 }

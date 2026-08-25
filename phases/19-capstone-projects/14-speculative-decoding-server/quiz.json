@@ -1,0 +1,78 @@
+{
+  "lesson": "14-speculative-decoding-server",
+  "title": "Speculative Decoding Server",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "When does TargetModel.verify accept a draft token at one position?",
+      "options": [
+        "Whenever the draft model and target model have different top tokens",
+        "Only when the token is the target's absolute top-probability token",
+        "When the target probability for that token is at least half of the target's maximum probability",
+        "Whenever the token is in VOCAB, regardless of its probability"
+      ],
+      "correct": 2,
+      "explanation": "The local acceptance rule is dist[tok] >= 0.5 * max(dist). Verification stops at the first draft token that fails this comparison."
+    },
+    {
+      "stage": "check",
+      "question": "How many target calls does baseline_decode make for the 500-token demo?",
+      "options": [
+        "83, because each call emits k=6 tokens",
+        "250, because each call emits two tokens",
+        "1, because the target distribution is reused",
+        "500, because baseline verifies one generated token per target call"
+      ],
+      "correct": 3,
+      "explanation": "baseline_decode samples one target token in each loop iteration, so target_calls and generated both reach 500."
+    },
+    {
+      "stage": "check",
+      "question": "How does Metrics.acceptance_rate(k) normalize accepted draft tokens?",
+      "options": [
+        "accepted_sum divided by target_calls × k",
+        "accepted_sum divided by generated tokens only",
+        "target_calls divided by draft_calls × k",
+        "accepted_sum divided by the vocabulary size"
+      ],
+      "correct": 0,
+      "explanation": "The method returns self.accepted_sum / (self.target_calls * k), with a zero guard when there have been no target calls."
+    },
+    {
+      "stage": "check",
+      "question": "What does one target verification call do after the first rejected draft position?",
+      "options": [
+        "It discards every accepted prefix token and starts a new target call",
+        "It commits the accepted prefix and samples one next token at the position after that prefix",
+        "It accepts the remaining draft suffix without checking it",
+        "It invokes the draft model again until every token is accepted"
+      ],
+      "correct": 1,
+      "explanation": "verify breaks at the first rejection, keeps the accepted prefix, then samples next_tok from the target distribution at ctx_seed + len(accepted)."
+    },
+    {
+      "stage": "post",
+      "question": "Which row in the local sweep has the strongest reported speculative result?",
+      "options": [
+        "alignment 0.60, k=2, with speedup 1.10×",
+        "alignment 0.75, k=4, with speedup 2.80×",
+        "alignment 0.90, k=6, with acceptance 0.91 and speedup 6.41×",
+        "alignment 0.60, k=6, with acceptance 0.91 and speedup 0.64×"
+      ],
+      "correct": 2,
+      "explanation": "The seeded sweep's best row is alignment=0.90 and k=6; it reports acceptance≈0.91 and speedup≈6.41× over the 500-call baseline."
+    },
+    {
+      "stage": "post",
+      "question": "Why does speculative decoding reduce target calls when several draft tokens are accepted?",
+      "options": [
+        "The target model is replaced by the draft model for the rest of the request",
+        "The target never computes probabilities for draft positions",
+        "The vocabulary is shortened after every accepted token",
+        "One batched target verification can commit the accepted prefix and add a resampled token"
+      ],
+      "correct": 3,
+      "explanation": "TargetModel.verify checks a draft batch in one call, and the scheduler counts the accepted prefix plus a possible resample before requesting another target call."
+    }
+  ]
+}

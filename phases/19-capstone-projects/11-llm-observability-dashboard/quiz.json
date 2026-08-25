@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which span does TailSampler keep regardless of its random sample draw?",
+      "question": "Which trace does TailSampler keep regardless of its random sample draw?",
       "options": [
-        "Any span with an error attribute",
-        "Only spans with latency under 100 ms",
-        "Only spans whose user_id is new",
-        "Only spans from the 20% random sample"
+        "Any trace containing at least one span with status == \"error\"",
+        "Only traces whose spans all have latency under 100 ms",
+        "Only traces whose user_id is new",
+        "Only traces selected by the 20% random sample"
       ],
       "correct": 0,
-      "explanation": "TailSampler checks error first and keeps an error span; its random sample rate applies only after the error, toxicity, and PII conditions are false."
+      "explanation": "TailSampler checks `any(s.status == \"error\" for s in trace)` first, so a trace with at least one error-status span is kept before the random, toxicity, or PII branches."
     },
     {
       "stage": "check",

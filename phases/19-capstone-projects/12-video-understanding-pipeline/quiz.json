@@ -6,9 +6,9 @@
       "stage": "pre",
       "question": "Which embedding streams does multi_vector_search combine for a video query?",
       "options": [
-        "Caption, frame, and transcript embeddings",
         "Only one pooled frame embedding",
         "Audio waveform, optical flow, and OCR pixels",
+        "Caption, frame, and transcript embeddings",
         "Caption embeddings and the final answer text only"
       ],
       "correct": 2,
@@ -19,9 +19,9 @@
       "question": "What reciprocal-rank contribution does a result at zero-based rank r receive in the video fusion?",
       "options": [
         "1/(r+1), with no constant",
-        "1/(60+r+1)",
         "(r+1)/60",
-        "1/(60+r)"
+        "1/(60+r)",
+        "1/(60+r+1)"
       ],
       "correct": 3,
       "explanation": "The fusion uses the same RRF form as the code: 1/(60 + rank + 1), so the top zero-based rank contributes 1/61."

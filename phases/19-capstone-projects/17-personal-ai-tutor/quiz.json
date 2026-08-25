@@ -1,0 +1,78 @@
+{
+  "lesson": "17-personal-ai-tutor",
+  "title": "Personal AI Tutor",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What prior mastery does a new concept receive from the default BKTParams?",
+      "options": [
+        "p_init=0.2",
+        "p_init=0.5",
+        "p_init=0.85",
+        "p_init=0.12"
+      ],
+      "correct": 0,
+      "explanation": "BKTParams initializes p_init to 0.2; p_learn=0.12 is the later learning transition, not the prior mastery."
+    },
+    {
+      "stage": "check",
+      "question": "What sequence does bkt_update use after observing an answer?",
+      "options": [
+        "It applies p_learn first and then ignores whether the answer was correct",
+        "It computes a correct/incorrect posterior and then applies the p_learn transition",
+        "It replaces mastery with p_guess for every incorrect answer",
+        "It only updates mastery when the learner reaches 0.85"
+      ],
+      "correct": 1,
+      "explanation": "The function first computes the Bayesian posterior using slip/guess and the observation, then returns posterior + (1-posterior)*p_learn."
+    },
+    {
+      "stage": "check",
+      "question": "When can next_concept select a concept that has prerequisites?",
+      "options": [
+        "As soon as its own mastery is above 0.5",
+        "When its prerequisites have any nonzero mastery",
+        "Only after every prerequisite reaches the 0.85 master_threshold",
+        "Only when all concepts in ALGEBRA are mastered"
+      ],
+      "correct": 2,
+      "explanation": "next_concept skips concepts at or above 0.85 and requires all listed prerequisites to be at least that threshold before selecting the concept."
+    },
+    {
+      "stage": "check",
+      "question": "What Socratic action is chosen for an incorrect answer when the concept mastery is 0.4?",
+      "options": [
+        "celebrate_and_advance",
+        "reinforce_and_next_question",
+        "hint",
+        "scaffold_from_prereq"
+      ],
+      "correct": 3,
+      "explanation": "socratic_policy checks incorrect answers after the correct branches; mastery 0.4 is not above 0.5, so it returns scaffold_from_prereq."
+    },
+    {
+      "stage": "post",
+      "question": "How many concepts are in the local ALGEBRA curriculum graph?",
+      "options": [
+        "11",
+        "8",
+        "20",
+        "60"
+      ],
+      "correct": 0,
+      "explanation": "The ALGEBRA list contains 11 named concepts, from number_line through quadratic_basics; 60 is the number of simulated turns."
+    },
+    {
+      "stage": "post",
+      "question": "What adaptive-versus-baseline result does the seeded 60-turn study print?",
+      "options": [
+        "Adaptive is lower by 1.36 mastery points",
+        "Adaptive is higher by 1.36 mastery points",
+        "Both arms have exactly the same mastery sum",
+        "Adaptive is higher by 0.12, the p_learn rate"
+      ],
+      "correct": 1,
+      "explanation": "The seeded study prints adaptive mean 9.81, baseline mean 8.45, and delta +1.36 mastery points over 60 turns."
+    }
+  ]
+}

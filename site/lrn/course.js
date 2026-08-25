@@ -230,6 +230,10 @@
     if (modules.length) {
       about.appendChild(overviewDetail(i18n("course_modules_label", "Modules"), modules.join(" · ")));
     }
+    var owner = window.LrnSchedule ? window.LrnSchedule.trainer(course.ownerTrainerId) : null;
+    if (owner) {
+      about.appendChild(overviewDetail(i18n("course_owner_label", "Course lead"), owner.name || owner.id));
+    }
 
     overview.appendChild(about);
 
@@ -258,6 +262,9 @@
     }
 
     var children = [intro, facts, overview];
+
+    var sessions = sessionSection(course);
+    if (sessions) children.push(sessions);
 
     if (map.length && window.LearningVisuals) {
       var routeHost = document.createElement("div");
@@ -655,6 +662,109 @@
       return window.LrnCourseFormats.resolve(courseItem);
     }
     return { id: "toolkit", icon: "wrench", labelKey: "course_format_toolkit", label: "Toolkit" };
+  }
+
+  // Kurstermine aus catalog.json (window.LrnData.sessions). Die Sektion bleibt
+  // ganz weg, solange für den Kurs nie ein Termin gepflegt wurde — ein leerer
+  // Kasten auf jeder Kursseite wäre nur Rauschen.
+  function sessionSection(courseItem) {
+    if (!window.LrnSchedule) return null;
+    var all = window.LrnSchedule.sessions(courseItem.id);
+    if (!all.length) return null;
+    var open = window.LrnSchedule.upcoming(courseItem.id);
+    var locale = (window.SiteLang ? window.SiteLang.get() : "en") === "de" ? "de-DE" : "en-GB";
+
+    var section = document.createElement("section");
+    section.className = "course-sessions";
+    section.setAttribute("aria-labelledby", "courseSessionsTitle");
+
+    var title = document.createElement("h2");
+    title.id = "courseSessionsTitle";
+    title.className = "course-sessions__title";
+    title.textContent = i18n("course_sessions_title", "Upcoming dates");
+    section.appendChild(title);
+
+    if (!open.length) {
+      var empty = document.createElement("p");
+      empty.className = "course-sessions__empty";
+      empty.textContent = i18n("course_sessions_empty", "No date has been scheduled for this course yet.");
+      section.appendChild(empty);
+      return section;
+    }
+
+    var list = document.createElement("ul");
+    list.className = "course-sessions__list";
+    open.slice(0, 3).forEach(function (session) {
+      list.appendChild(sessionCard(session, locale));
+    });
+    section.appendChild(list);
+
+    if (open.length > 3) {
+      var more = document.createElement("p");
+      more.className = "course-sessions__more";
+      more.textContent = i18nFmt("course_sessions_more", { count: open.length - 3 }, "{count} further dates");
+      section.appendChild(more);
+    }
+    return section;
+  }
+
+  function sessionCard(session, locale) {
+    var item = document.createElement("li");
+    item.className = "course-session";
+    item.dataset.status = session.status || "planned";
+
+    var when = document.createElement("p");
+    when.className = "course-session__when";
+    when.append(lucideIcon("calendar-dots"), document.createTextNode(window.LrnSchedule.formatRange(session, locale)));
+
+    var meta = document.createElement("p");
+    meta.className = "course-session__meta";
+    var parts = [];
+    if (session.language) parts.push(i18n("course_lang_" + session.language, String(session.language).toUpperCase()));
+    if (session.delivery) parts.push(i18n("course_delivery_" + session.delivery, session.delivery));
+    if (session.location) parts.push(session.location);
+    meta.textContent = parts.join(" · ");
+
+    var people = document.createElement("p");
+    people.className = "course-session__trainers";
+    var names = window.LrnSchedule.trainerNames(session);
+    people.append(
+      lucideIcon("user"),
+      document.createTextNode(names.length ? names.join(", ") : i18n("course_session_trainer_open", "Trainer to be confirmed"))
+    );
+
+    var foot = document.createElement("p");
+    foot.className = "course-session__foot";
+    var free = window.LrnSchedule.seatsFree(session);
+    var seatLabel = document.createElement("span");
+    seatLabel.className = "course-session__seats";
+    if (session.status === "full" || free === 0) {
+      seatLabel.textContent = i18n("course_session_seats_full", "Fully booked");
+    } else if (free == null) {
+      seatLabel.textContent = i18n("course_session_seats_open", "Seats on request");
+    } else {
+      seatLabel.textContent = i18nFmt("course_session_seats_free", { count: free }, "{count} seats free");
+    }
+    foot.appendChild(seatLabel);
+
+    if (session.registrationUrl) {
+      var register = document.createElement("a");
+      register.className = "course-session__register";
+      register.href = session.registrationUrl;
+      register.rel = "noopener";
+      register.target = "_blank";
+      register.append(document.createTextNode(i18n("course_session_register", "Register")), lucideIcon("arrow-up-right"));
+      foot.appendChild(register);
+    }
+
+    item.append(when, meta, people, foot);
+    if (session.note) {
+      var note = document.createElement("p");
+      note.className = "course-session__note";
+      note.textContent = session.note;
+      item.appendChild(note);
+    }
+    return item;
   }
 
   function includesItem(iconName, text) {

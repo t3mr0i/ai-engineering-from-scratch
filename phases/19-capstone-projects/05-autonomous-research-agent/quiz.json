@@ -40,15 +40,15 @@
     },
     {
       "stage": "check",
-      "question": "Which limits are installed by the default Tree used by tree_search?",
+      "question": "Which configuration values does the default Tree install, and how should its node value be interpreted?",
       "options": [
         "A $24 budget and at most 30 nodes",
         "A $10 budget and at most 50 nodes",
-        "A $50 budget and at most 20 nodes",
-        "A $30 budget and at most 24 nodes"
+        "A $50 budget and a 20-node hard cap",
+        "budget=30.0 and max_nodes=24; max_nodes is checked at loop entry, so expansion can overshoot it"
       ],
       "correct": 3,
-      "explanation": "Tree declares budget=30.0 and max_nodes=24. The search stops when either the frontier empties, the budget is spent, or the node count reaches that cap."
+      "explanation": "Tree declares budget=30.0 and max_nodes=24. The loop checks the node count before expansion; expanding a selected node can push five children, which is why the seeded run reaches 26 nodes."
     },
     {
       "stage": "post",

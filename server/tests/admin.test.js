@@ -110,6 +110,98 @@ test("validator catches unknown course references and duplicate course ids", () 
   assert.ok(codes.has("track.course.unknown"));
 });
 
+test("trainer roster enforces stable ids, names, and referential integrity", () => {
+  const snapshot = clone(loadBaseCurriculum(SITE));
+  snapshot.catalog.trainers = [
+    { id: "TR-01", name: "Ada Lovelace", email: "ada@lhind.dlh.de", languages: ["de", "en"], status: "active" },
+    { id: "TR-01", name: "Doppelte ID", languages: ["de"], status: "active" },
+    { id: "trainer-3", name: "", languages: [], status: "unbekannt" },
+  ];
+  snapshot.catalog.courses[0].ownerTrainerId = "TR-77";
+  snapshot.catalog.courses[1].trainerIds = ["TR-99"];
+  const codes = new Set(validateCurriculum(snapshot).map((item) => item.code));
+  assert.ok(codes.has("trainer.duplicate"));
+  assert.ok(codes.has("trainer.id"));
+  assert.ok(codes.has("trainer.name"));
+  assert.ok(codes.has("trainer.status"));
+  assert.ok(codes.has("trainer.languages"));
+  assert.ok(codes.has("course.owner.unknown"));
+  assert.ok(codes.has("course.trainer.unknown"));
+});
+
+test("missing course responsibility only warns once trainers are maintained", () => {
+  const empty = clone(loadBaseCurriculum(SITE));
+  empty.catalog.trainers = [];
+  assert.equal(validateCurriculum(empty).filter((item) => item.code === "course.owner.missing").length, 0);
+
+  const staffed = clone(loadBaseCurriculum(SITE));
+  staffed.catalog.trainers = [{ id: "TR-01", name: "Ada Lovelace", languages: ["de"], status: "active" }];
+  assert.ok(validateCurriculum(staffed).some((item) => item.code === "course.owner.missing"));
+});
+
+test("sessions are checked against course, trainer pool, seats, and calendar", () => {
+  const snapshot = clone(loadBaseCurriculum(SITE));
+  const courseId = snapshot.catalog.courses[0].id;
+  snapshot.catalog.trainers = [
+    { id: "TR-01", name: "Ada Lovelace", languages: ["de"], status: "active", capacity: { sessionsPerMonth: 1 } },
+  ];
+  snapshot.catalog.courses[0].trainerIds = [];
+  snapshot.catalog.sessions = [
+    {
+      id: "SES-2026-001", courseId, start: "2026-10-12T09:00", end: "2026-10-13T17:00",
+      language: "en", delivery: "onsite", location: "", trainerIds: ["TR-01"],
+      seats: 10, seatsTaken: 12, status: "confirmed",
+    },
+    {
+      id: "SES-2026-002", courseId, start: "2026-10-13T09:00", end: "2026-10-13T12:00",
+      language: "de", delivery: "remote", trainerIds: ["TR-01"], status: "planned",
+    },
+    {
+      id: "session-3", courseId: "LRN-99", start: "12.10.2026", end: "2026-10-01",
+      language: "de", delivery: "vor Ort", trainerIds: ["TR-42"], status: "unklar",
+    },
+  ];
+  const codes = new Set(validateCurriculum(snapshot).map((item) => item.code));
+  assert.ok(codes.has("session.overbooked"));
+  assert.ok(codes.has("session.location"));
+  assert.ok(codes.has("session.trainer.outside_pool"));
+  assert.ok(codes.has("session.trainer.language"));
+  assert.ok(codes.has("session.trainer.overlap"));
+  assert.ok(codes.has("trainer.capacity"));
+  assert.ok(codes.has("session.id"));
+  assert.ok(codes.has("session.course.unknown"));
+  assert.ok(codes.has("session.start"));
+  assert.ok(codes.has("session.delivery"));
+  assert.ok(codes.has("session.status"));
+  assert.ok(codes.has("session.trainer.unknown"));
+});
+
+test("a cancelled session neither blocks its trainer nor demands staffing", () => {
+  const snapshot = clone(loadBaseCurriculum(SITE));
+  const courseId = snapshot.catalog.courses[0].id;
+  snapshot.catalog.trainers = [{ id: "TR-01", name: "Ada Lovelace", languages: ["de"], status: "active" }];
+  snapshot.catalog.courses[0].trainerIds = ["TR-01"];
+  snapshot.catalog.sessions = [
+    { id: "SES-2026-001", courseId, start: "2026-10-12T09:00", end: "2026-10-12T17:00", language: "de", delivery: "remote", trainerIds: ["TR-01"], status: "cancelled" },
+    { id: "SES-2026-002", courseId, start: "2026-10-12T09:00", end: "2026-10-12T17:00", language: "de", delivery: "remote", trainerIds: ["TR-01"], status: "confirmed" },
+    { id: "SES-2026-003", courseId, start: "2026-11-02T09:00", end: "2026-11-02T17:00", language: "de", delivery: "remote", trainerIds: [], status: "cancelled" },
+  ];
+  const codes = new Set(validateCurriculum(snapshot).map((item) => item.code));
+  assert.ok(!codes.has("session.trainer.overlap"));
+  assert.ok(!codes.has("session.trainer.missing"));
+});
+
+test("published files carry the trainer roster and the course calendar", () => {
+  const snapshot = clone(loadBaseCurriculum(SITE));
+  snapshot.catalog.trainers = [{ id: "TR-01", name: "Ada Lovelace", languages: ["de"], status: "active" }];
+  snapshot.catalog.sessions = [{ id: "SES-2026-001", courseId: snapshot.catalog.courses[0].id, start: "2026-10-12T09:00", end: "2026-10-12T17:00", language: "de", delivery: "remote", trainerIds: ["TR-01"], status: "planned" }];
+  const files = filesForSnapshot(snapshot);
+  const catalogFile = files.find((file) => file.filePath === "site/lrn/manifests/catalog.json");
+  const browserFile = files.find((file) => file.filePath === "site/lrn/data.js");
+  assert.match(catalogFile.content, /"SES-2026-001"/);
+  assert.match(browserFile.content, /"TR-01"/);
+});
+
 test("change sets retain revisions and reject stale writes", () => {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "curriculum-admin-"));
   const store = new AdminStore({ dataDir, webRoot: SITE });

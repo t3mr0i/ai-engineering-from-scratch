@@ -141,6 +141,8 @@ function validateCurriculum(snapshot) {
     }
   }
 
+  validateStaffing(catalog, courseIds, issues);
+
   for (const courseId of Object.keys(maps)) {
     if (!courseIds.has(courseId)) {
       issues.push(issue("error", "map.course.unknown", `curriculumMap.courseMaps.${courseId}`, `Die Zuordnung gehört zu keinem Kurs: ${courseId}.`));
@@ -179,6 +181,195 @@ function validateCurriculum(snapshot) {
     }
   }
   return issues;
+}
+
+const SESSION_STATUSES = ["planned", "confirmed", "full", "cancelled", "done"];
+const DELIVERY_MODES = ["onsite", "remote", "hybrid"];
+
+function parseMoment(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(value)) return null;
+  const stamp = Date.parse(value.length === 10 ? `${value}T00:00` : value);
+  return Number.isNaN(stamp) ? null : stamp;
+}
+
+function monthKey(value) {
+  return String(value || "").slice(0, 7);
+}
+
+/**
+ * Trainer roster, course responsibility, and scheduled sessions. Kept in one
+ * pass so cross references (session → course → trainer pool) are checked
+ * against the same set of known ids.
+ */
+function validateStaffing(catalog, courseIds, issues) {
+  const courses = Array.isArray(catalog.courses) ? catalog.courses : [];
+  const trainers = Array.isArray(catalog.trainers) ? catalog.trainers : [];
+  const sessions = Array.isArray(catalog.sessions) ? catalog.sessions : [];
+  if (catalog.trainers != null && !Array.isArray(catalog.trainers)) {
+    issues.push(issue("error", "trainers.shape", "catalog.trainers", "Trainer müssen eine Liste sein."));
+  }
+  if (catalog.sessions != null && !Array.isArray(catalog.sessions)) {
+    issues.push(issue("error", "sessions.shape", "catalog.sessions", "Termine müssen eine Liste sein."));
+  }
+
+  const trainerById = new Map();
+  for (const [index, trainer] of trainers.entries()) {
+    const at = `catalog.trainers[${index}]`;
+    if (!trainer || typeof trainer !== "object") {
+      issues.push(issue("error", "trainer.shape", at, "Der Trainereintrag ist ungültig."));
+      continue;
+    }
+    if (!/^TR-\d{2}$/.test(trainer.id || "")) {
+      issues.push(issue("error", "trainer.id", `${at}.id`, "Trainer-IDs müssen TR-NN entsprechen."));
+    } else if (trainerById.has(trainer.id)) {
+      issues.push(issue("error", "trainer.duplicate", `${at}.id`, `Die Trainer-ID ${trainer.id} ist doppelt.`));
+    } else {
+      trainerById.set(trainer.id, trainer);
+    }
+    if (!String(trainer.name || "").trim()) {
+      issues.push(issue("error", "trainer.name", `${at}.name`, "Der Trainername fehlt."));
+    }
+    if (trainer.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trainer.email)) {
+      issues.push(issue("warning", "trainer.email", `${at}.email`, "Die E-Mail-Adresse sieht nicht gültig aus."));
+    }
+    if (!Array.isArray(trainer.languages) || trainer.languages.length === 0) {
+      issues.push(issue("warning", "trainer.languages", `${at}.languages`, "Für den Trainer ist keine Sprache hinterlegt."));
+    }
+    if (trainer.status && trainer.status !== "active" && trainer.status !== "inactive") {
+      issues.push(issue("warning", "trainer.status", `${at}.status`, "Der Trainerstatus muss active oder inactive sein."));
+    }
+  }
+
+  for (const [index, course] of courses.entries()) {
+    if (!course || typeof course !== "object") continue;
+    const at = `catalog.courses[${index}]`;
+    const owner = course.ownerTrainerId;
+    if (!owner) {
+      // Solange kein einziger Trainer gepflegt ist, ist die Trainerverwaltung
+      // schlicht noch nicht in Benutzung — dann wäre diese Warnung für jeden
+      // Kurs reines Rauschen und würde den Qualitätswert verfälschen.
+      if (trainerById.size > 0) {
+        issues.push(issue("warning", "course.owner.missing", `${at}.ownerTrainerId`, `Für ${course.id} ist keine verantwortliche Person hinterlegt.`));
+      }
+    } else if (!trainerById.has(owner)) {
+      issues.push(issue("error", "course.owner.unknown", `${at}.ownerTrainerId`, `${course.id} verweist auf den unbekannten Trainer ${owner}.`));
+    } else if (trainerById.get(owner).status === "inactive") {
+      issues.push(issue("warning", "course.owner.inactive", `${at}.ownerTrainerId`, `Die verantwortliche Person für ${course.id} ist inaktiv.`));
+    }
+    const pool = Array.isArray(course.trainerIds) ? course.trainerIds : [];
+    const seen = new Set();
+    for (const [poolIndex, trainerId] of pool.entries()) {
+      if (!trainerById.has(trainerId)) {
+        issues.push(issue("error", "course.trainer.unknown", `${at}.trainerIds[${poolIndex}]`, `${course.id} verweist auf den unbekannten Trainer ${trainerId}.`));
+      } else if (trainerById.get(trainerId).status === "inactive") {
+        issues.push(issue("warning", "course.trainer.inactive", `${at}.trainerIds[${poolIndex}]`, `${trainerId} ist inaktiv, steht aber im Trainerpool von ${course.id}.`));
+      }
+      if (seen.has(trainerId)) {
+        issues.push(issue("warning", "course.trainer.duplicate", `${at}.trainerIds[${poolIndex}]`, `${trainerId} steht mehrfach im Trainerpool von ${course.id}.`));
+      }
+      seen.add(trainerId);
+    }
+  }
+
+  const poolByCourse = new Map(courses.filter((course) => course && course.id).map((course) => [course.id, new Set(Array.isArray(course.trainerIds) ? course.trainerIds : [])]));
+  const sessionIds = new Set();
+  const bookings = new Map();
+  const perTrainerMonth = new Map();
+  for (const [index, session] of sessions.entries()) {
+    const at = `catalog.sessions[${index}]`;
+    if (!session || typeof session !== "object") {
+      issues.push(issue("error", "session.shape", at, "Der Termineintrag ist ungültig."));
+      continue;
+    }
+    if (!/^SES-\d{4}-\d{3}$/.test(session.id || "")) {
+      issues.push(issue("error", "session.id", `${at}.id`, "Termin-IDs müssen SES-JJJJ-NNN entsprechen."));
+    } else if (sessionIds.has(session.id)) {
+      issues.push(issue("error", "session.duplicate", `${at}.id`, `Die Termin-ID ${session.id} ist doppelt.`));
+    }
+    sessionIds.add(session.id);
+
+    if (!courseIds.has(session.courseId)) {
+      issues.push(issue("error", "session.course.unknown", `${at}.courseId`, `Der Termin verweist auf den unbekannten Kurs ${session.courseId}.`));
+    }
+
+    const start = parseMoment(session.start);
+    const end = parseMoment(session.end);
+    if (start == null) {
+      issues.push(issue("error", "session.start", `${at}.start`, "Der Beginn fehlt oder hat nicht das Format JJJJ-MM-TT oder JJJJ-MM-TTTHH:MM."));
+    }
+    if (end == null) {
+      issues.push(issue("error", "session.end", `${at}.end`, "Das Ende fehlt oder hat nicht das Format JJJJ-MM-TT oder JJJJ-MM-TTTHH:MM."));
+    }
+    if (start != null && end != null && end < start) {
+      issues.push(issue("error", "session.range", `${at}.end`, "Das Ende liegt vor dem Beginn."));
+    }
+
+    if (!String(session.language || "").trim()) {
+      issues.push(issue("warning", "session.language", `${at}.language`, "Für den Termin ist keine Sprache hinterlegt."));
+    }
+    if (session.delivery && !DELIVERY_MODES.includes(session.delivery)) {
+      issues.push(issue("warning", "session.delivery", `${at}.delivery`, `Das Format muss ${DELIVERY_MODES.join(", ")} sein.`));
+    }
+    if (session.delivery === "onsite" && !String(session.location || "").trim()) {
+      issues.push(issue("warning", "session.location", `${at}.location`, "Für einen Präsenztermin fehlt der Ort."));
+    }
+    if (session.status && !SESSION_STATUSES.includes(session.status)) {
+      issues.push(issue("warning", "session.status", `${at}.status`, `Der Terminstatus muss ${SESSION_STATUSES.join(", ")} sein.`));
+    }
+    const seats = Number(session.seats);
+    const taken = Number(session.seatsTaken);
+    if (session.seats != null && (!Number.isFinite(seats) || seats < 0)) {
+      issues.push(issue("error", "session.seats", `${at}.seats`, "Die Platzzahl muss eine nicht negative Zahl sein."));
+    }
+    if (session.seatsTaken != null && (!Number.isFinite(taken) || taken < 0)) {
+      issues.push(issue("error", "session.seatsTaken", `${at}.seatsTaken`, "Die Zahl belegter Plätze muss eine nicht negative Zahl sein."));
+    }
+    if (Number.isFinite(seats) && Number.isFinite(taken) && taken > seats) {
+      issues.push(issue("error", "session.overbooked", `${at}.seatsTaken`, "Es sind mehr Plätze belegt als vorhanden."));
+    }
+
+    const assigned = Array.isArray(session.trainerIds) ? session.trainerIds : [];
+    if (assigned.length === 0 && session.status !== "cancelled") {
+      issues.push(issue("warning", "session.trainer.missing", `${at}.trainerIds`, "Dem Termin ist kein Trainer zugeordnet."));
+    }
+    for (const [assignedIndex, trainerId] of assigned.entries()) {
+      const trainer = trainerById.get(trainerId);
+      if (!trainer) {
+        issues.push(issue("error", "session.trainer.unknown", `${at}.trainerIds[${assignedIndex}]`, `Der Termin verweist auf den unbekannten Trainer ${trainerId}.`));
+        continue;
+      }
+      const pool = poolByCourse.get(session.courseId);
+      if (pool && !pool.has(trainerId)) {
+        issues.push(issue("warning", "session.trainer.outside_pool", `${at}.trainerIds[${assignedIndex}]`, `${trainerId} gehört nicht zum Trainerpool von ${session.courseId}.`));
+      }
+      if (trainer.status === "inactive") {
+        issues.push(issue("warning", "session.trainer.inactive", `${at}.trainerIds[${assignedIndex}]`, `${trainerId} ist inaktiv, führt den Termin aber durch.`));
+      }
+      if (session.language && Array.isArray(trainer.languages) && trainer.languages.length && !trainer.languages.includes(session.language)) {
+        issues.push(issue("warning", "session.trainer.language", `${at}.trainerIds[${assignedIndex}]`, `${trainerId} ist nicht für ${session.language} hinterlegt.`));
+      }
+      if (session.status === "cancelled" || start == null || end == null) continue;
+      const booked = bookings.get(trainerId) || [];
+      for (const slot of booked) {
+        if (start < slot.end && end > slot.start) {
+          issues.push(issue("warning", "session.trainer.overlap", `${at}.trainerIds[${assignedIndex}]`, `${trainerId} hat zeitgleich bereits den Termin ${slot.id}.`));
+          break;
+        }
+      }
+      booked.push({ id: session.id, start, end });
+      bookings.set(trainerId, booked);
+      const key = `${trainerId}|${monthKey(session.start)}`;
+      perTrainerMonth.set(key, (perTrainerMonth.get(key) || 0) + 1);
+    }
+  }
+
+  for (const [key, count] of perTrainerMonth) {
+    const [trainerId, month] = key.split("|");
+    const limit = Number(trainerById.get(trainerId) && trainerById.get(trainerId).capacity && trainerById.get(trainerId).capacity.sessionsPerMonth);
+    if (Number.isFinite(limit) && limit > 0 && count > limit) {
+      issues.push(issue("warning", "trainer.capacity", `catalog.trainers.${trainerId}.capacity`, `${trainerId} hat im Monat ${month} ${count} Termine bei einer Kapazität von ${limit}.`));
+    }
+  }
 }
 
 function curriculumStats(snapshot) {
@@ -223,6 +414,7 @@ function requiresCurriculumGrill(base, candidate) {
 
 module.exports = {
   clone,
+  validateStaffing,
   loadBaseCurriculum,
   validateCurriculum,
   curriculumStats,

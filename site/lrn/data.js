@@ -3164,6 +3164,8 @@ window.LrnData = {
       ]
     }
   ],
+  "trainers": [],
+  "sessions": [],
   "academyPaths": [
     {
       "id": "academy-ai-01",

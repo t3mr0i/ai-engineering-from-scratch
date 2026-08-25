@@ -278,6 +278,7 @@
       { id: "optional", labelKey: "lrn_status_optional" },
       { id: "inprogress", labelKey: "lrn_status_started" },
       { id: "completed", labelKey: "lrn_status_completed" },
+      { id: "scheduled", labelKey: "lrn_status_scheduled" },
       { id: "all", labelKey: "lrn_status_all" }
     ];
     replaceChildren(els.courseFilters, options.map(function (option) {
@@ -879,6 +880,19 @@
       : entry.progress.lessonCount + " lessons";
     meta.appendChild(metaText);
 
+    // Nächster Termin aus catalog.json — nur, wenn einer gepflegt ist.
+    var nextSession = window.LrnSchedule ? window.LrnSchedule.next(course.id) : null;
+    if (nextSession) {
+      var locale = (window.SiteLang ? window.SiteLang.get() : "en") === "de" ? "de-DE" : "en-GB";
+      var date = document.createElement("span");
+      date.className = "course-card__date";
+      date.textContent = window.LrnSchedule.formatShort(nextSession, locale)
+        + (nextSession.language ? " · " + String(nextSession.language).toUpperCase() : "");
+      date.title = i18n("course_card_next_date", "Next date {date}")
+        .replace("{date}", window.LrnSchedule.formatRange(nextSession, locale));
+      meta.appendChild(date);
+    }
+
     var summary = null;
     if (entry.searchMatch && course.summary) {
       summary = document.createElement("p");
@@ -993,6 +1007,7 @@
       // instead, matching what "started" actually means.
       if (state.filter === "inprogress") return entry.progress.visitedLessons > 0 && entry.progress.completedLessons < entry.progress.lessonCount;
       if (state.filter === "completed") return entry.progress.lessonCount > 0 && entry.progress.completedLessons === entry.progress.lessonCount;
+      if (state.filter === "scheduled") return Boolean(window.LrnSchedule && window.LrnSchedule.next(entry.course.id));
       return true;
     });
   }

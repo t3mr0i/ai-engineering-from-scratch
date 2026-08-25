@@ -1,0 +1,78 @@
+{
+  "lesson": "16-github-issue-to-pr-agent",
+  "title": "GitHub Issue-to-PR Agent",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which policy decision is hard-coded into InstallationToken.can?",
+      "options": [
+        "It denies every pull_request.open action",
+        "It grants force_push when the token is less than one hour old",
+        "It denies force_push and any write:main action",
+        "It denies read-only issue access but permits writes to main"
+      ],
+      "correct": 2,
+      "explanation": "can returns False for force_push and for actions beginning with write:main; ordinary scoped actions remain allowed by this local policy."
+    },
+    {
+      "stage": "check",
+      "question": "What per-repository daily PR limit does BudgetLedger enforce?",
+      "options": [
+        "2",
+        "20",
+        "50",
+        "5"
+      ],
+      "correct": 3,
+      "explanation": "daily_pr_cap defaults to 5, and permit rejects a repository once prs_today[repo] reaches that number."
+    },
+    {
+      "stage": "check",
+      "question": "Which hard cap can make run_agent fail even if the model keeps making progress?",
+      "options": [
+        "20 turns, $20, or 30 wall-clock minutes, whichever is reached first",
+        "Only a 5-PR repository cap",
+        "A 50-token output limit per turn",
+        "Only a coverage delta below zero"
+      ],
+      "correct": 0,
+      "explanation": "run_agent checks turn_cap=20, dollar_cap=$20.0, and minute_cap=30.0 after each turn and sets the corresponding failure."
+    },
+    {
+      "stage": "check",
+      "question": "When does run_verify set failure=\"coverage_regression\"?",
+      "options": [
+        "When CI is green and coverage increases by less than 0.6",
+        "When the sampled coverage_delta is below -2.0",
+        "Whenever a test is flaky, regardless of coverage",
+        "When the PR count reaches five"
+      ],
+      "correct": 1,
+      "explanation": "After the flake check, run_verify samples coverage_delta and rejects only values less than -2.0; it otherwise advances the run to PR."
+    },
+    {
+      "stage": "post",
+      "question": "Which condition directly makes open_pr fail in the local implementation?",
+      "options": [
+        "The token has a pull_requests:rw permission",
+        "The task title contains the word fix",
+        "The installation token is expired",
+        "The run reached the VERIFY state"
+      ],
+      "correct": 2,
+      "explanation": "open_pr first checks time.time() against token.expires_at and sets token_expired when the installation token is no longer valid."
+    },
+    {
+      "stage": "post",
+      "question": "What aggregate result does the seeded dispatcher print for 20 tasks?",
+      "options": [
+        "5 PRs opened and 15 failures",
+        "20 PRs opened and no failures",
+        "7 PRs opened and 13 failures",
+        "13 PRs opened and 7 failures"
+      ],
+      "correct": 3,
+      "explanation": "With random.Random(9), the demo reports 13 PRs opened and 7 failed runs across the 20 dispatched issues."
+    }
+  ]
+}

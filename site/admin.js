@@ -22,6 +22,12 @@
     lessonIssues: [],
     selectedPathId: null,
     pathView: "structure",
+    selectedTrainerId: null,
+    trainerQuery: "",
+    selectedSessionId: null,
+    calendarView: "list",
+    calendarMonth: "",
+    calendarFilters: { courseId: "", trainerId: "", language: "", status: "" },
     courseQuery: "",
     coursePreview: false,
     pathQuery: "",
@@ -272,10 +278,14 @@
       tracks: state.snapshot.catalog.tracks.length,
       units: Object.values(maps).reduce((sum, units) => sum + units.length, 0),
       activities: Object.values(maps).reduce((sum, units) => sum + units.reduce((inner, unit) => inner + (unit.lessons || []).length, 0), 0),
+      trainers: (state.snapshot.catalog.trainers || []).length,
+      sessions: (state.snapshot.catalog.sessions || []).length,
     };
     $("#courseNavCount").textContent = state.stats.courses;
     $("#lessonNavCount").textContent = state.lessons.length;
     $("#pathNavCount").textContent = state.stats.tracks;
+    $("#trainerNavCount").textContent = state.stats.trainers;
+    $("#sessionNavCount").textContent = state.stats.sessions;
     $("#reviewNavCount").textContent = state.issues.length || "";
   }
 
@@ -353,6 +363,8 @@
       courses: renderCourses,
       lessons: renderLessons,
       paths: renderPaths,
+      trainers: renderTrainers,
+      calendar: renderCalendar,
       assistant: renderAssistant,
       review: renderReview,
       history: renderHistory,
@@ -385,6 +397,7 @@
       ["Kurse", state.stats.courses, `${state.stats.units} Units`],
       ["Lessons", state.lessons.length, `${state.stats.activities} Activities`],
       ["Lernpfade", state.stats.tracks, "Profile und Level verbunden"],
+      ["Termine", state.stats.sessions, `${state.stats.trainers} Trainer`],
       ["Offene Entscheidungen", drafts + review, `${drafts} Entwürfe · ${review} im Review`],
     ];
     dashboard.append(h("dl", { class: "admin-inventory", "aria-label": "Curriculum-Inventar" }, inventoryItems.map(([label, value, context]) =>
@@ -499,7 +512,7 @@
       h("div", { class: "admin-panel__header" }, [h("h2", { text: "Units und Activities" }), button("Unit hinzufügen", "secondary", () => addUnit(course.id), "plus", { disabled: !editable })]),
       renderUnitEditors(course.id, editable),
     ]);
-    return [heading, h("div", { class: "editor-sections" }, [basics, outcomes, unitSection])];
+    return [heading, h("div", { class: "editor-sections" }, [basics, outcomes, renderCourseStaffing(course, editable), unitSection])];
   }
 
   function exportCurriculum() {
@@ -874,6 +887,577 @@
     state.lessonFile = Object.keys(state.activeLesson.files).sort()[0] || "docs/en.md";
     markLessonDirty();
     renderLessons();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Trainerverwaltung und Kurskalender
+  // ---------------------------------------------------------------------------
+
+  const LANGUAGE_OPTIONS = [
+    { value: "de", label: "Deutsch" },
+    { value: "en", label: "Englisch" },
+  ];
+  const DELIVERY_OPTIONS = [
+    { value: "onsite", label: "Präsenz" },
+    { value: "remote", label: "Remote" },
+    { value: "hybrid", label: "Hybrid" },
+  ];
+  const SESSION_STATUS_OPTIONS = [
+    { value: "planned", label: "Geplant" },
+    { value: "confirmed", label: "Bestätigt" },
+    { value: "full", label: "Ausgebucht" },
+    { value: "cancelled", label: "Abgesagt" },
+    { value: "done", label: "Durchgeführt" },
+  ];
+
+  function trainerList() {
+    if (!Array.isArray(state.snapshot.catalog.trainers)) state.snapshot.catalog.trainers = [];
+    return state.snapshot.catalog.trainers;
+  }
+
+  function sessionList() {
+    if (!Array.isArray(state.snapshot.catalog.sessions)) state.snapshot.catalog.sessions = [];
+    return state.snapshot.catalog.sessions;
+  }
+
+  function trainerName(trainerId) {
+    const trainer = trainerList().find((item) => item.id === trainerId);
+    return trainer ? trainer.name || trainer.id : trainerId;
+  }
+
+  function courseTitle(courseId) {
+    const course = state.snapshot.catalog.courses.find((item) => item.id === courseId);
+    return course ? course.title : courseId;
+  }
+
+  function optionLabel(options, value, fallback) {
+    const match = options.find((option) => option.value === value);
+    return match ? match.label : value || fallback;
+  }
+
+  function sessionMoment(value) {
+    if (typeof value !== "string" || !value) return null;
+    const stamp = Date.parse(value.length === 10 ? `${value}T00:00` : value);
+    return Number.isNaN(stamp) ? null : new Date(stamp);
+  }
+
+  function formatSessionRange(session) {
+    const start = sessionMoment(session.start);
+    const end = sessionMoment(session.end);
+    if (!start) return "Termin offen";
+    const day = (date) => date.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const time = (date) => date.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+    const hasTime = String(session.start).length > 10;
+    if (!end || day(start) === day(end)) {
+      return hasTime ? `${day(start)}, ${time(start)}–${end ? time(end) : "offen"}` : day(start);
+    }
+    return `${day(start)} – ${day(end)}`;
+  }
+
+  function sortedSessions(items) {
+    return items.slice().sort((left, right) => String(left.start || "").localeCompare(String(right.start || "")));
+  }
+
+  function sessionsForCourse(courseId) {
+    return sortedSessions(sessionList().filter((session) => session.courseId === courseId));
+  }
+
+  function sessionsForTrainer(trainerId) {
+    return sortedSessions(sessionList().filter((session) => (session.trainerIds || []).includes(trainerId)));
+  }
+
+  function isEditable() {
+    return Boolean(state.active && state.active.status === "draft");
+  }
+
+  function createTrainer() {
+    if (!state.active) return openChangesetDialog();
+    const trainers = trainerList();
+    const numbers = trainers.map((item) => /^TR-(\d+)$/.exec(item.id || "")).filter(Boolean).map((match) => Number(match[1]));
+    const id = `TR-${String(Math.max(0, ...numbers) + 1).padStart(2, "0")}`;
+    trainers.push({
+      id,
+      name: "Neue Trainerin oder neuer Trainer",
+      email: "",
+      unit: "",
+      languages: ["de"],
+      status: "active",
+      initials: "",
+      photo: "",
+      bio: "",
+      topics: [],
+      capacity: { sessionsPerMonth: null, note: "" },
+    });
+    state.selectedTrainerId = id;
+    markDirty();
+    renderTrainers();
+  }
+
+  function deleteTrainer(trainer) {
+    const courses = state.snapshot.catalog.courses.filter((course) => course.ownerTrainerId === trainer.id || (course.trainerIds || []).includes(trainer.id));
+    const sessions = sessionsForTrainer(trainer.id);
+    if (courses.length || sessions.length) {
+      toast(`${trainer.id} ist noch ${courses.length} Kursen und ${sessions.length} Terminen zugeordnet. Bitte zuerst dort entfernen.`, "error");
+      return;
+    }
+    const trainers = trainerList();
+    trainers.splice(trainers.indexOf(trainer), 1);
+    state.selectedTrainerId = null;
+    markDirty();
+    renderTrainers();
+  }
+
+  function renderTrainers() {
+    const panel = $("#view-trainers");
+    const trainers = trainerList();
+    if (!state.selectedTrainerId || !trainers.some((item) => item.id === state.selectedTrainerId)) {
+      state.selectedTrainerId = trainers[0] ? trainers[0].id : null;
+    }
+    const query = state.trainerQuery.toLowerCase();
+    const filtered = trainers.filter((trainer) => `${trainer.id} ${trainer.name || ""} ${trainer.unit || ""} ${(trainer.topics || []).join(" ")}`.toLowerCase().includes(query));
+    panel.replaceChildren(pageHeading(
+      "trainersTitle",
+      "Durchführung",
+      "Trainer",
+      "Wer verantwortet einen Kurs fachlich und wer führt ihn durch?",
+      button("Trainer anlegen", "primary", createTrainer, "plus", { disabled: !state.active }),
+    ));
+
+    const items = h("div", { class: "content-list__items", role: "listbox", "aria-label": "Trainer" });
+    for (const trainer of filtered) {
+      const owned = state.snapshot.catalog.courses.filter((course) => course.ownerTrainerId === trainer.id).length;
+      items.append(h("button", {
+        type: "button",
+        class: `content-list__item${trainer.id === state.selectedTrainerId ? " is-active" : ""}`,
+        role: "option",
+        "aria-selected": String(trainer.id === state.selectedTrainerId),
+        onclick: () => { state.selectedTrainerId = trainer.id; renderTrainers(); },
+      }, [
+        h("span", {}, [
+          h("strong", { text: trainer.name || trainer.id }),
+          h("small", { text: `${trainer.unit || "Ohne Einheit"} · ${owned} verantwortet${trainer.status === "inactive" ? " · inaktiv" : ""}` }),
+        ]),
+        h("code", { text: trainer.id }),
+      ]));
+    }
+    const list = h("aside", { class: "content-list" }, [
+      h("div", { class: "content-list__toolbar" }, h("div", { class: "admin-search" }, [
+        icon("magnifying-glass"),
+        h("input", { type: "search", value: state.trainerQuery, placeholder: "Name, Einheit oder Thema …", "aria-label": "Trainer durchsuchen", oninput: (event) => { state.trainerQuery = event.target.value; renderTrainers(); } }),
+      ])),
+      filtered.length
+        ? items
+        : emptyState("magnifying-glass", "Keine Trainer gefunden", "Passe den Suchbegriff an.", button("Suche leeren", "quiet", () => { state.trainerQuery = ""; renderTrainers(); })),
+    ]);
+    const trainer = trainers.find((item) => item.id === state.selectedTrainerId);
+    const editor = trainer
+      ? renderTrainerEditor(trainer)
+      : emptyState("users-three", "Noch keine Trainer", "Lege die Personen an, die Kurse verantworten und durchführen.", button("Ersten Trainer anlegen", "primary", createTrainer, "plus", { disabled: !state.active }));
+    panel.append(h("div", { class: "content-shell" }, [list, h("div", { class: "content-editor" }, editor)]));
+  }
+
+  function renderTrainerEditor(trainer) {
+    const editable = isEditable();
+    const update = (key, value) => { trainer[key] = value; markDirty(); };
+    const updateCapacity = (key, value) => {
+      trainer.capacity = trainer.capacity || {};
+      trainer.capacity[key] = value;
+      markDirty();
+    };
+    const heading = h("div", { class: "editor-heading" }, [
+      h("div", {}, [
+        h("h1", { text: trainer.name || trainer.id }),
+        h("p", { text: `${trainer.id} · ${trainer.unit || "Ohne Organisationseinheit"}` }),
+      ]),
+      h("div", { class: "editor-actions" }, [
+        selectFor(trainer.status || "active", [
+          { value: "active", label: "Aktiv" },
+          { value: "inactive", label: "Inaktiv" },
+        ], (value) => { update("status", value); renderTrainers(); }, { disabled: !editable, "aria-label": "Trainerstatus" }),
+        button("Entfernen", "secondary", () => deleteTrainer(trainer), "trash", { disabled: !editable }),
+      ]),
+    ]);
+
+    const basics = h("section", { class: "editor-section" }, [
+      h("h2", { text: "Grundlagen" }),
+      h("div", { class: "admin-form-grid" }, [
+        field("Trainer-ID", inputFor(trainer.id, () => {}, { readonly: true }), false, "Bleibt nach der Anlage stabil."),
+        field("Name", inputFor(trainer.name, (value) => update("name", value), { disabled: !editable, required: true })),
+        field("E-Mail", inputFor(trainer.email, (value) => update("email", value), { type: "email", disabled: !editable })),
+        field("Organisationseinheit", inputFor(trainer.unit, (value) => update("unit", value), { disabled: !editable })),
+        field("Sprachen", inputFor((trainer.languages || []).join(", "), (value) => update("languages", splitList(value)), { disabled: !editable }), false, "Sprachcodes, kommagetrennt, zum Beispiel de, en"),
+      ]),
+    ]);
+
+    const profile = h("section", { class: "editor-section" }, [
+      h("h2", { text: "Profil" }),
+      h("div", { class: "admin-form-grid" }, [
+        field("Initialen", inputFor(trainer.initials, (value) => update("initials", value), { disabled: !editable, maxlength: "3" }), false, "Leer lassen, dann werden sie aus dem Namen gebildet."),
+        field("Foto", inputFor(trainer.photo, (value) => update("photo", value), { disabled: !editable }), false, "Pfad unterhalb von site/, zum Beispiel assets/trainers/tr-01.jpg"),
+        field("Kurzbio", textareaFor(trainer.bio, (value) => update("bio", value), { disabled: !editable, rows: "4" }), true),
+        field("Themenschwerpunkte", inputFor((trainer.topics || []).join(", "), (value) => update("topics", splitList(value)), { disabled: !editable }), true, "Kommagetrennt"),
+      ]),
+    ]);
+
+    const capacity = h("section", { class: "editor-section" }, [
+      h("h2", { text: "Kapazität" }),
+      h("div", { class: "admin-form-grid" }, [
+        field("Termine pro Monat", inputFor(trainer.capacity && trainer.capacity.sessionsPerMonth, (value) => updateCapacity("sessionsPerMonth", value === "" ? null : Number(value)), { type: "number", min: "0", disabled: !editable }), false, "Leer lassen, wenn keine Obergrenze gilt."),
+        field("Verfügbarkeit", inputFor(trainer.capacity && trainer.capacity.note, (value) => updateCapacity("note", value), { disabled: !editable }), true, "Freitext, zum Beispiel: freitags nicht verfügbar"),
+      ]),
+    ]);
+
+    const owned = state.snapshot.catalog.courses.filter((course) => course.ownerTrainerId === trainer.id);
+    const pooled = state.snapshot.catalog.courses.filter((course) => (course.trainerIds || []).includes(trainer.id) && course.ownerTrainerId !== trainer.id);
+    const upcoming = sessionsForTrainer(trainer.id).filter((session) => {
+      const end = sessionMoment(session.end || session.start);
+      return !end || end.getTime() >= Date.now();
+    });
+    const courseLink = (course) => h("button", {
+      type: "button",
+      class: "admin-button admin-button--quiet",
+      text: `${course.id} · ${course.title}`,
+      onclick: () => { state.selectedCourseId = course.id; activateView("courses"); },
+    });
+    const assignments = h("section", { class: "editor-section" }, [
+      h("h2", { text: "Zuständigkeiten" }),
+      h("div", { class: "trainer-refs" }, [
+        h("div", {}, [
+          h("h3", { text: `Verantwortlich für ${owned.length}` }),
+          owned.length ? h("ul", {}, owned.map((course) => h("li", {}, courseLink(course)))) : h("p", { class: "metric-context", text: "Noch kein Kurs zugewiesen." }),
+        ]),
+        h("div", {}, [
+          h("h3", { text: `Im Trainerpool von ${pooled.length}` }),
+          pooled.length ? h("ul", {}, pooled.map((course) => h("li", {}, courseLink(course)))) : h("p", { class: "metric-context", text: "In keinem weiteren Trainerpool." }),
+        ]),
+        h("div", {}, [
+          h("h3", { text: `Kommende Termine ${upcoming.length}` }),
+          upcoming.length
+            ? h("ul", {}, upcoming.slice(0, 6).map((session) => h("li", {}, h("button", {
+              type: "button",
+              class: "admin-button admin-button--quiet",
+              text: `${formatSessionRange(session)} · ${session.courseId}`,
+              onclick: () => { state.selectedSessionId = session.id; activateView("calendar"); },
+            }))))
+            : h("p", { class: "metric-context", text: "Keine kommenden Termine." }),
+        ]),
+      ]),
+    ]);
+
+    return [heading, h("div", { class: "editor-sections" }, [basics, profile, capacity, assignments])];
+  }
+
+  function renderCourseStaffing(course, editable) {
+    const trainers = trainerList();
+    const pool = Array.isArray(course.trainerIds) ? course.trainerIds : [];
+    const togglePool = (trainerId, checked) => {
+      const next = new Set(pool);
+      if (checked) next.add(trainerId); else next.delete(trainerId);
+      course.trainerIds = trainers.filter((item) => next.has(item.id)).map((item) => item.id);
+      markDirty();
+      renderCourses();
+    };
+    const roster = trainers.length
+      ? h("div", { class: "trainer-picker" }, trainers.map((trainer) => h("label", { class: `trainer-picker__item${pool.includes(trainer.id) ? " is-active" : ""}` }, [
+        h("input", { type: "checkbox", checked: pool.includes(trainer.id), disabled: !editable, onchange: (event) => togglePool(trainer.id, event.target.checked) }),
+        h("span", {}, [h("strong", { text: trainer.name || trainer.id }), h("small", { text: `${trainer.id} · ${(trainer.languages || []).join(", ") || "Sprache offen"}` })]),
+      ])))
+      : h("p", { class: "metric-context", text: "Noch keine Trainer angelegt." });
+
+    const sessions = sessionsForCourse(course.id);
+    const upcoming = sessions.filter((session) => {
+      const end = sessionMoment(session.end || session.start);
+      return !end || end.getTime() >= Date.now();
+    });
+
+    return h("section", { class: "editor-section" }, [
+      h("div", { class: "admin-panel__header" }, [
+        h("h2", { text: "Verantwortung und Trainer" }),
+        button("Trainer verwalten", "quiet", () => activateView("trainers"), "arrow-right"),
+      ]),
+      h("div", { class: "admin-form-grid" }, [
+        field("Verantwortlich", selectFor(course.ownerTrainerId || "", [
+          { value: "", label: "Nicht zugewiesen" },
+          ...trainers.map((trainer) => ({ value: trainer.id, label: `${trainer.name || trainer.id} (${trainer.id})` })),
+        ], (value) => { course.ownerTrainerId = value || undefined; markDirty(); renderCourses(); }, { disabled: !editable }), false, "Fachliche Verantwortung für die Inhalte."),
+      ]),
+      h("h3", { class: "editor-subheading", text: "Trainerpool" }),
+      h("p", { class: "metric-context", text: "Termine dieses Kurses wählen ihre Trainer aus diesem Pool." }),
+      roster,
+      h("h3", { class: "editor-subheading", text: `Kommende Termine (${upcoming.length})` }),
+      upcoming.length
+        ? h("ul", { class: "course-session-list" }, upcoming.slice(0, 5).map((session) => h("li", {}, h("button", {
+          type: "button",
+          class: "admin-button admin-button--quiet",
+          text: `${formatSessionRange(session)} · ${String(session.language || "").toUpperCase()} · ${optionLabel(DELIVERY_OPTIONS, session.delivery, "Format offen")}`,
+          onclick: () => { state.selectedSessionId = session.id; activateView("calendar"); },
+        }))))
+        : h("p", { class: "metric-context", text: "Für diesen Kurs ist kein Termin geplant." }),
+      button("Termin anlegen", "secondary", () => createSession(course.id), "calendar-plus", { disabled: !editable }),
+    ]);
+  }
+
+  function createSession(courseId) {
+    if (!state.active) return openChangesetDialog();
+    const sessions = sessionList();
+    const year = new Date().getFullYear();
+    const numbers = sessions.map((item) => new RegExp(`^SES-${year}-(\\d{3})$`).exec(item.id || "")).filter(Boolean).map((match) => Number(match[1]));
+    const id = `SES-${year}-${String(Math.max(0, ...numbers) + 1).padStart(3, "0")}`;
+    const course = state.snapshot.catalog.courses.find((item) => item.id === courseId) || state.snapshot.catalog.courses[0];
+    const start = new Date();
+    start.setDate(start.getDate() + 14);
+    start.setHours(9, 0, 0, 0);
+    const end = new Date(start);
+    end.setHours(17, 0, 0, 0);
+    sessions.push({
+      id,
+      courseId: course ? course.id : "",
+      start: localInputValue(start),
+      end: localInputValue(end),
+      language: "de",
+      delivery: "remote",
+      location: "",
+      trainerIds: course && course.ownerTrainerId ? [course.ownerTrainerId] : [],
+      seats: null,
+      seatsTaken: 0,
+      status: "planned",
+      registrationUrl: "",
+      note: "",
+    });
+    state.selectedSessionId = id;
+    markDirty();
+    activateView("calendar");
+  }
+
+  function deleteSession(session) {
+    const sessions = sessionList();
+    sessions.splice(sessions.indexOf(session), 1);
+    state.selectedSessionId = null;
+    markDirty();
+    renderCalendar();
+  }
+
+  function localInputValue(date) {
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function visibleSessions() {
+    const filters = state.calendarFilters;
+    return sortedSessions(sessionList().filter((session) => {
+      if (filters.courseId && session.courseId !== filters.courseId) return false;
+      if (filters.trainerId && !(session.trainerIds || []).includes(filters.trainerId)) return false;
+      if (filters.language && session.language !== filters.language) return false;
+      if (filters.status && session.status !== filters.status) return false;
+      return true;
+    }));
+  }
+
+  function shiftCalendarMonth(offset) {
+    const [year, month] = state.calendarMonth.split("-").map(Number);
+    const date = new Date(year, month - 1 + offset, 1);
+    state.calendarMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const panel = $("#view-calendar");
+    if (!state.calendarMonth) state.calendarMonth = localInputValue(new Date()).slice(0, 7);
+    const sessions = visibleSessions();
+    if (state.selectedSessionId && !sessionList().some((item) => item.id === state.selectedSessionId)) state.selectedSessionId = null;
+    panel.replaceChildren(pageHeading(
+      "calendarTitle",
+      "Durchführung",
+      "Kalender",
+      "Wann welcher Kurs läuft, in welcher Sprache und mit wem.",
+      button("Termin anlegen", "primary", () => createSession(state.calendarFilters.courseId || null), "plus", { disabled: !state.active }),
+    ));
+
+    const setFilter = (key, value) => { state.calendarFilters[key] = value; renderCalendar(); };
+    const filters = h("div", { class: "calendar-filters" }, [
+      field("Kurs", selectFor(state.calendarFilters.courseId, [
+        { value: "", label: "Alle Kurse" },
+        ...state.snapshot.catalog.courses.map((course) => ({ value: course.id, label: `${course.id} · ${course.title}` })),
+      ], (value) => setFilter("courseId", value))),
+      field("Trainer", selectFor(state.calendarFilters.trainerId, [
+        { value: "", label: "Alle Trainer" },
+        ...trainerList().map((trainer) => ({ value: trainer.id, label: trainer.name || trainer.id })),
+      ], (value) => setFilter("trainerId", value))),
+      field("Sprache", selectFor(state.calendarFilters.language, [
+        { value: "", label: "Alle Sprachen" },
+        ...LANGUAGE_OPTIONS,
+      ], (value) => setFilter("language", value))),
+      field("Status", selectFor(state.calendarFilters.status, [
+        { value: "", label: "Alle Status" },
+        ...SESSION_STATUS_OPTIONS,
+      ], (value) => setFilter("status", value))),
+      h("div", { class: "calendar-view-switch", role: "group", "aria-label": "Kalenderansicht" }, [
+        ["list", "Liste", "list-bullets"],
+        ["month", "Monat", "calendar-blank"],
+      ].map(([value, label, iconName]) => button(label, state.calendarView === value ? "primary" : "secondary", () => { state.calendarView = value; renderCalendar(); }, iconName, { "aria-pressed": String(state.calendarView === value) }))),
+    ]);
+
+    const content = state.calendarView === "month" ? renderCalendarMonth(sessions) : renderCalendarList(sessions);
+    const selected = sessionList().find((item) => item.id === state.selectedSessionId);
+    const shell = h("div", { class: `calendar-shell${selected ? " calendar-shell--split" : ""}` }, [
+      h("div", { class: "calendar-main" }, content),
+      selected ? h("aside", { class: "calendar-editor" }, renderSessionEditor(selected)) : null,
+    ]);
+    panel.append(filters, shell);
+  }
+
+  function sessionChip(session, compact) {
+    const trainers = (session.trainerIds || []).map(trainerName).join(", ");
+    return h("button", {
+      type: "button",
+      class: `session-chip${session.id === state.selectedSessionId ? " is-active" : ""}`,
+      "data-status": session.status || "planned",
+      title: `${courseTitle(session.courseId)} · ${formatSessionRange(session)}${trainers ? ` · ${trainers}` : ""}`,
+      onclick: () => { state.selectedSessionId = session.id; renderCalendar(); },
+    }, compact
+      ? [h("strong", { text: session.courseId }), h("small", { text: String(session.language || "").toUpperCase() })]
+      : [
+        h("strong", { text: `${session.courseId} · ${courseTitle(session.courseId)}` }),
+        h("small", { text: `${String(session.language || "–").toUpperCase()} · ${optionLabel(DELIVERY_OPTIONS, session.delivery, "Format offen")}${session.location ? ` · ${session.location}` : ""} · ${trainers || "Trainer offen"}` }),
+      ]);
+  }
+
+  function seatLabel(session) {
+    const seats = Number(session.seats);
+    if (!Number.isFinite(seats) || seats <= 0) return "Plätze offen";
+    const taken = Number(session.seatsTaken) || 0;
+    return `${taken}/${seats} Plätze`;
+  }
+
+  function renderCalendarList(sessions) {
+    if (!sessions.length) {
+      return emptyState("calendar-dots", "Keine Termine", "Für die aktuelle Auswahl ist nichts geplant.", button("Termin anlegen", "primary", () => createSession(state.calendarFilters.courseId || null), "plus", { disabled: !state.active }));
+    }
+    const groups = new Map();
+    for (const session of sessions) {
+      const date = sessionMoment(session.start);
+      const key = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` : "offen";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(session);
+    }
+    const list = h("div", { class: "calendar-list" });
+    for (const [key, items] of groups) {
+      const label = key === "offen"
+        ? "Ohne Datum"
+        : new Date(Number(key.slice(0, 4)), Number(key.slice(5)) - 1, 1).toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+      list.append(h("section", { class: "calendar-group" }, [
+        h("h2", { text: label }),
+        h("div", { class: "calendar-group__items" }, items.map((session) => h("article", { class: "session-row" }, [
+          h("span", { class: "session-row__date", text: formatSessionRange(session) }),
+          sessionChip(session, false),
+          h("span", { class: "status-dot", "data-status": session.status || "planned", text: optionLabel(SESSION_STATUS_OPTIONS, session.status, "Geplant") }),
+          h("span", { class: "session-row__seats", text: seatLabel(session) }),
+        ]))),
+      ]));
+    }
+    return list;
+  }
+
+  function renderCalendarMonth(sessions) {
+    const [year, month] = state.calendarMonth.split("-").map(Number);
+    const first = new Date(year, month - 1, 1);
+    const offset = (first.getDay() + 6) % 7;
+    const gridStart = new Date(year, month - 1, 1 - offset);
+    const monthLabel = first.toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+    const byDay = new Map();
+    for (const session of sessions) {
+      const start = sessionMoment(session.start);
+      const end = sessionMoment(session.end) || start;
+      if (!start) continue;
+      const cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+      while (cursor <= last) {
+        const key = localInputValue(cursor).slice(0, 10);
+        if (!byDay.has(key)) byDay.set(key, []);
+        byDay.get(key).push(session);
+        cursor.setDate(cursor.getDate() + 1);
+      }
+    }
+    const head = h("div", { class: "calendar-month__head" }, [
+      button("Voriger Monat", "quiet", () => shiftCalendarMonth(-1), "caret-left", { "aria-label": "Voriger Monat" }),
+      h("h2", { text: monthLabel }),
+      button("Nächster Monat", "quiet", () => shiftCalendarMonth(1), "caret-right", { "aria-label": "Nächster Monat" }),
+      button("Heute", "secondary", () => { state.calendarMonth = localInputValue(new Date()).slice(0, 7); renderCalendar(); }, "crosshair"),
+    ]);
+    const grid = h("div", { class: "calendar-month__grid", role: "grid", "aria-label": `Kalender ${monthLabel}` });
+    for (const label of ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]) {
+      grid.append(h("div", { class: "calendar-month__weekday", role: "columnheader", text: label }));
+    }
+    const today = localInputValue(new Date()).slice(0, 10);
+    for (let index = 0; index < 42; index += 1) {
+      const day = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + index);
+      const key = localInputValue(day).slice(0, 10);
+      const outside = day.getMonth() !== month - 1;
+      const items = byDay.get(key) || [];
+      grid.append(h("div", {
+        class: `calendar-month__day${outside ? " is-outside" : ""}${key === today ? " is-today" : ""}`,
+        role: "gridcell",
+        "aria-label": day.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }),
+      }, [
+        h("span", { class: "calendar-month__daynum", text: String(day.getDate()) }),
+        ...items.map((session) => sessionChip(session, true)),
+      ]));
+    }
+    return h("div", { class: "calendar-month" }, [head, grid]);
+  }
+
+  function renderSessionEditor(session) {
+    const editable = isEditable();
+    const update = (key, value) => { session[key] = value; markDirty(); renderCalendar(); };
+    const quietUpdate = (key, value) => { session[key] = value; markDirty(); };
+    const course = state.snapshot.catalog.courses.find((item) => item.id === session.courseId);
+    const pool = course && Array.isArray(course.trainerIds) ? course.trainerIds : [];
+    const assigned = Array.isArray(session.trainerIds) ? session.trainerIds : [];
+    const toggleTrainer = (trainerId, checked) => {
+      const next = new Set(assigned);
+      if (checked) next.add(trainerId); else next.delete(trainerId);
+      session.trainerIds = trainerList().filter((item) => next.has(item.id)).map((item) => item.id);
+      markDirty();
+      renderCalendar();
+    };
+    const candidates = trainerList().filter((trainer) => pool.includes(trainer.id) || assigned.includes(trainer.id));
+    const others = trainerList().filter((trainer) => !pool.includes(trainer.id) && !assigned.includes(trainer.id));
+
+    return [
+      h("div", { class: "editor-heading" }, [
+        h("div", {}, [
+          h("h2", { text: courseTitle(session.courseId) }),
+          h("p", { text: `${session.id} · ${formatSessionRange(session)}` }),
+        ]),
+        h("div", { class: "editor-actions" }, [
+          button("Schließen", "quiet", () => { state.selectedSessionId = null; renderCalendar(); }, "x", { "aria-label": "Termindetails schließen" }),
+          button("Entfernen", "secondary", () => deleteSession(session), "trash", { disabled: !editable }),
+        ]),
+      ]),
+      h("div", { class: "admin-form-grid" }, [
+        field("Kurs", selectFor(session.courseId, state.snapshot.catalog.courses.map((item) => ({ value: item.id, label: `${item.id} · ${item.title}` })), (value) => update("courseId", value), { disabled: !editable }), true),
+        field("Beginn", inputFor(session.start, (value) => quietUpdate("start", value), { type: "datetime-local", disabled: !editable })),
+        field("Ende", inputFor(session.end, (value) => quietUpdate("end", value), { type: "datetime-local", disabled: !editable })),
+        field("Sprache", selectFor(session.language || "de", LANGUAGE_OPTIONS, (value) => update("language", value), { disabled: !editable })),
+        field("Format", selectFor(session.delivery || "remote", DELIVERY_OPTIONS, (value) => update("delivery", value), { disabled: !editable })),
+        field("Ort", inputFor(session.location, (value) => quietUpdate("location", value), { disabled: !editable }), true, "Bei Präsenz erforderlich, sonst zum Beispiel Teams."),
+        field("Plätze", inputFor(session.seats, (value) => quietUpdate("seats", value === "" ? null : Number(value)), { type: "number", min: "0", disabled: !editable })),
+        field("Belegt", inputFor(session.seatsTaken, (value) => quietUpdate("seatsTaken", value === "" ? null : Number(value)), { type: "number", min: "0", disabled: !editable })),
+        field("Status", selectFor(session.status || "planned", SESSION_STATUS_OPTIONS, (value) => update("status", value), { disabled: !editable })),
+        field("Anmeldung", inputFor(session.registrationUrl, (value) => quietUpdate("registrationUrl", value), { type: "url", disabled: !editable }), true, "Link zur Buchung, zum Beispiel MyCompetence."),
+        field("Notiz", textareaFor(session.note, (value) => quietUpdate("note", value), { disabled: !editable, rows: "3" }), true),
+      ]),
+      h("h3", { class: "editor-subheading", text: "Trainer" }),
+      candidates.length || others.length
+        ? h("div", { class: "trainer-picker" }, [...candidates, ...others].map((trainer) => h("label", { class: `trainer-picker__item${assigned.includes(trainer.id) ? " is-active" : ""}` }, [
+          h("input", { type: "checkbox", checked: assigned.includes(trainer.id), disabled: !editable, onchange: (event) => toggleTrainer(trainer.id, event.target.checked) }),
+          h("span", {}, [
+            h("strong", { text: trainer.name || trainer.id }),
+            h("small", { text: pool.includes(trainer.id) ? `Im Pool · ${(trainer.languages || []).join(", ") || "Sprache offen"}` : `Außerhalb des Pools · ${(trainer.languages || []).join(", ") || "Sprache offen"}` }),
+          ]),
+        ])))
+        : h("p", { class: "metric-context", text: "Noch keine Trainer angelegt." }),
+    ];
   }
 
   function renderLessons() {

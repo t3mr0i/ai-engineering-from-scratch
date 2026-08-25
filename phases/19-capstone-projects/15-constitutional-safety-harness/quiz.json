@@ -1,0 +1,78 @@
+{
+  "lesson": "15-constitutional-safety-harness",
+  "title": "Constitutional Safety Harness",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "In which order does SafetyPipeline.process run its observable safety layers?",
+      "options": [
+        "sanitize → nemo_rail → llama_guard_4 → x_guard → output_filter",
+        "llama_guard_4 → sanitize → output_filter → nemo_rail → x_guard",
+        "nemo_rail → x_guard → sanitize → target → llama_guard_4",
+        "sanitize → target → output_filter, with guards after the response"
+      ],
+      "correct": 0,
+      "explanation": "process normalizes the prompt, applies the banking off-domain rail, then llama_guard_4 and x_guard, and finally checks the stubbed response with output_filter."
+    },
+    {
+      "stage": "check",
+      "question": "Why can the short base64 probe in attack_encoding pass sanitize in this scaffold?",
+      "options": [
+        "sanitize decodes every token, but the classifier always allows decoded text",
+        "sanitize only attempts decoding for base64-like tokens at least 32 characters long",
+        "base64 is removed by output_filter after the target responds",
+        "the encoding attack is skipped because SafetyPipeline has no domain"
+      ],
+      "correct": 1,
+      "explanation": "The decoder loop requires a token length of 32 or more; the short encoded probes do not meet that guard, so they remain undecoded."
+    },
+    {
+      "stage": "check",
+      "question": "What lets a probe reach the deeper classifier gates when the pipeline domain is banking?",
+      "options": [
+        "It contains no words, so off_domain treats it as neutral",
+        "It starts with a health keyword recognized by the health domain",
+        "The wrapped prompt includes a banking keyword such as account or transfer",
+        "It sets a flag that bypasses nemo_rail"
+      ],
+      "correct": 2,
+      "explanation": "The red-team helpers wrap attacks with a banking pretext; off_domain admits text when its token set intersects the banking keyword set."
+    },
+    {
+      "stage": "check",
+      "question": "Which layer catches multilingual terms such as bombe, bomba, or бомба?",
+      "options": [
+        "sanitize, because it translates every input",
+        "llama_guard_4, because BAD_EN includes every language",
+        "output_filter, because it detects unsafe prompts in the response",
+        "x_guard, because BAD_MULTILINGUAL contains those terms"
+      ],
+      "correct": 3,
+      "explanation": "x_guard scans BAD_MULTILINGUAL, which explicitly includes bombe, bomba, бомба, malware, and nitroglycerin."
+    },
+    {
+      "stage": "post",
+      "question": "Which six families does run_range execute in the harness demo?",
+      "options": [
+        "PAIR, TAP, GCG, encoding, multilingual, and multi_turn",
+        "PAIR, SQLi, XSS, CSRF, SSRF, and DoS",
+        "TAP, GCG, jailbreak, prompt-leak, PII, and tool-use",
+        "encoding, OCR, speech, vision, retrieval, and memory"
+      ],
+      "correct": 0,
+      "explanation": "run_range returns exactly six keys: PAIR, TAP, GCG, encoding, multilingual, and multi_turn."
+    },
+    {
+      "stage": "post",
+      "question": "What false-positive rate does measure_over_refusal report for the three benign banking prompts?",
+      "options": [
+        "33%",
+        "0%",
+        "50%",
+        "100%"
+      ],
+      "correct": 1,
+      "explanation": "All three benign probes contain banking keywords and pass the rail and classifier stubs, so blocked remains zero and the reported rate is 0%."
+    }
+  ]
+}

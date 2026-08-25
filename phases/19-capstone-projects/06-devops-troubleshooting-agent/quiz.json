@@ -6,9 +6,9 @@
       "stage": "pre",
       "question": "For the sample checkout-api rollout, which score does root_cause assign to the bad-rollout hypothesis?",
       "options": [
-        "0.735, using the recent revision, two telemetry citations, specificity 0.82, and path length 0",
         "0.500, because all hypotheses receive the same starting score",
         "0.090, because only the DNS hypothesis has a numeric score",
+        "0.735, using the recent revision, two telemetry citations, specificity 0.82, and path length 0",
         "0.140, because the Prometheus error rate is 0.14"
       ],
       "correct": 2,
@@ -24,7 +24,7 @@
         "bad rollout: image checkout-api:v2.41 fails /healthz"
       ],
       "correct": 3,
-      "explanation": "The recently deployed v2.41 image is linked to both Prometheus and Loki evidence, so its bad-rollout hypothesis outranks the less specific node and DNS alternatives."
+      "explanation": "The recently deployed v2.41 image is linked to both Prometheus and Loki evidence, so its bad-rollout hypothesis outranks the less specific DNS alternative in the sample ranking."
     },
     {
       "stage": "check",
@@ -51,7 +51,7 @@
       "explanation": "A supplied approver satisfies the destructive-tool gate; the event records alice@sre and both approved and executed become true."
     },
     {
-      "stage": "check",
+      "stage": "post",
       "question": "What does the audit log retain about a denied destructive command?",
       "options": [
         "Only successful read-only calls are retained",
