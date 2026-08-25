@@ -1,6 +1,6 @@
 # Python Environments
 
-> Dependency hell is real. Virtual environments are the cure.
+> Reproducibility starts with knowing which interpreter is executing the command.
 
 **Type:** Build
 **Languages:** Python
@@ -9,88 +9,66 @@
 
 ## Learning Objectives
 
-- Create isolated virtual environments using `uv`, `venv`, or `conda`
-- Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility
-- Diagnose and fix common pitfalls: global installs, pip/conda mixing, CUDA version mismatches
-- Implement a per-phase environment strategy for projects with conflicting dependencies
+- Read `sys.prefix`, `sys.base_prefix`, and `sys.executable` with `environment_report`.
+- Determine whether the active interpreter is inside a virtual environment from `isolated` and `pyvenv_config`.
+- Compare the `uv venv` and `python3 -m venv` branches in `env_setup.sh`.
+- Explain why package installation policy and environment selection belong in project documentation.
+- Design a per-phase environment boundary without claiming that this demo creates a lockfile.
 
-## The Problem
+## What the code actually proves
 
-You install PyTorch 2.4 for a fine-tuning project. Next week, a different project needs PyTorch 2.1 because its CUDA build is pinned. You upgrade globally, and the first project breaks. You downgrade, and the second one breaks.
-
-This is dependency hell. It happens constantly in AI/ML work because:
-
-- PyTorch, JAX, and TensorFlow each ship their own CUDA bindings
-- Model libraries pin specific framework versions
-- A global `pip install` overwrites whatever was there before
-- CUDA 11.8 builds don't work with CUDA 12.x drivers (and vice versa)
-
-The fix: every project gets its own isolated environment with its own packages.
-
-## The Concept
+`code/main.py` is intentionally read-only. `environment_report()` resolves the active executable, `sys.prefix`, and `sys.base_prefix`; it reports `isolated = (prefix != base_prefix)` and includes the path to `pyvenv.cfg` only when that file exists. Running it does not create an environment, install packages, or inspect CUDA.
 
 ```mermaid
-graph TD
-    subgraph without["Without virtual environments"]
-        SP[System Python] --> T24["torch 2.4.0 (CUDA 12.4)\nProject A needs this"]
-        SP --> T21["torch 2.1.0 (CUDA 11.8)\nProject B needs this"]
-        SP --> CONFLICT["CONFLICT: only one\ntorch version can exist"]
-    end
-
-    subgraph with["With virtual environments"]
-        PA["Project A (.venv/)"] --> PA1["torch 2.4.0 (CUDA 12.4)"]
-        PA --> PA2["transformers 4.44"]
-        PB["Project B (.venv/)"] --> PB1["torch 2.1.0 (CUDA 11.8)"]
-        PB --> PB2["diffusers 0.28"]
-    end
+flowchart TD
+    A[python3 code/main.py] --> B[sys.executable]
+    A --> C[sys.prefix vs sys.base_prefix]
+    C --> D{prefix differs?}
+    D -->|yes| E[isolated true + pyvenv.cfg path]
+    D -->|no| F[isolated false + no venv config]
 ```
-
-
-## Use It
-
-Run the setup script to create your course environment:
-
-```bash
-bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh
-```
-
-This creates a `.venv` at the repo root with core dependencies installed and verified.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Virtual environment | "A venv" | An isolated directory containing a Python interpreter and packages, separate from the system Python |
-| Lockfile | "Pinned dependencies" | A file listing every package and its exact version, guaranteeing identical installs across machines |
-| pyproject.toml | "The new setup.py" | The standard Python project configuration file, replacing setup.py/setup.cfg/requirements.txt |
-| Transitive dependency | "A dependency of a dependency" | Package B depends on C; if you install A which depends on B, C is a transitive dependency of A |
-| CUDA mismatch | "My GPU isn't working" | PyTorch was compiled for a different CUDA version than what your GPU driver supports |
 
 ## Build It
 
-Reconstruct **Python Environments** by following `environment_report` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+Run the report without changing the repository:
+
+```bash
+cd phases/00-setup-and-tooling/06-python-environments
+python3 code/main.py
+```
+
+The JSON contains `python`, `executable`, `prefix`, `base_prefix`, `isolated`, and `pyvenv_config`. Read the absolute paths before making a claim. To observe the isolated branch safely, create a disposable environment outside the repository and invoke the same script with its interpreter:
+
+```bash
+python3 -m venv /tmp/phase00-python-env
+/tmp/phase00-python-env/bin/python code/main.py
+```
+
+The two reports should differ in `executable`, `prefix`, `isolated`, and usually `pyvenv_config`; the source file is unchanged.
+
+## Use It
+
+`code/env_setup.sh` is a separate provisioning script. It requires Python 3.11+, prefers `uv` when present, otherwise uses `python3 -m venv`, activates `.venv` at the repository root, installs `numpy matplotlib jupyter scikit-learn pandas`, and verifies imports. It optionally reports PyTorch and CUDA. Run it only in a disposable clone or when you explicitly intend to create that root `.venv`; this lesson does not run it during normal tests.
+
+The script does not write `pyproject.toml` or a lockfile. A reproducible project can add those files separately, but the observable contract in this lesson is interpreter isolation and package verification.
 
 ## Ship It
 
-Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+[`outputs/artifact-card.md`](../outputs/artifact-card.md) should carry one baseline JSON report, the interpreter path used, and the command that reproduced it. Add a per-phase decision such as “shared lightweight environment for setup lessons; separate environment for incompatible framework requirements,” and link the actual project metadata when it exists.
 
 ## Exercises
 
-Work from the smallest fixture that the Python Environments demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `environment_report`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Create isolated virtual environments using `uv`, `venv`, or `conda`**.
-2. **Perturb one field.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Diagnose and fix common pitfalls: global installs, pip/conda mixing, CUDA version mismatches** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/artifact-card.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Implement a per-phase environment strategy for projects with conflicting dependencies**; note what the demo cannot establish.
+1. Capture reports from the system interpreter and `/tmp/phase00-python-env/bin/python`. Explain `isolated` using the two prefix values, not by guessing from the prompt.
+2. Read `env_setup.sh` and list its two environment-creation branches and its five core package names. Identify the step that verifies a package rather than installing it.
+3. Run `python3 code/main.py` from a directory outside the repository and confirm that changing the current directory does not change the interpreter metadata.
+4. Add the two reports and an acceptance rule to the artifact: a command is accepted only when the expected interpreter path and `isolated` value are visible. Do not claim a lockfile or CUDA setup was tested.
 
 ## Reference Solution
 
-A checkable result for **Python Environments** should contain:
+The baseline report may show `isolated: false`; that is a valid observation. The disposable venv should show distinct prefix/base-prefix paths, `isolated: true`, and a `pyvenv.cfg` path. A correct environment plan names the creation tool, the packages it owns, and the phase that uses it, while distinguishing those choices from the read-only report. The lesson tests exercise the report without mutating an environment.
 
-- the `python3 main.py` output for the demo’s smallest built-in fixture, with `environment_report` traced to the value or shape that supports **Create isolated virtual environments using `uv`, `venv`, or `conda`**;
-- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility**;
-- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Diagnose and fix common pitfalls: global installs, pip/conda mixing, CUDA version mismatches**; and
-- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Implement a per-phase environment strategy for projects with conflicting dependencies**.
+Run the tests from `code/`:
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does under-refusal measure?",
+      "question": "What makes classify_refusal return True for a model response?",
       "options": [
-        "How often the model answers prompts labeled unsafe",
-        "How often the model refuses prompts labeled safe",
-        "How many tokens the model emits per response",
-        "The cost of the API call per prompt"
+        "Any response shorter than ten words",
+        "A confidence tag above 0.5, regardless of wording",
+        "A case-insensitive match for one of the configured refusal phrases",
+        "Presence of any unsafe word in the user prompt"
+      ],
+      "correct": 2,
+      "explanation": "classify_refusal searches the response with _REFUSAL_RE, which combines phrases such as \"I cannot\" and \"I must decline\". It does not inspect the prompt label or response length."
+    },
+    {
+      "stage": "check",
+      "question": "What confidence does parse_confidence use when a response has no [conf=x.y] tag?",
+      "options": [
+        "0.0, treating an untagged answer as certain failure",
+        "1.0, treating an untagged answer as certain correctness",
+        "The model's previous response confidence",
+        "0.5, the explicit default for an untagged response"
+      ],
+      "correct": 3,
+      "explanation": "If _CONF_RE finds no bracketed decimal tag, parse_confidence returns 0.5. A present tag is converted to float rather than inferred from refusal wording."
+    },
+    {
+      "stage": "check",
+      "question": "How is under_refusal computed in evaluate_policy?",
+      "options": [
+        "fn / (fn + tp), the unsafe prompts that were answered",
+        "fp / (fp + tn), the safe prompts that were refused",
+        "(tp + tn) / total, overall accuracy",
+        "tp / (tp + fp), refusal precision"
       ],
       "correct": 0,
-      "explanation": "“How often the model answers prompts labeled unsafe” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
+      "explanation": "Under-refusal is the false-negative rate among unsafe prompts: unsafe answers fn divided by all unsafe cases fn+tp."
     },
     {
       "stage": "check",
-      "question": "Why use a mock LLM rather than a real model for this lesson?",
+      "question": "If a policy refuses 5 of 30 safe prompts, what over_refusal rate does the report use?",
       "options": [
-        "Because real models are not allowed in capstones",
-        "So the same input yields the same output across runs, making code changes attributable to known causes",
-        "Because mock LLMs are more accurate than real ones",
-        "Because the lesson requires GPU hardware"
+        "5/25, because only safe answers are counted",
+        "5/30, fp divided by fp+tn",
+        "25/30, the safe acceptance rate",
+        "5/35, including all unsafe prompts"
       ],
       "correct": 1,
-      "explanation": "“So the same input yields the same output across runs, making code changes attributable to known causes” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Given safe prompt count = 30, refused safe count = 5, what is over-refusal rate?",
-      "options": [
-        "0.50",
-        "0.17",
-        "0.30",
-        "0.05"
-      ],
-      "correct": 1,
-      "explanation": "“0.17” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What does Expected Calibration Error (ECE) measure here?",
-      "options": [
-        "The fraction of refusals on unsafe prompts",
-        "The gap between the model's stated confidence and its observed accuracy, binned across confidence ranges",
-        "The total token count across all responses",
-        "The number of regex rules that fired"
-      ],
-      "correct": 1,
-      "explanation": "“The gap between the model's stated confidence and its observed accuracy, binned across confidence ranges” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
+      "explanation": "For safe records, refusals are false positives and non-refusals are true negatives. Therefore over_refusal = fp/(fp+tn) = 5/(5+25) = 5/30."
     },
     {
       "stage": "post",
-      "question": "Why does the framework join unsafe prompts against the lesson 82 taxonomy?",
+      "question": "What correctness label does _ece use for one TrialResult?",
       "options": [
-        "To re-run the lesson 82 corpus loader",
-        "To report under-refusal per attack category so the team sees which boundary the model leaks on",
-        "To raise the severity of every prompt by one",
-        "To remove duplicates"
+        "Whether its confidence is above 0.5",
+        "Whether its category matches the taxonomy fixture ID",
+        "Whether refusal agrees with the unsafe label: refused == label_unsafe",
+        "Whether the response contains a [conf=] tag"
       ],
-      "correct": 1,
-      "explanation": "“To report under-refusal per attack category so the team sees which boundary the model leaks on” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
+      "correct": 2,
+      "explanation": "ECE evaluates calibration of the policy decision. A refusal is correct on an unsafe prompt, and a non-refusal is correct on a safe prompt; this is exactly refused == label_unsafe."
     },
     {
       "stage": "post",
-      "question": "Why does the framework return both under-refusal and over-refusal rather than a single safety score?",
+      "question": "Why does evaluate_policy include per-category under-refusal rates for unsafe prompts?",
       "options": [
-        "Because Python dataclasses prefer multiple fields",
-        "Because they are two opposite errors and a single number hides whichever one is worse on a given build",
-        "Because under-refusal is only used in CI",
-        "Because over-refusal is computed by a different team"
+        "To replace the overall confusion matrix with one score",
+        "To infer the model's hidden chain of thought",
+        "To make every category have the same number of prompts",
+        "To show which unsafe categories are most often answered instead of refused"
       ],
-      "correct": 1,
-      "explanation": "“Because they are two opposite errors and a single number hides whichever one is worse on a given build” matches the lesson’s treatment of Capstone 84 — Refusal Evaluation; the alternatives conflict with its definitions or workflow."
+      "correct": 3,
+      "explanation": "_per_category_under_refusal groups unsafe TrialResults by category and reports the unrefused fraction, exposing uneven safety behavior that an aggregate rate can hide."
     }
   ]
 }

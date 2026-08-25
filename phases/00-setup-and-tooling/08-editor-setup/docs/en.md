@@ -1,6 +1,6 @@
 # Editor Setup
 
-> Your editor is your co-pilot. Configure it once so it stays out of your way and starts pulling its weight.
+> A useful editor makes the project contract visible without changing the project for you.
 
 **Type:** Build
 **Languages:** Python
@@ -9,75 +9,65 @@
 
 ## Learning Objectives
 
-- Install VS Code with essential extensions for Python, Jupyter, linting, and remote SSH
-- Configure format-on-save, type checking, and notebook output scrolling for AI workflows
-- Set up Remote SSH to edit and debug code on remote GPU machines as if they were local
-- Evaluate editor alternatives (Cursor, Windsurf, Neovim) and their tradeoffs for AI work
+- Evaluate a boolean editor checklist with `evaluate_editor` without mutating user settings.
+- Interpret the `ready`, `satisfied`, `missing`, and `score` fields returned by the demo.
+- Map the checked-in VS Code settings to format-on-save, type checking, notebook output limits, and terminal behavior.
+- Identify the recommended extensions for Python, Pylance, Jupyter, Ruff/Black, GitLens, and Remote SSH.
+- Separate a local checklist result from the claim that a remote GPU session or an alternative editor is working.
 
-## The Problem
+## What the demo checks
 
-You'll spend thousands of hours inside your editor writing Python, running notebooks, debugging training loops, and SSH-ing into GPU boxes. A misconfigured editor turns every session into friction: no autocomplete, no type hints, no inline errors, manual formatting, and a clunky terminal workflow.
-
-The right setup takes 20 minutes. Skipping it costs you 20 minutes every day.
-
-## The Concept
-
-An AI engineering editor setup needs five things:
+`code/main.py` constructs a sample mapping in which all five required keys are `True`: `format_on_save`, `type_checking`, `integrated_terminal`, `notebook_support`, and `remote_ssh`. `evaluate_editor` compares each value with `is True`, returns missing keys in checklist order, and computes `len(satisfied) / 5`. It does not inspect VS Code, install extensions, or connect over SSH.
 
 ```mermaid
-graph TD
-    L5["5. Remote Development<br/>SSH into GPU boxes, cloud VMs"] --> L4
-    L4["4. Terminal Integration<br/>Run scripts, debug, monitor GPU"] --> L3
-    L3["3. AI-Specific Settings<br/>Auto-format, type checking, rulers"] --> L2
-    L2["2. Extensions<br/>Python, Jupyter, Pylance, GitLens"] --> L1
-    L1["1. Base Editor<br/>VS Code — free, extensible, universal"]
+flowchart TD
+    A[settings mapping] --> B[evaluate_editor]
+    B --> C[satisfied list]
+    B --> D[missing list]
+    B --> E[ready and score]
+    F[extensions.json + settings.json] -. configure editor .-> A
 ```
-
-
-## Use It
-
-With this setup, your daily workflow looks like:
-
-1. Open the project folder in VS Code (or connect via Remote SSH to a GPU box).
-2. Write Python in the editor with autocomplete, type hints, and inline errors.
-3. Run Jupyter notebooks inline with the Jupyter extension.
-4. Use the integrated terminal for training scripts, `uv pip install`, and GPU monitoring.
-5. Review changes with GitLens before committing.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| LSP | "Autocomplete engine" | Language Server Protocol: a standard for editors to get type info, completions, and diagnostics from a language-specific server |
-| Pylance | "The Python plugin" | Microsoft's Python language server using Pyright for type checking and IntelliSense |
-| Remote SSH | "Working on the server" | VS Code extension that runs a lightweight server on a remote machine and streams the UI to your local editor |
-| Format on save | "Auto-prettier" | The editor runs a formatter (Black, Ruff) every time you save, so code style is always consistent |
 
 ## Build It
 
-Reconstruct **Editor Setup** by following `evaluate_editor` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+Run the deterministic sample:
+
+```bash
+cd phases/00-setup-and-tooling/08-editor-setup/code
+python3 main.py
+```
+
+It reports `ready: true`, an empty `missing` list, five satisfied names, and `score: 1.0`. Exercise the contract directly without changing settings files:
+
+```python
+from main import evaluate_editor
+
+print(evaluate_editor({"format_on_save": True, "type_checking": False}))
+```
+
+The result is not ready, lists `type_checking` plus the three absent keys, and reports `1/5`. A value such as `1` is not the boolean `True` under the implementation's identity check.
+
+## Use It
+
+The checked-in `vscode/extensions.json` recommends Python, Pylance, Jupyter, debugpy, Black, Ruff, GitLens, Remote SSH, and related file-format/notebook extensions. `vscode/settings.json` sets Python type checking to `basic`, format-on-save with Black, Ruff on save, notebook output scrolling, a 500-line text limit, terminal profiles, and exclusions for caches. These files are a starting configuration; they do not install extensions or prove that a remote host is reachable.
 
 ## Ship It
 
-Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+[`outputs/artifact-card.md`](../outputs/artifact-card.md) is the reusable checklist. Record the mapping passed to `evaluate_editor`, the JSON result, and which settings/extensions were actually installed. Keep Remote SSH validation separate: the checklist can say `remote_ssh: true` while an SSH connection still fails.
 
 ## Exercises
 
-This lab follows `evaluate_editor` and `evaluate_editor` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `evaluate_editor`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Install VS Code with essential extensions for Python, Jupyter, linting, and remote SSH**.
-2. **Change the controlled parameter.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Configure format-on-save, type checking, and notebook output scrolling for AI workflows** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Set up Remote SSH to edit and debug code on remote GPU machines as if they were local** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/artifact-card.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Evaluate editor alternatives (Cursor, Windsurf, Neovim) and their tradeoffs for AI work**; note what the demo cannot establish.
+1. Run the sample and verify that all five required names appear in `satisfied` and none appear in `missing`.
+2. Evaluate a mapping with `type_checking` set to `False` and one with the key absent. Compare the two missing lists; both should contain `type_checking`.
+3. Inspect `settings.json` and connect three checklist keys to exact settings (`python.analysis.typeCheckingMode`, `editor.formatOnSave`, and `notebook.output.scrolling`).
+4. Use the artifact to record an editor setup on a local project, then separately record a Remote SSH smoke test. Do not use the score as evidence of network access.
 
 ## Reference Solution
 
-A checkable result for **Editor Setup** should contain:
+The canonical JSON has five satisfied entries, `ready: true`, and score 1.0. A partial mapping demonstrates strict boolean checking and stable missing-key order. The settings and extension files explain how to implement the checklist, while a real editor launch and an SSH command are required for runtime acceptance. Tests cover the pure function and do not modify a user's editor.
 
-- the `python3 main.py` output for the demo’s smallest built-in fixture, with `evaluate_editor` traced to the value or shape that supports **Install VS Code with essential extensions for Python, Jupyter, linting, and remote SSH**;
-- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Configure format-on-save, type checking, and notebook output scrolling for AI workflows**;
-- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Set up Remote SSH to edit and debug code on remote GPU machines as if they were local**; and
-- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate editor alternatives (Cursor, Windsurf, Neovim) and their tradeoffs for AI work**.
+Run the lesson tests from `code/`:
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```

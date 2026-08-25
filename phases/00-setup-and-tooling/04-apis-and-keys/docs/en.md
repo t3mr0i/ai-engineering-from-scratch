@@ -1,80 +1,73 @@
 # APIs & Keys
 
-> Every AI API works the same way: send a request, get a response. The details change, the pattern doesn't.
+> Make authentication, request shape, and response shape separately observable.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 0, Lesson 01
+**Prerequisites:** Phase 0, Lessons 01–03
 **Time:** ~30 minutes
 
 ## Learning Objectives
 
-- Store API keys securely using environment variables and `.env` files
-- Make an LLM API call using both the Anthropic Python SDK and raw HTTP
-- Compare SDK-based and raw HTTP request/response formats for debugging
-- Identify and handle common API errors including authentication and rate limits
+- Keep an API key in `ANTHROPIC_API_KEY` or a local `.env` file instead of source code.
+- Trace the Anthropic Messages request built by `first_api_call.py` through both SDK and standard-library HTTP paths.
+- Compare the shared `model`, `max_tokens`, and `messages` fields with the response `content` and `usage` fields.
+- Run the no-credential path without making a network request and distinguish it from a live request failure.
+- Use the API troubleshooting prompt to turn an authentication or rate-limit message into a reproducible next check.
 
-## The Problem
+## Why this lesson exists
 
-Starting from Phase 11, you'll call LLM APIs (Anthropic, OpenAI, Google). In Phase 13-16 you'll build agents that use these APIs in loops. You need to know how API keys work, how to store them safely, and how to make your first API call.
-
-## The Concept
+An API call has a small, inspectable contract: endpoint, authentication header, JSON request body, and JSON response. The Python implementation has two functions. `call_with_sdk` constructs an `anthropic.Anthropic()` client and requests the one-sentence neural-network prompt. `call_raw_http` sends the same conceptual request to `https://api.anthropic.com/v1/messages` with `x-api-key`, `anthropic-version: 2023-06-01`, and a JSON body.
 
 ```mermaid
 sequenceDiagram
-    participant C as Your Code
-    participant S as API Server
-    C->>S: HTTP Request (with API key)
-    S->>C: HTTP Response (JSON)
+    participant P as Python program
+    participant K as Environment / .env
+    participant A as Anthropic Messages API
+    P->>K: Read ANTHROPIC_API_KEY
+    P->>A: POST request + JSON body + auth headers
+    A-->>P: content[] and usage counts
 ```
 
-Every API call has:
-1. An endpoint (URL)
-2. An API key (authentication)
-3. A request body (what you want)
-4. A response body (what you get back)
-
-
-
-## Ship It
-
-This lesson produces:
-- `outputs/prompt-api-troubleshooter.md` - diagnose common API errors
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| API key | "Password for the API" | A unique string that identifies your account and authorizes requests |
-| Rate limit | "They're throttling me" | Maximum requests per minute/hour to prevent abuse and ensure fair usage |
-| Token | "A word" (in API context) | A billing unit: input and output tokens are counted and charged separately |
-| Streaming | "Real-time responses" | Getting the response word by word instead of waiting for the full response |
+The Python entrypoint does not catch every SDK-constructor or network exception. With no SDK installed it prints an install hint; with no key the raw HTTP branch prints a key reminder. Those are safe local diagnostics, not successful API calls.
 
 ## Build It
 
-Reconstruct **APIs & Keys** by following `call_with_sdk` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+From the lesson directory, run without credentials first:
+
+```bash
+env -u ANTHROPIC_API_KEY python3 code/main.py
+```
+
+In a dependency-free environment the output contains both section labels and the no-SDK/no-key messages. If the SDK is installed without a key, its constructor may fail before the raw-HTTP section; preserve that credential error rather than treating a traceback as an API result. Do not place a real key in the command line or commit a `.env` file. If you intentionally have the SDK and a key, the live Python call uses the model string recorded in `first_api_call.py`, `max_tokens=256`, and one user message; the response prints `content[0].text` and `usage.input_tokens`/`usage.output_tokens`.
 
 ## Use It
 
-Call `call_with_sdk` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+The TypeScript companion has a deterministic `MOCK=1` path. If a TypeScript runner is already available, run:
+
+```bash
+MOCK=1 npx tsx code/first_api_call.ts
+```
+
+It prints a mock response and `tokens: 12 in, 28 out`, then exits without a network call. Its `.env` loader gives process environment variables precedence over file values. This makes request/response plumbing testable without treating a mock as provider evidence.
+
+## Ship It
+
+[`outputs/prompt-api-troubleshooter.md`](../outputs/prompt-api-troubleshooter.md) is the reusable artifact. When adapting it, include the exact status/error text, whether the SDK or HTTP path was used, whether a key was present, and the next command that can confirm the diagnosis. Never paste the key itself.
 
 ## Exercises
 
-This lab follows `call_with_sdk` and `call_raw_http` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the smallest valid record {"id": 1}. Follow `call_with_sdk`, `call_raw_http`, `loadDotenv`. Expect validation names the missing field or rejects the request; it must not silently accept an incomplete record; capture the first printed shape, metric, status, or summary field and state which part supports **Store API keys securely using environment variables and `.env` files**.
-2. **Change the controlled parameter.** Repeat the command after changing only the optional field: use the same record with one optional field changed. Predict the direction of the change, then compare the two output values. Explain why **Make an LLM API call using both the Anthropic Python SDK and raw HTTP** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation a record missing the required "id" field. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare SDK-based and raw HTTP request/response formats for debugging** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/prompt-api-troubleshooter.md` and add a worked example using the smallest valid record {"id": 1}. Include the input contract, one expected output field, and a named acceptance check for **Identify and handle common API errors including authentication and rate limits**; note what the demo cannot establish.
+1. Run the Python entrypoint without a key and label each printed message as import/setup, credential, or network evidence.
+2. Compare the Python request body with the TypeScript `MessagesRequest`: identify the model field, `max_tokens`, and the role/content message without sending either request.
+3. Create a temporary `.env` containing `ANTHROPIC_API_KEY=mock`, run the TypeScript mock path, then remove the file. Confirm that `process.env` would override the file if both were set.
+4. Add an authentication failure and a rate-limit failure to the troubleshooting artifact. For each, specify the captured status/body and a verification step; do not claim that the local mock exercised the provider.
 
 ## Reference Solution
 
-A checkable result for **APIs & Keys** should contain:
+The no-credential Python run is successful only as a bounded local diagnostic: it should not make a live request. The TypeScript mock proves that the expected response envelope can be parsed, not that credentials or the network work. A live run is accepted only when the request uses the documented headers/body and the returned `content` and `usage` fields are present. The artifact must retain error evidence without exposing secrets.
 
-- the `python3 main.py` output for the smallest valid record {"id": 1}, with `call_with_sdk`, `call_raw_http`, `loadDotenv` traced to the value or shape that supports **Store API keys securely using environment variables and `.env` files**;
-- a before/after comparison for the optional field, where the same record with one optional field changed changes the observation in the direction predicted by **Make an LLM API call using both the Anthropic Python SDK and raw HTTP**;
-- a recorded result for a record missing the required "id" field that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare SDK-based and raw HTTP request/response formats for debugging**; and
-- an updated `outputs/prompt-api-troubleshooter.md` example with a concrete input, expected output field, and acceptance check tied to **Identify and handle common API errors including authentication and rate limits**.
+Run the Python tests from `code/`:
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```

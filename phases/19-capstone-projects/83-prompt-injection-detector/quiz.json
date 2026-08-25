@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the detector return for a prompt?",
+      "question": "In what order does normalize expose obfuscated prompt content to the detector rules?",
       "options": [
-        "A boolean block decision only",
-        "A list of every rule in the rulebase",
-        "A category and a confidence in [0, 1]",
-        "The model's full system prompt"
-      ],
-      "correct": 2,
-      "explanation": "“A category and a confidence in [0, 1]” matches the lesson’s treatment of Capstone 83 — Prompt Injection Detector; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why does normalize run before substring and regex rules?",
-      "options": [
-        "Because regex is slower than substring",
-        "Because normalize lowers the file size on disk",
-        "Because normalize exposes hidden tokens such as base64, rot13, and zero-width insertions to the downstream rules",
-        "Because the standard library forbids running rules on the original text"
-      ],
-      "correct": 2,
-      "explanation": "“Because normalize exposes hidden tokens such as base64, rot13, and zero-width insertions to the downstream rules” matches the lesson’s treatment of Capstone 83 — Prompt Injection Detector; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Given true positives = 6, false positives = 2 for category C, what is precision?",
-      "options": [
-        "0.50",
-        "0.60",
-        "0.75",
-        "0.86"
-      ],
-      "correct": 2,
-      "explanation": "“0.75” matches the lesson’s treatment of Capstone 83 — Prompt Injection Detector; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why is the benign prompt corpus part of the evaluation?",
-      "options": [
-        "To inflate the accuracy number",
-        "To measure false-positive rate on safe text and catch over-broad rules",
-        "To pre-train the rules",
-        "To compute recall on attacks"
-      ],
-      "correct": 1,
-      "explanation": "“To measure false-positive rate on safe text and catch over-broad rules” matches the lesson’s treatment of Capstone 83 — Prompt Injection Detector; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What does the analyze method do when no rule fires?",
-      "options": [
-        "Returns the category benign with confidence 0.0",
-        "Raises an exception",
-        "Returns the category of the most recent rule attempted",
-        "Returns a random category"
+        "Remove zero-width characters, map homoglyphs, decode base64/hex, translate leetspeak, then try ROT13",
+        "Run ROT13 first, then reject every non-ASCII character",
+        "Only lowercase the original text; encoded content is intentionally ignored",
+        "Decode every word as base64 and discard the original prompt"
       ],
       "correct": 0,
-      "explanation": "“Returns the category benign with confidence 0.0” matches the lesson’s treatment of Capstone 83 — Prompt Injection Detector; the alternatives conflict with its definitions or workflow."
+      "explanation": "normalize applies the layered transformations in that order. The returned text retains the original context while adding decodable content where the guarded decoders succeed."
+    },
+    {
+      "stage": "check",
+      "question": "Where does Detector.analyze look for each rule's signal?",
+      "options": [
+        "Only in the raw prompt, because normalization is for reporting",
+        "In both the lowercased original prompt and the normalized text",
+        "Only in decoded base64 strings, never in plain text",
+        "In the taxonomy artifact's fixture IDs"
+      ],
+      "correct": 1,
+      "explanation": "The detector builds haystacks = (prompt.lower(), normalized) and applies substring and compiled regex rules to both, preserving plain signals while catching transformed ones."
+    },
+    {
+      "stage": "check",
+      "question": "What Verdict does Detector.analyze return when no substring or regex rule fires?",
+      "options": [
+        "The highest-severity category with confidence 0.5",
+        "The previous prompt's verdict from an internal cache",
+        "category=\"benign\", confidence=0.0, and an empty fired list",
+        "category=\"unknown\" with every rule name"
+      ],
+      "correct": 2,
+      "explanation": "The no-signal branch constructs the explicit benign Verdict with zero confidence and no fired rule names."
+    },
+    {
+      "stage": "check",
+      "question": "Why can a base64-encoded instruction still trigger a detector rule?",
+      "options": [
+        "The taxonomy matcher decrypts it using a secret key",
+        "Every base64 token is automatically labeled high severity",
+        "The rule engine runs the encoded bytes as Python",
+        "normalize decodes sufficiently long valid base64 tokens and places readable text in a searched haystack"
+      ],
+      "correct": 3,
+      "explanation": "_try_decode_base64 only replaces valid, long-enough tokens whose decoded text contains letters. The resulting readable phrase is then available to the same substring and regex checks."
     },
     {
       "stage": "post",
-      "question": "Why does this lesson argue the detector is not the safety gate?",
+      "question": "If a category has tp=6 and fp=2, what precision does PerCategoryMetrics report?",
       "options": [
-        "Because the detector is implemented in Python",
-        "Because the detector is one signal among several the gate will compose, with each signal trading precision against recall differently",
-        "Because the detector is too fast to be useful",
-        "Because the rules are stored as data"
+        "0.75",
+        "0.60",
+        "0.25",
+        "0.80"
+      ],
+      "correct": 0,
+      "explanation": "Precision is tp/(tp+fp) = 6/(6+2) = 0.75. It measures how often predictions of that category were correct, not recall over all fixtures."
+    },
+    {
+      "stage": "post",
+      "question": "What does evaluate report separately from attack-fixture accuracy?",
+      "options": [
+        "Only the number of regex rules loaded",
+        "The benign corpus size, pass-through count, and false positives by category",
+        "A guarantee that every benign prompt is safe",
+        "The taxonomy's severity histogram only"
       ],
       "correct": 1,
-      "explanation": "“Because the detector is one signal among several the gate will compose, with each signal trading precision against recall differently” matches the lesson’s treatment of Capstone 83 — Prompt Injection Detector; the alternatives conflict with its definitions or workflow."
+      "explanation": "evaluate tracks benign_total and benign_pass_through, plus benign_false_positives_by_category. These measurements expose false alarms instead of turning detector output into a safety guarantee."
     }
   ]
 }

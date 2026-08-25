@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the per-rank bandwidth cost of ring allreduce for a tensor of T bytes on N ranks?",
+      "question": "What does ring_allreduce return for each rank after its two ring passes?",
       "options": [
-        "T bytes",
-        "N * T bytes",
-        "2T(N-1)/N bytes",
-        "T log2(N) bytes"
+        "Only rank 0's original tensor",
+        "A scalar containing the global maximum",
+        "The elementwise sum across ranks, with the original tensor shape",
+        "A concatenation of every rank's unmodified tensor"
       ],
       "correct": 2,
-      "explanation": "Ring allreduce moves N-1 chunks of size T/N twice (reduce-scatter then allgather); the per-rank total is 2T(N-1)/N, independent of cluster size."
+      "explanation": "The reduce-scatter pass sums shards and the allgather pass distributes the summed shards. Every rank receives the full elementwise sum, padded internally only when needed and trimmed back to the input shape."
     },
     {
       "stage": "check",
-      "question": "Why is the queue mesh in this lesson an honest stand-in for NCCL on a real cluster?",
+      "question": "How does broadcast spread a source tensor through the ranks?",
       "options": [
-        "It runs on CUDA cores",
-        "It hardware-offloads reductions",
-        "It implements the same wire pattern (ordered point-to-point sends around a ring), only the medium differs",
-        "It compresses messages"
+        "Every rank sends to every other rank in one all-to-all round",
+        "The source is reduced with non-source inputs before being returned",
+        "Only the next rank in numeric order receives the source",
+        "The holder set doubles each round, requiring ceil(log2(world_size)) hops"
       ],
-      "correct": 2,
-      "explanation": "Algorithmic correctness depends on the wire pattern, not the medium; the queue ring exposes the same race shapes and chunk schedule as NCCL ring allreduce."
+      "correct": 3,
+      "explanation": "The implementation tracks ranks holding the source and sends to new ranks in rounds. Doubling the holder set gives the logarithmic hop count."
     },
     {
       "stage": "check",
-      "question": "After the reduce-scatter half of ring allreduce, what does rank r hold?",
+      "question": "For world_size=w and an input shard of length T on each rank, what does allgather return?",
       "options": [
-        "Nothing",
-        "The full tensor unreduced",
-        "The reduced sum for one chunk (one Nth of the tensor)",
-        "The reduced sum for two chunks"
+        "A length T*w tensor in rank order",
+        "A length T tensor containing only rank 0",
+        "A length T/w tensor after averaging",
+        "A scalar sum of all shard elements"
       ],
-      "correct": 2,
-      "explanation": "Reduce-scatter parks the sum of one chunk on one rank; the allgather half then rotates those completed chunks around the ring."
+      "correct": 0,
+      "explanation": "Each rank starts with one T-element shard. The ring rotates and collects every shard, concatenating them in rank order into a T*w-element output."
     },
     {
       "stage": "check",
-      "question": "Why use tree broadcast instead of N-1 direct sends from the source?",
+      "question": "What does reduce_scatter do when its input length is not divisible by world_size?",
       "options": [
-        "Trees use less memory",
-        "Trees double the holder set per round; depth is log2(N) so latency scales as log not N",
-        "Trees are mandatory in PyTorch",
-        "Direct sends drop packets"
+        "It silently drops the remainder",
+        "It raises ValueError before reducing",
+        "It pads with zeros automatically like ring_allreduce",
+        "It returns the uneven final chunk"
       ],
       "correct": 1,
-      "explanation": "log2(N) hops dominate when latency per hop is the bottleneck; N-1 sequential sends pay that latency floor N times."
+      "explanation": "Unlike ring_allreduce's explicit padding path, reduce_scatter requires a divisible flattened input and raises ValueError when it cannot form equal chunks."
     },
     {
       "stage": "post",
-      "question": "Why verify against torch.distributed gloo on the same input?",
+      "question": "For n=64 float32 values and world_size=4, what per-rank byte count does the ring allreduce model predict?",
       "options": [
-        "Gloo is faster",
-        "Gloo is the legal reference for collective semantics; byte-equal output proves your algorithm agrees with the spec before it runs on a real cluster",
-        "Gloo writes JSONL automatically",
-        "Gloo requires no setup"
+        "64 bytes",
+        "256 bytes",
+        "384 bytes",
+        "768 bytes"
       ],
-      "correct": 1,
-      "explanation": "Without a reference, the primitive looks correct until step 10000 of a real training run; gloo gives byte-equal ground truth on CPU."
+      "correct": 2,
+      "explanation": "The model is 2*(w-1)*(n/w)*element_size = 2*3*16*4 = 384 bytes per rank. This counts the two ring phases, not the total traffic over all ranks."
     },
     {
       "stage": "post",
-      "question": "When does tree allreduce win over ring allreduce?",
+      "question": "What happens if Mesh.send is asked to send a tensor to the same rank?",
       "options": [
-        "Always",
-        "When messages are large",
-        "Small messages or high-latency links; the log2(N) hop count beats the bandwidth term 2T(N-1)/N below the crossover",
-        "Never"
+        "It enqueues a reference to the tensor for local receive",
+        "It returns the tensor immediately without counting bytes",
+        "It broadcasts the tensor to every other rank instead",
+        "It raises ValueError because self-send is not a supported collective hop"
       ],
-      "correct": 2,
-      "explanation": "NCCL picks ring above ~1 MB and tree below; the crossover is bandwidth-versus-latency on the given cluster topology."
+      "correct": 3,
+      "explanation": "Mesh.send explicitly rejects dst == src. For a valid destination it clones a contiguous tensor and records its byte count before queueing it."
     }
   ]
 }

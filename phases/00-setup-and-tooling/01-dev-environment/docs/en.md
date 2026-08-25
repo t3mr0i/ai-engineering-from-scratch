@@ -1,6 +1,6 @@
 # Dev Environment
 
-> Your tools shape your thinking. Set them up once, set them up right.
+> Make the toolchain observable before the first model is imported.
 
 **Type:** Build
 **Languages:** Rust
@@ -9,78 +9,67 @@
 
 ## Learning Objectives
 
-- Set up Python 3.11+, Node.js 20+, and Rust toolchains from scratch
-- Configure virtual environments and package managers for reproducible builds
-- Verify GPU access with CUDA/MPS and run a test tensor operation
-- Understand the four-layer stack: system, packages, runtimes, AI libraries
+- Compile and run the Rust environment checker from `code/main.rs`.
+- Interpret required-tool failures separately from optional-tool skips.
+- Verify that the checker accepts a parseable Python 3.10+ version and reports the other runtime versions.
+- Compare the Rust checker with the companion Python and TypeScript probes without confusing presence checks with package tests.
+- Record a reproducible diagnosis in the reusable environment-check prompt.
 
-## The Problem
+## Why this lesson exists
 
-You're about to learn AI engineering across 200+ lessons using Python, TypeScript, Rust, and Julia. If your environment is broken, every single lesson becomes a fight against tooling instead of learning.
+Later lessons assume that a shell, Git, Python, Node.js, and Rust are reachable. A missing executable should be identified before an experiment fails halfway through. This lesson therefore builds a small Rust program that probes commands rather than installing anything for you.
 
-Most people skip environment setup. Then they spend hours debugging import errors, version conflicts, and missing CUDA drivers. We're going to do this once, properly.
-
-## The Concept
-
-An AI engineering environment has four layers:
+The checker has four conceptual layers: the operating system, package managers, language runtimes, and libraries. The layers are useful for locating a failure, but `main.rs` only verifies command-line tools. It does not prove that CUDA, NumPy, or a model library is installed.
 
 ```mermaid
-graph TD
-    A["4. AI/ML Libraries\nPyTorch, JAX, transformers, etc."] --> B["3. Language Runtimes\nPython 3.11+, Node 20+, Rust, Julia"]
-    B --> C["2. Package Managers\nuv, pnpm, cargo, juliaup"]
-    C --> D["1. System Foundation\nOS, shell, git, editor, GPU drivers"]
+flowchart TD
+    A[System and shell] --> B[Package managers]
+    B --> C[Language runtimes]
+    C --> D[AI libraries and project code]
+    D --> E[Repeatable lesson run]
 ```
-
-We install bottom-up. Each layer depends on the one below it.
-
-### Verify Your Python Setup
-
-Once `uv` has installed Python and NumPy, confirm both are on the path and working:
-
-```python editable
-import sys
-print(f"Python {sys.version}")
-
-import numpy as np
-print(f"NumPy {np.__version__}")
-a = np.array([1, 2, 3])
-print(f"Vector: {a}, dot product with itself: {np.dot(a, a)}")
-```
-
-## Ship It
-
-This lesson produces a verification script that anyone can run to check their setup.
-
-See `outputs/prompt-env-check.md` for a prompt that helps AI assistants diagnose environment issues.
 
 ## Build It
 
-Reconstruct **Dev Environment** by following `Check` on a graph with edges (0,1) and (1,2). Run `rustc --edition 2021 main.rs -o /tmp/lesson && /tmp/lesson` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+From the repository root, compile the canonical entrypoint:
+
+```bash
+rustc --edition 2021 phases/00-setup-and-tooling/01-dev-environment/code/main.rs -o /tmp/lesson-dev-env
+/tmp/lesson-dev-env
+```
+
+`CHECKS` contains five required probes (`git`, `python3`, `node`, `rustc`, and `cargo`) and three optional probes (`uv`, `pnpm`, and `julia`). `run_check` executes each program with `--version`, reads the first non-empty output line, and turns a missing executable into a `[FAIL]` or `[skip]` line. `parse_minor_python` rejects a Python version below 3.10. A successful run ends with `Environment is ready. Start with Phase 1.` and exit status 0; a failed required probe returns exit status 1.
+
+The summary is the primary observable artifact. On a machine without the optional tools it can legitimately say `5/5 required, 0/3 optional`; the optional count is not a failure.
 
 ## Use It
 
-Call `Check` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Run the companion probes when you want a language-specific view:
+
+```bash
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py
+```
+
+`verify.py` checks imports such as NumPy, Matplotlib, Jupyter, and PyTorch in addition to command presence, and treats its GPU section as optional. `verify.ts` uses `execFileSync` to probe Node.js, Git, Python, Cargo, and Deno; its required set is Node.js 20+, Git, and Python 3.10+. These files are comparison tools, not the Rust lesson entrypoint, so their results can differ without indicating a contradiction.
+
+## Ship It
+
+The reusable artifact is [`outputs/prompt-env-check.md`](../outputs/prompt-env-check.md). Hand it to an assistant together with the exact failing line, the command that produced it, and whether the probe was required or optional. The prompt can guide a fix, but the verification command remains the acceptance check.
 
 ## Exercises
 
-Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.
-
-1. **Read the control output.** Run [main.rs](../code/main.rs) with `rustc --edition 2021 main.rs -o /tmp/lesson && /tmp/lesson` from `code/`. Record the smallest input that demonstrates “Set up Python 3.11+, Node.js 20+, and Rust toolchains from scratch”. Point to `run_check`, `parse_minor_python`, `print_header` and name the output field or printed value that proves the claim.
-2. **Make one controlled change.** Change one input, threshold, or environment choice that affects “Configure virtual environments and package managers for reproducible builds”. Predict the direction of the change before running it, then compare the two results and explain why unrelated fields should remain stable.
-3. **Probe a boundary.** Choose an empty, missing, malformed, or maximum-sized input relevant to “Verify GPU access with CUDA/MPS and run a test tensor operation”. Write the expected behavior first. Distinguish an intentional validation message from an exception or a silently wrong result.
-4. **Hand off the artifact.** Open outputs/prompt-env-check.md and adapt one example to a real workflow that exercises “Understand the four-layer stack: system, packages, runtimes, AI libraries”. Record the owner, evidence required, and next action; mark anything the demo leaves unverified.
+1. Run the Rust command above and copy the required/optional summary. Explain why a missing `uv` line does not change the required result, while a missing `python3` line does.
+2. Compare one tool in the Rust output with the corresponding Python or TypeScript probe. Identify whether both are checking a version, an import, or a runtime capability.
+3. Use a temporary directory with a modified `PATH` that hides one optional executable. Predict the single changed row, run the binary, and restore `PATH`; do not alter the repository.
+4. Add the exact command, summary, and next action to `prompt-env-check.md`. Mark GPU availability as unverified unless the Python probe actually imports PyTorch and reports it.
 
 ## Reference Solution
 
-For **Dev Environment**, record the `rustc --edition 2021 main.rs -o /tmp/lesson && /tmp/lesson` output, the captured input, and the interpretation that connects each check to the environment claim:
+A sound run records the Rust binary's exit status, all five required rows, and the three optional rows. It explains Python parsing as a version gate, treats a missing optional program as a skip, and does not infer package or GPU availability from a command version. The companion probes provide extra evidence only when their own interpreter/import checks run. The shipped prompt names the failing layer and asks for the relevant command output, so another person can reproduce the diagnosis.
 
-- the result demonstrates “Set up Python 3.11+, Node.js 20+, and Rust toolchains from scratch” and names the field or intermediate value used as evidence;
-- the one-variable comparison makes “Configure virtual environments and package managers for reproducible builds” visible and explains the mechanism in run_check, parse_minor_python, print_header;
-- the boundary prediction matches (or explicitly corrects) the observed behavior for “Verify GPU access with CUDA/MPS and run a test tensor operation”; and
-- outputs/prompt-env-check.md contains one concrete update applying “Understand the four-layer stack: system, packages, runtimes, AI libraries”, with an owner and a follow-up check.
+Run the Rust tests from `code/` after the exercise:
 
-After the experiment, run the lesson's tests. If prediction and observation disagree, record the mismatch and revise the explanation rather than tuning the input until it looks right.
-
-## Guided Demo
-
-Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.
+```bash
+rustc --edition 2021 --test tests/test_main.rs -o /tmp/lesson-dev-env-tests
+/tmp/lesson-dev-env-tests
+```

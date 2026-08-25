@@ -1,6 +1,6 @@
 # Terminal & Shell
 
-> The terminal is where AI engineers live. Get comfortable here.
+> Turn recurring training operations into inspectable shell commands, not opaque habits.
 
 **Type:** Learn
 **Languages:** None
@@ -9,73 +9,62 @@
 
 ## Learning Objectives
 
-- Use piping, redirects, and `grep` to filter and process training logs from the command line
-- Create persistent tmux sessions with multiple panes for concurrent training and GPU monitoring
-- Monitor system and GPU resources with `htop`, `nvtop`, and `nvidia-smi`
-- Transfer files between local and remote machines using SSH, `scp`, and `rsync`
+- Source `code/shell_aliases.sh` and inspect the aliases and functions it adds to a shell.
+- Filter a static training log with `grep`, pipes, and redirects before using a follow-mode watcher.
+- Create a detached `tmux` training layout and identify its monitoring panes without killing a real job.
+- Check GPU processes, disk usage, and large model files with the supplied aliases.
+- Transfer a directory with `syncto` or `syncfrom` while checking the function's argument guard first.
 
-## The Problem
+## The artifact is a shell library
 
-You will spend more time in the terminal than in any editor. Training runs, GPU monitoring, log tailing, remote SSH sessions, environment management. Every AI workflow touches the shell. If you're slow here, you're slow everywhere.
-
-This lesson covers the terminal skills that matter for AI work. No history of Unix. No deep-dive into Bash scripting. Just what you need.
-
-## The Concept
+This lesson has no `code/main.*` program. Its executable artifact is [`code/shell_aliases.sh`](../code/shell_aliases.sh), which is meant to be sourced from Bash or zsh. It defines GPU queries (`gpu`, `gpuwatch`, `gpumem`, `gpuprocs`), environment helpers (`ae`, `de`, `mkvenv`, `uvvenv`), log filters, disk checks, tmux shortcuts, rsync wrappers, experiment-directory helpers, and process inspection functions.
 
 ```mermaid
-graph TD
-    subgraph tmux["tmux session: training"]
-        subgraph top["Top row"]
-            P1["Pane 1: Training run<br/>python train.py<br/>Epoch 12/100 ..."]
-            P2["Pane 2: GPU monitor<br/>watch -n1 nvidia-smi<br/>GPU: 78% | Mem: 14/24G"]
-        end
-        P3["Pane 3: Logs + experiments<br/>tail -f logs/train.log | grep loss"]
-    end
+flowchart TD
+    S[Source shell_aliases.sh] --> G[GPU and environment aliases]
+    S --> L[Log and disk inspection]
+    S --> T[tmux training layout]
+    S --> R[rsync and experiment helpers]
+    L --> E[Evidence before intervention]
+    T --> E
+    R --> E
 ```
-
-Three things running at once. One terminal. You can detach, go home, SSH back in, and reattach. The training keeps running.
-
-
-## Use It
-
-Here's when each tool comes into play during this course:
-
-| Tool | When you use it |
-|------|----------------|
-| tmux | Every training run (Phases 3+) |
-| `tail -f` + `grep` | Monitoring training logs |
-| `nohup` / `&` | Quick background tasks |
-| `htop` / `nvtop` | Debugging slow training, OOM errors |
-| SSH + `rsync` | Working on cloud GPUs |
-| Piping + redirects | Processing experiment results |
-| Aliases | Saving time on repetitive commands |
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Shell | "The terminal" | The program that interprets your commands (bash, zsh, fish) |
-| tmux | "Terminal multiplexer" | A program that lets you run multiple terminal sessions inside one window, and detach/reattach |
-| Pipe | "The bar thing" | The `\|` operator that sends one command's output as input to another |
-| PID | "Process ID" | A unique number assigned to every running process, used to monitor or kill it |
-| nohup | "No hangup" | Runs a command immune to the hangup signal, so closing the terminal won't kill it |
-| SSH | "Connecting to the server" | Secure Shell, an encrypted protocol for running commands on a remote machine |
 
 ## Build It
 
-Reconstruct **Terminal & Shell** by following `code` on x=0.5 with the demo defaults. Run `run main.text` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+Inspect the library in a clean interactive Bash without changing a profile:
+
+```bash
+bash --noprofile --norc -ic 'source phases/00-setup-and-tooling/10-terminal-and-shell/code/shell_aliases.sh; type gpu; type watchloss; type trainenv; type syncto; type newexp'
+```
+
+The output should identify `gpu` and `watchloss` as aliases and the others as functions. `watchloss` follows `logs/*.log`; do not run it against a missing or unbounded log while validating the lesson. `trainenv` creates and attaches to a tmux session, so inspect its commands before using it on a remote machine.
+
+## Use It
+
+For a bounded log experiment, create a temporary file and use the underlying pipeline rather than leaving `tail -f` running:
+
+```bash
+tmp_log=$(mktemp)
+printf '%s\n' 'step=1 loss=2.1' 'step=2 accuracy=0.7' 'step=3 loss=1.4' > "$tmp_log"
+grep 'loss' "$tmp_log" > "${tmp_log}.loss"
+cat "${tmp_log}.loss"
+rm -f "$tmp_log" "${tmp_log}.loss"
+```
+
+The `gpu` aliases query `nvidia-smi` and therefore report nothing useful on a machine without that tool. `syncto` and `syncfrom` wrap `rsync -avz --progress`; both return a usage message and status 1 when required arguments are missing. `newexp` creates `experiments/<name>_<timestamp>/logs`, `checkpoints`, and `configs`.
 
 ## Ship It
 
-Hand off `outputs/artifact-card.md` with the command `run main.text`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+[`outputs/artifact-card.md`](../outputs/artifact-card.md) is the handoff. Record the exact alias/function, the input log or remote path, the command output, and a safe rollback or cleanup path. Never put a broad `pkill` pattern or a private hostname in a shared profile without reviewing it.
 
 ## Exercises
 
-1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Use piping, redirects, and `grep` to filter and process training logs from the command line.
-2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Create persistent tmux sessions with multiple panes for concurrent training and GPU monitoring.
-3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Monitor system and GPU resources with `htop`, `nvtop`, and `nvidia-smi`.
+1. Source the file in a clean shell and run `type` for one alias and one function. Explain how Bash distinguishes them.
+2. Filter a static log for `loss`, `accuracy`, and `ERROR` with three separate `grep` commands. Compare the output with the corresponding `watchloss`, `watchacc`, and `watcherr` pipelines without leaving a live watcher running.
+3. Run `syncto` with no arguments and record its usage text and exit status. Then inspect, but do not invoke, the command it would run for `syncto gpu ~/data ./data`.
+4. In a temporary working directory, call `newexp demo`; list the three created subdirectories and remove that exact experiment directory. Do not run `killtraining` on a shared machine.
 
 ## Reference Solution
 
-A complete response first demonstrates “Use piping, redirects, and `grep` to filter and process training logs from the command line” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Create persistent tmux sessions with multiple panes for concurrent training and GPU monitoring.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Monitor system and GPU resources with `htop`, `nvtop`, and `nvidia-smi`.” Unsupported preference statements are not sufficient.
+The expected evidence is a clean-shell `type` report, a finite filtered-log file, and a recorded `syncto` usage guard. A tmux plan names the session and panes but is only accepted as running after `tmux ls` and an explicit reattach check. GPU and remote-transfer claims remain environment-dependent; the artifact should distinguish “command is defined” from “command succeeded.”

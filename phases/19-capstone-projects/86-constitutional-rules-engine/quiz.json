@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why use a declarative YAML constitution rather than ad-hoc code checks?",
+      "question": "Which fields and severity values are required for every rule loaded by Engine?",
       "options": [
-        "Because YAML is faster to parse than Python",
-        "Because rules in YAML are reviewable by non-engineers, lived in version control, and replaceable without a code change",
-        "Because the standard library prefers YAML",
-        "Because YAML supports anchors"
-      ],
-      "correct": 1,
-      "explanation": "“Because rules in YAML are reviewable by non-engineers, lived in version control, and replaceable without a code change” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What fields must every rule have at minimum?",
-      "options": [
-        "name, regex, fix",
-        "id, owner, timestamp",
-        "name, severity, must, explanation",
-        "predicate, severity, owner"
+        "Only name and a boolean must field",
+        "A numeric score and a model ID",
+        "name, explanation, must, and severity in low/medium/high",
+        "A regex string and a fixed priority from 1 to 10"
       ],
       "correct": 2,
-      "explanation": "“name, severity, must, explanation” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
+      "explanation": "Engine validates that each rule has name, explanation, and must, and that severity belongs to SEVERITY_ORDER = (low, medium, high). Optional applies_when and fix fields add behavior but do not replace these requirements."
     },
     {
       "stage": "check",
-      "question": "How does the engine compose predicates?",
+      "question": "What RuleResult status is emitted when a rule's applies_when predicate is false?",
       "options": [
-        "Only via a single contains_regex per rule",
-        "Via all_of, any_of, and not_ which recursively wrap atomic predicates",
-        "By multiplying confidence scores",
-        "Through a neural classifier"
+        "violation, because non-applicable rules fail by default",
+        "error, because every rule must apply to every response",
+        "pass, with a fabricated matched span",
+        "not_applicable, without evaluating the rule's must predicate"
       ],
-      "correct": 1,
-      "explanation": "“Via all_of, any_of, and not_ which recursively wrap atomic predicates” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
+      "correct": 3,
+      "explanation": "Engine evaluates applies_when first. A false predicate creates not_applicable and skips must; it is neither a pass nor a violation."
     },
     {
       "stage": "check",
-      "question": "What is the role of applies_when?",
+      "question": "How does _eval_predicate combine an all_of list when one child fails?",
       "options": [
-        "It always evaluates to true",
-        "It gates the must predicate so rules that do not apply are recorded as not_applicable rather than violation",
-        "It overrides the severity",
-        "It picks the fixer operation"
+        "It returns false immediately with that child's failing span",
+        "It returns true if any child succeeds",
+        "It evaluates only the final child in the list",
+        "It turns the list into a regular expression"
+      ],
+      "correct": 0,
+      "explanation": "all_of requires every child to pass. The implementation stops at the first false child and returns its boolean and matched-span information; only after all pass does it return true."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to a text longer than the bounded-length rule's max_words=800 predicate?",
+      "options": [
+        "It is automatically truncated before evaluation",
+        "The rule produces a violation with the over-limit word-count span",
+        "The rule becomes not_applicable for long text",
+        "The engine raises a parser error instead of a RuleResult"
       ],
       "correct": 1,
-      "explanation": "“It gates the must predicate so rules that do not apply are recorded as not_applicable rather than violation” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
+      "explanation": "max_words compares _word_count(text) to 800. A count above the limit fails the predicate and records a violation whose matched_span describes the word count."
     },
     {
       "stage": "post",
-      "question": "What does the Fixer do?",
+      "question": "When does Fixer apply an append_if_missing repair?",
       "options": [
-        "It rewrites the rules file",
-        "It applies the per-rule declarative fix (append, prepend, replace_regex) to produce a revised text",
-        "It computes severity from the fix",
-        "It calls a remote model to repair the text"
+        "On every rule evaluation, even when the rule passed",
+        "Only when the violation has no rule name",
+        "When that named rule has a fix and its stripped suffix is not already in the text",
+        "Only after replacing every regex in the constitution"
       ],
-      "correct": 1,
-      "explanation": "“It applies the per-rule declarative fix (append, prepend, replace_regex) to produce a revised text” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
+      "correct": 2,
+      "explanation": "Fixer maps violations to rules with fixes. For append_if_missing it checks the stripped suffix first, then appends it to the stripped output only when it is absent."
     },
     {
       "stage": "post",
-      "question": "Why does the demo run the engine a second time after the fixer?",
+      "question": "Which change operations can diff emit for a replaced line block?",
       "options": [
-        "To inflate the report size",
-        "To verify the revised text satisfies the rules and to surface any rule the fixer cannot repair locally",
-        "To re-load the constitution",
-        "Because the first pass is only a dry run"
+        "Only one replace operation containing both versions",
+        "A JSON Patch add operation with no text",
+        "Only remove, because revised lines are not stored",
+        "edit-removed entries for old lines and edit-added entries for new lines"
       ],
-      "correct": 1,
-      "explanation": "“To verify the revised text satisfies the rules and to surface any rule the fixer cannot repair locally” matches the lesson’s treatment of Capstone 86 — Constitutional Rules Engine; the alternatives conflict with its definitions or workflow."
+      "correct": 3,
+      "explanation": "For a SequenceMatcher replace opcode, diff records each old line as edit-removed and each new line as edit-added, preserving both sides of the reviewable change."
     }
   ]
 }

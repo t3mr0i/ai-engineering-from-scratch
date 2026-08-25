@@ -1,6 +1,6 @@
 # Jupyter Notebooks
 
-> Notebooks are the lab bench of AI engineering. You prototype here, then move what works into production.
+> A notebook is a stateful experiment: make the state, output, and restart boundary visible.
 
 **Type:** Build
 **Languages:** Python
@@ -9,76 +9,71 @@
 
 ## Learning Objectives
 
-- Install and launch JupyterLab, Jupyter Notebook, or VS Code with the Jupyter extension
-- Use magic commands (`%timeit`, `%%time`, `%matplotlib inline`) to benchmark and visualize inline
-- Distinguish when to use notebooks vs scripts and apply the "explore in notebooks, ship in scripts" workflow
-- Identify and avoid common notebook traps: out-of-order execution, hidden state, and memory leaks
+- Execute a cell and distinguish captured `stdout`, the last expression, and a structured error.
+- Explain why variables persist between cells and why `NotebookKernel.restart()` removes them.
+- Run a list of cells in document order with `NotebookKernel.run_all`.
+- Transfer the model to a real Jupyter interface using markdown, code cells, and magic commands.
+- Diagnose hidden state and out-of-order execution with a restart-and-run-all check.
 
-## The Problem
+## Why this lesson exists
 
-Every AI paper, tutorial, and Kaggle competition uses Jupyter notebooks. They let you run code in pieces, see outputs inline, mix code with explanations, and iterate fast. If you try to learn AI without notebooks, you're doing math homework without scratch paper.
-
-But notebooks have real traps. People use them for everything, including things they're terrible at. Knowing when to use a notebook and when to use a script will save you from debugging nightmares later.
-
-## The Concept
-
-A notebook is a list of cells. Each cell is either code or text.
+Installing a notebook server is useful, but the important behavior is the kernel contract. The local demo implements that contract in a small standard-library class rather than depending on Jupyter. `NotebookKernel` keeps a namespace, executes Python with `ast` and `exec`, captures printed output, displays the last expression, and turns an exception into `CellResult(error_type, error_message)` without killing the kernel.
 
 ```mermaid
-graph TD
-    A["**Markdown Cell**\n# My Experiment\nTesting learning rate 0.01"] --> B["**Code Cell** ► Run\nmodel.fit(X, y, lr=0.01)\n---\nOutput: loss = 0.342"]
-    B --> C["**Code Cell** ► Run\nplt.plot(losses)\n---\nOutput: inline plot"]
+flowchart LR
+    A[Cell source] --> B[NotebookKernel.execute]
+    B --> C[Shared namespace]
+    B --> D[stdout]
+    B --> E[Last expression]
+    B --> F[Structured error]
+    G[restart] --> C
 ```
-
-The kernel is a Python process running in the background. When you run a cell, it sends the code to the kernel, which executes it and sends back the result. All cells share the same kernel, so variables persist between cells.
-
-```mermaid
-graph LR
-    A[Notebook UI] <--> B[Kernel\nPython process]
-    B --> C[Keeps variables in memory]
-    B --> D[Runs cells in whatever order you click]
-    B --> E[Dies when you restart it]
-```
-
-That "whatever order you click" part is both the superpower and the foot-gun.
-
-
-
 
 ## Build It
 
-Reconstruct **Jupyter Notebooks** by following `CellResult` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+Run the standard-library simulation from its code directory:
+
+```bash
+cd phases/00-setup-and-tooling/05-jupyter-notebooks/code
+python3 main.py
+```
+
+The demo runs three cells: it assigns `samples = [2, 4, 8]`, prints the list, and evaluates `sum(samples) / len(samples)`. The third result is `4.666666666666667`. After `restart()`, evaluating `samples` produces a `NameError`. Those two observations are the core of the lesson: state is shared until the kernel is restarted.
 
 ## Use It
 
-Call `CellResult` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+The tests exercise the same public surface:
+
+```python
+from main import NotebookKernel
+
+kernel = NotebookKernel()
+kernel.execute("answer = 6 * 7")
+print(kernel.execute("answer").display)  # 42
+print(kernel.execute('print("hello notebook")').stdout)
+```
+
+`run_all(["x = 3", "x *= 4", "x"])` restarts first and returns a final display of `12`. A failed cell returns `ZeroDivisionError` or another error type in the result; it does not terminate the kernel object.
+
+The companion notebook documents real Jupyter actions such as `Shift+Enter`, `%timeit`, `%%time`, `%matplotlib inline`, rich DataFrame display, and `Kernel > Restart & Run All`. Those magics belong to a real IPython kernel; the local `NotebookKernel` intentionally models Python cell semantics only.
 
 ## Ship It
 
-Hand off `outputs/prompt-notebook-helper.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [JupyterLab Docs](https://jupyterlab.readthedocs.io/) for the full feature set
-- [Google Colab FAQ](https://research.google.com/colaboratory/faq.html) for Colab-specific limits and features
-- [28 Jupyter Notebook Tips](https://www.dataquest.io/blog/jupyter-notebook-tips-tricks-shortcuts/) for power-user shortcuts
+[`outputs/prompt-notebook-helper.md`](../outputs/prompt-notebook-helper.md) is the reusable troubleshooting artifact. It asks for the exact error, restart-and-run-all result, data shape, environment, and kernel executable before recommending a fix. Keep the diagnostic output separate from any private data loaded by a notebook.
 
 ## Exercises
 
-Keep two runs side by side for **Jupyter Notebooks**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `CellResult`, `NotebookKernel`, `restart`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Install and launch JupyterLab, Jupyter Notebook, or VS Code with the Jupyter extension**.
-2. **Run a two-value comparison.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Use magic commands (`%timeit`, `%%time`, `%matplotlib inline`) to benchmark and visualize inline** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Distinguish when to use notebooks vs scripts and apply the "explore in notebooks, ship in scripts" workflow** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-notebook-helper.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Identify and avoid common notebook traps: out-of-order execution, hidden state, and memory leaks**; note what the demo cannot establish.
+1. Run `main.py` and record the display from the arithmetic cell and the error type after restart.
+2. Use `NotebookKernel.execute` with `value = 10`, then `value + 5`; explain why the second cell can see the first assignment.
+3. Execute `1 / 0`, inspect `error_type` and `error_message`, then execute `2 + 2` on the same kernel to show that one failed cell does not destroy state.
+4. In a real notebook, create one markdown cell and two code cells, run them out of order, then use Restart & Run All. Record which hidden dependency disappeared.
 
 ## Reference Solution
 
-A checkable result for **Jupyter Notebooks** should contain:
+The local acceptance evidence is `display == "42"` for the two-cell answer example, `stdout == "hello notebook\n"` for a print cell, `error_type == "NameError"` after restart, and a final `run_all` display of `12`. The real-notebook exercise is complete when the document runs top to bottom after a restart; `%timeit` and plots are interface features, not outputs fabricated by `NotebookKernel`.
 
-- the `python3 main.py` output for the demo’s smallest built-in fixture, with `CellResult`, `NotebookKernel`, `restart` traced to the value or shape that supports **Install and launch JupyterLab, Jupyter Notebook, or VS Code with the Jupyter extension**;
-- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Use magic commands (`%timeit`, `%%time`, `%matplotlib inline`) to benchmark and visualize inline**;
-- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Distinguish when to use notebooks vs scripts and apply the "explore in notebooks, ship in scripts" workflow**; and
-- an updated `outputs/prompt-notebook-helper.md` example with a concrete input, expected output field, and acceptance check tied to **Identify and avoid common notebook traps: out-of-order execution, hidden state, and memory leaks**.
+Run the lesson tests from `code/`:
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the aggregator require every input score to be in [0, 1]?",
+      "question": "What invariant does _validate_runs enforce for each EvalRun score?",
       "options": [
-        "Without a common scale, a single metric reported on a 0-100 range would dominate the per-model mean",
-        "The [0, 1] range happens to be the same bin range used by the expected-calibration-error computation",
-        "The numpy library internally requires all array values to fall within the [0, 1] range to function",
-        "The markdown table renderer expects every score to be formatted with exactly two decimal places"
-      ],
-      "correct": 0,
-      "explanation": "If pass-rate is in [0,1] and BLEU is in [0,100], the latter swamps the average. Normalisation belongs at the metric layer and is checked here."
-    },
-    {
-      "stage": "check",
-      "question": "What information does mean score hide that win-rate exposes?",
-      "options": [
-        "Whether the model's predicted confidence scores are well calibrated against actual outcomes",
-        "The raw number of tasks the model actually completed during the full evaluation run",
-        "The width of the bootstrap confidence interval computed around the headline mean score",
-        "Per-task wins resist outliers and scale shifts; the mean is sensitive to both of those"
-      ],
-      "correct": 3,
-      "explanation": "Win-rate counts task-by-task wins. A model can have a high mean from one easy task and still lose most pairwise comparisons."
-    },
-    {
-      "stage": "check",
-      "question": "How does bootstrap_mean_ci estimate the confidence interval?",
-      "options": [
-        "By assuming the sample mean follows a normal distribution and using its analytic standard error term",
-        "By resampling task scores with replacement and taking the alpha/2 and 1-alpha/2 percentiles of the means",
-        "By computing the standard deviation of the scores analytically and deriving a symmetric interval around it",
-        "By calling out to scipy.stats.bootstrap and using its default percentile-method configuration"
-      ],
-      "correct": 1,
-      "explanation": "Non-parametric percentile bootstrap on the per-task scores; no distributional assumption, no scipy."
-    },
-    {
-      "stage": "check",
-      "question": "When does the pairwise diff CI report `significant`?",
-      "options": [
-        "When the raw mean difference between the two models is larger than an absolute threshold of 0.1",
-        "When both models being compared have completed more than thirty tasks in the evaluation",
-        "When the confidence interval around the difference does not contain zero at all",
-        "When the two models' win-rates against each other happen to be numerically unequal"
+        "A score may be any finite real number",
+        "A score must be an integer percentage from 0 to 100",
+        "A score must be between 0 and 1 inclusive",
+        "A score must equal the model's mean across tasks"
       ],
       "correct": 2,
-      "explanation": "A CI that strictly excludes zero means the difference is unlikely to be zero at the chosen level; that is the operational definition the lesson uses."
+      "explanation": "The validator rejects scores outside [0, 1]. The leaderboard stores normalized metric scores rather than percentages or aggregate-only values."
     },
     {
-      "stage": "post",
-      "question": "Why is the pairwise bootstrap paired rather than independent?",
+      "stage": "check",
+      "question": "How does bootstrap_mean_ci create each resample?",
       "options": [
-        "Paired bootstrap respects that the same task feeds both models; differences are computed per task",
-        "Independent bootstrap sampling is not something the Python language is able to express at all",
-        "Paired bootstrap happens to run measurably faster than an independent bootstrap would on the same data",
-        "Paired bootstrap is the only bootstrap variant that the numpy library provides support for"
-      ],
-      "correct": 0,
-      "explanation": "Paired bootstrap reduces noise: we sample over tasks, not over models, so the comparison is on the same task set every iteration."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the aggregator return per-category means alongside the headline number?",
-      "options": [
-        "Returning per-category means is a requirement imposed by the JSON Schema the leaderboard record follows",
-        "Computing per-category means happens to run faster than computing a single overall mean across categories",
-        "The markdown table renderer requires a per-category breakdown in order to render the leaderboard at all",
-        "Headline mean can mask category-level weakness (good overall, bad at code); per-category exposes that"
+        "It permutes scores once and reuses that ordering",
+        "It samples without replacement until every score appears",
+        "It uses a normal approximation with no resampling",
+        "It draws the same number of scores with replacement and takes the requested percentiles"
       ],
       "correct": 3,
-      "explanation": "A model can win on aggregate by being okay everywhere or by dominating one category. Per-category breakdown lets the consumer see which."
+      "explanation": "The function uses a NumPy generator to draw n scores with replacement for each bootstrap replicate, records the mean, and returns alpha/2 and 1-alpha/2 percentiles."
+    },
+    {
+      "stage": "check",
+      "question": "Why does bootstrap_pairwise_diff require aligned model score vectors?",
+      "options": [
+        "Each position represents the same task, so subtracting positions forms paired task differences",
+        "The two models must have identical names",
+        "Pairing is only needed to sort the final leaderboard",
+        "It turns every score into a category mean before subtraction"
+      ],
+      "correct": 0,
+      "explanation": "The function subtracts one model's score from the other task by task. Mismatched lengths cannot establish those paired differences and raise a validation error."
+    },
+    {
+      "stage": "check",
+      "question": "When does bootstrap_pairwise_diff mark a difference significant?",
+      "options": [
+        "Whenever the point estimate is nonzero",
+        "When the confidence interval excludes zero on either side",
+        "Only when the lower bound is positive",
+        "Only when both models have identical task counts"
+      ],
+      "correct": 1,
+      "explanation": "The report treats a difference as significant when lo > 0 or hi < 0, meaning the interval does not cross zero in either direction."
+    },
+    {
+      "stage": "post",
+      "question": "In _win_rate, how is a task handled when two models tie at the task maximum?",
+      "options": [
+        "The tie is discarded from both denominators",
+        "The win is split into one half for each model",
+        "Each tied model receives a win",
+        "The model with the lexicographically smaller ID wins"
+      ],
+      "correct": 2,
+      "explanation": "The implementation compares each model with the per-task maximum using math.isclose. Every model tied at that maximum is counted as a winner; it does not split or discard ties."
+    },
+    {
+      "stage": "post",
+      "question": "How are rows ordered in the rendered aggregate leaderboard?",
+      "options": [
+        "By model ID in ascending lexical order",
+        "By number of completed tasks, then randomly",
+        "By category name before computing model means",
+        "By mean score in descending order"
+      ],
+      "correct": 3,
+      "explanation": "Aggregation computes each model's mean and sorts the final rows from highest mean score to lowest, while retaining category means and completed-task counts."
     }
   ]
 }

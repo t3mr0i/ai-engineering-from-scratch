@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the runner spawn a fresh Python subprocess per candidate rather than calling exec inline?",
+      "question": "Given text with two fenced code blocks, which block does extract_code return?",
       "options": [
-        "It is faster than exec",
-        "It avoids polluting builtins",
-        "It isolates timeouts, output overruns, and dangerous imports from the host eval process",
-        "exec is deprecated in modern Python"
+        "The last fenced block, because later code overrides earlier code",
+        "All fenced blocks concatenated with a newline",
+        "The first matching fenced block, without its opening and closing fences",
+        "None, because the extractor requires a language name"
       ],
       "correct": 2,
-      "explanation": "An infinite loop or runaway memory allocation in candidate code crashes only the subprocess. The host eval keeps making progress."
+      "explanation": "CODE_BLOCK_RE uses search rather than findall, so extract_code returns the contents of the first matching triple-backtick block. The language tag is optional in the pattern."
     },
     {
       "stage": "check",
-      "question": "What is the score for a task with three assertions when two pass and one fails?",
+      "question": "A candidate passes 2 of 3 assertion strings. What score does run_candidate report when it completes normally?",
       "options": [
-        "1.0",
-        "0.667",
-        "0.0",
-        "0.5"
-      ],
-      "correct": 1,
-      "explanation": "Score is passed divided by total. Two of three is 0.667. The exit code is assertion_fail."
-    },
-    {
-      "stage": "check",
-      "question": "Which exit code does the runner return when the candidate code does not parse?",
-      "options": [
-        "error",
-        "assertion_fail",
-        "timeout",
-        "syntax_error"
+        "0.5, because only two assertions are inspected",
+        "1.0, because one failed assertion is ignored",
+        "0.0, because any failed assertion makes the run invalid",
+        "2/3, the number of passed assertions divided by the total"
       ],
       "correct": 3,
-      "explanation": "compile() raises SyntaxError inside the runner, the inner script catches it and writes exit_code=syntax_error."
+      "explanation": "The runner evaluates each assertion and reports passed divided by total. Two passes out of three therefore produce 2/3."
     },
     {
       "stage": "check",
-      "question": "Why is wall-clock timeout the load-bearing control rather than the import denylist?",
+      "question": "What exit code describes code that cannot be compiled because of a Python syntax error?",
       "options": [
-        "Imports cannot be denied in Python",
-        "Most failures are infinite loops, and a determined adversary can bypass any in-process denylist",
-        "subprocess.run does not support denylists",
-        "Wall-clock is checked at compile time"
-      ],
-      "correct": 1,
-      "explanation": "Denylists catch lazy code, timeouts catch infinite loops. The denylist is a backstop, the timeout is the floor."
-    },
-    {
-      "stage": "post",
-      "question": "What does pass_at_k(n, c, k) return when n - c < k?",
-      "options": [
-        "Zero, because the sample is undefined",
-        "One, because the sample must contain at least one passing solution",
-        "c / n, the empirical pass rate",
-        "Raises ValueError"
-      ],
-      "correct": 1,
-      "explanation": "If there are fewer fails than the sample size, every sample of size k necessarily includes at least one pass, so the probability is 1."
-    },
-    {
-      "stage": "post",
-      "question": "How does the runner surface an output overflow, and why is the cap 256 KB?",
-      "options": [
-        "Stdout from the subprocess is streamed; once the 256 KB running total is crossed the child is killed and the task is recorded as exit_code=error with detail \"output overflow\"",
-        "Stderr only; size matches the OS pipe default",
-        "The candidate source size, capped so generated code stays small",
-        "The score value, expressed as a percentage with two decimals"
+        "syntax_error",
+        "assertion_fail",
+        "timeout",
+        "pass"
       ],
       "correct": 0,
-      "explanation": "The cap protects the host. Candidate code that floods stdout gets killed mid-stream; the runner normalises the result under exit_code=error with detail \"output overflow\" rather than minting a new exit code."
+      "explanation": "The generated runner compiles the candidate before executing assertions. A compile-time SyntaxError is reported as syntax_error, distinct from an assertion failure."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when a candidate keeps running past the effective timeout?",
+      "options": [
+        "The process continues, but its score is rounded down after completion",
+        "The process is killed and the result has score 0 with exit code timeout",
+        "The candidate is marked assertion_fail without being stopped",
+        "The timeout is ignored if stdout is still arriving"
+      ],
+      "correct": 1,
+      "explanation": "run_candidate tracks a deadline, kills a still-running child at expiry, and returns an all-zero ExecResult with the timeout exit code."
+    },
+    {
+      "stage": "post",
+      "question": "Using pass_at_k(n=10, c=2, k=5), what probability does the estimator compute?",
+      "options": [
+        "0.20, the observed pass fraction c/n",
+        "0.50, because five samples are drawn",
+        "About 0.778, equal to 1 - C(8,5)/C(10,5)",
+        "1.0, because c is nonzero"
+      ],
+      "correct": 2,
+      "explanation": "The estimator is one minus the probability that all k samples come from the eight failures: 1 - 56/252 = 0.777... ."
+    },
+    {
+      "stage": "post",
+      "question": "What result does run_candidate return when captured stdout exceeds OUTPUT_CAP_BYTES (256 KiB)?",
+      "options": [
+        "pass with the output truncated silently",
+        "timeout with the partial output scored",
+        "assertion_fail with the full output retained",
+        "error with score 0 and detail \"output overflow\""
+      ],
+      "correct": 3,
+      "explanation": "The nonblocking reader tracks bytes before appending chunks. Crossing the 256 KiB cap sets overflow and returns an error result whose detail is output overflow."
     }
   ]
 }

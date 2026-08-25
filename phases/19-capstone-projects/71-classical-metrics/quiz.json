@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is the tokenizer chosen at the metric layer rather than the runner layer?",
+      "question": "What does tokenize(\"The Cat, sat!\") return in this lesson's implementation?",
       "options": [
-        "The tokenizer defines what counts as a token match; swapping it changes what the benchmark actually measures",
-        "Metric implementations run in O(n) time no matter which tokenizer is plugged into the metric layer",
-        "The numpy library requires a tokenizer object to be present at import time before any metric can load",
-        "Tokenizers are inherently model-specific, and the runner layer has no way to see which model produced the text"
+        "[\"the\", \"cat\", \"sat\"]",
+        "[\"The\", \"Cat\", \"sat\"]",
+        "[\"the cat\", \"sat\"]",
+        "[\"the\", \"cat,\", \"sat!\"]"
       ],
       "correct": 0,
-      "explanation": "BLEU and F1 are sensitive to tokenisation. Binding the tokenizer to the metric makes scores reproducible and lets you point at the rule — it is not about complexity, numpy, or model visibility."
+      "explanation": "tokenize lowercases the input and applies the Unicode word-run regular expression, so punctuation is not retained and the three tokens are the, cat, and sat."
     },
     {
       "stage": "check",
-      "question": "What does modified n-gram precision do that plain n-gram precision does not?",
+      "question": "For candidate tokens [\"the\", \"the\", \"the\", \"the\"] and reference [\"the\", \"cat\", \"sat\"], what clipped unigram precision does _modified_precision compute?",
       "options": [
-        "It computes the n-gram precision using a different logarithm base than the plain version does",
-        "It clips each candidate n-gram's count by the maximum count that n-gram reaches in any single reference",
-        "It runs measurably faster than plain n-gram precision because it skips repeated n-grams entirely",
-        "It returns a percentage value in the range 0 to 100 instead of a fraction in 0 to 1"
+        "1.0, because every candidate token has a reference",
+        "0.25, because the reference clips \"the\" to one occurrence",
+        "0.33, because there are three reference tokens",
+        "0.75, because three of four tokens overlap"
       ],
       "correct": 1,
-      "explanation": "Clipping by the reference cap stops a candidate from inflating its score by repeating a high-precision word over and over."
+      "explanation": "The reference contains one \"the\", so the four candidate copies are clipped to one match. The clipped count is 1 and the candidate total is 4, giving 0.25."
     },
     {
       "stage": "check",
-      "question": "Why does BLEU use a brevity penalty?",
+      "question": "With a candidate length of 2 and reference length of 10, which brevity-penalty factor does bleu4 use?",
       "options": [
-        "Long candidates make the geometric mean used inside BLEU numerically unstable and prone to underflow",
-        "The brevity penalty exists to replace the n-gram count cap used by modified precision entirely",
-        "The brevity penalty compensates for the additive-one smoothing applied to zero-count n-gram matches",
-        "Without it, a short candidate matching a few words gets an inflated precision and unfairly high BLEU score"
-      ],
-      "correct": 3,
-      "explanation": "Precision alone rewards short outputs. BP downweights candidates shorter than the reference using exp(1 - r/c) — it is not about numerical stability or smoothing."
-    },
-    {
-      "stage": "check",
-      "question": "What does ROUGE-L compare?",
-      "options": [
-        "The 4-gram precision computed against any single reference's 4-grams, same as one BLEU component",
-        "The longest common subsequence shared between the candidate and reference token sequences",
-        "The Levenshtein edit distance between the raw candidate and reference character strings",
-        "The character-level Jaccard index computed over the sets of characters in each string"
-      ],
-      "correct": 1,
-      "explanation": "ROUGE-L uses the LCS length, then computes precision (LCS/cand-len) and recall (LCS/ref-len) combined with F-beta."
-    },
-    {
-      "stage": "post",
-      "question": "Token-level F1 returns 1.0 for which case?",
-      "options": [
-        "When the prediction is empty but the target string is non-empty and contains real tokens",
-        "When the prediction contains the target as a subset, plus some additional noisy extra tokens mixed in",
-        "When both the prediction and the target are empty strings, by convention treated as a perfect match",
-        "When the prediction and target happen to share exactly one overlapping token between them"
+        "1, because BLEU never penalizes short candidates",
+        "exp(-0.2), from 1 - 2/10",
+        "exp(-4), from 1 - 10/2",
+        "0, because the candidate is shorter than the reference"
       ],
       "correct": 2,
-      "explanation": "By convention, empty-empty is a perfect match. Any non-empty target with an empty prediction is 0.0."
+      "explanation": "_brevity_penalty returns exp(1 - ref_len/cand_len) when the candidate is nonempty and shorter. Here that is exp(1 - 10/2) = exp(-4)."
+    },
+    {
+      "stage": "check",
+      "question": "What is the LCS length for prediction \"cat sat\" and target \"cat ran\" in rouge_l?",
+      "options": [
+        "0, because the final tokens differ",
+        "2, because both strings have two tokens",
+        "3, because rouge_l counts characters",
+        "1, because only the ordered token \"cat\" is shared"
+      ],
+      "correct": 3,
+      "explanation": "The dynamic-programming LCS operates on token sequences. \"cat\" is the only shared token in order, so the LCS length is 1."
     },
     {
       "stage": "post",
-      "question": "Why dispatch on metric_name rather than category in the score function?",
+      "question": "What does f1_score([], []) return for an empty prediction and an empty target?",
       "options": [
-        "It lets the same category use different metrics across tasks and keeps the dispatcher metric-agnostic",
-        "Because the category field is inherently harder for the validator to check than metric_name is",
-        "Because the string metric_name happens to be shorter to type than the string category",
-        "Because the runner layer does not actually have access to the category field at all during dispatch time"
+        "1.0, treating two empty answers as a perfect match",
+        "0.0, because no tokens overlap",
+        "NaN, because precision divides by zero",
+        "It raises ValueError before scoring"
       ],
       "correct": 0,
-      "explanation": "metric_name is the contract. A summary task can use rouge_l on one record and bleu_4 on another; the dispatcher does not need to care."
+      "explanation": "The implementation defines the empty/empty case as a perfect match. Only a one-empty/one-nonempty pair receives zero."
+    },
+    {
+      "stage": "post",
+      "question": "What does score(\"f1\", \"the cat\", [\"cat\"]) return?",
+      "options": [
+        "0.5, using precision only",
+        "About 0.667, the F1 of precision 0.5 and recall 1.0",
+        "1.0, because the target is contained in the prediction",
+        "0.0, because the token counts differ"
+      ],
+      "correct": 1,
+      "explanation": "There is one overlapping token: precision is 1/2 and recall is 1/1. Their harmonic mean is 2*(0.5*1)/(0.5+1) = 2/3, and score takes the maximum across targets."
     }
   ]
 }

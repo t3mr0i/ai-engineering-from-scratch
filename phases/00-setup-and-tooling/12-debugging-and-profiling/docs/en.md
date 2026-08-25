@@ -1,74 +1,81 @@
 # Debugging and Profiling
 
-> The worst AI bugs don't crash. They train silently on garbage and report a beautiful loss curve.
+> Catch a bad tensor, gradient, device, or allocation before a long training run hides it.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Lesson 1 (Dev Environment), basic PyTorch familiarity
+**Prerequisites:** Lesson 01 (Dev Environment), basic PyTorch familiarity
 **Time:** ~60 minutes
 
 ## Learning Objectives
 
-- Use conditional `breakpoint()` and `debug_print` to inspect tensor shapes, dtypes, and NaN values mid-training
-- Profile training loops with `cProfile`, `Timer`, and `tracemalloc` to find bottlenecks
-- Detect common AI bugs: shape mismatches, NaN loss, data leakage, and wrong-device tensors
-- Capture timing, allocation, and gradient-health evidence with `Timer`, `tracemalloc`, and `check_gradient_health`
+- Use `debug_print` to expose a tensor's shape, dtype, device, range, mean, and NaN flag.
+- Time a bounded section with `Timer` and inspect Python allocations with `tracemalloc`.
+- Trace layer input/output shapes with `check_shapes` and forward hooks.
+- Detect NaN losses and non-finite gradients with `detect_nan`, then inspect devices and gradient norms.
+- Distinguish CPU/Python diagnostics from CUDA memory observations and state the PyTorch precondition for each.
 
-## The Problem
+## The toolkit
 
-AI code fails differently than regular code. A web app crashes with a stack trace. A misconfigured training loop runs for 8 hours, burns $200 in GPU time, and produces a model that predicts the mean of every input. The code never errored. The bug was a tensor on the wrong device, a forgotten `.detach()`, or labels leaking into features.
-
-You need debugging tools that catch these silent failures before they waste your time and compute.
-
-## The Concept
-
-AI debugging operates at three levels:
+The canonical entrypoint is `code/main.py`, which delegates to `debug_tools.py`. With PyTorch installed it runs ten small demonstrations: tensor summaries, two matrix timings, `tracemalloc`, shape hooks through a three-layer MLP, normal and simulated NaN loss, device checks, gradient health, optional CUDA memory, logging, and a conditional `breakpoint()` pattern. Without PyTorch it prints the missing-dependency message, enters the fallback branch, and currently reaches `demo_memory_tracking`, whose `torch.randn(...)` call raises `NameError`; the test harness skips the PyTorch-dependent execution tests. Treat this as a documented dependency/code-path limitation, not a successful CPU fallback.
 
 ```mermaid
-graph TD
-    L3["3. Training Dynamics<br/>Loss curves, gradient norms, activations"] --> L2
-    L2["2. Tensor Operations<br/>Shapes, dtypes, devices, NaN/Inf values"] --> L1
-    L1["1. Standard Python<br/>Breakpoints, logging, profiling, memory"]
+flowchart TD
+    A[Training step] --> B[debug_print]
+    A --> C[check_shapes hooks]
+    A --> D[detect_nan]
+    A --> E[check_devices]
+    A --> F[check_gradient_health]
+    G[Timer + tracemalloc] --> H[Cost evidence]
+    B --> I[Stop, inspect, or continue]
+    C --> I
+    D --> I
+    E --> I
+    F --> I
 ```
-
-Most people jump straight to level 3 (staring at dashboards). But 80% of AI bugs live at levels 1 and 2.
-
-
-
-## Ship It
-
-Run the debugging toolkit script:
-
-```bash
-python phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py
-```
-
-See `outputs/prompt-debug-ai-code.md` for a prompt that helps diagnose AI-specific bugs.
 
 ## Build It
 
-Reconstruct **Debugging and Profiling** by following `debug_print` on a 2x3 tensor with one finite value. Run `python3 main.py` and verify that the diagnostic names the shape/dtype/non-finite value or the profiling section that explains the cost.
+From the lesson directory, run the bounded entrypoint:
+
+```bash
+cd phases/00-setup-and-tooling/12-debugging-and-profiling
+python3 code/main.py
+```
+
+On a machine with PyTorch, `demo_print_debugging` first reports shape `(32, 784)` and then `(32, 128)`; the injected tensor reports `has_nan=True`. `demo_shape_checking` traces `784 -> 256 -> 64 -> 10` for a `(4, 784)` input. `demo_nan_detection` reports a finite normal loss and then detects the simulated NaN at step 99. CUDA memory output appears only when `torch.cuda.is_available()` is true. Timings and allocation counts are measurements of the current machine, not fixed acceptance numbers.
 
 ## Use It
 
-Call `debug_print` from a small caller with a 2x3 tensor with one finite value. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+The most direct probe, when PyTorch is available, is:
+
+```python
+import torch
+from debug_tools import debug_print
+
+debug_print("probe", torch.tensor([[1.0, 2.0, 3.0]]))
+debug_print("bad", torch.tensor([[1.0, float("nan"), 3.0]]))
+```
+
+For a model, `check_shapes` installs hooks and removes them after the forward pass. `check_devices` compares every supplied tensor with the first model parameter's device. `check_gradient_health` returns the L2 norm of all available gradients and warns about zero or very large per-parameter norms. `tracemalloc` observes Python allocations; it is not a complete report of CUDA allocator memory.
+
+## Ship It
+
+[`outputs/prompt-debug-ai-code.md`](../outputs/prompt-debug-ai-code.md) is the reusable diagnostic prompt. A useful handoff includes the exact tensor shape/dtype/device, the loss and step, gradient findings, timing label, and whether the issue reproduced after a clean run. Never paste credentials or an entire private dataset into the prompt.
 
 ## Exercises
 
-Work from the smallest fixture that the Debugging and Profiling demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using a 2x3 tensor with one finite value. Follow `debug_print`, `Timer`, `check_shapes`. Expect the diagnostic names the shape/dtype/non-finite value or the profiling section that explains the cost; capture the first printed shape, metric, status, or summary field and state which part supports **Use conditional `breakpoint()` and `debug_print` to inspect tensor shapes, dtypes, and NaN values mid-training**.
-2. **Perturb one field.** Repeat the command after changing only the injected NaN value: use the same tensor with one NaN. Predict the direction of the change, then compare the two output values. Explain why **Profile training loops with `cProfile`, `Timer`, and `tracemalloc` to find bottlenecks** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation a tensor with an incompatible shape. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Detect common AI bugs: shape mismatches, NaN loss, data leakage, and wrong-device tensors** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-debug-ai-code.md` and add a worked example using a 2x3 tensor with one finite value. Include the input contract, one expected output field, and a named acceptance check for **Capture timing, allocation, and gradient-health evidence with `Timer`, `tracemalloc`, and `check_gradient_health`**; note what the demo cannot establish.
+1. Run the entrypoint and record whether the PyTorch branch or the fallback branch ran. If PyTorch is installed, capture the shape and `has_nan` fields from the finite and injected-NaN summaries.
+2. Use a `(2, 3)` tensor with one NaN and compare `debug_print` output with an all-finite tensor. Explain why `has_nan` changes while shape and dtype do not.
+3. Build an `nn.Linear(4, 2)` and pass a `(2, 3)` input to reproduce a shape error. Then pass `(2, 4)` and use `check_shapes` to record the layer transition.
+4. Run the artifact prompt against a simulated NaN loss and require a verification command plus a statement of what `tracemalloc` and CUDA memory do not measure.
 
 ## Reference Solution
 
-A checkable result for **Debugging and Profiling** should contain:
+The canonical report must expose the finite/NaN distinction and the MLP shape path when PyTorch is available. A shape failure is accepted only when the incompatible input and the layer's expected feature count are recorded. A useful profile reports a named timer and allocation snapshot, but does not compare wall-clock values across machines as if they were invariant. When PyTorch is absent, record the missing-dependency message, the observed fallback/`NameError` path, and the skipped tensor-specific evidence; do not call the run successful.
 
-- the `python3 main.py` output for a 2x3 tensor with one finite value, with `debug_print`, `Timer`, `check_shapes` traced to the value or shape that supports **Use conditional `breakpoint()` and `debug_print` to inspect tensor shapes, dtypes, and NaN values mid-training**;
-- a before/after comparison for the injected NaN value, where the same tensor with one NaN changes the observation in the direction predicted by **Profile training loops with `cProfile`, `Timer`, and `tracemalloc` to find bottlenecks**;
-- a recorded result for a tensor with an incompatible shape that matches the implementation’s validation or empty-result contract and explains the evidence for **Detect common AI bugs: shape mismatches, NaN loss, data leakage, and wrong-device tensors**; and
-- an updated `outputs/prompt-debug-ai-code.md` example with a concrete input, expected output field, and acceptance check tied to **Capture timing, allocation, and gradient-health evidence with `Timer`, `tracemalloc`, and `check_gradient_health`**.
+Run the lesson tests from `code/`:
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```

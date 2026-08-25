@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the pipeline bubble?",
+      "question": "What bubble fraction does bubble_fraction(num_stages=4, num_microbatches=8) return?",
       "options": [
-        "A bug in NCCL",
-        "Idle time at start and end of the pipeline: stages with no work until the first microbatch reaches them, and after the last microbatch leaves",
-        "Memory leak",
-        "A network packet"
+        "3/11, about 0.273",
+        "4/8, exactly 0.5",
+        "1/4, because there are four stages",
+        "8/11, because forward work dominates"
       ],
-      "correct": 1,
-      "explanation": "With M microbatches and N stages, per-stage bubble is (N-1)/(M+N-1). Picking M much greater than N shrinks it."
+      "correct": 0,
+      "explanation": "The closed form is (n-1)/(m+n-1). With n=4 and m=8, it is 3/(8+4-1)=3/11, about 27.3%."
     },
     {
       "stage": "check",
-      "question": "Why is GPipe's activation memory proportional to M?",
+      "question": "In gpipe_schedule, at what cycle is the forward unit for microbatch m on stage s placed?",
       "options": [
-        "Bug",
-        "All M microbatches' activations must be held until the matching backward; nothing frees until the drain begins",
-        "Compiler limit",
-        "Hardware limit"
+        "m - s",
+        "m + s",
+        "m * s",
+        "m + num_stages - s"
       ],
       "correct": 1,
-      "explanation": "GPipe fills the pipeline with all forwards before any backward. Each in-flight microbatch carries its activations until its backward starts."
+      "explanation": "The schedule emits forward work at cycle = microbatch + stage. This diagonal placement models the pipeline warm-up before the backward wave."
     },
     {
       "stage": "check",
-      "question": "How does 1F1B improve over GPipe?",
+      "question": "How does measure_bubble compute idle work in the generated schedule?",
       "options": [
-        "Lower bubble",
-        "Same bubble but bounded activation memory; once mb 0's forward reaches the last stage, its backward begins and activations free",
-        "Higher throughput",
-        "Smaller model"
+        "It counts only backward units and calls the remainder communication",
+        "It divides the number of stages by the number of microbatches",
+        "It compares occupied cycle-stage slots with all slots through the maximum cycle",
+        "It assumes every stage is busy for exactly m cycles"
       ],
-      "correct": 1,
-      "explanation": "Megatron-LM and PipeDream use 1F1B to bound activation memory by pipeline depth, not microbatch count."
+      "correct": 2,
+      "explanation": "measure_bubble forms a stage-by-cycle grid up to max_cycle+1, counts scheduled F/B units, and reports the unoccupied fraction of that grid."
     },
     {
       "stage": "check",
-      "question": "Why is equal compute per stage more important than equal parameter count?",
+      "question": "Which stage shapes are used by the real two-rank demo?",
       "options": [
-        "Aesthetic",
-        "The slowest stage gates every cycle; other stages idle waiting for it. Embedding layers have many parameters but little compute, so partitioning by parameter count misbalances the pipeline",
-        "Memory aligned",
-        "Easier to code"
+        "Rank 0: 16→4; rank 1: 4→16",
+        "Both ranks: 16→32→4",
+        "Rank 0: 32→16; rank 1: 16→8",
+        "Rank 0: 16→32→16; rank 1: 16→32→4"
       ],
-      "correct": 1,
-      "explanation": "Megatron-LM exposes --num-layers-per-stage as a list to allow uneven layer counts when per-layer cost differs."
+      "correct": 3,
+      "explanation": "The demo's first stage maps the input through 16→32→16, while the second stage consumes 16 features and maps 16→32→4 for the final output."
     },
     {
       "stage": "post",
-      "question": "What goes wrong if every stage calls send before recv?",
+      "question": "What happens to the modeled bubble fraction as the number of microbatches grows with stages fixed?",
       "options": [
-        "Memory leak",
-        "Deadlock on the wire; standard fix is to interleave even-rank send-first and odd-rank recv-first",
-        "Slow",
-        "Higher bubble"
+        "It shrinks toward zero because the fixed warm-up is amortized",
+        "It grows linearly with every added microbatch",
+        "It stays exactly one half for every schedule",
+        "It becomes undefined once there are more microbatches than stages"
       ],
-      "correct": 1,
-      "explanation": "Synchronous send/recv pairs need one side to be receiving when the other sends. The lesson schedules ranks explicitly so the pattern is visible."
+      "correct": 0,
+      "explanation": "In (n-1)/(m+n-1), the numerator is fixed while m grows. More microbatches fill the pipeline and reduce the relative warm-up/flush idle fraction."
     },
     {
       "stage": "post",
-      "question": "Pipeline plus ZeRO-1 combines what two memory wins?",
+      "question": "When does the schedule begin its backward wave relative to the forward wave?",
       "options": [
-        "Compression and quantisation",
-        "Per-stage parameter sharding (each rank only holds one stage of layers) plus per-rank optimiser sharding (each rank only holds 1/N of optimiser state for its stage)",
-        "Activation only",
-        "Nothing"
+        "At cycle m, before the last forward reaches the final stage",
+        "After forward_end = num_microbatches + num_stages - 1",
+        "Immediately after the first forward unit on stage 0",
+        "Only after an optimizer step has completed"
       ],
       "correct": 1,
-      "explanation": "Pipeline shards layers across ranks; ZeRO shards optimiser state within the data-parallel group at each pipeline rank. Both wins compound."
+      "explanation": "The schedule defines forward_end = m+n-1, then emits backward units in reverse stage order from that point. It is a schedule model; the real wire demo separately sends activations and gradients."
     }
   ]
 }

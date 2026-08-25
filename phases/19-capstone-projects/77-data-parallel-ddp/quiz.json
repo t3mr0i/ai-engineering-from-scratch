@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does DDP broadcast parameters at construction instead of relying on the same seed across ranks?",
+      "question": "What parameter synchronization happens when the lesson's DistributedDataParallel wrapper is constructed?",
       "options": [
-        "Broadcast is faster than seeding",
-        "Same-seed init drifts by float epsilon across ranks; broadcast guarantees byte-equal weights before training starts",
-        "PyTorch forbids same-seed init",
-        "Broadcast saves memory"
+        "Rank 0 broadcasts its parameters to every other rank",
+        "Each rank keeps its random initialization and only syncs after step 1",
+        "Only gradients are broadcast; parameters are never synchronized",
+        "The wrapper averages parameters independently on each rank"
       ],
-      "correct": 1,
-      "explanation": "Float ops on different hardware (or even different process orders) can differ at the bit level. A broadcast from rank 0 is the only way to get byte-equal weights everywhere."
+      "correct": 0,
+      "explanation": "The constructor broadcasts every parameter from rank 0, giving all replicas the same starting model before local microbatches are processed."
     },
     {
       "stage": "check",
-      "question": "What does DDP do after backward and before optimizer.step?",
+      "question": "How does sync_grads turn summed gradients into a data-parallel average?",
       "options": [
-        "Nothing",
-        "Saves a checkpoint",
-        "Allreduce-SUM every parameter's gradient and divide by world_size to get the mean gradient",
-        "Broadcasts logits"
+        "It divides each local gradient by its parameter count",
+        "It all-reduces each gradient with SUM, then divides by world_size",
+        "It keeps rank 0's gradient and discards the others",
+        "It averages parameters before computing gradients"
+      ],
+      "correct": 1,
+      "explanation": "For every non-None gradient, sync_grads performs an all-reduce sum and scales the resulting tensor by 1/world_size. Parameters with no gradient are skipped."
+    },
+    {
+      "stage": "check",
+      "question": "Why does reference_single_process divide each microbatch loss by world_size?",
+      "options": [
+        "To make a single rank train on fewer examples",
+        "To remove the model's bias terms",
+        "To reproduce the average of the gradients that distributed ranks would all-reduce",
+        "To convert the loss into an accuracy percentage"
       ],
       "correct": 2,
-      "explanation": "The mean gradient is invariant to world_size so a learning rate tuned at one rank works at N ranks."
+      "explanation": "The reference visits each rank's disjoint microbatch sequentially. Dividing each contribution by world_size makes its accumulated gradient match the distributed averaged gradient."
     },
     {
       "stage": "check",
-      "question": "Why divide by world_size after allreduce-SUM instead of using allreduce-MEAN?",
+      "question": "For rank r at training step s, which start offset selects its disjoint microbatch in the synthetic dataset?",
       "options": [
-        "Allreduce-MEAN does not exist in gloo",
-        "Division by world_size on each rank is a local op; allreduce-MEAN would be implemented the same way under the hood",
-        "Division produces NaN",
-        "world_size is unknown"
+        "s * BATCH + r",
+        "r * BATCH + s",
+        "(s + r) * WORLD_SIZE",
+        "s * WORLD_SIZE * BATCH + r * BATCH"
       ],
-      "correct": 1,
-      "explanation": "Both approaches yield the same arithmetic. NCCL ships allreduce-AVG since 2.10; gloo does not, so divide locally after SUM."
-    },
-    {
-      "stage": "check",
-      "question": "What does gradient bucketing in production DDP achieve?",
-      "options": [
-        "Quantises gradients to int8",
-        "Coalesces many small allreduces into one large allreduce, amortising the per-call latency floor",
-        "Frees gradient memory",
-        "Skips backward"
-      ],
-      "correct": 1,
-      "explanation": "A 1B-parameter model has thousands of grad tensors; one allreduce per tensor pays gloo or NCCL latency thousands of times."
+      "correct": 3,
+      "explanation": "Each step advances past all ranks' batches, so the offset is s*WORLD_SIZE*BATCH. Rank r then selects its BATCH-sized slice within that step."
     },
     {
       "stage": "post",
-      "question": "Why does no_sync() exist in PyTorch DDP?",
+      "question": "How many trainable parameter tensors does MiniMLP contain in this lesson?",
       "options": [
-        "To turn off DDP",
-        "Gradient accumulation over K microbatches needs to skip the post-backward allreduce for K-1 of them; no_sync wraps that pause",
-        "To switch backends",
-        "To debug"
+        "6: weight and bias for each of its three Linear layers",
+        "3: one tensor per layer after flattening",
+        "8: one tensor for every input and output dimension",
+        "12: a separate tensor for each matrix row"
       ],
-      "correct": 1,
-      "explanation": "Without no_sync the allreduce fires K times per accumulated step and throughput drops to the floor."
+      "correct": 0,
+      "explanation": "MiniMLP has three Linear modules (16→32, 32→32, and 32→4). Each contributes a weight and a bias parameter, for six tensors."
     },
     {
       "stage": "post",
-      "question": "Why does this lesson's reference implementation walk every rank's micro-batch sequentially in one process?",
+      "question": "Which seed controls the synthetic DDP fixture's torch Generator?",
       "options": [
-        "Single-process is faster",
-        "It gives a byte-equal baseline: the sequential mean gradient must equal DDP's allreduced mean gradient at every step",
-        "It is the only way to use gloo",
-        "It saves memory"
+        "The current process time",
+        "The lesson constant SEED=7",
+        "The rank number only",
+        "The optimizer learning rate"
       ],
       "correct": 1,
-      "explanation": "Equivalence to the reference loop is the load-bearing correctness test; without it gradient sync bugs hide until step 10000."
+      "explanation": "The fixture seeds its generator with the module's SEED constant, 7. Rank-specific slicing then selects disjoint examples from that reproducible dataset."
     }
   ]
 }

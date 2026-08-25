@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does a capstone matter when each lesson already had its own tests?",
+      "question": "Which attention mask makes MiniGPT causal?",
       "options": [
-        "Cosmetic",
-        "Composition is a separate property: pieces can pass unit tests but the integration deadlocks, the loss diverges, or the memory grows when they run together",
-        "Slower",
-        "Easier to grade"
+        "An upper-triangular mask that blocks attention to future token positions",
+        "A lower-triangular mask that blocks all previous context",
+        "A mask that allows every query to see every key",
+        "A mask that removes only padding embeddings"
       ],
-      "correct": 1,
-      "explanation": "End-to-end tests catch wiring bugs that no piece tests in isolation: rendezvous, barrier order, gather contracts."
+      "correct": 0,
+      "explanation": "The causal self-attention uses an upper-triangular future-position mask. Each token may attend to itself and earlier tokens, not tokens to its right."
     },
     {
       "stage": "check",
-      "question": "What four invariants does the demo verify?",
+      "question": "How does the training run combine ZeroOptimizer with distributed gradients?",
       "options": [
-        "Speed",
-        "(a) loss runs to step 20 without NaN, (b) every rank's parameter norm agrees, (c) per-rank optimiser memory equals the ZeRO-1 formula, (d) the step-10 checkpoint reloads byte-equal",
-        "Tokens per second",
-        "Hardware"
+        "Every rank keeps a full Adam state and rank 0 broadcasts only the loss",
+        "It reduce-scatters averaged gradients, updates a local Adam shard, and all-gathers parameters",
+        "It shards activations but never synchronizes parameters",
+        "It averages checkpoint files instead of gradients"
       ],
       "correct": 1,
-      "explanation": "Each invariant catches a different composition bug: NaN catches divergence, norm-agree catches sync drift, memory catches sharding bugs, checkpoint catches write atomicity."
+      "explanation": "The stage-1 optimizer reduce-scatters flattened gradients, applies Adam to each rank's master/m/v shard, and all-gathers the updated master parameters back into the model."
     },
     {
       "stage": "check",
-      "question": "Why is the model a tiny GPT instead of an MLP?",
+      "question": "What happens at CHECKPOINT_STEP=10 in run_e2e?",
       "options": [
-        "Look fancy",
-        "GPT adds LayerNorm running statistics, embedding gradient shape, and softmax+cross-entropy edge cases that an MLP would hide",
-        "Faster",
-        "Required"
+        "Training stops permanently at step 10",
+        "Only rank 1 writes a local text log",
+        "Rank state is gathered to rank 0 and written through save_sharded",
+        "The optimizer state is discarded so the next run starts fresh"
       ],
-      "correct": 1,
-      "explanation": "MLP gradient sync was verified in lesson 77; the capstone needs a model with more edge cases to prove composition under realistic ops."
+      "correct": 2,
+      "explanation": "At the checkpoint step, the run gathers the distributed state needed for a resumable checkpoint on rank 0 and invokes the sharded checkpoint writer."
     },
     {
       "stage": "check",
-      "question": "What does self-terminating mean in this context?",
+      "question": "What does verify_resume compare after loading the saved checkpoint?",
       "options": [
-        "Process kills itself",
-        "Fixed step count (20), exit 0 on completion, no human in the loop; if any piece deadlocks the demo never returns and CI catches it",
-        "Crash recovery",
-        "Manual"
+        "Only the printed loss at the final step",
+        "The vocabulary size against the batch size",
+        "The number of worker processes against the number of layers",
+        "Saved optimizer master_shard tensors against the in-memory snapshots byte for byte"
       ],
-      "correct": 1,
-      "explanation": "A bounded run with exit 0 lets the test rig assert termination; while-True loops mask deadlocks."
+      "correct": 3,
+      "explanation": "The resume check loads the checkpoint and compares each saved master_shard tensor with the snapshot retained at checkpoint time, requiring byte equality."
     },
     {
       "stage": "post",
-      "question": "How does the demo combine DDP and ZeRO?",
+      "question": "What does the shard_bytes calculation count for each rank in this training demo?",
       "options": [
-        "Both at once",
-        "DDP-style broadcast at init for parameter sync, ZeRO-1's reduce_scatter+allgather replaces optimiser.step; DDP gradient allreduce is subsumed into ZeRO's reduce_scatter",
-        "DDP only",
-        "ZeRO only"
+        "Three fp32 arrays over one shard: master parameters, first moment, and second moment",
+        "Only the model's token embeddings",
+        "The full parameter vector in fp16 plus activations",
+        "One byte for each checkpoint metadata field"
       ],
-      "correct": 1,
-      "explanation": "ZeRO-1 owns the gradient sync via reduce_scatter, so DDP's separate allreduce is not needed; the broadcast at init is the only DDP-specific call that survives."
+      "correct": 0,
+      "explanation": "Each local optimizer shard stores master, m, and v as fp32 values. The reported memory is chunk_numel * 4 * 3, separate from model and activation memory."
     },
     {
       "stage": "post",
-      "question": "Why does production use wall-clock checkpoint cadence instead of step count?",
+      "question": "Which result invariant does the end-to-end demo check over its training history?",
       "options": [
-        "Looks cleaner",
-        "Step time varies with sequence length and microbatch count; a 10-minute cadence catches the same compute regardless of model size",
-        "Faster",
-        "Required by NCCL"
+        "There are exactly two loss values, both allowed to be NaN",
+        "There are 20 finite losses for the configured STEPS=20 run",
+        "Loss is constant because no optimizer step occurs",
+        "The loss list contains one value per vocabulary token"
       ],
       "correct": 1,
-      "explanation": "The lesson uses step-based for clarity; production runs typically save every 5-15 minutes of wall-clock."
+      "explanation": "The configured run performs 20 steps and the tests require a finite loss at each step. The history therefore has 20 usable values, even though loss need not decrease monotonically."
     }
   ]
 }

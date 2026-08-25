@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does ZeRO shard optimiser state first instead of parameters?",
+      "question": "What does this ZeRO-1 implementation shard across ranks?",
       "options": [
-        "Optimiser is more important",
-        "Optimiser state is the largest memory term and is only touched during the step, not forward or backward",
-        "Parameters are easier",
-        "DeepSpeed mandates it"
+        "The model parameters themselves, which are absent on non-owning ranks",
+        "Only the input batch, while optimizer state stays replicated",
+        "The fp32 master parameters and Adam m/v state; the full model parameters remain present",
+        "Activations only; all optimizer tensors remain full-sized"
       ],
-      "correct": 1,
-      "explanation": "For Adam in mixed precision the fp32 master plus two moments is 12P bytes per rank vs 4P for fp16 params + grads. Sharding the biggest term first wins the most memory per unit complexity."
+      "correct": 2,
+      "explanation": "This is optimizer-state sharding: every module still holds full model parameters, while each rank owns one shard of the fp32 master copy and Adam moments."
     },
     {
       "stage": "check",
-      "question": "What is the per-step wire pattern of ZeRO stage 1?",
+      "question": "For total=17, world_size=4, and rank=3, what does shard_bounds return?",
       "options": [
-        "One allreduce",
-        "One reduce_scatter on gradients plus one allgather on updated parameters",
-        "One broadcast",
-        "Nothing"
+        "(12, 17, 4)",
+        "(13, 17, 5)",
+        "(15, 20, 5)",
+        "(15, 17, 5)"
       ],
-      "correct": 1,
-      "explanation": "Reduce_scatter delivers each rank only its gradient shard; allgather distributes the updated parameter shards back. Total bytes equal allreduce, memory is divided by N."
+      "correct": 3,
+      "explanation": "The padded chunk size is ceil(17/4)=5. Rank 3 starts at 15 and has a logical end min(20,17)=17, so the tuple is (15,17,5)."
     },
     {
       "stage": "check",
-      "question": "Why is the per-step bandwidth the same as DDP?",
+      "question": "Which sequence describes ZeroOptimizer.step after gradients are available?",
       "options": [
-        "Magic",
-        "Allreduce equals reduce_scatter plus allgather in bandwidth; ZeRO splits that into two halves on different data",
-        "ZeRO uses compression",
-        "It is not the same"
+        "Reduce-scatter summed gradients, divide by world_size, update the local Adam shard, then all-gather parameters",
+        "All-gather parameters, update every full Adam state, then discard gradients",
+        "Update only rank 0 and broadcast its loss",
+        "Reduce-scatter parameters and never reconstruct the full model"
       ],
-      "correct": 1,
-      "explanation": "Ring allreduce is implemented as reduce_scatter then allgather. ZeRO does the same two operations but the allgather rotates the updated parameters, not the summed gradient."
+      "correct": 0,
+      "explanation": "The step flattens gradients, reduce-scatters their sums and averages, applies bias-corrected Adam to each local shard, then all-gathers master shards back into full parameters."
     },
     {
       "stage": "check",
-      "question": "For a 7B model with Adam in mixed precision on 8 ranks, what is the memory drop vs vanilla DDP?",
+      "question": "What is the role of padding in a non-divisible flattened parameter vector?",
       "options": [
-        "10%",
-        "Around 65% (vanilla 16P vs ZeRO-1 4P + 12P/N = 5.5P)",
-        "99%",
-        "0%"
+        "It changes the model's parameter count permanently",
+        "It makes equal communication chunks; the padded tail is removed when real parameters are scattered back",
+        "It drops the last real parameters to preserve equal chunks",
+        "It allows ranks to use different optimizer learning rates"
       ],
       "correct": 1,
-      "explanation": "Vanilla: 2P + 2P + 4P + 4P + 4P = 16P. ZeRO-1: 2P + 2P + (4P+4P+4P)/8 = 5.5P. Drop is (16-5.5)/16 = 65.6%."
+      "explanation": "Padding is only a communication layout convenience. The extra slots are zeros and are sliced away when the original-length parameter vector is reconstructed."
     },
     {
       "stage": "post",
-      "question": "What does ZeRO-2 add over ZeRO-1?",
+      "question": "For one rank's optimizer state, which storage is represented by shard_bytes?",
       "options": [
-        "Nothing",
-        "Also drops the non-shard gradients after reduce_scatter, freeing per-rank gradient memory; bandwidth stays the same",
-        "Switches backend to NCCL",
-        "Removes the optimiser"
+        "Only the model's fp16 activations",
+        "The full model parameter vector plus one gradient buffer",
+        "One fp32 master shard plus its Adam m and v shards",
+        "The complete master, m, and v vectors replicated on every rank"
       ],
-      "correct": 1,
-      "explanation": "ZeRO-2 zeroes the non-shard gradient portion after reduce_scatter; same bandwidth as ZeRO-1 but lower gradient memory."
+      "correct": 2,
+      "explanation": "The memory table counts three fp32 arrays for the local chunk: master parameters, first moment, and second moment. It does not claim that all optimizer state is local."
     },
     {
       "stage": "post",
-      "question": "Why does ZeRO require the optimiser state checkpoint to record which rank owns which shard?",
+      "question": "How does gather_flat_grads represent a parameter whose grad is None?",
       "options": [
-        "Cosmetic",
-        "Without per-rank ownership the saved state is unreadable at restart; resuming on the same world size needs to put the right shard back on the right rank",
-        "It does not",
-        "Compression"
+        "It skips the parameter and shifts every later offset",
+        "It raises because every parameter must receive a gradient",
+        "It copies the previous parameter's gradient",
+        "It inserts a zero tensor with the same shape before flattening"
       ],
-      "correct": 1,
-      "explanation": "Lesson 80 builds the sharded checkpoint manifest precisely so a ZeRO run can resume on the same topology."
+      "correct": 3,
+      "explanation": "A missing gradient contributes zeros of the parameter's shape, preserving a stable flat layout for reduce-scatter and later parameter updates."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Where do the three checkpoints sit in the request lifecycle?",
+      "question": "What does SafetyGate.handle do when the pre-generation detector is non-benign with confidence >= block_confidence (0.85)?",
       "options": [
-        "All three run after the model finishes",
-        "Pre-gen runs on the prompt before the model, during-gen filters the stream, post-gen runs on the completed output",
-        "All three run before the model is called",
-        "Only post-gen runs; pre-gen and during-gen are aliases"
+        "It returns block immediately with refusal text and no post-generation verdict",
+        "It streams the full response and relies only on the output classifier",
+        "It downgrades the request to a low-severity warning",
+        "It runs the rules fixer before deciding whether to block"
       ],
-      "correct": 1,
-      "explanation": "“Pre-gen runs on the prompt before the model, during-gen filters the stream, post-gen runs on the completed output” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The early branch returns a RequestTrace with final_action=block, refusal text, zero during chunks, and post_gen=None. This is an immediate pre-generation decision, not a universal safety guarantee."
     },
     {
       "stage": "check",
-      "question": "What is the goal of during-gen filtering?",
+      "question": "With the default buffer_cap=2, when does _during_gen emit a buffered chunk?",
       "options": [
-        "To translate the output to another language",
-        "To buffer chunks and terminate the stream early when a known harmful continuation appears, before the user sees it",
-        "To increase token throughput",
-        "To replace the prompt with a refusal"
+        "Only after the whole stream ends, regardless of buffer size",
+        "When a third chunk arrives, it emits the oldest chunk and scans the remaining window",
+        "Immediately on every chunk before pattern scanning",
+        "It never emits chunks until a termination pattern is found"
       ],
       "correct": 1,
-      "explanation": "“To buffer chunks and terminate the stream early when a known harmful continuation appears, before the user sees it” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
+      "explanation": "The method appends each chunk, and when len(buffer)>2 it pops and emits the oldest. It scans the joined current buffer for termination patterns, then flushes the remainder if not terminated."
     },
     {
       "stage": "check",
-      "question": "How does the aggregator decide the final action?",
+      "question": "What severity signal does an early during-generation termination contribute to _aggregate?",
       "options": [
-        "By averaging the confidences of every signal",
-        "By taking the maximum severity across detector, token-filter, classifier, and rules signals and mapping it to block, redact, warn, or allow",
-        "By calling the model a second time",
-        "By looking only at the rules engine"
+        "High, so every early stop is a hard block",
+        "None, because terminated output is excluded from the trace",
+        "Medium, which can make the final action redact unless a higher signal exists",
+        "Low only when the classifier also fires"
       ],
-      "correct": 1,
-      "explanation": "“By taking the maximum severity across detector, token-filter, classifier, and rules signals and mapping it to block, redact, warn, or allow” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
+      "correct": 2,
+      "explanation": "_aggregate appends a medium-ranked during signal when terminated_early is true. A high pre or post signal can still dominate it, but termination alone does not automatically mean block."
     },
     {
       "stage": "check",
-      "question": "Why does the gate emit a structured RequestTrace per request?",
+      "question": "How does _aggregate combine pre, during, and post signals into a final action?",
       "options": [
-        "To slow the system down",
-        "To give a reviewer a per-checkpoint audit trail so a regression in any layer can be traced to the right module",
-        "To replace logging",
-        "To replicate the trace into the prompt"
+        "It uses the earliest signal and ignores later severity",
+        "It averages numeric confidences and rounds to an action",
+        "It always prefers the classifier action over the rules engine",
+        "It takes the maximum severity: high→block, medium→redact, low→warn, and no signal→allow"
       ],
-      "correct": 1,
-      "explanation": "“To give a reviewer a per-checkpoint audit trail so a regression in any layer can be traced to the right module” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
+      "correct": 3,
+      "explanation": "Signals are ranked none/low/medium/high and the maximum rank drives the action mapping. This precedence composes independent detectors without claiming that any one gate proves safety."
     },
     {
       "stage": "post",
-      "question": "What happens when pre-gen confidence exceeds the block threshold?",
+      "question": "Which mock stream persona handles an input matching the encoding-trick lazy pattern?",
       "options": [
-        "The model is still called for completeness",
-        "The gate returns the policy refusal and skips during-gen and post-gen entirely",
-        "The gate raises an exception",
-        "The gate lowers the threshold and retries"
+        "attacker-lazy, which emits the scripted harmful continuation for the during-gen filter",
+        "attacker-honest, which emits a refusal and never streams harmful text",
+        "clean, which emits only the benign reply",
+        "taxonomy-only, which returns a fixture without any generated chunks"
       ],
-      "correct": 1,
-      "explanation": "“The gate returns the policy refusal and skips during-gen and post-gen entirely” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "mock_llm_stream._persona checks _LAZY_PATTERNS such as \"decode this base64\" and selects attacker-lazy. Calling stream directly then yields HARMFUL_CONTINUATION; SafetyGate may still pre-block the same prompt before it reaches the stream."
     },
     {
       "stage": "post",
-      "question": "Why does the demo intentionally let some encoding-trick prompts reach during-gen?",
+      "question": "What does RequestTrace preserve for later inspection of one gate decision?",
       "options": [
-        "Because encoding tricks are not real attacks",
-        "Because the input pipeline does not always normalize them in time; the during-gen filter is the defense in depth that catches the leaked continuation",
-        "Because the model refuses them anyway",
-        "Because the rules engine handles encoding"
+        "Only the final action string and a boolean pass/fail",
+        "Request ID/prompt, pre/during/post verdicts, final action/output, and latency",
+        "The model's hidden state and all user account credentials",
+        "Only the classifier's list of fired rules"
       ],
       "correct": 1,
-      "explanation": "“Because the input pipeline does not always normalize them in time; the during-gen filter is the defense in depth that catches the leaked continuation” matches the lesson’s treatment of Capstone 87 — End-to-End Safety Gate; the alternatives conflict with its definitions or workflow."
+      "explanation": "RequestTrace records the request_id and prompt, structured pre_gen and during_gen data, optional post_gen data, final action/output, and latency_ms. trace_to_dict serializes those fields for gate_trace.json."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does a perplexity of 1.0 imply about a language model on the test corpus?",
+      "question": "How does PerplexityResult.from_token_nll convert token negative log-likelihoods into perplexity?",
       "options": [
-        "The model's output distribution is exactly uniform over the entire vocabulary at every single position",
-        "The test corpus being scored contains zero tokens, making the perplexity calculation trivial",
-        "The model assigns probability 1 to every actual next token; on this corpus it is a perfect predictor",
-        "The model is broken and is producing invalid probability values outside the valid range"
-      ],
-      "correct": 2,
-      "explanation": "Perplexity equals exp(avg negative log-likelihood). When every token gets probability 1, the NLL is zero, and exp(0) is 1 — not uniformity, an empty corpus, or a broken model."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the harness require non-negative log-probabilities from the adapter?",
-      "options": [
-        "A negative log-probability value means the adapter sent log p instead of the required -log p",
-        "Perplexity is mathematically undefined whenever any of the input values happen to be negative numbers",
-        "The underlying numpy library raises an exception whenever it encounters a negative floating-point value",
-        "The bin edges used inside the expected-calibration-error computation assume every input is positive"
+        "It exponentiates total NLL divided by total token count",
+        "It averages the per-sequence perplexities without weighting tokens",
+        "It returns the largest NLL as the perplexity",
+        "It takes log of the mean token count"
       ],
       "correct": 0,
-      "explanation": "-log p of a probability is non-negative. A negative value is a contract violation that would silently give perplexity < 1, which is impossible."
+      "explanation": "The implementation sums NLL and token counts, computes average NLL = total_nll/total_tokens, and returns exp(average NLL)."
     },
     {
       "stage": "check",
-      "question": "What does expected calibration error measure?",
+      "question": "What does from_token_nll do if one negative log-likelihood is negative?",
       "options": [
-        "The mean absolute distance between each individual predicted label and its true label",
-        "The variance of the softmax output distribution across all predictions in the evaluation set",
-        "The cross-entropy loss computed between the predicted distribution and the true label distribution",
-        "The average gap between bin-level confidence and bin-level accuracy, weighted by bin size"
-      ],
-      "correct": 3,
-      "explanation": "ECE bins predictions by confidence, measures the gap between average confidence and average accuracy per bin, weights by bin size."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the implementation also return populated_bins alongside the ECE value?",
-      "options": [
-        "Reliability diagrams require the populated_bins count in order to be rendered at all",
-        "It signals when too few bins are populated for the single number to be trustworthy",
-        "populated_bins forms the denominator used when computing the separate Brier score value",
-        "The numpy library needs the populated_bins count internally to run its computations"
+        "Clips it to zero and continues",
+        "Raises ValueError because NLL values must be non-negative",
+        "Marks only that sequence as missing",
+        "Returns perplexity below one"
       ],
       "correct": 1,
-      "explanation": "With few populated bins the ECE is dominated by noise. Reporting the populated count lets the runner refuse to publish a misleading single number."
+      "explanation": "The validation loop rejects nll < 0 with ValueError and explains that the caller may have forgotten the negation."
     },
     {
-      "stage": "post",
-      "question": "What does Brier score capture that ECE does not?",
+      "stage": "check",
+      "question": "How does expected_calibration_error weight a populated bin?",
       "options": [
-        "It penalises local miscalibration directly, since it is the per-prediction squared error",
-        "Brier score is simply faster to compute than ECE across a large evaluation set",
-        "Brier score can be computed without any ground-truth labels ever being available at all for scoring",
-        "Brier score only produces a meaningful result on strictly binary classification outcomes"
+        "By the bin width alone",
+        "By the largest confidence in the bin",
+        "By bin population divided by the total sample count",
+        "Every bin contributes equally, even when empty"
       ],
-      "correct": 0,
-      "explanation": "ECE only looks at averages per bin. Brier squares the error per prediction, so it catches the case where bins cancel out on average but are individually miscalibrated."
+      "correct": 2,
+      "explanation": "For each populated bin, ECE adds (bin_size/n) times the absolute difference between mean confidence and mean accuracy. Empty bins contribute nothing."
     },
     {
-      "stage": "post",
-      "question": "Why is calibration a per-model report rather than a per-task metric?",
+      "stage": "check",
+      "question": "With bins=10, which bin receives a confidence of exactly 1.0?",
       "options": [
-        "Individual tasks in this harness do not carry probability values attached to their predictions at all",
-        "Computing calibration statistics is simply too slow to run separately for every individual task",
-        "Expected calibration error requires the runner to know the internal architecture of the model being scored",
-        "Single tasks have too few predictions to estimate bin statistics; the eval aggregates across all tasks"
+        "Bin 0, because search starts at the lower edge",
+        "Bin 9 only if another sample is already there",
+        "No bin, because 1.0 is outside the open intervals",
+        "The final bin (index 9), after searchsorted indices are clipped"
       ],
       "correct": 3,
-      "explanation": "Per-task calibration is dominated by noise. The runner pools confidence/correctness pairs across all tasks before computing ECE, Brier, and the reliability diagram."
+      "explanation": "searchsorted(..., side=\"right\") would produce the upper-edge index, and _bin_indices clips it to n_bins - 1, so confidence 1.0 belongs to bin 9."
+    },
+    {
+      "stage": "post",
+      "question": "What is brier_score([1.0, 0.0], [1, 0])?",
+      "options": [
+        "0.0, because both confidence values match correctness",
+        "0.5, the mean of the two confidence values",
+        "1.0, because both examples are at an endpoint",
+        "It raises because correct must be floating point"
+      ],
+      "correct": 0,
+      "explanation": "Brier score is the mean squared error between confidence and the 0/1 correctness labels. Both squared errors are zero."
+    },
+    {
+      "stage": "post",
+      "question": "What does from_token_nll return when all token_counts sum to zero?",
+      "options": [
+        "Perplexity 0 and average NLL NaN",
+        "Perplexity NaN, average NLL 0.0, and total_tokens 0",
+        "ValueError because an empty corpus cannot be represented",
+        "Perplexity 1 and average NLL 1"
+      ],
+      "correct": 1,
+      "explanation": "The explicit zero-token branch avoids division by zero and returns float('nan') for perplexity, 0.0 for average NLL, and zero total tokens."
     }
   ]
 }

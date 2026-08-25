@@ -1,83 +1,76 @@
 # Data Management
 
-> Data is the fuel. How you manage it determines how fast you go.
+> Make dataset identity, format, split, and cache decisions reproducible before training starts.
 
 **Type:** Build
 **Languages:** Python
-**Language:** Python
 **Prerequisites:** Phase 0, Lesson 01
 **Time:** ~45 minutes
 
 ## Learning Objectives
 
-- Load, stream, and cache datasets using the Hugging Face `datasets` library
-- Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs
-- Create reproducible train/validation/test splits with fixed random seeds
-- Manage large model and dataset files using `.gitignore`, Git LFS, or DVC
+- Load and inspect the `cornell-movie-review-data/rotten_tomatoes` training split with `load_and_inspect`.
+- Stream a bounded number of rows with `stream_dataset` instead of materializing the whole split.
+- Convert a Dataset to CSV, JSON, and Parquet and compare the files created by `convert_format`.
+- Create train/validation/test subsets with `make_splits` and a fixed seed, then verify their row counts.
+- Record a dataset fingerprint and cache summary without treating either as a semantic data-quality audit.
 
-## The Problem
+## What the utility actually does
 
-Every AI project starts with data. You need to find datasets, download them, convert between formats, split them for training and evaluation, and version them so experiments are reproducible. Doing this manually every time is slow and error-prone. You need a repeatable workflow.
-
-## The Concept
+`code/data_utils.py` is an integration utility around the Hugging Face `datasets` and `huggingface_hub` APIs. It is not a local synthetic-data demo: the canonical path contacts the Hub, writes `/tmp/data_utils_demo`, downloads `config.json` for `sentence-transformers/all-MiniLM-L6-v2`, and inspects the local cache. The repository's dependency allowlist is intentionally stdlib-first and does not include these two external packages; the standard test harness may therefore skip this lesson. Do not install extra dependencies merely to make a local check green.
 
 ```mermaid
-graph TD
-    A["Hugging Face Hub"] --> B["datasets library"]
-    B --> C["Load / Stream"]
-    C --> D["Local Cache<br/>~/.cache/huggingface/"]
-    B --> E["Format Conversion<br/>CSV, JSON, Parquet, Arrow"]
-    E --> F["Data Splits<br/>train / val / test"]
-    F --> G["Your Training Pipeline"]
+flowchart LR
+    H[Hub dataset] --> L[load_and_inspect]
+    H --> S[stream_dataset]
+    L --> F[CSV / JSON / Parquet]
+    L --> P[make_splits seed=42]
+    L --> D[fingerprint first rows]
+    C[Local cache] --> Q[cache_summary]
 ```
-
-The Hugging Face `datasets` library is the standard way to load data for AI work. It handles downloading, caching, format conversion, and streaming out of the box.
-
-
-
-## Ship It
-
-This lesson produces:
-- `code/data_utils.py` - reusable data loading and caching utility
-- `outputs/prompt-data-helper.md` - prompt for finding the right dataset for a task
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Dataset split | "Training data" | A named subset (train/val/test) used at different stages of the ML lifecycle |
-| Streaming | "Load it lazily" | Processing data row by row from a remote source without downloading the full dataset |
-| Parquet | "Compressed CSV" | A columnar file format optimized for analytical queries and storage efficiency |
-| Arrow | "Fast dataframe" | An in-memory columnar format used internally by the datasets library for zero-copy reads |
-| Git LFS | "Git for big files" | An extension that stores large files outside the git repo while keeping pointers in version control |
-| DVC | "Git for data" | A version control system for datasets and models that integrates with cloud storage |
-| Cache | "Already downloaded" | A local copy of previously fetched data, stored at ~/.cache/huggingface/ by default |
 
 ## Build It
 
-Reconstruct **Data Management** by following `load_and_inspect` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+When the two external APIs are already available and network access is intentional, run:
+
+```bash
+cd phases/00-setup-and-tooling/09-data-management
+python3 code/main.py
+```
+
+The sequence is explicit in `data_utils.py`: load the Rotten Tomatoes `train` split; stream three rows; select the first 500 rows; write three files under `/tmp/data_utils_demo`; split those 500 rows with `train_ratio=0.8`, `val_ratio=0.1`, and `seed=42`; reload the Parquet file; download the model config; fingerprint the first 100 rows; and report cache size. The split should be approximately 400/50/50 for 500 rows; record the actual counts because rounding belongs to the library.
+
+If the imports are unavailable, the program prints an installation message and exits before any dataset operation. If the Hub or network is unavailable, preserve the actual error instead of inventing rows or file sizes. This failure is an integration precondition, not evidence that the split logic is wrong.
 
 ## Use It
 
-Call `load_and_inspect` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+The helper contracts are usable independently once the external APIs are present:
+
+- `load_and_inspect(name, config=None, split="train")` prints row count, column names, features, and the first row.
+- `stream_dataset(name, config=None, max_rows=5)` returns at most `max_rows` dictionaries.
+- `convert_format(ds, output_dir, name)` writes `.csv`, `.json`, and `.parquet` and returns their paths.
+- `make_splits(ds, train_ratio, val_ratio, seed)` rejects ratios whose sum leaves no test data and returns three Dataset objects.
+- `fingerprint(ds, num_rows=100)` hashes a JSON serialization of the first `min(num_rows, len(ds))` rows and returns the first 16 hexadecimal characters.
+
+The code uses the default Hugging Face cache path `~/.cache/huggingface/datasets`. A fingerprint detects a changed sampled representation; it does not prove that labels are correct or that two datasets are statistically equivalent.
+
+## Ship It
+
+[`outputs/prompt-data-helper.md`](../outputs/prompt-data-helper.md) is the reusable artifact. When adapting it, retain the dataset ID, config, split, intended row budget, and authentication/network preconditions. Ask for a real Hub lookup before recommending an ID; the prompt's examples are suggestions, not outputs generated by this lesson.
 
 ## Exercises
 
-Keep two runs side by side for **Data Management**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `load_and_inspect`, `stream_dataset`, `convert_format`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Load, stream, and cache datasets using the Hugging Face `datasets` library**.
-2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Create reproducible train/validation/test splits with fixed random seeds** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-data-helper.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Manage large model and dataset files using `.gitignore`, Git LFS, or DVC**; note what the demo cannot establish.
+1. Run the canonical command only if the external packages and network are available. Record whether the first failure is import, Hub access, or a later conversion step.
+2. For the 500-row sample, verify the actual train/validation/test counts and rerun `make_splits` with seed 42. Compare the selected row identities, not just the counts.
+3. Inspect the three files under `/tmp/data_utils_demo`. Compare their byte sizes and reload the Parquet file with `load_from_parquet`; quote the returned column names.
+4. Compute a fingerprint twice with `num_rows=100`, then change one sampled row in a disposable Dataset and compute it again. Add the observed hashes and the limitation of this check to the artifact.
 
 ## Reference Solution
 
-A checkable result for **Data Management** should contain:
+A successful integration run reports the named dataset and `train` split, streams exactly three rows, writes all three formats, and produces actual split counts and a 16-character fingerprint. The acceptance record includes the seed and paths, but does not claim a fixed byte ratio or a clean cache without observing them. In an environment lacking the external APIs, the correct solution is a documented skip with the printed precondition; no fabricated data or dependency installation is required.
 
-- the `python3 main.py` output for x=0.5 with the demo defaults, with `load_and_inspect`, `stream_dataset`, `convert_format` traced to the value or shape that supports **Load, stream, and cache datasets using the Hugging Face `datasets` library**;
-- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs**;
-- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Create reproducible train/validation/test splits with fixed random seeds**; and
-- an updated `outputs/prompt-data-helper.md` example with a concrete input, expected output field, and acceptance check tied to **Manage large model and dataset files using `.gitignore`, Git LFS, or DVC**.
+Run the lesson tests from `code/` when their dependency policy permits it:
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```

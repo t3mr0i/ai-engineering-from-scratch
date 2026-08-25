@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why run output-side classifiers if the input was already checked?",
+      "question": "How does ToxicityClassifier classify one non-negated toxicity hit?",
       "options": [
-        "To make the system slower on purpose",
-        "Because any input bypass produces an output the user will see, and the output is the last place to catch it",
-        "Because input classifiers are deprecated",
-        "Because the standard library requires both"
+        "low severity with score 0.6",
+        "medium severity with score 0.8",
+        "high severity with score 1.0",
+        "none severity because a single term is ignored"
       ],
-      "correct": 1,
-      "explanation": "“Because any input bypass produces an output the user will see, and the output is the last place to catch it” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The classifier counts non-negated toxicity terms. One hit maps to low/0.6; two hits map to medium/0.8 and three or more to high/1.0."
     },
     {
       "stage": "check",
-      "question": "Which three classifiers are wired in this lesson?",
+      "question": "Which PII example reaches high severity in the local classifier?",
       "options": [
-        "Sentiment, language, length",
-        "Toxicity, PII, instruction-leakage",
-        "OCR, ASR, TTS",
-        "Quality, factuality, citation"
+        "An invalid 12-digit card-like string",
+        "A valid Luhn-checked 16-digit card number such as 4111 1111 1111 1111",
+        "A single ordinary word with no PII pattern",
+        "A phone number after it has been redacted"
       ],
       "correct": 1,
-      "explanation": "“Toxicity, PII, instruction-leakage” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
+      "explanation": "Card detection requires 13–19 digits and a valid Luhn checksum; a valid card or an SSN is high severity. An invalid card-like string is not accepted as a card finding."
     },
     {
       "stage": "check",
-      "question": "What does the router do when one verdict is high and another is medium?",
+      "question": "What severity progression does ToxicityClassifier use as non-negated term hits accumulate?",
       "options": [
-        "Run only the medium action",
-        "Run both actions in sequence",
-        "Take the maximum severity and apply that action; block dominates redact",
-        "Drop both verdicts and ship the original"
+        "One hit high, two hits low, three hits none",
+        "All positive counts remain low because severity is binary",
+        "One hit low, two hits medium, three or more hits high",
+        "One hit medium, two hits high, three hits rejected"
       ],
       "correct": 2,
-      "explanation": "“Take the maximum severity and apply that action; block dominates redact” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
+      "explanation": "The implementation maps counts 1, 2, and >=3 to low/0.6, medium/0.8, and high/1.0 respectively. Negation within the configured window suppresses a term hit."
     },
     {
       "stage": "check",
-      "question": "Why is a Luhn check used inside the PII classifier?",
+      "question": "What action does Router.decide choose for its highest classifier severity?",
       "options": [
-        "To translate digits into letters",
-        "To distinguish credit-card shaped digit runs from arbitrary digit sequences with low false positives",
-        "To compute the SSN",
-        "To compress the regex"
+        "high→warn, medium→log, low→redact, none→block",
+        "It always returns log and leaves output unchanged",
+        "It selects the first classifier's severity, regardless of the others",
+        "high→block, medium→redact, low→warn, none→log"
       ],
-      "correct": 1,
-      "explanation": "“To distinguish credit-card shaped digit runs from arbitrary digit sequences with low false positives” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
+      "correct": 3,
+      "explanation": "Router orders severities none < low < medium < high. The maximum drives block, redact, warn, or log, while metadata still records every verdict."
     },
     {
       "stage": "post",
-      "question": "How does the instruction-leakage classifier decide?",
+      "question": "What similarity thresholds does InstructionLeakageClassifier use for high and medium severity?",
       "options": [
-        "By detecting curly braces in the output",
-        "By computing trigram cosine between the output and a known system prompt, with a threshold",
-        "By calling another model",
-        "By counting tokens"
+        "At least 0.85 is high; at least 0.70 but below 0.85 is medium",
+        "At least 0.55 is high; below 0.55 is medium",
+        "Only exact text matches can be high",
+        "Every nonempty response is high severity"
       ],
-      "correct": 1,
-      "explanation": "“By computing trigram cosine between the output and a known system prompt, with a threshold” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The classifier first requires similarity >=0.55. It labels scores >=0.85 high, scores >=0.70 below that high threshold medium, and lower matches low."
     },
     {
       "stage": "post",
-      "question": "Why does the toxicity classifier check for negation in a small left window?",
+      "question": "When Router chooses medium severity, which text transformations does it apply?",
       "options": [
-        "To slow the regex down",
-        "To skip matches like 'you are not stupid' so the classifier does not over-redact common reassurances",
-        "To increase the false-positive rate",
-        "Because negation is required by Unicode"
+        "Only the highest-scoring classifier's redactor",
+        "Each fired classifier's redactor, in classifier order",
+        "No redaction; medium is only a log label",
+        "A random redactor selected from the three classifiers"
       ],
       "correct": 1,
-      "explanation": "“To skip matches like 'you are not stupid' so the classifier does not over-redact common reassurances” matches the lesson’s treatment of Capstone 85 — Content Classifier Integration; the alternatives conflict with its definitions or workflow."
+      "explanation": "_apply_redactors walks configured classifiers and applies the redactor for every verdict whose severity is not none. This can remove multiple kinds of findings before returning the medium action."
     }
   ]
 }

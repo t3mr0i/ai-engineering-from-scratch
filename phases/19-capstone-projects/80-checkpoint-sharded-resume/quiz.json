@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is gather-then-write the wrong checkpoint pattern at scale?",
+      "question": "In what order does save_sharded publish a checkpoint?",
       "options": [
-        "It looks ugly",
-        "All state passes through rank 0; write bandwidth is the slowest single link, not the aggregate, so a TB-scale write takes hours",
-        "It uses too much CPU",
-        "It needs special hardware"
+        "It writes directly to the manifest and then fills shard files",
+        "It deletes the old checkpoint before any temporary file is synced",
+        "It fsyncs temporary shards, replaces shard files, then atomically replaces the manifest last",
+        "It writes only rank 0's shard and derives other paths during load"
       ],
-      "correct": 1,
-      "explanation": "Sharded write scales with cluster size: 64 ranks writing in parallel finish in 1/64 the time of one rank writing the gathered state."
+      "correct": 2,
+      "explanation": "Each rank first writes and fsyncs a .tmp shard. After replacement, the manifest is written, fsynced, and os.replace publishes it last, so a visible manifest describes completed shard files."
     },
     {
       "stage": "check",
-      "question": "What does the manifest record that the shard files cannot?",
+      "question": "What does load_sharded do when the manifest world_size differs from the requested world_size?",
       "options": [
-        "Random numbers",
-        "world_size, schema version, per-shard sha256, and shard ownership; gives the loader a contract to validate before touching state",
-        "Filesystem name",
-        "Hostname"
+        "It silently maps the old shards onto the new ranks",
+        "It pads missing ranks with zero tensors",
+        "It loads only rank 0 and ignores the mismatch",
+        "It raises CheckpointError before returning per-rank state"
       ],
-      "correct": 1,
-      "explanation": "Without the manifest the loader has to guess which shard belongs to which rank and trust the file count is right."
+      "correct": 3,
+      "explanation": "World size is part of the checkpoint contract. load_sharded validates it, along with schema and shard metadata, and rejects a mismatch rather than guessing a remapping."
     },
     {
       "stage": "check",
-      "question": "Why write to <name>.tmp and rename instead of writing directly?",
+      "question": "What does a SHA-256 mismatch tell load_sharded about a shard file?",
       "options": [
-        "Faster",
-        "POSIX rename within a filesystem is atomic: a crash mid-write leaves the previous file untouched. Direct writes can leave half-finished checkpoints that poison the next resume",
-        "Required by torch",
-        "Saves memory"
+        "The file was altered or corrupted after the manifest was written, so loading fails",
+        "The loader should recalculate and accept the new digest",
+        "Only the shard's wall-clock metadata is stale",
+        "The file is valid as long as its size is unchanged"
       ],
-      "correct": 1,
-      "explanation": "Without atomic write a partial save plus an updated manifest pointing at it corrupts state on the next load."
+      "correct": 0,
+      "explanation": "The manifest records each shard digest. load_sharded hashes the bytes and raises when the digest differs, catching tampering or corruption rather than silently resuming."
     },
     {
       "stage": "check",
-      "question": "What does sha256 per shard defend against?",
+      "question": "Which path is rejected by the checkpoint loader's shard-path validation?",
       "options": [
-        "Network attacks",
-        "Partial or corrupted writes; verifying the hash on load catches truncated shards before they touch model state",
-        "Slowdown",
-        "Memory leak"
+        "A simple relative name such as rank0.bin",
+        "An absolute path or a name containing a path separator or '..' component",
+        "A file whose digest matches the manifest",
+        "A rank number that is present exactly once"
       ],
       "correct": 1,
-      "explanation": "Without sha256 verification a truncated shard loads silently and corrupts the optimiser, surfacing later as NaN loss."
+      "explanation": "Shard names must be safe simple relative paths. Absolute names, separators, empty names, '.' and '..' are rejected before resolution to prevent escaping the checkpoint directory."
     },
     {
       "stage": "post",
-      "question": "Why does the load path reject a world_size mismatch loudly?",
+      "question": "If seven step directories exist and rotate_checkpoints(parent, keep_last=3) runs, how many are removed?",
       "options": [
-        "Cosmetic",
-        "Resuming a 4-rank shard layout on 8 ranks silently misassigns shards; loud rejection forces the operator to use the cross-world-size rebalance path",
-        "Easier to code",
-        "Hardware needs it"
+        "7, because rotation always starts from an empty directory",
+        "3, leaving four for a safety margin",
+        "4, leaving the three newest directories",
+        "0, because keep_last is advisory only"
       ],
-      "correct": 1,
-      "explanation": "The cross-world-size rebalance is a separate operation; silently splicing wrong sized shards corrupts state."
+      "correct": 2,
+      "explanation": "The function sorts checkpoint directories and keeps the newest three. The older seven-minus-three = four directories are removed."
     },
     {
       "stage": "post",
-      "question": "Why does production rotate checkpoints (keep last K)?",
+      "question": "Which fields identify the on-disk format in ShardManifest?",
       "options": [
-        "Aesthetic",
-        "Without rotation the disk fills mid-run and the next checkpoint fails; rotation deletes the oldest before writing the new one, bounding disk usage",
-        "Compression",
-        "It does not"
+        "Only step and wall_clock_seconds",
+        "Model ID, task ID, and metric name",
+        "Rank, stdout, and exit code",
+        "world_size, step, wall_clock_seconds, shards, and schema_version=1"
       ],
-      "correct": 1,
-      "explanation": "Real runs keep 3-5 recent checkpoints; the oldest is dropped before each new save so the disk budget is fixed."
+      "correct": 3,
+      "explanation": "The manifest serializes the checkpoint contract: world size and step, timing metadata, the ShardEntry list, and schema_version 1 for format validation."
     }
   ]
 }

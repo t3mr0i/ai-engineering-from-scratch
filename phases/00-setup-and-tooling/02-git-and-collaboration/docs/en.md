@@ -1,6 +1,6 @@
 # Git & Collaboration
 
-> Version control is not optional. Every experiment, every model, every lesson you build here gets tracked.
+> Use small, inspectable commits to make experiments reversible.
 
 **Type:** Learn
 **Languages:** None
@@ -9,76 +9,81 @@
 
 ## Learning Objectives
 
-- Configure git identity and use the daily workflow of add, commit, and push
-- Create and merge branches for isolated experiments without breaking main
-- Write a `.gitignore` that excludes model checkpoints and large binary files
-- Navigate the commit history with `git log` to understand project evolution
+- Configure a repository-local Git identity and verify it with `git config`.
+- Create a branch for an experiment and merge it back into a local `main` branch.
+- Write ignore rules for model checkpoints and other generated files without hiding source code.
+- Inspect commits with `git log --oneline --decorate --graph` and explain what changed.
+- Push a branch only after checking its status and reviewing the staged diff.
 
-## The Problem
+## Why this lesson exists
 
-You're about to write hundreds of code files across 20 phases. Without version control you will lose work, break things you can't undo, and have no way to collaborate with others.
+The course notebook is the lesson artifact here: there is no `code/main.*` entrypoint. The notebook walks through identity configuration, a daily add/commit/push cycle, and a branch named `experiment/new-optimizer`. It also includes a course-repository workflow that creates a personal progress branch. The exercises should be performed in a disposable repository or a branch you own, not by rewriting the course history.
 
-Git is the tool. GitHub is where the code lives. This lesson covers what you need for this course and nothing more.
-
-## The Concept
+## The collaboration model
 
 ```mermaid
 sequenceDiagram
-    participant WD as Working Directory
-    participant SA as Staging Area
-    participant LR as Local Repo
-    participant R as Remote (GitHub)
-    WD->>SA: git add
-    SA->>LR: git commit
-    LR->>R: git push
-    R->>LR: git fetch
-    LR->>WD: git pull
+    participant W as Working tree
+    participant S as Staging area
+    participant L as Local branch
+    participant R as Remote
+    W->>S: git add
+    S->>L: git commit
+    L->>R: git push
+    R->>L: git fetch / git pull
 ```
 
-Three things to remember:
-1. Save often (`git commit`)
-2. Push to remote (`git push`)
-3. Branch for experiments (`git checkout -b experiment`)
-
-
-## Use It
-
-For this course, you need exactly these commands:
-
-| Command | When |
-|---------|------|
-| `git clone` | Get the course repo |
-| `git add` + `git commit` | Save your work |
-| `git push` | Back it up to GitHub |
-| `git checkout -b` | Try something without breaking main |
-| `git log --oneline` | See what you've done |
-
-That's it. You don't need rebase, cherry-pick, or submodules for this course.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Commit | "Saving" | A snapshot of your entire project at a point in time |
-| Branch | "A copy" | A pointer to a commit that moves forward as you work |
-| Merge | "Combining code" | Taking changes from one branch and applying them to another |
-| Remote | "The cloud" | A copy of your repo hosted somewhere else (GitHub, GitLab) |
+A commit is a snapshot; a branch is a movable name for a line of commits; a remote is another copy reachable through a configured URL. `git status` and `git diff --staged` are the evidence that tells you what will be committed.
 
 ## Build It
 
-Reconstruct **Git & Collaboration** by following `main` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+Open `docs/notebook/lesson.ipynb` and execute its shell snippets one command at a time in a temporary directory:
+
+```bash
+tmp_dir=$(mktemp -d)
+cd "$tmp_dir"
+git init
+git branch -M main
+git config user.name "Lesson User"
+git config user.email "lesson@example.invalid"
+printf '%s\n' '# experiment' > README.md
+git add README.md
+git commit -m "Create experiment"
+git checkout -b experiment/new-optimizer
+printf '%s\n' 'optimizer=baseline' > config.txt
+git add config.txt
+git commit -m "Record optimizer choice"
+git checkout main
+git merge --ff-only experiment/new-optimizer
+git log --oneline --decorate --graph --all
+```
+
+The local identity avoids changing global user settings. The final log should show both commits reachable from `main`. If the merge is not fast-forwardable in a different experiment, stop and inspect the conflict instead of deleting work.
+
+## Use It
+
+Before committing a model run, create a `.gitignore` entry such as:
+
+```text
+*.pt
+*.pth
+*.safetensors
+checkpoints/
+```
+
+Check the rule with `git status --ignored`; keep code, configuration, and small evaluation fixtures visible. The notebook's daily sequence is `git status`, `git add`, `git commit`, and `git push origin <branch>`. `git checkout -b my-progress` creates an isolated progress branch; it does not publish it until a push is requested.
 
 ## Ship It
 
-Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+[`outputs/artifact-card.md`](../outputs/artifact-card.md) is the reusable decision card. Fill it with the repository path, the branch name, the commit shown by `git log`, the ignore rules tested, and the review command used before a push. It is a checklist, not a substitute for a remote backup.
 
 ## Exercises
 
-1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Configure git identity and use the daily workflow of add, commit, and push.
-2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Create and merge branches for isolated experiments without breaking main.
-3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Write a `.gitignore` that excludes model checkpoints and large binary files.
+1. Repeat the temporary-repository run and change one file on the experiment branch. Use `git diff --staged` to show exactly what the commit will contain.
+2. Add a `.pt` file and a source file, then confirm that only the checkpoint is ignored. Remove the temporary directory by its explicit path when finished.
+3. In a fresh temporary repository, create the experiment branch after a base commit. Make one commit on `main` and a different-file commit on `experiment/new-optimizer` before the first merge. Inspect the diverged graph, then merge with `git merge --no-ff experiment/new-optimizer` and record why the histories can combine without a content conflict.
+4. Read the last three commits with `git log --oneline --decorate --graph` and write one sentence describing the parent of each commit.
 
 ## Reference Solution
 
-A complete response first demonstrates “Configure git identity and use the daily workflow of add, commit, and push” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Create and merge branches for isolated experiments without breaking main.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Write a `.gitignore` that excludes model checkpoints and large binary files.” Unsupported preference statements are not sufficient.
+The expected evidence is a repository-local identity, two named branches, visible commits, and an ignore rule that hides checkpoints but not source. For the divergence exercise, `main` and `experiment/new-optimizer` each have a commit after their common base; changing different files lets `git merge --no-ff` create a merge commit without a content conflict. A correct handoff includes `git status`, the staged diff, the commit IDs, and the branch that would be pushed. No global configuration, force push, rebase, or deletion of unrelated history is required for this lesson.
