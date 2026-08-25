@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Roughly how long does a cold start typically take for a 70B model on a fresh node without mitigations?",
+      "question": "What raw cold-start total does total_for_stack compute for the five PHASES_70B entries?",
       "options": [
-        "Over 1 hour",
-        "30-60 seconds",
-        "3-8 minutes",
-        "Under 10 seconds"
-      ],
-      "correct": 2,
-      "explanation": "“3-8 minutes” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which AWS-side feature does the lesson recommend for pre-seeding container images so step-2 image pull disappears?",
-      "options": [
-        "Bottlerocket dual-volume architecture referenced from EC2NodeClass",
-        "ECS task definitions",
-        "Spot fleet placement",
-        "EBS volume snapshots only"
+        "328 seconds",
+        "180 seconds",
+        "75 seconds",
+        "50 seconds"
       ],
       "correct": 0,
-      "explanation": "“Bottlerocket dual-volume architecture referenced from EC2NodeClass” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
+      "explanation": "The RAW path sums 50 + 180 + 75 + 20 + 3 = 328 seconds across node, image, HBM load, engine init, and first forward."
     },
     {
       "stage": "check",
-      "question": "Which Modal feature provides the closest thing to a \"warm GPU boot in seconds\" by deserializing post-load state directly into HBM?",
+      "question": "Which phase does pre_seeded eliminate in the local stack model?",
       "options": [
-        "Tiered NVMe-to-DRAM loading",
-        "Live migration",
-        "GPU memory snapshots (checkpoints)",
-        "Run:ai Model Streamer"
+        "Node provision",
+        "Image pull",
+        "Engine initialization",
+        "The first forward"
+      ],
+      "correct": 1,
+      "explanation": "The image pull row has pre_seeded_sec=0; the node, weight, engine, and first-forward phases still retain their pre-seeded values."
+    },
+    {
+      "stage": "check",
+      "question": "What does the streamer option change for the weights-to-HBM phase?",
+      "options": [
+        "It raises 75 seconds to 180 seconds",
+        "It removes the node-provision phase",
+        "It replaces 75 seconds with 35 seconds",
+        "It replaces all phases with a 0.5-second snapshot"
       ],
       "correct": 2,
-      "explanation": "“GPU memory snapshots (checkpoints)” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
+      "explanation": "For weights to HBM, streamer_sec is 35 rather than the raw 75; other phases use their raw or pre-seeded values depending on the stack."
     },
     {
       "stage": "check",
-      "question": "Why does live migration transfer input tokens rather than KV cache between nodes?",
+      "question": "What total does the GPU_SNAPSHOT stack produce from the phase table?",
       "options": [
-        "Live migration is required by GDPR",
-        "Input tokens have larger entropy",
-        "KV cache is encrypted and cannot move",
-        "Recomputing KV on the destination is cheaper than transferring GB of KV cache over the network"
+        "328 seconds",
+        "148 seconds",
+        "35 seconds",
+        "3 seconds"
       ],
       "correct": 3,
-      "explanation": "“Recomputing KV on the destination is cheaper than transferring GB of KV cache over the network” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
+      "explanation": "The snapshot values sum to 0.5 + 0 + 0 + 2 + 0.5 = 3 seconds, replacing the raw phase times."
     },
     {
       "stage": "post",
-      "question": "Which serverless layer trades direct GPU cost for predictable readiness by keeping at least one replica live?",
+      "question": "What is the main warm-pool trade-off for an interactive path?",
       "options": [
-        "Warm pool with min_workers >= 1",
-        "Tiered loading",
-        "Bottlerocket pre-seeding",
-        "Live migration"
+        "Pay for an idle GPU so the warm path avoids cold-start latency",
+        "Trade a larger model for a smaller tokenizer",
+        "Use scale-to-zero and guarantee no first-request delay",
+        "Move KV cache to a cheaper region"
       ],
       "correct": 0,
-      "explanation": "“Warm pool with min_workers >= 1” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
+      "explanation": "min_workers=1 avoids the cold start on the warm path but carries a 24×7 GPU rental; the lesson recommends it for latency-sensitive chat or voice."
     },
     {
       "stage": "post",
-      "question": "Why does the lesson say cold-start mitigation must be stacked across layers rather than picked as a single tool?",
+      "question": "Why does live migration transfer input tokens rather than a full KV cache?",
       "options": [
-        "No single layer eliminates every step (node provision, image pull, weights load, engine init); stacking layers compresses each step",
-        "It is a regulatory requirement",
-        "Modal owns the entire stack",
-        "All five layers are bundled in vLLM"
+        "Input tokens are larger than KV tensors",
+        "Tokens are KB-scale; the destination recomputes the much larger GB-scale KV state",
+        "KV caches contain no model information",
+        "The engine only supports images as migration data"
       ],
-      "correct": 0,
-      "explanation": "“No single layer eliminates every step (node provision, image pull, weights load, engine init); stacking layers compresses each step” matches the lesson’s treatment of Cold Start Mitigation for Serverless LLMs; the alternatives conflict with its definitions or workflow."
+      "correct": 1,
+      "explanation": "The lesson's design transfers a compact token sequence and pays recomputation, avoiding network movement of a GB-scale KV cache."
     }
   ]
 }

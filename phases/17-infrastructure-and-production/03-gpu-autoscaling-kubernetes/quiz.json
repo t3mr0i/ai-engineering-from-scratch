@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which signal does HPA typically scale on by default that the lesson calls broken for vLLM-style serving?",
+      "question": "Which signal does the QUEUE_DEPTH strategy inspect when deciding to add replicas?",
       "options": [
-        "Queue depth",
-        "P99 TTFT",
-        "KV cache utilization",
-        "DCGM_FI_DEV_GPU_UTIL duty cycle"
-      ],
-      "correct": 3,
-      "explanation": "“DCGM_FI_DEV_GPU_UTIL duty cycle” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which problem does gang scheduling in KAI Scheduler primarily prevent?",
-      "options": [
-        "GPU memory fragmentation",
-        "Tokenizer GIL contention",
-        "The partial-allocation trap where 7 of 8 GPUs sit idle waiting on the eighth",
-        "Cold-start latency"
-      ],
-      "correct": 2,
-      "explanation": "“The partial-allocation trap where 7 of 8 GPUs sit idle waiting on the eighth” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why is Karpenter's default consolidationPolicy WhenEmptyOrUnderutilized dangerous for inference GPU pools?",
-      "options": [
-        "It refuses to scale up under burst",
-        "It only consolidates spot instances",
-        "It terminates running GPU nodes to migrate pods, which evicts running requests and reloads weights",
-        "It prevents Karpenter from provisioning new nodes"
-      ],
-      "correct": 2,
-      "explanation": "“It terminates running GPU nodes to migrate pods, which evicts running requests and reloads weights” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Roughly how much faster is Karpenter at provisioning a GPU node compared to Cluster Autoscaler?",
-      "options": [
-        "Roughly 40% faster (~45-60s vs ~90-120s)",
-        "About 10x slower",
-        "The same",
-        "About 5% faster"
+        "The number of requests waiting in queue",
+        "DCGM GPU utilization only",
+        "The number of completed tokens yesterday",
+        "The model's parameter count"
       ],
       "correct": 0,
-      "explanation": "“Roughly 40% faster (~45-60s vs ~90-120s)” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
+      "explanation": "The strategy reads len(queue), adding capacity when the actual request backlog exceeds its threshold."
     },
     {
-      "stage": "post",
-      "question": "For disaggregated prefill / decode pods (Phase 17 · 17), which scaling signals does the lesson recommend?",
+      "stage": "check",
+      "question": "With KAI_GANG and a queue depth of 7, how many replicas does the strategy request in that tick?",
       "options": [
-        "Manual scaling only",
-        "A single HPA on duty cycle covering both pod classes",
-        "Queue depth for prefill pods and KV cache pressure for decode pods, as separate per-role HPAs",
-        "Cluster Autoscaler for both"
-      ],
-      "correct": 2,
-      "explanation": "“Queue depth for prefill pods and KV cache pressure for decode pods, as separate per-role HPAs” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Which Karpenter disruption setting does the lesson recommend for an inference GPU pool to avoid evicting running jobs?",
-      "options": [
-        "consolidationPolicy: WhenEmptyOrUnderutilized with consolidateAfter: 0s",
-        "consolidationPolicy: WhenEmpty with consolidateAfter: 1h",
-        "Always run with spot instances and no consolidation",
-        "Disable Karpenter entirely"
+        "One, because KAI never scales in pairs",
+        "Two, from max(2, qd // 3)",
+        "Seven, one for each queued request",
+        "Four, from qd // 2"
       ],
       "correct": 1,
-      "explanation": "“consolidationPolicy: WhenEmpty with consolidateAfter: 1h” matches the lesson’s treatment of GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling; the alternatives conflict with its definitions or workflow."
+      "explanation": "For qd > 3, KAI_GANG adds max(2, qd // 3); at qd=7 this is max(2,2)=2 replicas."
+    },
+    {
+      "stage": "check",
+      "question": "When does simulate mark a queued request as dropped?",
+      "options": [
+        "After 15 seconds, at every HPA tick",
+        "As soon as GPU utilization falls below 20%",
+        "When now - arrived_at exceeds 30 seconds",
+        "Only after MAX_REPLICAS is reached"
+      ],
+      "correct": 2,
+      "explanation": "The queue loop applies the explicit SLA timeout if now - arrived_at exceeds 30, then marks the request dropped."
+    },
+    {
+      "stage": "check",
+      "question": "A new replica in this simulator becomes ready after which combined delay?",
+      "options": [
+        "15 seconds of HPA delay only",
+        "45 seconds of model load only",
+        "110 seconds of cluster autoscaler plus 45 seconds",
+        "50 seconds node provision plus 45 seconds model load"
+      ],
+      "correct": 3,
+      "explanation": "pending_replicas receive ready_at = now + NODE_PROVISION_SEC + MODEL_LOAD_SEC = 50 + 45 seconds; the cluster autoscaler constant is only a comparison."
+    },
+    {
+      "stage": "post",
+      "question": "Which Karpenter policy is described as safe for running jobs in the lesson?",
+      "options": [
+        "WhenEmpty with consolidateAfter: 1h",
+        "WhenEmptyOrUnderutilized with no delay",
+        "Terminate every node below 70% GPU utilization",
+        "Scale down whenever queue depth is nonzero"
+      ],
+      "correct": 0,
+      "explanation": "The lesson warns that WhenEmptyOrUnderutilized can terminate active jobs and recommends WhenEmpty plus a one-hour consolidation delay."
+    },
+    {
+      "stage": "post",
+      "question": "Why is DUTY_CYCLE a misleading default signal for this LLM workload?",
+      "options": [
+        "It cannot observe any Kubernetes object",
+        "DCGM duty-cycle utilization can look low while requests wait on queue or KV state",
+        "It always adds 16 replicas at once",
+        "It measures queue depth twice and drops every request"
+      ],
+      "correct": 1,
+      "explanation": "The demo contrasts DCGM_FI_DEV_GPU_UTIL with backlog-aware scaling: a memory-bound or queued LLM can have misleading duty-cycle readings."
     }
   ]
 }

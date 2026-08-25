@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the difference between L1 semantic caching and L2 prompt/prefix caching?",
+      "question": "What does the L2 cache key represent in the Python simulator?",
       "options": [
-        "L1 is provider-side and L2 is client-side — exactly backwards from how the lesson defines the two layers",
-        "L2 stores embeddings and L1 stores attention KV — exactly backwards from how the lesson defines the two caching layers",
-        "L1 skips the LLM entirely on embedding similarity hits; L2 reuses attention KV at the provider for repeated prefixes",
-        "L1 and L2 are the same caching mechanism, just implemented by different vendors"
-      ],
-      "correct": 2,
-      "explanation": "The lesson defines L1 semantic caching as skipping the LLM entirely on an embedding-similarity hit, while L2 prompt/prefix caching reuses the attention KV at the provider for a repeated prefix."
-    },
-    {
-      "stage": "check",
-      "question": "Which Anthropic mechanism marks blocks as cacheable for L2 prompt caching?",
-      "options": [
-        "Explicit cache_control attribute on the request blocks, with a 5-minute TTL (1.25x write cost) or 1-hour TTL (2x write cost)",
-        "A separate /caches endpoint that you call before sending the main completion request",
-        "Filename suffixes in tool definitions that mark which tool schemas should be cached",
-        "An implicit prompt-length threshold, the same kind of automatic mechanism OpenAI uses for prompts over 1024 tokens, with no explicit marker required"
+        "The request's prefix_hash",
+        "The full generated response text",
+        "The tenant's API key",
+        "The cosine threshold alone"
       ],
       "correct": 0,
-      "explanation": "The lesson states Anthropic requires an explicit `cache_control` marker on the request blocks you want cached, with a 5-minute TTL (1.25x write cost) or 1-hour TTL (2x write cost) option -- unlike OpenAI's automatic caching."
+      "explanation": "The L2 cache is a set of prefix_hash values; a matching prefix uses the cached-input rate instead of a new cache write."
     },
     {
       "stage": "check",
-      "question": "How does the parallelization anti-pattern inflate the bill?",
+      "question": "With parallel_penalty=True, what happens when a parallel-wave request misses L2?",
       "options": [
-        "Parallel requests bypass batching entirely, so the batch API's 50% discount never applies to them",
-        "N parallel requests with the same prefix arrive before the first cache write completes, so each pays a write premium and gets zero discount",
-        "Parallelization triggers a per-request guardrail charge that stacks on top of the normal token price",
-        "All parallel requests share one cache entry automatically, so only the very first request in the entire parallel batch is ever billed at the standard rate"
+        "It is counted as an L1 semantic hit",
+        "It pays the write cost but does not insert the prefix into l2_cache",
+        "It always reads at CACHED_INPUT",
+        "It disables the 1-hour TTL"
       ],
       "correct": 1,
-      "explanation": "The lesson's worked example has 10 parallel tool calls sharing the same system prompt arrive within the same millisecond window, before the first cache write (~300 ms) completes, so each of the 10 pays a write premium and none gets a read discount."
+      "explanation": "The penalty branch charges a write and increments l2_writes without adding the prefix, modeling parallel arrivals that all miss together."
     },
     {
       "stage": "check",
-      "question": "What is the dynamic-content anti-pattern in cacheable prefixes?",
+      "question": "What input-token price does a successful L2 read use?",
       "options": [
-        "Putting tool schemas in the prefix, which the lesson recommends as a cacheable, static block",
-        "Always streaming responses, a delivery choice the lesson does not connect to cache hit rate",
-        "Using too short a system prompt, which the lesson says has no effect at all on whether a prefix is eligible to be cached at the provider level for either L1 or L2",
-        "Including content that changes every request (current time to the minute, request ID, randomized example order) inside the cacheable prefix, killing hit rate"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's example system prompt embeds the current time and a request ID inside the cacheable block, so every request is unique and every request writes a fresh cache entry instead of hitting -- the fix is moving that dynamic content after the cache boundary."
-    },
-    {
-      "stage": "post",
-      "question": "How can batch + cached input stack overnight to cut cost?",
-      "options": [
-        "Batch only saves output cost, since the lesson ties the 50% batch discount solely to generated tokens",
-        "Batch is incompatible with caching, so the lesson recommends picking one discount mechanism, not both",
-        "Batch APIs give 50% off; cached input adds another ~10x; combined, overnight pipelines drop to ~10% of synchronous-uncached cost",
-        "Caching disables batch eligibility entirely, so cached prefixes must always be resubmitted through the plain synchronous API path instead"
+        "$3.00 per million",
+        "$1.25 per request",
+        "$0.30 per million",
+        "$15.00 per million"
       ],
       "correct": 2,
-      "explanation": "The lesson states Batch APIs give a 50% discount at 24-hour turnaround, cached input adds roughly another 10x on top, and stacking both can drop overnight classification/labeling/report pipelines to about 10% of synchronous-uncached cost."
+      "explanation": "CACHED_INPUT is 0.30, while BASE_INPUT is 3.00; the L2 hit branch adds prompt_tokens/1e6 × CACHED_INPUT."
+    },
+    {
+      "stage": "check",
+      "question": "How does the TypeScript LRUCache treat an entry whose expiresAt is in the past?",
+      "options": [
+        "It refreshes the timestamp and returns the value",
+        "It moves the entry to the newest position",
+        "It returns the oldest value instead",
+        "It deletes the entry and returns undefined"
+      ],
+      "correct": 3,
+      "explanation": "get checks expiresAt <= now, deletes the expired key, and returns undefined before applying LRU refresh logic."
     },
     {
       "stage": "post",
-      "question": "What does the lesson say about semantic cache \"95% accuracy\" claims?",
+      "question": "What is the dimensionality of the deterministic semantic embedding used by the TypeScript demo?",
       "options": [
-        "95% refers to match correctness, not hit rate; reported production hit rates range from ~10% (open chat) up to ~70% (structured FAQ)",
-        "95% is the OpenAI default cache hit rate, a fixed figure the lesson attributes directly to OpenAI's automatic caching behavior on every request",
-        "95% is a vendor-documented hit-rate baseline that both Anthropic and OpenAI publish and guarantee",
-        "95% means you should expect 95% cache hits on any workload, regardless of prompt structure"
+        "64 dimensions",
+        "16 dimensions",
+        "128 dimensions",
+        "The prompt length in tokens"
       ],
       "correct": 0,
-      "explanation": "The lesson is explicit that vendor 'accuracy' figures describe how often a returned cached response is semantically correct, not how often you hit the cache; actual production hit rates it reports range from 10-15% for open-ended chat up to 40-70% for structured FAQ."
+      "explanation": "EMBED_DIM is 64; words are hashed into those buckets and the vector is L2-normalized for cosine comparison."
+    },
+    {
+      "stage": "post",
+      "question": "For BASE_INPUT=$3/M, what is the 1-hour cache-write rate in the Python constants?",
+      "options": [
+        "$2.00/M",
+        "$6.00/M",
+        "$3.75/M",
+        "$15.00/M"
+      ],
+      "correct": 1,
+      "explanation": "CACHE_WRITE_1HR is 2.00 × BASE_INPUT, so it costs $6.00 per million input tokens in the toy pricing model."
     }
   ]
 }

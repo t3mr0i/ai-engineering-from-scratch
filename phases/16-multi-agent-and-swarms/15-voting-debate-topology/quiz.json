@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Voting, Self-Consistency, and Debate Topology?",
+      "question": "What does this topology harness compare?",
       "options": [
-        "Explain the coordination mechanism behind Voting, Self-Consistency, and Debate Topology",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the coordination mechanism behind Voting, Self-Consistency, and Debate Topology” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Voting, Self-Consistency, and Debate Topology?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central multi-agent interaction from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Voting, Self-Consistency, and Debate Topology?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace messages, shared state, and verification decisions end to end",
-        "Treat one successful example as proof that every edge case works"
+        "A2A authentication modes and FIPA performatives.",
+        "Only a single-agent baseline with no topology.",
+        "Star, chain, tree, and graph communication patterns under controlled agent accuracy and token costs.",
+        "Four auction mechanisms with no agent messages."
       ],
       "correct": 2,
-      "explanation": "“Trace messages, shared state, and verification decisions end to end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The code implements `run_star`, `run_chain`, `run_tree`, and `run_graph`, then reports accuracy, tokens, and steps for different N and heterogeneity."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Voting, Self-Consistency, and Debate Topology?",
+      "question": "For three agents, how many tokens does `run_star` charge?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate coordination quality, cost, and correlated failure modes",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate coordination quality, cost, and correlated failure modes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Voting, Self-Consistency, and Debate Topology?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the coordination mechanism behind Voting, Self-Consistency, and Debate Topology"
+        "400, because only the hub calls the model.",
+        "1600, because star requires four rounds.",
+        "800, because the hub replaces one worker call.",
+        "1200: two worker calls plus one hub call at 400 tokens each."
       ],
       "correct": 3,
-      "explanation": "“Explain the coordination mechanism behind Voting, Self-Consistency, and Debate Topology” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`run_star` answers with the two workers, then adds `hub.tokens_per_call`; with 400 tokens per call, that is `2×400 + 400 = 1200`."
+    },
+    {
+      "stage": "check",
+      "question": "What is the `steps` value returned by `run_chain` with N agents?",
+      "options": [
+        "N, because each agent contributes one sequential step.",
+        "The number of workers only, N - 1.",
+        "2 for every N.",
+        "2N + 1, because each proposal is broadcast twice."
+      ],
+      "correct": 0,
+      "explanation": "The chain loops through the first agent and every remaining agent, and returns `steps=len(agents)`."
+    },
+    {
+      "stage": "check",
+      "question": "For N=7 and the default two graph rounds, what token and step counts does `run_graph` return?",
+      "options": [
+        "2800 tokens and 2 steps.",
+        "5600 tokens and 4 steps.",
+        "400 tokens and 14 steps.",
+        "5600 tokens and 7 steps."
+      ],
+      "correct": 1,
+      "explanation": "The initial proposal costs `7×400`; the second round adds another `7×400`, for 5600. `steps=rounds*2=4`."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Voting, Self-Consistency, and Debate Topology?",
+      "question": "How does `make_agents(7, heterogeneous=True, ...)` differ from the homogeneous case?",
       "options": [
-        "Implement the central multi-agent interaction from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It makes every agent use the same `WRONG-A` bias with accuracy 0.50.",
+        "It sets every agent's accuracy to 1.0 and removes all errors.",
+        "It cycles through `WRONG-A`, `WRONG-B`, and `WRONG-C` biases and varied accuracies instead of one bias and all 0.72.",
+        "It removes the `error_bias` field so majority voting cannot run."
       ],
-      "correct": 0,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The heterogeneous branch defines three wrong-answer biases and accuracies `[0.72, 0.70, 0.74, 0.71, 0.73, 0.70, 0.72]`; the homogeneous branch repeats one bias and 0.72."
+    },
+    {
+      "stage": "post",
+      "question": "Which conclusion matches the harness's stated topology tradeoff?",
+      "options": [
+        "Graph is always cheapest because every agent shares one call.",
+        "Heterogeneous agents always lower accuracy by introducing more error biases.",
+        "Chain guarantees independent opinions because later agents never see earlier answers.",
+        "Star is a cost-sweet-spot for low-stakes aggregation, while graph coordination cost grows with agents and rounds."
+      ],
+      "correct": 3,
+      "explanation": "The takeaways call star a cost-sweet-spot and identify graph/N=7 coordination tax. Heterogeneity is presented as improving ensemble behavior, not as a guarantee of lower accuracy."
     }
   ]
 }

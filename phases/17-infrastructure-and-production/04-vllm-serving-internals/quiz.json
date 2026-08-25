@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the main problem classic static batching has with mixed-length requests?",
+      "question": "Request.blocks_needed() uses which block size in the toy scheduler?",
       "options": [
-        "It only works with FP4",
-        "It requires NVLink between every GPU",
-        "It cannot use GPUs at all",
-        "Padding to the longest prompt and longest output wastes memory and stalls the whole batch on the slowest sequence"
+        "16 tokens per KV block",
+        "32 tokens per KV block",
+        "256 tokens per KV block",
+        "512 tokens per KV block"
       ],
-      "correct": 3,
-      "explanation": "“Padding to the longest prompt and longest output wastes memory and stalls the whole batch on the slowest sequence” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "KV_BLOCK_SIZE is 16, and blocks_needed computes ceil((prompt_len + output_len) / 16)."
     },
     {
       "stage": "check",
-      "question": "How does PagedAttention reduce KV cache fragmentation from 60-80% to under 4%?",
+      "question": "For a request with 1,000 prompt tokens and 25 output tokens, how many KV blocks are reserved?",
       "options": [
-        "By disabling KV cache entirely",
-        "By compressing weights to INT4",
-        "By allocating KV cache in fixed-size blocks (default 16 tokens) referenced through a per-sequence block table",
-        "By holding the full prompt in CPU RAM"
-      ],
-      "correct": 2,
-      "explanation": "“By allocating KV cache in fixed-size blocks (default 16 tokens) referenced through a per-sequence block table” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What invariant defines continuous batching in vLLM's V1 scheduler?",
-      "options": [
-        "The scheduler runs once per request and the batch never changes",
-        "Each request gets its own dedicated GPU stream",
-        "The scheduler waits 10 ms windows to fill a batch before running",
-        "The scheduler runs once per decode iteration, admitting finished sequences out and waiting ones in"
-      ],
-      "correct": 3,
-      "explanation": "“The scheduler runs once per decode iteration, admitting finished sequences out and waiting ones in” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which latency metric does chunked prefill primarily protect under mixed load?",
-      "options": [
-        "Mean throughput",
-        "Cold-start time",
-        "Network RTT",
-        "P99 inter-token latency (ITL)"
-      ],
-      "correct": 3,
-      "explanation": "“P99 inter-token latency (ITL)” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "In vLLM v0.18.0, which speculative-decoding variant remains compatible with --enable-chunked-prefill?",
-      "options": [
-        "EAGLE-1 only",
-        "N-gram GPU speculative decoding in the V1 scheduler",
-        "No speculative decoding is compatible",
-        "Draft-model speculative decoding"
+        "63",
+        "65",
+        "64",
+        "1,025"
       ],
       "correct": 1,
-      "explanation": "“N-gram GPU speculative decoding in the V1 scheduler” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
+      "explanation": "The total is 1,025 tokens; ceil(1,025/16) = ceil(64.0625) = 65 blocks."
+    },
+    {
+      "stage": "check",
+      "question": "What does chunked=True change in simulate_continuous?",
+      "options": [
+        "It disables continuous admission",
+        "It pads every request to the longest prompt",
+        "It limits one prefill step to a 512-token slice",
+        "It raises KV_BLOCKS_AVAILABLE to infinity"
+      ],
+      "correct": 2,
+      "explanation": "The chunked path takes min(CHUNK_SIZE, remaining), with CHUNK_SIZE=512, so long prefills yield to decode work between slices."
+    },
+    {
+      "stage": "check",
+      "question": "Why can simulate_static waste work compared with continuous batching?",
+      "options": [
+        "It never runs a decode forward",
+        "It rejects all prompts longer than 16 tokens",
+        "It uses no KV blocks at all",
+        "It pads prompt and output work to the slowest request in each batch of 16"
+      ],
+      "correct": 3,
+      "explanation": "simulate_static chooses max prompt and max output for each fixed window, so shorter requests pay for padding and wait for the slowest member."
     },
     {
       "stage": "post",
-      "question": "Why does chunked prefill not in isolation increase mean throughput?",
+      "question": "When is Request.in_prefill true?",
       "options": [
-        "It runs on a different GPU than decode",
-        "It uses speculative decoding under the hood",
-        "It compresses weights more aggressively",
-        "It only reduces decode-time jitter; the throughput win in practice comes from keeping decode sequences alive during long prefills, not from changing the work done"
+        "While prefilled is smaller than prompt_len",
+        "Only after generated reaches output_len",
+        "Whenever the request has a nonzero output length",
+        "Only when the KV budget is exhausted"
       ],
-      "correct": 3,
-      "explanation": "“It only reduces decode-time jitter; the throughput win in practice comes from keeping decode sequences alive during long prefills, not from changing the work done” matches the lesson’s treatment of vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The property is self.prefilled < self.prompt_len; once all prompt tokens are processed, the scheduler enters decode."
+    },
+    {
+      "stage": "post",
+      "question": "What is the intended effect of CONTINUOUS + CHUNKED in the demo's final comparison?",
+      "options": [
+        "More padding and a higher P99 ITL",
+        "Interleave long-prefill slices with decode to reduce tail ITL",
+        "Serial execution with no admission or release",
+        "A larger prompt cache but no scheduling change"
+      ],
+      "correct": 1,
+      "explanation": "Chunked prefill bounds each prefill slice at 512 tokens, allowing active decodes to progress instead of being blocked by one long prompt."
     }
   ]
 }

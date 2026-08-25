@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which components dominate TTFT (time to first token)?",
+      "question": "In the demo's goodput function, when is one RequestTrace counted as good?",
       "options": [
-        "Queue time, network request time, and prefill time — TTFT = queue_time + network_request + prefill_time",
-        "Decode-only forward time, since TTFT is defined purely by the memory-bound decode step",
-        "Disk I/O for weights, since TTFT is dominated by reloading model weights from disk on every single request",
-        "Tokenizer GIL overhead, since TTFT is dominated by Python's tokenizer lock contention"
+        "When TTFT, GenAI-Perf TPOT, and E2E all meet their limits",
+        "When aggregate throughput exceeds the target",
+        "When its mean TPOT is below the limit, regardless of E2E",
+        "When at least one of the three latency limits passes"
       ],
       "correct": 0,
-      "explanation": "The lesson defines TTFT = queue_time + network_request + prefill_time, so all three of those components, not decode time, dominate it."
+      "explanation": "goodput increments only when all three comparisons use <=: ttft_ms, tpot_genaiperf(), and e2e_ms must each satisfy the supplied SLO."
     },
     {
       "stage": "check",
-      "question": "Which metric does the lesson call the one that actually matters for product?",
+      "question": "For RequestTrace, which terms make up ttft_ms in the local implementation?",
       "options": [
-        "Aggregate throughput in tokens per second, since the lesson treats fleet-wide token volume as the product signal",
-        "Goodput — the fraction of requests meeting every SLO constraint (TTFT, TPOT, and E2E) simultaneously",
-        "GPU duty cycle, since the lesson treats hardware utilization as the proxy for whether users are served well",
-        "Mean ITL, since the lesson treats the average inter-token latency as the number reflecting user experience"
+        "Decode time plus output length",
+        "queue_ms plus prefill_ms",
+        "Only network response time",
+        "Prompt tokens divided by output tokens"
       ],
       "correct": 1,
-      "explanation": "The lesson is explicit that throughput is a fleet-efficiency metric, but goodput -- the fraction of requests meeting every SLO constraint (TTFT, TPOT, and E2E) simultaneously -- is the one that reflects whether the product actually worked for users."
+      "explanation": "The ttft_ms property returns queue_ms + prefill_ms; decode samples are added later by e2e_ms."
     },
     {
       "stage": "check",
-      "question": "Why is mean the wrong statistic to report for LLM latency?",
+      "question": "A trace has TTFT 500 ms, 100 output tokens, and 700 ms total decode time. What does tpot_genaiperf return?",
       "options": [
-        "Mean is never computable on streaming responses, since tokens arrive incrementally rather than as one batch",
-        "Mean only works for prefill latency, not decode latency, because decode is memory-bound rather than compute-bound",
-        "Mean is not supported by GenAI-Perf's ITL calculation, which only reports percentiles by design",
-        "LLM latency distributions are right-skewed; users routinely hit P99 outliers that mean hides"
+        "12.00 ms",
+        "5.00 ms",
+        "About 7.07 ms",
+        "About 0.07 ms"
+      ],
+      "correct": 2,
+      "explanation": "GenAI-Perf excludes TTFT and divides the 700 ms decode sum by output_tokens - 1, so 700/99 is about 7.07 ms."
+    },
+    {
+      "stage": "check",
+      "question": "For that same trace, what does tpot_llmperf report?",
+      "options": [
+        "7.07 ms because it starts at token 2",
+        "500 ms because TTFT is the only input",
+        "0 ms because decode is excluded",
+        "12.00 ms from e2e_ms divided by 100 tokens"
       ],
       "correct": 3,
-      "explanation": "The lesson's example shows mean TPOT of 9 ms hiding a P99 TPOT of 65 ms, because a right-skewed distribution (a few requests sharing a batch with a long-prefill neighbor) means users regularly hit the tail that the mean averages away."
-    },
-    {
-      "stage": "check",
-      "question": "Why do GenAI-Perf and LLMPerf disagree on TPOT for the same run?",
-      "options": [
-        "GenAI-Perf only runs on Blackwell GPUs, so its numbers are not comparable to LLMPerf runs on other hardware",
-        "LLMPerf uses microseconds and GenAI-Perf uses milliseconds, so the raw numbers differ by a unit conversion",
-        "GenAI-Perf excludes TTFT from the ITL calculation; LLMPerf includes it, so tool choice changes the number",
-        "They sample a different set of requests from the same run, so the percentile comparison is not apples-to-apples"
-      ],
-      "correct": 2,
-      "explanation": "The lesson's worked example shows GenAI-Perf starting ITL from token 2 (excluding TTFT) while LLMPerf starts from token 1 (including TTFT), producing different numbers (7.07 ms vs 12.00 ms) for the identical run."
+      "explanation": "LLMPerf's local method returns e2e_ms/output_tokens = (500 + 700)/100 = 12.00 ms, including TTFT."
     },
     {
       "stage": "post",
-      "question": "For long-output requests (>500 tokens), which metric dominates end-to-end latency?",
+      "question": "Why can high aggregate throughput coexist with poor goodput?",
       "options": [
-        "TTFT, the time to the first streamed token, which the lesson treats as dominant regardless of output length",
-        "TPOT times output length, since E2E = TTFT + TPOT * output_tokens + network_response and the TPOT term dominates",
-        "Cold-start time, since spinning up a fresh replica adds a fixed delay to every long-output request",
-        "Network response time, since transferring a long generated response back over the wire dominates total end-to-end latency"
+        "Tokens can be produced quickly in aggregate while many requests miss one SLO",
+        "Goodput ignores all latency constraints",
+        "Throughput is always computed from P99 only",
+        "A request is good if any single token arrives"
+      ],
+      "correct": 0,
+      "explanation": "Throughput sums output tokens over the fleet; goodput is a per-request all-constraints result, so fast aggregate work can still violate TTFT, TPOT, or E2E."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the lesson emphasize P50, P90, and P99 rather than only a mean?",
+      "options": [
+        "Percentiles remove the need to define TTFT",
+        "Right-skewed tail requests can be hidden by an apparently good mean",
+        "The mean cannot be calculated for a list of traces",
+        "P99 is always lower than P50 in this simulator"
       ],
       "correct": 1,
-      "explanation": "E2E = TTFT + TPOT * output_tokens + network_response, and the lesson states that for long outputs (>500 tokens) E2E is TPOT-dominated -- TPOT times output length outweighs the fixed TTFT and network terms."
-    },
-    {
-      "stage": "post",
-      "question": "Which set best captures the lesson's reasonable consumer-facing SLO for a 70B chat model in 2026?",
-      "options": [
-        "P50 only, with no P90 or P99 reported, since the lesson treats the median as sufficient for consumer SLOs",
-        "TTFT P99 8s, TPOT P99 200ms, goodput 50% — thresholds far looser than what the lesson calls reasonable",
-        "TTFT P99 800 ms, TPOT P99 25 ms, E2E P99 3 s for <300-token outputs, goodput >= 99%",
-        "Mean TTFT 10 ms, mean TPOT 1 ms, with no percentile or goodput target specified at all"
-      ],
-      "correct": 2,
-      "explanation": "The lesson gives exactly this SLO as the reasonable 2026 consumer-facing target: TTFT P99 <= 800 ms, TPOT P99 <= 25 ms, E2E P99 <= 3 s for <300-token outputs, and a goodput target >= 99%."
+      "explanation": "A small number of long-prefill or queue-spike traces can dominate user experience while barely moving the mean; percentiles expose those tails."
     }
   ]
 }

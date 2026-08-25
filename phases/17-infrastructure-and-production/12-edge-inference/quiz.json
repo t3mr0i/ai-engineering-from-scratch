@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the core constraint that makes mobile LLM inference slower than datacenter, per the lesson?",
+      "question": "How does ceiling compute the theoretical decode rate for a target?",
       "options": [
-        "Wi-Fi latency",
-        "Compute throughput",
-        "Memory bandwidth (mobile DRAM at 50-90 GB/s vs HBM3 at 2-3 TB/s)",
-        "Storage capacity"
-      ],
-      "correct": 2,
-      "explanation": "“Memory bandwidth (mobile DRAM at 50-90 GB/s vs HBM3 at 2-3 TB/s)” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why does Apple's Neural Engine avoid CPU-NPU copy overhead?",
-      "options": [
-        "It uses PCIe 5.0",
-        "Core ML disables KV cache",
-        "It transcodes weights to FP4 before copy",
-        "Apple Silicon ships unified memory — CPU and ANE share the same pool"
-      ],
-      "correct": 3,
-      "explanation": "“Apple Silicon ships unified memory — CPU and ANE share the same pool” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which quantization format does the lesson recommend for WebGPU + WebLLM in the browser?",
-      "options": [
-        "NVFP4",
-        "FP8",
-        "Q4 MLC (q4f16_1) compiled via mlc_llm convert_weight",
-        "GGUF Q4_K_M"
-      ],
-      "correct": 2,
-      "explanation": "“Q4 MLC (q4f16_1) compiled via mlc_llm convert_weight” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Roughly what WebGPU mobile coverage does the lesson report for 2026?",
-      "options": [
-        "100% across all browsers",
-        "Only iOS Safari",
-        "Under 10%",
-        "About 70-75%, with Firefox Android still catching up"
-      ],
-      "correct": 3,
-      "explanation": "“About 70-75%, with Firefox Android still catching up” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Why is keeping 128K context impractical on a typical phone?",
-      "options": [
-        "Tokenizers fail above 8K",
-        "Model weights plus KV cache for 32K tokens plus OS overhead easily exceed the 8 GB RAM budget",
-        "WebGPU caps context at 4K",
-        "iOS forbids long context"
-      ],
-      "correct": 1,
-      "explanation": "“Model weights plus KV cache for 32K tokens plus OS overhead easily exceed the 8 GB RAM budget” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Why is voice highlighted as the killer app for edge inference?",
-      "options": [
-        "Voice agents are latency-sensitive (first token < 500 ms) and local inference eliminates network latency entirely",
-        "Voice models do not need KV cache",
-        "Voice models always fit in 50 MB",
-        "Voice runs in WebAssembly only"
+        "It takes 1 divided by model_gb / bandwidth_gb_s",
+        "It multiplies model_gb by bandwidth_gb_s",
+        "It returns observed tok/s without using bandwidth",
+        "It divides TOPS by the number of CPU cores"
       ],
       "correct": 0,
-      "explanation": "“Voice agents are latency-sensitive (first token < 500 ms) and local inference eliminates network latency entirely” matches the lesson’s treatment of Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson; the alternatives conflict with its definitions or workflow."
+      "explanation": "ceiling calculates seconds_per_token = model_gb / target bandwidth and returns its reciprocal, giving a bandwidth-limited tokens/second ceiling."
+    },
+    {
+      "stage": "check",
+      "question": "For a 4.7 GB model on the 60 GB/s Apple A18 row, what ceiling is approximately implied?",
+      "options": [
+        "60 tok/s",
+        "About 12.8 tok/s",
+        "4.7 tok/s",
+        "About 282 tok/s"
+      ],
+      "correct": 1,
+      "explanation": "The reciprocal is 60/4.7, about 12.8 tokens/s; the observed A18 value is lower because the ceiling is theoretical."
+    },
+    {
+      "stage": "check",
+      "question": "What memory property distinguishes the Apple M4/A18 Neural Engine path in the lesson?",
+      "options": [
+        "It requires a cross-region KV transfer",
+        "It uses separate HBM and CPU memory pools",
+        "Unified memory avoids a CPU-to-NPU copy",
+        "It supports only GGUF files in a browser"
+      ],
+      "correct": 2,
+      "explanation": "The Apple path uses unified memory, so CPU and ANE share the pool; native ANE deployment still uses Core ML conversion."
+    },
+    {
+      "stage": "check",
+      "question": "Which weight format does the WebGPU/WebLLM target table recommend?",
+      "options": [
+        "GGUF Q4 without conversion",
+        "NVFP4 weights with FP8 KV",
+        "BF16 only",
+        "Q4 MLC q4f16_1 with compiled WebGPU artifacts"
+      ],
+      "correct": 3,
+      "explanation": "The table specifies Q4 MLC q4f16_1 and a compiled wasm path; GGUF is explicitly not the WebGPU artifact in this lesson."
+    },
+    {
+      "stage": "post",
+      "question": "Which browser support gap is called out for 2026?",
+      "options": [
+        "Firefox Android is still catching up while Safari iOS 26 is GA",
+        "Chrome Android cannot use WebGPU at all",
+        "Safari iOS 26 has no WebGPU landing",
+        "WebLLM works only on desktop Firefox"
+      ],
+      "correct": 0,
+      "explanation": "The lesson reports Chrome Android v121+ and Safari iOS 26 support, with Firefox Android still catching up and overall mobile coverage around 70–75%."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the lesson call edge decode memory-bandwidth-bound?",
+      "options": [
+        "The model reads no weights during decode",
+        "Mobile DRAM bandwidth is roughly 30–50× below datacenter HBM3",
+        "TOPS is always zero on mobile NPUs",
+        "Network RTT dominates even when the model is local"
+      ],
+      "correct": 1,
+      "explanation": "The same Q4 weights must be read for each token; mobile DRAM is 50–90 GB/s versus roughly 2–3 TB/s HBM3, so bandwidth sets the ceiling."
     }
   ]
 }

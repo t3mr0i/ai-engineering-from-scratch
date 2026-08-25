@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Roughly what is the per-million-tokens cost gap the lesson reports between Blackwell + TRT-LLM + Dynamo and H100 + vLLM on a comparable 120B-class workload?",
+      "question": "How does hbm_footprint_gb compute the weight footprint from params_b and weight_bits?",
       "options": [
-        "About 100x",
-        "About 7x",
-        "About 2x",
-        "About 1.1x"
-      ],
-      "correct": 1,
-      "explanation": "“About 7x” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the lesson recommend keeping KV cache in FP8 rather than NVFP4 on Blackwell?",
-      "options": [
-        "NVFP4 KV cache is not yet supported in any engine",
-        "FP8 is the only precision NVLink 5 supports",
-        "KV cache spans a wide dynamic range; FP4 quantization causes catastrophic accuracy loss in attention scores",
-        "FP8 uses less memory than FP4"
-      ],
-      "correct": 2,
-      "explanation": "“KV cache spans a wide dynamic range; FP4 quantization causes catastrophic accuracy loss in attention scores” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which Blackwell feature does TRT-LLM exploit so models can be loaded without a post-training conversion step?",
-      "options": [
-        "Day-0 FP4 weights shipped by model providers",
-        "INT2 weights via bitsandbytes",
-        "FP64 attention",
-        "BF16 KV cache"
+        "params_b × weight_bits ÷ 8",
+        "params_b × 8 ÷ weight_bits",
+        "params_b + weight_bits",
+        "weight_bits ÷ 1e9, independent of params_b"
       ],
       "correct": 0,
-      "explanation": "“Day-0 FP4 weights shipped by model providers” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
+      "explanation": "The code treats params_b as billions of parameters and converts bits to bytes with params_b * weight_bits / 8."
     },
     {
       "stage": "check",
-      "question": "What is the dominant tradeoff of choosing the TRT-LLM stack per the lesson?",
+      "question": "Which weight precision is used by the B200 + NVFP4 + FP8 + TRT-LLM stack?",
       "options": [
-        "It cannot serve MoE models",
-        "It requires fully autonomous remediation",
-        "It locks you into NVIDIA hardware — no AMD, no Intel, no ARM",
-        "It only works at small scale"
+        "16 bits",
+        "4 bits",
+        "8 bits",
+        "1 bit"
+      ],
+      "correct": 1,
+      "explanation": "The B200 Stack is declared with weight_bits=4 and kv_bits=8, so weights use NVFP4 while the KV cache remains FP8."
+    },
+    {
+      "stage": "check",
+      "question": "What per-GPU HBM capacity does the B200 row expose?",
+      "options": [
+        "80 GB",
+        "141 GB",
+        "192 GB",
+        "671 GB"
       ],
       "correct": 2,
-      "explanation": "“It locks you into NVIDIA hardware — no AMD, no Intel, no ARM” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
+      "explanation": "The B200 Stack is declared with hbm_gb=192; 671B is a model-size fixture, not a GPU memory value."
+    },
+    {
+      "stage": "check",
+      "question": "Which factors multiply the memory-bandwidth raw throughput in decode_throughput?",
+      "options": [
+        "Only sequence length and KV bits",
+        "Only price_per_gpu_hour",
+        "Weight bits and the number of model parameters twice",
+        "mtp_factor and disagg_factor"
+      ],
+      "correct": 3,
+      "explanation": "After HBM bandwidth is divided by active weight bytes/token, the code multiplies by both MTP and disaggregation factors."
     },
     {
       "stage": "post",
-      "question": "Which precision combination does the lesson describe as the typical Blackwell config?",
+      "question": "For the 120B total / 36B active MoE fixture, what is the NVFP4 weight footprint before KV and activations?",
       "options": [
-        "Weights FP4, KV cache FP4, attention in INT8",
-        "Everything in BF16",
-        "Weights NVFP4, activations NVFP4, KV cache FP8, attention accumulator FP32",
-        "Weights INT8, activations FP32, KV cache INT4"
+        "60 GB",
+        "18 GB",
+        "120 GB",
+        "36 GB"
       ],
-      "correct": 2,
-      "explanation": "“Weights NVFP4, activations NVFP4, KV cache FP8, attention accumulator FP32” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "Weight memory uses total params, so 120B × 4 bits / 8 = 60 GB; active_b affects the representative KV shape and decode bytes."
     },
     {
       "stage": "post",
-      "question": "For reasoning-heavy workloads where NVFP4 weight conversion drops MATH accuracy a few points, what does the lesson advise?",
+      "question": "Which stack has the largest disaggregation multiplier in STACKS?",
       "options": [
-        "Switch to AMD MI300X",
-        "Disable speculative decoding",
-        "Validate task quality on your eval set per model; teams often use FP8 weights + FP4 activations or stay on H200 with FP8 throughout",
-        "Ship NVFP4 anyway because the cost win dominates"
+        "B200 + NVFP4 + FP8 + TRT-LLM at 1.6",
+        "GB200 NVL72 + TRT-LLM + Dyn at 2.5",
+        "H200 + FP8 + vLLM at 1.0",
+        "H100 + BF16 + vLLM at 1.0"
       ],
-      "correct": 2,
-      "explanation": "“Validate task quality on your eval set per model; teams often use FP8 weights + FP4 activations or stay on H200 with FP8 throughout” matches the lesson’s treatment of TensorRT-LLM on Blackwell with FP8 and NVFP4; the alternatives conflict with its definitions or workflow."
+      "correct": 1,
+      "explanation": "GB200 NVL72 is declared with disagg_factor=2.5, larger than B200's 1.6 and the H100/H200 value of 1.0."
     }
   ]
 }

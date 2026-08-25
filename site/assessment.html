@@ -27,10 +27,8 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
   <meta name="description" content="Rate yourself across 19 AI-literacy capabilities, get your AI-Literacy score, and a personalized learning path built from the curriculum.">
   <meta name="robots" content="noindex">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260824a">
+  <link rel="stylesheet" href="learning-visuals.css?v=20260825g">
   <style>
     .assess-page { padding: 100px 0 80px; min-height: 100vh; }
     .assess-header { margin-bottom: 32px; }
@@ -41,19 +39,19 @@
     .assess-step.active { display: block; }
 
     .field-label {
-      font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--blueprint); margin-bottom: 8px; display: block;
+      display: block; margin-bottom: 8px; color: var(--text-secondary);
+      font-family: var(--font-body); font-size: var(--fs-body-sm); font-weight: 500;
     }
     .role-select {
       font-family: var(--font-body); font-size: 1rem; padding: 12px 16px;
-      background: var(--bg-surface); border: 2px solid var(--border); border-radius: 0;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
       color: var(--text); min-width: min(320px, 100%); max-width: 100%;
     }
 
-    .cluster-block { margin: 28px 0; border-top: 2px solid var(--rule); padding-top: 16px; }
+    .cluster-block { margin: 28px 0; border-top: 1px solid var(--rule); padding-top: 16px; }
     .cluster-title {
-      font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--blueprint); margin-bottom: 14px;
+      font-family: var(--font-body); font-size: var(--fs-body-sm); font-weight: 600;
+      color: var(--blueprint); margin-bottom: 14px;
     }
 
     .cap-row {
@@ -63,19 +61,19 @@
     .cap-name { font-weight: 600; }
     .cap-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
     .cap-target {
-      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
-      color: var(--warn); margin-top: 6px; text-transform: uppercase;
+      font-family: var(--font-body); font-size: var(--fs-caption);
+      color: var(--warn); margin-top: 6px;
     }
     .cap-no-match {
-      font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em;
+      font-family: var(--font-body); font-size: var(--fs-caption);
       color: var(--text-muted); margin-top: 4px;
     }
 
     .level-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .level-btn {
-      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em;
-      padding: 7px 11px; border: 2px solid var(--border); background: var(--bg-surface);
-      color: var(--text); cursor: pointer; border-radius: 0; white-space: nowrap;
+      min-height: 40px; padding: 7px 13px; border: 1px solid var(--border);
+      border-radius: 999px; background: var(--bg-surface); color: var(--text);
+      font-family: var(--font-body); font-size: var(--fs-caption); cursor: pointer; white-space: nowrap;
     }
     .level-btn[aria-pressed="true"] {
       background: var(--blueprint); color: #fff; border-color: var(--blueprint);
@@ -83,18 +81,20 @@
 
     .btn-row { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
     .btn {
-      font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
-      text-transform: uppercase; padding: 13px 22px; border: 2px solid var(--blueprint);
-      background: var(--blueprint); color: #fff; cursor: pointer; border-radius: 0;
-      box-shadow: var(--shadow-hard); transition: transform .08s, box-shadow .08s;
+      min-height: 48px; padding: 13px 22px; border: 1px solid var(--blueprint);
+      border-radius: 999px; background: var(--blueprint); color: #fff;
+      font-family: var(--font-body); font-size: var(--fs-body-sm); cursor: pointer;
+      transition: background-color var(--dur-base), transform var(--dur-fast), box-shadow var(--dur-base);
     }
-    .btn:hover { transform: translate(-1px,-1px); box-shadow: var(--shadow-hard-lg); }
+    .btn:hover { background: var(--secondary); box-shadow: var(--shadow-sm); }
+    .btn:active { transform: translateY(1px); }
     .btn.secondary { background: var(--bg-surface); color: var(--blueprint); }
     .btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; transform: none; }
 
     /* Result */
     .score-card {
-      border: 2px solid var(--rule); padding: 28px; margin-bottom: 32px;
+      padding: 28px; margin-bottom: 32px; border-radius: 12px;
+      background: var(--bg-surface); box-shadow: var(--shadow-sm);
       display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;
     }
     .score-num {
@@ -106,27 +106,27 @@
     .score-sub { color: var(--text-muted); margin-top: 6px; }
 
     .path-item {
-      border: 2px solid var(--border); padding: 18px; margin-bottom: 14px;
-      border-left: 6px solid var(--blueprint);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; margin-bottom: 14px; background: var(--bg-surface);
     }
-    .path-item.met { border-left-color: var(--status-planned); opacity: 0.72; }
+    .path-item.met { opacity: 0.72; }
     .path-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
     .path-cap { font-weight: 700; font-size: 1.05rem; }
     .path-gap {
-      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-family: var(--font-body); font-size: var(--fs-caption);
     }
     .path-gap.gap { color: var(--warn); }
     .path-gap.ok { color: var(--status-complete); }
     .path-lessons { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
     .lesson-chip {
-      font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 10px;
-      border: 1px solid var(--border); background: var(--bg-surface); color: var(--blueprint);
-      text-decoration: none;
+      font-family: var(--font-body); font-size: var(--fs-caption); padding: 7px 11px;
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--bg-surface); color: var(--blueprint); text-decoration: none;
     }
     .lesson-chip:hover { background: var(--blueprint-tint); }
     .path-nomatch { margin-top: 10px; color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
     @media (max-width: 640px) {
+      .assess-page { padding-inline: 16px; }
       .cap-row { grid-template-columns: 1fr; }
       .score-card { grid-template-columns: 1fr; text-align: left; }
     }
@@ -148,7 +148,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js"></script>
+  <script src="i18n.js?v=20260825b"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -221,6 +221,7 @@
           <div class="score-sub" id="scoreSub"></div>
         </div>
       </div>
+      <div id="capabilityProfileVisual"></div>
       <h2 style="margin-bottom:6px;" data-i18n="assess_your_path">Your learning path</h2>
       <p style="color:var(--text-muted); margin-bottom:20px;">
         Capabilities below your role's target come first. Each links to the lessons that build it.</p>
@@ -234,6 +235,7 @@
 
   <script src="data.js?v=20260525a"></script>
   <script src="capabilities.js?v=20260525a"></script>
+  <script src="learning-visuals.js?v=20260825g"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
@@ -396,6 +398,19 @@
         document.getElementById('scoreSub').textContent = complete
           ? i18nText('assess_score_sub_complete', { met: metCount, total: required.length, role: state.role })
           : i18nText('assess_score_sub_incomplete', { total: required.length, rated: ratedRequired.length });
+
+        if (window.LearningVisuals) {
+          window.LearningVisuals.renderCapabilityProfile(
+            document.getElementById('capabilityProfileVisual'),
+            required.map(function (entry) {
+              return { cluster: entry.cap.cluster, current: entry.current, target: entry.target };
+            }),
+            {
+              title: i18nText('viz_assessment_title'),
+              description: i18nText('viz_assessment_desc')
+            }
+          );
+        }
 
         // Path: gaps only, ordered by cluster, then lessons-available, then gap size.
         var items = required.filter(function (x) { return x.gap > 0; });

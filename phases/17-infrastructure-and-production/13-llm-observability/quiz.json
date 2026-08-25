@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does the lesson split the 2026 LLM observability market?",
+      "question": "What does BYTES_PER_TRACE represent in the retention simulator?",
       "options": [
-        "On-prem versus cloud deployment, a split the lesson does not use to organize the 2026 observability market",
-        "Development platforms (bundled with evals, prompts, and session replay) versus gateway/telemetry tools focused on traces and metrics",
-        "Vendor versus open source licensing, a split the lesson does not use anywhere to organize the 2026 observability tool market landscape",
-        "Python versus TypeScript SDK support, a split the lesson does not use to organize the 2026 observability market"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's opening frames the 2026 market as splitting into development platforms that bundle monitoring with evals, prompt management, and session replay (LangSmith, Langfuse, Comet Opik) versus gateway/telemetry tools that focus on traces and metrics only (Helicone, SigNoz, OpenLLMetry, Phoenix)."
-    },
-    {
-      "stage": "check",
-      "question": "Which tool does the lesson position as MIT-licensed core with strong self-host story and 50K events/month free cloud tier?",
-      "options": [
-        "LangSmith — LangChain/LangGraph-first, $39/user/month, self-host on Enterprise only",
-        "Phoenix — Elastic License 2.0, OpenTelemetry-native, strong on RAG and drift visualization",
-        "Arize AX — commercial, zero-copy Iceberg/Parquet integration built for scale",
-        "Langfuse — MIT-licensed core, easy Docker self-host, 50K events/month free cloud tier"
-      ],
-      "correct": 3,
-      "explanation": "The lesson describes Langfuse as core Apache/MIT licensed with easy Docker self-hosting and a 50K-events/month free cloud tier -- the 'OSS balance' pick for teams that must self-host or stay on an OSS license."
-    },
-    {
-      "stage": "check",
-      "question": "What is Arize AX's main scale claim relative to monolithic observability stacks like Datadog?",
-      "options": [
-        "Roughly 100x cheaper at scale via zero-copy Iceberg/Parquet integration",
-        "Always more expensive than monolithic stacks like Datadog, a claim the lesson does not make about Arize AX",
-        "Free under 1M events/day, a specific free-tier threshold the lesson does not state for Arize AX",
-        "10% cheaper at scale, a modest figure the lesson does not attach to Arize AX's zero-copy claim"
+        "4,500 bytes of prompt, response, and metadata per retained trace",
+        "4,500 gigabytes per trace",
+        "The number of spans in every trace",
+        "The monthly S3 price per trace"
       ],
       "correct": 0,
-      "explanation": "The lesson describes Arize AX's zero-copy Iceberg/Parquet integration as shifting cost from ingest fees to your own S3 and compute bill -- favorable at scale, though the lesson is explicit that the exact savings multiplier depends on retention, query patterns, and egress rather than being a fixed figure."
+      "explanation": "The Python and TypeScript simulators set BYTES_PER_TRACE to 4,500 and multiply it by retained traces to obtain daily storage."
     },
     {
       "stage": "check",
-      "question": "What does the lesson call the wrong instrumentation layer for portability?",
+      "question": "What does keep_errors=True guarantee in simulate_day?",
       "options": [
-        "Sampling at 5% on successes, a data-retention tactic the lesson recommends, not an instrumentation-layer choice",
-        "Using OpenTelemetry GenAI semantic conventions, the portable convention layer the lesson recommends adopting",
-        "Instrumenting inside your agent framework, since it couples you to that framework",
-        "Instrumenting at the HTTP/OpenAI-SDK layer, the portable layer the lesson recommends via OpenLLMetry or a gateway"
-      ],
-      "correct": 2,
-      "explanation": "The lesson calls out instrumenting inside your agent framework (e.g. adding LangSmith traces directly) as the trap because it couples you to that framework; instrumenting at the HTTP/OpenAI-SDK layer via OpenLLMetry or a gateway is the portable choice."
-    },
-    {
-      "stage": "post",
-      "question": "Which OpenTelemetry conventions does the lesson identify as the 2026 interop layer between observability tools?",
-      "options": [
-        "OTel messaging semantic conventions, built for queues and brokers rather than LLM request/response telemetry",
-        "OTel database semantic conventions, built for SQL and NoSQL query telemetry rather than LLM calls",
-        "OTel HTTP semantic conventions, the generic web-request layer rather than the LLM-specific attribute set",
-        "GenAI semantic conventions (gen_ai.system, gen_ai.request.model, gen_ai.usage.input_tokens)"
-      ],
-      "correct": 3,
-      "explanation": "The lesson names OpenTelemetry's GenAI semantic conventions (gen_ai.system, gen_ai.request.model, gen_ai.usage.input_tokens), published late 2025, as the glue that lets a gateway, an eval platform, and a data-lake archive all consume the same trace stream."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the lesson argue full-trace retention does not scale past 1M requests/day?",
-      "options": [
-        "OpenTelemetry itself caps trace volume at a fixed hard ceiling, so retention above that ceiling is not technically possible at all",
-        "Retention storage costs more than the LLM calls themselves; teams must sample (e.g. 100% errors, 100% high-cost, 5% successes)",
-        "Vendors block full retention above 1M requests/day as a pricing-tier restriction rather than a cost problem",
-        "Phoenix only supports 1M traces total, a hard product ceiling rather than a cost-driven sampling decision"
+        "Only successful traces are sampled",
+        "A trace marked as an error is retained even if the random sample misses",
+        "All high-cost traces are discarded",
+        "The sample rate is changed to 100% for every trace"
       ],
       "correct": 1,
-      "explanation": "The lesson states that at more than 1M requests/day, full-trace retention costs more than the LLM calls themselves, so teams sample by rule -- 100% of errors, 100% of high-cost calls, and only about 5% of plain successes -- while keeping aggregates always."
+      "explanation": "After the random decision, the simulator sets keep=True whenever is_error and keep_errors are both true."
+    },
+    {
+      "stage": "check",
+      "question": "In makeSamplingExporter, when is a successful span classified as high cost?",
+      "options": [
+        "When it has any output token",
+        "When the provider is self-hosted",
+        "When input plus output tokens exceeds 8,000",
+        "When its duration is below one millisecond"
+      ],
+      "correct": 2,
+      "explanation": "The TypeScript exporter adds input and output usage and sets isHighCost when totalTokens > 8000; such spans bypass success sampling."
+    },
+    {
+      "stage": "check",
+      "question": "Which attribute records input usage on a GenAI span?",
+      "options": [
+        "gen_ai.response.id",
+        "gen_ai.request.temperature",
+        "gen_ai.response.finish_reasons",
+        "gen_ai.usage.input_tokens"
+      ],
+      "correct": 3,
+      "explanation": "traceLLMCall writes result.inputTokens to gen_ai.usage.input_tokens, alongside output and cached-input usage attributes."
+    },
+    {
+      "stage": "post",
+      "question": "Which storage price is lowest per GB-month in the local constants?",
+      "options": [
+        "Arize AX at $0.005",
+        "S3 at $0.023",
+        "Monolithic ingest at $0.50",
+        "All three are identical"
+      ],
+      "correct": 0,
+      "explanation": "ARIZE_AX_PER_GB is 0.005, below COST_PER_GB_MONTH 0.023 and OBSERVABILITY_INGEST_PER_GB 0.50."
+    },
+    {
+      "stage": "post",
+      "question": "What does traceLLMCall emit when mockLLMCall is forced to fail?",
+      "options": [
+        "An OK span with no response ID",
+        "An ERROR span with error.type rate_limit_exceeded and an exception event",
+        "No span because errors are not observable",
+        "A successful response with finishReason length"
+      ],
+      "correct": 1,
+      "explanation": "The catch path adds error.type, records an exception event, ends the span with ERROR, and returns undefined."
     }
   ]
 }

@@ -259,6 +259,32 @@
 
     var children = [intro, facts, overview];
 
+    if (map.length && window.LearningVisuals) {
+      var routeHost = document.createElement("div");
+      routeHost.className = "learning-visual-slot";
+      var currentAssigned = false;
+      window.LearningVisuals.renderCourseRoute(routeHost, map.map(function (subcourse, index) {
+        var unitStats = subcourseProgress(subcourse);
+        var state = unitStats.percent >= 100 ? "complete" : "open";
+        if (state === "open" && !currentAssigned) {
+          state = "current";
+          currentAssigned = true;
+        }
+        return {
+          code: unitCode(index),
+          title: subcourse.title,
+          count: unitStats.lessonCount,
+          percent: unitStats.percent,
+          state: state,
+          href: "#course-unit-" + String(index + 1)
+        };
+      }), {
+        title: i18n("viz_course_title", "Course route"),
+        description: i18n("viz_course_desc", "Move through the units in order; progress reflects your reading depth.")
+      });
+      children.push(routeHost);
+    }
+
     var syllabusTitle = document.createElement("h2");
     syllabusTitle.className = "syllabus-title";
     syllabusTitle.textContent = i18n("course_tasks_title", "Tasks");
@@ -756,6 +782,7 @@
     var stats = subcourseProgress(subcourse);
     var block = document.createElement("section");
     block.className = "unit-block";
+    block.id = "course-unit-" + String(subcourseIndex + 1);
 
     var head = document.createElement("div");
     head.className = "unit-block__head";

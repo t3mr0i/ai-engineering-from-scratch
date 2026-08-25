@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Case Studies and the 2026 State of the Art?",
+      "question": "Which inputs does `Design` give the case-study mapper?",
       "options": [
-        "Explain the coordination mechanism behind Case Studies and the 2026 State of the Art",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the coordination mechanism behind Case Studies and the 2026 State of the Art” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Case Studies and the 2026 State of the Art?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central multi-agent interaction from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Case Studies and the 2026 State of the Art?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace messages, shared state, and verification decisions end to end",
-        "Treat one successful example as proof that every edge case works"
+        "A raw transcript with no structured design attributes.",
+        "Only the model vendor and a temperature value.",
+        "Task type, expected agent count, verification need, runtime duration, role distinctness, and whether the product is user-facing/networked.",
+        "The benchmark score and the number of SQLite rows."
       ],
       "correct": 2,
-      "explanation": "“Trace messages, shared state, and verification decisions end to end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The dataclass contains `task_type`, `n_agents_expected`, `verification_required`, `runtime_duration_hours`, `roles_distinct`, and `user_facing_network` alongside the design name."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Case Studies and the 2026 State of the Art?",
+      "question": "After the higher-priority population/user-facing-network branch is excluded, where does an engineering-focused design map?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate coordination quality, cost, and correlated failure modes",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate coordination quality, cost, and correlated failure modes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Case Studies and the 2026 State of the Art?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the coordination mechanism behind Case Studies and the 2026 State of the Art"
+        "It always maps to the OpenClaw population case.",
+        "It is rejected because the mapper supports research only.",
+        "It maps to Anthropic Research unless there are exactly six agents.",
+        "It maps to the MetaGPT/ChatDev role-decomposition case."
       ],
       "correct": 3,
-      "explanation": "“Explain the coordination mechanism behind Case Studies and the 2026 State of the Art” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`map_to_case` checks population or `user_facing_network` first. Once that branch is excluded, `task_type == \"engineering\"` or `roles_distinct` selects `metagpt_chatdev`."
+    },
+    {
+      "stage": "check",
+      "question": "Which case does the built-in `research-assistant` design select?",
+      "options": [
+        "Anthropic Research (supervisor-worker)",
+        "MetaGPT / ChatDev",
+        "OpenClaw / Moltbook",
+        "No case, because six agents exceed the mapper's limit."
+      ],
+      "correct": 0,
+      "explanation": "Its `task_type` is `research`, so after the population and engineering checks the function returns `anthropic_research`."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the built-in `internal-automation` design map to MetaGPT/ChatDev instead of the default research case?",
+      "options": [
+        "Its runtime is exactly 24 hours.",
+        "Its `roles_distinct=True`, which triggers the engineering/role-decomposition branch.",
+        "The task type `automation` is a special population case.",
+        "It has `user_facing_network=True`."
+      ],
+      "correct": 1,
+      "explanation": "The mapper's second condition is `d.task_type == \"engineering\" or d.roles_distinct`; that condition is true for internal automation and returns `metagpt_chatdev`."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Case Studies and the 2026 State of the Art?",
+      "question": "What happens for a design that is neither population/networked, engineering/role-distinct, nor research?",
       "options": [
-        "Implement the central multi-agent interaction from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It returns an empty framework string.",
+        "It raises `KeyError` because no default exists.",
+        "The mapper's final fallback is `anthropic_research`.",
+        "It always selects OpenClaw for safety."
       ],
-      "correct": 0,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "After the explicit population, engineering, and research checks, the function tests long verified runs and otherwise returns `anthropic_research` as its final default."
+    },
+    {
+      "stage": "post",
+      "question": "How should the lesson's case-study mapping be used in a real design review?",
+      "options": [
+        "Treat the selected reference as a guaranteed performance result and copy its current claims unchanged.",
+        "Assume protocol compatibility makes all handoff semantics equivalent.",
+        "Choose a framework solely from the number of agents, ignoring verification and topology.",
+        "Use the closest reference to identify patterns and tradeoffs, then adapt and verify them for the proposed system."
+      ],
+      "correct": 3,
+      "explanation": "The docs frame the mapper as a way to select patterns to copy, not a benchmark guarantee. Local design constraints, verification, cost, and handoff semantics still need evaluation."
     }
   ]
 }

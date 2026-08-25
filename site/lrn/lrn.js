@@ -516,7 +516,7 @@
       els.academyAllToggle.setAttribute("aria-pressed", String(state.academyAll));
       els.academyAllToggle.textContent = state.academyAll
         ? i18n("academy_paths_show_relevant", "Show role recommendations")
-        : i18n("academy_paths_show_all", "Show all AI-X trainings");
+        : i18n("academy_paths_show_all", "Show all AI trainings");
     }
 
     replaceChildren(els.academyPathList, visiblePaths.map(function (path) {

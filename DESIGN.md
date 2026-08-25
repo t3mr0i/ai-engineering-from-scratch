@@ -248,6 +248,31 @@ See `site/lrn/tokens.css` for `--btn-*` tokens and `style.css` for `.btn*` class
   shadow — the two together read as "soft card," not "flat outlined box."
 - **Internal Padding:** 24px.
 
+### Learning visualizations
+
+`site/learning-visuals.js` and `site/learning-visuals.css` are the shared,
+zero-dependency visualization layer for structural and quantitative learning
+views. Lesson routes derive from real section headings, course routes derive
+from curriculum units and reading progress, catalog bars derive from the
+active lesson result set, and assessment bars use the same target-met ratio as
+the published score. Never invent illustrative progress or average ordinal
+Basic / Advanced / Expert levels as if their intervals were numeric.
+
+- **Authored concepts:** Mermaid or SVG only, following the repository rule.
+  Use Mermaid for relationships and flows; use the existing figure registry
+  for reusable interactive technical diagrams.
+- **Derived orientation:** render as semantic lists, links, buttons, headings,
+  and labelled chart roles first. Connector lines and bars are a visual layer,
+  not the sole carrier of meaning.
+- **Responsive behavior:** horizontal routes become vertical below 760px.
+  Dense phase distributions may scroll horizontally rather than compressing
+  labels below legibility.
+- **Color and state:** Core Blue communicates the active or matching value;
+  neutral tracks show the available whole. Complete/current states must remain
+  named for assistive technology and cannot rely on color alone.
+- **Motion:** visualization values update without animating layout properties.
+  Honor `prefers-reduced-motion` for any future explanatory motion.
+
 ### Navigation
 - **Style:** fixed `nav-edge` header, wordmark left, pill-shaped icon buttons
   right (badges, language/theme toggle). Hairline bottom border, translucent

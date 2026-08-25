@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does speculative decoding exploit a gap that exists in plain decode?",
+      "question": "In SpecPoint, what does alpha measure?",
       "options": [
-        "Decode is compute-bound, so adding more compute is free",
-        "Decode does not benefit from batching",
-        "Decode requires more network bandwidth than prefill",
-        "Decode is memory-bound, so the GPU is mostly idle waiting on HBM reads of weights"
-      ],
-      "correct": 3,
-      "explanation": "“Decode is memory-bound, so the GPU is mostly idle waiting on HBM reads of weights” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What does the acceptance rate alpha measure?",
-      "options": [
-        "Fraction of GPU memory used during decode",
-        "Fraction of draft-proposed tokens accepted by the target model",
-        "Latency overhead of the draft model",
-        "Cache hit rate of the KV cache"
-      ],
-      "correct": 1,
-      "explanation": "“Fraction of draft-proposed tokens accepted by the target model” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What changes in EAGLE-3 compared to EAGLE-2 that pushes alpha to roughly 0.6-0.8 on general chat?",
-      "options": [
-        "It uses a full-sized draft model of the same family",
-        "It runs on CPU instead of GPU",
-        "It removes the verify step entirely",
-        "The draft head is trained on multiple target layers rather than just the last layer"
-      ],
-      "correct": 3,
-      "explanation": "“The draft head is trained on multiple target layers rather than just the last layer” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Below roughly what alpha does the lesson say speculative decoding becomes net negative at high concurrency on most 2026 hardware?",
-      "options": [
-        "0.95",
-        "0.05",
-        "0.55",
-        "0.85"
-      ],
-      "correct": 2,
-      "explanation": "“0.55” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Which metric should you watch most closely after flipping EAGLE-3 on, even if mean ITL drops?",
-      "options": [
-        "Cold-start time",
-        "GPU memory utilization",
-        "P99 ITL, because rejected-draft two-passes can serialize under full batch",
-        "Mean E2E latency"
-      ],
-      "correct": 2,
-      "explanation": "“P99 ITL, because rejected-draft two-passes can serialize under full batch” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Why is speculative decoding opt-in (not default) in vLLM 2026 per the lesson?",
-      "options": [
-        "Acceptance rate depends on workload, and turning it on without measuring alpha is a production anti-pattern",
-        "It only works on Blackwell GPUs",
-        "It is incompatible with PagedAttention",
-        "It requires a separate license"
+        "The fraction of draft tokens accepted by verification",
+        "The number of target-model layers",
+        "The GPU memory capacity in GB",
+        "The probability of a provider timeout"
       ],
       "correct": 0,
-      "explanation": "“Acceptance rate depends on workload, and turning it on without measuring alpha is a production anti-pattern” matches the lesson’s treatment of EAGLE-3 Speculative Decoding in Production; the alternatives conflict with its definitions or workflow."
+      "explanation": "alpha is documented as the acceptance rate; expected tokens per target forward are 1 + k*alpha."
+    },
+    {
+      "stage": "check",
+      "question": "For k=5, verify_overhead=0.15, and concurrency=32, what is the break-even alpha approximately?",
+      "options": [
+        "0.150",
+        "0.034",
+        "0.300",
+        "0.750"
+      ],
+      "correct": 1,
+      "explanation": "The effective overhead is 0.15 × (1 + 32/256) = 0.16875; breakeven_alpha divides that by k=5, about 0.03375."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to effective verify overhead as concurrency rises from 32 to 256?",
+      "options": [
+        "It becomes zero because batches share verification",
+        "It is divided by the concurrency",
+        "It increases through the factor 1 + concurrency/256",
+        "It is replaced by alpha"
+      ],
+      "correct": 2,
+      "explanation": "expected_speedup multiplies verify_overhead by (1 + p.concurrency / 256), so more concurrent sequences raise the verification cost."
+    },
+    {
+      "stage": "check",
+      "question": "Holding k, overhead, and concurrency fixed, which alpha should give the highest expected_speedup?",
+      "options": [
+        "0.30",
+        "0.45",
+        "0.55",
+        "0.80"
+      ],
+      "correct": 3,
+      "explanation": "The numerator 1 + k*alpha grows monotonically with alpha while the denominator is unchanged, so 0.80 is the largest candidate."
+    },
+    {
+      "stage": "post",
+      "question": "Why can speculative decoding have a worse P99 tail even when expected_speedup is above 1?",
+      "options": [
+        "Rejected drafts can pay an extra target pass, creating high per-token batches",
+        "The plain decoder always has zero latency",
+        "alpha is ignored by simulate_tail",
+        "P99 is computed from the number of GPUs, not token latencies"
+      ],
+      "correct": 0,
+      "explanation": "simulate_tail adds reroll_ms when accepted < k; a rejected draft can therefore create a costly batch and worsen the tail."
+    },
+    {
+      "stage": "post",
+      "question": "Which local combination is explicitly documented as not compiling together?",
+      "options": [
+        "EAGLE-3 with a KV cache",
+        "An N-gram GPU draft model with chunked prefill",
+        "EAGLE-3 with concurrency 32",
+        "A target model with FP8 weights"
+      ],
+      "correct": 1,
+      "explanation": "The lesson calls out the N-gram GPU exception: combining that draft path with chunked prefill does not compile in the described vLLM setup."
     }
   ]
 }

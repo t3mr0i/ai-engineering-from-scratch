@@ -39,6 +39,7 @@
   <link rel="preload" href="lrn/assets/fonts/LHGHeadWEB-Light.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="lrn/assets/fonts/LHGTextWEB-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css?v=20260824a">
+  <link rel="stylesheet" href="learning-visuals.css?v=20260825g">
   <style>
     .catalog-page {
       padding: 100px 0 80px;
@@ -346,6 +347,10 @@
         width: 100%;
       }
 
+      .catalog-search-group {
+        flex: 0 0 auto;
+      }
+
       .catalog-table {
         font-size: 0.85rem;
       }
@@ -379,7 +384,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js"></script>
+  <script src="i18n.js?v=20260825b"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -458,6 +463,7 @@
         </label>
       </div>
       <div class="catalog-count" id="catalogCount" aria-live="polite"></div>
+      <div id="catalogPhaseVisual"></div>
       <div class="catalog-table-wrap">
         <table class="catalog-table" id="catalogTable">
           <thead>
@@ -479,6 +485,7 @@
   <script src="lrn/data.js?v=20260824b"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="progress.js?v=20260724a"></script>
+  <script src="learning-visuals.js?v=20260825g"></script>
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
   <script>
@@ -606,6 +613,7 @@
         var searchClear = document.getElementById('catalogSearchClear');
         var bodyEl = document.getElementById('catalogBody');
         var countEl = document.getElementById('catalogCount');
+        var phaseVisualEl = document.getElementById('catalogPhaseVisual');
         var sortCol = 'phase';
         var sortDir = 1;
         var manualSort = false;
@@ -675,6 +683,18 @@
             .replace('{total}', String(allRows.length))
             .replace('{topic}', topicFilter ? topicLabel(topicFilter) : '');
           searchClear.hidden = !query;
+
+          if (window.LearningVisuals && phaseVisualEl) {
+            window.LearningVisuals.renderPhaseChart(phaseVisualEl, allRows, rows, {
+              selectedPhase: phaseFilter,
+              title: uiText('viz_catalog_title', 'Curriculum distribution'),
+              description: uiText('viz_catalog_desc', 'Each bar is a phase. The blue fill shows the lessons matching your filters.'),
+              onSelect: function (phaseId) {
+                phaseSelect.value = String(phaseId) === phaseSelect.value ? '' : String(phaseId);
+                render();
+              }
+            });
+          }
 
           if (rows.length === 0) {
             bodyEl.innerHTML = '<tr><td colspan="5" class="catalog-empty">' +

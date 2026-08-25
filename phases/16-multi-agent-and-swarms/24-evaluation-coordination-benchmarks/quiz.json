@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Evaluation and Coordination Benchmarks?",
+      "question": "What does the benchmark scorecard measure beyond raw task accuracy?",
       "options": [
-        "Explain the coordination mechanism behind Evaluation and Coordination Benchmarks",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the coordination mechanism behind Evaluation and Coordination Benchmarks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Evaluation and Coordination Benchmarks?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central multi-agent interaction from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Evaluation and Coordination Benchmarks?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace messages, shared state, and verification decisions end to end",
-        "Treat one successful example as proof that every edge case works"
+        "Whether a task used Python or TypeScript, with no cost metric.",
+        "Only the model name and the number of prompts.",
+        "Seen/held accuracy, milestone completion, cost per task, cost per held milestone, random baseline delta, and contamination signals.",
+        "A single subjective rating from the system's own manager."
       ],
       "correct": 2,
-      "explanation": "“Trace messages, shared state, and verification decisions end to end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`run_bench` computes seen/held accuracy and milestone rates plus cost metrics; `format_scorecard` adds the random baseline and a seen–held contamination delta."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Evaluation and Coordination Benchmarks?",
+      "question": "What split does `format_scorecard` pass to `run_bench`?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate coordination quality, cost, and correlated failure modes",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate coordination quality, cost, and correlated failure modes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Evaluation and Coordination Benchmarks?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the coordination mechanism behind Evaluation and Coordination Benchmarks"
+        "200 seen and 0 held tasks.",
+        "160 seen and 40 held tasks.",
+        "20 seen and 20 held tasks.",
+        "40 seen tasks and 160 held tasks."
       ],
       "correct": 3,
-      "explanation": "“Explain the coordination mechanism behind Evaluation and Coordination Benchmarks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For each system, the scorecard calls `run_bench(sys, n_seen=40, n_held=160, seed=17)`."
+    },
+    {
+      "stage": "check",
+      "question": "When does the scorecard mark the contamination flag?",
+      "options": [
+        "When `accuracy_seen - accuracy_held` is greater than 0.1.",
+        "When cost per task exceeds $0.20.",
+        "When held accuracy is higher than seen accuracy by any amount.",
+        "Whenever milestone completion is below 0.80."
+      ],
+      "correct": 0,
+      "explanation": "The printed rule and code use `delta > 0.1`; a star is appended to that system's row when the seen advantage exceeds one tenth."
+    },
+    {
+      "stage": "check",
+      "question": "Which accuracy should be treated as canonical when judging generalization?",
+      "options": [
+        "Seen accuracy, because it includes all training examples.",
+        "Held-set accuracy, because it is not the contaminated training split.",
+        "The maximum of seen and held accuracy.",
+        "The random baseline, because it has no contamination."
+      ],
+      "correct": 1,
+      "explanation": "The scorecard explicitly labels held-set accuracy as canonical. Seen scores can be inflated by `training_contamination`, especially for system-A."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Evaluation and Coordination Benchmarks?",
+      "question": "How is `cost_per_milestone_held` computed for a system?",
       "options": [
-        "Implement the central multi-agent interaction from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The random baseline divided by raw accuracy.",
+        "Total cost multiplied by the number of seen tasks.",
+        "Cost per task divided by the held-set milestone rate, with a 0.01 floor for the denominator.",
+        "Cost per task divided by the number of agents in the system."
       ],
-      "correct": 0,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "`run_bench` divides `system.cost_per_task` by the held milestone fraction and protects the denominator with `max(0.01, ...)`."
+    },
+    {
+      "stage": "post",
+      "question": "Which item belongs on the lesson's claim checklist?",
+      "options": [
+        "Choose the system with the largest seen score and omit the split.",
+        "Treat a single successful demo as a statistically significant result.",
+        "Replace held-out tasks with the same prompts to reduce variance.",
+        "Report benchmark/split, contamination, baselines, statistical significance, task diversity, and cost."
+      ],
+      "correct": 3,
+      "explanation": "`print_claim_scorecard` lists those six questions, insisting that a multi-agent claim disclose evaluation design, comparisons, uncertainty, generalization, and cost."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is round-robin load balancing actively harmful for cached LLM inference?",
+      "question": "What TTFT values does the simulator assign to a local cache hit and a cold cache miss?",
       "options": [
-        "A request that does not land on the node holding its prefix pays full prefill cost instead of a cache hit",
-        "Round-robin requires sticky sessions",
-        "Round-robin breaks TLS",
-        "Round-robin is only valid for stateful databases"
+        "80 ms and 800 ms",
+        "800 ms and 80 ms",
+        "65 ms and 75 ms",
+        "4 ms and 12 ms"
       ],
       "correct": 0,
-      "explanation": "“A request that does not land on the node holding its prefix pays full prefill cost instead of a cache hit” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
+      "explanation": "CACHE_HIT_MS is 80 and CACHE_MISS_MS is 800; rtt is added on top when the chosen replica is remote."
     },
     {
       "stage": "check",
-      "question": "What two inputs does a cache-aware router consume?",
+      "question": "What RTT does rtt return for an us-east-1 request served in eu-west-1?",
       "options": [
-        "Random shuffles and request size",
-        "Only the user_id and tenant_id",
-        "Round-robin counters and TLS keys",
-        "KV-cache events from replicas and a prefix hash on the incoming request"
-      ],
-      "correct": 3,
-      "explanation": "“KV-cache events from replicas and a prefix hash on the incoming request” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Roughly what is the TTFT gap between a cache hit and a cold prefill on a 2K-token prompt for Llama 3.3 70B FP8?",
-      "options": [
-        "Identical",
-        "About 10x (~80 ms vs ~800 ms)",
-        "About 1.1x",
-        "About 1000x"
+        "0 ms",
+        "75 ms",
+        "65 ms",
+        "130 ms"
       ],
       "correct": 1,
-      "explanation": "“About 10x (~80 ms vs ~800 ms)” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
+      "explanation": "CROSSREGION_RTT includes (us-east-1, eu-west-1): 75; same-region traffic alone returns 0."
     },
     {
       "stage": "check",
-      "question": "Why does cross-region routing not always beat regional routing for cache hits?",
+      "question": "When does GLOBAL prefer a matching remote cache over a local cold prefill?",
       "options": [
-        "Cache-aware routing is impossible across regions",
-        "GORGO research found cache hits do not help latency",
-        "Inter-region routing is forbidden by all hyperscalers",
-        "Saved prefill can be dwarfed by network RTT, e.g. 440 ms round-trip can dwarf an 800-to-80 ms prefill saving"
-      ],
-      "correct": 3,
-      "explanation": "“Saved prefill can be dwarfed by network RTT, e.g. 440 ms round-trip can dwarf an 800-to-80 ms prefill saving” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What does the lesson cite as the 32% LLM DR failure driver?",
-      "options": [
-        "Backups that include weights but miss tokenizer files or quantization configs",
-        "Region quota exhaustion",
-        "Misconfigured load balancers",
-        "Unencrypted backups"
-      ],
-      "correct": 0,
-      "explanation": "“Backups that include weights but miss tokenizer files or quantization configs” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What does the lesson say about commercial cross-region inference offerings such as Bedrock CRI?",
-      "options": [
-        "They are KV-cache-aware and replace app-layer routing",
-        "They only work in us-east-1",
-        "They optimize availability, not TTFT, and treat inference as opaque — you still need an app-layer cache-aware router",
-        "They are forbidden under GDPR"
+        "Whenever the remote replica has any queue depth",
+        "Only when the remote region is eu-west-1",
+        "When cache-hit latency plus RTT is below the miss cost",
+        "Never; GLOBAL always chooses a local replica"
       ],
       "correct": 2,
-      "explanation": "“They optimize availability, not TTFT, and treat inference as opaque — you still need an app-layer cache-aware router” matches the lesson’s treatment of Multi-Region LLM Serving and KV Cache Locality; the alternatives conflict with its definitions or workflow."
+      "explanation": "GLOBAL evaluates CACHE_HIT_MS + rtt and falls back to a local replica if the best match costs more than CACHE_MISS_MS."
+    },
+    {
+      "stage": "check",
+      "question": "Which artifact omission does the lesson identify as a 32% DR failure driver?",
+      "options": [
+        "A missing GPU price list only",
+        "A missing cross-region DNS record only",
+        "An absent request ID in logs",
+        "Tokenizer files or quantization configurations"
+      ],
+      "correct": 3,
+      "explanation": "The DR checklist includes tokenizer.json/tokenizer.model and quantization configs; backing up weights alone is not enough."
+    },
+    {
+      "stage": "post",
+      "question": "Why does ROUND_ROBIN underperform on a repeated-prefix workload?",
+      "options": [
+        "It ignores which replica already holds the prefix cache",
+        "It always routes all traffic to eu-west-1",
+        "It disables the request queue",
+        "It adds 800 ms of RTT to every request"
+      ],
+      "correct": 0,
+      "explanation": "ROUND_ROBIN chooses replicas by index, so the same prefix is scattered across caches and many requests pay the 800 ms miss path."
+    },
+    {
+      "stage": "post",
+      "question": "What is the key distinction between Bedrock CRI or a GKE multi-cluster gateway and the router in this lesson?",
+      "options": [
+        "Commercial offerings expose KV prefix hashes to every client",
+        "Commercial offerings handle availability across regions but do not provide this KV-aware routing decision",
+        "The local router cannot account for RTT",
+        "The local router is only a billing API"
+      ],
+      "correct": 1,
+      "explanation": "The lesson treats commercial cross-region products as opaque availability/failover, while this simulator explicitly chooses by prefix-cache state and network cost."
     }
   ]
 }

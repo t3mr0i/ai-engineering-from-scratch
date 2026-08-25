@@ -54,8 +54,8 @@
     if (!entry) {
       entry = createEntry(documentRef);
       entry.dataset.adminEntry = "true";
-      nav.insertBefore(entry, nav.querySelector(".theme-toggle") || null);
     }
+    nav.append(entry);
 
     try {
       const response = await fetchFn("/api/admin/me", {

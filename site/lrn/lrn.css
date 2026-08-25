@@ -2106,6 +2106,9 @@ i[class^="ph "] {
 }
 
 .course-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -2120,6 +2123,39 @@ i[class^="ph "] {
     border-color var(--dur-base) var(--ease-standard),
     transform var(--dur-base) var(--ease-out),
     box-shadow var(--dur-base) var(--ease-standard);
+}
+
+/* A quiet "approach light" gives the card one authored hover moment. The
+   light originates at the open control, so it reinforces direction instead
+   of decorating the whole grid. */
+.course-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    72% 58% at 104% 104%,
+    rgba(45, 95, 228, 0.11) 0%,
+    rgba(45, 95, 228, 0.045) 46%,
+    transparent 76%
+  );
+  opacity: 0;
+  transform: translate3d(12px, 8px, 0) scale(0.98);
+  transform-origin: 100% 100%;
+  transition:
+    opacity var(--dur-fast) var(--ease-standard),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.course-card:hover,
+.course-card:focus-visible {
+  text-decoration: none;
+}
+
+.course-card:focus-visible::before {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 /* Per-family tints — Lufthansa brand-adjacent, single brand-blue family. */
@@ -2140,14 +2176,46 @@ i[class^="ph "] {
   color: var(--tile-ink);
   font-size: 1.25rem;
   line-height: 1;
+  box-shadow: 0 0 0 rgba(5, 22, 77, 0);
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-standard);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .course-card:hover {
     border-color: var(--lhg-blue-500);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
   }
+
+  .course-card:hover::before {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  .course-card:hover .course-card__tile {
+    background: var(--action-primary);
+    color: var(--action-primary-ink);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(5, 22, 77, 0.14);
+  }
+}
+
+/* Keyboard focus wins over hover when both states coincide. */
+.course-card:focus-visible {
+  border-color: var(--border-focus);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-focus), var(--shadow-lg);
+}
+
+.course-card:focus-visible .course-card__tile {
+  background: var(--action-primary);
+  color: var(--action-primary-ink);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(5, 22, 77, 0.14);
 }
 
 .course-card:active {
@@ -2250,6 +2318,7 @@ i[class^="ph "] {
   margin-block-start: auto;
   padding-block-start: var(--space-3);
   border-block-start: 1px solid var(--border-subtle);
+  transition: border-color var(--dur-fast) var(--ease-standard);
 }
 
 .course-card__foot .progress-meter {
@@ -2275,13 +2344,67 @@ i[class^="ph "] {
     border-color var(--dur-base) var(--ease-standard);
 }
 
+.course-card__open svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.course-card .progress-meter span {
+  position: relative;
+  overflow: hidden;
+}
+
+.course-card .progress-meter span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.72) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateX(-110%);
+  transition:
+    opacity var(--dur-fast) var(--ease-standard),
+    transform var(--dur-base) var(--ease-out);
+}
+
 @media (hover: hover) and (pointer: fine) {
+  .course-card:hover .course-card__foot {
+    border-color: rgba(45, 95, 228, 0.24);
+  }
+
   .course-card:hover .course-card__open {
     background: var(--action-primary);
     color: var(--action-primary-ink);
     border-color: var(--action-primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .course-card:hover .course-card__open svg {
     transform: translateX(2px);
   }
+
+  .course-card:hover .progress-meter span::after {
+    opacity: 1;
+    transform: translateX(110%);
+  }
+}
+
+.course-card:focus-visible .course-card__foot {
+  border-color: rgba(45, 95, 228, 0.24);
+}
+
+.course-card:focus-visible .course-card__open {
+  background: var(--action-primary);
+  color: var(--action-primary-ink);
+  border-color: var(--action-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.course-card:focus-visible .course-card__open svg {
+  transform: translateX(2px);
 }
 
 /* Stagger-in on (re)render — reveal curve, capped delay set inline per index */
@@ -2297,7 +2420,9 @@ i[class^="ph "] {
 }
 
 .course-card--enter {
-  animation: card-enter 360ms var(--ease-out) both;
+  /* `backwards` applies the hidden start during the delay, then releases
+     `transform` so the card's hover lift can take over after entry. */
+  animation: card-enter 360ms var(--ease-out) backwards;
   animation-delay: var(--enter-delay, 0ms);
 }
 
@@ -2801,6 +2926,7 @@ i[class^="ph "] {
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-xs);
+  scroll-margin-top: 6rem;
 }
 
 .unit-block__head {
@@ -3249,13 +3375,54 @@ i[class^="ph "] {
   }
 
   .activity-link {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto auto minmax(0, 1fr);
+  }
+
+  .activity-link__dot {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .activity-link__type-icon {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .activity-link strong {
+    grid-column: 3;
   }
 
   .activity-link small,
   .activity-link em {
-    grid-column: 2;
+    grid-column: 3;
     justify-self: start;
+  }
+
+  .unit-block__head {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .unit-block__icon {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .unit-block__code {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .unit-block__head h3 {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .unit-block__meta {
+    grid-column: 3;
+    grid-row: 2;
+    white-space: normal;
   }
 
   .skills-progress {
@@ -3428,6 +3595,17 @@ i[class^="ph "] {
     animation: none !important;
   }
   .activity-link::before {
+    display: none !important;
+  }
+  .course-card::before {
+    transform: none !important;
+    transition: opacity var(--dur-fast) linear !important;
+  }
+  .course-card__open svg {
+    transform: none !important;
+    transition: none !important;
+  }
+  .course-card .progress-meter span::after {
     display: none !important;
   }
 }

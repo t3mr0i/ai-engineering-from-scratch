@@ -250,7 +250,7 @@ test("Harness Engineering is staged in LP03 and not broadened through LP02", () 
   assert.ok(lp03.profileIds.includes("tc"), "LP03 must serve Technology Consulting");
 });
 
-test("Academy learning paths cover every imported AI-X course exactly once", () => {
+test("Academy learning paths cover every imported AI course exactly once", () => {
   assert.ok(Array.isArray(data.academyPaths), "LrnData.academyPaths must be an array");
   const actual = data.academyPaths.map((path) => path.academyCourse).sort();
   const expected = ["AI-01", "AI-02", "AI-03", "AI-04", "AI-06", "AI-07", "AI-08", "AI-09", "AI-10", "AI-12"];

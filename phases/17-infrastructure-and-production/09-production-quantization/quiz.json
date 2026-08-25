@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which quantization format does the lesson call the production default for CPU and edge serving?",
+      "question": "Which local format is singled out for serving one base model with many LoRA adapters in vLLM?",
       "options": [
-        "FP8",
-        "GGUF Q4_K_M / Q5_K_M",
-        "AWQ INT4",
-        "NVFP4"
-      ],
-      "correct": 1,
-      "explanation": "“GGUF Q4_K_M / Q5_K_M” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which format is the lesson's pick for datacenter GPU serving when multi-LoRA is required in vLLM?",
-      "options": [
-        "GGUF Q4_K_M",
-        "AWQ",
-        "GPTQ with Marlin kernels",
-        "NVFP4"
-      ],
-      "correct": 2,
-      "explanation": "“GPTQ with Marlin kernels” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What is the \"my model is 4 GB now\" trap with AWQ?",
-      "options": [
-        "AWQ is incompatible with vLLM",
-        "AWQ requires INT8 KV cache",
-        "AWQ does not actually shrink weights",
-        "AWQ only shrinks weights; KV cache and activations are separate and can add 30-50 GB at production batch sizes"
-      ],
-      "correct": 3,
-      "explanation": "“AWQ only shrinks weights; KV cache and activations are separate and can add 30-50 GB at production batch sizes” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why does calibrating AWQ on generic web text hurt domain models?",
-      "options": [
-        "It disables Marlin kernels",
-        "The algorithm makes wrong decisions about which weights to protect, dropping domain accuracy (for example several Pass@1 points on HumanEval)",
-        "It only works on AMD GPUs",
-        "It increases model size"
-      ],
-      "correct": 1,
-      "explanation": "“The algorithm makes wrong decisions about which weights to protect, dropping domain accuracy (for example several Pass@1 points on HumanEval)” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "For a reasoning-heavy workload where quality is non-negotiable, which precision does the lesson recommend by default?",
-      "options": [
-        "GPTQ INT4",
-        "INT2 GGUF",
-        "NVFP4 weights",
-        "FP8 weights"
-      ],
-      "correct": 3,
-      "explanation": "“FP8 weights” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Which 2026 quantization limitation does the lesson call out for NVFP4 in early 2026?",
-      "options": [
-        "No LoRA support yet",
-        "Not supported on H100",
-        "Only runs on CPU",
-        "Cannot be combined with FP8 KV cache"
+        "GPTQ-Int4 with Marlin",
+        "GGUF Q4_K_M in llama.cpp",
+        "FP8 with no adapter support",
+        "BF16 baseline"
       ],
       "correct": 0,
-      "explanation": "“No LoRA support yet” matches the lesson’s treatment of Production Quantization — AWQ, GPTQ, GGUF K-quants, FP8, MXFP4/NVFP4; the alternatives conflict with its definitions or workflow."
+      "explanation": "The GPTQ-Int4 + Marlin row notes multi-LoRA support; the lesson uses that workload as GPTQ's distinctive production advantage."
+    },
+    {
+      "stage": "check",
+      "question": "What is the approximate weight memory for a 70B model at INT4 in memory_breakdown?",
+      "options": [
+        "140 GB",
+        "35 GB",
+        "70 GB",
+        "17.5 GB"
+      ],
+      "correct": 1,
+      "explanation": "weight_gb is params_b * weight_bits / 8, so 70 × 4 / 8 = 35 GB before KV cache and activations."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to KV precision when the AWQ format is selected in FORMATS?",
+      "options": [
+        "It automatically becomes 4 bits with the weights",
+        "It is removed from the memory calculation",
+        "It remains 16 bits, separate from the 4-bit weights",
+        "It is always set to 32 bits"
+      ],
+      "correct": 2,
+      "explanation": "AWQ-Int4 + Marlin has weight_bits=4 but kv_bits=16, so quantizing weights does not silently quantize the KV cache."
+    },
+    {
+      "stage": "check",
+      "question": "Which format does the lesson position as the safer quality choice for reasoning-heavy workloads?",
+      "options": [
+        "GGUF Q3_K_M",
+        "NVFP4 without evaluation",
+        "AWQ-Int4 regardless of task",
+        "FP8"
+      ],
+      "correct": 3,
+      "explanation": "The FP8 row is labeled safe default reasoning; aggressive FP4 formats require per-model validation because quality drops can show up on reasoning tasks."
+    },
+    {
+      "stage": "post",
+      "question": "Why can a calibration set built from generic web text hurt a medical or code deployment?",
+      "options": [
+        "It may protect the wrong salient weights for the deployment domain",
+        "Calibration changes the model's tokenizer vocabulary only",
+        "It increases KV precision to 32 bits",
+        "It makes all formats use the same engine"
+      ],
+      "correct": 0,
+      "explanation": "AWQ/GPTQ calibration chooses quantization behavior from representative examples; a domain mismatch can degrade domain-specific accuracy."
+    },
+    {
+      "stage": "post",
+      "question": "Why should a 4-bit weight result not be treated as the whole production memory budget?",
+      "options": [
+        "The weight file is always larger than the model parameter count",
+        "KV cache and activations are calculated separately and grow with context and concurrency",
+        "Quantized weights cannot be loaded into HBM",
+        "The simulator ignores weight memory entirely"
+      ],
+      "correct": 1,
+      "explanation": "memory_breakdown adds weight, KV, and activation terms; KV grows with concurrency × context and can consume the memory saved by weight quantization."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which three market segments does the lesson use to organize 2026 inference vendors?",
+      "question": "Which pricing branch does cost_per_day use for Replicate?",
       "options": [
-        "Free tier, paid self-serve, and enterprise contract — the pricing-page split, not the lesson's segmentation",
-        "Custom silicon, GPU platforms, and API-first marketplaces",
-        "Single-tenant, multi-tenant, and on-prem — a deployment split the lesson does not use to organize vendors",
-        "Open-source licensed, commercial closed, and hybrid — a licensing split the lesson does not use to organize vendors"
+        "per_prediction multiplied by predictions_per_day",
+        "per-minute billing with a 1,440-minute floor",
+        "per-million output tokens",
+        "A fixed monthly reservation"
+      ],
+      "correct": 0,
+      "explanation": "Replicate is the only local vendor with per_prediction set, so cost_per_day multiplies $0.006 by the prediction count."
+    },
+    {
+      "stage": "check",
+      "question": "Baseten serves 100M tokens/day at 900k tokens/minute. Why does the demo still bill 1,440 minutes?",
+      "options": [
+        "The token rate is ignored for per-minute vendors",
+        "Its reserved-minute floor is 1,440, above the roughly 111 saturated minutes",
+        "Baseten bills every request for 60 minutes",
+        "The workload is converted to 1,440 predictions"
       ],
       "correct": 1,
-      "explanation": "The lesson organizes the 2026 market into custom silicon (Groq, Cerebras, SambaNova), GPU platforms (Baseten, Together, Fireworks, Modal, Anyscale), and API-first marketplaces (Replicate, DeepInfra, OpenRouter, Fal)."
+      "explanation": "cost_per_day takes max(saturated_minutes, min_reserved_minutes_per_day); 100M/900k is about 111 minutes, so Baseten's 1,440-minute floor wins."
     },
     {
       "stage": "check",
-      "question": "Around what sustained GPU utilization does per-minute billing (Baseten, Modal) start to beat per-token billing (Fireworks, Together)?",
+      "question": "At 500,000 predictions/day, what does Replicate's $0.006 per-prediction field contribute?",
       "options": [
-        "60%",
-        "90%",
-        "5%",
-        "30%"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's rule of thumb is that above roughly 30% sustained utilization of a dedicated GPU, per-minute billing starts to beat per-token; below that, per-token wins because you avoid paying for idle capacity."
-    },
-    {
-      "stage": "check",
-      "question": "Which platform is described as Python-native serverless with per-second billing and 2-4s cold starts after pre-warming?",
-      "options": [
-        "Modal — pure Python serverless, per-second billing, 2-4s cold starts with pre-warming",
-        "Baseten — Truss packaging with dependencies and secrets, per-minute billing on dedicated GPUs",
-        "Fireworks — FireAttention engine, per-token pricing, claims 4x lower latency than vLLM",
-        "Anyscale — Ray-native platform built on RayTurbo, tuned for distributed Python workload graphs"
-      ],
-      "correct": 0,
-      "explanation": "Modal is described as true Python serverless: decorate a function with `@modal.function(gpu=\"A100\")`, per-second billing, and 2-4s cold starts with pre-warming (under 1s for small models)."
-    },
-    {
-      "stage": "check",
-      "question": "What is Fireworks's notable LoRA pricing differentiator?",
-      "options": [
-        "LoRA-served requests cost more than the base model, the premium most competing platforms charge",
-        "LoRA fine-tunes are not supported on Fireworks at all, only base models can be served",
-        "LoRA-served requests are charged at the base model's per-token rate, with no fine-tune premium",
-        "LoRA requests require a separate dedicated GPU contract outside the normal per-token pricing"
+        "$300",
+        "$600",
+        "$3,000",
+        "$30,000"
       ],
       "correct": 2,
-      "explanation": "The lesson notes Fireworks serves a fine-tuned (LoRA) model at the same per-token rate as the base model, calling out that other providers typically charge a premium for LoRA-served requests."
+      "explanation": "The prediction branch computes 500,000 × $0.006, which is $3,000/day before any separate token comparison."
     },
     {
-      "stage": "post",
-      "question": "Which platform fits a regulated healthcare customer that needs SOC 2 Type II, HIPAA-ready posture, and dedicated GPUs?",
+      "stage": "check",
+      "question": "For Fireworks at 100M output tokens/day, which expression is the local per-token cost?",
       "options": [
-        "Together — 200+ model catalog, open-source releases within days of upstream, breadth-optimized rather than compliance-optimized positioning",
-        "Anyscale — Ray-native distributed Python platform built around the RayTurbo inference engine",
-        "Replicate — pay-per-prediction multimodal marketplace for image, video, and audio models",
-        "Baseten — SOC 2 Type II and HIPAA-ready, dedicated GPUs from T4 through B200, the common fintech and healthcare pick"
+        "100M ÷ 900k × $0.90",
+        "100M × $0.006",
+        "100M ÷ 60 × $0.55",
+        "(100M ÷ 1M) × $0.90"
       ],
       "correct": 3,
-      "explanation": "The lesson describes Baseten as enterprise-polish-optimized: SOC 2 Type II and HIPAA-ready, dedicated GPU range from T4 through B200, and calls it the common fintech and healthcare pick."
+      "explanation": "Fireworks stores $0.90 per million output tokens, and cost_per_day divides tokens by 1e6 before multiplying by that rate."
     },
     {
       "stage": "post",
-      "question": "Why does the lesson argue that custom-engine claims are mostly marketing shade at the platform layer?",
+      "question": "Which vendor has the shortest cold_start_sec in VENDORS?",
       "options": [
-        "vLLM and SGLang represent roughly 80% of production open-source inference, so platform differentiation comes more from DX, attribution, and SLAs than the serving engine itself",
-        "Per-token pricing is the only real differentiator the lesson credits, since it treats FireAttention, RayTurbo, and Baseten's own inference stack as performing identically in every practical benchmark",
-        "All the custom engines advertised — FireAttention, RayTurbo, Baseten's stack — are forks of TensorRT-LLM repackaged under new marketing names",
-        "Custom engines like FireAttention and RayTurbo never outperform vLLM on any benchmark the lesson cites, regardless of workload"
+        "Fireworks at 1.5 seconds",
+        "Modal at 2.5 seconds",
+        "Together at 2.0 seconds",
+        "Replicate at 4.0 seconds"
       ],
       "correct": 0,
-      "explanation": "The lesson states vLLM and SGLang represent about 80% of production open-source inference, so despite every platform touting a custom engine (FireAttention, RayTurbo, etc.), the real differentiation is DX, attribution, and SLAs rather than the engine itself."
+      "explanation": "The Fireworks row sets cold_start_sec to 1.5, lower than Together 2.0, Modal 2.5, and Replicate 4.0."
+    },
+    {
+      "stage": "post",
+      "question": "What utilization rule does the demo give for reserved per-minute billing?",
+      "options": [
+        "Per-minute always wins, even at one request",
+        "It tends to beat per-token once saturation stays around 60–70% or higher",
+        "Per-token always wins above 10% utilization",
+        "The pricing model cannot be compared after normalization"
+      ],
+      "correct": 1,
+      "explanation": "The printed rule of thumb accounts for the reserved-minute floor: per-minute vendors become attractive only when GPU saturation is sustained around 60–70% or more."
     }
   ]
 }

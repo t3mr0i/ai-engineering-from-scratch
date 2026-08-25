@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Before this lesson, which platform would you reach for first if a customer needed Claude, Llama, and Cohere behind one API?",
+      "question": "Which entry in PLATFORMS has no PTU offering in the local comparator?",
       "options": [
-        "AWS Bedrock, the marketplace bet that puts Claude, Llama, Titan, Cohere, and more behind one API and one IAM surface",
-        "Vertex AI, the Gemini-first bet that puts Google's own models ahead of the Model Garden third-party catalog and its 1M-token context",
-        "Azure OpenAI Service, the exclusive OpenAI partnership limited to GPT, DALL·E, and Whisper in the catalog",
-        "Direct Anthropic API, the single-vendor route with no marketplace, no PTUs, and no cross-model failover"
+        "Vertex AI Gemini",
+        "Bedrock on-demand",
+        "Azure OpenAI",
+        "All three expose the same PTU field"
       ],
       "correct": 0,
-      "explanation": "The lesson describes AWS Bedrock as the marketplace strategy: Claude, Llama, Titan, Stability, Cohere, and Mistral behind one API, one IAM surface, and one CloudWatch export."
+      "explanation": "Vertex AI Gemini stores ptu_hourly as None and ptu_tokens_per_hour as 0; Bedrock and Azure have PTU values."
     },
     {
       "stage": "check",
-      "question": "Which hyperscaler's bet is described as exclusive partnership rather than marketplace?",
+      "question": "Azure's PTU advertises 2,000,000 tokens/hour. How much daily capacity does one PTU provide in the demo?",
       "options": [
-        "Vertex AI, betting on Gemini first with Model Garden as a secondary catalog",
-        "Azure OpenAI Service, betting only on OpenAI's own model family across GPT, DALL·E, and Whisper",
-        "AWS Bedrock, betting on breadth across Claude, Llama, Titan, Stability, Cohere, and Mistral in one marketplace",
-        "OCI Generative AI, a bet the lesson does not size up against the other three hyperscalers"
+        "2,000,000 tokens",
+        "48,000,000 tokens",
+        "24,000,000 tokens",
+        "480,000,000 tokens"
       ],
       "correct": 1,
-      "explanation": "Azure OpenAI Service is described as an exclusive OpenAI partnership: only OpenAI models (GPT-4/4o/5/o-series, DALL-E, Whisper) are in the catalog, betting that OpenAI remains the frontier and customers want enterprise controls on that one relationship."
+      "explanation": "The comparator multiplies ptu_tokens_per_hour by 24, so Azure's unit supplies 2,000,000 × 24 = 48,000,000 tokens/day."
     },
     {
       "stage": "check",
-      "question": "Roughly what is the measured median TTFT gap between Azure OpenAI (with PTUs) and Bedrock on-demand on Llama 3.1 405B equivalents?",
+      "question": "With 3M input and 1M output tokens, what on-demand daily cost does Bedrock compute?",
       "options": [
-        "~100 ms",
-        "~250 ms",
-        "~25 ms",
-        "~5 ms"
+        "$18",
+        "$21",
+        "$24",
+        "$36"
       ],
       "correct": 2,
-      "explanation": "The lesson cites Artificial Analysis numbers: Azure OpenAI median TTFT around 50 ms (with PTUs) versus Bedrock on-demand around 75 ms, a gap of roughly 25 ms driven by dedicated versus shared capacity."
+      "explanation": "Bedrock charges $3/M input and $15/M output, giving 3×3 + 1×15 = $24 for the workload."
     },
     {
       "stage": "check",
-      "question": "Which Bedrock 2025 feature gives the cleanest per-product cost attribution natively in CloudWatch?",
+      "question": "Why can the PTU-enabled Azure run still print the on-demand path for a 45M-token workload?",
       "options": [
-        "Bedrock Knowledge Bases, a retrieval-augmentation feature the lesson does not credit with any cost-attribution or CloudWatch-native role",
-        "Application Inference Profiles, added in 2025, tagged with team/product/feature so CloudWatch breaks out cost per profile natively",
-        "Bedrock Guardrails, a safety-filtering feature the lesson does not credit with any cost-attribution role",
-        "Bedrock Agents, an orchestration feature the lesson does not credit with any cost-attribution role"
+        "Azure PTUs are never considered when use_ptu is true",
+        "The PTU path always has higher TTFT, so it is rejected",
+        "The code compares only median TTFT and ignores cost",
+        "simulate chooses the cheaper of the computed PTU and on-demand costs"
       ],
-      "correct": 1,
-      "explanation": "The lesson names Application Inference Profiles, added in 2025, as the cleanest native attribution: tag a profile with team/product/feature and CloudWatch breaks out cost per profile without post-processing."
+      "correct": 3,
+      "explanation": "simulate computes both costs and uses min(cost_ondemand, cost_ptu); a PTU is not selected merely because use_ptu is enabled."
     },
     {
       "stage": "post",
-      "question": "Azure PTUs typically break even versus on-demand at what sustained utilization band?",
+      "question": "Which Azure latency value represents the dedicated PTU median in the platform table?",
       "options": [
-        "40-60%",
-        "5-10%",
-        "80-95%",
-        "20-30%"
+        "38 ms",
+        "50 ms",
+        "140 ms",
+        "160 ms"
       ],
       "correct": 0,
-      "explanation": "The lesson states PTUs are billed as a fixed hourly reservation regardless of traffic, and the break-even against on-demand pricing is usually around 40-60% sustained utilization."
+      "explanation": "Azure's Platform row sets ttft_median_ms to 50 for shared capacity and ttft_median_ptu_ms to 38 for a PTU."
     },
     {
       "stage": "post",
-      "question": "Why is the lesson's recommended 2026 policy a two-provider minimum for product-critical LLM calls?",
+      "question": "The lock-in example adds 3% gateway overhead and 10% idle secondary headroom. What uplift does it report?",
       "options": [
-        "Hyperscalers refuse to sign BAAs unless you also use a competitor, so a second vendor is needed just to get compliance sign-off",
-        "Frontier model leadership rotates monthly, so single-vendor lock-in shuts you out of two-thirds of the frontier",
-        "It is required by SOC 2 Type II, which audits refuse to certify for a single-vendor LLM deployment",
-        "Single-vendor pricing is always more expensive than splitting spend across two competing hyperscalers"
+        "3% of primary spend",
+        "13% of primary spend",
+        "30% of primary spend",
+        "10% of primary spend"
       ],
       "correct": 1,
-      "explanation": "The lesson argues that because frontier leadership rotates monthly across providers, single-hyperscaler lock-in shuts a product out of two-thirds of the frontier, so a two-provider minimum (e.g. Bedrock plus Azure OpenAI) with gateway failover is the working pattern."
+      "explanation": "lock_in_cost adds the two percentages, so the redundancy uplift is 3% + 10% = 13% of primary daily spend."
     }
   ]
 }

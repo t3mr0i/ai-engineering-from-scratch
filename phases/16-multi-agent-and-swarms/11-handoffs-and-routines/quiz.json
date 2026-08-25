@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Handoffs and Routines — Stateless Orchestration?",
+      "question": "What event changes the active agent in this handoff miniature?",
       "options": [
-        "Explain the coordination mechanism behind Handoffs and Routines — Stateless Orchestration",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A routing function returns an `Agent` object, which the run loop detects and installs as active.",
+        "The current agent mutates a global state graph before every token.",
+        "The manager broadcasts to every agent and waits for a majority vote.",
+        "A fixed round counter selects the next agent without reading tool results."
       ],
       "correct": 0,
-      "explanation": "“Explain the coordination mechanism behind Handoffs and Routines — Stateless Orchestration” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`scripted_router` may return an `Agent`; `run_swarm` appends a handoff message, assigns that agent to `active`, and invokes it on the same user message."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Handoffs and Routines — Stateless Orchestration?",
+      "question": "What response does the refund flow produce for `\"I need a refund on order 77\"`?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central multi-agent interaction from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Quote for enterprise plan: $99/mo.",
+        "Refund processed for order 77.",
+        "Ticket opened for: I need a refund on order 77",
+        "Could you tell me what you need help with?"
       ],
       "correct": 1,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Triage sees `refund`, transfers to the refund agent, and that agent extracts the numeric order id `77` before calling `process_refund`."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Handoffs and Routines — Stateless Orchestration?",
+      "question": "What does the triage router return for the ambiguous message `\"hello\"`?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace messages, shared state, and verification decisions end to end",
-        "Treat one successful example as proof that every edge case works"
+        "A transfer to the support agent.",
+        "A refund for the default order 42.",
+        "The text `Could you tell me what you need help with?`.",
+        "A sales quote for the enterprise plan."
       ],
       "correct": 2,
-      "explanation": "“Trace messages, shared state, and verification decisions end to end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "No refund, buying/price, or broken/bug keyword matches. The triage branch therefore returns the clarification string rather than an `Agent`."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Handoffs and Routines — Stateless Orchestration?",
+      "question": "What is appended when triage hands a refund request to `refund_agent`?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate coordination quality, cost, and correlated failure modes",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate coordination quality, cost, and correlated failure modes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Handoffs and Routines — Stateless Orchestration?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the coordination mechanism behind Handoffs and Routines — Stateless Orchestration"
+        "Only the final refund text; handoffs are invisible in history.",
+        "A user message addressed to the manager.",
+        "A reviewer verdict with the original prompt removed.",
+        "An assistant `Msg` with content `(handoff to refund)` and sender `triage`, followed by the refund response."
       ],
       "correct": 3,
-      "explanation": "“Explain the coordination mechanism behind Handoffs and Routines — Stateless Orchestration” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`run_swarm` records the handoff as an assistant message before switching `active`; it then calls the refund agent and records its response with sender `refund`."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Handoffs and Routines — Stateless Orchestration?",
+      "question": "What does this lesson mean by “stateless orchestration”?",
       "options": [
-        "Implement the central multi-agent interaction from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Routing is encoded in agent instructions and tool-returned handoffs; the framework only switches on an `Agent` return.",
+        "All conversations are persisted in a relational database by the framework.",
+        "No message history is ever passed to an agent.",
+        "Every handoff must be represented as a declarative graph edge."
       ],
       "correct": 0,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The miniature has no state-machine DSL or graph runtime. Its orchestration primitive is a function returning the next `Agent`; prompts and tools carry the routing logic."
+    },
+    {
+      "stage": "post",
+      "question": "Which output belongs to the support branch for `\"my dashboard is broken\"`?",
+      "options": [
+        "Refund processed for order 42.",
+        "Ticket opened for: my dashboard is broken",
+        "Quote for enterprise plan: $99/mo.",
+        "Could you tell me what you need help with?"
+      ],
+      "correct": 1,
+      "explanation": "The triage router matches `broken` or `bug`, transfers to support, and `open_ticket` returns the issue prefixed with `Ticket opened for:`."
     }
   ]
 }

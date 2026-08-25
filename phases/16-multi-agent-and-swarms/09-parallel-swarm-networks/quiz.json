@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Parallel / Swarm / Networked Architectures?",
+      "question": "What is the defining scheduling action in `run_swarm`?",
       "options": [
-        "Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Each worker repeatedly pulls the next task from one shared queue.",
+        "The main thread assigns every task permanently before workers start.",
+        "One worker executes the whole list while others only log.",
+        "Workers wait for a central LLM to choose a speaker after each task."
       ],
       "correct": 0,
-      "explanation": "“Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`run_swarm` puts all tasks in a `queue.Queue`; each worker calls `get_nowait()` until empty, then marks completion with `task_done()`."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Parallel / Swarm / Networked Architectures?",
+      "question": "What workload does `make_tasks(4)` construct?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central multi-agent interaction from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Four tasks, all lasting 0.4 seconds.",
+        "Eight tasks: four slow tasks at 0.4 s and four fast tasks at 0.1 s.",
+        "Eight tasks all lasting 0.1 seconds.",
+        "Sixteen tasks divided evenly among four fixed workers."
       ],
       "correct": 1,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The loop creates task ids 0–7; ids 0–3 are slow (0.4 s) and ids 4–7 are fast (0.1 s)."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Parallel / Swarm / Networked Architectures?",
+      "question": "Why is fixed assignment much slower than the swarm for this fixture?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace messages, shared state, and verification decisions end to end",
-        "Treat one successful example as proof that every edge case works"
+        "Fixed assignment executes every task twice.",
+        "The queue adds a 0.4 s delay before any work begins.",
+        "Worker 0 receives all four slow tasks while other workers finish their fast tasks and idle.",
+        "The swarm skips the slow tasks rather than processing them."
       ],
       "correct": 2,
-      "explanation": "“Trace messages, shared state, and verification decisions end to end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`make_tasks` assigns every slow task to worker 0. That worker serially spends about 1.6 s on them, whereas shared pulling lets all workers take slow tasks as capacity frees."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Parallel / Swarm / Networked Architectures?",
+      "question": "What protects the swarm's per-worker counts when a task finishes?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate coordination quality, cost, and correlated failure modes",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate coordination quality, cost, and correlated failure modes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Parallel / Swarm / Networked Architectures?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures"
+        "The task's duration acts as a lock.",
+        "The main thread rewrites counts after all workers exit.",
+        "A global database transaction around every sleep.",
+        "A `threading.Lock` guards the increment, and `q.task_done()` marks queue completion."
       ],
       "correct": 3,
-      "explanation": "“Explain the coordination mechanism behind Parallel / Swarm / Networked Architectures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The worker performs `fake_work`, enters the lock to increment `counts[wid]`, then calls `task_done`. The queue itself hands out each task once."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Parallel / Swarm / Networked Architectures?",
+      "question": "What string does `fake_work(Task(task_id=7, duration=0))` return?",
       "options": [
-        "Implement the central multi-agent interaction from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "`task-7-done`",
+        "`worker-7-complete`",
+        "`done:7:0`",
+        "An empty string because duration is zero"
       ],
       "correct": 0,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`fake_work` sleeps for the supplied duration and returns `f\"task-{task.task_id}-done\"`, so the id appears in the result regardless of duration."
+    },
+    {
+      "stage": "post",
+      "question": "What operational tradeoff does the demo state for the swarm pattern?",
+      "options": [
+        "It has a central trace automatically, so no task ids are needed.",
+        "It balances variable work, but debugging needs per-task IDs and durable logs because there is no central trace.",
+        "It is useful only when every task has identical duration.",
+        "It guarantees exactly-once external side effects without a checkpoint."
+      ],
+      "correct": 1,
+      "explanation": "Shared pulling improves utilization when durations vary. The code also explicitly warns that decentralized execution needs task identifiers and durable logging for diagnosis."
     }
   ]
 }

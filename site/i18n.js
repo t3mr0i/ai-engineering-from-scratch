@@ -146,10 +146,10 @@ window.SITE_I18N = {
 
   // lrn/data.js academyPaths — source-aligned AI Literacy Academy paths.
   academy_paths_overline: { en: "AI Literacy Academy", de: "AI Literacy Academy" },
-  academy_paths_title: { en: "AI-X trainings for your role", de: "AI-X-Trainings für deine Rolle" },
+  academy_paths_title: { en: "AI trainings for your role", de: "AI Trainings für deine Rolle" },
   academy_paths_intro: { en: "Cards adapt to your selected role and level. Open one to see the matching learning route.", de: "Die Karten passen sich an deine gewählte Rolle und dein Level an. Öffne eine Karte, um den passenden Lernweg zu sehen." },
   academy_paths_count: { en: "{count} matching trainings", de: "{count} passende Trainings" },
-  academy_paths_show_all: { en: "Show all AI-X trainings", de: "Alle AI-X-Trainings anzeigen" },
+  academy_paths_show_all: { en: "Show all AI trainings", de: "Alle AI Trainings anzeigen" },
   academy_paths_show_relevant: { en: "Show role recommendations", de: "Rollenempfehlungen anzeigen" },
   my_path_title: { en: "Your learning path", de: "Dein Lernpfad" },
   my_path_intro: { en: "Your selected path is saved in this browser and always points you to the next useful step.", de: "Dein gewählter Pfad wird in diesem Browser gespeichert und zeigt dir jederzeit den nächsten sinnvollen Schritt." },
@@ -359,6 +359,23 @@ window.SITE_I18N = {
   assess_score_sub_incomplete: { en: "Rate all {total} required capabilities for a score — {rated} done. Your path is ready below.", de: "Bewerte alle {total} erforderlichen Kompetenzen für einen Score — {rated} erledigt. Dein Lernpfad steht unten bereit." },
   assess_no_gaps: { en: "No gaps — you meet every target for your role.", de: "Keine Lücken – du erfüllst jedes Ziel für deine Rolle." },
   assess_no_dedicated_lessons: { en: "No dedicated lessons in this curriculum yet — a business/literacy capability covered through external training.", de: "Noch keine eigenen Lektionen in diesem Curriculum — eine Business-/Literacy-Kompetenz, die über externe Schulungen abgedeckt wird." },
+
+  // Shared learning visualizations — lesson route, course route, catalog chart,
+  // and assessment profile all use the same semantic renderer.
+  viz_lesson_title: { en: "Lesson route", de: "Lektionsroute" },
+  viz_lesson_desc: { en: "See the concepts in sequence and jump to any section.", de: "Sieh die Konzepte in ihrer Reihenfolge und springe direkt zu einem Abschnitt." },
+  viz_course_title: { en: "Course route", de: "Kursroute" },
+  viz_course_desc: { en: "Move through the units in order; progress reflects your reading depth.", de: "Durchlaufe die Einheiten der Reihe nach; der Fortschritt spiegelt deine Lesetiefe wider." },
+  viz_unit_meta: { en: "{count} activities · {percent}%", de: "{count} Aktivitäten · {percent} %" },
+  viz_catalog_title: { en: "Curriculum distribution", de: "Verteilung im Curriculum" },
+  viz_catalog_desc: { en: "Each bar is a phase. The blue fill shows the lessons matching your filters.", de: "Jeder Balken steht für eine Phase. Die blaue Füllung zeigt die Lektionen, die zu deinen Filtern passen." },
+  viz_phase_label: { en: "Phase {phase}: {visible} of {total} lessons", de: "Phase {phase}: {visible} von {total} Lektionen" },
+  viz_assessment_title: { en: "Capability profile", de: "Kompetenzprofil" },
+  viz_assessment_desc: { en: "See the share of role targets met in each capability group.", de: "Sieh, wie viele Rollenziele du in jeder Kompetenzgruppe erfüllst." },
+  viz_assessment_met: { en: "Role targets met", de: "Erfüllte Rollenziele" },
+  viz_assessment_met_count: { en: "{met} / {total} targets", de: "{met} / {total} Ziele" },
+  viz_assessment_other: { en: "Other", de: "Weitere" },
+  viz_capability_label: { en: "{name}: {met} of {total} role targets met", de: "{name}: {met} von {total} Rollenzielen erfüllt" },
 
   // index.html footer — added alongside the new footer so about.html and
   // assessment.html become reachable (see nav gap in the plan's §6).

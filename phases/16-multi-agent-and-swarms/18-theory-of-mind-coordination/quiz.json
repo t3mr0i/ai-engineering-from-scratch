@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Theory of Mind and Emergent Coordination?",
+      "question": "What distinction does `run_trial(..., tom=...)` test?",
       "options": [
-        "Explain the coordination mechanism behind Theory of Mind and Emergent Coordination",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the coordination mechanism behind Theory of Mind and Emergent Coordination” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Theory of Mind and Emergent Coordination?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central multi-agent interaction from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Theory of Mind and Emergent Coordination?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace messages, shared state, and verification decisions end to end",
-        "Treat one successful example as proof that every edge case works"
+        "Both policies choose the same fixed box, but ToM uses a larger grid.",
+        "ToM agents communicate by sending arbitrary messages while zeroth-order agents use a central planner.",
+        "Zeroth-order agents choose among remaining boxes without modeling peers; first-order ToM agents avoid boxes they infer peers are targeting.",
+        "Zeroth-order agents run a verifier, while ToM agents ignore observations."
       ],
       "correct": 2,
-      "explanation": "“Trace messages, shared state, and verification decisions end to end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The `Agent.choose_target` branches on `tom`: false chooses uniformly from available boxes, true filters boxes inferred from recent observations when possible."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Theory of Mind and Emergent Coordination?",
+      "question": "What does `World.new(3)` initialize?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate coordination quality, cost, and correlated failure modes",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate coordination quality, cost, and correlated failure modes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Theory of Mind and Emergent Coordination?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the coordination mechanism behind Theory of Mind and Emergent Coordination"
+        "Three empty boxes and no tokens.",
+        "A 4×4 grid copied from the MARL lesson.",
+        "Two boxes with one token selected at random.",
+        "A world with `n_boxes=3` and tokens in boxes `{0, 1, 2}`."
       ],
       "correct": 3,
-      "explanation": "“Explain the coordination mechanism behind Theory of Mind and Emergent Coordination” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`World.new` returns `World(n_boxes=n, boxes_with_tokens=set(range(n)))`, so all three numbered boxes initially contain a token."
+    },
+    {
+      "stage": "check",
+      "question": "How does a first-order ToM agent choose among boxes after observing peers?",
+      "options": [
+        "It removes recently observed target boxes from the candidate list when alternatives remain, then samples.",
+        "It selects the box with the largest integer label.",
+        "It always follows the oldest observation, even if that box is gone.",
+        "It waits until another agent explicitly sends a completion message."
+      ],
+      "correct": 0,
+      "explanation": "The ToM branch builds `last_turn_targets`, filters `available` into `options`, and chooses from options if nonempty; otherwise it falls back to an available box."
+    },
+    {
+      "stage": "check",
+      "question": "What does `run_trial` return for one seed?",
+      "options": [
+        "Only a boolean indicating whether all agents finished.",
+        "A tuple of completed agents, collision duplications, and turns used.",
+        "The number of messages and the number of model calls.",
+        "The final world state and the random generator."
+      ],
+      "correct": 1,
+      "explanation": "The function returns `(completions, duplications, turns)`, which `bench` aggregates into full-completion counts, average duplications, and average turns."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Theory of Mind and Emergent Coordination?",
+      "question": "What is the role of the preference prime in the ToM trials?",
       "options": [
-        "Implement the central multi-agent interaction from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It forces every agent to target box 0, creating a baseline collision.",
+        "It removes all tokens before the first turn.",
+        "It gives ToM agents observations of other agents' preferred boxes; zeroth-order agents ignore this extra information.",
+        "It lets zeroth-order agents inspect future random choices."
       ],
-      "correct": 0,
-      "explanation": "“Implement the central multi-agent interaction from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "When `tom` is true, each agent observes the others' `j % n_boxes` preference before the loop. The false branch does not use those observations."
+    },
+    {
+      "stage": "post",
+      "question": "If two agents commit to the same box in a turn, how does the environment resolve it?",
+      "options": [
+        "Both collect the token and the duplication counter stays zero.",
+        "The trial immediately fails without counting a turn.",
+        "The box is removed and all colliding agents are marked collected.",
+        "The first commitment in dictionary order collects; later commitments to that box waste the turn."
+      ],
+      "correct": 3,
+      "explanation": "The code counts `n - 1` duplications for a box, then uses a `taken` set so only the first commitment can discard that token and mark its agent collected."
     }
   ]
 }
