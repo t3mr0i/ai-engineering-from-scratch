@@ -43,7 +43,7 @@ print(finite_stats((1.0, 2.0, 3.0))["mean"])  # 2.0
 
 ### 2. Classify the loss trace
 
-`loss_health` returns `NOT_ENOUGH_DATA` for one point and `NAN_OR_INF` when any point is non-finite. With the default `window=10`, a trace of at least 20 points is `NOT_DECREASING` when the final ten-point mean is at least `0.99` of the first ten-point mean. Shorter traces are marked `HEALTHY` unless their recent differences alternate often enough to be `OSCILLATING`. The status says what to inspect next; it does not certify a model.
+`loss_health` first returns `NOT_ENOUGH_DATA` for a trace with fewer than two points, then `NAN_OR_INF` when any supplied point is non-finite. Alternating recent differences are classified as `OSCILLATING` before trend classification. With the default `window=10`, a trace of at least 20 points compares the final ten-point mean with the first ten-point mean; a final mean at least `0.99` of the first is `NOT_DECREASING`. A shorter trace compares its last value with its first using the same `0.99` rule: a constant or rising short trace is `NOT_DECREASING`, while a strictly falling short trace can be `HEALTHY`. The status says what to inspect next; it does not certify a model.
 
 ### 3. Inspect activations and gradients
 
@@ -100,9 +100,9 @@ This handoff keeps a silent numerical failure distinguishable from an unavailabl
 ## Exercises
 
 1. Run `diagnose` on the canonical fixture, then replace one activation with `0.0` until `DEAD_NEURONS` appears. Record the zero fraction and explain why the threshold is local to this helper.
-2. Build a 20-value loss trace whose first ten values average `1.0` and last ten average `1.0`. Verify `NOT_DECREASING`, then lower the last ten mean below `0.99` and identify the changed status.
+2. Check `loss_health((1,1,1,1))` (`NOT_DECREASING`), `loss_health((1,.8,.6,.4))` (`HEALTHY`), and `loss_health((1,.5,1,.5))` (`OSCILLATING`). Then build a 20-value trace whose first ten values average `1.0` and last ten average `1.0`, and verify the same `NOT_DECREASING` priority.
 3. Compare `central_difference(lambda x: x**3, 2.0, epsilon=1e-3)` with the analytic derivative `12`. Repeat with `epsilon=1e-6` and report both the approximation and why smaller is not automatically better.
 
 ## Reference Solution
 
-Exercise 1 is accepted when the report contains `DEAD_NEURONS` and the recorded fraction is greater than `0.5`; no claim about a trained network is required. For Exercise 2, the first trace must return `NOT_DECREASING` because `last >= first*0.99`, while the lowered trace should no longer trigger that branch. For Exercise 3, both results should be close to `12` on this scalar fixture. The explanation should separate finite-difference truncation from floating-point cancellation and include the chosen epsilon.
+Exercise 1 is accepted when the report contains `DEAD_NEURONS` and the recorded fraction is greater than `0.5`; no claim about a trained network is required. For Exercise 2, the constant short trace must not be called healthy, the strictly falling trace may be `HEALTHY`, and the alternating trace must be `OSCILLATING`; the 20-point comparison uses the first/last ten means. For Exercise 3, both results should be close to `12` on this scalar fixture. The explanation should separate finite-difference truncation from floating-point cancellation and include the chosen epsilon.

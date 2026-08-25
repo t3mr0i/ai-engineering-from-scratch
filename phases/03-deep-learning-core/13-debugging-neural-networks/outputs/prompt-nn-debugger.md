@@ -18,7 +18,7 @@ You are reviewing a neural-network symptom report. Use measured evidence first a
 ## Triage order
 
 1. If a value is NaN or infinite, stop and locate the earliest non-finite input.
-2. If a loss has too few points, request a longer bounded trace before calling it healthy.
+2. For a short loss trace, distinguish a constant/rising result (`NOT_DECREASING`) from a strictly falling result (`HEALTHY`); request more points before making a stronger claim.
 3. Check shapes and data ranges before changing a learning rate.
 4. Compare activation zero fraction/magnitude and gradient absolute mean with the exact local thresholds.
 5. Re-run the smallest fixture after one change; do not combine a data, model, and optimizer change in one experiment.

@@ -37,8 +37,10 @@ class DiagnosticContractTests(unittest.TestCase):
     def test_loss_statuses_are_distinct(self) -> None:
         self.assertEqual(lesson.loss_health((1.0,)), "NOT_ENOUGH_DATA")
         self.assertEqual(lesson.loss_health((1.0, float("nan"))), "NAN_OR_INF")
+        self.assertEqual(lesson.loss_health((1.0, 1.0, 1.0, 1.0)), "NOT_DECREASING")
         self.assertEqual(lesson.loss_health(tuple([1.0] * 20)), "NOT_DECREASING")
         self.assertEqual(lesson.loss_health((1.0, 0.8, 0.6, 0.4)), "HEALTHY")
+        self.assertEqual(lesson.loss_health((1.0, 0.5, 1.0, 0.5)), "OSCILLATING")
         with self.assertRaises(ValueError):
             lesson.loss_health((1.0, 0.9), tolerance=0.0)
 

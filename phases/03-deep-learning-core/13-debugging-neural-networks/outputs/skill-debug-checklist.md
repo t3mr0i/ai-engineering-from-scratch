@@ -29,7 +29,8 @@ runtime: stdlib bridge | optional framework adapter
 ## Reading the local labels
 
 - `NAN_OR_INF` means a non-finite value entered the loss trace; find that value before tuning.
-- `NOT_DECREASING` is a comparison of the first and last ten-point means once 20 points exist.
+- `NOT_DECREASING` compares first/last ten-point means once 20 points exist; shorter traces compare their first and last values, so a constant short trace is not called healthy.
+- `OSCILLATING` has priority when recent loss differences alternate often enough; a strictly falling short trace can be `HEALTHY`.
 - `DEAD_NEURONS`, `EXPLODING_ACTIVATIONS`, and `COLLAPSED_ACTIVATIONS` can coexist for one vector.
 - `VANISHING_GRADIENT` and `EXPLODING_GRADIENT` describe magnitude, not accuracy or generalization.
 

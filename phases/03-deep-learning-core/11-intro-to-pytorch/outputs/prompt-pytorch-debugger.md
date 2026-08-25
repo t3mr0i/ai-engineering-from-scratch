@@ -43,4 +43,4 @@ Return five short fields:
 4. **Verification** — the bounded command and expected finite result.
 5. **Boundary** — say explicitly if the check could not run because torch is unavailable.
 
-Start with the smallest local invariant. Do not turn an unavailable optional dependency into a successful training claim.
+Use the earliest local invariant. Do not turn an unavailable optional dependency into a successful training claim.

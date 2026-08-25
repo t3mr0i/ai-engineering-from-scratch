@@ -1,138 +1,166 @@
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+# Entry point for phases/04-computer-vision/03-cnns-lenet-to-resnet/docs/en.md.
+# Traces the spatial contracts of classic CNN families with small NumPy operations, not framework weights.
+# The functions make LeNet pooling and ResNet shape-preserving residual additions directly testable.
+# Run from this directory with: python3 main.py
+
+from __future__ import annotations
+
+from numbers import Integral
+
+import numpy as np
 
 
-class LeNet5(nn.Module):
-    def __init__(self, num_classes=10):
-        super().__init__()
-        self.conv1 = nn.Conv2d(1, 6, kernel_size=5)
-        self.conv2 = nn.Conv2d(6, 16, kernel_size=5)
-        self.pool = nn.AvgPool2d(2)
-        self.fc1 = nn.Linear(16 * 5 * 5, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, num_classes)
-
-    def forward(self, x):
-        x = self.pool(torch.tanh(self.conv1(x)))
-        x = self.pool(torch.tanh(self.conv2(x)))
-        x = torch.flatten(x, 1)
-        x = torch.tanh(self.fc1(x))
-        x = torch.tanh(self.fc2(x))
-        return self.fc3(x)
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
 
 
-class VGGBlock(nn.Module):
-    def __init__(self, in_c, out_c):
-        super().__init__()
-        self.conv1 = nn.Conv2d(in_c, out_c, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(out_c)
-        self.conv2 = nn.Conv2d(out_c, out_c, kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm2d(out_c)
-        self.pool = nn.MaxPool2d(2)
-
-    def forward(self, x):
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = F.relu(self.bn2(self.conv2(x)))
-        return self.pool(x)
+def _numeric(value: np.ndarray, name: str) -> np.ndarray:
+    array = np.asarray(value)
+    if not np.issubdtype(array.dtype, np.number) or not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain finite numeric values")
+    return array
 
 
-class MiniVGG(nn.Module):
-    def __init__(self, num_classes=10):
-        super().__init__()
-        self.stack = nn.Sequential(
-            VGGBlock(3, 32),
-            VGGBlock(32, 64),
-            VGGBlock(64, 128),
-        )
-        self.head = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1),
-            nn.Flatten(),
-            nn.Linear(128, num_classes),
-        )
-
-    def forward(self, x):
-        return self.head(self.stack(x))
+def _batch_nchw(value: np.ndarray, name: str = "x") -> np.ndarray:
+    array = _numeric(value, name)
+    if array.ndim != 4 or 0 in array.shape:
+        raise ValueError(f"{name} must have non-empty NCHW shape")
+    return array
 
 
-class BasicBlock(nn.Module):
-    def __init__(self, in_c, out_c, stride=1):
-        super().__init__()
-        self.conv1 = nn.Conv2d(in_c, out_c, kernel_size=3, stride=stride, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(out_c)
-        self.conv2 = nn.Conv2d(out_c, out_c, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn2 = nn.BatchNorm2d(out_c)
-        if stride != 1 or in_c != out_c:
-            self.shortcut = nn.Sequential(
-                nn.Conv2d(in_c, out_c, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(out_c),
-            )
-        else:
-            self.shortcut = nn.Identity()
-
-    def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
-        out = self.bn2(self.conv2(out))
-        out = out + self.shortcut(x)
-        return F.relu(out)
-
-
-class TinyResNet(nn.Module):
-    def __init__(self, num_classes=10):
-        super().__init__()
-        self.stem = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1, bias=False),
-            nn.BatchNorm2d(32),
-            nn.ReLU(inplace=True),
-        )
-        self.layer1 = self._make_group(32, 32, num_blocks=2, stride=1)
-        self.layer2 = self._make_group(32, 64, num_blocks=2, stride=2)
-        self.layer3 = self._make_group(64, 128, num_blocks=2, stride=2)
-        self.layer4 = self._make_group(128, 256, num_blocks=2, stride=2)
-        self.head = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1),
-            nn.Flatten(),
-            nn.Linear(256, num_classes),
-        )
-
-    def _make_group(self, in_c, out_c, num_blocks, stride):
-        blocks = [BasicBlock(in_c, out_c, stride=stride)]
-        for _ in range(num_blocks - 1):
-            blocks.append(BasicBlock(out_c, out_c, stride=1))
-        return nn.Sequential(*blocks)
-
-    def forward(self, x):
-        x = self.stem(x)
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        return self.head(x)
+def conv2d_nchw(
+    x: np.ndarray,
+    weights: np.ndarray,
+    bias: np.ndarray | None = None,
+    stride: int = 1,
+    padding: int = 0,
+) -> np.ndarray:
+    """Apply cross-correlation to NCHW data and OCHW weights."""
+    inputs = _batch_nchw(x)
+    kernels = _numeric(weights, "weights")
+    if kernels.ndim != 4 or kernels.shape[1] != inputs.shape[1] or 0 in kernels.shape:
+        raise ValueError("weights must have non-empty OCHW shape with matching channels")
+    stride = _positive_int(stride, "stride")
+    if isinstance(padding, bool) or not isinstance(padding, Integral) or int(padding) < 0:
+        raise ValueError("padding must be a non-negative integer")
+    padding = int(padding)
+    if bias is not None:
+        bias = _numeric(bias, "bias")
+        if bias.shape != (kernels.shape[0],):
+            raise ValueError("bias shape must match output channels")
+    kh, kw = kernels.shape[-2:]
+    oh = (inputs.shape[2] + 2 * padding - kh) // stride + 1
+    ow = (inputs.shape[3] + 2 * padding - kw) // stride + 1
+    if oh <= 0 or ow <= 0:
+        raise ValueError("kernel does not fit input")
+    padded = np.pad(inputs, ((0, 0), (0, 0), (padding, padding), (padding, padding)))
+    output = np.zeros((inputs.shape[0], kernels.shape[0], oh, ow), dtype=np.float32)
+    for n in range(inputs.shape[0]):
+        for oc in range(kernels.shape[0]):
+            for oy in range(oh):
+                for ox in range(ow):
+                    patch = padded[n, :, oy * stride:oy * stride + kh, ox * stride:ox * stride + kw]
+                    output[n, oc, oy, ox] = np.sum(patch * kernels[oc])
+            if bias is not None:
+                output[n, oc] += bias[oc]
+    return output
 
 
-def summary(name, net, x):
-    net.eval()
-    with torch.no_grad():
-        y = net(x)
-    params = sum(p.numel() for p in net.parameters())
-    trainable = sum(p.numel() for p in net.parameters() if p.requires_grad)
-    print(f"{name:12s}  input {tuple(x.shape)} -> output {tuple(y.shape)}   "
-          f"params {params:>10,}   trainable {trainable:>10,}")
+def avg_pool2d(x: np.ndarray, kernel: int = 2, stride: int | None = None) -> np.ndarray:
+    inputs = _batch_nchw(x)
+    kernel = _positive_int(kernel, "kernel")
+    stride = kernel if stride is None else _positive_int(stride, "stride")
+    oh = (inputs.shape[2] - kernel) // stride + 1
+    ow = (inputs.shape[3] - kernel) // stride + 1
+    if oh <= 0 or ow <= 0:
+        raise ValueError("pool kernel does not fit input")
+    output = np.empty((inputs.shape[0], inputs.shape[1], oh, ow), dtype=np.float32)
+    for oy in range(oh):
+        for ox in range(ow):
+            output[:, :, oy, ox] = inputs[:, :, oy * stride:oy * stride + kernel,
+                                            ox * stride:ox * stride + kernel].mean(axis=(-2, -1))
+    return output
 
 
-def per_group_params(net):
-    return {name: sum(p.numel() for p in mod.parameters()) for name, mod in net.named_children()}
+def relu(x: np.ndarray) -> np.ndarray:
+    return np.maximum(_numeric(x, "x"), 0).astype(np.float32)
 
 
-def main():
-    summary("LeNet5",     LeNet5(),     torch.randn(1, 1, 32, 32))
-    summary("MiniVGG",    MiniVGG(),    torch.randn(1, 3, 32, 32))
-    summary("TinyResNet", TinyResNet(), torch.randn(1, 3, 32, 32))
+def dense(x: np.ndarray, weights: np.ndarray, bias: np.ndarray | None = None) -> np.ndarray:
+    inputs = _numeric(x, "x")
+    kernels = _numeric(weights, "weights")
+    if inputs.ndim != 2 or kernels.ndim != 2 or inputs.shape[1] != kernels.shape[1]:
+        raise ValueError("dense inputs must be (N,F) and weights (O,F)")
+    result = inputs @ kernels.T
+    if bias is not None:
+        bias = _numeric(bias, "bias")
+        if bias.shape != (kernels.shape[0],):
+            raise ValueError("bias shape must match dense outputs")
+        result = result + bias
+    return result.astype(np.float32)
 
-    print("\nTinyResNet parameters by group:")
-    for name, n in per_group_params(TinyResNet()).items():
-        print(f"  {name:8s}  {n:>10,}")
+
+def lenet_shape_trace(input_shape: tuple[int, int, int, int] = (1, 1, 32, 32), num_classes: int = 10) -> list[tuple[str, tuple[int, ...]]]:
+    """Return LeNet-5 tensor shapes for conv5, avg-pool2, conv5, avg-pool2, and the head."""
+    if len(input_shape) != 4 or any(_positive_int(v, "input dimension") <= 0 for v in input_shape):
+        raise ValueError("input_shape must be a non-empty NCHW tuple")
+    if input_shape[1] != 1:
+        raise ValueError("the LeNet trace expects one input channel")
+    num_classes = _positive_int(num_classes, "num_classes")
+    n, _, h, w = input_shape
+    shapes = [("input", tuple(input_shape))]
+    h, w = h - 4, w - 4
+    if h <= 0 or w <= 0:
+        raise ValueError("input is too small for the first 5x5 convolution")
+    shapes.append(("conv1+tanh", (n, 6, h, w)))
+    h, w = h // 2, w // 2
+    if h <= 0 or w <= 0:
+        raise ValueError("input is too small for the first pool")
+    shapes.append(("avgpool1", (n, 6, h, w)))
+    h, w = h - 4, w - 4
+    if h <= 0 or w <= 0:
+        raise ValueError("input is too small for the second convolution")
+    shapes.append(("conv2+tanh", (n, 16, h, w)))
+    h, w = h // 2, w // 2
+    if h <= 0 or w <= 0:
+        raise ValueError("input is too small for the second pool")
+    shapes.append(("avgpool2", (n, 16, h, w)))
+    shapes.extend([
+        ("flatten", (n, 16 * h * w)),
+        ("fc1+tanh", (n, 120)),
+        ("fc2+tanh", (n, 84)),
+        ("logits", (n, num_classes)),
+    ])
+    return shapes
+
+
+def residual_add(main: np.ndarray, shortcut: np.ndarray) -> np.ndarray:
+    left, right = _numeric(main, "main"), _numeric(shortcut, "shortcut")
+    if left.shape != right.shape or left.ndim != 4:
+        raise ValueError("residual branches must have the same non-empty NCHW shape")
+    return (left + right).astype(np.float32)
+
+
+def model_parameter_counts(num_classes: int = 10) -> dict[str, int]:
+    num_classes = _positive_int(num_classes, "num_classes")
+    lenet = 5 * 5 * 1 * 6 + 6 + 5 * 5 * 6 * 16 + 16 + (16 * 5 * 5) * 120 + 120 + 120 * 84 + 84 + 84 * num_classes + num_classes
+    vgg_like = (3 * 3 * 3 * 16 + 16) + (3 * 3 * 16 * 32 + 32) + (32 * num_classes + num_classes)
+    resnet_like = (3 * 3 * 3 * 16) + (3 * 3 * 16 * 16 * 2) + (16 * num_classes + num_classes)
+    return {"LeNet5": int(lenet), "VGG-small": int(vgg_like), "ResNet-small": int(resnet_like)}
+
+
+def main() -> int:
+    trace = lenet_shape_trace()
+    print("LeNet-5 shape trace:")
+    for name, shape in trace:
+        print(f"  {name:12s} {shape}")
+    print("parameter counts:", model_parameter_counts())
+    branch = np.ones((1, 4, 5, 5), dtype=np.float32)
+    print("residual identity check:", bool(np.array_equal(residual_add(branch, np.zeros_like(branch)), branch)))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -52,15 +52,15 @@
     },
     {
       "stage": "post",
-      "question": "Which invariant does schedule_values(schedule, total_steps=20, ...) enforce after sampling?",
+      "question": "Which one-cycle call samples the shortest valid start/peak/finish trace?",
       "options": [
-        "Every rate must be exactly the first rate",
-        "The trace must contain 20 finite, non-negative rates",
-        "The loss must already be below 0.1",
-        "The schedule must have a warmup segment"
+        "schedule_values(one_cycle_schedule, 2, lr=0.1)",
+        "schedule_values(one_cycle_schedule, 3, lr=0.1)",
+        "schedule_values(one_cycle_schedule, 1, lr=0.1)",
+        "schedule_values(one_cycle_schedule, 0, lr=0.1)"
       ],
       "correct": 1,
-      "explanation": "It evaluates steps 0 through 19 and rejects a trace that is not finite or contains a negative learning rate."
+      "explanation": "The implementation requires total_steps >= 3. With three points the values are approximately 0.004, 0.1, and 0.00001; step 3 and later return the finish value."
     },
     {
       "stage": "post",

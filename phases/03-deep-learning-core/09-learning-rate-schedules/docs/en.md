@@ -37,7 +37,7 @@ for `0 <= step < total_steps` and returns `lr_min` at or beyond the horizon. Thu
 
 `warmup_cosine_schedule` uses `lr * (step + 1) / warmup_steps` for the warmup steps, reaches the peak at the boundary, then follows cosine decay. A zero warmup skips the ramp. The implementation requires `0 <= warmup_steps < total_steps`; it does not silently reinterpret an impossible horizon.
 
-`one_cycle_schedule` starts at `lr/div_factor`, rises smoothly to `lr` at the midpoint, then falls to `lr/final_div_factor` at the last in-horizon step. These are explicit scalar formulas for a small experiment, not a claim that one schedule is universally best.
+`one_cycle_schedule` requires `total_steps >= 3`: the shortest valid trace has a start, a peak, and a finish. It starts at `lr/div_factor`, rises smoothly to `lr` at the midpoint, then falls to `lr/final_div_factor` at the last in-horizon step. At or beyond the horizon it returns the finish value. Rejecting a two-step horizon avoids claiming both a distinct peak and a distinct finish with only two samples. These are explicit scalar formulas for a small experiment, not a claim that one schedule is universally best.
 
 ```mermaid
 flowchart LR
@@ -58,7 +58,7 @@ python3 main.py
 
 The demo prints step zero and final rates for five schedules and applies each to the same quadratic fixture. `train_quadratic` updates `x` with `x -= rate * 2*(x-target)` and returns `parameter`, `losses`, and `rates` for inspection.
 
-All public schedules reject negative steps, non-finite or non-positive peaks, invalid horizons, a floor outside `[0, lr]`, invalid warmup boundaries, and invalid decay factors. `schedule_values` checks the returned trace for finite non-negative rates.
+All public schedules reject negative steps, non-finite or non-positive peaks, invalid horizons, a floor outside `[0, lr]`, invalid warmup boundaries, and invalid decay factors. In particular, `one_cycle_schedule` rejects `total_steps < 3`; `schedule_values(one_cycle_schedule, 3, lr=0.1)` returns approximately `(0.004, 0.1, 0.00001)`, and sampling step 3 returns the same finish value. `schedule_values` checks the returned trace for finite non-negative rates.
 
 ## Use It
 

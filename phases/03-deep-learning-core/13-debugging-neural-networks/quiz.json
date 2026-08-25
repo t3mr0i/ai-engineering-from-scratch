@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does finite_stats((1, 2, 3)) provide before a model-specific interpretation?",
+      "question": "What status does loss_health((1.0, 1.0, 1.0, 1.0)) return?",
       "options": [
-        "A trained classifier and its test accuracy",
-        "Finite count, mean, standard deviation, minimum, and maximum",
-        "A replacement loss computed with softmax",
-        "A list of framework hooks attached to every layer"
+        "HEALTHY, because four points are enough to certify a model",
+        "NOT_DECREASING, because a constant short trace supplies no downward evidence",
+        "NAN_OR_INF, because constant values are invalid",
+        "NOT_ENOUGH_DATA, because only traces of 20 points are accepted"
       ],
       "correct": 1,
-      "explanation": "The helper summarizes a non-empty finite sequence; it deliberately reports evidence rather than pretending to train or inspect a framework model."
+      "explanation": "For fewer than 20 points, loss_health compares the last value with the first; equality meets the 0.99 non-decrease rule, so a constant short trace is not called healthy."
     },
     {
       "stage": "check",

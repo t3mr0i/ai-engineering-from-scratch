@@ -76,11 +76,6 @@ def loss_health(history: Sequence[Real], window: int = 10, tolerance: Real = 0.9
     ):
         return "NAN_OR_INF"
     recent = [float(value) for value in history[-width:]]
-    if len(history) >= 2 * width:
-        first = sum(float(value) for value in history[:width]) / width
-        last = sum(float(value) for value in history[-width:]) / width
-        if last >= first * margin:
-            return "NOT_DECREASING"
     differences = [recent[index + 1] - recent[index] for index in range(len(recent) - 1)]
     sign_changes = sum(
         1
@@ -89,6 +84,14 @@ def loss_health(history: Sequence[Real], window: int = 10, tolerance: Real = 0.9
     )
     if sign_changes >= max(2, len(differences) // 2):
         return "OSCILLATING"
+    if len(history) >= 2 * width:
+        first = sum(float(value) for value in history[:width]) / width
+        last = sum(float(value) for value in history[-width:]) / width
+    else:
+        first = float(history[0])
+        last = float(history[-1])
+    if last >= first * margin:
+        return "NOT_DECREASING"
     return "HEALTHY"
 
 

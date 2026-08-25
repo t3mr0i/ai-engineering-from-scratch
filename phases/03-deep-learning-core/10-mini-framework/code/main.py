@@ -259,7 +259,15 @@ class DataLoader:
     def __init__(self, data: Sequence[tuple[Sequence[float], int]], batch_size: int = 1, shuffle: bool = False, seed: int = 0) -> None:
         if not data:
             raise ValueError("DataLoader needs nonempty data")
-        self.data = [(tuple(_vector(x, name="sample")), int(y)) for x, y in data]
+        parsed: list[tuple[tuple[float, ...], int]] = []
+        for index, row in enumerate(data):
+            if not isinstance(row, (tuple, list)) or len(row) != 2:
+                raise ValueError(f"data row {index} must be (features, binary_label)")
+            features, label = row
+            if isinstance(label, bool) or not isinstance(label, int) or label not in (0, 1):
+                raise ValueError(f"data row {index} label must be integer 0 or 1")
+            parsed.append((tuple(_vector(features, name=f"data row {index} features")), label))
+        self.data = parsed
         self.batch_size = _positive_int(batch_size, "batch_size")
         self.shuffle = bool(shuffle)
         self.seed = seed

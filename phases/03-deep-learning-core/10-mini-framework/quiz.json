@@ -52,15 +52,15 @@
     },
     {
       "stage": "post",
-      "question": "What batch sizes does DataLoader(data_of_5_rows, batch_size=2) yield?",
+      "question": "What should DataLoader([((1.0,), 0.5)]) do with the fractional label?",
       "options": [
-        "[2, 2, 1]",
-        "[2, 2, 2]",
-        "[1, 1, 1, 1, 1]",
-        "[5] only, because short batches are dropped"
+        "Silently convert it to label 0",
+        "Raise ValueError before storing the row",
+        "Treat it as a third binary class",
+        "Keep it as a float and let SGD decide"
       ],
-      "correct": 0,
-      "explanation": "The iterator yields slices of size two and keeps the final remainder, so five rows produce 2, 2, and 1."
+      "correct": 1,
+      "explanation": "The loader's XOR contract accepts only exact integer labels 0 and 1. It rejects a fractional label rather than applying int() and changing the data."
     },
     {
       "stage": "post",

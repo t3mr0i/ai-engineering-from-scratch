@@ -12,9 +12,13 @@ tags: [pytorch, training, tensors, patterns]
 The lesson's canonical command is dependency-safe: if `torch` is unavailable it reports the fallback and exits 0. When it is installed, the bounded `train_demo` uses the same small fixture as the tests.
 
 ```python
+import torch
+
+from pytorch_intro import build_model, fixture
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = Model().to(device)
-criterion = nn.CrossEntropyLoss()
+model = build_model().to(device)
+criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 
 for step in range(60):

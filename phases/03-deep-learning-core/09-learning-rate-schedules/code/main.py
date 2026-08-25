@@ -112,8 +112,8 @@ def one_cycle_schedule(
     step = _step(step)
     peak = _learning_rate(lr)
     total_steps = _positive_int(total_steps, "total_steps")
-    if total_steps < 2:
-        raise ValueError("total_steps must be at least 2")
+    if total_steps < 3:
+        raise ValueError("total_steps must be at least 3 for start, peak, and finish points")
     div_factor = _learning_rate(div_factor, "div_factor")
     final_div_factor = _learning_rate(final_div_factor, "final_div_factor")
     start = peak / div_factor

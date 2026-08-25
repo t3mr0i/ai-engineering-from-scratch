@@ -21,7 +21,7 @@ Each `Module` has `forward`, `backward`, `parameters`, and a `training` flag. `L
 
 `Parameter` separates `data` from an accumulated `grad`. `SGD.zero_grad()` clears every gradient, while `SGD.step()` subtracts `lr * grad` and rejects non-finite gradients. The separation is the same idea as a larger framework's optimizer state, but every operation remains inspectable Python.
 
-Dropout uses an inverted mask only in training mode. In evaluation mode it returns the input unchanged. `DataLoader` validates a non-empty list of `(features, label)` pairs, yields the final short batch, and uses `seed + epoch` for reproducible but distinct shuffled epochs.
+Dropout uses an inverted mask only in training mode. In evaluation mode it returns the input unchanged. This lesson's XOR `DataLoader` accepts a non-empty list of `(features, label)` pairs where each label is exactly the integer `0` or `1`; it rejects booleans, strings, fractional labels, other classes, and malformed rows instead of coercing them. It yields the final short batch and uses `seed + epoch` for reproducible but distinct shuffled epochs.
 
 ```mermaid
 flowchart LR
@@ -42,14 +42,14 @@ python3 main.py
 
 The bounded demo builds `Linear(2,4) -> Tanh -> Linear(4,1) -> Sigmoid`, trains the four XOR points for 800 epochs, and prints `parameters=17`, the batch count from a three-row loader, the classes `[0, 1, 1, 0]`, and the final local MSE. No external package is imported.
 
-The implementation rejects empty sequences, wrong widths, non-finite values, backward calls before forward, invalid dropout probabilities, empty parameter lists, non-positive rates, and non-finite gradients. These are API errors, not accidental `IndexError` or `ZeroDivisionError` paths.
+The implementation rejects empty sequences, wrong widths, non-finite values, backward calls before forward, invalid dropout probabilities, empty parameter lists, non-positive rates, non-finite gradients, and malformed/non-binary loader rows. These are API errors, not accidental `IndexError` or `ZeroDivisionError` paths.
 
 ## Use It
 
 1. Construct `Linear(2,2,seed=1)`, run it on `(1,-2)`, and call `backward((1,1))`; inspect its two input gradients.
 2. Build the XOR `Sequential` and compare `len(model.parameters())` with the `8+4+4+1=17` scalar count.
 3. Call `model.eval()` around a `Dropout(0.5, seed=4)` module and verify that the same vector is returned without a mask.
-4. Iterate `DataLoader` over five rows with `batch_size=2`; the batch lengths must be `[2,2,1]`.
+4. Iterate `DataLoader` over five rows with `batch_size=2`; the batch lengths must be `[2,2,1]`. Then try labels `0.5`, `"1"`, and `True`; each must raise `ValueError` rather than become an integer label.
 
 ## Ship It
 

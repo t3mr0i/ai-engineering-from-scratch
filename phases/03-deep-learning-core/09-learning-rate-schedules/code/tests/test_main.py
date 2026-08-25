@@ -39,11 +39,21 @@ class ScheduleTests(unittest.TestCase):
         self.assertAlmostEqual(max(values), 0.1)
         self.assertAlmostEqual(values[-1], 0.1 / 10000)
 
+    def test_one_cycle_minimum_horizon_has_three_distinct_contract_points(self):
+        values = main.schedule_values(main.one_cycle_schedule, 3, lr=0.1)
+        self.assertEqual(len(values), 3)
+        self.assertAlmostEqual(values[0], 0.1 / 25)
+        self.assertAlmostEqual(values[1], 0.1)
+        self.assertAlmostEqual(values[2], 0.1 / 10000)
+        self.assertAlmostEqual(main.one_cycle_schedule(3, lr=0.1, total_steps=3), 0.1 / 10000)
+
     def test_invalid_schedule_contracts_raise(self):
         with self.assertRaises(ValueError):
             main.cosine_schedule(0, lr=0.1, total_steps=0)
         with self.assertRaises(ValueError):
             main.warmup_cosine_schedule(0, lr=0.1, total_steps=5, warmup_steps=5)
+        with self.assertRaises(ValueError):
+            main.one_cycle_schedule(0, lr=0.1, total_steps=2)
         with self.assertRaises(ValueError):
             main.step_decay_schedule(0, gamma=1.5)
         with self.assertRaises(ValueError):

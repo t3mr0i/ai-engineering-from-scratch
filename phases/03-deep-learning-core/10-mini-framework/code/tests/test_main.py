@@ -62,6 +62,14 @@ class MiniFrameworkTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual([len(batch) for batch in first], [2, 2, 1])
 
+    def test_dataloader_rejects_coerced_or_malformed_labels_and_rows(self):
+        for label in (0.5, "1", True, 2):
+            with self.assertRaises(ValueError):
+                main.DataLoader([((1.0,), label)])
+        for row in (((1.0,),), ((1.0,), 0, "extra"), None):
+            with self.assertRaises(ValueError):
+                main.DataLoader([row])
+
     def test_xor_training_reduces_loss_and_predicts_classes(self):
         _, history, predictions = main.train_xor(epochs=800, lr=0.5, seed=3)
         self.assertLess(history[-1], history[0])
