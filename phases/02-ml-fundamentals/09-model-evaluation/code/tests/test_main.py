@@ -54,6 +54,27 @@ class EvaluationTests(unittest.TestCase):
         two = evaluation.cross_validate(X, y, lambda: evaluation.SimpleLogistic(epochs=30), k=4)
         self.assertEqual(one, two)
 
+    def test_stratified_folds_cover_rows_with_balanced_sizes(self):
+        folds = evaluation.stratified_kfold_split([0] * 6 + [1] * 6, k=4, seed=2)
+        self.assertEqual(sorted(len(val) for _, val in folds), [3, 3, 3, 3])
+        self.assertEqual(sorted(index for _, val in folds for index in val), list(range(12)))
+        for train, val in folds:
+            self.assertEqual(set(train) & set(val), set())
+
+    def test_split_and_metric_boundaries_are_explicit(self):
+        with self.assertRaises(ValueError):
+            evaluation.kfold_split(2, k=5)
+        with self.assertRaises(ValueError):
+            evaluation.train_val_test_split([[1]], [1], train_ratio=0.9, val_ratio=0.5)
+        with self.assertRaises(ValueError):
+            evaluation.confusion_matrix([1, 0], [1])
+        with self.assertRaises(ValueError):
+            evaluation.confusion_matrix([2], [1])
+        with self.assertRaises(ValueError):
+            evaluation.mse([1.0], [])
+        with self.assertRaises(ValueError):
+            evaluation.roc_curve([1, 1], [0.2, 0.3])
+
 
 if __name__ == "__main__":
     unittest.main()

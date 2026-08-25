@@ -61,6 +61,41 @@ class PipelineTests(unittest.TestCase):
         model.fit(data)
         self.assertTrue(0.0 <= model.score(data) <= 1.0)
 
+    def test_transformers_and_models_reject_use_before_fit(self):
+        X = np.array([[1.0], [2.0]])
+        for transformer in (pipeline.MedianImputer(), pipeline.StandardScaler(), pipeline.OneHotEncoder()):
+            with self.assertRaises(RuntimeError):
+                transformer.transform(X)
+        with self.assertRaises(RuntimeError):
+            pipeline.LogisticRegressionSimple().predict(X)
+        with self.assertRaises(RuntimeError):
+            pipeline.DecisionTreeSimple().predict(X)
+        with self.assertRaises(RuntimeError):
+            pipeline.FullPipeline(pipeline.DecisionTreeSimple(), ["age"], ["city"]).predict(pipeline.make_mixed_data(2))
+
+    def test_unknown_error_mode_and_all_nan_column_are_explicit(self):
+        with self.assertRaises(ValueError):
+            pipeline.OneHotEncoder(handle_unknown="wat")
+        encoder = pipeline.OneHotEncoder(handle_unknown="error")
+        encoder.fit(np.array([["red"], ["blue"]], dtype=object))
+        with self.assertRaises(ValueError):
+            encoder.transform(np.array([["green"]], dtype=object))
+        with self.assertRaises(ValueError):
+            pipeline.MedianImputer().fit(np.array([[np.nan], [np.nan]]))
+        with self.assertRaises(ValueError):
+            pipeline.StandardScaler().fit(np.array([[np.nan], [np.nan]]))
+
+    def test_split_and_cross_validation_boundaries(self):
+        data = pipeline.make_mixed_data(4, seed=3)
+        with self.assertRaises(ValueError):
+            pipeline.train_test_split_dict(data, test_ratio=0)
+        with self.assertRaises(ValueError):
+            pipeline.cross_validate_pipeline(lambda: None, data, n_folds=5)
+        malformed = dict(data)
+        malformed["city"] = malformed["city"][:-1]
+        with self.assertRaises(ValueError):
+            pipeline.train_test_split_dict(malformed)
+
 
 if __name__ == "__main__":
     unittest.main()

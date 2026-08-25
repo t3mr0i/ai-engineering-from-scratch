@@ -71,6 +71,42 @@ class EnsembleTests(unittest.TestCase):
         model.fit(self.X, self.y)
         self.assertTrue(set(model.predict(self.X[:8])).issubset({-1.0, 1.0}))
 
+    def test_fit_resets_ensemble_state_and_prefit_predict_is_rejected(self):
+        ada = ensembles.AdaBoostScratch(n_estimators=2)
+        with self.assertRaises(RuntimeError):
+            ada.predict(self.X[:2])
+        ada.fit(self.X, self.y)
+        ada.fit(self.X, self.y)
+        self.assertEqual(len(ada.stumps), 2)
+        booster = ensembles.GradientBoostingScratch(n_estimators=2, max_depth=2)
+        booster.fit(self.X, self.y)
+        booster.fit(self.X, self.y)
+        self.assertEqual(len(booster.trees), 2)
+        bag = ensembles.BaggingClassifier(n_estimators=2, max_depth=2)
+        bag.fit(self.X, self.y)
+        bag.fit(self.X, self.y)
+        self.assertEqual(len(bag.trees), 2)
+
+    def test_classification_and_parameter_contracts(self):
+        for factory in (
+            lambda: ensembles.AdaBoostScratch(n_estimators=0),
+            lambda: ensembles.BaggingClassifier(max_depth=0),
+            lambda: ensembles.SimpleRegressionTree(max_depth=0),
+        ):
+            with self.assertRaises(ValueError):
+                factory()
+        with self.assertRaises(ValueError):
+            ensembles.AdaBoostScratch(n_estimators=2).fit(self.X, np.zeros(len(self.y)))
+        with self.assertRaises(ValueError):
+            ensembles.DecisionStump().fit(self.X, self.y[:-1], np.ones(len(self.y)))
+
+    def test_tie_policy_never_returns_zero(self):
+        tree = ensembles.SimpleRegressionTree(max_depth=1)
+        tree.fit(np.zeros((4, 1)), np.array([-1.0, -1.0, 1.0, 1.0]))
+        bag = ensembles.BaggingClassifier(n_estimators=2, max_depth=1)
+        bag.fit(self.X, self.y)
+        self.assertTrue(set(bag.predict(self.X[:10])).issubset({-1.0, 1.0}))
+
 
 if __name__ == "__main__":
     unittest.main()

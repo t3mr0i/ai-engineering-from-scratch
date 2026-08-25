@@ -43,6 +43,12 @@ class BiasVarianceTests(unittest.TestCase):
             self.assertGreaterEqual(terms["variance"], 0.0)
             self.assertGreaterEqual(terms["total_error"], 0.0)
             self.assertAlmostEqual(terms["noise"], 0.25)
+            self.assertAlmostEqual(
+                terms["total_error"],
+                terms["bias_sq"] + terms["variance"] + terms["noise"],
+                places=12,
+            )
+            self.assertGreaterEqual(terms["reducible_error"], 0.0)
 
     def test_find_optimal_returns_known_degree_key(self):
         result = {1: {"total_error": 2.0}, 2: {"total_error": 1.0}}

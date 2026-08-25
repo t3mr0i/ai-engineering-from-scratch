@@ -51,6 +51,28 @@ class FeatureEngineeringTests(unittest.TestCase):
         self.assertEqual(features.variance_threshold(rows, threshold=0.1), [1])
         self.assertEqual(features.remove_correlated([[1, 2], [2, 4], [3, 6]], threshold=0.9), [0])
 
+    def test_invalid_vector_and_parameter_contracts_raise_value_error(self):
+        with self.assertRaises(ValueError):
+            features.target_encode(["a", "b"], [1.0], smoothing=1)
+        with self.assertRaises(ValueError):
+            features.target_encode(["a"], [1.0], smoothing=-1)
+        with self.assertRaises(ValueError):
+            features.bin_values([1.0, 2.0], n_bins=0)
+        with self.assertRaises(ValueError):
+            features.correlation([1.0, 2.0], [1.0])
+        with self.assertRaises(ValueError):
+            features.mutual_information([1.0, 2.0], [0, 1], n_bins=0)
+
+    def test_selection_and_tfidf_empty_or_ragged_inputs_are_explicit(self):
+        with self.assertRaises(ValueError):
+            features.variance_threshold([])
+        with self.assertRaises(ValueError):
+            features.remove_correlated([[1.0], [1.0, 2.0]])
+        with self.assertRaises(ValueError):
+            features.tfidf([])
+        vectors, _ = features.tfidf(["", "word"])
+        self.assertEqual(vectors[0], [0.0])
+
 
 if __name__ == "__main__":
     unittest.main()

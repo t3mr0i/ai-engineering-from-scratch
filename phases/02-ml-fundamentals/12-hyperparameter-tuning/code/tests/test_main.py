@@ -53,6 +53,33 @@ class TuningTests(unittest.TestCase):
         model.fit(self.X_train, self.y_train)
         self.assertAlmostEqual(tuning.neg_mse(model, self.X_val, self.y_val), -np.mean((model.predict(self.X_val) - self.y_val) ** 2))
 
+    def test_invalid_parameter_specs_and_budgets_raise_value_error(self):
+        rng = np.random.RandomState(2)
+        for spec in [("wat", 2, 9), ("int", 4, 2), ("log_float", 0, 1), []]:
+            with self.assertRaises(ValueError):
+                tuning.sample_param(spec, rng)
+        with self.assertRaises(ValueError):
+            tuning.grid_search({}, self.X_train, self.y_train, self.X_val, self.y_val)
+        with self.assertRaises(ValueError):
+            tuning.random_search({"x": [1]}, self.X_train, self.y_train, self.X_val, self.y_val, n_iter=0)
+        with self.assertRaises(ValueError):
+            tuning.SimpleBayesianOptimizer({}, n_initial=1)
+
+    def test_gbm_validates_parameters_and_resets_trees(self):
+        for kwargs in (
+            {"n_estimators": 0},
+            {"learning_rate": -1},
+            {"subsample": 0},
+        ):
+            with self.assertRaises(ValueError):
+                tuning.GBMForTuning(**kwargs)
+        model = tuning.GBMForTuning(n_estimators=2, max_depth=1)
+        with self.assertRaises(RuntimeError):
+            model.predict(self.X_val)
+        model.fit(self.X_train, self.y_train)
+        model.fit(self.X_train, self.y_train)
+        self.assertEqual(len(model.trees), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

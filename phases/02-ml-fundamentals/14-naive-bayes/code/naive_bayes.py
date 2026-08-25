@@ -6,16 +6,39 @@
 import numpy as np
 
 
+def _matrix(X, name, *, nonnegative=False):
+    try:
+        X = np.asarray(X, dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be numeric") from exc
+    if X.ndim != 2 or X.shape[0] == 0 or X.shape[1] == 0:
+        raise ValueError(f"{name} must be a non-empty 2-D matrix")
+    if not np.isfinite(X).all():
+        raise ValueError(f"{name} must contain finite values")
+    if nonnegative and np.any(X < 0):
+        raise ValueError("Multinomial features must be non-negative")
+    return X
+
+
+def _xy(X, y, *, nonnegative=False):
+    X = _matrix(X, "X", nonnegative=nonnegative)
+    y = np.asarray(y)
+    if y.ndim != 1 or len(y) != X.shape[0] or len(y) == 0:
+        raise ValueError("y must be a non-empty vector matching X rows")
+    return X, y
+
+
 class MultinomialNB:
     def __init__(self, alpha=1.0):
+        if not isinstance(alpha, (int, float)) or not np.isfinite(alpha) or alpha <= 0:
+            raise ValueError("alpha must be finite and strictly positive")
         self.alpha = alpha
         self.classes_ = None
         self.class_log_prior_ = None
         self.feature_log_prob_ = None
 
     def fit(self, X, y):
-        if np.any(X < 0):
-            raise ValueError("MultinomialNB requires non-negative feature values")
+        X, y = _xy(X, y, nonnegative=True)
         self.classes_ = np.unique(y)
         n_classes = len(self.classes_)
         n_features = X.shape[1]
@@ -30,9 +53,15 @@ class MultinomialNB:
             total = counts.sum()
             self.feature_log_prob_[i] = np.log(counts / total)
 
+        self.n_features_ = n_features
         return self
 
     def predict_log_proba(self, X):
+        if self.classes_ is None:
+            raise RuntimeError("MultinomialNB must be fitted before prediction")
+        X = _matrix(X, "X", nonnegative=True)
+        if X.shape[1] != self.n_features_:
+            raise ValueError("X has a different feature width from the fitted model")
         return X @ self.feature_log_prob_.T + self.class_log_prior_
 
     def predict_proba(self, X):
@@ -52,6 +81,8 @@ class MultinomialNB:
 
 class GaussianNB:
     def __init__(self, var_smoothing=1e-9):
+        if not isinstance(var_smoothing, (int, float)) or not np.isfinite(var_smoothing) or var_smoothing <= 0:
+            raise ValueError("var_smoothing must be finite and strictly positive")
         self.var_smoothing = var_smoothing
         self.classes_ = None
         self.means_ = None
@@ -59,6 +90,7 @@ class GaussianNB:
         self.priors_ = None
 
     def fit(self, X, y):
+        X, y = _xy(X, y)
         self.classes_ = np.unique(y)
         n_classes = len(self.classes_)
         n_features = X.shape[1]
@@ -73,9 +105,15 @@ class GaussianNB:
             self.vars_[i] = X_c.var(axis=0) + self.var_smoothing
             self.priors_[i] = X_c.shape[0] / X.shape[0]
 
+        self.n_features_ = n_features
         return self
 
     def _log_likelihood(self, X):
+        if self.classes_ is None:
+            raise RuntimeError("GaussianNB must be fitted before prediction")
+        X = _matrix(X, "X")
+        if X.shape[1] != self.n_features_:
+            raise ValueError("X has a different feature width from the fitted model")
         n_classes = len(self.classes_)
         n_samples = X.shape[0]
         log_proba = np.zeros((n_samples, n_classes))
@@ -106,6 +144,10 @@ class GaussianNB:
 
 
 def make_text_data(n_samples=1000, n_features=200, seed=42):
+    if not isinstance(n_samples, int) or isinstance(n_samples, bool) or n_samples <= 1:
+        raise ValueError("n_samples must be an integer greater than 1")
+    if not isinstance(n_features, int) or isinstance(n_features, bool) or n_features < 120:
+        raise ValueError("n_features must be an integer of at least 120 for the fixture bands")
     rng = np.random.RandomState(seed)
 
     tech_words_weight = np.zeros(n_features)
@@ -133,33 +175,38 @@ def make_text_data(n_samples=1000, n_features=200, seed=42):
 
 
 def make_continuous_data(n_samples=300, seed=42):
+    if not isinstance(n_samples, int) or isinstance(n_samples, bool) or n_samples < 3:
+        raise ValueError("n_samples must be an integer of at least 3")
     rng = np.random.RandomState(seed)
-    n_per_class = n_samples // 3
+    counts = [n_samples // 3 + (index < n_samples % 3) for index in range(3)]
 
     class_0 = rng.multivariate_normal(
         [5.0, 3.4, 1.4, 0.2],
         np.diag([0.12, 0.14, 0.03, 0.01]),
-        n_per_class,
+        counts[0],
     )
     class_1 = rng.multivariate_normal(
         [5.9, 2.8, 4.3, 1.3],
         np.diag([0.27, 0.10, 0.22, 0.04]),
-        n_per_class,
+        counts[1],
     )
     class_2 = rng.multivariate_normal(
         [6.6, 3.0, 5.6, 2.0],
         np.diag([0.40, 0.10, 0.30, 0.08]),
-        n_per_class,
+        counts[2],
     )
 
     X = np.vstack([class_0, class_1, class_2])
-    y = np.array([0] * n_per_class + [1] * n_per_class + [2] * n_per_class)
+    y = np.array([0] * counts[0] + [1] * counts[1] + [2] * counts[2])
 
     shuffle_idx = rng.permutation(len(y))
     return X[shuffle_idx], y[shuffle_idx]
 
 
 def train_test_split(X, y, test_ratio=0.2, seed=42):
+    X, y = _xy(X, y)
+    if not np.isfinite(test_ratio) or not 0 < test_ratio < 1:
+        raise ValueError("test_ratio must be strictly between 0 and 1")
     rng = np.random.RandomState(seed)
     n = len(y)
     idx = rng.permutation(n)
@@ -169,6 +216,10 @@ def train_test_split(X, y, test_ratio=0.2, seed=42):
 
 
 def accuracy(y_true, y_pred):
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    if y_true.ndim != 1 or len(y_true) == 0 or len(y_true) != len(y_pred):
+        raise ValueError("accuracy inputs must be non-empty vectors of equal length")
     return np.mean(y_true == y_pred)
 
 
@@ -272,7 +323,7 @@ def demo_comparison():
     X_train, X_test, y_train, y_test = train_test_split(X, y, seed=99)
 
     X_train_pos = X_train - X_train.min(axis=0) + 0.01
-    X_test_pos = X_test - X_train.min(axis=0) + 0.01
+    X_test_pos = np.maximum(X_test - X_train.min(axis=0) + 0.01, 0.01)
 
     mnb2 = MultinomialNB(alpha=1.0)
     mnb2.fit(X_train_pos, y_train)

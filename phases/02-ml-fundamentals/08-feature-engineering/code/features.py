@@ -261,7 +261,12 @@ def correlation(x, y):
 
 
 def mutual_information(feature, target, n_bins=10):
-    feature, target = _same_numeric_vectors(feature, target, "feature", "target")
+    feature = _numeric_vector(feature, "feature")
+    target = list(target)
+    if not target:
+        raise ValueError("target must not be empty")
+    if len(feature) != len(target):
+        raise ValueError("feature and target must have equal lengths")
     if not isinstance(n_bins, int) or isinstance(n_bins, bool) or n_bins <= 0:
         raise ValueError("n_bins must be a positive integer")
     feat_min = min(feature)
