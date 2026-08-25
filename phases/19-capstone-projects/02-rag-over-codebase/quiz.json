@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is naive cosine search over raw chunks insufficient for cross-repo code retrieval?",
+      "question": "What anchor does `Chunk(\"auth\", \"services/authz/check.py\", 12, 38, ...)` produce?",
       "options": [
-        "It poisons results on generated code, monorepo duplication, and rarely imported symbols",
-        "Cosine similarity is undefined on code embeddings",
-        "Vector indexes cannot store payloads larger than 1KB",
-        "Embedding models do not see code as tokens"
-      ],
-      "correct": 0,
-      "explanation": "“It poisons results on generated code, monorepo duplication, and rarely imported symbols” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What does AST-aware chunking mean in the ingestion pipeline?",
-      "options": [
-        "Compressing chunks with gzip before storage",
-        "Dropping comments and whitespace before embedding",
-        "Cutting at tree-sitter node boundaries such as function and class spans",
-        "Splitting code into fixed 256-token windows"
+        "services/authz/check.py:12-38",
+        "auth:services/authz/check.py:12:38",
+        "auth/services/authz/check.py:12-38",
+        "auth/services/authz/check.py#12"
       ],
       "correct": 2,
-      "explanation": "“Cutting at tree-sitter node boundaries such as function and class spans” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
+      "explanation": "`Chunk.anchor` formats the repository, slash, path, colon, and inclusive-looking line range as `auth/services/authz/check.py:12-38`."
     },
     {
       "stage": "check",
-      "question": "Which three retrievable modalities does each chunk get in this pipeline?",
+      "question": "How does `BM25Index.add` weight the fields of a code chunk?",
       "options": [
-        "Token IDs, syntax tree, and call graph",
-        "AST, IR, and bytecode",
-        "Raw text, gzip, and hash",
-        "Dense embedding, BM25 terms, and a natural-language summary"
+        "Body ×4, summary ×2, symbol ×1",
+        "All three fields receive the same term weight",
+        "Symbol ×2, summary ×1, body ×4",
+        "Symbol ×4, summary ×2, body ×1"
       ],
       "correct": 3,
-      "explanation": "“Dense embedding, BM25 terms, and a natural-language summary” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
+      "explanation": "The token list repeats symbol terms four times, summary terms twice, and body terms once. Exact symbol names therefore have the strongest sparse signal."
     },
     {
       "stage": "check",
-      "question": "What is the role of the cross-encoder reranker after the hybrid retrieval step?",
+      "question": "Which score does `rrf` add for a hit at zero-based rank `rank`?",
       "options": [
-        "It rewrites the chunks to remove generated code",
-        "It re-embeds the query in a different model",
-        "It compresses the chunks before sending to the synthesizer",
-        "It scores each query-candidate pair together for higher accuracy than cosine alone"
+        "`1 / (60 + rank + 1)`",
+        "`rank / 60`",
+        "`1 / (rank + 1)` with no constant",
+        "The raw dense and BM25 scores multiplied together"
+      ],
+      "correct": 0,
+      "explanation": "For each dense or sparse list, `rrf` adds reciprocal rank `1/(k_rrf + rank + 1)` with the default `k_rrf=60`, then merges by the chunk anchor."
+    },
+    {
+      "stage": "check",
+      "question": "What is distinctive about `fake_embed` in this offline scaffold?",
+      "options": [
+        "It loads a 4096-dimensional pretrained encoder",
+        "It builds a deterministic 64-dimensional hash-based vector",
+        "It returns one-hot vectors for only symbol names",
+        "It embeds only the query and leaves chunks unindexed"
+      ],
+      "correct": 1,
+      "explanation": "`fake_embed` uses token hashes to accumulate values in a 64-dimensional vector and normalizes it. It stands in for a code embedding model without a network dependency."
+    },
+    {
+      "stage": "post",
+      "question": "How does `rerank` reward an exact symbol-name overlap?",
+      "options": [
+        "It adds 0.1 for each matching symbol token",
+        "It discards all dense and sparse scores",
+        "It adds 3 points per matching symbol token, plus a smaller summary bonus",
+        "It sorts only by the chunk's line count"
+      ],
+      "correct": 2,
+      "explanation": "The reranker computes `3 * symbol_overlap + 0.1 * summary_overlap` and adds that to the fused prior score before taking the top five candidates."
+    },
+    {
+      "stage": "post",
+      "question": "Which fields does `answer` expose for downstream citation-aware synthesis?",
+      "options": [
+        "Only the raw query and one best score",
+        "Only generated natural-language prose with no anchors",
+        "The full source files and no retrieval scores",
+        "The query plus dense, sparse, fused, and reranked anchor lists"
       ],
       "correct": 3,
-      "explanation": "“It scores each query-candidate pair together for higher accuracy than cosine alone” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the synthesizer reject answers without (repo/path:start-end) anchors?",
-      "options": [
-        "Citation faithfulness gates the answer so users can verify each claim",
-        "Anchors reduce token cost on the synthesis call",
-        "Anchors are needed for downstream BM25 reranking",
-        "Anchors are required by the vector database schema"
-      ],
-      "correct": 0,
-      "explanation": "“Citation faithfulness gates the answer so users can verify each claim” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What does incremental re-index require to stay under 60 seconds on a 50-file push?",
-      "options": [
-        "Re-embedding only chunks whose text changed and recomputing affected symbol edges",
-        "Re-embedding the full 2M-LOC corpus on each commit",
-        "Dropping the symbol graph entirely",
-        "Throwing away the BM25 index and rebuilding it from scratch"
-      ],
-      "correct": 0,
-      "explanation": "“Re-embedding only chunks whose text changed and recomputing affected symbol edges” matches the lesson’s treatment of Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search); the alternatives conflict with its definitions or workflow."
+      "explanation": "The returned dictionary includes `query`, `dense_top`, `sparse_top`, `fused_top`, and `rerank_top`; each list contains `repo/path:start-end` anchors that can support citations."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which loop shape do 2026 terminal coding agents share?",
+      "question": "What hard turn ceiling does the default Budget enforce?",
       "options": [
-        "Plan, act, observe, recover",
-        "Encode, decode, sample, stream",
-        "Train, evaluate, deploy, monitor",
-        "Fetch, embed, rank, synthesize"
+        "50 turns",
+        "200,000 turns",
+        "3 turns, because SCRIPT has three entries",
+        "30 seconds"
       ],
       "correct": 0,
-      "explanation": "“Plan, act, observe, recover” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
+      "explanation": "Budget.max_turns defaults to 50. The three entries in SCRIPT describe the deterministic stub model, not the production-style loop ceiling."
     },
     {
       "stage": "check",
-      "question": "Why does the harness run each task inside an E2B or Daytona sandbox?",
+      "question": "What does destructive_guard do when a proposed shell command contains `rm -rf`?",
       "options": [
-        "To isolate filesystem and tool execution from the host so the worktree can be torn down on completion",
-        "To bypass model-provider rate limits",
-        "To benchmark token throughput on cold caches",
-        "To enable GPU access for the agent loop"
-      ],
-      "correct": 0,
-      "explanation": "“To isolate filesystem and tool execution from the host so the worktree can be torn down on completion” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which built-in hook is the natural place to block destructive shell commands before they execute?",
-      "options": [
-        "PreToolUse",
-        "SessionStart",
-        "Stop",
-        "PostToolUse"
-      ],
-      "correct": 0,
-      "explanation": "“PreToolUse” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "The capstone caps each tool result at roughly 4k tokens. Which failure mode does that primarily prevent?",
-      "options": [
-        "Sandbox escape via malicious shell metacharacters",
-        "Context poisoning and runaway cost when a tool returns a large dump",
-        "Stale plan state across resumed sessions",
-        "Model overfitting to tool-call traces"
+        "It runs the command and records a warning afterward",
+        "It sets `blocked` to true and supplies a PreToolUse reason",
+        "It raises a TimeoutError before the hook can return",
+        "It changes the command to a read-only `ls` call"
       ],
       "correct": 1,
-      "explanation": "“Context poisoning and runaway cost when a tool returns a large dump” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
+      "explanation": "The hook marks the payload blocked and adds `destructive command blocked by PreToolUse hook`. `run_agent` then records the blocked PostToolUse event without invoking the tool."
+    },
+    {
+      "stage": "check",
+      "question": "What does `TRUNCATE_BYTES = 4096` bound in the tool surface?",
+      "options": [
+        "The number of plan items per turn",
+        "The shell timeout in seconds",
+        "The characters returned by file and shell observations",
+        "The dollars that may be spent in one session"
+      ],
+      "correct": 2,
+      "explanation": "Both `tool_read_file` and `tool_run_shell` slice their returned text to 4096 characters. This keeps a large observation from poisoning the next context window."
+    },
+    {
+      "stage": "check",
+      "question": "How many lifecycle names are in `HookBus.EVENTS`?",
+      "options": [
+        "4",
+        "6",
+        "10",
+        "8"
+      ],
+      "correct": 3,
+      "explanation": "The tuple contains SessionStart, SessionEnd, PreToolUse, PostToolUse, UserPromptSubmit, Notification, Stop, and PreCompact: eight extension points."
     },
     {
       "stage": "post",
-      "question": "What does the PreCompact hook do at the 150k-token mark?",
+      "question": "What counters does the deterministic three-step SCRIPT consume in the demo?",
       "options": [
-        "Cancels the run and refunds the user budget",
-        "Summarizes older turns into a prior-state block so the plan and new observations still fit",
-        "Force-pushes the current branch to back up progress",
-        "Switches the backing model to a smaller draft model"
+        "3 turns, 2700 tokens, and $0.050",
+        "50 turns, 200000 tokens, and $5.000",
+        "2 turns, 2100 tokens, and $0.040",
+        "3 turns, 4096 tokens, and $0.050"
       ],
-      "correct": 1,
-      "explanation": "“Summarizes older turns into a prior-state block so the plan and new observations still fit” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The three script entries contribute 1200+900+600 = 2700 tokens and 0.02+0.02+0.01 = $0.05. The terminal third step stops with `complete`, so the run uses three turns."
     },
     {
       "stage": "post",
-      "question": "Which baseline does the capstone compare its harness against on a 30-issue SWE-bench Pro subset?",
+      "question": "What happens when `tool_read_file` is given a path outside the sandbox?",
       "options": [
-        "OpenCode",
-        "mini-swe-agent",
-        "Live-SWE-agent",
-        "Aider"
+        "The path is silently rewritten to the sandbox root",
+        "It raises `RuntimeError(\"path escapes sandbox\")`",
+        "It returns an empty string and marks the plan done",
+        "It opens the path because read-only access is harmless"
       ],
       "correct": 1,
-      "explanation": "“mini-swe-agent” matches the lesson’s treatment of Capstone 01 — Terminal-Native Coding Agent; the alternatives conflict with its definitions or workflow."
+      "explanation": "The real-path prefix check rejects paths that do not remain below the sandbox directory and raises the explicit escape error before opening a file."
     }
   ]
 }

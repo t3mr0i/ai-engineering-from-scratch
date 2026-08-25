@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why can a voice agent not be built by stitching three blocking REST calls?",
+      "question": "What is the simulated frame cadence in `synth_call`?",
       "options": [
-        "REST endpoints have a 30-second hard timeout",
-        "REST is incompatible with WebRTC",
-        "JSON serialization is too slow for audio data",
-        "End-to-end latency below 800ms requires pipelined streaming at every stage"
-      ],
-      "correct": 3,
-      "explanation": "“End-to-end latency below 800ms requires pipelined streaming at every stage” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What is the role of the turn-detector alongside VAD?",
-      "options": [
-        "Trains a custom voice clone for the agent",
-        "Reads partial transcripts and scores whether the user has actually finished their utterance",
-        "Detects which speaker is talking in a multi-party call",
-        "Mixes background music into the output stream"
-      ],
-      "correct": 1,
-      "explanation": "“Reads partial transcripts and scores whether the user has actually finished their utterance” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "When the user starts speaking while the agent is mid-response, what must happen for barge-in to feel right?",
-      "options": [
-        "The TTS finishes the current sentence before yielding",
-        "The pipeline buffers user audio until TTS completes",
-        "The TTS is canceled immediately, remaining LLM output is dropped, and ASR re-arms",
-        "The agent raises the TTS volume to assert priority"
-      ],
-      "correct": 2,
-      "explanation": "“The TTS is canceled immediately, remaining LLM output is dropped, and ASR re-arms” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why is a short filler such as \"one second, let me check\" emitted when a tool exceeds about 300ms?",
-      "options": [
-        "It avoids silence so the conversation does not stall while the side-channel tool runs",
-        "It triggers a fallback ASR model",
-        "It resets the WebRTC jitter buffer",
-        "It improves WER on the next utterance"
+        "One `Frame` every 20 ms",
+        "One `Frame` every 100 ms",
+        "One `Frame` per spoken word",
+        "A variable cadence chosen by the TTS stream"
       ],
       "correct": 0,
-      "explanation": "“It avoids silence so the conversation does not stall while the side-channel tool runs” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
+      "explanation": "Each generated frame advances `t` by 20 milliseconds. Six initial frames therefore represent 120 ms of leading silence before the simulated utterance."
+    },
+    {
+      "stage": "check",
+      "question": "What score does `turn_completion_score` return for a partial ending in `?`, `.`, or `!`?",
+      "options": [
+        "0.20",
+        "0.95",
+        "0.55",
+        "0.75"
+      ],
+      "correct": 1,
+      "explanation": "The punctuation branch returns 0.95 before the word-count heuristic runs, making an explicitly punctuated partial strongly likely to be complete."
+    },
+    {
+      "stage": "check",
+      "question": "When does `run_session` mark a listening turn complete?",
+      "options": [
+        "After any single silent frame",
+        "When the partial has punctuation, regardless of VAD silence",
+        "After at least 500 ms of silence and a completion score of at least 0.6",
+        "Only after the weather tool returns"
+      ],
+      "correct": 2,
+      "explanation": "The scheduler accumulates 20-ms silent frames until `silence_run_ms >= 500`, then requires `turn_completion_score(final_partial) >= 0.6` before entering `WAITING`."
+    },
+    {
+      "stage": "check",
+      "question": "What does the tool side-channel emit after the weather call has been pending for 300 ms?",
+      "options": [
+        "A second ASR transcript",
+        "An immediate TTS cancellation",
+        "A fatal timeout and session reset",
+        "The filler `one second, let me check`"
+      ],
+      "correct": 3,
+      "explanation": "The scheduler emits the filler once the pending tool exceeds 300 ms, keeping the audio stream conversational while `WEATHER` completes at 420 ms."
     },
     {
       "stage": "post",
-      "question": "The first audio chunk must leave the server within roughly how long of the first LLM token?",
+      "question": "What latency does the clean demo report from turn completion to first audio?",
       "options": [
-        "20ms",
-        "800ms",
-        "2 seconds",
-        "200ms"
+        "740 ms",
+        "560 ms",
+        "420 ms",
+        "180 ms"
       ],
-      "correct": 3,
-      "explanation": "“200ms” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The clean trace records turn completion at 2840 ms and first audio at 3580 ms. `Metrics.latency_ms()` subtracts those timestamps, yielding 740 ms."
     },
     {
       "stage": "post",
-      "question": "Which metric directly measures inappropriate barge-in or over-eager turn closure?",
+      "question": "What state change does the second demo make when speech arrives during the response?",
       "options": [
-        "WER",
-        "MOS",
-        "Acceptance rate",
-        "False-cutoff rate"
+        "It waits for TTS to finish and stays SPEAKING",
+        "It counts one barge-in, cancels the TTS/LLM stream, and re-arms LISTENING",
+        "It marks the turn as a false cutoff without changing state",
+        "It switches to TOOL and keeps the old audio buffer"
       ],
-      "correct": 3,
-      "explanation": "“False-cutoff rate” matches the lesson’s treatment of Capstone 03 — Real-Time Voice Assistant (ASR to LLM to TTS); the alternatives conflict with its definitions or workflow."
+      "correct": 1,
+      "explanation": "The barge-in branch fires while SPEAKING or THINKING, increments `barge_ins`, logs cancellation, resets stream timestamps, and sets the state to LISTENING."
     }
   ]
 }

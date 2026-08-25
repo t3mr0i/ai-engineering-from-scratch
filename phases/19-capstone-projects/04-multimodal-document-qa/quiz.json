@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the 2026 frontier prefer vision-first late interaction over OCR-then-text on financial PDFs and scientific papers?",
+      "question": "What does `Page.embed_patches` create for a page?",
       "options": [
-        "Vision models are cheaper per page",
-        "OCR pipelines mangle rotated tables, dense equations, and chart imagery, losing half the signal",
-        "OCR is slower than rendering",
-        "OCR cannot run on GPUs"
-      ],
-      "correct": 1,
-      "explanation": "“OCR pipelines mangle rotated tables, dense equations, and chart imagery, losing half the signal” matches the lesson’s treatment of Capstone 04 — Multimodal Document QA (Vision-First PDF, Tables, Charts); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What does late interaction mean in ColPali-style retrieval?",
-      "options": [
-        "Each query token scores against every patch token, and per-token maxima are summed via MaxSim",
-        "Embeddings are deferred until eval time",
-        "Embeddings are computed after the user clicks a result",
-        "The reranker only runs on the final candidate"
-      ],
-      "correct": 0,
-      "explanation": "“Each query token scores against every patch token, and per-token maxima are summed via MaxSim” matches the lesson’s treatment of Capstone 04 — Multimodal Document QA (Vision-First PDF, Tables, Charts); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Roughly how many patch vectors does a ColQwen embedding produce per page, and what storage problem does that create?",
-      "options": [
-        "Around 2048 patch vectors per page, ballooning raw storage compared with single-vector indexes",
-        "Exactly 128 vectors, fitting cleanly in any vector DB",
-        "1 vector per page, no storage issue",
-        "16 vectors with negligible storage overhead"
-      ],
-      "correct": 0,
-      "explanation": "“Around 2048 patch vectors per page, ballooning raw storage compared with single-vector indexes” matches the lesson’s treatment of Capstone 04 — Multimodal Document QA (Vision-First PDF, Tables, Charts); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What does DocPruner do in this pipeline?",
-      "options": [
-        "Removes duplicate PDF pages before ingestion",
-        "Compresses the multi-vector index by keeping high-signal patches at about 50% with negligible accuracy loss",
-        "Rewrites the query embedding for shorter vectors",
-        "Crops bounding boxes around evidence regions"
-      ],
-      "correct": 1,
-      "explanation": "“Compresses the multi-vector index by keeping high-signal patches at about 50% with negligible accuracy loss” matches the lesson’s treatment of Capstone 04 — Multimodal Document QA (Vision-First PDF, Tables, Charts); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Why is an OCR text channel still spliced in for some pages?",
-      "options": [
-        "It improves PDF rendering quality",
-        "VLMs cannot read images at 180 DPI",
-        "OCR is the primary retrieval modality",
-        "Equation-dense and table-heavy pages benefit from a text fallback alongside the image"
-      ],
-      "correct": 3,
-      "explanation": "“Equation-dense and table-heavy pages benefit from a text fallback alongside the image” matches the lesson’s treatment of Capstone 04 — Multimodal Document QA (Vision-First PDF, Tables, Charts); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Which benchmark does this capstone target for vision-first retrieval evaluation?",
-      "options": [
-        "RewardBench-2",
-        "SWE-bench Pro",
-        "ViDoRe v3",
-        "MMLU-Pro"
+        "One vector for the whole document",
+        "A sparse BM25 row with no image representation",
+        "One 16-dimensional patch vector for each content token",
+        "A single vector only for the page title"
       ],
       "correct": 2,
-      "explanation": "“ViDoRe v3” matches the lesson’s treatment of Capstone 04 — Multimodal Document QA (Vision-First PDF, Tables, Charts); the alternatives conflict with its definitions or workflow."
+      "explanation": "The scaffold treats each token in `content_tokens` as a patch and calls `hash_embed` on it. The resulting list preserves multi-vector page evidence rather than pooling it immediately."
+    },
+    {
+      "stage": "check",
+      "question": "With `keep_fraction=0.5`, how does `doc_prune` choose patches?",
+      "options": [
+        "It keeps the first half in source order",
+        "It samples half uniformly at random",
+        "It keeps only patches whose token is in the query",
+        "It sorts by per-patch absolute-value norm and keeps the largest half, with at least one"
+      ],
+      "correct": 3,
+      "explanation": "`doc_prune` scores each patch by `sum(abs(x) for x in p)`, sorts descending, and keeps `max(1, int(len(scored) * keep_fraction))` patches."
+    },
+    {
+      "stage": "check",
+      "question": "How is `max_sim_score` computed?",
+      "options": [
+        "For each query vector, it takes the maximum dot product over page patches and sums those maxima",
+        "It averages every query-patch dot product",
+        "It compares only the single best page patch to the whole query",
+        "It adds BM25 scores to the page number"
+      ],
+      "correct": 0,
+      "explanation": "Late interaction is implemented literally: each query token finds its best matching patch, and the per-token maxima are summed into the page score."
+    },
+    {
+      "stage": "check",
+      "question": "How many pages does `build_index` add from the local `CORPUS` fixture?",
+      "options": [
+        "5",
+        "10",
+        "16",
+        "2048"
+      ],
+      "correct": 1,
+      "explanation": "`CORPUS` contains ten `(doc_id, page_num, text)` tuples. `build_index` embeds and adds one `Page` for each tuple, so the demo prints `pages indexed: 10`."
+    },
+    {
+      "stage": "post",
+      "question": "What does `Index.retrieve(query, k=3)` guarantee about its return order?",
+      "options": [
+        "It preserves corpus insertion order",
+        "It always returns only handwritten pages",
+        "It returns at most three pages sorted by descending MaxSim score",
+        "It returns three pages chosen by BM25"
+      ],
+      "correct": 2,
+      "explanation": "`retrieve` scores every indexed page with `max_sim_score`, sorts by negative score, and slices the first `k` entries. It is a top-k late-interaction lookup, not a corpus-order iterator."
+    },
+    {
+      "stage": "post",
+      "question": "What does the demo's pruning ablation report for the chart query?",
+      "options": [
+        "The full and pruned top-3 lists are identical",
+        "The pruned index always has zero hits",
+        "Pruning increases the overlap to 3/3 on every query",
+        "The printed chart-query top-3 lists overlap in 2 of 3 pages"
+      ],
+      "correct": 3,
+      "explanation": "For `chart comparing segment margins`, the run prints full and pruned top-3 lists with `overlap: 2/3`. That is the measured fixture behavior, not a claim that pruning is lossless in general."
     }
   ]
 }
