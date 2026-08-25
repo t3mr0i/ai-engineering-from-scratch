@@ -4,38 +4,38 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the operational difference between early fusion and late fusion in vision-language modeling?",
+      "question": "In CrossAttention.forward, which tensors supply queries versus keys and values?",
       "options": [
-        "Early fusion runs first in wall-clock time",
-        "Early fusion concatenates image and text tokens into one sequence; late fusion keeps them separate and bridges via cross-attention at each block",
-        "Late fusion uses more memory",
-        "Early fusion is illegal"
+        "Image memory supplies Q; text x supplies K and V",
+        "Both Q and K come from text, while V is a learned scalar",
+        "Text x supplies Q; image memory supplies K and V",
+        "Q, K, and V are all projected from the concatenated sequence"
       ],
-      "correct": 1,
-      "explanation": "Chameleon and Emu3 are early-fusion; Flamingo and BLIP-2 are late-fusion. The architectural choice changes mask shapes and KV caching."
+      "correct": 2,
+      "explanation": "The method applies q_proj to x, the text stream, and project_memory to memory, the image stream. Thus text length is the query length and image-token length is the key/value length."
     },
     {
       "stage": "check",
       "question": "In a decoder block with both self-attention and cross-attention, which one uses a causal mask?",
       "options": [
         "Both",
-        "Self-attention only; the image is fully observed and cross-attention has no temporal order",
         "Cross-attention only",
-        "Neither"
+        "Neither",
+        "Self-attention only; the image is fully observed and cross-attention has no temporal order"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Text generation is autoregressive, so text self-attention is causal. Image tokens are all visible before any text is decoded."
     },
     {
       "stage": "check",
       "question": "Why is the cross-attention KV cache built once per image?",
       "options": [
-        "PyTorch requires caching",
         "Image keys and values do not change as text is decoded, so projecting memory once and reusing the K and V across all decode steps is the whole inference speedup",
+        "PyTorch requires caching",
         "Caching saves disk space",
         "It avoids using the GPU"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The vision encoder runs once. Its KV projection is computed once. Each text token reuses the cache for free."
     },
     {
@@ -55,24 +55,24 @@
       "question": "Why is no mask used on cross-attention?",
       "options": [
         "Masks are too expensive",
-        "The image is fully observed before text generation begins; every text position may attend to every patch",
         "PyTorch does not support cross masks",
+        "The image is fully observed before text generation begins; every text position may attend to every patch",
         "Masks always cause NaN"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "There is no temporal order on image patches and no leakage to prevent, so cross-attention sees the whole image."
     },
     {
       "stage": "post",
-      "question": "Which extension would you add to recover Flamingo-style stability during training?",
+      "question": "Which residual computation matches the documented learned gate extension for cross-attention?",
       "options": [
-        "Drop the self-attention layer",
-        "Insert a learned tanh gate on the cross-attention residual so the model can start from text-only behavior and grow into the image stream",
-        "Remove the FFN",
-        "Use only one attention head"
+        "x = tanh(x + cross_attn(x, memory)) and the residual is discarded",
+        "x = x + softmax(gate) * self_attn(x), with no image memory",
+        "x = cross_attn(x, memory) and the text residual is always removed",
+        "x = x + tanh(gate) * cross_attn(x, memory), with gate initialized at zero"
       ],
-      "correct": 1,
-      "explanation": "Flamingo's tanh gate starts at zero, recovers text-only behavior at init, and gives the model a smooth ramp into cross-attention."
+      "correct": 3,
+      "explanation": "The lesson's baseline has no gate, but its extension scales the cross-attention residual by tanh(gate). A zero-initialized gate starts near the text-only path and can learn to open the image path."
     }
   ]
 }

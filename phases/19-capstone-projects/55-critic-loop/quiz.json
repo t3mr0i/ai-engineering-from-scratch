@@ -7,11 +7,11 @@
       "question": "Why does the critic score across five fixed dimensions instead of returning a freeform paragraph?",
       "options": [
         "Because models cannot generate paragraphs reliably",
-        "Because a fixed vector lets the harness detect per-dimension regressions across rounds",
         "Because LaTeX requires a score field",
+        "Because a fixed vector lets the harness detect per-dimension regressions across rounds",
         "Because the reviser only accepts JSON"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "A fixed dimension vector turns critique into structured data the harness can compare across rounds. Freeform criticism is unverifiable; vectors make regressions visible."
     },
     {
@@ -19,24 +19,24 @@
       "question": "In what order does the loop check stop conditions at the end of a round?",
       "options": [
         "Budget, then plateau, then target",
-        "Target, then plateau, then budget",
         "Plateau, then target, then budget",
-        "Whichever fires first by random tie-break"
+        "Whichever fires first by random tie-break",
+        "Target, then plateau, then budget"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Target met wins (the work is done). Then plateau (no more progress is achievable). Then budget (hard cap). The order makes the result deterministic when more than one condition could fire."
     },
     {
       "stage": "check",
-      "question": "Why does plateau detection require two consecutive flat rounds rather than one?",
+      "question": "Why does the loop require two consecutive small mean gains before declaring a plateau?",
       "options": [
-        "Because the dataclass requires a list",
-        "Because deterministic scoring still has noise per round; one flat round is not enough signal",
+        "One small gain may be transient; repeated small gains are stronger evidence that progress has stalled",
+        "Because the trace format requires two entries",
         "Because the model returns nondeterministic scores",
-        "Because the dashboard expects two points"
+        "Because a critic cannot return a score after one round"
       ],
-      "correct": 1,
-      "explanation": "Even a deterministic scorer's output changes round to round depending on which suggestions were applied. Requiring two flat rounds filters that noise."
+      "correct": 0,
+      "explanation": "The plateau window compares successive mean changes. Requiring two consecutive changes no larger than the epsilon avoids stopping on a single flat round."
     },
     {
       "stage": "check",
@@ -55,11 +55,11 @@
       "question": "What does the trace contain for each round?",
       "options": [
         "Just the final paper draft",
-        "Round number, score vector, mean, suggestions applied, verdict",
         "The model prompt and completion",
+        "Round number, score vector, mean, suggestions applied, verdict",
         "Only the convergence verdict"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The trace is the per-round event log. Dashboards render it as a score-over-time chart; the next stage reads it to decide whether the branch is worth keeping."
     },
     {
@@ -67,11 +67,11 @@
       "question": "A critic that keeps emitting suggestions that never improve any score will produce which terminal verdict?",
       "options": [
         "target, because the budget hides the bug",
-        "plateau or budget, because the harness will catch the lack of progress",
         "converged, because suggestions were applied",
-        "An exception, because the loop crashes"
+        "An exception, because the loop crashes",
+        "plateau or budget, because the harness will catch the lack of progress"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Either plateau (two flat rounds) or budget (hard cap) fires. Both verdicts surface the bug. The loop never silently succeeds."
     }
   ]

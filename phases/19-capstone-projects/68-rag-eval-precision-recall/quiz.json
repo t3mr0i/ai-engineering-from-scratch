@@ -4,26 +4,26 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is recall@k usually the headline retrieval metric in production RAG?",
+      "question": "Why does this eval track recall@k before judging generated answers?",
       "options": [
-        "Recall ignores ranking",
-        "Generation can drop irrelevant chunks but cannot invent an answer from a chunk it never saw, so missing the right chunk is the more expensive failure",
-        "Recall is required by the OpenAPI spec",
-        "Recall is the same as precision in RAG"
+        "If no gold document enters top-k, the generator cannot ground an answer in that evidence; extra retrieved documents can still be filtered",
+        "Recall@k is always identical to answer relevance",
+        "The evaluator cannot calculate precision for a list shorter than k",
+        "The model must emit a retrieval score before it can generate text"
       ],
-      "correct": 1,
-      "explanation": "A retriever that misses the right chunk cannot be repaired downstream; surplus chunks waste tokens but rarely poison the answer."
+      "correct": 0,
+      "explanation": "Generation can discard surplus context, but it cannot cite a gold document that retrieval never supplied. Recall therefore exposes an upstream ceiling before answer-level metrics are interpreted."
     },
     {
       "stage": "check",
       "question": "What does MRR compute?",
       "options": [
-        "The mean of 1 / position-of-first-relevant-document across queries",
         "The geometric mean of cosine similarity",
+        "The mean of 1 / position-of-first-relevant-document across queries",
         "Median rank of the second relevant document",
         "Token count of the answer"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "MRR is dominated by the top of the list: rank 1 contributes 1.0, rank 2 contributes 0.5, rank 10 contributes 0.1."
     },
     {
@@ -31,35 +31,35 @@
       "question": "When should you reach for nDCG instead of recall@k?",
       "options": [
         "When the corpus is small",
-        "When the gold labels carry graded relevance (e.g. doc A is 3, doc B is 2, doc C is 1) and binary metrics lose information",
         "When the retriever does not return scores",
+        "When the gold labels carry graded relevance (e.g. doc A is 3, doc B is 2, doc C is 1) and binary metrics lose information",
         "Never"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "nDCG uses graded gains and a position discount; recall flattens everything to binary."
     },
     {
       "stage": "check",
       "question": "What is the difference between faithfulness and answer relevance?",
       "options": [
-        "Faithfulness asks 'is the answer grounded in the retrieved context'; answer relevance asks 'does the answer address the question'",
         "Faithfulness measures precision; relevance measures recall",
         "Faithfulness is a retrieval metric and relevance is a chunker metric",
-        "They are the same metric with two names"
+        "They are the same metric with two names",
+        "Faithfulness asks 'is the answer grounded in the retrieved context'; answer relevance asks 'does the answer address the question'"
       ],
-      "correct": 0,
+      "correct": 3,
       "explanation": "A faithful but off-topic answer scores high on faithfulness, low on relevance; a relevant but ungrounded answer scores high on relevance, low on faithfulness."
     },
     {
       "stage": "post",
       "question": "A pipeline shows decent recall@5 but low MRR. Which stage should you investigate first?",
       "options": [
-        "The chunker",
         "The reranker, because the right chunk is in the top-k but not at the top",
+        "The chunker",
         "The generator",
         "The corpus ingestor"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Recall@5 means the gold is in top-5; low MRR means it is not at the top of the list. That is the rerank stage's job."
     },
     {

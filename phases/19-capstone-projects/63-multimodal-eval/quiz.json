@@ -7,35 +7,35 @@
       "question": "Why is training loss alone an insufficient measure of a multimodal model's quality?",
       "options": [
         "Loss is hard to compute",
-        "Training loss measures fit on the training distribution; eval surfaces (retrieval, VQA, captioning) measure whether the model generalizes to held-out tasks",
         "Loss values are random",
+        "Training loss measures fit on the training distribution; eval surfaces (retrieval, VQA, captioning) measure whether the model generalizes to held-out tasks",
         "Loss is a string"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Loss minimization is necessary but not sufficient. Held-out metrics on three task surfaces measure what the model can actually do."
     },
     {
       "stage": "check",
-      "question": "What is R@5 measuring in a 100-sample retrieval eval?",
+      "question": "In recall_at_k(sim, k), what counts as an image-to-text hit?",
       "options": [
-        "The fifth caption is always correct",
-        "Fraction of queries whose correct match lands in the top 5 retrieved candidates out of 100",
-        "Five percent accuracy",
-        "Five queries per second"
+        "The fifth caption is correct for every row",
+        "Any row contains the literal query string",
+        "The largest similarity in the batch is positive",
+        "The diagonal caption index i appears among row i's top-k columns"
       ],
-      "correct": 1,
-      "explanation": "R@K = fraction of queries with the target in the top K ranked candidates. Higher is better."
+      "correct": 3,
+      "explanation": "The function uses targets=arange(N), takes topk along each image row, and checks whether that row's matching caption index appears in the selected columns."
     },
     {
       "stage": "check",
       "question": "Why does BLEU-4 take the geometric mean of 1- to 4-gram precisions instead of the arithmetic mean?",
       "options": [
-        "Arithmetic is slower",
         "Geometric mean is zero if any n-gram precision is zero, which is the strict matching property BLEU wants; smoothing handles the zero case",
+        "Arithmetic is slower",
         "Geometric mean is bigger",
         "PyTorch supports only geometric mean"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The geometric mean enforces that ALL n-gram orders contribute; a 4-gram precision of zero collapses the score before smoothing."
     },
     {
@@ -55,11 +55,11 @@
       "question": "Why does multi-reference BLEU usually score higher than single-reference BLEU on the same generation?",
       "options": [
         "The math is different",
-        "Each n-gram in the generation can match any reference, so the clipped count is higher when more references are available",
         "Single-reference is broken",
+        "Each n-gram in the generation can match any reference, so the clipped count is higher when more references are available",
         "References cost extra memory"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "More references give the n-gram more chances to be matched; clipped counts grow and the precision rises."
     },
     {
@@ -67,11 +67,11 @@
       "question": "Which eval surface uses no model embeddings and only id-level matching?",
       "options": [
         "Retrieval",
-        "VQA exact match: a predicted answer id is compared directly to a reference id with no embedding step",
         "BLEU-4",
-        "Cosine similarity"
+        "Cosine similarity",
+        "VQA exact match: a predicted answer id is compared directly to a reference id with no embedding step"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "VQA exact match is an integer comparison after the model emits its answer token; no embedding or similarity math involved."
     }
   ]

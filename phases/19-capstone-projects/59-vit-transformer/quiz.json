@@ -4,38 +4,38 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the standard ViT block use pre-LayerNorm placement instead of post-LayerNorm?",
+      "question": "Which order does Block.forward apply to each sub-layer?",
       "options": [
-        "Post-LN is patented",
-        "Pre-LN trains stably at depth without learning-rate warm-up while post-LN diverges past about 6 layers",
-        "Pre-LN runs faster",
-        "Post-LN uses more memory"
+        "It applies LayerNorm only after both residual additions",
+        "It normalizes the image once and skips normalization inside the blocks",
+        "It normalizes before attention and the FFN, then adds each residual: x+attn(ln1(x)); x+ffn(ln2(x))",
+        "It applies the FFN before attention and drops both residual paths"
       ],
-      "correct": 1,
-      "explanation": "Pre-LN normalizes each sub-layer's input which keeps gradient norms bounded as depth grows."
+      "correct": 2,
+      "explanation": "Block.forward calls ln1 before self-attention and adds that result to x, then calls ln2 before the feed-forward layer and adds the second result. This is the local pre-LN wiring."
     },
     {
       "stage": "check",
       "question": "At hidden=768 with heads=12, what is the per-head dimension and why does it matter?",
       "options": [
         "12, so each head can run on a small GPU",
-        "64, which controls the resolution of each attention map and lets twelve heads attend independently in parallel",
         "768, because all heads share the projection",
-        "96, set by ResNet-50"
+        "96, set by ResNet-50",
+        "64, which controls the resolution of each attention map and lets twelve heads attend independently in parallel"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "head_dim = hidden / heads = 64. Each head projects the token to its own 64-D q/k/v and computes its own attention map."
     },
     {
       "stage": "check",
       "question": "Does the ViT encoder need a causal attention mask?",
       "options": [
-        "Yes, like a GPT decoder",
         "No: the encoder is bidirectional, every token may attend to every other token in the same sequence",
+        "Yes, like a GPT decoder",
         "Only for the CLS row",
         "Only during training"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Vision encoders are bidirectional. Causal masking appears later when a text decoder consumes the cross-attention output."
     },
     {
@@ -52,27 +52,27 @@
     },
     {
       "stage": "post",
-      "question": "Why is the feed-forward layer expanded to 4x the hidden dim?",
+      "question": "With hidden=768 and mlp_ratio=4.0, what does FeedForward construct?",
       "options": [
-        "PyTorch requires 4x",
-        "An empirical sweet spot since the original Transformer; smaller underfits, larger overfits at fixed data budget",
-        "It halves FLOPs",
-        "It removes the need for attention"
+        "Linear(768, 768) followed by GELU and Linear(768, 768)",
+        "A 12-head attention layer with 64-dimensional values",
+        "Linear(768, 3072) followed by GELU and Linear(3072, 768)",
+        "Linear(3072, 768) followed by GELU and Linear(768, 3072)"
       ],
-      "correct": 1,
-      "explanation": "The 4x factor has held across language and vision transformers since 2017. Capacity per parameter peaks here."
+      "correct": 2,
+      "explanation": "FeedForward computes inner=int(768*4.0)=3072, then applies fc1, GELU, and fc2 to return to the hidden width of 768."
     },
     {
       "stage": "post",
-      "question": "Which family extension keeps the block math unchanged but adds prepended learned tokens?",
+      "question": "What changes if a register token is prepended to this encoder sequence?",
       "options": [
-        "Causal masking",
-        "Register tokens (DINOv2): a few learned vectors prepended after CLS that capture global statistics and smooth attention maps",
-        "Mixture-of-experts",
-        "RoPE rotation"
+        "The model becomes a causal decoder and masks image tokens",
+        "Every patch is removed so the sequence length stays fixed",
+        "The token embedding dimension changes from 768 to 64",
+        "The sequence gains a learned token; the attention and FFN dimensions stay the same"
       ],
-      "correct": 1,
-      "explanation": "Register tokens stabilize attention without altering the block's math; they are extra slots in the sequence."
+      "correct": 3,
+      "explanation": "A register is an additional learned sequence element. Existing block projections still use the same hidden width; only the token count and the corresponding attention matrices grow."
     }
   ]
 }

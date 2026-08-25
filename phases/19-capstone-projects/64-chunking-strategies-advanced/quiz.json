@@ -6,49 +6,49 @@
       "stage": "pre",
       "question": "Why is the chunking choice an upper bound on retrieval quality and not just a hyperparameter?",
       "options": [
+        "Because no embedding, reranker, or LLM downstream can recover an answer span that was cut into incoherent pieces",
         "Because the LLM never reads chunks",
         "Because the embedding model is fixed at training time",
-        "Because no embedding, reranker, or LLM downstream can recover an answer span that was cut into incoherent pieces",
         "Because BM25 has no role in modern RAG"
       ],
-      "correct": 2,
+      "correct": 0,
       "explanation": "If the chunk that holds the answer span is incoherent the embedding moves to the wrong cluster and downstream components cannot repair the damage."
     },
     {
       "stage": "check",
-      "question": "Which strategy is the strongest single-strategy default when you have no prior knowledge of the corpus?",
+      "question": "Which chunker follows a separator hierarchy and falls back to finer separators when a region is too long?",
       "options": [
-        "Fixed-window",
-        "Sentence packer",
-        "Recursive split",
-        "Structural markdown"
+        "fixed_window",
+        "recursive_split",
+        "sentence_chunks",
+        "semantic_chunks"
       ],
-      "correct": 2,
-      "explanation": "Recursive split adapts per region by trying the strongest separator first and falling back, so it survives inconsistent structure."
+      "correct": 1,
+      "explanation": "recursive_split tries the configured separators from coarse to fine, recursively splitting oversized pieces until they fit the target. The other strategies use different boundary rules."
     },
     {
       "stage": "check",
       "question": "What does recall@k measure in this lesson?",
       "options": [
         "Whether the top-k chunks contain the literal query string",
-        "Whether any of the top-k chunks overlaps the gold answer span",
         "The cosine similarity between the query and the top-k chunks",
+        "Whether any of the top-k chunks overlaps the gold answer span",
         "The number of unique documents in the top-k"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Each query carries gold offsets; recall@k is 1 if any top-k chunk overlaps the gold span, else 0; averaged across queries."
     },
     {
       "stage": "check",
-      "question": "Why does fixed-window chunking fail badly on code or YAML corpora?",
+      "question": "Why can fixed_window split code or YAML meaning?",
       "options": [
-        "It loses Unicode characters",
-        "It cuts identifiers and key-value pairs in half, producing chunks that embed to noise",
-        "It produces chunks larger than the embedding model's context window",
-        "It cannot be parallelized"
+        "It removes all Unicode characters before indexing",
+        "It always creates chunks longer than the embedding context",
+        "It cannot be run in parallel",
+        "Character boundaries can separate an identifier or key/value pair, so no chunk contains the complete unit"
       ],
-      "correct": 1,
-      "explanation": "Character-level cuts inside a symbol destroy the meaning the embedding model is supposed to capture."
+      "correct": 3,
+      "explanation": "fixed_window slices raw character offsets without knowing syntax. A cut inside a symbol or mapping can leave retrieval with only a fragment of the fact it needs."
     },
     {
       "stage": "post",

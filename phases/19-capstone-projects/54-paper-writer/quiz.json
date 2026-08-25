@@ -6,12 +6,12 @@
       "stage": "pre",
       "question": "Why does the writer declare sections, figures, and citations as data before any prose is written?",
       "options": [
-        "Because LaTeX requires a forward declaration",
         "Because the structure is the contract: the harness can validate completeness before prose generation",
+        "Because LaTeX requires a forward declaration",
         "Because the model needs a system prompt",
         "Because BibTeX cannot resolve forward references"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Structure-first lets the harness validate uniqueness, citation coverage, and figure coverage before invoking the prose generator. The skeleton is the contract."
     },
     {
@@ -31,11 +31,11 @@
       "question": "Which validation failure raises PaperValidationError before any file is written?",
       "options": [
         "An odd number of authors",
-        "A section that cites a key not declared in the bibliography",
         "An abstract longer than 200 words",
+        "A section that cites a key not declared in the bibliography",
         "A figure path that does not exist on disk"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Missing bibliography keys, duplicate figure ids, empty title, empty abstract, and unknown figure refs all raise PaperValidationError. Existence on disk is not enforced because the LaTeX compiler enforces it later."
     },
     {
@@ -43,23 +43,23 @@
       "question": "Why is the prose generator a callable injected into PaperWriter rather than a method on it?",
       "options": [
         "Because Python does not allow methods to take Paper as an argument",
-        "Because tests can swap a deterministic MockProseGenerator for a model call without touching the writer",
         "Because LaTeX requires a callback",
-        "Because the dataclass cannot hold state"
+        "Because the dataclass cannot hold state",
+        "Because tests can swap a deterministic MockProseGenerator for a model call without touching the writer"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "The writer takes the prose generator as a dependency. The test substitutes MockProseGenerator. Production substitutes a model call. The writer is unchanged."
     },
     {
       "stage": "post",
       "question": "What three files does PaperWriter.write emit on success?",
       "options": [
-        "paper.tex, paper.pdf, references.bib",
         "paper.tex, references.bib, manifest.json",
+        "paper.tex, paper.pdf, references.bib",
         "outline.json, paper.tex, figures.tar",
         "manifest.json, prose.txt, paper.pdf"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "paper.tex is the LaTeX source. references.bib is the bibliography. manifest.json is the structured artifact the critic loop reads next."
     },
     {

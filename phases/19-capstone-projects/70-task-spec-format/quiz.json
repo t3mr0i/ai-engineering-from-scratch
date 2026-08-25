@@ -19,11 +19,11 @@
       "question": "What is the closed vocabulary that the metric_name field accepts?",
       "options": [
         "Whatever string the task runner happens to be configured to recognise at load time",
+        "The six pinned names: exact_match, f1, bleu_4, rouge_l, accuracy, and code_exec",
         "Any string the task author chooses to write into the metric_name field freely",
-        "Only exact_match and f1; the other four metric names are reserved for a future lesson",
-        "The six pinned names: exact_match, f1, bleu_4, rouge_l, accuracy, and code_exec"
+        "Only exact_match and f1; the other four metric names are reserved for a future lesson"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The lesson pins the metric vocabulary to six names. Adding one requires a new lesson and a new validator entry — it is not runner-configured or author-chosen freely."
     },
     {
@@ -31,11 +31,11 @@
       "question": "What does the validator do when it sees an unknown top-level field on a record?",
       "options": [
         "Strips the unrecognized field silently and continues processing the rest of the record",
-        "Returns a validation error and rejects the record outright, without silently accepting it",
         "Logs a warning to stderr but still accepts and continues processing the record as fully valid",
+        "Returns a validation error and rejects the record outright, without silently accepting it",
         "Renames the unknown field to metadata.unknown and keeps it as part of the record going forward"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Unknown fields are a forward-compatibility hazard. The validator rejects them so the schema stays the only source of truth — it does not strip, warn-and-accept, or rename."
     },
     {
@@ -44,10 +44,10 @@
       "options": [
         "Because the task runner in this lesson has no file I/O capability and cannot read example files",
         "Attaching the examples directly to the record saves a small amount of disk space overall",
-        "Author intent is part of the eval; binding examples to the task removes per-model prompt variance",
-        "Few-shot examples are only ever used during a fine-tuning run, never during evaluation"
+        "Few-shot examples are only ever used during a fine-tuning run, never during evaluation",
+        "Author intent is part of the eval; binding examples to the task removes per-model prompt variance"
       ],
-      "correct": 2,
+      "correct": 3,
       "explanation": "Few-shot composition is part of the eval definition, not the model interface. Putting it in the task means every model sees the same prompt."
     },
     {
@@ -55,24 +55,24 @@
       "question": "Which category-metric pair is illegal under the validator?",
       "options": [
         "summary + rouge_l, a pairing the validator accepts since ROUGE is meant for free-text summaries",
+        "mcq + bleu_4, since scoring a single selected letter with a text-overlap metric is meaningless",
         "arithmetic + exact_match, a pairing the validator accepts since arithmetic answers are exact strings",
-        "code_exec + code_exec, a pairing the validator accepts since it names the same thing twice",
-        "mcq + bleu_4, since scoring a single selected letter with a text-overlap metric is meaningless"
+        "code_exec + code_exec, a pairing the validator accepts since it names the same thing twice"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "BLEU on a single letter is meaningless. The validator enforces that mcq tasks use exact_match or accuracy only; the other three pairs are all accepted."
     },
     {
       "stage": "post",
       "question": "What does the post_process rule extract_letter return when the generation is `Answer: C is correct`?",
       "options": [
-        "C — the validator's first character matching the pattern [A-E] found anywhere in the generation",
         "Answer — the validator extracts the preceding word instead of the letter itself",
         "An empty string — because no character in [A-E] appears anywhere in the generation",
-        "The full generation string unchanged, since extract_letter found no matching letter pattern"
+        "The full generation string unchanged, since extract_letter found no matching letter pattern",
+        "C — the post-process regex returns the first matching letter in the generation"
       ],
-      "correct": 0,
-      "explanation": "extract_letter returns the first character matching [A-E] in the generation. The string has C at the start of the body, so it is neither empty nor left unchanged."
+      "correct": 3,
+      "explanation": "post_process searches for a standalone A-E letter first and falls back to any A-E character. In `Answer: C is correct`, it returns `C`; it does not return the surrounding word or the untouched string."
     }
   ]
 }

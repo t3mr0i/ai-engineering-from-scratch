@@ -6,12 +6,12 @@
       "stage": "pre",
       "question": "What two distinct capabilities does combining InfoNCE and LM loss train into one model?",
       "options": [
-        "Speed and accuracy",
         "Ranking (find the right image for a caption) and generation (write a caption for an image)",
+        "Speed and accuracy",
         "Compression and decompression",
         "Tokenization and detokenization"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "InfoNCE handles ranking; LM loss handles generation. CoCa, BLIP, and friends combine both in one training pass."
     },
     {
@@ -28,51 +28,51 @@
     },
     {
       "stage": "check",
-      "question": "Why is the contrastive temperature usually a learned parameter?",
+      "question": "In info_nce_loss, what does log_tau.exp().clamp(1e-3, 100.0) do to the normalized dot products?",
       "options": [
-        "PyTorch requires it",
-        "Hand-tuning is fragile; letting tau learn allows the model to find the right softmax peakedness as the embedding scale evolves during training",
-        "Learned tau is faster on GPU",
-        "It avoids using Adam"
+        "It turns the similarity matrix into hard one-hot labels",
+        "It masks all off-diagonal pairs",
+        "It supplies a bounded positive scale for the similarity logits; log_tau remains trainable",
+        "It converts image embeddings into token IDs"
       ],
-      "correct": 1,
-      "explanation": "CLIP introduced learned log-tau so the contrastive softmax stays in the useful regime as embedding norms grow."
+      "correct": 2,
+      "explanation": "The code exponentiates the trainable log_tau and clamps the resulting scale before multiplying img_n @ txt_n.T. The diagonal and off-diagonal logits are all scaled; only the cross-entropy targets select the diagonal."
     },
     {
       "stage": "check",
       "question": "Which sub-modules receive gradient from the LM loss but not from the contrastive loss?",
       "options": [
         "The vision encoder",
-        "The cross-attention decoder",
         "The MLP projector",
-        "The text-side encoder"
+        "The text-side encoder",
+        "The cross-attention decoder"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Contrastive loss does not touch the decoder; LM loss does not touch the text-side mean-pool encoder."
     },
     {
       "stage": "post",
       "question": "What does ignore_index=PAD_ID accomplish in the LM cross-entropy?",
       "options": [
-        "Speeds up the loss",
         "Masks padding positions out of the loss so the model is not punished for predicting tokens after the caption ends",
+        "Speeds up the loss",
         "Encrypts pad tokens",
         "Reorders tokens"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Padding positions carry no signal; ignoring them stops the loss from learning to predict pad."
     },
     {
       "stage": "post",
-      "question": "Why is a 50-step demo on synthetic data enough to call the lesson complete?",
+      "question": "What does the 50-step synthetic run actually establish?",
       "options": [
-        "The model reaches state of the art at 50 steps",
-        "The demo proves the gradient plumbing works end to end; production training shape is identical but runs for millions of steps on real data",
-        "50 steps is the maximum supported",
-        "Real data would change the architecture"
+        "It proves the model has production-level caption quality",
+        "It proves the configured encoder, projector, and decoder losses can backpropagate on the fixture; it is not a quality result on real data",
+        "It proves 50 steps is a universal training budget",
+        "It proves real images would produce the same metrics"
       ],
       "correct": 1,
-      "explanation": "The dynamics demonstrated (both losses decrease, no NaN, stable tau) are the same dynamics a billion-image run would show; just scaled up."
+      "explanation": "The demo uses a deterministic 200-pair synthetic corpus and checks that the loss path runs and moves. That is useful plumbing evidence, not evidence about generalization or real-data quality."
     }
   ]
 }

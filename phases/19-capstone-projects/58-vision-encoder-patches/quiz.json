@@ -6,12 +6,12 @@
       "stage": "pre",
       "question": "Why does a Vision Transformer use patches instead of feeding one pixel per token?",
       "options": [
-        "Patches are required by PyTorch",
         "Pixel-per-token sequences explode attention compute quadratically and lose tractability at typical resolutions",
+        "Patches are required by PyTorch",
         "Patches improve image quality",
         "It avoids using a tokenizer"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "A 224x224 image is 150528 pixel tokens. Attention is quadratic in length, so 16x16 patching shrinks the sequence to 196 tokens and makes the model tractable."
     },
     {
@@ -28,51 +28,51 @@
     },
     {
       "stage": "check",
-      "question": "Why is the 2D sinusoidal position embedding deterministic instead of learned?",
+      "question": "What makes sinusoidal_2d deterministic in this front end?",
       "options": [
-        "Learned positions are illegal",
-        "Fixed sin/cos signals interpolate cleanly to grids the model never saw, which is useful when resolution changes",
-        "It saves disk space",
-        "Random init is required"
+        "It copies a learned table from the previous image",
+        "It samples new offsets for each batch",
+        "It computes sin/cos values from grid coordinates and fixed frequencies; no position parameters are learned",
+        "It uses the random image seed as position data"
       ],
-      "correct": 1,
-      "explanation": "Fixed sinusoidal positions are deterministic across resolutions and let the same encoder run on inputs it was not trained on."
+      "correct": 2,
+      "explanation": "sinusoidal_2d builds the row and column values directly from arange coordinates and fixed frequency constants. Repeating the same grid and dimension therefore produces the same table without learned state."
     },
     {
       "stage": "check",
       "question": "What is the output sequence length of a 224x224 image with patch_size=16 and one CLS token?",
       "options": [
         "196",
-        "197",
         "224",
-        "256"
+        "256",
+        "197"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "224/16 = 14, so 14x14 = 196 patches, plus one CLS token for 197 total tokens."
     },
     {
       "stage": "post",
       "question": "Why is reconstruction (unfold then unflatten) a useful sanity check on the patch front end?",
       "options": [
-        "It improves accuracy",
         "Round-tripping pixels through patch-flatten with no projection must equal the input; failure means the unfold math is wrong",
+        "It improves accuracy",
         "It is required by ONNX",
         "It speeds up inference"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The patch step is invertible without projection. If the round-trip drifts, the unfold logic is bugged and the rest of the encoder is unsafe."
     },
     {
       "stage": "post",
-      "question": "What changes when you swap a learned position embedding for the 2D sinusoidal one in this lesson?",
+      "question": "If you construct a second FrontEndConfig with image_size=256 and patch_size=16, what sequence length does its position table support?",
       "options": [
-        "Nothing changes",
-        "Learned positions can fit a fixed resolution slightly better; sinusoidal positions transfer to new resolutions without retraining",
-        "Sinusoidal positions cost more parameters",
-        "Sinusoidal positions are random per step"
+        "197, because the CLS token fixes the length",
+        "257: 16x16 patch positions plus the CLS row",
+        "256, because one token represents each image row",
+        "513: one patch token for every image pixel pair"
       ],
       "correct": 1,
-      "explanation": "Learned positions are flexible at one resolution. Sinusoidal positions cost zero parameters and survive resolution shifts."
+      "explanation": "A 256/16 grid has 16 by 16 = 256 patches. VisionFrontEnd builds a fresh sinusoidal table for that grid and prepends one CLS position, giving 257 tokens."
     }
   ]
 }

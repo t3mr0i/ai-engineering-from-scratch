@@ -6,24 +6,24 @@
       "stage": "pre",
       "question": "What is the architectural difference between a bi-encoder and a cross-encoder?",
       "options": [
+        "A bi-encoder embeds query and document independently; a cross-encoder reads the concatenated (query, document) sequence with full attention across both",
         "Bi-encoders use cosine; cross-encoders use dot product",
         "Bi-encoders are trained; cross-encoders are not",
-        "A bi-encoder embeds query and document independently; a cross-encoder reads the concatenated (query, document) sequence with full attention across both",
         "Cross-encoders run only on GPUs"
       ],
-      "correct": 2,
+      "correct": 0,
       "explanation": "Cross attention across the join is what gives the cross-encoder its precision; the bi-encoder never sees the query and document together."
     },
     {
       "stage": "check",
       "question": "Why can a cross-encoder not be used as the primary retriever on a 10M-document corpus?",
       "options": [
-        "It requires one forward pass per (query, document) pair, which is 10M passes per query",
         "It cannot embed text",
+        "It requires one forward pass per (query, document) pair, which is 10M passes per query",
         "It does not support negative scores",
         "It requires the CLS token at the end of the sequence"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Throughput collapses at corpus scale; the cross-encoder runs once per pair instead of once per document at index time."
     },
     {
@@ -31,24 +31,24 @@
       "question": "What is the role of the N parameter in a two-stage retrieve-then-rerank pipeline?",
       "options": [
         "It is the number of layers in the cross-encoder",
-        "It is the number of candidates returned by the bi-encoder for the cross-encoder to rescore",
         "It is the size of the vocabulary",
+        "It is the number of candidates returned by the bi-encoder for the cross-encoder to rescore",
         "It is the cross-encoder hidden dimension"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "N is the rerank pool; it caps quality (cross-encoder cannot exceed bi-encoder recall at N) and latency (cross-encoder runs N forward passes)."
     },
     {
       "stage": "check",
-      "question": "Why must you pick N strictly larger than K (typically 3x or more)?",
+      "question": "Why must top_n exceed top_k if the reranker should be able to improve recall?",
       "options": [
-        "The cross-encoder requires N to be a multiple of K",
-        "If N equals K the cross-encoder cannot reorder, only reweight; rerank lift collapses to zero",
-        "Smaller N reduces the embedding dimensionality",
-        "BM25 requires it for the IDF computation"
+        "The cross-encoder requires top_n to be a multiple of top_k",
+        "A smaller pool changes the token vocabulary",
+        "BM25 computes IDF only when top_n is larger",
+        "A larger pool gives the reranker candidates to reorder; with top_n=top_k it cannot recover a relevant document the bi-encoder left out"
       ],
-      "correct": 1,
-      "explanation": "With N = K there is nothing to reorder; the cross-encoder's only job is to pick the right K out of N, which needs N > K."
+      "correct": 3,
+      "explanation": "The reranker only scores candidates returned by BiEncoder.search. If top_n equals top_k, it can reorder that set but cannot add a document that retrieval omitted; increasing the pool creates room for membership gains."
     },
     {
       "stage": "post",
@@ -66,12 +66,12 @@
       "stage": "post",
       "question": "Which production failure mode does logging the rank-1 cross-encoder score help detect?",
       "options": [
-        "Out-of-domain queries: when the top-1 reranker score is below a corpus-specific threshold, the model is signalling that nothing in the corpus actually answers the query",
         "Network outages",
+        "Out-of-domain queries: when the top-1 reranker score is below a corpus-specific threshold, the model is signalling that nothing in the corpus actually answers the query",
         "Vocabulary drift in the tokenizer",
         "Index corruption in the bi-encoder"
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "A consistently low rank-1 score is the cross-encoder telling you the retrieved pool does not contain the answer; surface that to the LLM as low-confidence."
     }
   ]
