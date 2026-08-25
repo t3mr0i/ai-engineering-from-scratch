@@ -63,13 +63,16 @@ def bias_variance_decomposition(
         mean_pred = predictions.mean(axis=0)
         bias_sq = np.mean((mean_pred - y_true) ** 2)
         variance = np.mean(predictions.var(axis=0))
-        total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
+        reducible_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
+        noise = noise_std ** 2
+        total_error = bias_sq + variance + noise
 
         results[degree] = {
             "bias_sq": bias_sq,
             "variance": variance,
             "total_error": total_error,
-            "noise": noise_std ** 2,
+            "reducible_error": reducible_error,
+            "noise": noise,
         }
 
     return results

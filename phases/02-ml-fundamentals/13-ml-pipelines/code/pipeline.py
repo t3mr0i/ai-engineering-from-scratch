@@ -8,7 +8,36 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+REQUIRED_COLUMNS = ("age", "income", "score", "city", "plan", "target")
+
+
+def _numeric_matrix(X, name, *, allow_nan=False):
+    try:
+        array = np.asarray(X, dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be numeric") from exc
+    if array.ndim != 2 or array.shape[0] == 0 or array.shape[1] == 0:
+        raise ValueError(f"{name} must be a non-empty 2-D matrix")
+    if not allow_nan and not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain finite values")
+    if allow_nan and np.isinf(array).any():
+        raise ValueError(f"{name} must not contain infinities")
+    return array
+
+
+def _data_dict(data):
+    if not isinstance(data, dict) or not set(REQUIRED_COLUMNS).issubset(data):
+        raise ValueError(f"data must contain {REQUIRED_COLUMNS}")
+    arrays = {key: np.asarray(value) for key, value in data.items()}
+    lengths = {len(value) for value in arrays.values()}
+    if not lengths or len(lengths) != 1 or not next(iter(lengths)):
+        raise ValueError("all data columns must have one shared non-empty length")
+    return arrays
+
+
 def make_mixed_data(n_samples=500, seed=42):
+    if not isinstance(n_samples, int) or isinstance(n_samples, bool) or n_samples <= 0:
+        raise ValueError("n_samples must be a positive integer")
     rng = np.random.RandomState(seed)
 
     age = rng.normal(35, 12, n_samples).clip(18, 80)
@@ -50,10 +79,15 @@ def make_mixed_data(n_samples=500, seed=42):
 
 
 def train_test_split_dict(data, test_ratio=0.2, seed=42):
+    data = _data_dict(data)
+    if not np.isfinite(test_ratio) or not 0 < test_ratio < 1:
+        raise ValueError("test_ratio must be strictly between 0 and 1")
     rng = np.random.RandomState(seed)
     n = len(data["target"])
     idx = rng.permutation(n)
     split = int(n * (1 - test_ratio))
+    if split <= 0 or split >= n:
+        raise ValueError("test_ratio must produce non-empty train and test partitions")
     train_idx, test_idx = idx[:split], idx[split:]
 
     train = {k: v[train_idx] for k, v in data.items()}
@@ -66,10 +100,18 @@ class MedianImputer:
         self.medians = None
 
     def fit(self, X):
+        X = _numeric_matrix(X, "X", allow_nan=True)
+        if np.isnan(X).all(axis=0).any():
+            raise ValueError("MedianImputer cannot fit an all-NaN column")
         self.medians = np.nanmedian(X, axis=0)
         return self
 
     def transform(self, X):
+        if self.medians is None:
+            raise RuntimeError("MedianImputer must be fitted before transform")
+        X = _numeric_matrix(X, "X", allow_nan=True)
+        if X.shape[1] != len(self.medians):
+            raise ValueError("X has a different number of columns from the fitted imputer")
         X_out = X.copy()
         for col in range(X.shape[1]):
             mask = np.isnan(X_out[:, col])
@@ -86,12 +128,20 @@ class StandardScaler:
         self.stds = None
 
     def fit(self, X):
+        X = _numeric_matrix(X, "X", allow_nan=True)
+        if np.isnan(X).all(axis=0).any():
+            raise ValueError("StandardScaler cannot fit an all-NaN column")
         self.means = np.nanmean(X, axis=0)
         self.stds = np.nanstd(X, axis=0)
         self.stds[self.stds == 0] = 1.0
         return self
 
     def transform(self, X):
+        if self.means is None or self.stds is None:
+            raise RuntimeError("StandardScaler must be fitted before transform")
+        X = _numeric_matrix(X, "X", allow_nan=False)
+        if X.shape[1] != len(self.means):
+            raise ValueError("X has a different number of columns from the fitted scaler")
         return (X - self.means) / self.stds
 
     def fit_transform(self, X):
@@ -100,19 +150,32 @@ class StandardScaler:
 
 class OneHotEncoder:
     def __init__(self, handle_unknown="ignore"):
+        if handle_unknown not in {"ignore", "error"}:
+            raise ValueError("handle_unknown must be 'ignore' or 'error'")
         self.categories = None
         self.handle_unknown = handle_unknown
 
     def fit(self, X):
+        X = np.asarray(X, dtype=object)
+        if X.ndim != 2 or X.shape[0] == 0 or X.shape[1] == 0:
+            raise ValueError("X must be a non-empty 2-D categorical matrix")
         self.categories = []
         for col in range(X.shape[1]):
             self.categories.append(sorted(set(X[:, col])))
         return self
 
     def transform(self, X):
+        if self.categories is None:
+            raise RuntimeError("OneHotEncoder must be fitted before transform")
+        X = np.asarray(X, dtype=object)
+        if X.ndim != 2 or X.shape[0] == 0 or X.shape[1] != len(self.categories):
+            raise ValueError("X must have the fitted categorical width and non-empty rows")
         encoded_cols = []
         for col in range(X.shape[1]):
             cats = self.categories[col]
+            unknown = set(X[:, col]) - set(cats)
+            if unknown and self.handle_unknown == "error":
+                raise ValueError(f"unknown categories in column {col}: {sorted(unknown)}")
             for cat in cats:
                 encoded_cols.append((X[:, col] == cat).astype(float))
         return np.column_stack(encoded_cols) if encoded_cols else np.zeros((X.shape[0], 0))
@@ -123,7 +186,10 @@ class OneHotEncoder:
 
 class PipelineFromScratch:
     def __init__(self, steps):
+        if not steps:
+            raise ValueError("steps must not be empty")
         self.steps = steps
+        self.fitted = False
 
     def fit(self, X, y=None):
         X_current = X.copy() if isinstance(X, np.ndarray) else X
@@ -131,9 +197,12 @@ class PipelineFromScratch:
             X_current = step.fit_transform(X_current)
         name, model = self.steps[-1]
         model.fit(X_current, y)
+        self.fitted = True
         return self
 
     def predict(self, X):
+        if not self.fitted:
+            raise RuntimeError("PipelineFromScratch must be fitted before predict")
         X_current = X.copy() if isinstance(X, np.ndarray) else X
         for name, step in self.steps[:-1]:
             X_current = step.transform(X_current)
@@ -147,15 +216,25 @@ class PipelineFromScratch:
 
 class ColumnTransformerScratch:
     def __init__(self, transformers):
+        if not transformers:
+            raise ValueError("transformers must not be empty")
         self.transformers = transformers
+        self.fitted = False
 
     def fit(self, data):
+        data = _data_dict(data)
+        if not self.transformers:
+            raise ValueError("transformers must not be empty")
         for name, pipeline, columns in self.transformers:
             X_subset = np.column_stack([data[c] for c in columns])
             pipeline.fit(X_subset)
+        self.fitted = True
         return self
 
     def transform(self, data):
+        if not self.fitted:
+            raise RuntimeError("ColumnTransformerScratch must be fitted before transform")
+        data = _data_dict(data)
         outputs = []
         for name, pipeline, columns in self.transformers:
             X_subset = np.column_stack([data[c] for c in columns])
@@ -168,15 +247,21 @@ class ColumnTransformerScratch:
 
 class TransformerPipeline:
     def __init__(self, steps):
+        if not steps:
+            raise ValueError("steps must not be empty")
         self.steps = steps
+        self.fitted = False
 
     def fit(self, X):
         X_current = X
         for name, step in self.steps:
             X_current = step.fit_transform(X_current)
+        self.fitted = True
         return self
 
     def transform(self, X):
+        if not self.fitted:
+            raise RuntimeError("TransformerPipeline must be fitted before transform")
         X_current = X
         for name, step in self.steps:
             X_current = step.transform(X_current)
@@ -188,6 +273,10 @@ class TransformerPipeline:
 
 class LogisticRegressionSimple:
     def __init__(self, lr=0.01, n_iter=1000):
+        if not np.isfinite(lr) or lr <= 0:
+            raise ValueError("lr must be finite and positive")
+        if not isinstance(n_iter, int) or isinstance(n_iter, bool) or n_iter <= 0:
+            raise ValueError("n_iter must be a positive integer")
         self.lr = lr
         self.n_iter = n_iter
         self.weights = None
@@ -197,6 +286,10 @@ class LogisticRegressionSimple:
         return 1.0 / (1.0 + np.exp(-np.clip(z, -500, 500)))
 
     def fit(self, X, y):
+        X = _numeric_matrix(X, "X")
+        y = np.asarray(y, dtype=float)
+        if y.ndim != 1 or len(y) != X.shape[0] or not np.isfinite(y).all():
+            raise ValueError("y must be finite and match X rows")
         n_samples, n_features = X.shape
         self.weights = np.zeros(n_features)
         self.bias = 0.0
@@ -208,12 +301,23 @@ class LogisticRegressionSimple:
             db = (1 / n_samples) * np.sum(pred - y)
             self.weights -= self.lr * dw
             self.bias -= self.lr * db
+        return self
 
     def predict(self, X):
+        if self.weights is None:
+            raise RuntimeError("LogisticRegressionSimple must be fitted before predict")
+        X = _numeric_matrix(X, "X")
+        if X.shape[1] != len(self.weights):
+            raise ValueError("X has a different number of features from the fitted model")
         z = X @ self.weights + self.bias
         return (self._sigmoid(z) >= 0.5).astype(int)
 
     def predict_proba(self, X):
+        if self.weights is None:
+            raise RuntimeError("LogisticRegressionSimple must be fitted before predict_proba")
+        X = _numeric_matrix(X, "X")
+        if X.shape[1] != len(self.weights):
+            raise ValueError("X has a different number of features from the fitted model")
         z = X @ self.weights + self.bias
         p = self._sigmoid(z)
         return np.column_stack([1 - p, p])
@@ -221,11 +325,19 @@ class LogisticRegressionSimple:
 
 class DecisionTreeSimple:
     def __init__(self, max_depth=5):
+        if not isinstance(max_depth, int) or isinstance(max_depth, bool) or max_depth <= 0:
+            raise ValueError("max_depth must be a positive integer")
         self.max_depth = max_depth
         self.root = None
 
     def fit(self, X, y):
+        X = _numeric_matrix(X, "X")
+        y = np.asarray(y, dtype=float)
+        if y.ndim != 1 or len(y) != X.shape[0] or not np.isfinite(y).all():
+            raise ValueError("y must be finite and match X rows")
         self.root = self._build(X, y, 0)
+        self.n_features = X.shape[1]
+        return self
 
     def _gini(self, y):
         if len(y) == 0:
@@ -265,6 +377,11 @@ class DecisionTreeSimple:
         }
 
     def predict(self, X):
+        if self.root is None:
+            raise RuntimeError("DecisionTreeSimple must be fitted before predict")
+        X = _numeric_matrix(X, "X")
+        if X.shape[1] != self.n_features:
+            raise ValueError("X has a different number of features from the fitted tree")
         return np.array([self._pred(x, self.root) for x in X])
 
     def _pred(self, x, node):
@@ -276,8 +393,11 @@ class DecisionTreeSimple:
 
 
 def cross_validate_pipeline(pipeline_factory, data, n_folds=5, seed=42):
+    data = _data_dict(data)
     rng = np.random.RandomState(seed)
     n = len(data["target"])
+    if not isinstance(n_folds, int) or isinstance(n_folds, bool) or not 2 <= n_folds <= n:
+        raise ValueError("n_folds must satisfy 2 <= n_folds <= number of rows")
     idx = rng.permutation(n)
     fold_size = n // n_folds
     scores = []
@@ -302,6 +422,8 @@ def cross_validate_pipeline(pipeline_factory, data, n_folds=5, seed=42):
 
 class FullPipeline:
     def __init__(self, model, numeric_cols, categorical_cols):
+        if not numeric_cols or not categorical_cols:
+            raise ValueError("numeric_cols and categorical_cols must not be empty")
         self.model = model
         self.numeric_cols = numeric_cols
         self.categorical_cols = categorical_cols
@@ -310,8 +432,10 @@ class FullPipeline:
             ("scale", StandardScaler()),
         ])
         self.cat_encoder = OneHotEncoder(handle_unknown="ignore")
+        self.fitted = False
 
     def fit(self, data):
+        data = _data_dict(data)
         X_num = np.column_stack([data[c] for c in self.numeric_cols])
         X_cat = np.column_stack([data[c] for c in self.categorical_cols])
 
@@ -322,9 +446,13 @@ class FullPipeline:
         y = data["target"]
 
         self.model.fit(X, y)
+        self.fitted = True
         return self
 
     def predict(self, data):
+        if not self.fitted:
+            raise RuntimeError("FullPipeline must be fitted before predict")
+        data = _data_dict(data)
         X_num = np.column_stack([data[c] for c in self.numeric_cols])
         X_cat = np.column_stack([data[c] for c in self.categorical_cols])
 
@@ -335,6 +463,7 @@ class FullPipeline:
         return self.model.predict(X)
 
     def score(self, data):
+        data = _data_dict(data)
         pred = self.predict(data)
         return np.mean(pred == data["target"])
 

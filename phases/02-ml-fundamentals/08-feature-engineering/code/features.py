@@ -7,7 +7,37 @@ import math
 import random
 
 
+def _numeric_vector(values, name, *, minimum_length=1):
+    values = list(values)
+    if len(values) < minimum_length:
+        raise ValueError(f"{name} must contain at least {minimum_length} value(s)")
+    if any(not isinstance(value, (int, float)) or not math.isfinite(value) for value in values):
+        raise ValueError(f"{name} must contain finite numeric values")
+    return values
+
+
+def _same_numeric_vectors(left, right, left_name, right_name, *, minimum_length=1):
+    left = _numeric_vector(left, left_name, minimum_length=minimum_length)
+    right = _numeric_vector(right, right_name, minimum_length=minimum_length)
+    if len(left) != len(right):
+        raise ValueError(f"{left_name} and {right_name} must have equal lengths")
+    return left, right
+
+
+def _matrix(features, name):
+    rows = [list(row) for row in features]
+    if not rows or not rows[0]:
+        raise ValueError(f"{name} must be a non-empty matrix")
+    width = len(rows[0])
+    if any(len(row) != width for row in rows):
+        raise ValueError(f"{name} rows must have equal lengths")
+    for row in rows:
+        _numeric_vector(row, name)
+    return rows
+
+
 def min_max_scale(values):
+    values = _numeric_vector(values, "values")
     min_val = min(values)
     max_val = max(values)
     if max_val == min_val:
@@ -16,6 +46,7 @@ def min_max_scale(values):
 
 
 def standardize(values):
+    values = _numeric_vector(values, "values")
     n = len(values)
     mean = sum(values) / n
     variance = sum((v - mean) ** 2 for v in values) / n
@@ -24,10 +55,16 @@ def standardize(values):
 
 
 def log_transform(values):
+    values = _numeric_vector(values, "values")
+    if any(value <= -1 for value in values):
+        raise ValueError("log_transform requires every value to be greater than -1")
     return [math.log(v + 1) for v in values]
 
 
 def bin_values(values, n_bins=5):
+    values = _numeric_vector(values, "values")
+    if not isinstance(n_bins, int) or isinstance(n_bins, bool) or n_bins <= 0:
+        raise ValueError("n_bins must be a positive integer")
     min_val = min(values)
     max_val = max(values)
     bin_width = (max_val - min_val) / n_bins
@@ -42,6 +79,9 @@ def bin_values(values, n_bins=5):
 
 
 def polynomial_features(row, degree=2):
+    row = _numeric_vector(row, "row")
+    if not isinstance(degree, int) or isinstance(degree, bool) or degree < 0:
+        raise ValueError("degree must be a non-negative integer")
     n = len(row)
     result = list(row)
     if degree >= 2:
@@ -54,6 +94,9 @@ def polynomial_features(row, degree=2):
 
 
 def one_hot_encode(values):
+    values = list(values)
+    if not values:
+        raise ValueError("values must not be empty")
     categories = sorted(set(values))
     cat_to_idx = {cat: i for i, cat in enumerate(categories)}
     n_cats = len(categories)
@@ -68,12 +111,23 @@ def one_hot_encode(values):
 
 
 def label_encode(values):
+    values = list(values)
+    if not values:
+        raise ValueError("values must not be empty")
     categories = sorted(set(values))
     cat_to_int = {cat: i for i, cat in enumerate(categories)}
     return [cat_to_int[v] for v in values], cat_to_int
 
 
 def target_encode(feature_values, target_values, smoothing=10):
+    feature_values = list(feature_values)
+    target_values = _numeric_vector(target_values, "target_values")
+    if not feature_values:
+        raise ValueError("feature_values must not be empty")
+    if len(feature_values) != len(target_values):
+        raise ValueError("feature_values and target_values must have equal lengths")
+    if not isinstance(smoothing, (int, float)) or not math.isfinite(smoothing) or smoothing < 0:
+        raise ValueError("smoothing must be a finite non-negative number")
     global_mean = sum(target_values) / len(target_values)
 
     category_stats = {}
@@ -93,6 +147,11 @@ def target_encode(feature_values, target_values, smoothing=10):
 
 
 def count_vectorize(documents):
+    documents = list(documents)
+    if not documents:
+        raise ValueError("documents must not be empty")
+    if any(not isinstance(doc, str) for doc in documents):
+        raise ValueError("documents must contain strings")
     vocab = {}
     idx = 0
     for doc in documents:
@@ -112,6 +171,11 @@ def count_vectorize(documents):
 
 
 def tfidf(documents):
+    documents = list(documents)
+    if not documents:
+        raise ValueError("documents must not be empty")
+    if any(not isinstance(doc, str) for doc in documents):
+        raise ValueError("documents must contain strings")
     n_docs = len(documents)
 
     vocab = {}
@@ -184,6 +248,7 @@ def add_missing_indicator(values):
 
 
 def correlation(x, y):
+    x, y = _same_numeric_vectors(x, y, "x", "y", minimum_length=2)
     n = len(x)
     mean_x = sum(x) / n
     mean_y = sum(y) / n
@@ -196,6 +261,9 @@ def correlation(x, y):
 
 
 def mutual_information(feature, target, n_bins=10):
+    feature, target = _same_numeric_vectors(feature, target, "feature", "target")
+    if not isinstance(n_bins, int) or isinstance(n_bins, bool) or n_bins <= 0:
+        raise ValueError("n_bins must be a positive integer")
     feat_min = min(feature)
     feat_max = max(feature)
     bin_width = (feat_max - feat_min) / n_bins if feat_max != feat_min else 1.0
@@ -229,6 +297,9 @@ def mutual_information(feature, target, n_bins=10):
 
 
 def variance_threshold(features, threshold=0.01):
+    features = _matrix(features, "features")
+    if not isinstance(threshold, (int, float)) or not math.isfinite(threshold) or threshold < 0:
+        raise ValueError("threshold must be a finite non-negative number")
     n_features = len(features[0])
     n_samples = len(features)
     selected = []
@@ -244,6 +315,9 @@ def variance_threshold(features, threshold=0.01):
 
 
 def remove_correlated(features, threshold=0.9):
+    features = _matrix(features, "features")
+    if not isinstance(threshold, (int, float)) or not math.isfinite(threshold) or not 0 <= threshold <= 1:
+        raise ValueError("threshold must be a finite number between 0 and 1")
     n_features = len(features[0])
     n_samples = len(features)
 

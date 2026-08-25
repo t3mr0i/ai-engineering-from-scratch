@@ -6,7 +6,39 @@
 import numpy as np
 
 
+def _validate_xy(X, y, *, classification=False):
+    X = np.asarray(X, dtype=float)
+    y = np.asarray(y)
+    if X.ndim != 2 or X.shape[0] == 0 or X.shape[1] == 0:
+        raise ValueError("X must be a non-empty 2-D array")
+    if y.ndim != 1 or len(y) != X.shape[0]:
+        raise ValueError("X and y must have matching non-empty lengths")
+    if not np.isfinite(X).all():
+        raise ValueError("X must contain finite values")
+    try:
+        numeric_y = y.astype(float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("y must contain finite numeric values") from exc
+    if classification:
+        if not np.isfinite(numeric_y).all() or not np.isin(numeric_y, (-1, 1)).all():
+            raise ValueError("classification labels must be finite -1/1 values")
+    elif not np.isfinite(numeric_y).all():
+        raise ValueError("regression targets must be finite numbers")
+    return X, y
+
+
+def _validate_predict_X(X, n_features):
+    X = np.asarray(X, dtype=float)
+    if X.ndim != 2 or X.shape[1] != n_features or not np.isfinite(X).all():
+        raise ValueError(f"X must be a finite 2-D array with {n_features} features")
+    return X
+
+
 def make_classification_data(n_samples=300, n_features=5, noise=0.1, seed=42):
+    if not isinstance(n_samples, int) or n_samples <= 0 or not isinstance(n_features, int) or n_features < 3:
+        raise ValueError("n_samples must be positive and n_features must be at least 3")
+    if noise < 0 or not np.isfinite(noise):
+        raise ValueError("noise must be finite and non-negative")
     rng = np.random.RandomState(seed)
     X = rng.randn(n_samples, n_features)
     boundary = 0.5 * X[:, 0] + 0.3 * X[:, 1] ** 2 - 0.2 * X[:, 2]
@@ -15,6 +47,10 @@ def make_classification_data(n_samples=300, n_features=5, noise=0.1, seed=42):
 
 
 def make_regression_data(n_samples=300, n_features=5, noise=0.3, seed=42):
+    if not isinstance(n_samples, int) or n_samples <= 0 or not isinstance(n_features, int) or n_features < 3:
+        raise ValueError("n_samples must be positive and n_features must be at least 3")
+    if noise < 0 or not np.isfinite(noise):
+        raise ValueError("noise must be finite and non-negative")
     rng = np.random.RandomState(seed)
     X = rng.randn(n_samples, n_features)
     y = 2.0 * X[:, 0] + np.sin(3 * X[:, 1]) - 0.5 * X[:, 2] ** 2 + rng.normal(0, noise, n_samples)
@@ -22,6 +58,9 @@ def make_regression_data(n_samples=300, n_features=5, noise=0.3, seed=42):
 
 
 def train_test_split(X, y, test_ratio=0.2, seed=42):
+    X, y = _validate_xy(X, y)
+    if not 0 < test_ratio < 1:
+        raise ValueError("test_ratio must be strictly between 0 and 1")
     rng = np.random.RandomState(seed)
     idx = rng.permutation(len(y))
     split = int(len(y) * (1 - test_ratio))
@@ -34,8 +73,18 @@ class DecisionStump:
         self.threshold = None
         self.polarity = 1
         self.alpha = None
+        self.n_features = None
 
     def fit(self, X, y, weights):
+        X, y = _validate_xy(X, y, classification=True)
+        weights = np.asarray(weights, dtype=float)
+        if weights.ndim != 1 or len(weights) != len(y) or not np.isfinite(weights).all() or np.any(weights < 0) or weights.sum() <= 0:
+            raise ValueError("weights must be finite, non-negative, and match y")
+        self.feature_idx = None
+        self.threshold = None
+        self.polarity = 1
+        self.alpha = None
+        self.n_features = X.shape[1]
         n_samples, n_features = X.shape
         best_error = float("inf")
 
@@ -51,8 +100,12 @@ class DecisionStump:
                         self.feature_idx = f
                         self.threshold = thresh
                         self.polarity = polarity
+        return self
 
     def predict(self, X):
+        if self.feature_idx is None:
+            raise RuntimeError("DecisionStump must be fitted before predict")
+        X = _validate_predict_X(X, self.n_features)
         n = X.shape[0]
         pred = np.ones(n)
         idx = self.polarity * X[:, self.feature_idx] < self.polarity * self.threshold
@@ -62,12 +115,17 @@ class DecisionStump:
 
 class AdaBoostScratch:
     def __init__(self, n_estimators=50):
+        if not isinstance(n_estimators, int) or isinstance(n_estimators, bool) or n_estimators <= 0:
+            raise ValueError("n_estimators must be a positive integer")
         self.n_estimators = n_estimators
         self.stumps = []
         self.alphas = []
 
     def fit(self, X, y):
+        X, y = _validate_xy(X, y, classification=True)
         n = X.shape[0]
+        self.stumps = []
+        self.alphas = []
         weights = np.full(n, 1 / n)
 
         for t in range(self.n_estimators):
@@ -85,12 +143,17 @@ class AdaBoostScratch:
             stump.alpha = alpha
             self.stumps.append(stump)
             self.alphas.append(alpha)
+        return self
 
     def predict(self, X):
+        if not self.stumps:
+            raise RuntimeError("AdaBoostScratch must be fitted before predict")
+        X = _validate_predict_X(X, self.stumps[0].n_features)
         total = sum(a * s.predict(X) for a, s in zip(self.alphas, self.stumps))
-        return np.sign(total)
+        return np.where(total >= 0, 1.0, -1.0)
 
     def accuracy(self, X, y):
+        _, y = _validate_xy(X, y, classification=True)
         return np.mean(self.predict(X) == y)
 
 
@@ -105,12 +168,19 @@ class TreeNode:
 
 class SimpleRegressionTree:
     def __init__(self, max_depth=3, min_samples_split=2):
+        if not isinstance(max_depth, int) or isinstance(max_depth, bool) or max_depth <= 0:
+            raise ValueError("max_depth must be a positive integer")
+        if not isinstance(min_samples_split, int) or isinstance(min_samples_split, bool) or min_samples_split < 2:
+            raise ValueError("min_samples_split must be an integer at least 2")
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.root = None
 
     def fit(self, X, y):
+        X, y = _validate_xy(X, y)
         self.root = self._build(X, y, depth=0)
+        self.n_features = X.shape[1]
+        return self
 
     def _build(self, X, y, depth):
         n_samples, n_features = X.shape
@@ -157,6 +227,9 @@ class SimpleRegressionTree:
         return node
 
     def predict(self, X):
+        if self.root is None:
+            raise RuntimeError("SimpleRegressionTree must be fitted before predict")
+        X = _validate_predict_X(X, self.n_features)
         return np.array([self._predict_one(x, self.root) for x in X])
 
     def _predict_one(self, x, node):
@@ -169,6 +242,12 @@ class SimpleRegressionTree:
 
 class GradientBoostingScratch:
     def __init__(self, n_estimators=100, learning_rate=0.1, max_depth=3):
+        if not isinstance(n_estimators, int) or isinstance(n_estimators, bool) or n_estimators <= 0:
+            raise ValueError("n_estimators must be a positive integer")
+        if not np.isfinite(learning_rate) or learning_rate <= 0:
+            raise ValueError("learning_rate must be finite and positive")
+        if not isinstance(max_depth, int) or isinstance(max_depth, bool) or max_depth <= 0:
+            raise ValueError("max_depth must be a positive integer")
         self.n_estimators = n_estimators
         self.lr = learning_rate
         self.max_depth = max_depth
@@ -176,8 +255,10 @@ class GradientBoostingScratch:
         self.initial_pred = None
 
     def fit(self, X, y):
+        X, y = _validate_xy(X, y)
         self.initial_pred = np.mean(y)
         current_pred = np.full(len(y), self.initial_pred)
+        self.trees = []
 
         for _ in range(self.n_estimators):
             residuals = y - current_pred
@@ -186,8 +267,13 @@ class GradientBoostingScratch:
             update = tree.predict(X)
             current_pred += self.lr * update
             self.trees.append(tree)
+        self.n_features = X.shape[1]
+        return self
 
     def predict(self, X):
+        if not self.trees:
+            raise RuntimeError("GradientBoostingScratch must be fitted before predict")
+        X = _validate_predict_X(X, self.n_features)
         pred = np.full(X.shape[0], self.initial_pred)
         for tree in self.trees:
             pred += self.lr * tree.predict(X)
@@ -199,30 +285,48 @@ class GradientBoostingScratch:
 
 class BaggingClassifier:
     def __init__(self, n_estimators=20, max_depth=5):
+        if not isinstance(n_estimators, int) or isinstance(n_estimators, bool) or n_estimators <= 0:
+            raise ValueError("n_estimators must be a positive integer")
+        if not isinstance(max_depth, int) or isinstance(max_depth, bool) or max_depth <= 0:
+            raise ValueError("max_depth must be a positive integer")
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.trees = []
 
     def fit(self, X, y):
+        X, y = _validate_xy(X, y, classification=True)
         rng = np.random.RandomState(42)
         n = len(y)
+        self.trees = []
 
         for _ in range(self.n_estimators):
             idx = rng.choice(n, size=n, replace=True)
             tree = SimpleRegressionTree(max_depth=self.max_depth)
             tree.fit(X[idx], y[idx])
             self.trees.append(tree)
+        self.n_features = X.shape[1]
+        return self
 
     def predict(self, X):
+        if not self.trees:
+            raise RuntimeError("BaggingClassifier must be fitted before predict")
+        X = _validate_predict_X(X, self.n_features)
         predictions = np.array([tree.predict(X) for tree in self.trees])
-        return np.sign(np.mean(predictions, axis=0))
+        return np.where(np.mean(predictions, axis=0) >= 0, 1.0, -1.0)
 
     def accuracy(self, X, y):
+        _, y = _validate_xy(X, y, classification=True)
         return np.mean(self.predict(X) == y)
 
 
 class StackingClassifier:
     def __init__(self, base_models, meta_lr=0.1, n_folds=5):
+        if not base_models:
+            raise ValueError("base_models must not be empty")
+        if not isinstance(n_folds, int) or isinstance(n_folds, bool) or n_folds < 2:
+            raise ValueError("n_folds must be at least 2")
+        if not np.isfinite(meta_lr) or meta_lr <= 0:
+            raise ValueError("meta_lr must be finite and positive")
         self.base_models = base_models
         self.meta_lr = meta_lr
         self.n_folds = n_folds
@@ -231,7 +335,10 @@ class StackingClassifier:
         self.fitted_models = []
 
     def fit(self, X, y):
+        X, y = _validate_xy(X, y, classification=True)
         n = len(y)
+        if self.n_folds > n:
+            raise ValueError("n_folds cannot exceed the number of samples")
         meta_features = np.zeros((n, len(self.base_models)))
 
         fold_size = n // self.n_folds
@@ -265,13 +372,19 @@ class StackingClassifier:
             model = model_class()
             model.fit(X, y)
             self.fitted_models.append(model)
+        self.n_features = X.shape[1]
+        return self
 
     def predict(self, X):
+        if not self.fitted_models:
+            raise RuntimeError("StackingClassifier must be fitted before predict")
+        X = _validate_predict_X(X, self.n_features)
         meta_features = np.column_stack([m.predict(X) for m in self.fitted_models])
         logits = meta_features @ self.meta_weights + self.meta_bias
-        return np.sign(logits)
+        return np.where(logits >= 0, 1.0, -1.0)
 
     def accuracy(self, X, y):
+        _, y = _validate_xy(X, y, classification=True)
         return np.mean(self.predict(X) == y)
 
 

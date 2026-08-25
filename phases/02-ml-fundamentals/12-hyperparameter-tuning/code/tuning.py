@@ -8,7 +8,41 @@ import itertools
 import time
 
 
+def _validate_xy(X, y):
+    X = np.asarray(X, dtype=float)
+    y = np.asarray(y, dtype=float)
+    if X.ndim != 2 or X.shape[0] == 0 or X.shape[1] == 0:
+        raise ValueError("X must be a non-empty 2-D array")
+    if y.ndim != 1 or len(y) != X.shape[0]:
+        raise ValueError("X and y must have matching non-empty lengths")
+    if not np.isfinite(X).all() or not np.isfinite(y).all():
+        raise ValueError("X and y must contain finite values")
+    return X, y
+
+
+def _validate_spec(spec):
+    if isinstance(spec, list):
+        if not spec:
+            raise ValueError("discrete parameter lists must not be empty")
+        return
+    if not isinstance(spec, tuple) or len(spec) != 3:
+        raise ValueError("parameter specs must be a non-empty list or (kind, low, high)")
+    kind, low, high = spec
+    if kind not in {"int", "float", "log_float"}:
+        raise ValueError(f"unknown parameter spec kind: {kind!r}")
+    if not isinstance(low, (int, float)) or not isinstance(high, (int, float)):
+        raise ValueError("parameter bounds must be numeric")
+    if not np.isfinite(low) or not np.isfinite(high) or low > high:
+        raise ValueError("parameter bounds must be finite and ordered")
+    if kind == "log_float" and (low <= 0 or high <= 0):
+        raise ValueError("log_float bounds must be strictly positive")
+
+
 def make_data(n_samples=400, n_features=8, seed=42):
+    if not isinstance(n_samples, int) or isinstance(n_samples, bool) or n_samples < 5:
+        raise ValueError("n_samples must be an integer at least 5")
+    if not isinstance(n_features, int) or isinstance(n_features, bool) or n_features < 5:
+        raise ValueError("n_features must be an integer at least 5")
     rng = np.random.RandomState(seed)
     X = rng.randn(n_samples, n_features)
     y = (
@@ -29,12 +63,19 @@ def make_data(n_samples=400, n_features=8, seed=42):
 
 class SimpleTree:
     def __init__(self, max_depth=3, min_samples_split=5):
+        if not isinstance(max_depth, int) or isinstance(max_depth, bool) or max_depth <= 0:
+            raise ValueError("max_depth must be a positive integer")
+        if not isinstance(min_samples_split, int) or isinstance(min_samples_split, bool) or min_samples_split < 2:
+            raise ValueError("min_samples_split must be an integer at least 2")
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.root = None
 
     def fit(self, X, y):
+        X, y = _validate_xy(X, y)
         self.root = self._build(X, y, 0)
+        self.n_features = X.shape[1]
+        return self
 
     def _build(self, X, y, depth):
         if depth >= self.max_depth or len(y) < self.min_samples_split:
@@ -69,6 +110,11 @@ class SimpleTree:
         }
 
     def predict(self, X):
+        if self.root is None:
+            raise RuntimeError("SimpleTree must be fitted before predict")
+        X = np.asarray(X, dtype=float)
+        if X.ndim != 2 or X.shape[1] != self.n_features or not np.isfinite(X).all():
+            raise ValueError(f"X must be a finite 2-D array with {self.n_features} features")
         return np.array([self._predict_one(x, self.root) for x in X])
 
     def _predict_one(self, x, node):
@@ -82,6 +128,16 @@ class SimpleTree:
 class GBMForTuning:
     def __init__(self, n_estimators=50, learning_rate=0.1, max_depth=3,
                  min_samples_split=5, subsample=1.0):
+        if not isinstance(n_estimators, int) or isinstance(n_estimators, bool) or n_estimators <= 0:
+            raise ValueError("n_estimators must be a positive integer")
+        if not np.isfinite(learning_rate) or learning_rate <= 0:
+            raise ValueError("learning_rate must be finite and positive")
+        if not isinstance(max_depth, int) or isinstance(max_depth, bool) or max_depth <= 0:
+            raise ValueError("max_depth must be a positive integer")
+        if not isinstance(min_samples_split, int) or isinstance(min_samples_split, bool) or min_samples_split < 2:
+            raise ValueError("min_samples_split must be an integer at least 2")
+        if not np.isfinite(subsample) or not 0 < subsample <= 1:
+            raise ValueError("subsample must be finite and in (0, 1]")
         self.n_estimators = n_estimators
         self.learning_rate = learning_rate
         self.max_depth = max_depth
@@ -91,9 +147,11 @@ class GBMForTuning:
         self.init_pred = None
 
     def fit(self, X, y):
+        X, y = _validate_xy(X, y)
         rng = np.random.RandomState(42)
         self.init_pred = np.mean(y)
         pred = np.full(len(y), self.init_pred)
+        self.trees = []
 
         for _ in range(self.n_estimators):
             residuals = y - pred
@@ -112,8 +170,15 @@ class GBMForTuning:
             tree.fit(X_sub, r_sub)
             pred += self.learning_rate * tree.predict(X)
             self.trees.append(tree)
+        self.n_features = X.shape[1]
+        return self
 
     def predict(self, X):
+        if not self.trees:
+            raise RuntimeError("GBMForTuning must be fitted before predict")
+        X = np.asarray(X, dtype=float)
+        if X.ndim != 2 or X.shape[1] != self.n_features or not np.isfinite(X).all():
+            raise ValueError(f"X must be a finite 2-D array with {self.n_features} features")
         pred = np.full(X.shape[0], self.init_pred)
         for tree in self.trees:
             pred += self.learning_rate * tree.predict(X)
@@ -121,11 +186,21 @@ class GBMForTuning:
 
 
 def neg_mse(model, X, y):
+    X, y = _validate_xy(X, y)
     pred = model.predict(X)
     return -np.mean((pred - y) ** 2)
 
 
 def grid_search(param_grid, X_train, y_train, X_val, y_val):
+    if not isinstance(param_grid, dict) or not param_grid:
+        raise ValueError("param_grid must be a non-empty mapping")
+    for spec in param_grid.values():
+        if not isinstance(spec, list) or not spec:
+            raise ValueError("grid values must be non-empty lists")
+    X_train, y_train = _validate_xy(X_train, y_train)
+    X_val, y_val = _validate_xy(X_val, y_val)
+    if X_train.shape[1] != X_val.shape[1]:
+        raise ValueError("training and validation feature widths must match")
     keys = list(param_grid.keys())
     values = list(param_grid.values())
     best_score = -float("inf")
@@ -148,19 +223,32 @@ def grid_search(param_grid, X_train, y_train, X_val, y_val):
 
 def sample_param(spec, rng):
     if isinstance(spec, list):
+        if not spec:
+            raise ValueError("discrete parameter lists must not be empty")
         return rng.choice(spec)
-    name, low, high = spec[0], spec[1], spec[2]
+    _validate_spec(spec)
+    name, low, high = spec
     if name == "int":
         return rng.randint(low, high + 1)
     if name == "float":
         return rng.uniform(low, high)
     if name == "log_float":
         return np.exp(rng.uniform(np.log(low), np.log(high)))
-    return low
+    raise ValueError(f"unknown parameter spec kind: {name!r}")
 
 
 def random_search(param_distributions, X_train, y_train, X_val, y_val,
                   n_iter=50, seed=42):
+    if not isinstance(param_distributions, dict) or not param_distributions:
+        raise ValueError("param_distributions must be a non-empty mapping")
+    if not isinstance(n_iter, int) or isinstance(n_iter, bool) or n_iter <= 0:
+        raise ValueError("n_iter must be a positive integer")
+    for spec in param_distributions.values():
+        _validate_spec(spec)
+    X_train, y_train = _validate_xy(X_train, y_train)
+    X_val, y_val = _validate_xy(X_val, y_val)
+    if X_train.shape[1] != X_val.shape[1]:
+        raise ValueError("training and validation feature widths must match")
     rng = np.random.RandomState(seed)
     best_score = -float("inf")
     best_params = None
@@ -189,6 +277,12 @@ def random_search(param_distributions, X_train, y_train, X_val, y_val,
 
 class SimpleBayesianOptimizer:
     def __init__(self, param_space, n_initial=10, seed=42):
+        if not isinstance(param_space, dict) or not param_space:
+            raise ValueError("param_space must be a non-empty mapping")
+        if not isinstance(n_initial, int) or isinstance(n_initial, bool) or n_initial <= 0:
+            raise ValueError("n_initial must be a positive integer")
+        for spec in param_space.values():
+            _validate_spec(spec)
         self.param_space = param_space
         self.n_initial = n_initial
         self.rng = np.random.RandomState(seed)
@@ -274,10 +368,24 @@ class SimpleBayesianOptimizer:
         return candidates[best_idx]
 
     def observe(self, params, score):
+        if set(params) != set(self.param_names):
+            raise ValueError("observed params must match param_space keys")
+        for name in self.param_names:
+            value = params[name]
+            spec = self.param_space[name]
+            if isinstance(spec, list):
+                if value not in spec:
+                    raise ValueError(f"parameter {name!r} is outside its discrete space")
+            elif not isinstance(value, (int, float)) or not np.isfinite(value):
+                raise ValueError(f"parameter {name!r} must be finite")
+        if not isinstance(score, (int, float)) or not np.isfinite(score):
+            raise ValueError("score must be a finite number")
         self.X_observed.append(self._params_to_vec(params))
         self.y_observed.append(score)
 
     def optimize(self, objective, n_iter=50):
+        if not isinstance(n_iter, int) or isinstance(n_iter, bool) or n_iter <= 0:
+            raise ValueError("n_iter must be a positive integer")
         best_score = -float("inf")
         best_params = None
         history = []
@@ -285,6 +393,8 @@ class SimpleBayesianOptimizer:
         for i in range(n_iter):
             params = self.suggest()
             score = objective(params)
+            if not isinstance(score, (int, float)) or not np.isfinite(score):
+                raise ValueError("objective must return a finite numeric score")
             self.observe(params, score)
             history.append((params.copy(), score))
 

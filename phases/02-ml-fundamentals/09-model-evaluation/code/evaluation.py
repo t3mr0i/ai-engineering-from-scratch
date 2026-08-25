@@ -7,7 +7,42 @@ import random
 import math
 
 
+def _nonempty_pair(left, right, left_name="y_true", right_name="y_pred"):
+    left = list(left)
+    right = list(right)
+    if not left or not right:
+        raise ValueError(f"{left_name} and {right_name} must be non-empty")
+    if len(left) != len(right):
+        raise ValueError(f"{left_name} and {right_name} must have equal lengths")
+    return left, right
+
+
+def _binary_pair(y_true, y_pred=None, *, scores=False):
+    if y_pred is None:
+        y_true = list(y_true)
+        if not y_true:
+            raise ValueError("labels must be non-empty")
+        if any(label not in (0, 1) for label in y_true):
+            raise ValueError("binary labels must be 0 or 1")
+        return y_true
+    y_true, y_pred = _nonempty_pair(y_true, y_pred)
+    if any(label not in (0, 1) for label in y_true + y_pred):
+        raise ValueError("binary labels must be 0 or 1")
+    return y_true, y_pred
+
+
+def _finite_regression_pair(y_true, y_pred):
+    y_true, y_pred = _nonempty_pair(y_true, y_pred)
+    if any(not isinstance(value, (int, float)) or not math.isfinite(value)
+           for value in y_true + y_pred):
+        raise ValueError("regression values must be finite numbers")
+    return y_true, y_pred
+
+
 def train_val_test_split(X, y, train_ratio=0.6, val_ratio=0.2, seed=42):
+    X, y = _nonempty_pair(X, y, "X", "y")
+    if not (0 < train_ratio < 1) or not (0 <= val_ratio < 1) or train_ratio + val_ratio >= 1:
+        raise ValueError("train_ratio must be in (0,1), val_ratio in [0,1), and their sum below 1")
     random.seed(seed)
     n = len(X)
     indices = list(range(n))
@@ -15,6 +50,8 @@ def train_val_test_split(X, y, train_ratio=0.6, val_ratio=0.2, seed=42):
 
     train_end = int(n * train_ratio)
     val_end = int(n * (train_ratio + val_ratio))
+    if train_end < 1 or val_end <= train_end or val_end >= n:
+        raise ValueError("ratios must produce non-empty train, validation, and test partitions")
 
     train_idx = indices[:train_end]
     val_idx = indices[train_end:val_end]
@@ -31,6 +68,10 @@ def train_val_test_split(X, y, train_ratio=0.6, val_ratio=0.2, seed=42):
 
 
 def kfold_split(n, k=5, seed=42):
+    if not isinstance(n, int) or isinstance(n, bool) or n < 1:
+        raise ValueError("n must be a positive integer")
+    if not isinstance(k, int) or isinstance(k, bool) or not 2 <= k <= n:
+        raise ValueError("k must satisfy 2 <= k <= n")
     random.seed(seed)
     indices = list(range(n))
     random.shuffle(indices)
@@ -49,6 +90,11 @@ def kfold_split(n, k=5, seed=42):
 
 
 def stratified_kfold_split(y, k=5, seed=42):
+    y = list(y)
+    if not y:
+        raise ValueError("y must be non-empty")
+    if not isinstance(k, int) or isinstance(k, bool) or not 2 <= k <= len(y):
+        raise ValueError("k must satisfy 2 <= k <= len(y)")
     random.seed(seed)
 
     class_indices = {}
@@ -58,22 +104,28 @@ def stratified_kfold_split(y, k=5, seed=42):
     for label in class_indices:
         random.shuffle(class_indices[label])
 
-    folds = [{"train": [], "val": []} for _ in range(k)]
+    val_by_fold = [[] for _ in range(k)]
+    for indices in class_indices.values():
+        base, remainder = divmod(len(indices), k)
+        cursor = 0
+        for fold in range(k):
+            val_by_fold[fold].extend(indices[cursor:cursor + base])
+            cursor += base
+        # Put remainders into currently smallest folds. This preserves class
+        # balance while keeping total validation sizes within one row.
+        for index in indices[cursor:]:
+            fold = min(range(k), key=lambda candidate: (len(val_by_fold[candidate]), candidate))
+            val_by_fold[fold].append(index)
 
-    for label, indices in class_indices.items():
-        fold_size = len(indices) // k
-        for i in range(k):
-            start = i * fold_size
-            end = start + fold_size if i < k - 1 else len(indices)
-            val_part = indices[start:end]
-            train_part = indices[:start] + indices[end:]
-            folds[i]["val"].extend(val_part)
-            folds[i]["train"].extend(train_part)
-
-    return [(f["train"], f["val"]) for f in folds]
+    all_indices = set(range(len(y)))
+    return [
+        (sorted(all_indices - set(val_idx)), sorted(val_idx))
+        for val_idx in val_by_fold
+    ]
 
 
 def cross_validate(X, y, model_fn, k=5, metric_fn=None, stratified=False):
+    X, y = _nonempty_pair(X, y, "X", "y")
     n = len(X)
 
     if stratified:
@@ -102,6 +154,7 @@ def cross_validate(X, y, model_fn, k=5, metric_fn=None, stratified=False):
 
 
 def confusion_matrix(y_true, y_pred):
+    y_true, y_pred = _binary_pair(y_true, y_pred)
     tp = sum(1 for yt, yp in zip(y_true, y_pred) if yt == 1 and yp == 1)
     tn = sum(1 for yt, yp in zip(y_true, y_pred) if yt == 0 and yp == 0)
     fp = sum(1 for yt, yp in zip(y_true, y_pred) if yt == 0 and yp == 1)
@@ -132,6 +185,12 @@ def f1_score(y_true, y_pred):
 
 
 def roc_curve(y_true, y_scores):
+    y_true = _binary_pair(y_true)
+    y_true, y_scores = _nonempty_pair(y_true, y_scores, "y_true", "y_scores")
+    if 0 not in y_true or 1 not in y_true:
+        raise ValueError("ROC requires at least one positive and one negative label")
+    if any(not isinstance(score, (int, float)) or not math.isfinite(score) for score in y_scores):
+        raise ValueError("ROC scores must be finite numbers")
     thresholds = [float("inf")] + sorted(set(y_scores), reverse=True)
     tpr_list = []
     fpr_list = []
@@ -170,6 +229,7 @@ def auc_roc(y_true, y_scores):
 
 
 def mse(y_true, y_pred):
+    y_true, y_pred = _finite_regression_pair(y_true, y_pred)
     n = len(y_true)
     return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) / n
 
@@ -179,11 +239,13 @@ def rmse(y_true, y_pred):
 
 
 def mae(y_true, y_pred):
+    y_true, y_pred = _finite_regression_pair(y_true, y_pred)
     n = len(y_true)
     return sum(abs(yt - yp) for yt, yp in zip(y_true, y_pred)) / n
 
 
 def r_squared(y_true, y_pred):
+    y_true, y_pred = _finite_regression_pair(y_true, y_pred)
     mean_y = sum(y_true) / len(y_true)
     ss_res = sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred))
     ss_tot = sum((yt - mean_y) ** 2 for yt in y_true)
