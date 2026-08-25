@@ -45,7 +45,7 @@
         "A classifier can disable all attention without affecting any task",
         "Pattern extraction from examples supports benign in-context learning as well as harmful compliance patterns",
         "Many-shot attacks work only when temperature is zero",
-        "The defense must alter the model's training labels permanently"
+        "Pattern extraction from examples supports benign in-context learning as well as harmful compliance patterns"
       ],
       "correct": 3,
       "explanation": "The same ability to infer a task from demonstrations powers useful few-shot or in-context learning. A defense must distinguish harmful patterns, not simply suppress all example-based adaptation."

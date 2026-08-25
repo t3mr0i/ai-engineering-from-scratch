@@ -19,9 +19,9 @@
       "question": "Why does the repository's keyword_filter return false for the cloaked prompt?",
       "options": [
         "The forbidden list is empty",
-        "The exact lowercase substring \"bomb\" no longer occurs in the placeholder-plus-glyph text",
         "The filter detects visual letters before checking text",
-        "The filter runs only on the model output"
+        "The filter runs only on the model output",
+        "The exact lowercase substring \"bomb\" no longer occurs in the placeholder-plus-glyph text"
       ],
       "correct": 3,
       "explanation": "keyword_filter performs a simple substring search over text.lower(). Since cloak_prompt removes the literal word and inserts ASCII punctuation, this text-only detector sees no forbidden token."
@@ -30,9 +30,9 @@
       "stage": "check",
       "question": "What does the toy perplexity heuristic actually measure?",
       "options": [
+        "The ratio of non-alphanumeric, non-whitespace characters to total characters",
         "The probability assigned by a language model to each token",
         "The number of model layers that can read the glyphs",
-        "The ratio of non-alphanumeric, non-whitespace characters to total characters",
         "The fraction of forbidden words in the original prompt"
       ],
       "correct": 0,
@@ -43,9 +43,9 @@
       "question": "What are the two conceptual steps of ArtPrompt?",
       "options": [
         "Sample a new model and then fine-tune its tokenizer",
+        "Identify safety-relevant words, substitute non-semantic visual text, and place that encoding in a cloaked prompt",
         "Translate the request and then compress it into bytes",
-        "Search gradients for a suffix and then hide it in audio",
-        "Identify safety-relevant words, substitute non-semantic visual text, and place that encoding in a cloaked prompt"
+        "Search gradients for a suffix and then hide it in audio"
       ],
       "correct": 1,
       "explanation": "ArtPrompt first identifies the word carrying the safety meaning, then encodes that word as ASCII art while leaving the surrounding request readable. The attack moves interpretation from token semantics to visual recognition."
@@ -54,9 +54,9 @@
       "stage": "post",
       "question": "What capability does the ViTC benchmark probe?",
       "options": [
-        "Whether a model can read non-semantic visual prompts such as ASCII art or Wingdings",
         "Whether a model can compress a vision tensor",
         "Whether a model's training set contains toxic examples",
+        "Whether a model can read non-semantic visual prompts such as ASCII art or Wingdings",
         "Whether a model can call tools without a schema"
       ],
       "correct": 2,

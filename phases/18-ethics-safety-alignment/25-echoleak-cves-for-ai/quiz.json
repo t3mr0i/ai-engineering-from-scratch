@@ -1,78 +1,78 @@
 {
-  "lesson": "25-echoleak-cves-for-ai",
+  "lesson": "echoleak-cves-for-ai",
   "title": "EchoLeak and the Emergence of CVEs for AI",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which best describes EchoLeak (CVE-2025-32711)?",
+      "question": "What sequence does naive_copilot follow for the EchoLeak fixture?",
       "options": [
-        "A jailbreak via long-context shot stuffing",
-        "A supply-chain attack on PyPI",
-        "A hardware vulnerability in NPUs",
-        "A zero-click AI command-injection flaw in Microsoft 365 Copilot (CVE-2025-32711, CVSS 9.3) causing unauthorized network information disclosure, with exfiltration via a CSP allowlisted/trusted Microsoft domain"
+        "It retrieves an untrusted email, reads the private MFA inbox, and puts the code in a signed-domain image URL",
+        "It trains a new model on the email and deletes the inbox",
+        "It blocks retrieval before the model sees any email",
+        "It sends the user's prompt to an unrelated public search engine"
+      ],
+      "correct": 0,
+      "explanation": "The hidden instruction in ATTACKER_EMAIL triggers a lookup in INBOX_PRIVATE, then naive_copilot builds a render_image URL under signed.microsoft.com and places it in rendered_output. The chain crosses retrieval, scope, and output boundaries."
+    },
+    {
+      "stage": "check",
+      "question": "Why is EchoLeak called zero-click in the cited attack model?",
+      "options": [
+        "The victim must click an image before any retrieval occurs",
+        "The victim need not open the email; normal RAG retrieval supplies its body to Copilot",
+        "The attacker needs to install a browser extension first",
+        "The attack works only after a user manually forwards the message"
+      ],
+      "correct": 1,
+      "explanation": "retrieve is called for the ordinary user prompt \"summarize my recent emails\" and returns the attacker email. No click is needed to make the content part of the agent's context."
+    },
+    {
+      "stage": "check",
+      "question": "What does scope_separated_copilot change in the toy defense?",
+      "options": [
+        "It trusts every retrieved email because retrieval is internal",
+        "It encrypts the MFA code before putting it in the URL",
+        "It labels the retrieved email untrusted, redacts the instruction-shaped suffix, and makes no tool call",
+        "It runs the same hidden instruction through a second model"
+      ],
+      "correct": 2,
+      "explanation": "The defended branch checks email['trust'] and splits at [hidden:, leaving only a summary. The trace therefore shows one retrieved email, an empty tool_calls list, and no exfiltration URL."
+    },
+    {
+      "stage": "check",
+      "question": "What are the three independent boundaries in the LLM Scope Violation model?",
+      "options": [
+        "Training, inference, and deployment",
+        "Prompt, tokenizer, and context window",
+        "Retrieval, privileged scope, and output/network exfiltration",
+        "Model size, latency, and cost"
       ],
       "correct": 3,
-      "explanation": "“A zero-click AI command-injection flaw in Microsoft 365 Copilot (CVE-2025-32711, CVSS 9.3) causing unauthorized network information disclosure, with exfiltration via a CSP allowlisted/trusted Microsoft domain” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What makes EchoLeak 'zero-click'?",
-      "options": [
-        "The victim does not have to open the email; Copilot retrieves it as RAG context during routine queries and the injected instructions execute",
-        "It requires the user to click a link in a Teams chat",
-        "It runs in the operating-system kernel",
-        "It requires three clicks but no typing"
-      ],
-      "correct": 0,
-      "explanation": "“The victim does not have to open the email; Copilot retrieves it as RAG context during routine queries and the injected instructions execute” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Aim Labs frames EchoLeak as 'LLM Scope Violation'. What three boundaries must each be controlled independently?",
-      "options": [
-        "Retrieval, scope, output",
-        "Network, disk, memory",
-        "Input, model, GPU",
-        "Prompt, response, log"
-      ],
-      "correct": 0,
-      "explanation": "“Retrieval, scope, output” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "How did Microsoft/GitHub fix CamoLeak (CVSS 9.6, GitHub Copilot Chat)?",
-      "options": [
-        "Added an XPIA prompt-injection filter",
-        "Disabled image rendering entirely in Copilot Chat (cost: usability) because the alternative attack surface could not be bounded",
-        "Switched the model to Llama Guard",
-        "Increased context size"
-      ],
-      "correct": 1,
-      "explanation": "“Disabled image rendering entirely in Copilot Chat (cost: usability) because the alternative attack surface could not be bounded” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
+      "explanation": "An attacker-controlled retrieval item is only the first step. The model must also reach a privileged scope and send the result across an output boundary; defending one boundary alone leaves another path open."
     },
     {
       "stage": "post",
-      "question": "What pattern in severity calibration did the EchoLeak disclosure reveal?",
+      "question": "What severity lesson does the EchoLeak disclosure illustrate?",
       "options": [
-        "Vendors over-rated the initial CVSS score",
-        "Vendors initially rated EchoLeak low (information disclosure); Aim Labs's MFA-code exfiltration proof-of-concept escalated the rating to 9.3 — defenders must push for comprehensive PoC for AI-specific vulnerabilities",
-        "All AI CVEs are automatically rated 10.0",
-        "Severity ratings are decided by OWASP only"
+        "An information-disclosure label can understate impact until a concrete MFA-exfiltration proof of concept is demonstrated",
+        "CVE scores are determined only by model parameter count",
+        "A CSP allowlist guarantees that no AI vulnerability exists",
+        "Responsible disclosure prevents all later exploitation"
       ],
-      "correct": 1,
-      "explanation": "“Vendors initially rated EchoLeak low (information disclosure); Aim Labs's MFA-code exfiltration proof-of-concept escalated the rating to 9.3 — defenders must push for comprehensive PoC for AI-specific vulnerabilities” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The lesson describes an initially low assessment that rose to CVSS 9.3 after the practical exfiltration path was shown. AI-specific scope and tool boundaries must be included in severity analysis."
     },
     {
       "stage": "post",
-      "question": "Where do NIST and OWASP rank prompt injection as of 2024/2025?",
+      "question": "Why does the lesson reject input-only classification as an EchoLeak defense?",
       "options": [
-        "NIST AI SPD 2024 frames prompt injection as a major information-security risk for generative AI; OWASP 2025 ranks it LLM01 (top application-layer threat)",
-        "NIST: outside scope; OWASP: not listed",
-        "NIST: minor; OWASP: bottom of list",
-        "Both call it a Tier-2 risk only"
+        "Input classifiers cannot run before retrieval",
+        "The payload enters through retrieved content and can trigger privileged actions after the user-input check",
+        "A model cannot produce any output after classification",
+        "The retrieved instruction can be trusted if it comes from an email"
       ],
-      "correct": 0,
-      "explanation": "“NIST AI SPD 2024 frames prompt injection as a major information-security risk for generative AI; OWASP 2025 ranks it LLM01 (top application-layer threat)” matches the lesson’s treatment of EchoLeak and the Emergence of CVEs for AI; the alternatives conflict with its definitions or workflow."
+      "correct": 1,
+      "explanation": "A filter on the user's text does not necessarily inspect or constrain tool-derived content and side effects. EchoLeak defense requires independent retrieval, scope, and output controls, not only a prompt classifier."
     }
   ]
 }

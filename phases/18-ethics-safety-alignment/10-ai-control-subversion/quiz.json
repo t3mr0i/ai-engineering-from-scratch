@@ -18,10 +18,10 @@
       "stage": "check",
       "question": "At backdoor_rate=0.10, what does the toy's trusted_ed row report relative to the untrusted row?",
       "options": [
-        "trusted_ed has higher useful output (about 0.967) and zero shipped backdoors, while untrusted has about 0.863 useful and 0.042 backdoors",
         "trusted_ed ships more backdoors because T is weaker",
         "Both rows have identical usefulness and safety because H is fixed",
-        "untrusted monitoring never uses the human budget"
+        "untrusted monitoring never uses the human budget",
+        "trusted_ed has higher useful output (about 0.967) and zero shipped backdoors, while untrusted has about 0.863 useful and 0.042 backdoors"
       ],
       "correct": 3,
       "explanation": "The printed br=0.10 sweep gives trusted editing useful=.967 and backdoor=.000, versus untrusted useful=.863 and backdoor=.042. The result is a toy Pareto comparison, not a universal deployment guarantee."
@@ -54,9 +54,9 @@
       "stage": "post",
       "question": "Which is a fundamental limit of control rather than a claim that control creates alignment?",
       "options": [
-        "Humans do not scale, trusted weak models can lag U, and protocols may fail at higher capability levels",
         "Control guarantees that U develops a trustworthy mesa-objective",
         "A human budget becomes unlimited when U is stronger",
+        "Humans do not scale, trusted weak models can lag U, and protocols may fail at higher capability levels",
         "Trusted editing proves all future backdoors are absent"
       ],
       "correct": 2,

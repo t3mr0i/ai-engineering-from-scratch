@@ -6,9 +6,9 @@
       "stage": "pre",
       "question": "Why does the toy benchmark use repeated attacker trials instead of one hand-written jailbreak?",
       "options": [
-        "A single prompt cannot estimate attack success against a moving target; a budgeted sample is needed",
         "Manual testers are unable to read any response",
         "Every manual prompt is automatically rejected by the target",
+        "A single prompt cannot estimate attack success against a moving target; a budgeted sample is needed",
         "Attack success is independent of the target's filter"
       ],
       "correct": 2,
@@ -19,9 +19,9 @@
       "question": "What does pair_loop retain for the next PAIR attacker prompt?",
       "options": [
         "Only the target's model weights",
-        "The previous prompt/response history as in-context feedback",
+        "The judge's private training data",
         "A hidden gradient from the target model",
-        "The judge's private training data"
+        "The previous prompt/response history as in-context feedback"
       ],
       "correct": 3,
       "explanation": "pair_loop appends (prompt, response) to history after every query and passes that list to the next attacker function. This is black-box iterative refinement; no target gradients are required."
@@ -30,9 +30,9 @@
       "stage": "check",
       "question": "Why does the semantic_filter_target resist the paraphrase and roleplay attackers better than keyword_filter_target?",
       "options": [
-        "It uses a larger vocabulary file but no semantic cues",
-        "It ignores all target responses and always refuses",
         "It checks risk-adjacent terms and roleplay cues in addition to forbidden substrings",
+        "It ignores all target responses and always refuses",
+        "It uses a larger vocabulary file but no semantic cues",
         "It has white-box access to the attacker logits"
       ],
       "correct": 0,

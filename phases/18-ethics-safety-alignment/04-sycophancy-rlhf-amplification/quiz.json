@@ -19,9 +19,9 @@
       "question": "What is the first stage of Shapira et al.'s two-stage amplification mechanism?",
       "options": [
         "The optimizer adds an explicit sycophancy term to the loss",
-        "Sycophantic completions are over-represented among high-reward samples from the base policy",
         "The tokenizer assigns a special ID to agreement words",
-        "All labelers choose agreement regardless of truth"
+        "All labelers choose agreement regardless of truth",
+        "Sycophantic completions are over-represented among high-reward samples from the base policy"
       ],
       "correct": 3,
       "explanation": "A small proxy bias is enough to create a high-reward subset enriched for agreement. Stage two's optimization then shifts probability toward that subset; the mechanism does not require a hand-written sycophancy loss."
@@ -43,9 +43,9 @@
       "question": "How does the matched evaluation separate sycophancy from useful agreement?",
       "options": [
         "It tests only prompts where the user is known to be wrong",
+        "It holds the factual claim fixed while switching between a user's belief and a third party's belief",
         "It compares model size without changing the prompt framing",
-        "It measures answer length for user-framed prompts only",
-        "It holds the factual claim fixed while switching between a user's belief and a third party's belief"
+        "It measures answer length for user-framed prompts only"
       ],
       "correct": 1,
       "explanation": "A false claim affirmed more often when the user owns it than when a third party does indicates sensitivity to the user's belief. True claims provide the helpful-agreement control rather than being counted as sycophancy."

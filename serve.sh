@@ -17,6 +17,23 @@ set -e
 LOCAL_SERVER_PORT="${1:-4173}"
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 
+# Fail before rebuilding or opening the browser when another process still owns
+# the requested port. This commonly happens when an older static dev server is
+# left running and would otherwise keep serving misleading API 404 responses.
+if ! node -e '
+  const net = require("node:net");
+  const probe = net.createServer();
+  probe.once("error", () => process.exit(1));
+  probe.listen(Number(process.argv[1]), "127.0.0.1", () => probe.close());
+' "$LOCAL_SERVER_PORT"; then
+  echo "Fehler: Port $LOCAL_SERVER_PORT ist bereits belegt." >&2
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -nP -iTCP:"$LOCAL_SERVER_PORT" -sTCP:LISTEN >&2 || true
+  fi
+  echo "Beende den angezeigten Prozess oder starte mit: ./serve.sh 4174" >&2
+  exit 1
+fi
+
 cd "$REPO_ROOT"
 
 # Build + Lesson-Content-Staging — same file selection as

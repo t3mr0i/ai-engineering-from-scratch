@@ -1,78 +1,78 @@
 {
-  "lesson": "23-watermarking-synthid-stable-signature-c2pa",
+  "lesson": "watermarking-synthid-stable-signature-c2pa",
   "title": "Watermarking — SynthID, Stable Signature, C2PA",
   "questions": [
     {
       "stage": "pre",
-      "question": "How does Kirchenbauer-style (SynthID-text) token watermarking embed a signal?",
+      "question": "How does green_set create a token watermark in the toy?",
       "options": [
-        "By modifying the prompt template",
-        "By encrypting the output with a public key",
-        "At each decoding step, hash the previous K tokens to partition the vocabulary into green/red sets and bias sampling toward green; detection counts green tokens via a z-score",
-        "By inserting a hidden HTML comment"
-      ],
-      "correct": 2,
-      "explanation": "“At each decoding step, hash the previous K tokens to partition the vocabulary into green/red sets and bias sampling toward green; detection counts green tokens via a z-score” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What is the primary limitation of text watermarks against paraphrase?",
-      "options": [
-        "Rewording or paraphrasing the text destroys the green-token statistical signal",
-        "Paraphrase only affects image watermarks",
-        "Paraphrase strengthens the watermark",
-        "They actually survive paraphrase"
+        "It hashes the previous K=4 tokens and marks half the vocabulary green according to the hash parity",
+        "It signs the whole output with a private key",
+        "It appends an HTML comment to the prompt",
+        "It inserts a visible logo after decoding"
       ],
       "correct": 0,
-      "explanation": "“Rewording or paraphrasing the text destroys the green-token statistical signal” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
+      "explanation": "green_set hashes the last four token IDs and includes token t when (t+h) % 2 == 0. watermarked_sample then chooses the green half with probability bias=0.9."
     },
     {
       "stage": "check",
-      "question": "What does Stable Signature (Fernandez et al., ICCV 2023) do?",
+      "question": "What statistic does detect(tokens) report?",
       "options": [
-        "Uses C2PA to sign the image at upload",
-        "Adds a visible watermark in the corner of the image",
-        "Fine-tunes the latent diffusion decoder so every generated image carries a fixed embedded message detectable from the latent",
-        "Signs the metadata with a private key"
+        "The fraction of tokens that are in the prompt vocabulary",
+        "A z-score comparing observed green tokens with the 50% expected count after the K-token prefix",
+        "The exact number of paraphrases in the sample",
+        "The C2PA certificate chain length"
+      ],
+      "correct": 1,
+      "explanation": "detect counts green membership from index K onward, sets expected=n*0.5 and std=sqrt(n*0.5*0.5), and returns (green_count-expected)/std. A threshold such as z>=4 is evidence, not a provenance proof."
+    },
+    {
+      "stage": "check",
+      "question": "Why does paraphrase weaken the toy watermark?",
+      "options": [
+        "Paraphrase increases the watermark bias to 1.0",
+        "The detector ignores every token after the first four",
+        "Replacing token IDs changes the hash contexts and can turn green choices into red choices for the detector",
+        "Paraphrase attaches a new C2PA signature automatically"
       ],
       "correct": 2,
-      "explanation": "“Fine-tunes the latent diffusion decoder so every generated image carries a fixed embedded message detectable from the latent” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
+      "explanation": "The watermark is statistical and context-dependent. paraphrase replaces a fraction of the sequence, disrupting both the token choices and the rolling hash contexts used to reconstruct green membership."
     },
     {
       "stage": "check",
-      "question": "What does the May 2024 'Stable Signature is Unstable' result demonstrate?",
+      "question": "What does Stable Signature do differently from C2PA metadata?",
       "options": [
-        "The watermark is provably unforgeable",
-        "The watermark requires C2PA to function",
-        "The watermark fails only on JPEG compression",
-        "Post-generation fine-tuning of the decoder can remove the watermark while preserving image quality, undermining adversarial robustness"
+        "It puts a visible corner label on every image",
+        "It signs a provenance manifest without changing the image generator",
+        "It only watermarks text tokens",
+        "It fine-tunes a latent-diffusion decoder so generated images carry a fixed latent message detectable after generation"
       ],
       "correct": 3,
-      "explanation": "“Post-generation fine-tuning of the decoder can remove the watermark while preserving image quality, undermining adversarial robustness” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
+      "explanation": "Stable Signature embeds a learned signal in the image generation process, while C2PA records a signed provenance assertion. They protect different channels and fail under different transformations."
     },
     {
       "stage": "post",
-      "question": "How are C2PA metadata and watermarking complementary?",
+      "question": "Why are C2PA metadata and a watermark complementary?",
       "options": [
-        "They are interchangeable",
-        "Watermarks are signed by the same keys as C2PA",
-        "Metadata can be stripped but carries rich provenance chain; watermarks persist through transcoding but carry few bits; layered, they provide a usable provenance story",
-        "C2PA replaces watermarks entirely"
-      ],
-      "correct": 2,
-      "explanation": "“Metadata can be stripped but carries rich provenance chain; watermarks persist through transcoding but carry few bits; layered, they provide a usable provenance story” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Why is 'no SynthID signal' NOT proof of authenticity (human origin)?",
-      "options": [
-        "Because SynthID only watermarks generations from SynthID-enabled models; content from any model without SynthID is unwatermarked by default",
-        "Because SynthID is closed-source",
-        "Because SynthID always produces false positives on human text",
-        "Because SynthID only works on Gemini outputs"
+        "Metadata can carry a rich signed chain but be stripped; a watermark can persist through some transforms but carries only a small signal",
+        "They are interchangeable names for the same private key",
+        "A watermark automatically authenticates every image without a signer",
+        "C2PA metadata survives every edit by definition"
       ],
       "correct": 0,
-      "explanation": "“Because SynthID only watermarks generations from SynthID-enabled models; content from any model without SynthID is unwatermarked by default” matches the lesson’s treatment of Watermarking — SynthID, Stable Signature, C2PA; the alternatives conflict with its definitions or workflow."
+      "explanation": "C2PA is an authenticated provenance record whose metadata may be removed. A watermark is embedded in content and can survive compression, but it is model-specific and not a complete chain of custody."
+    },
+    {
+      "stage": "post",
+      "question": "Why does a missing SynthID signal not prove human origin?",
+      "options": [
+        "The detector only works on images",
+        "Content from models that never applied SynthID, or content transformed enough to erase it, is also unmarked",
+        "SynthID always gives a positive score on human text",
+        "A missing signal proves the C2PA signer was trusted"
+      ],
+      "correct": 1,
+      "explanation": "Absence is compatible with many non-human sources and with paraphrase or other transformations. Watermark detection can support a positive provenance claim for participating systems, not certify every unmarked item as human."
     }
   ]
 }

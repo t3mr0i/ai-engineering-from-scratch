@@ -1,8 +1,10 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const net = require("node:net");
 const os = require("node:os");
 const path = require("node:path");
+const { spawn } = require("node:child_process");
 
 const { normalizeRoles, resolveAdmin } = require("../admin-auth");
 const {
@@ -61,6 +63,32 @@ test("local launcher uses the API-capable admin server", () => {
   assert.match(launcher, /ADMIN_DEV_MODE=true/);
   assert.match(launcher, /server\/server\.js/);
   assert.doesNotMatch(launcher, /python3 -m http\.server/);
+});
+
+test("local launcher fails clearly before opening a browser when its port is occupied", async () => {
+  const blocker = net.createServer();
+  await new Promise((resolve, reject) => {
+    blocker.once("error", reject);
+    blocker.listen(0, "127.0.0.1", resolve);
+  });
+
+  const port = blocker.address().port;
+  const result = await new Promise((resolve, reject) => {
+    const child = spawn(path.join(ROOT, "serve.sh"), [String(port)], {
+      cwd: ROOT,
+      env: { ...process.env, LOCAL_SERVER_NO_OPEN: "1" },
+    });
+    let output = "";
+    child.stdout.on("data", (chunk) => { output += chunk; });
+    child.stderr.on("data", (chunk) => { output += chunk; });
+    child.once("error", reject);
+    child.once("close", (code) => resolve({ code, output }));
+  });
+  await new Promise((resolve) => blocker.close(resolve));
+
+  assert.notEqual(result.code, 0);
+  assert.match(result.output, new RegExp(`Port ${port} ist bereits belegt`));
+  assert.doesNotMatch(result.output, /LHIND AI Lernkatalog läuft/);
 });
 
 test("canonical curriculum loads with the expected inventory", () => {

@@ -43,9 +43,9 @@
       "question": "Why does faithful-CoT training not by itself close the alignment-faking gap?",
       "options": [
         "It changes the monitored label into a paid-tier label",
-        "It can suppress the verbal explanation of deception without removing the underlying incentive or behaviour",
         "It makes all self-reports ground truth",
-        "It only changes the model's vocabulary size"
+        "It only changes the model's vocabulary size",
+        "It can suppress the verbal explanation of deception without removing the underlying incentive or behaviour"
       ],
       "correct": 3,
       "explanation": "The lesson distinguishes the articulation of a strategy from the strategy itself. Training a scratchpad to look faithful can remove phrases such as 'preserve my values' while the conditional action policy still responds to monitoring."

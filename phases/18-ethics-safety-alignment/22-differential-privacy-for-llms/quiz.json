@@ -1,78 +1,78 @@
 {
-  "lesson": "22-differential-privacy-for-llms",
+  "lesson": "differential-privacy-for-llms",
   "title": "Differential Privacy for LLMs",
   "questions": [
     {
       "stage": "pre",
-      "question": "What does (epsilon, delta)-differential privacy guarantee for a randomized algorithm M?",
+      "question": "Which statement is the (epsilon, delta)-DP guarantee implemented conceptually by the lesson?",
       "options": [
-        "M does not memorize any training data ever",
-        "M is deterministic up to noise",
-        "For any two datasets differing in one example and any event S, P(M(D) in S) <= e^epsilon * P(M(D') in S) + delta, so any single individual's contribution cannot be reliably inferred",
-        "M is provably equivalent to a non-private algorithm"
+        "The trained model can never memorize any example",
+        "The algorithm is deterministic apart from a fixed seed",
+        "For neighbouring datasets and every event S, P(M(D) in S) <= exp(epsilon)P(M(D') in S)+delta",
+        "A private model must have exactly the same utility as a non-private model"
       ],
       "correct": 2,
-      "explanation": "“For any two datasets differing in one example and any event S, P(M(D) in S) <= e^epsilon * P(M(D') in S) + delta, so any single individual's contribution cannot be reliably inferred” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
+      "explanation": "The inequality limits how much one person's presence can change any output event's probability. It is a distributional guarantee, not an absolute no-memorization or equal-utility claim."
     },
     {
       "stage": "check",
-      "question": "Which is NOT a step of DP-SGD as described by Abadi et al. 2016?",
+      "question": "What is the purpose of clip in the toy DP-SGD loop?",
       "options": [
-        "Sample a mini-batch and compute per-example gradients",
-        "Clip each per-example gradient to a threshold C",
-        "Re-randomize the model's tokenizer between steps",
-        "Sum clipped gradients and add Gaussian noise scaled by sigma * C"
-      ],
-      "correct": 2,
-      "explanation": "“Re-randomize the model's tokenizer between steps” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why is LoRA + DP-SGD the common 2025 configuration?",
-      "options": [
-        "Full DP-SGD on a frontier model is prohibitive; LoRA limits gradient updates to a small adapter, reducing per-example gradient storage while still providing DP guarantees on the adapter",
-        "It uses LoRA as a tokenizer",
-        "LoRA increases epsilon by design",
-        "LoRA removes the need for an accountant"
-      ],
-      "correct": 0,
-      "explanation": "“Full DP-SGD on a frontier model is prohibitive; LoRA limits gradient updates to a small adapter, reducing per-example gradient storage while still providing DP guarantees on the adapter” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "How did the March 2025 audit (arXiv:2503.06808) resolve the canary-MIA vs training-data-extraction tension?",
-      "options": [
-        "It eliminated the need for canaries entirely",
-        "It proved DP-SGD is unnecessary",
-        "It showed both measure the same property",
-        "It showed they measure different things: MIA on inserted canaries under-reports memorization because canaries are not optimized to be the 'most extractable' examples that actually matter for privacy"
+        "It removes the bias term from the model",
+        "It clips the final model probability to [0,1]",
+        "It computes epsilon from the data size",
+        "It bounds a per-example gradient's L2 norm by C before noise is added"
       ],
       "correct": 3,
-      "explanation": "“It showed they measure different things: MIA on inserted canaries under-reports memorization because canaries are not optimized to be the 'most extractable' examples that actually matter for privacy” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
+      "explanation": "clip returns g unchanged when its norm is at most C and rescales it to C otherwise. Bounding sensitivity is what makes calibrated Gaussian noise meaningful for a DP accountant."
     },
     {
-      "stage": "post",
-      "question": "What does PMixED (arXiv:2403.15638) provide as an alternative to DP training?",
+      "stage": "check",
+      "question": "In the demo, what happens as sigma increases from 0.5 toward 4.0?",
       "options": [
-        "A faster DP-SGD variant",
-        "A new accountant for Renyi DP",
-        "Inference-time differential privacy via a mixture of experts on next-token distributions, with aggregation noise; avoids DP training entirely",
-        "A way to compute epsilon from epsilon-delta accounting alone"
-      ],
-      "correct": 2,
-      "explanation": "“Inference-time differential privacy via a mixture of experts on next-token distributions, with aggregation noise; avoids DP training entirely” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What is the Differential Privacy Reversal via LLM Feedback attack?",
-      "options": [
-        "Using a DP-trained model's confidence scores as an oracle to re-identify individuals, even when outputs do not leak directly",
-        "An attack on tokenizer entropy",
-        "A method to reset epsilon to zero",
-        "A countermeasure to canary insertion"
+        "The noise scale sigma*C grows, while the analytical epsilon proxy shrinks",
+        "The gradient becomes exact and epsilon grows without bound",
+        "The clipping threshold C is silently set to zero",
+        "Privacy and utility both improve monotonically by definition"
       ],
       "correct": 0,
-      "explanation": "“Using a DP-trained model's confidence scores as an oracle to re-identify individuals, even when outputs do not leak directly” matches the lesson’s treatment of Differential Privacy for LLMs; the alternatives conflict with its definitions or workflow."
+      "explanation": "dp_sgd samples Gaussian noise with standard deviation sigma*C, while analytical_epsilon is proportional to 1/sigma. More privacy noise can reduce utility, as the accuracy sweep illustrates."
+    },
+    {
+      "stage": "check",
+      "question": "Why is LoRA plus DP-SGD used as a practical compromise for large models?",
+      "options": [
+        "LoRA guarantees privacy for the frozen base model without any accounting",
+        "It confines private updates to a small adapter, reducing per-example gradient cost, while the guarantee applies only to that training target",
+        "LoRA replaces the need to clip gradients",
+        "It makes epsilon independent of sigma"
+      ],
+      "correct": 1,
+      "explanation": "Full-model per-example clipping and noise are expensive. Adapter training lowers the private parameter footprint, but an audit must state that the base model's prior memorization is not magically covered by an adapter guarantee."
+    },
+    {
+      "stage": "post",
+      "question": "What distinction did the cited 2025 audit make between canary MIA and extraction tests?",
+      "options": [
+        "They are identical measures of the same most-extractable examples",
+        "Extraction tests cannot run against language models",
+        "Canary membership inference can under-report memorization because inserted canaries are not necessarily the examples an attacker would extract",
+        "DP-SGD makes both tests unnecessary"
+      ],
+      "correct": 2,
+      "explanation": "A planted canary tests a known membership signal, whereas extraction searches for naturally high-leakage examples. The lesson warns that passing one is not evidence that the other threat is absent."
+    },
+    {
+      "stage": "post",
+      "question": "What privacy mechanism does PMixED provide in the lesson's comparison?",
+      "options": [
+        "A stricter DP-SGD accountant with no inference changes",
+        "A tokenizer that deletes personally identifying strings",
+        "A proof that confidence scores cannot leak information",
+        "Inference-time noise aggregated across next-token experts, avoiding DP training"
+      ],
+      "correct": 3,
+      "explanation": "PMixED moves the privacy mechanism to inference by mixing expert next-token distributions and adding aggregation noise. It changes the threat/utility trade-off rather than making every privacy attack impossible."
     }
   ]
 }

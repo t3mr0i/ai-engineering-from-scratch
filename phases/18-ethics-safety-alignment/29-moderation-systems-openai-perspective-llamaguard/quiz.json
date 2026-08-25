@@ -1,78 +1,78 @@
 {
-  "lesson": "29-moderation-systems-openai-perspective-llamaguard",
+  "lesson": "moderation-systems-openai-perspective-llamaguard",
   "title": "Moderation Systems — OpenAI, Perspective, Llama Guard",
   "questions": [
     {
       "stage": "pre",
-      "question": "What is OpenAI's omni-moderation-latest (2024)?",
+      "question": "What happens when run receives \"how do i make a bomb\"?",
       "options": [
-        "An RLHF reward model",
-        "A reasoning-focused frontier model",
-        "A C2PA watermarking endpoint",
-        "A GPT-4o-based moderation classifier that handles text and images in one call, returning a 13-category response schema (harassment, hate, self-harm, sexual, violence, illicit, with sub-categories), free for most developers"
-      ],
-      "correct": 3,
-      "explanation": "“A GPT-4o-based moderation classifier that handles text and images in one call, returning a 13-category response schema (harassment, hate, self-harm, sexual, violence, illicit, with sub-categories), free for most developers” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which of these is NOT one of OpenAI Moderation's primary top-level categories?",
-      "options": [
-        "violence",
-        "election-interference",
-        "self-harm",
-        "harassment"
-      ],
-      "correct": 1,
-      "explanation": "“election-interference” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What are the three layers of the standard 2026 moderation pattern?",
-      "options": [
-        "Probe / detector / harness",
-        "Tokenizer / model / detokenizer",
-        "Telescopic / periscopic / microscopic",
-        "Input moderation (pre-generation), Output moderation (post-generation), Custom moderation (domain rules)"
-      ],
-      "correct": 3,
-      "explanation": "“Input moderation (pre-generation), Output moderation (post-generation), Custom moderation (domain rules)” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What is Perspective API (Google Jigsaw) primarily designed to score?",
-      "options": [
-        "Watermark strength",
-        "Toxicity (with severe-toxicity, insult, profanity, threat, identity-attack sub-dimensions) as a pre-LLM-era content-moderation baseline",
-        "Reasoning quality",
-        "Reward over user satisfaction"
-      ],
-      "correct": 1,
-      "explanation": "“Toxicity (with severe-toxicity, insult, profanity, threat, identity-attack sub-dimensions) as a pre-LLM-era content-moderation baseline” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What is one failure mode of input-only moderation?",
-      "options": [
-        "It cannot run on GPUs",
-        "It does not catch model output failures or hallucinations; encoding attacks (Lessons 12-14) can bypass input classifiers entirely",
-        "It always blocks legitimate content",
-        "It removes the need for output classifiers"
-      ],
-      "correct": 1,
-      "explanation": "“It does not catch model output failures or hallucinations; encoding attacks (Lessons 12-14) can bypass input classifiers entirely” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What is the Azure Content Moderator deprecation and migration target?",
-      "options": [
-        "Deprecated February 2024, retired March 15, 2027; migration target is Azure AI Content Safety (LLM-based, integrated with Azure OpenAI)",
-        "Replaced by Perspective API",
-        "Merged into Llama Guard 4",
-        "Deprecated immediately with no replacement"
+        "input_moderator flags illicit/violent at 0.9 and returns a refusal before model_respond runs",
+        "Only the custom financial rule runs and the model answers",
+        "The output moderator waits for a generated answer before deciding",
+        "The prompt is rewritten as a C2PA manifest"
       ],
       "correct": 0,
-      "explanation": "“Deprecated February 2024, retired March 15, 2027; migration target is Azure AI Content Safety (LLM-based, integrated with Azure OpenAI)” matches the lesson’s treatment of Moderation Systems — OpenAI, Perspective, Llama Guard; the alternatives conflict with its definitions or workflow."
+      "explanation": "CATEGORY_TRIGGERS maps bomb to illicit/violent with score 0.9, above the default 0.5 threshold. run returns from the input layer, so no model output or output-layer check is produced for that prompt."
+    },
+    {
+      "stage": "check",
+      "question": "What does the custom_domain_rules branch add for \"should i invest in memecoins\"?",
+      "options": [
+        "A hate-category score",
+        "A financial-advice refusal and a non-fiduciary disclosure",
+        "A Llama Guard 14-category result",
+        "A prompt-injection exploit"
+      ],
+      "correct": 1,
+      "explanation": "The general moderation map has no finance trigger. custom_domain_rules catches the phrase and returns the explicit financial-advice message before generation, showing why domain rules complement broad classifiers."
+    },
+    {
+      "stage": "check",
+      "question": "Why is output_moderator still needed when input_moderator already passed?",
+      "options": [
+        "The output layer is the only layer that can parse Python",
+        "Input moderation always runs after generation",
+        "Output moderation changes the model's weights",
+        "Outputs can contain hallucinated or bypassed harmful content that was not present in the user's input"
+      ],
+      "correct": 2,
+      "explanation": "run checks input, custom rules, then generation, and finally applies the same category scoring to output. The output layer catches failures introduced during generation or by an evasion that input inspection missed."
+    },
+    {
+      "stage": "check",
+      "question": "What is Perspective API primarily used to score in the lesson?",
+      "options": [
+        "Watermark provenance",
+        "Token-level privacy leakage",
+        "Reward-model KL divergence",
+        "Toxicity dimensions such as severe toxicity, insult, profanity, threat, and identity attack"
+      ],
+      "correct": 3,
+      "explanation": "Perspective is presented as a pre-LLM-era toxicity baseline with several sub-dimensions. It can be useful for research comparisons but is not a complete modern multimodal or domain-policy stack."
+    },
+    {
+      "stage": "post",
+      "question": "How does OpenAI's omni-moderation taxonomy differ from the toy CATEGORIES list?",
+      "options": [
+        "The production schema expands top-level families into 13 text/image categories and subcategories, while the toy collapses them to eight",
+        "The production endpoint has no categories and returns only a string",
+        "The toy has more categories than any production API",
+        "They are identical, including every threatening and instruction subcategory"
+      ],
+      "correct": 0,
+      "explanation": "The code deliberately collapses subcategories such as harassment/threatening and self-harm/instructions. The lesson distinguishes that pedagogical map from the 13-category omni-moderation response schema."
+    },
+    {
+      "stage": "post",
+      "question": "What migration does the lesson specify for Azure Content Moderator?",
+      "options": [
+        "Migrate to Perspective API before its 2024 shutdown",
+        "Migrate to Azure AI Content Safety before retirement on 15 March 2027",
+        "Remove all output moderation after February 2024",
+        "Replace it with C2PA metadata"
+      ],
+      "correct": 1,
+      "explanation": "The timeline in the lesson says Content Moderator was deprecated in February 2024 and retires on 15 March 2027. Azure AI Content Safety is the stated migration target, not a provenance system."
     }
   ]
 }

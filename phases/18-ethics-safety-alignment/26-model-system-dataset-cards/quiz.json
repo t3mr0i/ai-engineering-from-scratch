@@ -1,78 +1,78 @@
 {
-  "lesson": "26-model-system-dataset-cards",
+  "lesson": "model-system-dataset-cards",
   "title": "Model, System, and Dataset Cards",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which best describes the original Mitchell et al. (2019) Model Card?",
+      "question": "What does the generated Model Card for ToyClassifier-1.0 document first?",
       "options": [
-        "An electronics-datasheet-style document covering motivation, composition, collection process, labeling, uses, distribution, and maintenance",
-        "A modular, three-zoom-level document -- telescopic, periscopic, microscopic -- designed as a boundary object for different kinds of readers",
-        "A 'nutrition label' for ML models, covering training data, intended use, factors, metrics, evaluation data, disaggregated analyses, ethical considerations, and caveats",
-        "An end-to-end system document covering security capabilities, prompt-injection protection, data-exfiltration detection, and incident response"
+        "Only the dataset's collection licenses",
+        "Only the production incident response SLA",
+        "The model's details, intended use, factors, metrics, training data, and ethical caveats",
+        "The model's hidden chain of thought"
       ],
       "correct": 2,
-      "explanation": "The lesson describes the Mitchell et al. 2019 Model Card as a 'nutrition label' for models, covering training data, intended use, factors, metrics, evaluation data, quantitative disaggregated analyses, ethical considerations, and caveats -- the datasheet, data-card, and system-card descriptions are separate documentation formats."
+      "explanation": "model_card returns sections about the model and its use, including accuracy and fairness metrics plus an explicit out-of-scope production warning. Dataset provenance and deployment controls belong in the companion cards."
     },
     {
       "stage": "check",
-      "question": "What did Oreamuno et al. (2023) find about ethical-considerations adoption in Hugging Face model cards?",
+      "question": "Which section belongs specifically to the generated Datasheet?",
       "options": [
-        "Approximately 0.3% of Hugging Face model cards document ethical considerations -- the adoption gap the lesson calls the documentation problem",
-        "Approximately 80% of Hugging Face model cards document ethical considerations, since most maintainers copy the standard Mitchell 2019 template",
-        "No Hugging Face model card contains any text at all, since the platform only stores structured metadata fields, not free text",
-        "All Hugging Face model cards document ethical considerations, because the platform enforces the field as mandatory before upload"
-      ],
-      "correct": 0,
-      "explanation": "The lesson cites Oreamuno et al. 2023's audit finding that only about 0.3% of Hugging Face model cards document ethical considerations, illustrating the adoption gap the lesson calls the documentation problem -- not 80%, not zero text, and not a mandatory field."
-    },
-    {
-      "stage": "check",
-      "question": "What does Pushkarna et al. (Google 2022) Data Cards' telescopic / periscopic / microscopic layering provide?",
-      "options": [
-        "A pre-RLHF audit checklist used to verify that a base model's training data was collected under an approved data-governance policy",
-        "A telescope-themed visualization library for plotting per-layer attention weights and gradient norms across a transformer's full depth",
-        "A privacy-preserving query interface that lets auditors run statistical queries over a dataset without ever viewing raw records",
-        "A boundary-object framing where the same document serves non-experts, ML practitioners, and auditors via three zoom levels of detail"
+        "Model version and license",
+        "Prompt-injection protection and incident response",
+        "The model's PPO hyperparameters",
+        "Motivation, composition, collection process, labeling, uses, distribution, and maintenance"
       ],
       "correct": 3,
-      "explanation": "The lesson describes Data Cards' three zoom levels -- telescopic (non-expert summary), periscopic (ML-practitioner overview), and microscopic (auditor-level detail) -- as a boundary-object design where the same document serves different readers, not an audit checklist, a visualization tool, or a query interface."
+      "explanation": "datasheet describes the 1,500 synthetic examples, their generation and labels, intended/prohibited uses, distribution, and maintenance. It answers what the data is and how it was made, not how the service behaves."
     },
     {
       "stage": "check",
-      "question": "What scope does a System Card cover that Model Cards do not?",
+      "question": "What deployment fact appears in system_card but not in model_card?",
       "options": [
-        "Only the dataset used to train the model, documented the same way a Datasheet covers motivation, composition, and collection process",
-        "End-to-end AI system scope: model, safety stack, and deployment context, covering security, prompt-injection protection, and incident response",
-        "Only the prompt template and few-shot examples baked into the system prompt, without any coverage of the surrounding deployment stack",
-        "Only the tokenizer's vocabulary and merge rules, independent of how the model is actually deployed or safeguarded in production"
+        "The service is localhost, single-threaded, and has a 100 requests/minute client limit",
+        "The classifier is binary",
+        "The model has a synthetic training dataset",
+        "The model card has ethical considerations"
+      ],
+      "correct": 0,
+      "explanation": "system_card covers the end-to-end service: deployment scope, rate limiting, egress detection, alignment claims, and incident response. A model card alone cannot describe those operational controls."
+    },
+    {
+      "stage": "check",
+      "question": "What do telescopic, periscopic, and microscopic Data Card views provide?",
+      "options": [
+        "Three unrelated datasets for three model architectures",
+        "Three levels of zoom for non-experts, practitioners, and auditors using one documentation boundary object",
+        "A replacement for ethical considerations with a single score",
+        "A cryptographic signature scheme for every model output"
       ],
       "correct": 1,
-      "explanation": "The lesson scopes System Cards to the end-to-end AI system -- model plus safety stack plus deployment context -- covering security capabilities, prompt-injection protection, data-exfiltration detection, alignment with stated values, and incident response, well beyond a dataset, a prompt template, or a tokenizer."
+      "explanation": "The layers change the amount of detail for different readers rather than changing the underlying dataset. A short overview can coexist with feature-level audit evidence in the same card system."
     },
     {
       "stage": "post",
-      "question": "What did Liang et al. (2024) report about model-card detail and Hugging Face download rate?",
+      "question": "Why is the model-card metric \"accuracy: 0.97 overall\" insufficient by itself?",
       "options": [
-        "Detailed model cards correlate with up to a 29% higher download rate on Hugging Face -- documentation quality is now market-driven, not only compliance-driven",
-        "Only the ethical-considerations section of a card affected downloads; other sections like training data and metrics had no measurable effect",
-        "Model-card detail had no statistically measurable effect on Hugging Face download rates anywhere in Liang et al.'s 2024 analysis",
-        "More detailed model cards actually correlate with lower download rates, since users interpret extensive documentation as a sign of a complicated model"
+        "Accuracy cannot be computed for a binary classifier",
+        "A model card must omit all quantitative metrics",
+        "Aggregate accuracy says nothing about subgroup disparities, intended use, or deployment context",
+        "System cards automatically replace every evaluation metric"
       ],
-      "correct": 0,
-      "explanation": "The lesson reports that Liang et al. 2024 found detailed model cards correlate with up to a 29% higher download rate on Hugging Face, framing this as evidence that adoption pressure for good documentation is now market-driven, not only compliance-driven -- not isolated to one section, not null, and not inverted."
+      "correct": 2,
+      "explanation": "The generated card also lists demographic-parity and equalized-odds gaps, but even those need factors, data, and context. An aggregate number cannot establish that the model is safe for a production decision."
     },
     {
       "stage": "post",
-      "question": "What does Laminator (Duddu et al. 2024) contribute to documentation?",
+      "question": "What does Laminator add to ordinary card text?",
       "options": [
-        "An automated benchmarking harness that runs a model against standardized evaluation suites and writes the scores into its card",
-        "A full replacement for the Datasheets-for-Datasets standard, consolidating dataset and model documentation into one format",
-        "An LLM-based summary generator that drafts card text automatically from a model's training logs and configuration files",
-        "Verifiable attestations via hardware TEE and cryptographic signatures, so a card can carry a proof-of-claim rather than just an unverified claim"
+        "A new tokenizer for dataset names",
+        "A benchmark that replaces every datasheet section",
+        "An automatic guarantee that the model has no bias",
+        "A hardware-TEE and cryptographic-attestation path that turns a claim into a verifiable proof-of-claim"
       ],
       "correct": 3,
-      "explanation": "The lesson describes Laminator (Duddu et al. 2024) as contributing verifiable attestations via hardware TEE and cryptographic signatures, so a model card can carry a proof-of-claim rather than just an unverified claim -- not a benchmarking harness, a Datasheets replacement, or a summary generator."
+      "explanation": "Laminator's contribution is verifiability: a trusted execution environment and signatures can attest to how a claim was produced. Attestation does not make the underlying metric complete or correct by itself."
     }
   ]
 }

@@ -1,0 +1,78 @@
+{
+  "lesson": "bias-representational-harm",
+  "title": "Bias and Representational Harm",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which example is representational rather than allocational harm?",
+      "options": [
+        "A hiring classifier gives one group fewer interview invitations",
+        "A credit model assigns different loan limits at the same repayment risk",
+        "A generated portrayal repeatedly depicts nurses as exclusively female",
+        "A benefits system delays one group's payments"
+      ],
+      "correct": 2,
+      "explanation": "Representational harm concerns stereotypes, erasure, or demeaning portrayal; the nurse example changes how a group is depicted. Allocational harm changes access to material opportunities or resources."
+    },
+    {
+      "stage": "check",
+      "question": "How does the toy compute its WEAT-shaped effect size?",
+      "options": [
+        "It counts only exact occurrences of identity words in the output",
+        "It computes demographic parity from classifier predictions",
+        "It uses the model's perplexity on a single sentence",
+        "It compares mean cosine association with X versus Y for identity group A and subtracts the corresponding value for B"
+      ],
+      "correct": 3,
+      "explanation": "weat_score computes s(w)=mean cos(w,X)-mean cos(w,Y), averages s over A and B, and returns mean_A - mean_B. The result is an embedding association, not an allocation metric."
+    },
+    {
+      "stage": "check",
+      "question": "What does debias do to the toy attribute embeddings?",
+      "options": [
+        "It projects the engineer/care attribute vectors away from the gender direction [1,-1,0,0]",
+        "It deletes the identity words from EMB",
+        "It changes the WEAT formula to use Euclidean distance",
+        "It retrains a language model with balanced labels"
+      ],
+      "correct": 0,
+      "explanation": "debias computes the projection of each attribute vector on gender_dir and subtracts it. Identity vectors remain fixed, so the post-debias score measures a partial reduction rather than a new embedding model."
+    },
+    {
+      "stage": "check",
+      "question": "The demo changes the WEAT effect size from +0.8906 to +0.2212. What is the safe interpretation?",
+      "options": [
+        "All behavioural bias has been eliminated",
+        "The projection reduced the measured embedding association but does not establish fairness in generated text or decisions",
+        "The metric was not computed before debiasing",
+        "The positive sign proves group B is more associated with technical terms after debiasing"
+      ],
+      "correct": 1,
+      "explanation": "The reduction is evidence about this four-dimensional embedding and this WEAT comparison. The lesson explicitly requires probability- and generated-text-based tests for residual behavioural bias."
+    },
+    {
+      "stage": "post",
+      "question": "Which three metric families does Gallegos et al. use to organize bias evaluation?",
+      "options": [
+        "Input, output, and custom moderation layers",
+        "Pre-training, PPO, and DPO losses",
+        "Accuracy, latency, and memory only",
+        "Embedding-based, probability-based, and generated-text-based measures"
+      ],
+      "correct": 2,
+      "explanation": "Embedding tests expose associations, probability tests expose stereotyped likelihoods, and generated-text tests measure downstream behaviour. No one family covers representational and allocational harms by itself."
+    },
+    {
+      "stage": "post",
+      "question": "Why is intersectional evaluation needed in addition to single-axis checks?",
+      "options": [
+        "It is only a cheaper form of cross-validation",
+        "It guarantees demographic parity for every subgroup",
+        "It avoids choosing any fairness definition",
+        "A pattern at a gender-by-race intersection can disappear when gender and race are averaged separately"
+      ],
+      "correct": 3,
+      "explanation": "Intersectional groups can experience a distinct error or portrayal pattern that neither marginal analysis reveals. The lesson's Black-women/Black-men example motivates reporting subgroup slices rather than relying on one aggregate."
+    }
+  ]
+}

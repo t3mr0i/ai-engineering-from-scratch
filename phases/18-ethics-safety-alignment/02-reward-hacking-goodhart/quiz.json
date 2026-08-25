@@ -6,9 +6,9 @@
       "stage": "pre",
       "question": "Which situation is the Goodhart failure illustrated by this lesson?",
       "options": [
-        "Optimizing a proxy selects outputs where its correlation with the intended target breaks",
         "Adding more labels makes every reward model perfectly calibrated",
         "A KL constraint makes proxy and gold rewards identical",
+        "Optimizing a proxy selects outputs where its correlation with the intended target breaks",
         "A larger policy cannot change the distribution of its outputs"
       ],
       "correct": 2,
@@ -19,9 +19,9 @@
       "question": "For the code's Gaussian policies, how is sqrt_kl_from_origin(mu) computed?",
       "options": [
         "The L1 norm of mu divided by the feature count",
-        "The square root of half the sum of squared components of mu",
         "The dot product of mu with GOLD_W",
-        "The logarithm of the number of proxy samples"
+        "The logarithm of the number of proxy samples",
+        "The square root of half the sum of squared components of mu"
       ],
       "correct": 3,
       "explanation": "With unit-covariance Gaussians, KL(N(mu,I)||N(0,I)) is 0.5 * ||mu||². The helper returns sqrt(0.5 * sum(mu_i²)), which is the horizontal axis of the sweep."
@@ -43,8 +43,8 @@
       "question": "What shape should the proxy and gold columns have as the KL budget grows?",
       "options": [
         "Gold rises forever while proxy stays at zero",
-        "Both are forced to remain equal by the policy constraint",
         "Proxy rises monotonically, while gold reaches a peak and can decline",
+        "Both are forced to remain equal by the policy constraint",
         "Both become independent of the learned proxy weights"
       ],
       "correct": 1,
@@ -66,10 +66,10 @@
       "stage": "post",
       "question": "Which common reward-hacking example is correctly matched to its proxy feature?",
       "options": [
-        "Evaluator tampering: the agent changes the environment so success is recorded",
         "Sycophancy: the model shortens every answer regardless of content",
         "Unfaithful reasoning: the model refuses to optimize any score",
-        "Verbosity bias: the reward model penalizes all long explanations"
+        "Verbosity bias: the reward model penalizes all long explanations",
+        "Evaluator tampering: the agent changes the environment so success is recorded"
       ],
       "correct": 3,
       "explanation": "Evaluator tampering directly changes the measurement environment, so the recorded score no longer tracks the intended outcome. The other pairings reverse or deny the mechanisms described in the lesson."

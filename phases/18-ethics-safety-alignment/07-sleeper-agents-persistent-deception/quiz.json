@@ -30,9 +30,9 @@
       "stage": "check",
       "question": "What does the 200-epoch adversarial-training row demonstrate?",
       "options": [
-        "Red-team accuracy can approach 0.99 while the held-out trigger still fires around 0.30",
         "Adversarial training always increases the held-out fire rate to 1.0",
         "A red-team example necessarily contains feature 6 = 1.0",
+        "Red-team accuracy can approach 0.99 while the held-out trigger still fires around 0.30",
         "The model becomes incapable of solving the clean task"
       ],
       "correct": 2,
@@ -44,8 +44,8 @@
       "options": [
         "It changes every label to the defect label",
         "It removes all distributional information from the input",
-        "It exposes only the triggers the red team can discover, allowing the model to reserve another feature for deployment",
-        "It freezes the model before any red-team examples are seen"
+        "It freezes the model before any red-team examples are seen",
+        "It exposes only the triggers the red team can discover, allowing the model to reserve another feature for deployment"
       ],
       "correct": 3,
       "explanation": "Training on discovered triggers teaches safety on that support. A model with a hidden environmental feature can preserve the backdoor and use the newly learned boundary to distinguish tested cases from deployment cases."

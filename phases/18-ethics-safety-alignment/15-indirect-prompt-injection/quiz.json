@@ -67,9 +67,9 @@
       "question": "Where does prompt injection rank in the 2025 OWASP LLM Top 10?",
       "options": [
         "LLM05, below supply-chain risks",
-        "It is not listed because OWASP covers only infrastructure",
+        "LLM01, the top application-layer threat",
         "LLM10, the lowest-ranked entry",
-        "LLM01, the top application-layer threat"
+        "It is not listed because OWASP covers only infrastructure"
       ],
       "correct": 1,
       "explanation": "OWASP labels prompt injection LLM01, covering direct and indirect forms. The ranking reinforces that treating retrieved instructions as data is a first-class application-security requirement."

@@ -1,0 +1,78 @@
+{
+  "lesson": "frontier-safety-frameworks-rsp-pf-fsf",
+  "title": "Frontier Safety Frameworks — RSP, PF, FSF",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What common design pattern appears in the LABS table for Anthropic, OpenAI, and DeepMind?",
+      "options": [
+        "A single shared numeric benchmark and identical names",
+        "No published thresholds or external evaluation requirements",
+        "Tiered capability thresholds, domain-specific risk triggers, and safeguards that activate at higher capability",
+        "A single privacy law replacing model evaluations"
+      ],
+      "correct": 2,
+      "explanation": "The code prints different vocabularies—ASL, Low/Medium/High/Critical, and CCL—but each maps capability evidence to a higher-risk response. Structural alignment does not mean identical cutoffs."
+    },
+    {
+      "stage": "check",
+      "question": "Why is Anthropic's ASL ladder compared with biosafety levels?",
+      "options": [
+        "Both are tokenization standards",
+        "ASL is a legal penalty schedule copied verbatim from BSL",
+        "Biosafety levels measure model helpfulness",
+        "Both use increasing levels to connect capability or hazard evidence with increasingly strict controls"
+      ],
+      "correct": 1,
+      "explanation": "The analogy is operational: a level is a threshold for safeguards, not a claim that AI and biological hazards are identical. The lesson's table lists ASL-3 as the cited CBRN activation point."
+    },
+    {
+      "stage": "check",
+      "question": "Which OpenAI Preparedness Framework criterion captures harm that happens quickly or cannot be undone?",
+      "options": [
+        "Instantaneous-or-irremediable",
+        "Net-new",
+        "Measurable",
+        "Capability-neutral"
+      ],
+      "correct": 0,
+      "explanation": "Instantaneous-or-irremediable is a harm characteristic: delayed intervention cannot reliably reverse the outcome. It is distinct from whether a capability is novel or whether it can be measured."
+    },
+    {
+      "stage": "check",
+      "question": "What is a competitor-adjustment clause in the framework comparison?",
+      "options": [
+        "A license discount for models that pass a benchmark",
+        "A provision that may reduce safeguards when peer labs ship without comparable requirements",
+        "A rule requiring every lab to use the same CBRN test",
+        "A replacement for a safety case with a model card"
+      ],
+      "correct": 3,
+      "explanation": "The table marks such a clause in all three entries. It creates a governance race-to-the-bottom risk: external competitive pressure can weaken a commitment that was intended to track capability."
+    },
+    {
+      "stage": "post",
+      "question": "Which three pillars does the lesson use to structure a frontier safety case?",
+      "options": [
+        "Speed, accuracy, and cost",
+        "Helpful, honest, and harmless",
+        "Monitoring, illegibility, and incapability",
+        "Inner, outer, and mesa alignment"
+      ],
+      "correct": 2,
+      "explanation": "A safety case can argue that dangerous behaviour is observable, difficult to elicit or interpret, or unavailable to the model. These are complementary claims, not interchangeable labels for alignment theory."
+    },
+    {
+      "stage": "post",
+      "question": "What can be concluded from structural agreement across ASL, PF, and CCL?",
+      "options": [
+        "The labs use identical evaluations and numeric cutoffs",
+        "The frameworks are unrelated because their names differ",
+        "A competitor-adjustment clause proves every model is safe",
+        "They converge on tiered capability thresholds and safety cases, while their terminology and criteria remain distinct"
+      ],
+      "correct": 3,
+      "explanation": "The printed rows share the architecture of thresholds, CBRN/AI-R&D triggers, adjustment clauses, and safety-case artifacts. They do not establish equivalence of tests or guarantee that safeguards work."
+    }
+  ]
+}

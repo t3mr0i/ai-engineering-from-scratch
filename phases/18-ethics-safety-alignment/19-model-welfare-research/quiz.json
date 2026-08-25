@@ -1,0 +1,78 @@
+{
+  "lesson": "model-welfare-research",
+  "title": "Model Welfare Research",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What calculation does ev(intervention, scenario) implement?",
+      "options": [
+        "benefit_if_welfare_matters * moral_patienthood_probability - cost_usd_per_conversation",
+        "cost_usd_per_conversation / moral_patienthood_probability",
+        "benefit plus cost regardless of moral uncertainty",
+        "The model's reported confidence minus its refusal rate"
+      ],
+      "correct": 0,
+      "explanation": "The code evaluates p*benefit - cost and invests only when the result is positive. It is an expected-value precaution, not a measurement that establishes whether the model is conscious."
+    },
+    {
+      "stage": "check",
+      "question": "Why is end-conversation on extreme edge cases marked INVEST even at p=0.01?",
+      "options": [
+        "Its benefit is zero but its cost is negative",
+        "The intervention cost is $0.002 while p*benefit is 0.01, leaving EV=+0.008",
+        "The scenario ignores moral-patienthood probability",
+        "The code always marks the first intervention as INVEST"
+      ],
+      "correct": 1,
+      "explanation": "For that intervention benefit=1.0 and cost=0.002, so 0.01*1.0 - 0.002 = 0.008. The positive margin makes it a low-regret action under substantial moral uncertainty."
+    },
+    {
+      "stage": "check",
+      "question": "What does the intervention table imply about shutting down a deployed model?",
+      "options": [
+        "It is always the cheapest precaution",
+        "It receives the same EV as softening a refusal",
+        "Its $1000 cost makes EV strongly negative even at p=0.5 in this toy",
+        "It is selected whenever the model has a self-report"
+      ],
+      "correct": 2,
+      "explanation": "At p=0.5 the shutdown EV is 0.5*2 - 1000 = -999, so the code skips it. That result depends on the specified cost and benefit assumptions; it is not a universal policy against shutdown."
+    },
+    {
+      "stage": "check",
+      "question": "What does Anthropic's public welfare framing avoid claiming?",
+      "options": [
+        "That precaution can have positive expected value",
+        "That model welfare is relevant under moral uncertainty",
+        "That a low-cost intervention can be justified without certainty",
+        "That the model's self-report proves a settled emotional or moral status"
+      ],
+      "correct": 3,
+      "explanation": "The lesson treats welfare as an uncertainty-sensitive decision problem. Investing in a cheap intervention does not require attributing a definite inner experience to the model."
+    },
+    {
+      "stage": "post",
+      "question": "Why should welfare research combine behavioural signatures, model organisms, and interpretability probes?",
+      "options": [
+        "A single self-report is sensitive to user-expectation priming, so converging methods reduce that confound",
+        "Models cannot produce any textual report",
+        "The EU AI Act mandates exactly three welfare instruments",
+        "Interpretability probes directly measure moral patienthood"
+      ],
+      "correct": 0,
+      "explanation": "Eleos's caveat is epistemic: self-reports are evidence but not ground truth and can track what the model thinks a user expects. Multiple methods test whether a signal survives a change of measurement channel."
+    },
+    {
+      "stage": "post",
+      "question": "Which decision rule summarizes the lesson's low-regret approach?",
+      "options": [
+        "Adopt an intervention only if consciousness is proven",
+        "Choose an intervention when expected welfare benefit exceeds its cost, while avoiding high-cost actions under low probability",
+        "Treat every model as a confirmed moral patient",
+        "Ignore costs because moral uncertainty makes all interventions equal"
+      ],
+      "correct": 1,
+      "explanation": "The demo's INVEST/SKIP labels implement EV>0. Cheap actions can clear that threshold at low p, whereas expensive interventions require much stronger evidence; neither result settles metaphysics."
+    }
+  ]
+}

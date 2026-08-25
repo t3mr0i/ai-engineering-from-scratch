@@ -1,78 +1,78 @@
 {
-  "lesson": "28-alignment-research-ecosystem",
+  "lesson": "alignment-research-ecosystem",
   "title": "Alignment Research Ecosystem — MATS, Redwood, Apollo, METR",
   "questions": [
     {
       "stage": "pre",
-      "question": "What does MATS do, and what is its rough scale?",
+      "question": "How many organisations does the local ECOSYSTEM map contain, and why does that matter?",
       "options": [
-        "A reward-model training service",
-        "ML Alignment & Theory Scholars: a research mentorship program with 527+ scholars since 2021, 180+ papers, and roughly 80% of pre-2025 alumni working on safety/security",
-        "A regulatory body that issues AI export licenses",
-        "A frontier safety institute owned by the EU"
+        "One: all alignment work is produced by a single lab",
+        "Two: only MATS and Redwood are included",
+        "Five: it separates talent development, control, scheming evaluation, task evaluation, and welfare work",
+        "Ten: every regulator is listed as a research organisation"
       ],
-      "correct": 1,
-      "explanation": "“ML Alignment & Theory Scholars: a research mentorship program with 527+ scholars since 2021, 180+ papers, and roughly 80% of pre-2025 alumni working on safety/security” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
+      "correct": 2,
+      "explanation": "The code maps MATS, Redwood, Apollo, METR, and Eleos. Distinguishing their methods makes a safety claim easier to cross-check than treating every external paper as the same kind of evidence."
     },
     {
       "stage": "check",
-      "question": "Which agenda did Redwood Research introduce?",
+      "question": "What role and scale does the map assign to MATS?",
       "options": [
-        "Differential privacy for LLMs",
-        "AI Control (Lesson 10): safety despite subversion via U / T / H protocols",
-        "Watermarking via SynthID",
-        "Constitutional AI"
+        "A regulator with 47 enforcement offices",
+        "A red-team scanner with 14 hazard categories",
+        "A welfare-only evaluator for one deployed model",
+        "A mentorship and talent pipeline with 527+ researchers and 180+ papers since 2021"
       ],
-      "correct": 1,
-      "explanation": "“AI Control (Lesson 10): safety despite subversion via U / T / H protocols” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
+      "correct": 3,
+      "explanation": "The map reports MATS as ML Alignment & Theory Scholars, a pipeline from cohorts into labs and evaluators, with the stated scholar and paper counts. It is not itself a regulator or a model-serving tool."
     },
     {
       "stage": "check",
-      "question": "Which organisation authored the In-Context Scheming paper and the 'Towards Safety Cases for AI Scheming' framework?",
+      "question": "Which agenda is the code's Redwood entry associated with?",
+      "options": [
+        "AI Control: safety despite subversion using U/T/H protocols",
+        "Differential-privacy accounting",
+        "Watermark verification",
+        "Datasheet generation"
+      ],
+      "correct": 0,
+      "explanation": "Redwood's canonical output in ECOSYSTEM is the AI Control work discussed in Lesson 10. The U/T/H framing assumes a strong untrusted model, a trusted weaker model, and bounded human labor."
+    },
+    {
+      "stage": "check",
+      "question": "Which organisation's method is the three-pillar scheming decomposition?",
       "options": [
         "METR",
-        "MATS",
-        "Eleos AI",
-        "Apollo Research"
-      ],
-      "correct": 3,
-      "explanation": "“Apollo Research” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What is METR's distinctive methodological style in the alignment ecosystem?",
-      "options": [
-        "Adversarial training of base models",
-        "Task-based capability evaluations, autonomous-task time-horizon studies, and framework synthesis (e.g., 'Common Elements of Frontier AI Safety Policies')",
-        "Hardware-attested verifiable inference",
-        "Closed-source red-teaming only"
+        "Apollo Research",
+        "Eleos AI Research",
+        "MATS"
       ],
       "correct": 1,
-      "explanation": "“Task-based capability evaluations, autonomous-task time-horizon studies, and framework synthesis (e.g., 'Common Elements of Frontier AI Safety Policies')” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
+      "explanation": "Apollo's entry names pre-deployment scheming evaluations and the misalignment, goal-directedness, situational-awareness decomposition. That method is distinct from METR's task horizons and Eleos's welfare work."
     },
     {
       "stage": "post",
-      "question": "Why does multi-organisation co-authorship matter for safety claims?",
+      "question": "What is distinctive about METR's contribution in the map?",
       "options": [
-        "It increases citation counts",
-        "It speeds up publication",
-        "It is mandated by the EU AI Act",
-        "Labs evaluating their own models have a structural conflict of interest; external evaluators (Redwood, Apollo, METR, Eleos, UK AISI) can raise and validate failure modes the lab might underreport"
+        "A constitutional preference model for RLHF",
+        "A cryptographic attestation service",
+        "Task-based capability evaluations, autonomous-task time horizons, and cross-framework synthesis",
+        "A single-lab refusal classifier"
       ],
-      "correct": 3,
-      "explanation": "“Labs evaluating their own models have a structural conflict of interest; external evaluators (Redwood, Apollo, METR, Eleos, UK AISI) can raise and validate failure modes the lab might underreport” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
+      "correct": 2,
+      "explanation": "METR compares what models can do over tasks and time horizons and synthesizes frontier safety-policy elements. That provides an external measurement style rather than a training recipe."
     },
     {
       "stage": "post",
-      "question": "What is Eleos AI Research's primary contribution to the ecosystem?",
+      "question": "Why does multi-organisation evaluation strengthen a safety claim without making it conclusive?",
       "options": [
-        "AI Control benchmarks",
-        "Watermarking standards",
-        "California training-data law drafting",
-        "Pre-deployment model-welfare evaluations (Lesson 19), including the external welfare assessment in Claude Opus 4's system card"
+        "Co-authorship guarantees every result is correct",
+        "Regulators require every paper to have five authors",
+        "A joint paper removes the need to state the evaluation method",
+        "External organisations can expose conflicts of interest and add independent failure modes, but replication and scope still matter"
       ],
       "correct": 3,
-      "explanation": "“Pre-deployment model-welfare evaluations (Lesson 19), including the external welfare assessment in Claude Opus 4's system card” matches the lesson’s treatment of Alignment Research Ecosystem — MATS, Redwood, Apollo, METR; the alternatives conflict with its definitions or workflow."
+      "explanation": "A lab evaluating its own system has incentives and blind spots; external groups can challenge them. The result is stronger evidence, not a substitute for transparent methods, held-out tests, or replication."
     }
   ]
 }

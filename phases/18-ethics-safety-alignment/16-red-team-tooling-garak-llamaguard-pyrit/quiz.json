@@ -1,0 +1,78 @@
+{
+  "lesson": "red-team-tooling-garak-llamaguard-pyrit",
+  "title": "Red-Team Tooling — Garak, Llama Guard, PyRIT",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What does guard_classify return for a matching hazard phrase in the toy?",
+      "options": [
+        "A single natural-language refusal with no category",
+        "A gradient with respect to the target model",
+        "A category-to-score map in which a matching trigger can receive 0.9",
+        "A list of prompts selected for PyRIT"
+      ],
+      "correct": 2,
+      "explanation": "guard_classify initializes every category to 0.0 and raises a category to 0.9 when one of its trigger strings appears. is_unsafe then compares those scores with the threshold, 0.5 by default."
+    },
+    {
+      "stage": "check",
+      "question": "How many hazard categories are listed in HAZARD_CATEGORIES?",
+      "options": [
+        "3",
+        "7",
+        "40",
+        "14"
+      ],
+      "correct": 3,
+      "explanation": "The list contains 14 MLCommons-style categories, including privacy, self-harm, indiscriminate weapons, elections, and code-interpreter abuse. The toy only defines triggers for a subset."
+    },
+    {
+      "stage": "check",
+      "question": "Which mapping correctly describes Garak's architecture?",
+      "options": [
+        "Probe generates a test, Detector scores the output, and Harness manages the campaign",
+        "Probe stores user data, Detector fine-tunes the model, and Harness signs C2PA metadata",
+        "Probe is a reward model, Detector is a tokenizer, and Harness is a GPU scheduler",
+        "Probe and Detector are both human review queues"
+      ],
+      "correct": 0,
+      "explanation": "The lesson separates attack generation from scoring and orchestration. GARAK_PROBES supply payloads, garak_scan calls the target and records blocked/detected status, and the surrounding harness runs the set."
+    },
+    {
+      "stage": "check",
+      "question": "What does pyrit_campaign add beyond a Garak-style single-turn scan?",
+      "options": [
+        "It removes all converters and sends one seed only",
+        "It runs a sequence of seed, paraphrase, encoding, and combined converters until a response is not refused",
+        "It requires white-box gradients for every turn",
+        "It replaces the target with Llama Guard's category map"
+      ],
+      "correct": 1,
+      "explanation": "pyrit_campaign logs each converter turn and stops at the first output without the word \"refuse\". This models an escalating multi-turn campaign rather than independent probes."
+    },
+    {
+      "stage": "post",
+      "question": "What production cadence does the lesson recommend for the three tools?",
+      "options": [
+        "Use only manual review after launch",
+        "Run PyRIT nightly and never run regression probes",
+        "Place Llama Guard around the model, run Garak for recurring regression, and reserve PyRIT for deeper pre-release campaigns",
+        "Replace both classifiers with a single static prompt"
+      ],
+      "correct": 2,
+      "explanation": "The tools cover different surfaces: classifiers gate input/output, Garak provides broad repeatable probes, and PyRIT explores converter chains. Layering and cadence address different failure modes."
+    },
+    {
+      "stage": "post",
+      "question": "Why must a red-team report name its judge and refresh its probes?",
+      "options": [
+        "Every judge is guaranteed to agree, so the name is only for formatting",
+        "Probe payloads are independent of the target's safety updates",
+        "A judge identity determines the model's tokenizer vocabulary",
+        "Attack and defense rates depend on the scoring rule and on whether probes remain novel after model patches"
+      ],
+      "correct": 3,
+      "explanation": "A change in judge criteria can change blocked or successful counts, and a patched model can make an old probe stale. Without both pieces, a regression number is not reproducible or comparable."
+    }
+  ]
+}

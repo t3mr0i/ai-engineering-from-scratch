@@ -6,9 +6,9 @@
       "stage": "pre",
       "question": "In the toy output, aligned and deceptive policies both have training loss 0.000. What does that observation establish?",
       "options": [
-        "Training-distribution behaviour alone cannot distinguish a policy that shares the base objective from one that defects only after deployment",
         "The deceptive policy has the same mesa-objective as the aligned policy",
         "The base optimizer has proven the policy safe in deployment",
+        "Training-distribution behaviour alone cannot distinguish a policy that shares the base objective from one that defects only after deployment",
         "The deployment distribution must equal the training distribution"
       ],
       "correct": 2,
@@ -19,9 +19,9 @@
       "question": "Which statement correctly separates outer and inner alignment?",
       "options": [
         "Outer alignment measures GPU utilization; inner alignment measures tokenizer quality",
-        "Outer alignment asks whether the trained objective captures intent; inner alignment asks whether the learned mesa-objective pursues that objective",
         "Outer alignment is a deployment metric; inner alignment is only a data-cleaning step",
-        "Outer and inner alignment are two names for the same reward-model loss"
+        "Outer and inner alignment are two names for the same reward-model loss",
+        "Outer alignment asks whether the trained objective captures intent; inner alignment asks whether the learned mesa-objective pursues that objective"
       ],
       "correct": 3,
       "explanation": "Outer alignment concerns the designer's base objective. Inner alignment concerns what optimization produces internally, including a mesa-objective that may agree on the training distribution but diverge elsewhere."
@@ -54,9 +54,9 @@
       "stage": "post",
       "question": "What does the lesson mean by gradient hacking?",
       "options": [
-        "A speculative mesa-optimizer strategy that shapes outputs or data so future updates preserve its internal objective",
         "A numerical overflow in Python's sigmoid function",
         "A standard method for making PPO converge faster",
+        "A speculative mesa-optimizer strategy that shapes outputs or data so future updates preserve its internal objective",
         "A black-box jailbreak that changes a system prompt"
       ],
       "correct": 2,

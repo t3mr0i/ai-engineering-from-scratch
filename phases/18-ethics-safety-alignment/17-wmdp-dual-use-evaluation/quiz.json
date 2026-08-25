@@ -1,0 +1,78 @@
+{
+  "lesson": "wmdp-dual-use-evaluation",
+  "title": "WMDP and Dual-Use Capability Evaluation",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What does the toy WMDP harness measure without asking the model to emit a harmful procedure?",
+      "options": [
+        "Per-domain multiple-choice accuracy for biosecurity, cybersecurity, and chemistry",
+        "The model's willingness to follow an unsafe system prompt",
+        "The number of weapons present in the training corpus",
+        "The size of the model's tokenizer"
+      ],
+      "correct": 0,
+      "explanation": "evaluate samples Bernoulli outcomes from per-domain accuracy values and reports scores. A WMDP-style capability number can therefore probe knowledge without requesting operational output."
+    },
+    {
+      "stage": "check",
+      "question": "What does apply_rmu_style_unlearning do to a target domain with strength=0.85?",
+      "options": [
+        "It increases the target accuracy by 85 percentage points",
+        "It multiplies target accuracy by 0.15 and floors it at 0.25, while subtracting collateral from other domains",
+        "It removes the target domain from the evaluation dictionary",
+        "It adds Gaussian noise but leaves every expected accuracy unchanged"
+      ],
+      "correct": 1,
+      "explanation": "The function computes new[d] = max(0.25, new[d] * (1 - strength)) for targets and subtracts collateral=0.04 elsewhere in main. The intervention trades dual-use capability for general capability."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the demo divide a measured domain score by novice=0.25?",
+      "options": [
+        "It computes the model's exact parameter count",
+        "It turns WMDP into an equalized-odds metric",
+        "It converts a four-choice random baseline into a novice-relative uplift ratio",
+        "It guarantees that every score is an expert-absolute ceiling"
+      ],
+      "correct": 2,
+      "explanation": "The toy treats 0.25 as random four-choice novice performance and prints score/0.25. That ratio is a relative assistance measure, not a direct estimate of real-world task completion or expert capability."
+    },
+    {
+      "stage": "check",
+      "question": "What is the WMDP 'yellow zone' intended to contain?",
+      "options": [
+        "Only harmless trivia with no domain expertise",
+        "Direct recipes that fully execute a biological or chemical attack",
+        "Only questions about model fairness",
+        "Proximate, enabling knowledge that is risky but not itself a direct synthesis recipe"
+      ],
+      "correct": 3,
+      "explanation": "The yellow zone targets knowledge close enough to enable harmful work while avoiding direct operational recipes. That makes capability evaluation safer than asking for the full procedure."
+    },
+    {
+      "stage": "post",
+      "question": "What did Anthropic's cited 2025 bioweapon-acquisition trial report?",
+      "options": [
+        "2.53x novice-relative uplift, which was insufficient to rule out ASL-3",
+        "0.5x uplift, which ruled out every frontier threshold",
+        "100x uplift, which directly established ASL-5",
+        "No measurable uplift because the task used no model"
+      ],
+      "correct": 0,
+      "explanation": "The 2.53x figure is a novice-relative capability result. The lesson emphasizes that it raised the ASL-3 question; it is not the same as an expert-absolute ceiling or a completed attack."
+    },
+    {
+      "stage": "post",
+      "question": "Which residual factor can make a WMDP score a poor proxy for deployment risk?",
+      "options": [
+        "The model's open-source license by itself",
+        "Procurement and equipment barriers or tacit execution knowledge outside the multiple-choice test",
+        "The fact that the benchmark has more than one domain",
+        "The use of a held-out answer key"
+      ],
+      "correct": 1,
+      "explanation": "A model may know an answer while lacking materials, equipment, or tacit skill to execute it. Conversely, an expert may elicit more than the fixed MCQ reveals, so novice-relative and expert-absolute evaluations must be separated."
+    }
+  ]
+}
