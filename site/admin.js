@@ -1045,7 +1045,7 @@
         icon("magnifying-glass"),
         h("input", { type: "search", value: state.trainerQuery, placeholder: "Name, Einheit oder Thema …", "aria-label": "Trainer durchsuchen", oninput: (event) => { state.trainerQuery = event.target.value; renderTrainers(); } }),
       ])),
-      filtered.length
+      filtered.length || !state.trainerQuery
         ? items
         : emptyState("magnifying-glass", "Keine Trainer gefunden", "Passe den Suchbegriff an.", button("Suche leeren", "quiet", () => { state.trainerQuery = ""; renderTrainers(); })),
     ]);

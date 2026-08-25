@@ -197,11 +197,10 @@
     <p class="kicker">Betriebs- und Konformitätsbild</p>
     <h1>Das Trainingcamp läuft auf unserer eigenen Infrastruktur</h1>
     <p class="lede">
-      Die Lernplattform wird als Container im LHIND-eigenen OpenShift-Cluster betrieben, ist nur
-      über das interne Netz erreichbar und speichert keinerlei personenbezogene Lerndaten auf dem
-      Server. Sprachmodell-Aufrufe verlassen den Browser ausschließlich über unser internes
-      Gateway, der zugehörige Schlüssel liegt serverseitig. Offen sind drei Punkte, die weiter
-      unten benannt und mit einem konkreten Vorschlag hinterlegt sind.
+      Die Lernplattform läuft als Container im LHIND-eigenen OpenShift-Cluster und ist nur über
+      das interne Netz erreichbar. Auf dem Server liegen keine personenbezogenen Lerndaten.
+      Sprachmodell-Aufrufe verlassen den Browser ausschließlich über unser internes Gateway, der
+      Schlüssel dafür liegt serverseitig. Drei Punkte sind offen, sie stehen in Abschnitt 05.
     </p>
     <div class="meta">
       <span>Anwendung: <strong>ase-site-gated</strong></span>
@@ -244,10 +243,9 @@
     </dl>
     <div class="body">
       <p>
-        Die frühere Azure-Variante ist vollständig abgebaut. Weder der App Service noch sein Plan
-        existieren noch, und der zugehörige CI-Job wurde entfernt. Was heute produktiv läuft, ist
-        ein einzelner Container in unserem eigenen Rechenzentrum, dessen sämtliche Manifeste
-        im Repository unter <code>openshift/</code> versioniert sind.
+        Die Azure-Variante ist abgebaut: App Service und Plan sind gelöscht, der zugehörige
+        CI-Job ist entfernt. Produktiv läuft heute ein einzelner Container in unserem eigenen
+        Rechenzentrum, dessen Manifeste unter <code>openshift/</code> im Repository liegen.
       </p>
     </div>
   </section>
@@ -337,9 +335,9 @@
         </svg>
       </div>
       <figcaption>
-        Alles, was Inhalte oder Prompts berührt, bleibt innerhalb der gestrichelten Grenze. Der
-        einzige Pfad nach außen ist der Abruf von Icons, Schriften und der Pyodide-Laufzeit durch
-        den Browser, siehe Abschnitt 05.
+        Alles, was Inhalte oder Prompts berührt, bleibt innerhalb der gestrichelten Grenze. Nach
+        außen führt ein einziger Pfad: Der Browser holt Icons, Schriften und die Pyodide-Laufzeit
+        von öffentlichen CDNs, siehe Abschnitt 05.
       </figcaption>
     </figure>
   </section>
@@ -394,10 +392,9 @@
         </svg>
       </div>
       <figcaption>
-        Der Gateway-Schlüssel existiert nur im Pod. Ein <code>Authorization</code>-Header, den der
-        Browser mitschickt, wird verworfen und durch den Schlüssel aus dem Secret ersetzt. Der
-        Server hält weder Prompt noch Antwort, es gibt für diesen Pfad keine Protokollierung von
-        Inhalten.
+        Der Gateway-Schlüssel existiert nur im Pod. Einen <code>Authorization</code>-Header aus dem
+        Browser verwirft der Server und setzt den Schlüssel aus dem Secret ein. Weder Prompt noch
+        Antwort werden festgehalten, für diesen Pfad protokolliert der Server nichts.
       </figcaption>
     </figure>
   </section>
@@ -458,16 +455,16 @@
             <td><strong>Nutzungsstatistik</strong></td>
             <td>Nirgends</td>
             <td>Nein</td>
-            <td>Es ist kein Tracker aktiv, die Einbindung ist leer</td>
+            <td>Die Analyse-Einbindung ist leer und lädt nichts nach</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="body">
       <p>
-        Bemerkenswert an dieser Tabelle ist vor allem, was fehlt: Es gibt keine Nutzerdatenbank,
-        keine Sitzungs-Historie und keinen Analyse-Dienst. Wer die Plattform verlässt, hinterlässt
-        auf dem Server nichts, was sich einer Person zuordnen ließe.
+        Die Plattform führt keine Nutzerdatenbank, keine Sitzungs-Historie und keinen
+        Analyse-Dienst. Auf dem Server bleibt nichts zurück, was sich einer Person zuordnen
+        ließe.
       </p>
     </div>
   </section>
@@ -479,8 +476,8 @@
     </div>
     <div class="body">
       <p>
-        Drei Punkte halten der Prüfung heute noch nicht vollständig stand. Sie sind bekannt,
-        eingegrenzt und jeweils mit einem Vorschlag hinterlegt.
+        An drei Stellen entspricht der Betrieb heute noch nicht dem, was wir nach außen zusagen
+        wollen.
       </p>
     </div>
     <div class="cards">
@@ -489,25 +486,26 @@
         <p>
           Icons kommen von unpkg, die Schriften von Google Fonts, die Pyodide-Laufzeit und die
           Diagrammbibliothek von jsDelivr. Damit erfahren drei externe Anbieter IP-Adresse und
-          Browserkennung unserer Lernenden. Lerninhalte oder Prompts sind davon nicht betroffen.
+          Browserkennung unserer Lernenden. Lerninhalte und Prompts sind davon nicht betroffen.
         </p>
         <p class="fix">
-          Vorschlag: alle drei Abhängigkeiten mit ins Image legen und im Build mit ausliefern. Das
-          betrifft die Seitenkopfzeilen und den Pyodide-Ladepfad, es ändert nichts an der
-          Architektur und macht die Anwendung zugleich offlinefähig.
+          Wir legen alle drei Abhängigkeiten ins Image und liefern sie selbst aus. Betroffen sind
+          die Seitenkopfzeilen und der Pyodide-Ladepfad; an der Architektur ändert sich nichts,
+          und die Anwendung wird dabei offlinefähig.
         </p>
       </div>
       <div class="card open">
         <h3>Die Anwendung authentifiziert selbst nicht</h3>
         <p>
-          Der Passcode-Schutz ist im Betrieb bewusst abgeschaltet, weil die Route ausschließlich
-          über den internen, VPN-beschränkten Reverse Proxy erreichbar ist. Der Schutz liegt damit
-          vollständig auf der Netzebene, die Anwendung selbst unterscheidet keine Personen.
+          Der Passcode-Schutz ist im Betrieb bewusst abgeschaltet, weil die Route nur über den
+          internen, VPN-beschränkten Reverse Proxy erreichbar ist. Der Schutz liegt damit allein
+          auf der Netzebene, die Anwendung selbst unterscheidet keine Personen.
         </p>
         <p class="fix">
-          Vorschlag: so belassen, solange die Netzbeschränkung gilt. Der Passcode-Mechanismus ist
-          weiterhin verdrahtet und über eine einzelne Umgebungsvariable wieder aktivierbar. Für
-          echte Nutzeranmeldung wäre der Reverse Proxy die richtige Stelle.
+          Solange die Netzbeschränkung gilt, würden wir es dabei belassen. Der
+          Passcode-Mechanismus ist weiterhin verdrahtet und über eine Umgebungsvariable wieder
+          aktivierbar. Eine echte Nutzeranmeldung gehört an den Reverse Proxy, nicht in diese
+          Anwendung.
         </p>
       </div>
       <div class="card open">
@@ -515,11 +513,11 @@
         <p>
           Das Limit von zwanzig Anfragen pro Minute greift nachweislich, es zählt aber nach der
           IP-Adresse aus dem Weiterleitungs-Header. Ob der vorgelagerte Reverse Proxy eine
-          konsistente Client-Adresse durchreicht, wurde bisher nur intern geprüft.
+          konsistente Client-Adresse durchreicht, haben wir bisher nur intern geprüft.
         </p>
         <p class="fix">
-          Vorschlag: einmal über den öffentlichen Namen gegenmessen. Im ungünstigen Fall greift das
-          Limit gröber als gedacht, das Budget des Gateways bleibt trotzdem geschützt.
+          Wir messen einmal über den öffentlichen Namen gegen. Im ungünstigen Fall greift das
+          Limit gröber als gedacht, geschützt bleibt das Budget des Gateways auch dann.
         </p>
       </div>
     </div>
@@ -533,32 +531,32 @@
     <div class="body">
       <ul class="plain">
         <li>
-          Der Quellcode liegt vollständig auf <code>git02.lhind.app.lufthansa.com</code>, das Image
-          wird im Cluster selbst gebaut. Es gibt keine externe Build-Pipeline und keine fremde
-          Registry im Pfad.
+          Der Quellcode liegt auf <code>git02.lhind.app.lufthansa.com</code>, gebaut wird das Image
+          im Cluster selbst. Im Pfad steht weder eine externe Build-Pipeline noch eine fremde
+          Registry.
         </li>
         <li>
-          Das Basis-Image ist Red Hats UBI 9 mit Node.js 22. Pulls von docker.io wären durch die
-          Registry-Richtlinie des Clusters ohnehin abgelehnt worden.
+          Das Basis-Image ist Red Hats UBI 9 mit Node.js 22. Pulls von docker.io hätte die
+          Registry-Richtlinie des Clusters ohnehin abgelehnt.
         </li>
         <li>
-          Zur Laufzeit hat der Server keine einzige npm-Abhängigkeit. Die gesamte Serverlogik sind
-          gut zweitausend Zeilen gegen die Node-Standardbibliothek, entsprechend klein ist die
-          Angriffsfläche und der Pflegeaufwand.
+          Zur Laufzeit hat der Server keine npm-Abhängigkeit. Die Serverlogik umfasst gut
+          zweitausend Zeilen gegen die Node-Standardbibliothek, entsprechend klein sind
+          Angriffsfläche und Pflegeaufwand.
         </li>
         <li>
-          Der Container läuft nicht als Root, unter einem eigenen Dienstkonto, wie es die
-          Kyverno-Richtlinie des Clusters verlangt, und innerhalb der Namespace-Quote von
+          Der Container läuft ohne Root-Rechte unter einem eigenen Dienstkonto, wie es die
+          Kyverno-Richtlinie des Clusters verlangt, und bleibt innerhalb der Namespace-Quote von
           250 Millicores und 2 Gigabyte.
         </li>
         <li>
-          Alle Geheimnisse liegen in einem OpenShift-Secret und werden erst zur Laufzeit in die
-          Umgebung gereicht. Im Repository steht nur eine Beispieldatei ohne Werte.
+          Alle Geheimnisse liegen in einem OpenShift-Secret und erreichen den Container erst zur
+          Laufzeit. Im Repository steht nur eine Beispieldatei ohne Werte.
         </li>
         <li>
           TLS terminiert an der Route, HTTP wird auf HTTPS umgeleitet, das Zertifikat stammt aus
-          dem bestehenden Wildcard des Clusters. Es war weder ein neuer DNS-Eintrag noch ein neues
-          Zertifikat nötig.
+          dem bestehenden Wildcard des Clusters. Weder ein neuer DNS-Eintrag noch ein neues
+          Zertifikat war nötig.
         </li>
       </ul>
     </div>
@@ -572,14 +570,14 @@
     <div class="ask">
       <ol>
         <li>
-          <strong>Freigabe des laufenden Betriebs</strong> auf ocp03 in der beschriebenen Form,
-          also intern erreichbar, ohne serverseitige Lerndaten und mit dem internen Gateway als
-          einzigem Sprachmodell-Pfad.
+          <strong>Freigabe des laufenden Betriebs</strong> auf ocp03 in der beschriebenen Form:
+          intern erreichbar, ohne serverseitige Lerndaten, mit dem internen Gateway als einzigem
+          Sprachmodell-Pfad.
         </li>
         <li>
-          <strong>Zustimmung, die drei CDN-Abhängigkeiten abzulösen</strong> und mit ins Image zu
-          nehmen. Der Aufwand liegt bei etwa einem Personentag, danach lädt der Browser
-          ausschließlich aus unserem eigenen Netz.
+          <strong>Zustimmung, die drei CDN-Abhängigkeiten abzulösen.</strong> Der Aufwand liegt bei
+          etwa einem Personentag, danach lädt der Browser ausschließlich aus unserem eigenen
+          Netz.
         </li>
         <li>
           <strong>Eine Entscheidung zur Anmeldung.</strong> Bleibt es beim Schutz über das Netz,

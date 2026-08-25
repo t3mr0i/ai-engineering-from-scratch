@@ -35,6 +35,14 @@ function loadMap() {
   return sandbox.window.LrnCurriculumMap;
 }
 
+function loadSchedule(data) {
+  const sandbox = { window: { LrnData: data }, console };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync("site/lrn/schedule.js", "utf8"), sandbox, { filename: "schedule.js" });
+  if (!sandbox.window.LrnSchedule) throw new Error("schedule.js did not assign window.LrnSchedule");
+  return sandbox.window.LrnSchedule;
+}
+
 function loadCourseFormats() {
   const sandbox = { window: {}, console };
   vm.createContext(sandbox);
@@ -593,4 +601,46 @@ test("GitHub Actions workflow deploys the site to Azure Static Web Apps", () => 
     `${workflowPath} does not use the Azure Static Web Apps deploy action`);
   assert.match(yml, /app_location:\s*["']site["']/i,
     `${workflowPath} must deploy the site/ directory`);
+});
+
+
+test("data.js carries the trainer roster and the course calendar", () => {
+  const data = loadData();
+  assert.ok(Array.isArray(data.trainers), "trainers[] fehlt");
+  assert.ok(Array.isArray(data.sessions), "sessions[] fehlt");
+});
+
+test("the schedule helper sorts dates and skips cancelled or finished ones", () => {
+  const past = new Date(Date.now() - 86400000 * 30).toISOString().slice(0, 16);
+  const soon = new Date(Date.now() + 86400000 * 7).toISOString().slice(0, 16);
+  const later = new Date(Date.now() + 86400000 * 30).toISOString().slice(0, 16);
+  const schedule = loadSchedule({
+    trainers: [{ id: "TR-01", name: "Ada Lovelace", languages: ["de"] }],
+    sessions: [
+      { id: "SES-2026-003", courseId: "LRN-01", start: later, end: later, trainerIds: ["TR-01"], status: "planned" },
+      { id: "SES-2026-002", courseId: "LRN-01", start: soon, end: soon, trainerIds: ["TR-01"], status: "confirmed" },
+      { id: "SES-2026-001", courseId: "LRN-01", start: past, end: past, trainerIds: ["TR-01"], status: "done" },
+      { id: "SES-2026-004", courseId: "LRN-01", start: soon, end: soon, trainerIds: ["TR-01"], status: "cancelled" },
+      { id: "SES-2026-005", courseId: "LRN-02", start: soon, end: soon, trainerIds: [], status: "planned" },
+    ],
+  });
+  assert.deepEqual(schedule.sessions("LRN-01").map((item) => item.id), ["SES-2026-001", "SES-2026-002", "SES-2026-004", "SES-2026-003"]);
+  assert.deepEqual(schedule.upcoming("LRN-01").map((item) => item.id), ["SES-2026-002", "SES-2026-003"]);
+  assert.equal(schedule.next("LRN-01").id, "SES-2026-002");
+  assert.equal(schedule.next("LRN-42"), null);
+  assert.deepEqual(schedule.trainerNames(schedule.next("LRN-01")), ["Ada Lovelace"]);
+});
+
+test("the schedule helper reports free seats and a readable date range", () => {
+  const schedule = loadSchedule({
+    trainers: [],
+    sessions: [{ id: "SES-2026-001", courseId: "LRN-01", start: "2026-10-12T09:00", end: "2026-10-13T17:00" }],
+  });
+  const session = schedule.sessions("LRN-01")[0];
+  assert.equal(schedule.formatRange(session, "de-DE"), "12.10.2026 – 13.10.2026");
+  assert.equal(schedule.formatShort(session, "de-DE"), "12.10.");
+  assert.equal(schedule.seatsFree(session), null);
+  assert.equal(schedule.seatsFree({ seats: 20, seatsTaken: 18 }), 2);
+  assert.equal(schedule.seatsFree({ seats: 20, seatsTaken: 25 }), 0);
+  assert.equal(schedule.formatRange({ start: "2026-10-12", end: "2026-10-12" }, "de-DE"), "12.10.2026");
 });

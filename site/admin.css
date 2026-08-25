@@ -542,6 +542,7 @@ button, select { touch-action: manipulation; }
 
 /* Trainerverwaltung und Kalender ------------------------------------------ */
 
+.editor-section > .admin-button { justify-self: start; }
 .editor-subheading { margin: 0; font-family: var(--font-head); font-size: var(--fs-body); font-weight: var(--weight-medium); }
 
 .trainer-refs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
